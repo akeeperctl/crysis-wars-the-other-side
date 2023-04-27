@@ -1,0 +1,72 @@
+<FrontEndAudio>
+
+	<Set name="menu" default="1">
+		<Menus>
+			<Menu name="Menu" />
+			<Menu name="AttractMode" />
+			<Menu name="LanguageSelection" />
+		</Menus>
+		<Signals>
+			<Start signal = "FrontEnd_Start" />
+			<Confirm signal = "FrontEnd_Confirm" />
+			<Cancel signal = "FrontEnd_Cancel" />
+			<Move signal = "FrontEnd_Move" />
+			<EnterMenu signal = "FrontEnd_Music_EnterMenu" />
+			<LeaveMenu signal = "FrontEnd_Music_LeaveMenu" />
+		</Signals>
+	</Set>
+	
+	<Set name="showroom">
+		<Menus>
+			<Menu name="Showroom" />
+		</Menus>
+		<Signals>
+			<Start signal = "FrontEnd_Start" />
+			<Confirm signal = "FrontEnd_Confirm" />
+			<Cancel signal = "FrontEnd_Cancel" />
+			<Move signal = "FrontEnd_Move" />
+		</Signals>
+	</Set>
+	
+	<Set name="loading">
+		<Menus>
+			<Menu name="LoadingScreen" />
+		</Menus>
+		<Signals>
+			<EnterMenu signal = "FrontEnd_Music_EnterLoading" />
+			<LeaveMenu signal = "FrontEnd_Music_LeaveLoading" />
+		</Signals>
+	</Set>
+	
+	<Set name="pause">
+		<Menus>
+			<Menu name="IngameMenu" />
+			<Menu name="SimplePause" />
+			<!--Menu name="InFictionMenu" /-->
+		</Menus>
+		<Signals>
+			<Start signal = "FrontEnd_Start" />
+			<Confirm signal = "FrontEnd_Confirm" />
+			<Cancel signal = "FrontEnd_Cancel" />
+			<Move signal = "FrontEnd_Move" />
+			<EnterMenu signal = "FrontEnd_Music_PauseMenu" />
+			<LeaveMenu signal = "FrontEnd_Music_LeaveMenu" />
+		</Signals>
+	</Set>
+	
+	<Set name="infiction">
+		<Menus>
+			<Menu name="WeaponCustomization" />
+			<Menu name="SuitCustomization" />
+		</Menus>
+		<Signals>
+		</Signals>
+	</Set>
+	
+	<Set name="mute">
+		<Menus>
+			<Menu name="TutorialBox" />
+		</Menus>
+	</Set>
+	
+</FrontEndAudio>

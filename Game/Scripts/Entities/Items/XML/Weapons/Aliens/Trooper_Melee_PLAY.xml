@@ -1,0 +1,69 @@
+<item name="Trooper_Melee_PLAY" class="Fists" category="small" invisible="1" >
+	<params>
+		<param name="giveable" 		value="1" />
+		<param name="selectable" 	value="1" />
+		<param name="pose" 				value="nw" />
+		<param name="mass"				value="1" />
+	</params>
+	<actions>
+		<action name="select">
+			<animation target="firstperson" name="select_01" />
+			<animation target="owner" name="select" />
+		</action>
+		<action name="deselect">
+			<animation target="firstperson" name="deselect_01" blendTime=".5" />
+			<animation target="owner" name="deselect" />
+		</action>
+		<action name="idle">
+			<animation target="firstperson" name="idle_01" />
+			<animation target="owner" name="idle" />
+    		</action>
+		<action name="punch">
+			<animation target="firstperson" name="impact_01" camera_helper="camera_helper" />
+			<animation target="owner" name="melee_punch_left" />
+		</action>
+		<action name="melee">
+			<animation target="firstperson" name="impact_02" camera_helper="camera_helper" />
+			<animation target="owner" name="melee_punch_left" />
+		</action>
+		<action name="hit">
+		</action>
+		<action name="offhand_on">
+			<animation target="firstperson" name="remove_%offhand%_01" speed="4.0" />
+		</action>
+		<action name="offhand_off">
+			<animation target="firstperson" name="select_%offhand%_01" />
+		</action>
+	</actions>
+	<firemodes>
+		<firemode name="punch" type="Melee">
+			<melee>
+				<param name="helper" value="Collision" />
+				<param name="damage" value="120" />
+				<param name="impulse" value="0.3" />
+				<param name="delay" value="0.3" />
+				<param name="rate" value="300" />
+				<param name="duration" value="2" />
+				<param name="clip_size" value="-1" />
+			</melee>
+			<actions>
+				<param name="attack" value="punch" />
+			</actions>
+		</firemode>
+		<firemode name="melee" type="Melee">
+			<melee>
+				<param name="helper" value="collision" />
+				<param name="damage" value="180" />
+				<param name="impulse" value="0.3" />
+				<param name="delay" value="0.55" />
+				<param name="duration" value="0.45" />
+				<param name="clip_size" value="-1" />
+			</melee>
+			<actions>
+				<param name="attack" value="melee" />
+			</actions>
+		</firemode>
+	</firemodes>
+	<zoommodes>
+	</zoommodes>
+</item>

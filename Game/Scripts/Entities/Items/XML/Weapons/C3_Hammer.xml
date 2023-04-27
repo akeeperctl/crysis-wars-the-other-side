@@ -1,0 +1,590 @@
+<item name="C3_Hammer" class="Weapon" category="small" priority="0"  >
+	<params>
+		<param name="giveable" 		value="1" />
+		<param name="selectable" 	value="1" />
+		<param name="pose" 				value="pistol" />
+		<param name="mass"				value="10" />
+		<param name="melee_attack_firemode"		value="melee" />
+		<param name="raiseable"		value="true" />
+		<param name="raise_distance" value="0.80" />
+		<param name="display_name"	value="CELL Hammer" />
+		<dualwield>
+			<suffix value="akimbo_" />
+		</dualwield>
+	</params>
+	<ai_descriptor handler="instant" burstBulletCountMin="1" burstBulletCountMax="10" burstPauseTimeMin="0.8" burstPauseTimeMax="3.5" singleFireTriggerTime="-1" />
+	<ammos>
+		<ammo name="lightbullet" extra="40" amount="8" />
+	</ammos>
+	<geometry>
+		<firstperson name="objects/weapons/c3_us/Hammer/Hammer.chr" angles="0,0,0" position="0,0,0" />
+		<thirdperson name="objects/weapons/c3_us/Hammer/Hammer_tp.cgf" angles="0,0,0"/>
+		<boneAttachments>
+			<attachment target="firstperson" name="magaz" bone="magazi" />
+			<attachment target="firstperson" name="silencer_attach" bone="silencer_attach" />
+			<attachment target="firstperson" name="muzzle_flash_effect" bone="weapon_term" />
+			<attachment target="firstperson" name="muzzle_flash_smoke" bone="weapon_term" />
+			<attachment target="firstperson" name="muzzle_flash_light" bone="weapon_term" />
+			<attachment target="firstperson" name="attachment_top" bone="attachment_top" />
+			<attachment target="firstperson" name="attachment_bottom" bone="attachment_bottom" />
+			<attachment target="firstperson" name="shell_grenade" bone="shell_grenade" />
+			<attachment target="firstperson" name="grenade_flash_effect" bone="grenade_term" />
+			<attachment target="firstperson" name="grenade_flash_light" bone="grenade_term" />
+			<attachment target="firstperson" name="attachment_side" bone="attachment_side"/>
+			<attachment target="firstperson" name="attachment_side_light" bone="attachment_side"/>
+			<attachment target="firstperson" name="attachment_side_Laser" bone="attachment_side"/>
+		</boneAttachments>
+	</geometry>
+	<actions>
+		<action name="select">
+			<animation target="firstperson" name="select_01" camera_helper="camera" camera_follow="1" camera_position="0" speed="1.3"/>
+			<animation target="owner" name="select" />
+			<sound target="thirdperson" name="sounds/weapons:scar:select" radius="2" />
+		</action>
+		<action name="deselect">
+			<animation target="firstperson" name="deselect_01" />
+			<animation target="owner" name="deselect" />
+			<sound target="firstperson" name="sounds/weapons:scar:deselect" radius="2" />
+			<sound target="thirdperson" name="sounds/weapons:scar:deselect" radius="2" />
+		</action>
+		<action name="idle" children="1">
+			<animation target="firstperson" name="idle_%hand%_%suffix%01" speed="0.7"/>
+			<animation target="owner" name="idle" />
+		</action>
+	
+		<action name="pickedup">
+			<sound target="firstperson" name="Sounds/weapons:weapon_accessories:pickup_weapon_fp" radius="5" />
+			<sound target="thirdperson" name="Sounds/weapons:weapon_accessories:pickup_weapon" radius="5" />
+		</action>
+
+		<action name="fire">
+			<animation target="firstperson" name="fire_bullets_%hand%_%suffix%01" speed="1.5"/>
+			<animation target="owner" name="shoot" />
+			<sound target="firstperson" name="sounds/wp_hammer:wp_hammer:hammer_fire%env%_fp" radius="150" static="1" />
+			<sound target="thirdperson" name="sounds/wp_hammer:wp_hammer:shoot_distance" radius="150" static="1" />
+		</action>
+		<action name="spin_down">
+			<sound target="firstperson" name="Sounds/weapons:scar:fire_fp_tail%env%" radius="5" static="1" />
+			<sound target="thirdperson" name="Sounds/weapons:scar:fire_3rd_tail%env%" radius="5" static="1" />
+		</action>
+		<action name="spin_down_silenced">
+			<sound target="firstperson" name="Sounds/weapons:scar:fire_silenced_fp_tail" radius="5" static="1" />
+			<sound target="thirdperson" name="Sounds/weapons:scar:fire_silenced_3rd_tail" radius="5" static="1" />
+		</action>
+		<action name="rapid_fire">
+			<sound target="firstperson" name="Sounds/weapons:scar:fire_fp_loop" radius="250" static="1" synched="1"/>
+			<sound target="thirdperson" name="Sounds/weapons:scar:fire_3rd_loop" radius="250" static="1" synched="1"/>
+		</action>
+		<action name="rapid_fire_silenced">
+			<sound target="firstperson" name="Sounds/weapons:scar:fire_silenced_fp_loop" radius="25" static="1" synched="1"/>
+			<sound target="thirdperson" name="Sounds/weapons:scar:fire_silenced_3rd_loop" radius="25" static="1" synched="1"/>
+		</action>
+		<action name="fire_silenced">
+			<animation target="firstperson" name="fire_bullets_%hand%_%suffix%01" />
+			<animation target="owner" name="shoot" />
+			<sound target="firstperson" name="sounds/weapons:scar:fire_silenced_fp_single" radius="20" static="1" />
+			<sound target="thirdperson" name="sounds/weapons:scar:fire_silenced_3rd_single" radius="20" static="1" />
+		</action>
+		
+		<action name="fire_gl" children="1" >
+			<animation target="firstperson" name="fire_grenade_%hand%_%suffix%01" />
+			<animation target="owner" name="shoot" />
+			<sound target="firstperson" name="sounds/weapons:scar:fire_grenademode_fp" radius="25" static="1" />
+			<sound target="thirdperson" name="sounds/weapons:scar:fire_grenademode" radius="25" static="1" />
+		</action>
+
+		<action name="change_firemode">
+			<animation target="firstperson" name="switch_firemode_%hand%_%suffix%01" />
+			<animation target="owner" name="firemode" />
+			<sound target="firstperson" name="sounds/weapons:weapon_accessories:change_firemode" radius="5" />
+			<sound target="thirdperson" name="sounds/weapons:weapon_accessories:change_firemode" radius="5" />
+		</action>		
+
+		<action name="change_firemode_zoomed">
+			<animation target="owner" name="firemode" />
+			<sound target="firstperson" name="sounds/weapons:weapon_accessories:change_firemode" radius="3" />
+			<sound target="thirdperson" name="sounds/weapons:weapon_accessories:change_firemode" radius="3" />
+		</action>
+		
+		<action name="reload_chamber_empty">
+			<animation target="firstperson" name="reload_chamberempty_01"  camera_helper="camera" camera_follow="1" camera_position="0" speed="1.5" />
+			<animation target="owner" name="reload_chamber_empty" />
+			<!--<sound target="thirdperson" name="sounds/weapons:scar:reload_chamberempty" radius="5" />-->
+		</action>
+		
+		<action name="reload_chamber_full">
+			<animation target="firstperson" name="reload_chamberfull_01"  camera_helper="camera" camera_follow="1" camera_position="0" speed="1.5" />
+			<animation target="owner" name="reload_chamber_full" />
+			<!--<sound target="thirdperson" name="sounds/weapons:scar:reload_chamberfull" radius="2" />-->
+		</action>
+		<action name="empty_clip">
+			<sound target="firstperson" name="Sounds/weapons:scar:dryfire_fp" radius="2" />
+			<sound target="thirdperson" name="Sounds/weapons:scar:dryfire" radius="2" />
+		</action>
+
+		<action name="zoom_in">
+			<animation target="firstperson" name="zoom_in_%suffix%01" speed="2.0" />
+		</action>
+		<action name="zoom_out">
+			<animation target="firstperson" name="zoom_out_%suffix%01" speed="2.0" />
+		</action>
+
+		<action name="reload_gl" children="1" >
+			<animation target="firstperson" name="reload_grenade_%hand%_%suffix%01" speed="0.7"/>
+			<animation target="owner" name="reload_gl" />
+			<!--<sound target="thirdperson" name="sounds/weapons:scar:reload_grenademode" radius="5" />-->
+		</action>
+		<action name="melee">
+			<animation target="firstperson" name="melee_%suffix%01" speed="1.3"/>
+			<animation target="owner" name="melee" />
+			<!--<sound target="thirdperson" name="sounds/weapons:melee:fire" radius="5" />-->
+		</action>
+		
+		<action name="hit">
+			<sound target="firstperson" name="sounds/physics:bullet_impact:melee_impact_mw" radius="5" />
+			<sound target="thirdperson" name="sounds/physics:bullet_impact:melee_impact_mw" radius="5" />
+		</action>
+		
+		<action name="offhand_on">
+			<animation target="firstperson" name="remove_arm_%offhand%_01" speed="1.5"/>
+		</action>
+		<action name="offhand_off">
+			<animation target="firstperson" name="grab_weapon_%offhand%_01" />
+		</action>
+		<action name="fire_tac" children="1">
+			<animation target="firstperson" name="fire_tactical_%hand%_%suffix%01" />
+			<animation target="owner" name="shoot" />
+			<sound target="firstperson" name="sounds/weapons:scar:fire_tac_fp" radius="2" static="1" />
+			<sound target="thirdperson" name="sounds/weapons:scar:fire_tac" radius="2" static="1" />
+		</action>
+		
+		<action name="reload_tac" children="1" >
+			<animation target="firstperson" name="reload_tactical_%hand%_%suffix%01" />
+			<animation target="owner" name="reload" />
+			<!--<sound target="thirdperson" name="sounds/weapons:scar:reload_grenademode" radius="2" />-->
+		</action>
+		
+		<action name="raise">
+			<animation target="firstperson" name="raise_%hand%_%suffix%01" />
+		</action>
+		
+		<action name="idle_raised">
+			<animation target="firstperson" name="idle_raised_%hand%_%suffix%01" speed="0.25"/>
+		</action>
+		
+		<action name="lower">
+			<animation target="firstperson" name="lower_%hand%_%suffix%01" />
+		</action>
+	</actions>
+	<layers>
+		<layer name="slider_back">
+			<animation target="firstperson" name="slider_back_layered_%hand%_01" layerId="4" />
+			<bones>
+				<bone name="hammer" />
+				<bone name="slider_chamber" />
+			</bones>
+		</layer>
+	
+		<layer name="silencer">
+			<animation target="firstperson" name="silencer_on_layer_01" layerId="1" />
+		</layer>
+		
+		<layer name="scope">
+			<animation target="firstperson" name="scope_on_layer_01" layerId="2" />
+		</layer>
+
+		<layer name="gl">
+			<animation target="firstperson" name="launcher_on_layer_01" layerId="3" />
+		</layer>
+
+		<layer name="modify_layer">
+			<animation target="firstperson" name="modify_layer_%hand%_01" layerId="4" speed="0.25"/>
+		</layer>
+		<layer name="flashlight">
+			<animation target="firstperson" name="flashlight_on_layer_01" layerId="5" />
+		</layer>
+		<layer name="lever_layer_01">
+			<animation target="firstperson" name="firemode_single_layer_01" layerId="6" />
+		</layer>
+		<layer name="lever_layer_02">
+			<animation target="firstperson" name="firemode_rapid_layer_01" layerId="7" />
+		</layer>
+	</layers>		
+	<firemodes>
+		<firemode type="default">
+			<fire>
+				<param name="ammo_type" value="lightbullet" />
+				<param name="hit_type" value="ht_LightBullet" />
+				<param name="rate" value="450" />
+				<param name="damage" value="17" />
+				<param name="clip_size" value="8" />
+				<param name="helper_tp" value="weapon_term" />
+				<param name="bullet_chamber" value="1" />
+				<param name="slider_layer" value="slider_back" />
+				<param name="ooatracer_treshold" value="3" />
+				<param name="nearmiss_signal" value="OnNearMiss" />
+				<param name="helper_tp"	value="weapon_term" />
+				<param name="reload_time" value="0.85" />
+				<param name="auto_fire"   value="true" />
+			</fire>
+			<tracer>
+				<param name="geometryFP" 	value="objects/effects/tracer_standard_new.cgf" />
+				<param name="geometry" 	value="objects/effects/tracer_standard_new.cgf" />
+				<param name="effectFP" 		value="weapon_fx.tracer.standardfp" />
+				<param name="effect" 		value="weapon_fx.tracer.standard" />
+				<paran name="speed" 		value="360" />
+				<param name="speedFP"   value="360" />
+				<param name="frequency" value="2" />
+				<param name="helper_fp"	value="weapon_term" />
+				<param name="helper_tp"	value="weapon_term" />
+			</tracer>
+			<outofammotracer>
+				<param name="geometry" 	value="objects/effects/tracer_standard_red_new.cgf" />
+				<param name="geometry" 	value="objects/effects/tracer_standard_red_new.cgf" />
+				<param name="effectFP" 		value="weapon_fx.tracer.standardfp" />
+				<param name="effect" 		value="weapon_fx.tracer.standard" />
+				<paran name="speed" 		value="360" />
+				<param name="speedFP"   value="360" />
+				<param name="frequency" value="2" />
+				<param name="helper_fp"	value="weapon_term" />
+				<param name="helper_tp"	value="weapon_term" />				
+			</outofammotracer>
+			<burst>
+				<param name="rate" value="160" />
+				<param name="nshots" value="2" />
+        <param name="onesound" value="1" />
+			</burst>
+			<recoil>
+				<param name="max_recoil"	value="12" />
+				<param name="attack" 			value="4.0" />
+				<param name="decay" 			value="0.3" />
+				<param name="maxx" 				value="12" />
+				<param name="maxy" 				value="0.95" />
+				<param name="randomness" 	value="0.5" />
+				<hints>
+					<hint x="0.01" 	y="0.00" />
+					<hint x="0.02" 	y="0.00" />
+					<hint x="0.35" 	y="-0.25" />					
+					<hint x="0.50" 	y="0.25" />
+					<hint x="0.85"	y="0.33" />
+					<hint x="0.50" 	y="0.15" />
+					<hint x="1.50" 	y="0.05" />
+					<hint x="1.00" 	y="-0.15" />
+					<hint x="0.75" y="-0.10" />
+					<hint x="1.00" 	y="-0.25" />
+					<hint x="1.00" 	y="-0.15" />
+					<hint x="1.25" 	y="0.0" />
+					<hint x="1.00" 	y="0.15" />
+					<hint x="0.75"	y="0.0" />		
+				</hints>
+			</recoil>	
+			<spread>
+				<param name="rotation_m" value="0" />
+				<param name="speed_m" value="1.15" />
+				<param name="min" value="1.00" />
+				<param name="max" value="3.50" />
+				<param name="attack" value="1.75" />
+				<param name="decay" value="0.50" />
+			</spread>			
+			<muzzleflash>
+				<firstperson effect="muzzleflash.Pistol.SOCOM" time="0.095" helper="muzzle_flash_effect" light_helper="muzzle_flash_light" light_radius="2" light_color="1,1,0.8" light_diffuse_mult="8" />
+				<thirdperson effect="muzzleflash.Pistol.SOCOM_tp" time="0.095" helper="weapon_term" light_helper="weapon_term" light_radius="2.3" light_color="1,1,0.8" light_diffuse_mult="8" />
+			</muzzleflash>
+			<reject>
+				<firstperson effect="weapon_fx.shells.socom" helper="shells" />
+				<thirdperson effect="weapon_fx.shells.socom" helper="shells" />
+			</reject>	
+			<recoil>
+				<param name="angular_impulse" value="0.1" />
+				<param name="back_impulse" value="0.1" />
+			</recoil>		
+		</firemode>
+		<firemode name="Single" type="Single">
+		</firemode>
+		<firemode name="melee" type="Melee">
+			<melee>
+				<param name="helper" value="collision" />
+				<param name="offset" value="0.85" />
+				<param name="damage" value="10" />
+				<param name="impulse" value="40" />
+				<param name="delay" value="0.15" />
+				<param name="duration" value="0.35" />
+			</melee>
+			<actions>
+				<param name="attack" value="melee" />
+			</actions>
+		</firemode>
+	</firemodes>
+	<zoommodes>
+		<zoommode name="ironsight" type="IronSight">
+			<zoom>
+				<param name="suffix" value="ironsight_" />
+				<param name="suffix_FC" value="fc_" />
+				<param name="support_FC_IronSight" value="true" />
+				<param name="dof_mask" value="textures/weapons/ironzoom_blurmask.dds" />
+				<param name="zoom_in_time" value="0.2" />
+				<param name="zoom_out_time" value="0.2" />
+				<stages>
+					<stage value="1.4" />
+				</stages>
+		  </zoom>
+			<zoomSway>
+				<param name="maxX" value="0.012" />
+				<param name="maxY" value="0.015" />
+				<param name="stabilizeTime" value="1.5"/>
+				<param name="minScale" value="0.25"/>
+				<param name="strengthScale" value="0.1"/>
+				<param name="strengthScaleTime" value="0.1"/>
+				<param name="crouchScale" value="0.75"/>
+				<param name="proneScale" value="0.5"/>
+			</zoomSway>
+			<spreadMod>
+		        <param name="max_mod" value="1.0"/>
+		        <param name="attack_mod" value="1.0"/>
+		        <param name="decay_mod" value="1.0"/>
+		        <param name="speed_m_mod" value="1.0" />
+		        <param name="min_mod" value="0.0001"/>
+		        <param name="rotation_m_mod" value="1.5"/>
+		        <param name="spread_crouch_m_mod" value="1.0"/>
+		        <param name="spread_prone_m_mod" value="0.75"/>
+		        <param name="spread_jump_m_mod" value="1.25"/>
+			</spreadMod>
+			<recoilMod>
+		        <param name="max_recoil_mod" value="1.0" />
+		        <param name="attack_mod" value="1.0" />
+		        <param name="decay_mod" value="1.0" />
+		        <param name="impulse_mod" value="1.0" />
+		        <param name="maxx_mod" value="0.75" />
+		        <param name="maxy_mod" value="0.75" />
+		        <param name="angular_impulse_mod" value="1.0" />
+		        <param name="back_impulse_mod" value="1.0" />
+		        <param name="recoil_crouch_m_mod" value="1.0" />
+		        <param name="recoil_prone_m_mod" value="0.75" />
+		        <param name="recoil_jump_m_mod" value="2.0" />
+		        <param name="recoil_strMode_m_mod" value="0.4" />
+			</recoilMod>
+		</zoommode>
+				<zoommode name="EoTechZ" type="IronSight" enabled="0" >
+			<zoom>
+				<param name="suffix" value="reflex_" />
+				<param name="dof_mask" value="textures/weapons/ironzoom_blurmask.dds" />
+				<param name="zoom_in_time" value="0.2" />
+				<param name="zoom_out_time" value="0.2" />
+				<param name="reflex_aimDot" value="0" />
+				<param name="reflex_dotEffect" value="Objects/Weapons/Attachments/reflex_rifle/dot.cgf" />
+				<param name="hbob_ratio" value="2.5" />
+				<param name="scope_mode" value="1" />
+				<param name="scope_nearFov" value="28" />
+				<param name="scope_offset" value="0.000,0.0,-0.013" />
+				<stages>
+					<stage value="1.4" />
+				</stages>
+			</zoom>
+			<zoomSway>
+				<param name="maxX" value="0.012" />
+				<param name="maxY" value="0.015" />
+				<param name="stabilizeTime" value="1.5"/>
+				<param name="minScale" value="0.25"/>
+				<param name="strengthScale" value="0.1"/>
+				<param name="strengthScaleTime" value="0.1"/>
+				<param name="crouchScale" value="0.75"/>
+				<param name="proneScale" value="0.5"/>
+			</zoomSway>
+			<spreadMod>
+		        <param name="max_mod" value="1.0"/>
+		        <param name="attack_mod" value="1.0"/>
+		        <param name="decay_mod" value="1.0"/>
+		        <param name="speed_m_mod" value="1.0" />
+		        <param name="min_mod" value="0.0001"/>
+		        <param name="rotation_m_mod" value="1.5"/>
+		        <param name="spread_crouch_m_mod" value="1.0"/>
+		        <param name="spread_prone_m_mod" value="0.75"/>
+		        <param name="spread_jump_m_mod" value="1.25"/>
+			</spreadMod>
+			<recoilMod>
+		        <param name="max_recoil_mod" value="1.0" />
+		        <param name="attack_mod" value="1.0" />
+		        <param name="decay_mod" value="1.0" />
+		        <param name="impulse_mod" value="1.0" />
+		        <param name="maxx_mod" value="0.75" />
+		        <param name="maxy_mod" value="0.75" />
+		        <param name="angular_impulse_mod" value="1.0" />
+		        <param name="back_impulse_mod" value="1.0" />
+		        <param name="recoil_crouch_m_mod" value="1.0" />
+		        <param name="recoil_prone_m_mod" value="0.75" />
+		        <param name="recoil_jump_m_mod" value="2.0" />
+		        <param name="recoil_strMode_m_mod" value="0.4" />
+			</recoilMod>
+		</zoommode>
+		<zoommode name="reflexsight" type="IronSight" enabled="0" >
+			<zoom>
+				<param name="suffix" value="reflex_" />
+				<param name="dof_mask" value="textures/weapons/ironzoom_blurmask.dds" />
+				<param name="zoom_in_time" value="0.2" />
+				<param name="zoom_out_time" value="0.2" />
+				<param name="reflex_aimDot" value="0" />
+				<param name="reflex_dotEffect" value="Objects/Weapons/Attachments/reflex_rifle/dot.cgf" />
+				<param name="hbob_ratio" value="2.5" />
+				<param name="scope_mode" value="1" />
+				<param name="scope_nearFov" value="28" />
+				<param name="scope_offset" value="0.000,0.0,-0.007" />
+				<stages>
+					<stage value="1.4" />
+				</stages>
+			</zoom>
+			<zoomSway>
+				<param name="maxX" value="0.012" />
+				<param name="maxY" value="0.015" />
+				<param name="stabilizeTime" value="1.5"/>
+				<param name="minScale" value="0.25"/>
+				<param name="strengthScale" value="0.1"/>
+				<param name="strengthScaleTime" value="0.1"/>
+				<param name="crouchScale" value="0.75"/>
+				<param name="proneScale" value="0.5"/>
+			</zoomSway>
+			<spreadMod>
+		        <param name="max_mod" value="1.0"/>
+		        <param name="attack_mod" value="1.0"/>
+		        <param name="decay_mod" value="1.0"/>
+		        <param name="speed_m_mod" value="1.0" />
+		        <param name="min_mod" value="0.0001"/>
+		        <param name="rotation_m_mod" value="1.5"/>
+		        <param name="spread_crouch_m_mod" value="1.0"/>
+		        <param name="spread_prone_m_mod" value="0.75"/>
+		        <param name="spread_jump_m_mod" value="1.25"/>
+			</spreadMod>
+			<recoilMod>
+		        <param name="max_recoil_mod" value="1.0" />
+		        <param name="attack_mod" value="1.0" />
+		        <param name="decay_mod" value="1.0" />
+		        <param name="impulse_mod" value="1.0" />
+		        <param name="maxx_mod" value="0.75" />
+		        <param name="maxy_mod" value="0.75" />
+		        <param name="angular_impulse_mod" value="1.0" />
+		        <param name="back_impulse_mod" value="1.0" />
+		        <param name="recoil_crouch_m_mod" value="1.0" />
+		        <param name="recoil_prone_m_mod" value="0.75" />
+		        <param name="recoil_jump_m_mod" value="2.0" />
+		        <param name="recoil_strMode_m_mod" value="0.4" />
+			</recoilMod>
+		</zoommode>
+
+			<zoommode name="sniper_2" type="Scope" enabled="0">
+			<zoom>
+				<param name="suffix" value="scope_" />
+				<param name="blur_amount" value="1" />
+				<param name="blur_mask" value="textures/weapons/assaultscope_blur.dds" />
+				<param name="dof_mask" value="textures/weapons/assaultscope_blur.dds" />
+				<param name="zoom_in_time" value="0.15" />
+				<param name="zoom_out_time" value="0.125" />
+				<param name="scope_mode" value="1" />
+				<param name="scope_nearFov" value="6" />
+				<param name="scope_offset" value="0.000,0.23,-0.0135" />
+				<param name="hbob_ratio" value="2.5" />
+				<stages>
+					<stage value="4" />
+					<stage value="10" />
+				</stages>
+			</zoom>
+			<zoomSway>
+				<param name="maxX" value="0.012" />
+				<param name="maxY" value="0.015" />
+				<param name="stabilizeTime" value="1.5"/>
+				<param name="minScale" value="0.25"/>
+				<param name="strengthScale" value="0.1"/>
+				<param name="strengthScaleTime" value="0.1"/>
+				<param name="crouchScale" value="0.75"/>
+				<param name="proneScale" value="0.5"/>
+			</zoomSway>
+			<scope>
+				<param name="scope" value="" />
+				<param name="dark_in_time" value="0.15" />
+				<param name="dark_out_time" value="0.15" />
+			</scope>
+			<spreadMod>
+		        <param name="max_mod" value="0.75"/>
+		        <param name="attack_mod" value="1.0"/>
+		        <param name="decay_mod" value="1.0"/>
+		        <param name="speed_m_mod" value="1.0" />
+		        <param name="min_mod" value="0.0001"/>
+		        <param name="rotation_m_mod" value="1.5"/>
+		        <param name="spread_crouch_m_mod" value="1.0"/>
+		        <param name="spread_prone_m_mod" value="0.75"/>
+		        <param name="spread_jump_m_mod" value="1.25"/>
+			</spreadMod>
+			<recoilMod>
+		        <param name="max_recoil_mod" value="1.0" />
+		        <param name="attack_mod" value="0.75" />
+		        <param name="decay_mod" value="0.9" />
+		        <param name="impulse_mod" value="1.0" />
+		        <param name="maxx_mod" value="0.75" />
+		        <param name="maxy_mod" value="0.75" />
+		        <param name="angular_impulse_mod" value="1.0" />
+		        <param name="back_impulse_mod" value="1.0" />
+		        <param name="recoil_crouch_m_mod" value="1.0" />
+		        <param name="recoil_prone_m_mod" value="0.75" />
+		        <param name="recoil_jump_m_mod" value="2.0" />
+		        <param name="recoil_strMode_m_mod" value="0.4" />
+			</recoilMod>
+		</zoommode>
+				<zoommode name="assault_scope_2" type="Scope" enabled="0">
+			<zoom>
+				<param name="suffix" value="scope_" />
+				<param name="blur_amount" value="1" />
+				<param name="blur_mask" value="textures/weapons/assaultscope_blur.dds" />
+				<param name="dof_mask" value="textures/weapons/assaultscope_blur.dds" />
+				<param name="zoom_in_time" value="0.15" />
+				<param name="zoom_out_time" value="0.125" />
+				<param name="scope_mode" value="1" />
+				<param name="scope_nearFov" value="6" />
+				<param name="scope_offset" value="0.000,0.23,-0.016" />
+				<param name="hbob_ratio" value="2.5" />
+				<stages>
+					<stage value="3.6" />
+				</stages>
+			</zoom>
+			<zoomSway>
+				<param name="maxX" value="0.012" />
+				<param name="maxY" value="0.015" />
+				<param name="stabilizeTime" value="1.5"/>
+				<param name="minScale" value="0.25"/>
+				<param name="strengthScale" value="0.1"/>
+				<param name="strengthScaleTime" value="0.1"/>
+				<param name="crouchScale" value="0.75"/>
+				<param name="proneScale" value="0.5"/>
+			</zoomSway>
+			<scope>
+				<param name="scope" value="" />
+				<param name="dark_in_time" value="0.15" />
+				<param name="dark_out_time" value="0.15" />
+			</scope>
+			<spreadMod>
+		        <param name="max_mod" value="0.75"/>
+		        <param name="attack_mod" value="1.0"/>
+		        <param name="decay_mod" value="1.0"/>
+		        <param name="speed_m_mod" value="1.0" />
+		        <param name="min_mod" value="0.0001"/>
+		        <param name="rotation_m_mod" value="1.5"/>
+		        <param name="spread_crouch_m_mod" value="1.0"/>
+		        <param name="spread_prone_m_mod" value="0.75"/>
+		        <param name="spread_jump_m_mod" value="1.25"/>
+			</spreadMod>
+			<recoilMod>
+		        <param name="max_recoil_mod" value="1.0" />
+		        <param name="attack_mod" value="0.75" />
+		        <param name="decay_mod" value="0.9" />
+		        <param name="impulse_mod" value="1.0" />
+		        <param name="maxx_mod" value="0.75" />
+		        <param name="maxy_mod" value="0.75" />
+		        <param name="angular_impulse_mod" value="1.0" />
+		        <param name="back_impulse_mod" value="1.0" />
+		        <param name="recoil_crouch_m_mod" value="1.0" />
+		        <param name="recoil_prone_m_mod" value="0.75" />
+		        <param name="recoil_jump_m_mod" value="2.0" />
+		        <param name="recoil_strMode_m_mod" value="0.4" />
+			</recoilMod>
+		</zoommode>
+	</zoommodes>
+	<accessories>
+	</accessories>
+</item>

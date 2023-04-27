@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Root>
+	<Screen name="main" noProfileDisplay="1">
+		<PadIconSet />
+		<SubScreen path="General/SelectLanguage.gfx"/>
+		<LanguageSelection />
+	</Screen>
+</Root>

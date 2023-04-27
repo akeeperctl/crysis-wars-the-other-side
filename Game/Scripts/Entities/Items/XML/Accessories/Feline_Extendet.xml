@@ -1,0 +1,11 @@
+<item name="Feline_Extendet" class="Item">
+	<params>
+		<param name="giveable" value="1" />
+		<param name="selectable" value="0" />
+		<param name="droppable" value="0" />
+	</params>
+	<geometry>
+		<firstperson name="Objects/weapons/c3_us/Feline/magazine_ext_attach.cgf"/>
+		<thirdperson name="Objects\weapons\c3_us\Feline\magazine_ext_attach.cgf"/>
+	</geometry>
+</item>

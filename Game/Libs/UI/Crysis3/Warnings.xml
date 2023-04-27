@@ -1,0 +1,259 @@
+<Root>
+	<Warnings>
+		<Warning id="NoStorageDeviceConnected" priority="2" title="@ui_warning_NoStorageDeviceConnected_title" message="@ui_warning_NoStorageDeviceConnected_message" buttonB="@ui_continue_without_saving" buttonBreturn="continue" buttonX="@ui_warning_ChooseStorageDevice" buttonXreturn="devicemanager" />
+		<Warning id="NoStorageDeviceSelected" priority="7" title="@ui_warning_NoStorageDeviceSelected_title" message="@ui_warning_NoStorageDeviceSelected_message" buttonX="@ui_warning_ChooseStorageDevice" buttonXreturn="devicemanager" />
+		<Warning id="Exit" priority="1" icon="question" title="@ui_menu_exit_game" message="@ui_menu_exit_game_msg" buttonA="@ui_btn_YES" buttonAreturn="exit" buttonB="@ui_btn_NO" buttonBreturn="no"/>
+		<Warning id="ExitSession" priority="1" icon="question" title="@ui_menu_exit_session" message="@ui_menu_gamelobby_leaving" buttonA="@ui_btn_YES" buttonAreturn="exit" buttonB="@ui_btn_NO" buttonBreturn="no"/>
+		<Warning id="ExitPublicSession" priority="1" icon="question" title="@ui_menu_exit_session" message="@ui_menu_leave_session_msg" buttonA="@ui_btn_YES" buttonAreturn="exit" buttonB="@ui_btn_NO" buttonBreturn="no"/>
+		<Warning id="ExitSessionSquadLeader" priority="1" icon="question" title="@ui_menu_exit_session" message="@ui_menu_gamelobby_leaving_squad_leader" buttonX="@ui_menu_take_squad_with_you" buttonXreturn="take_squad" buttonY="@ui_menu_leave_squad_behind" buttonYreturn="leave_squad" buttonB="@ui_btn_Cancel" buttonBreturn="cancel" />
+		<Warning id="ExitPublicSessionSquadLeader" priority="1" icon="question" title="@ui_menu_exit_session" message="@ui_menu_leave_session_squad_leader_msg" buttonX="@ui_menu_take_squad_with_you" buttonXreturn="take_squad" buttonY="@ui_menu_leave_squad_behind" buttonYreturn="leave_squad" buttonB="@ui_btn_Cancel" buttonBreturn="cancel" />
+		<Warning id="LeaderHasTakenSquadOutOfSession" priority="1" icon="attention" title="@ui_warning_title_attention" message="@ui_menu_squad_leader_has_taken_squad_out_of_session" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="YouAreNowSquadLeader" priority="1" icon="attention" title="@ui_warning_title_attention" message="@ui_menu_you_are_now_squad_leader" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="ExitSessionSP" priority="1" icon="question" title="@ui_menu_exit_session_SP" message="@ui_menu_exit_session_msg_SP" buttonA="@ui_btn_YES" buttonAreturn="exit" buttonB="@ui_btn_NO" buttonBreturn="no"/>
+		<Warning id="Suicide" priority="1" icon="question" title="@ui_menu_suicide" message="@ui_menu_suicide_msg" buttonA="@ui_btn_YES" buttonAreturn="suicide" buttonB="@ui_btn_NO" buttonBreturn="no"/>
+		<Warning id="JoinSession" priority="3" icon="loading" title="@ui_menu_connecting" message="@ui_menu_connecting_msg" buttonB="@ui_btn_Cancel" buttonBreturn="cancel"/>
+		<Warning id="CreateSession" priority="3" icon="loading" title="@ui_menu_creating_session_title" message="@ui_menu_creating_session" buttonB="@ui_btn_Cancel" buttonBreturn="cancel"/>
+		<Warning id="LobbyError" priority="1" icon="attention" title="@ui_warning_title_attention" message="@ui_menu_lobby_error" buttonA="@ui_btn_OK" buttonAreturn="ok" showError="1"/>
+		<Warning id="LobbyInternalError" priority="1" deferNumFrames="10" icon="attention" title="@ui_warning_title_attention" message="@ui_menu_lobby_internal_error" buttonA="@ui_btn_OK" buttonAreturn="ok" showError="1"/>
+		<Warning id="Disconnect" priority="1" icon="attention" title="@ui_warning_title_attention" message="@ui_menu_game_disconnect_error" buttonA="@ui_btn_OK" buttonAreturn="ok" showError="1"/>
+		<Warning id="ConnectionFailed" priority="1" icon="attention" title="@ui_warning_title_attention" message="@ui_menu_warning_connection_failed" buttonA="@ui_btn_OK" buttonAreturn="ok" showError="1"/>
+		<Warning id="LogIn" priority="1" icon="attention" title="@ui_menu_warning_title_sign_in" message="@ui_menu_warning_sign_in" buttonA="@ui_btn_YES" buttonAreturn="yes" buttonB="@ui_btn_NO" buttonBreturn="no"/>
+		<Warning id="LeaderboardError" priority="1" icon="attention" title="@ui_warning_title_attention" message="@ui_menu_leaderboard_error_msg" buttonA="@ui_btn_OK" buttonAreturn="ok" showError="1"/>
+		<Warning id="LeaderboardNotRanked" priority="4" icon="attention" title="@ui_warning_title_attention" message="@ui_menu_leaderboard_not_ranked" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="LeaderboardNoResults" priority="4" icon="attention" title="@ui_warning_title_attention" message="@ui_menu_leaderboard_no_results" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="EquipmentLoadoutRename" priority="2" icon="input" color="green" title="@ui_warning_loadout_rename_title" message="@ui_warning_loadout_rename" buttonA="@ui_btn_OK" buttonAreturn="ok" buttonB="@ui_btn_Cancel" buttonBreturn="*cancel*"/>
+		<Warning id="EquipmentLoadoutChanges" priority="10" icon="attention" title="@ui_warning_title_warning" message="@ui_warning_loadout_savechanges" buttonA="@ui_btn_YES" buttonAreturn="yes" buttonB="@ui_btn_NO" buttonBreturn="no"/>
+		<Warning id="EquipmentLoadoutUnlockLoadout" priority="10" icon="question" color="green" title="@ui_loadout_warning_spendtoken_title" message="@ui_loadout_warning_spendtoken_class" buttonA="@ui_btn_UNLOCK" buttonAreturn="yes" buttonX="@ui_btn_UNLOCK_EQUIP" buttonXreturn="yesAndEquip" buttonB="@ui_btn_Cancel" buttonBreturn="no"/>
+		<Warning id="EquipmentLoadoutUnlockItem" priority="10" icon="question" color="green" title="@ui_loadout_warning_spendtoken_title" message="@ui_loadout_warning_spendtoken_item" buttonA="@ui_btn_UNLOCK" buttonAreturn="yes" buttonX="@ui_btn_UNLOCK_EQUIP" buttonXreturn="yesAndEquip" buttonB="@ui_btn_Cancel" buttonBreturn="no"/>
+		<Warning id="EquipmentLoadoutResetDefault" priority="10" icon="question" title="@ui_warning_title_warning" message="@ui_loadout_reset_default" buttonA="@ui_btn_RESET" buttonAreturn="reset" buttonB="@ui_btn_Cancel" buttonBreturn="cancel"/>
+		<Warning id="EquipmentLoadoutRemoveLoadoutPro" priority="10" icon="question" title="@ui_warning_title_warning" message="@ui_warning_loadout_perk_loadoutpro" buttonA="@ui_btn_OK" buttonAreturn="ok" buttonB="@ui_btn_Cancel" buttonBreturn="cancel"/>
+		<Warning id="EquipmentLoadoutRemoveAutoArmour" priority="10" icon="question" title="@ui_warning_title_warning" message="@ui_warning_loadout_perk_autoarmour" buttonA="@ui_btn_OK" buttonAreturn="ok" buttonB="@ui_btn_Cancel" buttonBreturn="cancel"/>
+		<Warning id="SquadRename" priority="2" icon="input" color="green" title="@ui_warning_squad_rename_title" message="@ui_warning_squad_rename" buttonA="@ui_btn_OK" buttonAreturn="ok" buttonB="@ui_btn_Cancel" buttonBreturn="*cancel*"/>
+		<Warning id="LeaveSquad" priority="3" icon="attention" title="@ui_menu_leaving_squad" message="@ui_menu_leaving_squad_desc" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="LeaveGameLobby" priority="2" icon="attention" title="@ui_menu_gamelobby_leaving_title" message="@ui_menu_gamelobby_leaving" buttonA="@ui_btn_LEAVE" buttonAreturn="yes" buttonB="@ui_btn_Cancel" buttonBreturn="no"/>
+		<Warning id="LeaveGameLobbySquadLeader" priority="2" icon="attention" title="@ui_menu_gamelobby_leaving_title" message="@ui_menu_gamelobby_leaving_squad_leader" buttonX="@ui_menu_take_squad_with_you" buttonXreturn="take_squad" buttonY="@ui_menu_leave_squad_behind" buttonYreturn="leave_squad" buttonB="@ui_btn_Cancel" buttonBreturn="cancel" />
+		<Warning id="LeaveOnlineSquad" priority="2" icon="attention" title="@ui_menu_leaving_squad" message="@ui_menu_squad_leaving" buttonA="@ui_btn_LEAVE" buttonAreturn="yes" buttonB="@ui_btn_Cancel" buttonBreturn="no"/>
+		<Warning id="LeaveMultiplayer" priority="2" icon="attention" title="@ui_warning_title_attention" message="@ui_menu_multiplayer_leaving" buttonA="@ui_btn_LEAVE" buttonAreturn="yes" buttonB="@ui_btn_Cancel" buttonBreturn="no"/>
+		<Warning id="ControllerDisconnect" priority="999" icon="attention" title="@ui_menu_controller_disconnected_title" message="@ui_menu_controller_disconnected"/>
+		<Warning id="SavingSuccess" priority="5" icon="attention" title="@menu_savingsuccess_title" message="@menu_savingsuccess" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="SignedOut" priority="99" icon="attention" title="@ui_menu_signout_sp" message="@ui_menu_signin_body_sp" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="SignedOutInGame" priority="2" icon="attention" title="@ui_warning_title_attention" message="@ui_menu_signed_out_ingame" message360="@ui_menu_signed_out_ingame_360" messagePS3="@ui_menu_signed_out_ingame_ps3" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="OnlineSignedOut" priority="2" deferNumFrames="50" icon="attention" title="@ui_warning_title_attention" message="@ui_menu_signed_out" message360="@ui_menu_signed_out_360" messagePS3="@ui_menu_signed_out_ps3" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="OnlineSignedOutInGame" priority="2" deferNumFrames="50" icon="attention" title="@ui_warning_title_attention" message="@ui_menu_signed_out_ingame" message360="@ui_menu_signed_out_ingame_360" messagePS3="@ui_menu_signed_out_ingame_ps3" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="OnlineSignedOutInGamePrivate" priority="2" deferNumFrames="50" icon="attention" title="@ui_warning_title_attention" message="@ui_menu_signed_out_ingame_private" message360="@ui_menu_signed_out_ingame_private_360" messagePS3="@ui_menu_signed_out_ingame_private_ps3" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="InternetDisabled" priority="2" icon="attention" title="@ui_warning_title_attention" message="@ui_menu_internet_disabled" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="SimultaneousLogin" priority="2" icon="attention" title="@ui_warning_title_attention" message="@ui_menu_signed_out_simultaneous" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="Reincarnate" priority="2" icon="question" title="@ui_warning_title_warning" message="@ui_menu_reincarnate_warning" buttonA="@ui_warning_Continue" buttonAreturn="yes" buttonB="@ui_btn_Cancel" buttonBreturn="no"/>
+		<Warning id="Reincarnate2" priority="2" icon="question" title="@ui_warning_title_warning" message="@ui_menu_reincarnate_warning2" buttonA="@ui_btn_YES" buttonAreturn="yes" buttonB="@ui_btn_NO" buttonBreturn="no"/>
+		<Warning id="NewProfile" priority="2" icon="input" color="green" title="@menu_new_profile_title" message="@menu_new_profile_message" buttonA="@ui_btn_OK" buttonAreturn="ok" buttonB="@ui_btn_Cancel" buttonBreturn="*cancel*"/>
+		<Warning id="DeleteProfile" priority="2" icon="question" title="@menu_delete_profile_title" message="@menu_delete_profile_message" buttonA="@ui_btn_YES" buttonAreturn="delete" buttonB="@ui_btn_NO" buttonBreturn="no"/>
+		<Warning id="LastProfile" priority="1" icon="attention" title="@menu_last_profile_title" message="@menu_last_profile_message" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="ErrorCreateProfile" priority="2" icon="attention" title="@ui_warning_title_attention" message="@menu_error_create_profile_message" buttonA="@ui_btn_OK" buttonAreturn="ok" showError="1"/>
+		<Warning id="ErrorCreateProfileExists" priority="2" icon="attention" title="@ui_warning_title_attention" message="@menu_error_create_profile_exists_message" buttonA="@ui_btn_OK" buttonAreturn="ok" showError="1"/>
+		<Warning id="CableDisconnected" priority="201" icon="attention" title="@ui_warning_title_attention" message="@ui_network_cable_disconnected_message" message360="@ui_network_cable_disconnected_message_360" messagePS3="@ui_network_cable_disconnected_message_ps3" buttonA="@ui_btn_OK" buttonAreturn="ok" showError="1"/>
+		<Warning id="ConnectionNotAvailable" priority="1" icon="attention" title="@ui_warning_title_attention" message="@ui_network_connection_unavailable_message" buttonA="@ui_btn_OK" buttonAreturn="ok" showError="1"/>
+		<Warning id="SignInFailedCouldNotConnect" priority="1" deferNumFrames="50" icon="attention" title="@ui_warning_title_attention" message="@ui_sign_in_failed_could_not_connect" buttonA="@ui_btn_OK" buttonAreturn="ok" showError="1"/>
+		<Warning id="DLCUnavailable" priority="1" icon="attention" title="@ui_warning_title_attention" message="@ui_dlc_unavailable_message" message360="@ui_dlc_unavailable_message_360" messagePS3="@ui_dlc_unavailable_message_ps3" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="DLCSquadUnavailable" priority="1" icon="attention" title="@ui_warning_title_attention" message="@ui_dlc_squad_unavailable_message" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="DLCFileCorrupt" priority="1" icon="attention" title="@ui_warning_title_attention" message="@ui_dlc_file_corrupt_message" message360="@ui_dlc_file_corrupt_message_360" messagePS3="@ui_dlc_file_corrupt_message_ps3" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="DLCDiskCorrupt" priority="1" icon="attention" title="@ui_warning_title_attention" message="@ui_dlc_disk_corrupt_message" message360="@ui_dlc_disk_corrupt_message_360" messagePS3="@ui_dlc_disk_corrupt_message_ps3" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="DLCMissingOrCorrupt" priority="2" icon="attention" title="@ui_warning_title_attention" message="@ui_dlc_missing_or_corrupt_message" message360="@ui_dlc_missing_or_corrupt_message_360" messagePS3="@ui_dlc_missing_or_corrupt_message_ps3" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="DLCXmlError" priority="1" icon="attention" title="@ui_warning_title_attention" message="@ui_dlc_xml_error_message" message360="@ui_dlc_xml_error_message_360" messagePS3="@ui_dlc_xml_error_message_ps3" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="DLCVersionMismatch" priority="1" icon="attention" title="@ui_warning_title_attention" message="@ui_dlc_version_mismatch_message" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="DLCServerStartWarning" priority="1" icon="question" title="@ui_warning_title_attention" message="@ui_dlc_server_start_warning_message" buttonA="@ui_btn_YES" buttonAreturn="yes" buttonB="@ui_btn_NO" buttonBreturn="no"/>
+		<Warning id="DLCServerChangeMapWarning" priority="1" icon="question" title="@ui_warning_title_attention" message="@ui_dlc_server_change_map_warning_message" buttonA="@ui_btn_YES" buttonAreturn="yes" buttonB="@ui_btn_NO" buttonBreturn="no"/>
+		<Warning id="DLCCrysisRestart" priority="1" icon="question" title="@ui_warning_title_attention" message="@ui_dlc_console_restart_360" buttonA="@ui_btn_YES" buttonAreturn="yes" buttonB="@ui_btn_NO" buttonBreturn="no"/>
+		<Warning id="DLCCrysisQuitStore" priority="1" icon="question" title="@ui_warning_title_attention" message="@ui_dlc_console_quit_store_ps3" buttonA="@ui_btn_YES" buttonAreturn="yes" buttonB="@ui_btn_NO" buttonBreturn="no"/>
+		<Warning id="CantOnlineNotOnlineSignIn" priority="2" icon="attention" title="@ui_warning_title_attention" message="@ui_menu_need_to_be_online_sign_in_to_access_online" buttonA="@ui_btn_OK" buttonAreturn="ok" showError="1"/>
+		<Warning id="SwitchGameCantOnlineNotOnlineSignIn" priority="1" icon="attention" title="@ui_warning_title_attention" message="@ui_menu_need_to_be_online_sign_in_to_access_online" buttonA="@ui_btn_OK" buttonAreturn="ok" showError="1"/>
+		<Warning id="CantOnlineInsufficientPrivileges" priority="2" icon="attention" title="@ui_warning_title_attention" message="@ui_insufficient_privileges_to_access_online" buttonA="@ui_btn_OK" buttonAreturn="ok" showError="1"/>
+		<Warning id="CantMultiplayerGeneric" priority="2" icon="attention" title="@ui_warning_title_attention" message="@ui_menu_warning_multiplayer_error_generic" message360="@ui_menu_warning_multiplayer_error_generic_360" buttonA="@ui_btn_OK" buttonAreturn="ok" showError="1"/>
+		<Warning id="CantMultiplayerNoSignIn" priority="2" icon="attention" title="@ui_warning_title_attention" message="@ui_menu_need_profile_signed_in_to_access_multiplayer" buttonA="@ui_btn_OK" buttonAreturn="ok" showError="1"/>
+		<Warning id="CantAgeRestricted" priority="2" icon="attention" title="@ui_warning_title_attention" message="@ui_menu_cannot_connect_age_restricted_ps3" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="OnlineIncorrectDetails" priority="1" icon="attention" title="@ui_warning_title_warning" message="@ui_menu_mycrysis_login_incorrect_details" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="DisconnectHostMigrationFailed" priority="1" icon="attention" title="@ui_warning_title_attention" message="@ui_menu_game_disconnect_host_migration_failed" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="DisconnectHostMigrationFailedPrivate" priority="1" icon="attention" title="@ui_warning_title_attention" message="@ui_menu_game_disconnect_host_migration_failed_private" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="IdleTimeout" priority="1" icon="attention" title="@ui_warning_title_attention" message="@ui_idle_kick_message" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="TeamFull" priority="10" icon="attention" title="@ui_menu_teamfull_title" message="@ui_menu_teamfull" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="SwitchTeam" priority="10" icon="attention" title="@ui_menu_switchteam_title" message="@ui_menu_switchteam" buttonA="@ui_btn_YES" buttonAreturn="yes" buttonB="@ui_btn_NO" buttonBreturn="no"/>
+		<Warning id="CableNotConnected" priority="1" icon="attention" title="@ui_warning_title_attention" message="@ui_cable_not_connected" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="PlaylistRSSFailed" priority="1" icon="attention" title="@ui_warning_title_attention" message="@ui_menu_playlist_rssfailed" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="RestartLevel" priority="1" icon="question" title="@ui_menu_restart_level_warning" message="@ui_menu_restart_level_warning_body" buttonA="@ui_btn_YES" buttonAreturn="yes" buttonB="@ui_btn_NO" buttonBreturn="no"/>
+		<Warning id="FindFriends" priority="2" icon="input" color="green" title="@dialogue_mp_find_friend_title" message="@dialogue_mp_find_friend_msg" buttonA="@dialogue_mp_find_friend_button_ok" buttonAreturn="ok" buttonB="@ui_btn_Cancel" buttonBreturn="*cancel*"/>
+		<Warning id="FriendsInternalError" priority="2" icon="attention" title="@ui_warning_title_attention" message="@dialogue_mp_subtitle_friends_internal_error" buttonA="@ui_btn_OK" buttonAreturn="ok" showError="1"/>
+		<Warning id="InvalidFriendRequest" priority="2" icon="attention" title="@ui_warning_title_attention" message="@dialogue_mp_subtitle_invalid_friend_request" buttonA="@ui_btn_OK" buttonAreturn="ok" showError="1"/>
+		<Warning id="SearchingForSelf" priority="2" icon="attention" title="@ui_warning_title_attention" message="@dialogue_mp_searching_for_self" buttonA="@ui_btn_OK" buttonAreturn="ok" />
+		<Warning id="LoadLastSave" priority="1" icon="question" title="@ui_menu_load_last_save" message="@ui_menu_load_last_save_body" buttonA="@ui_btn_YES" buttonAreturn="yes" buttonB="@ui_btn_NO" buttonBreturn="no"/>
+		<Warning id="LoadSavegame" priority="1" icon="question" title="@ui_menu_load_savegame" message="@ui_menu_load_savegame_body" buttonA="@ui_btn_YES" buttonAreturn="yes" buttonB="@ui_btn_NO" buttonBreturn="no"/>
+		<Warning id="SaveSavegameInput" priority="2" icon="input" color="green" title="@ui_menu_save_savegame" message="@ui_menu_save_savegame_body" buttonA="@ui_btn_OK" buttonAreturn="ok" buttonB="@ui_btn_Cancel" buttonBreturn="*cancel*"/>
+		<Warning id="SignedOutInLevelLoadSP" priority="200" icon="attention" title="@ui_menu_signout_sp" message="@ui_menu_signin_body_loading_sp"/>
+		<Warning id="SignedInInLevelLoadSP" priority="200" icon="attention" title="@ui_menu_signin_sp" message="@ui_menu_signin_body_loading_sp"/>
+		<Warning id="SignedOutInGameSP" priority="201" icon="attention" title="@ui_menu_signout_sp" message="@ui_menu_signin_body_sp" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="SignedInInGameSP" priority="201" icon="attention" title="@ui_menu_signin_sp" message="@ui_menu_signin_body_sp" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="SquadNotSupported" priority="1" icon="attention" title="@ui_warning_title_attention" message="@ui_menu_squad_not_supported" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="InviteFailedIsHost" priority="1" icon="attention" title="@ui_warning_title_attention" message="@ui_menu_invite_failed_is_host" message360="@ui_menu_invite_failed_is_host_360" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="InviteFailedAlreadyInSession" priority="1" icon="attention" title="@ui_warning_title_attention" message="@ui_menu_invite_failed_already_in_session" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="StrictNAT" priority="1" icon="attention" title="@ui_warning_title_attention" message="@ui_menu_strict_nat" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="ChatRestricted" priority="1" icon="attention" title="@ui_warning_title_attention" message="@ui_menu_chat_restricted" message360="@ui_menu_chat_restricted" messagePS3="@ui_menu_chat_restricted_ps3" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="CatchKeyBind" priority="9" icon="attention" color="green" title="@menu_keybind_catch" message="@menu_keybind_catch_msg" />
+		<Warning id="ResetKeybindingsDefault" priority="1" icon="attention" color="red" title="@menu_keybind_resetdefault" message="@menu_keybind_resetdefault_msg" buttonA="@ui_btn_YES" buttonAreturn="yes" buttonB="@ui_btn_NO" buttonBreturn="no" />
+		<Warning id="PendingApply" priority="3" icon="question" color="red" title="@menu_pending_apply" message="@menu_pending_apply_msg" buttonA="@ui_btn_APPLY" buttonAreturn="apply" buttonB="@ui_btn_DISCARD" buttonBreturn="discard"/>
+		<Warning id="RequiredKeybinds" priority="3" icon="question" color="red" title="@menu_requiredkeybinds" message="@menu_requiredkeybinds_msg"  buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="SkipCutscene" priority="3" icon="question" color="red" title="@menu_skipcutscene_confirm" message="@menu_skipcutscene_confirm_msg" buttonA="@ui_btn_YES" buttonAreturn="yes" buttonB="@ui_btn_NO" buttonBreturn="no"/>
+		<Warning id="SkipCutsceneNonskippable" priority="3" icon="question" color="red" title="NON-SKIPPABLE CUTSCENE" message="You're about to skip a cutscene that is not intended to be skipped. This only works because you're not in RELEASE mode." buttonA="@ui_btn_YES" buttonAreturn="yes" buttonB="@ui_btn_NO" buttonBreturn="no"/>
+		<Warning id="SkipVideo" priority="3" icon="question" color="red" title="@menu_skipvideo_confirm" message="@menu_skipvideo_confirm_msg" buttonA="@ui_btn_YES" buttonAreturn="yes" buttonB="@ui_btn_NO" buttonBreturn="no"/>
+		<Warning id="SkipVideoNonskippable" priority="3" icon="question" color="red" title="NON-SKIPPABLE VIDEO" message="You're about to skip a video that is not intended to be skipped. This only works because you're not in RELEASE mode." buttonA="@ui_btn_YES" buttonAreturn="yes" buttonB="@ui_btn_NO" buttonBreturn="no"/>
+		<Warning id="InvertYAxis" priority="1" icon="question" color="green" title="@ui_warning_title_invertyaxis" message="@ui_warning_invertyaxis" buttonA="@ui_btn_YES" buttonAreturn="yes" buttonB="@ui_btn_NO" buttonBreturn="no"/>
+		<Warning id="KeepInvertYAxis" priority="1" icon="question" color="green" title="@ui_warning_title_keepinvertyaxis" message="@ui_warning_keepinvertyaxis" buttonA="@ui_btn_YES" buttonAreturn="yes" buttonB="@ui_btn_NO" buttonBreturn="no"/>
+		<Warning id="CreateNewSave" priority="1" icon="question" title="@ui_create_new_save_title" message="@ui_create_new_save" buttonX="@ui_warning_ChooseStorageDevice" buttonXreturn="selectdevice" buttonB="@ui_continue_without_saving" buttonBreturn="no"/>
+		<Warning id="KeyBindOverwrite" priority="1" icon="question" color="red" title="@menu_keybind_duplicate" message="@menu_keybind_duplicate_msg" buttonA="@ui_btn_YES" buttonAreturn="yes" buttonB="@ui_btn_NO" buttonBreturn="no"/>
+		<Warning id="ConfirmNoSaveDevice" priority="1" icon="attention" title="@ui_confirm_no_save_device_title" message="@ui_confirm_no_save_device" buttonA="@ui_btn_YES" buttonAreturn="yes" buttonB="@ui_btn_NO" buttonBreturn="no"/>
+		<Warning id="SaveCreated" priority="1" icon="empty" color="green" title="@ui_save_created_title" message="@ui_save_created" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="SaveAlreadyExists" priority="1" icon="attention" title="@ui_save_already_exists_title" message="@ui_save_already_exists" buttonY="@ui_btn_Overwrite" buttonYreturn="overwrite" buttonX="@ui_warning_ChooseStorageDevice" buttonXreturn="selectdevice"/>
+		<Warning id="SaveAlreadyExistsLoad" priority="1" icon="attention" title="@ui_save_already_exists_load_title" message="@ui_save_already_exists_load" buttonA="@ui_btn_Load" buttonAreturn="load" buttonX="@ui_warning_ChooseStorageDevice" buttonXreturn="selectdevice" buttonY="@ui_btn_Overwrite" buttonYreturn="overwrite" />
+		<Warning id="ConfirmOverwrite" priority="1" icon="attention" title="@ui_confirm_overwrite_title" message="@ui_confirm_overwrite" buttonA="@ui_btn_Confirm" buttonAreturn="overwrite" buttonX="@ui_warning_ChooseStorageDevice" buttonXreturn="selectdevice"/>
+		<Warning id="StorageRemoved" priority="102" deferNumFrames="50" icon="attention" title="@ui_storage_removed_title" message="@ui_storage_removed" buttonB="@ui_continue_without_saving" buttonBreturn="continue"/>
+		<Warning id="StorageRemoved2" priority="103" deferNumFrames="50" icon="attention" title="@ui_storage_removed_title" message="@ui_storage_removed2" buttonX="@ui_warning_ChooseStorageDevice" buttonXreturn="selectdevice" buttonB="@ui_continue_without_saving" buttonBreturn="continue"/>
+		<Warning id="StorageRemovedMP" priority="102" deferNumFrames="50" icon="attention" title="@ui_storage_removed_title" message="@ui_storage_removed_mp" buttonA="@ui_btn_OK" buttonAreturn="continue"/>
+		<Warning id="SaveNotFound" priority="1" icon="attention" title="@ui_save_not_found_title" message="@ui_save_not_found" buttonA="@ui_btn_SaveHere" buttonAreturn="create" buttonX="@ui_warning_ChooseStorageDevice" buttonXreturn="selectdevice"/>
+		<Warning id="SaveNotFoundLoseProgress" priority="1" icon="attention" title="@ui_save_not_found_title" message="@ui_save_not_found_lose_progress" buttonA="@ui_btn_SaveHere" buttonAreturn="create" buttonB="@ui_continue_without_saving" buttonBreturn="no" buttonX="@ui_warning_ChooseStorageDevice" buttonXreturn="selectdevice"/>
+		<Warning id="MultipleSaves" priority="1" icon="attention" title="@ui_multiple_saves_title" message="@ui_multiple_saves" buttonX="@ui_warning_ChooseStorageDevice" buttonXreturn="selectdevice" buttonB="@ui_continue_without_saving" buttonBreturn="no"/>
+		<Warning id="StorageNoSpace" priority="1" icon="attention" title="@ui_storage_no_space_title" message="@ui_storage_no_space" buttonX="@ui_warning_ChooseStorageDevice" buttonXreturn="selectdevice" buttonB="@ui_continue_without_saving" buttonBreturn="continue"/>
+		<Warning id="SaveCorrupt" priority="100" icon="attention" title="@ui_save_corrupt_title" message="@ui_save_corrupt" buttonX="@ui_warning_ChooseStorageDevice" buttonXreturn="selectdevice" buttonB="@ui_continue_without_saving" buttonBreturn="continue" buttonY="@ui_btn_DeleteSave" buttonYreturn="delete"/>
+		<Warning id="DiskCorrupt" priority="101" icon="attention" title="@ui_disk_error_title" message="@ui_disk_error" buttonX="@ui_warning_ChooseStorageDevice" buttonXreturn="selectdevice" buttonB="@ui_continue_without_saving" buttonBreturn="continue"/>
+		<Warning id="DeleteCorruptSave" priority="1" icon="attention" title="@ui_delete_corrupt_save_title" message="@ui_delete_save" buttonY="@ui_btn_Delete" buttonYreturn="delete" buttonB="@ui_btn_Cancel" buttonBreturn="cancel"/>
+		<Warning id="DeleteInvalidSave" priority="1" icon="attention" title="@ui_delete_invalid_save_title" message="@ui_delete_save" buttonY="@ui_btn_Delete" buttonYreturn="delete" buttonB="@ui_btn_Cancel" buttonBreturn="cancel"/>
+		<Warning id="SaveDeleted" priority="1" icon="empty" title="@ui_save_deleted_title" message="@ui_save_deleted" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="DeleteError" priority="1" icon="attention" title="@ui_delete_error_title" message="@ui_delete_error" buttonX="@ui_warning_ChooseStorageDevice" buttonXreturn="selectdevice"/>
+		<Warning id="EasyWarning" priority="1" icon="attention" title="@ui_new_game_warning_title" message="@ui_new_game_warning" buttonA="@ui_btn_YES" buttonAreturn="yes" buttonB="@ui_btn_NO" buttonBreturn="no"/>
+		<Warning id="MediumWarning" priority="1" icon="attention" title="@ui_new_game_warning_title" message="@ui_new_game_warning" buttonA="@ui_btn_YES" buttonAreturn="yes" buttonB="@ui_btn_NO" buttonBreturn="no"/>
+		<Warning id="HardWarning" priority="1" icon="attention" title="@ui_new_game_warning_title" message="@ui_new_game_warning" buttonA="@ui_btn_YES" buttonAreturn="yes" buttonB="@ui_btn_NO" buttonBreturn="no"/>
+		<Warning id="DeltaWarning" priority="1" icon="attention" title="@ui_new_game_warning_title" message="@ui_new_game_warning" buttonA="@ui_btn_YES" buttonAreturn="yes" buttonB="@ui_btn_NO" buttonBreturn="no"/>
+		<Warning id="PostHumanWarning" priority="1" icon="attention" title="@ui_new_game_warning_title" message="@ui_new_game_warning" buttonA="@ui_btn_YES" buttonAreturn="yes" buttonB="@ui_btn_NO" buttonBreturn="no"/>
+		<Warning id="RankTooHigh" priority="1" icon="attention" title="@ui_warning_title_attention" message="@ui_menu_rank_too_high" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="RankTooLow" priority="1" icon="attention" title="@ui_warning_title_attention" message="@ui_menu_rank_too_low" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="InviteNotSignedIn" priority="1" icon="attention" title="@ui_warning_title_attention" message="@ui_invite_not_signed_in" message360="@ui_invite_not_signed_in_360" messagePS3="@ui_invite_not_signed_in_ps3" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="InviteSelectController" priority="1" icon="attention" title="@ui_warning_title_attention" message="@ui_invite_select_controller" buttonA="@ui_btn_Confirm" buttonAreturn="ok"/>
+		<Warning id="InviteInvalidRequest" priority="1" icon="attention" title="@ui_warning_title_attention" message="@ui_invite_invalid_request" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="ServerListPassword" priority="2" icon="input" color="green" title="@ui_warning_title_attention" message="@ui_warning_serverlist_password" buttonA="@ui_btn_OK" buttonAreturn="ok" buttonB="@ui_btn_Cancel" buttonBreturn="*cancel*"/>
+		<Warning id="CannotCreateSquad" priority="2" icon="attention" title="@ui_warning_title_attention" message="@ui_error_cannotcreatemultiplayersession" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="WrongLoginName" priority="1" icon="attention" title="@ui_warning_wrong_login_name" message="@ui_warning_wrong_login_name_descr" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="PlayTutorial" priority="1" icon="question" title="@ui_warning_playtutorial_title" message="@ui_warning_playtutorial_message" buttonA="@ui_btn_YES" buttonAreturn="yes" buttonB="@ui_btn_NO" buttonBreturn="no" />
+		<Warning id="FinishTutorial" priority="1" icon="question" title="@ui_warning_finishtutorial_title" message="@ui_warning_finishtutorial_message" buttonA="@ui_btn_YES" buttonAreturn="yes" buttonB="@ui_btn_NO" buttonBreturn="no" />
+
+		<Warning id="LoadMod" priority="1" icon="question" color="red" title="@ui_activatemod" message="@ui_activatemod_msg" buttonA="@ui_btn_OK" buttonAreturn="ok" buttonB="@ui_btn_Cancel"/>
+		<Warning id="UnLoadMod" priority="1" icon="question" color="red" title="@ui_unloadactivemod" message="@ui_unloadactivemod_msg" buttonA="@ui_btn_OK" buttonAreturn="ok" buttonB="@ui_btn_Cancel"/>
+		<Warning id="NoMods" priority="1" icon="attention" color="red" title="@ui_nomods" message="@ui_nomods_msg" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="ActivateModSquad" priority="1" icon="attention" title="@ui_warning_title_attention" message="@ui_mod_not_activated_session" buttonA="@ui_btn_OK" buttonAreturn="ok" />
+		<Warning id="DeactivateModSquad" priority="1" icon="attention" title="@ui_warning_title_attention" message="@ui_mod_no_mod_session" buttonA="@ui_btn_OK" buttonAreturn="ok" />
+		<Warning id="UnavailableModSquad" priority="1" icon="attention" title="@ui_warning_title_attention" message="@ui_mod_not_installed_session" buttonA="@ui_btn_OK" buttonAreturn="ok" />
+		<Warning id="WrongModSquad" priority="1" icon="attention" title="@ui_warning_title_attention" message="@ui_mod_wrong_version_session" buttonA="@ui_btn_OK" buttonAreturn="ok" />
+		<Warning id="ActivateMod" priority="1" icon="attention" title="@ui_warning_title_attention" message="@ui_mod_not_activated" buttonA="@ui_btn_OK" buttonAreturn="ok" />
+		<Warning id="DeactivateMod" priority="1" icon="attention" title="@ui_warning_title_attention" message="@ui_mod_no_mod" buttonA="@ui_btn_OK" buttonAreturn="ok" />
+		<Warning id="UnavailableMod" priority="1" icon="attention" title="@ui_warning_title_attention" message="@ui_mod_not_installed" buttonA="@ui_btn_OK" buttonAreturn="ok" />
+		<Warning id="WrongMod" priority="1" icon="attention" title="@ui_warning_title_attention" message="@ui_mod_wrong_version" buttonA="@ui_btn_OK" buttonAreturn="ok" />
+		<Warning id="LevelVersionMismatch" priority="1" icon="attention" title="@ui_warning_title_attention" message="@ui_mod_map_version_incorrect" buttonA="@ui_btn_OK" buttonAreturn="ok" />
+		<Warning id="LevelNotFound" priority="1" icon="attention" title="@ui_warning_title_attention" message="@ui_mod_map_not_installed" buttonA="@ui_btn_OK" buttonAreturn="ok" />
+
+		<Warning id="ExternalWebsite" priority="1" icon="attention" title="@ui_warning_title_attention" message="@ui_warning_extrenal_url" buttonA="@ui_btn_OK" buttonAreturn="ok" buttonB="@ui_btn_Cancel" buttonBreturn="cancel"/>
+		<Warning id="DLCCheckFailed" priority="1" icon="attention" title="@ui_warning_title_attention" message="@ui_dlc_warning_check_fail" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="DLCInstallFailed" priority="1" icon="attention" title="@ui_warning_title_attention" message="@ui_dlc_warning_install_fail" buttonA="@ui_btn_OK" buttonAreturn="ok" />
+
+		<Warning id="UpdateUserData" priority="1" icon="attention" title="@ui_warning_title_attention" message="@ui_warning_updateuserdata"/>
+		<Warning id="RedeemLimitedEd" priority="1" icon="attention" color="green" title="@ui_limited_edition_title" message="@ui_limited_edition_message" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="RedeemPresale1" priority="1" icon="attention" color="green" title="@ui_presale_title" message="@ui_presale_message_1" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="RedeemPresale2" priority="1" icon="attention" color="green" title="@ui_presale_title" message="@ui_presale_message_2" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="RedeemPresale3" priority="1" icon="attention" color="green" title="@ui_presale_title" message="@ui_presale_message_3" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="RedeemDigiPack1" priority="1" icon="attention" color="green" title="@ui_digipack_title" message="@ui_digipack_message_1" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="RedeemNewDLC" priority="1" icon="attention" color="green" title="@ui_newdlc_title" message="@ui_newdlc_message" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="PresaleWarning" priority="1" icon="question" title="@ui_menu_exit_game" message="@ui_menu_presale_warn" buttonA="@ui_btn_YES" buttonAreturn="exit" buttonB="@ui_btn_NO" buttonBreturn="no"/>
+		<Warning id="GotoMyCrysisWarning" priority="1" icon="question" title="@ui_warning_title_warning" message="@ui_menu_goto_mycrysis_warn" buttonA="@ui_btn_YES" buttonAreturn="yes" buttonB="@ui_btn_NO" buttonBreturn="no"/>
+		<Warning id="StereoWarning" priority="1" icon="attention" title="@ui_warning_stereo" message="@ui_warning_stereo_body" buttonA="@ui_btn_YES" buttonAreturn="yes" buttonB="@ui_btn_NO" buttonBreturn="no"/>
+		<Warning id="Stereo1080Warning" priority="1" icon="attention" title="@ui_warning_stereo1080" message="@ui_warning_stereo1080_body" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="StereoFramePackedWarning" priority="1" icon="attention" title="@ui_warning_stereoframepacked" message="@ui_warning_stereoframepacked_body" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="StereoFrameOverscanWarning" priority="1" icon="attention" title="@ui_warning_stereoframeoverscan" message="@ui_warning_stereoframeoverscan_body" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="TimedConfirmation" priority="1" icon="question" timer="25" title="@ui_warning_timed_confirmation" message="@ui_warning_timed_confirmation_body" buttonA="@ui_btn_YES" buttonAreturn="yes" buttonB="@ui_btn_NO" buttonBreturn="no"/>
+		<Warning id="ChangesRequireRestart" priority="1" icon="attention" title="@ui_warning_requiresrestart" message="@ui_warning_requiresrestart_body" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="CreateAccountFailed" priority="1" icon="attention" title="@ui_warning_title_attention" message="@ui_createaccount_failed_msg" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="ForgottenPassword" priority="1" icon="input" title="@ui_warning_title_attention" message="@ui_forgottenpassword_msg" buttonA="@ui_btn_OK" buttonAreturn="ok" buttonB="@ui_btn_Cancel" buttonBreturn="*cancel*"/>
+		<Warning id="ChangeDifficulty" priority="1" icon="question" title="@ui_menu_changedifficulty_warning" message="@ui_menu_changedifficulty_warning_body" buttonA="@ui_btn_YES" buttonAreturn="yes" buttonB="@ui_btn_NO" buttonBreturn="no"/>
+		<Warning id="MyCrysisSignout" priority="1" icon="question" title="@ui_warning_title_warning" message="@ui_mycrysis_signout" buttonA="@ui_btn_YES" buttonAreturn="yes" buttonB="@ui_btn_NO" buttonBreturn="no"/>
+		<Warning id="MyCrysisSigningOut" priority="1" icon="attention" title="@ui_warning_title_attention" message="@ui_mycrysis_signingout"/>
+		<Warning id="ConfirmInvite" priority="1" icon="question" title="@ui_warning_title_warning" message="@ui_invite_confirm" buttonA="@ui_btn_YES" buttonAreturn="yes" buttonB="@ui_btn_NO" buttonBreturn="no"/>
+		<Warning id="BadOnlineName" priority="1" icon="question" title="@ui_warning_title_warning" message="@ui_bad_online_name" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="BadOnlineNameWithSuggestions" priority="1" icon="question" title="@ui_warning_title_warning" message="@ui_bad_online_name_with_suggestions" buttonA="@ui_btn_YES" buttonAreturn="yes" buttonB="@ui_btn_NO" buttonBreturn="no"/>
+		<Warning id="AccountNotYours" priority="1" icon="question" title="@ui_warning_title_warning" message="@ui_menu_mycrysis_account_already_exists" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="AccountYoursWrongName" priority="1" icon="question" title="@ui_warning_title_warning" message="@ui_account_yours_wrong_name" buttonA="@ui_btn_OK" buttonAreturn="yes"/>
+		<Warning id="AccountYoursCorrectName" priority="1" icon="question" title="@ui_warning_title_warning" message="@ui_account_yours_correct_name" buttonA="@ui_btn_YES" buttonAreturn="yes" buttonB="@ui_btn_NO" buttonBreturn="no"/>
+		<Warning id="MyCrysisInvalidLogin" priority="1" icon="attention" title="@ui_warning_title_warning" message="@ui_mycrysis_invalid_login" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="MyCrysisSubmitted" priority="1" icon="attention" title="@ui_warning_title_attention" message="@ui_warning_mycrysis_sent" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+
+		<Warning id="WrongVersion" priority="1" icon="attention" title="@ui_warning_title_attention" message="@ui_wrong_version" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="WrongVersionOurFault" priority="1" icon="attention" title="@ui_warning_title_attention" message="@ui_wrong_version_our_fault" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="WrongVersionTheirFault" priority="1" icon="attention" title="@ui_warning_title_attention" message="@ui_wrong_version_their_fault" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="BadUniqueNick" priority="1" icon="question" title="@ui_warning_title_warning" message="@ui_bad_unique_nick" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="PasswordMismatch" priority="1" icon="question" title="@ui_warning_title_warning" message="@ui_password_mismatch" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="PasswordEmpty" priority="1" icon="question" title="@ui_warning_title_warning" message="@ui_password_empty" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="EmailEmpty" priority="1" icon="question" title="@ui_warning_title_warning" message="@ui_email_empty" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="BadEmailAddress" priority="1" icon="attention" title="@ui_warning_title_attention" message="@ui_bad_email_address" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="KickedFromSquad" priority="1" icon="attention" title="@ui_warning_title_attention" message="@ui_kicked_from_squad" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="BannedFromSquad" priority="1" icon="attention" title="@ui_warning_title_attention" message="@ui_banned_from_squad" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="KickPlayerFromSquad" priority="1" icon="attention" title="@ui_warning_title_kick" message="@ui_kick_player_from_squad" buttonA="@ui_btn_YES" buttonAreturn="yes" buttonB="@ui_btn_NO" buttonBreturn="no"/>
+		<Warning id="CannotConnectToMP" priority="2" deferNumFrames="50" icon="attention" title="@ui_warning_title_attention" message="@ui_cannot_connect_mp" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="MaxNumFavouritesReached" priority="1" icon="attention" title="@ui_warning_title_attention" message="@ui_warning_max_favourite_servers" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+
+		<Warning id="OnlineSignedOutInGamePrivateConnected" priority="1" icon="attention" title="@ui_warning_title_attention" message="@ui_menu_signed_out_ingame_private_ps3_connected" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="OnlineSignedOutInGameConnected" priority="1" icon="attention" title="@ui_warning_title_attention" message="@ui_menu_signed_out_ingame_ps3_connected" buttonA="@ui_btn_OK" buttonAreturn="ok" />
+		<Warning id="OnlineSignedOutConnected" priority="2" deferNumFrames="50" icon="attention" title="@ui_warning_title_attention" message="@ui_menu_signed_out_connected" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="StartingSession" priority="200" icon="attention" title="@ui_warning_title_attention" message="@ui_menu_starting_session"/>
+
+		<Warning id="SerialEnter" priority="1" icon="input" color="green" title="@ui_warning_title_attention" message="@ui_warning_serial_enter" buttonA="@ui_btn_OK" buttonAreturn="ok" buttonB="@ui_btn_Cancel" buttonBreturn="*cancel*"/>
+		<Warning id="SerialInvalidSyntax" priority="1" icon="attention" title="@ui_warning_title_warning" message="@ui_warning_serial_invalid_syntax" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="SerialInvalidInUse" priority="1" icon="attention" title="@ui_warning_title_attention" message="@ui_warning_serial_in_use" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="SerialInvalidDisabled" priority="1" icon="attention" title="@ui_warning_title_attention" message="@ui_warning_serial_disabled" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="SerialInvalid" priority="1" icon="attention" title="@ui_warning_title_attention" message="@ui_warning_serial_invalid" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="SerialCannotVerify" priority="1" icon="attention" title="@ui_warning_title_attention" message="@ui_warning_serial_error" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+
+		<Warning id="SessionNotAvailable" priority="1" icon="attention" title="@ui_warning_title_attention" message="@ui_menu_lobby_error_57" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="PasswordIncorrect" priority="1" icon="attention" title="@ui_warning_title_attention" message="@ui_menu_lobby_error_65" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		
+		<Warning id="BlazeDeclineToS" priority="1" icon="question" title="@ui_warning_title_warning" message="@warning_blazetos_decline" buttonA="@ui_btn_DECLINE" buttonAreturn="decline" buttonB="@ui_btn_CANCEL" buttonBreturn="cancel" showError="1"/>
+		<Warning id="ParamOkError" priority="1" icon="attention" title="@ui_warning_title_attention" message="@warning_param" buttonA="@ui_btn_OK" buttonAreturn="ok" showError="1"/>
+		<Warning id="BlazeGeneralError" priority="1" icon="attention" title="@ui_warning_title_warning" message="@warning_blaze_general_error" buttonA="@ui_btn_OK" buttonAreturn="ok" showError="1"/>
+		<Warning id="BlazePersonaError_General" priority="1" icon="attention" title="@ui_warning_title_attention" message="@warning_blaze_persona_general" buttonA="@ui_btn_OK" buttonAreturn="ok" showError="1"/>
+		<Warning id="BlazePersonaError_Exists" priority="1" icon="attention" title="@ui_warning_title_attention" message="@warning_blaze_persona_exists" buttonA="@ui_btn_OK" buttonAreturn="ok" showError="1"/>
+		<Warning id="BlazePersonaError_Empty" priority="1" icon="attention" title="@ui_warning_title_attention" message="@warning_blaze_persona_empty" buttonA="@ui_btn_OK" buttonAreturn="ok" showError="1"/>
+		<Warning id="BlazeLogin_IncorrectUserOrPass" priority="1" icon="attention" title="@ui_warning_title_attention" message="@warning_blaze_login_incorrect_name_pass" buttonA="@ui_btn_OK" buttonAreturn="ok" showError="1"/>
+		<Warning id="BlazeLogin_TooYoung" priority="1" icon="attention" title="@ui_warning_title_attention" message="@warning_blaze_login_too_young" buttonA="@ui_btn_OK" buttonAreturn="ok" showError="1"/>
+		<Warning id="BlazeCreate_TooYoung" priority="1" icon="attention" title="@ui_warning_title_attention" message="@warning_blaze_create_too_young" buttonA="@ui_btn_OK" buttonAreturn="ok" showError="1"/>
+		<Warning id="BlazeCreate_Exists" priority="1" icon="attention" title="@ui_warning_title_attention" message="@warning_blaze_create_exists" buttonA="@ui_btn_OK" buttonAreturn="ok" showError="1"/>
+		<Warning id="BlazeCreate_EnterDoB" priority="1" icon="attention" title="@ui_warning_title_attention" message="@warning_blaze_create_enter_dob" buttonA="@ui_btn_OK" buttonAreturn="ok" showError="1"/>
+		<Warning id="BlazeForgotPassword_Success" priority="1" icon="attention" title="@ui_warning_title_attention" message="@warning_blaze_forgot_password_success" buttonA="@ui_btn_OK" buttonAreturn="ok" showError="1"/>
+		<Warning id="BlazeForgotPassword_NotFound" priority="1" icon="attention" title="@ui_warning_title_attention" message="@warning_blaze_forgot_password_not_found" buttonA="@ui_btn_OK" buttonAreturn="ok" showError="1"/>
+		<Warning id="BlazeForgotPassword_None" priority="1" icon="attention" title="@ui_warning_title_attention" message="@warning_blaze_forgot_password_none" buttonA="@ui_btn_OK" buttonAreturn="ok" showError="1"/>
+		<Warning id="BlazeCreate_InvalidPassword" priority="1" icon="attention" title="@ui_warning_title_attention" message="@warning_blaze_password_invalid" buttonA="@ui_btn_OK" buttonAreturn="ok" showError="1"/>
+		<Warning id="BlazeCreate_InvalidParams" priority="1" icon="attention" title="@ui_warning_title_attention" message="@warning_blaze_email_password_invalid" buttonA="@ui_btn_OK" buttonAreturn="ok" showError="1"/>
+		<Warning id="BlazeCreate_EmailExists" priority="1" icon="attention" title="@ui_warning_title_attention" message="@warning_blaze_email_exists" buttonA="@ui_btn_OK" buttonAreturn="ok" showError="1"/>
+		<Warning id="BlazeNoCDKey" priority="1" icon="attention" title="@ui_warning_title_attention" message="@warning_blaze_no_cdkey" buttonA="@ui_btn_OK" buttonAreturn="ok" showError="1"/>
+		<Warning id="BlazeAccountBanned" priority="1" icon="attention" title="@ui_warning_title_attention" message="@warning_blaze_login_account_banned" buttonA="@ui_btn_OK" buttonAreturn="ok" showError="1"/>
+		<Warning id="MPAccountCreated" priority="1" color="green" icon="attention" title="@ui_warning_title_attention" message="@ui_menu_account_created" buttonA="@ui_btn_OK" buttonAreturn="ok" />
+
+		<Warning id="SessionQueue" priority="1" icon="loading" title="@ui_menu_connecting" message="@ui_warning_queue" buttonB="@ui_btn_Cancel" buttonBreturn="cancel" />
+	
+		<Warning id="S3D_360_HDMI" priority="1" icon="attention" title="@ui_warning_title_attention" message="@ui_warning_s3d_body_360" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+		<Warning id="DLCRemoved" priority="105" icon="attention" title="@ui_warning_title_attention" message="@ui_menu_dlc_removed_menu" buttonA="@ui_btn_OK" buttonAreturn="ok"/>
+
+    <Warning id="NoGameModeSelected" priority="1" icon="attention" title="@ui_warning_title_attention" message="@ui_warning_no_gamemode_selected" buttonA="@ui_btn_OK"/>
+    <Warning id="PiiOptedIn" priority="1" color="green" icon="attention" title="@ui_warning_title_attention" message="@ui_menu_goodies_received" buttonA="@ui_btn_OK" buttonAreturn="ok" />
+	</Warnings>
+
+	<CustomWarnings>
+		<QuickSquadPopUp flashPath="libs/ui/menu/cw2_quicksquadpopup.gfx" />
+		<StoryInfoPopup flashPath="libs/ui/menu/infopopup.gfx" />
+		<CreditsEffectsPopup flashPath="libs/ui/general/credits_effects.gfx" />
+		<ChallengeCardPopUp flashPath="libs/ui/menu/cw2_challengecardpopup.gfx" />
+		<MinigameLoaderPopup flashPath="libs/ui/menu/minigameloaderpopup.gfx" />
+	</CustomWarnings>
+
+</Root>
+

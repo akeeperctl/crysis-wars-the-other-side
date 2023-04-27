@@ -1,0 +1,17 @@
+<Graph Description="" Group="" enabled="1" MultiPlayer="ClientServer">
+ <Nodes>
+  <Node Id="1" Class="AI:ActionStart" pos="80,10,0" flags="0"/>
+  <Node Id="2" Class="AI:ActionEnd" pos="490,10,0" flags="0">
+   <Inputs />
+  </Node>
+  <Node Id="7" Class="Vehicle:Exit" pos="250,0,0" flags="0">
+   <Inputs entityId="0"/>
+  </Node>
+ </Nodes>
+ <Edges>
+  <Edge nodeIn="7" nodeOut="1" portIn="Synk" portOut="UserId" enabled="1"/>
+  <Edge nodeIn="7" nodeOut="1" portIn="entityId" portOut="UserId" enabled="1"/>
+  <Edge nodeIn="2" nodeOut="7" portIn="cancel" portOut="fail" enabled="1"/>
+  <Edge nodeIn="2" nodeOut="7" portIn="end" portOut="succeed" enabled="1"/>
+ </Edges>
+</Graph>

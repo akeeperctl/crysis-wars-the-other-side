@@ -1,0 +1,143 @@
+<?xml version="1.0"?>
+<?mso-application progid="Excel.Sheet"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:o="urn:schemas-microsoft-com:office:office"
+ xmlns:x="urn:schemas-microsoft-com:office:excel"
+ xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:html="http://www.w3.org/TR/REC-html40">
+ <DocumentProperties xmlns="urn:schemas-microsoft-com:office:office">
+  <Author>kirill</Author>
+  <LastAuthor>laszlov</LastAuthor>
+  <Created>2006-06-28T14:43:22Z</Created>
+  <LastSaved>2008-06-04T12:52:31Z</LastSaved>
+  <Version>12.00</Version>
+ </DocumentProperties>
+ <ExcelWorkbook xmlns="urn:schemas-microsoft-com:office:excel">
+  <WindowHeight>10740</WindowHeight>
+  <WindowWidth>14925</WindowWidth>
+  <WindowTopX>1665</WindowTopX>
+  <WindowTopY>525</WindowTopY>
+  <RefModeR1C1/>
+  <ProtectStructure>False</ProtectStructure>
+  <ProtectWindows>False</ProtectWindows>
+ </ExcelWorkbook>
+ <Styles>
+  <Style ss:ID="Default" ss:Name="Normal">
+   <Alignment ss:Vertical="Bottom"/>
+   <Borders/>
+   <Font ss:FontName="Arial"/>
+   <Interior/>
+   <NumberFormat/>
+   <Protection/>
+  </Style>
+  <Style ss:ID="s62">
+   <NumberFormat ss:Format="Fixed"/>
+  </Style>
+  <Style ss:ID="s63">
+   <Interior ss:Color="#C0C0C0" ss:Pattern="Solid"/>
+   <NumberFormat ss:Format="Fixed"/>
+  </Style>
+  <Style ss:ID="s64">
+   <Interior ss:Color="#C0C0C0" ss:Pattern="Solid"/>
+  </Style>
+  <Style ss:ID="s65">
+   <Interior ss:Color="#FFCC00" ss:Pattern="Solid"/>
+  </Style>
+  <Style ss:ID="s67">
+   <Font ss:FontName="Arial" x:Family="Swiss" ss:Bold="1"/>
+   <Interior ss:Color="#FFCC00" ss:Pattern="Solid"/>
+  </Style>
+  <Style ss:ID="s68">
+   <Font ss:FontName="Arial" x:Family="Swiss" ss:Bold="1"/>
+   <Interior ss:Color="#FFCC00" ss:Pattern="Solid"/>
+   <NumberFormat ss:Format="Fixed"/>
+  </Style>
+  <Style ss:ID="s69">
+   <Font ss:FontName="Arial"/>
+   <Interior ss:Color="#FFFF00" ss:Pattern="Solid"/>
+   <NumberFormat ss:Format="Fixed"/>
+  </Style>
+  <Style ss:ID="s70">
+   <Font ss:FontName="Arial"/>
+   <Interior ss:Color="#FFFF00" ss:Pattern="Solid"/>
+  </Style>
+  <Style ss:ID="s71">
+   <Font ss:FontName="Arial" x:Family="Swiss"/>
+  </Style>
+ </Styles>
+ <Worksheet ss:Name="Sheet1">
+  <Table ss:ExpandedColumnCount="4" ss:ExpandedRowCount="32" x:FullColumns="1"
+   x:FullRows="1">
+   <Column ss:AutoFitWidth="0" ss:Width="153.75"/>
+   <Column ss:AutoFitWidth="0" ss:Width="245.25"/>
+   <Column ss:AutoFitWidth="0" ss:Width="71.25"/>
+   <Column ss:StyleID="s62" ss:AutoFitWidth="0" ss:Width="63"/>
+   <Row ss:StyleID="s64">
+    <Cell><Data ss:Type="String">sounds/alien:scout:</Data><Comment
+      ss:Author="kirill"><ss:Data xmlns="http://www.w3.org/TR/REC-html40"><B><Font
+         html:Face="Tahoma" html:Size="8" html:Color="#000000">kirill:</Font></B><Font
+        html:Face="Tahoma" html:Size="8" html:Color="#000000">&#10;this is the base path for this pack&#10;</Font></ss:Data></Comment></Cell>
+    <Cell ss:Index="4" ss:StyleID="s63"/>
+   </Row>
+   <Row ss:StyleID="s64">
+    <Cell ss:StyleID="s63"><Data ss:Type="Number">5</Data></Cell>
+    <Cell ss:Index="4" ss:StyleID="s63"/>
+   </Row>
+   <Row ss:StyleID="s65">
+    <Cell ss:StyleID="s67"><Data ss:Type="String">readability signal</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">event to play</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">probability</Data></Cell>
+    <Cell ss:StyleID="s68"><Data ss:Type="String">group delay</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">pain</Data></Cell>
+    <Cell><Data ss:Type="String">pain</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">death</Data></Cell>
+    <Cell><Data ss:Type="String">death</Data></Cell>
+   </Row>
+   <Row ss:Index="27" ss:StyleID="s70">
+    <Cell ss:Index="4" ss:StyleID="s69"/>
+   </Row>
+   <Row ss:Index="32">
+    <Cell ss:Index="2" ss:StyleID="s71"/>
+   </Row>
+  </Table>
+  <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">
+   <Print>
+    <ValidPrinterInfo/>
+    <PaperSizeIndex>9</PaperSizeIndex>
+    <HorizontalResolution>300</HorizontalResolution>
+    <VerticalResolution>300</VerticalResolution>
+   </Print>
+   <Selected/>
+   <Panes>
+    <Pane>
+     <Number>3</Number>
+     <ActiveRow>7</ActiveRow>
+    </Pane>
+   </Panes>
+   <ProtectObjects>False</ProtectObjects>
+   <ProtectScenarios>False</ProtectScenarios>
+  </WorksheetOptions>
+ </Worksheet>
+ <Worksheet ss:Name="Sheet2">
+  <Table ss:ExpandedColumnCount="1" ss:ExpandedRowCount="1" x:FullColumns="1"
+   x:FullRows="1">
+  </Table>
+  <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">
+   <ProtectObjects>False</ProtectObjects>
+   <ProtectScenarios>False</ProtectScenarios>
+  </WorksheetOptions>
+ </Worksheet>
+ <Worksheet ss:Name="Sheet3">
+  <Table ss:ExpandedColumnCount="1" ss:ExpandedRowCount="1" x:FullColumns="1"
+   x:FullRows="1">
+  </Table>
+  <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">
+   <ProtectObjects>False</ProtectObjects>
+   <ProtectScenarios>False</ProtectScenarios>
+  </WorksheetOptions>
+ </Worksheet>
+</Workbook>

@@ -1,0 +1,5225 @@
+<FXLib>
+<Effect name="blank_event">
+</Effect>
+
+<Effect name="hit_mat_feathers_law" delay="0.05">
+
+	<Particle>
+		<Name minscale="0.6" maxscale="1.3" maxscaledist="80">bullet.hit_feathers.rocket_hit</Name>
+	</Particle>
+
+</Effect>
+<Effect name="large_blast_decal">
+	<RandEffect>
+		<Decal minscale="9" maxscale="10" lifetime="5.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="screen_lightup" maxdist="50"/>
+</Effect>
+
+<Effect name="hit_mat_sand_Gauss">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:gauss_explosion</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name minscale="1" maxscale="1.4" maxscaledist="100">bullet.hit_sand.a50</Name>
+		</Particle>
+	</RandEffect>
+	<RandEffect>
+		<Decal minscale="0.8" maxscale="1.3" lifetime="5.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="gauss_hit_effect" maxdist="2"/>
+	<FlowGraph name="screen_lightup" maxdist="10"/>
+</Effect>
+<Effect name="hit_mat_tree_Gauss" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:gauss_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.6" maxscale="1.3" maxscaledist="80">bullet.hit_wood.a50</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="0.8" maxscale="1.3" lifetime="5.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="gauss_hit_effect" maxdist="2"/>
+	<FlowGraph name="screen_lightup" maxdist="10"/>
+</Effect>
+<Effect name="hit_mat_glass_Gauss" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:gauss_explosion</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name minscale="1" maxscale="1.3" maxscaledist="100">bullet.hit_glass.a50</Name>
+		</Particle>
+	</RandEffect>
+	<RandEffect>
+		<Decal minscale="0.08" maxscale="0.13">
+			<Material>materials/decals/glass</Material>
+		</Decal>
+		<Decal minscale="0.08" maxscale="0.13">
+			<Material>materials/decals/glass_b</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="gauss_hit_effect" maxdist="2"/>
+	<FlowGraph name="screen_lightup" maxdist="10"/>
+</Effect>
+<Effect name="hit_mat_cliff_Gauss" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:gauss_explosion</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name minscale="1" maxscale="1.3" maxscaledist="100">bullet.hit_concrete.a50</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="1" maxscale="1.3" maxscaledist="100">bullet.hit_concrete.b50</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="1" maxscale="1.3" maxscaledist="100">bullet.hit_concrete.c50</Name>
+		</Particle>
+	</RandEffect>
+	<RandEffect>
+		<Decal minscale="0.8" maxscale="1.3" lifetime="5.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="gauss_hit_effect" maxdist="2"/>
+	<FlowGraph name="screen_lightup" maxdist="10"/>
+</Effect>
+<Effect name="hit_mat_concrete_Gauss" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:gauss_explosion</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name minscale="1" maxscale="1.3" maxscaledist="100">bullet.hit_concrete.a50</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="1" maxscale="1.3" maxscaledist="100">bullet.hit_concrete.b50</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="1" maxscale="1.3" maxscaledist="100">bullet.hit_concrete.c50</Name>
+		</Particle>
+	</RandEffect>
+	<RandEffect>
+		<Decal minscale="0.8" maxscale="1.3" lifetime="5.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="gauss_hit_effect" maxdist="2"/>
+	<FlowGraph name="screen_lightup" maxdist="10"/>
+</Effect>
+<Effect name="hit_mat_metal_Gauss" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:gauss_explosion</Name>
+	</Sound>
+	<RandEffect name="particles1">
+		<Particle>
+			<Name minscale="1.4" maxscale="1.7" maxscaledist="100">bullet.hit_metal.a50</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="1.4" maxscale="1.7" maxscaledist="100">bullet.hit_metal.a50</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="1.4" maxscale="1.7" maxscaledist="100">bullet.hit_metal.b50</Name>
+		</Particle>
+	</RandEffect>
+	<RandEffect>
+		<Decal minscale="0.8" maxscale="1.3" lifetime="5.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="gauss_hit_effect" maxdist="2"/>
+	<FlowGraph name="screen_lightup" maxdist="10"/>
+</Effect>
+<Effect name="hit_mat_mud_Gauss" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:gauss_explosion</Name>
+	</Sound>
+	<RandEffect name="particles1">
+		<Particle>
+			<Name minscale="1" maxscale="1.3" maxscaledist="100">bullet.hit_mud.a50</Name>
+		</Particle>
+	</RandEffect>
+	<RandEffect>
+		<Decal minscale="0.8" maxscale="1.3" lifetime="5.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="gauss_hit_effect" maxdist="2"/>
+	<FlowGraph name="screen_lightup" maxdist="10"/>
+</Effect>
+<Effect name="hit_mat_soil_Gauss" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:gauss_explosion</Name>
+	</Sound>
+	<RandEffect name="particles1">
+		<Particle>
+			<Name minscale="1" maxscale="1.3" maxscaledist="100">bullet.hit_soil.a50</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="1" maxscale="1.3" maxscaledist="100">bullet.hit_soil.b50</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="1" maxscale="1.3" maxscaledist="100">bullet.hit_soil.c50</Name>
+		</Particle>
+	</RandEffect>
+	<RandEffect>
+		<Decal minscale="0.8" maxscale="1.3" lifetime="5.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="gauss_hit_effect" maxdist="2"/>
+	<FlowGraph name="screen_lightup" maxdist="10"/>
+</Effect>
+<Effect name="hit_mat_default_Gauss" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:gauss_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.6" maxscale="1.3" maxscaledist="80">bullet.hit_default.a50</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="0.8" maxscale="1.3" lifetime="5.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="gauss_hit_effect" maxdist="2"/>
+	<FlowGraph name="screen_lightup" maxdist="10"/>
+</Effect>
+<Effect name="hit_mat_wood_Gauss" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:gauss_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.6" maxscale="1.3" maxscaledist="80">bullet.hit_wood.a50</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="0.8" maxscale="1.3" lifetime="5.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="gauss_hit_effect" maxdist="2"/>
+	<FlowGraph name="screen_lightup" maxdist="10"/>
+</Effect>
+<Effect name="hit_mat_snow_Gauss" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:gauss_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.6" maxscale="1.3" maxscaledist="80">bullet.hit_snow.a50</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="0.5" maxscale="0.1">
+			<Filename>textures/decal/metal.dds</Filename>
+			<Material>materials/decals/snow_melt</Material>
+		</Decal>
+	</RandEffect>
+</Effect>
+<Effect name="hit_mat_water_Gauss" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:gauss_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.6" maxscale="1.3" maxscaledist="80">explosions.Grenade_SCAR.water</Name>
+	</Particle>
+	<FlowGraph name="water_explosion" maxdist="5"/>
+	<FlowGraph name="screen_lightup" maxdist="10"/>
+</Effect>
+
+
+<Effect name="hit_mat_character_Gauss" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:gauss_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.6" maxscale="1.3" maxscaledist="80">bullet.hit_default.a50</Name>
+	</Particle>
+	<FlowGraph name="gauss_hit_effect" maxdist="2"/>
+</Effect>
+
+<Effect name="hit_mat_alien_Gauss" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:gauss_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.6" maxscale="1.3" maxscaledist="80">bullet.hit_default.a50</Name>
+	</Particle>
+	<FlowGraph name="gauss_hit_effect" maxdist="2"/>
+	<FlowGraph name="screen_lightup" maxdist="10"/>
+</Effect>
+
+<Effect name="gausstank_sand">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:gausstank_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.6" maxscale="1.3" maxscaledist="80">explosions.Grenade_SCAR.sand</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="1.2" maxscale="1.6" lifetime="5.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="gauss_hit_effect" maxdist="5"/>
+	<FlowGraph name="screen_lightup" maxdist="50"/>
+</Effect>
+<Effect name="gausstank_tree" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:gausstank_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.6" maxscale="1.3" maxscaledist="80">explosions.Grenade_SCAR.tree</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="1.2" maxscale="1.6" lifetime="5.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="gauss_hit_effect" maxdist="5"/>
+	<FlowGraph name="screen_lightup" maxdist="50"/>
+</Effect>
+<Effect name="gausstank_glass" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:gausstank_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.6" maxscale="1.3" maxscaledist="80">explosions.Grenade_SCAR.glass</Name>
+	</Particle>
+	<FlowGraph name="gauss_hit_effect" maxdist="5"/>
+	<FlowGraph name="screen_lightup" maxdist="50"/>
+</Effect>
+<Effect name="gausstank_cliff" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:gausstank_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.6" maxscale="1.3" maxscaledist="80">explosions.Grenade_SCAR.cliff</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="1.2" maxscale="1.6" lifetime="5.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="gauss_hit_effect" maxdist="5"/>
+	<FlowGraph name="screen_lightup" maxdist="50"/>
+</Effect>
+<Effect name="gausstank_concrete" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:gausstank_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.6" maxscale="1.3" maxscaledist="80">explosions.Grenade_SCAR.concrete</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="1.2" maxscale="1.6" lifetime="5.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="gauss_hit_effect" maxdist="5"/>
+	<FlowGraph name="screen_lightup" maxdist="50"/>
+</Effect>
+<Effect name="gausstank_metal" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:gausstank_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.6" maxscale="1.3" maxscaledist="80">explosions.Grenade_SCAR.metal</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="1.2" maxscale="1.6" lifetime="5.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="gauss_hit_effect" maxdist="5"/>
+	<FlowGraph name="screen_lightup" maxdist="50"/>
+</Effect>
+<Effect name="gausstank_mud" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:gausstank_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.6" maxscale="1.3" maxscaledist="80">explosions.Grenade_SCAR.mud</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="1.2" maxscale="1.6" lifetime="5.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="gauss_hit_effect" maxdist="5"/>
+	<FlowGraph name="screen_lightup" maxdist="50"/>
+</Effect>
+<Effect name="gausstank_soil" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:gausstank_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.6" maxscale="1.3" maxscaledist="80">explosions.Grenade_SCAR.soil</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="1.2" maxscale="1.6" lifetime="5.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="gauss_hit_effect" maxdist="5"/>
+	<FlowGraph name="screen_lightup" maxdist="50"/>
+</Effect>
+<Effect name="gausstank_default" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:gausstank_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.6" maxscale="1.3" maxscaledist="80">explosions.Grenade_SCAR.metal</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="1.2" maxscale="1.6" lifetime="5.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="gauss_hit_effect" maxdist="5"/>
+	<FlowGraph name="screen_lightup" maxdist="50"/>
+</Effect>
+<Effect name="gausstank_wood" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:gausstank_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.6" maxscale="1.3" maxscaledist="80">explosions.Grenade_SCAR.wood</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="1.2" maxscale="1.6" lifetime="5.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="gauss_hit_effect" maxdist="5"/>
+	<FlowGraph name="screen_lightup" maxdist="50"/>
+</Effect>
+<Effect name="gausstank_snow" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:gausstank_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.6" maxscale="1.3" maxscaledist="80">explosions.Grenade_SCAR.snow</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="1.2" maxscale="1.25">
+			<Filename>textures/decal/metal.dds</Filename>
+			<Material>materials/decals/snow_melt</Material>
+		</Decal>
+	</RandEffect>
+</Effect>
+<Effect name="gausstank_water" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:gausstank_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.6" maxscale="1.3" maxscaledist="80">explosions.Grenade_SCAR.water</Name>
+	</Particle>
+	<FlowGraph name="water_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="50"/>
+</Effect>
+
+
+<Effect name="gausstank_character" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:gausstank_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.6" maxscale="1.3" maxscaledist="80">explosions.Grenade_SCAR.character</Name>
+	</Particle>
+	<FlowGraph name="gauss_hit_effect" maxdist="5"/>
+</Effect>
+
+<Effect name="gausstank_alien" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:gausstank_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name>explosions.grenade_SCAR.alien</Name>
+	</Particle>
+	<FlowGraph name="gauss_hit_effect" maxdist="5"/>
+	<FlowGraph name="screen_lightup" maxdist="50"/>
+</Effect>
+
+<Effect name="cluster_bomb" delay="0.05">
+	<RandEffect>
+		<Particle>
+			<Name>explosions.cluster_bomb.impact</Name>
+		</Particle>
+	</RandEffect>
+	<FlowGraph name="cluster_bomb" maxdist="1000"/>
+</Effect>
+
+<Effect name="hit_mat_alien_machine_damageable" delay="0.05">
+	<Sound>
+		<Name>sounds/physics:bullet_impact:mat_alien_floor</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name>bullet.hit_alien.machine_damageable</Name>
+		</Particle>
+	</RandEffect>
+</Effect>
+
+<Effect name="hit_mat_rubber_dirt" delay="0.05">
+	<Sound name="mastersnd1" >
+		<Name>sounds/physics:bullet_impact:mat_dirt</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name minscale="0.4" maxscale="2" maxscaledist="50">bullet.hit_rubber_bullet.default</Name>
+		</Particle>
+	</RandEffect>
+	<RandEffect>
+		<Decal minscale="0.05" maxscale="0.1">
+			<Filename>textures/decal/metal.dds</Filename>
+			<Material>materials/decals/terrain_soil</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="dirt_bullet_hit" maxdist="2"/>
+</Effect>
+<Effect name="hit_mat_rubber_grass" delay="0.05">
+	<Sound>
+		<Name>sounds/physics:bullet_impact:mat_grass</Name>
+	</Sound>
+	<RandEffect>
+		<Decal minscale="0.05" maxscale="0.1">
+			<Filename>textures/decal/metal.dds</Filename>
+			<Material>materials/decals/terrain_soil</Material>
+		</Decal>
+	</RandEffect>
+	<RandEffect name="particles1">
+		<Particle>
+			<Name minscale="0.4" maxscale="2" maxscaledist="50">bullet.hit_rubber_bullet.default</Name>
+		</Particle>
+	</RandEffect>
+	<FlowGraph name="dirt_bullet_hit" maxdist="2"/>
+</Effect>
+<Effect name="hit_mat_rubber_metal" delay="0.05">
+	<RandEffect>
+		<Particle>
+			<Name minscale="0.4" maxscale="2" maxscaledist="50">bullet.hit_rubber_bullet.default</Name>
+		</Particle>
+	</RandEffect>
+	<RandEffect>
+		<Decal minscale="0.015" maxscale="0.03">
+			<Filename>textures/decal/metal.dds</Filename>
+			<Material>materials/decals/metal_tin</Material>
+		</Decal>
+	</RandEffect>
+	<Sound name="mainsnd">
+		<Name>sounds/physics:bullet_impact:mat_metal_thick</Name>
+	</Sound>
+</Effect>
+<Effect name="hit_mat_rubber_water" delay="0.05">
+	<RandEffect>
+		<Particle>
+			<Name minscale="0.4" maxscale="2" maxscaledist="50">bullet.hit_rubber_bullet.default</Name>
+		</Particle>
+	</RandEffect>
+	<Sound>
+		<Name>sounds/physics:bullet_impact:mat_water_heavy</Name>
+	</Sound>
+	<FlowGraph name="water_bullet_hit" maxdist="2"/>
+</Effect>
+<Effect name="hit_mat_rubber_ice" delay="0.05">
+	<Sound>
+		<Name>sounds/physics:bullet_impact:mat_ice</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name minscale="0.4" maxscale="2" maxscaledist="50">bullet.hit_rubber_bullet.default</Name>
+		</Particle>
+	</RandEffect>
+	<RandEffect>
+		<Decal minscale="0.06" maxscale="0.2">
+			<Filename>textures/decal/metal.dds</Filename>
+			<Material>materials/decals/ice</Material>
+		</Decal>
+	</RandEffect>
+</Effect>
+
+<Effect name="rifle_nuke_explode">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:tac_explosion</Name>
+	</Sound>
+	<Particle>
+  		<Name maxdist="100">explosions.TAC.rifle_close</Name>
+  		<Name>explosions.TAC.rifle_far</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="2.2" maxscale="2.6" lifetime="5.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="50"/>
+</Effect>
+
+<Effect name="hit_mat_metal_sheet_vehicle" delay="0.05">
+	<Sound name="mainsnd" >
+		<Name>sounds/physics:bullet_impact:mat_metal_sheet</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name minscale="0.3" maxscale="2.2" maxscaledist="70">bullet.hit_metal.heli</Name>
+		</Particle>
+	</RandEffect>
+	<RandEffect>
+		<Decal minscale="0.015" maxscale="0.03">
+			<Filename>textures/decal/metal.dds</Filename>
+			<Material>materials/decals/metal_tin</Material>
+		</Decal>
+	</RandEffect>
+</Effect>
+
+<Effect name="hit_mat_concrete_50" delay="0.05">
+	<Sound>
+		<Name>sounds/physics:bullet_impact:mat_concrete_50cal</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name minscale="1" maxscale="1.3" maxscaledist="100">bullet.hit_concrete.a50</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="1" maxscale="1.3" maxscaledist="100">bullet.hit_concrete.b50</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="1" maxscale="1.3" maxscaledist="100">bullet.hit_concrete.c50</Name>
+		</Particle>
+	</RandEffect>
+	<RandEffect>
+		<Decal minscale="0.1" maxscale="0.2">
+			<Filename>textures/decal/metal.dds</Filename>
+			<Material>materials/decals/rock_hard</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="dirt_bullet_hit" maxdist="2"/>
+</Effect>
+
+<Effect name="hit_mat_grass_50" delay="0.05">
+	<Sound>
+		<Name>sounds/physics:bullet_impact:mat_dirt_50cal</Name>
+	</Sound>
+	<RandEffect>
+		<Decal minscale="0.05" maxscale="0.1">
+			<Filename>textures/decal/metal.dds</Filename>
+			<Material>materials/decals/terrain_soil</Material>
+		</Decal>
+	</RandEffect>
+	<RandEffect name="particles1">
+		<Particle>
+			<Name minscale="1" maxscale="1.3" maxscaledist="100">bullet.hit_grass.a50</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="1" maxscale="1.3" maxscaledist="100">bullet.hit_grass.b50</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="1" maxscale="1.3" maxscaledist="100">bullet.hit_grass.c50</Name>
+		</Particle>
+	</RandEffect>
+	<FlowGraph name="dirt_bullet_hit" maxdist="2"/>
+</Effect>
+
+<Effect name="hit_generic_lightACMO" delay="0.05">
+	<Sound name="mainsnd" >
+		<Name>sounds/physics:bullet_impact:mat_wood_solid</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name>explosions.MOAC.a</Name>
+		</Particle>
+	</RandEffect>
+</Effect>
+<Effect name="melee_hit_mat_alien" delay="0.05">
+	<Sound name="mainsnd" >
+		<Name>sounds/physics:bullet_impact:mat_wood_solid</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name>melee.hit_alien.hit</Name>
+		</Particle>
+	</RandEffect>
+	<FlowGraph name="melee_punch_alien" maxdist="2"/>
+</Effect>
+
+<Effect name="melee_hit_mat_wood" delay="0.05">
+	<Sound name="mainsnd" >
+		<Name>sounds/physics:bullet_impact:mat_wood_solid</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name>melee.hit_wood.hit</Name>
+		</Particle>
+	</RandEffect>
+</Effect>
+<Effect name="melee_hit_mat_fruit" delay="0.05">
+	<Sound name="mainsnd" >
+		<Name>sounds/physics:bullet_impact:mat_wood_solid</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name>melee.hit_wood.fruit</Name>
+		</Particle>
+	</RandEffect>
+</Effect>
+<Effect name="melee_hit_mat_concrete" delay="0.05">
+	<Sound>
+		<Name>sounds/physics:bullet_impact:mat_concrete</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name>melee.hit_concrete.hit</Name>
+		</Particle>
+	</RandEffect>
+</Effect>
+<Effect name="melee_hit_mat_default" delay="0.05">
+	<Sound>
+		<Name>sounds/physics:bullet_impact:mat_log</Name>
+	</Sound>
+	<Particle>
+		<Name>melee.hit_default.hit</Name>
+	</Particle>
+</Effect>
+<Effect name="melee_hit_mat_flesh" delay="0.05">
+	<Sound>
+		<Name>sounds/physics:bullet_impact:mat_flesh</Name>
+	</Sound>
+	<Particle>
+		<Name>melee.hit_flesh.hit</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="0.1" maxscale="0.15" lifetime="5.0">
+			<Filename>textures/decal/metal.dds</Filename>
+			<Material>materials/decals/human_body</Material>
+		</Decal>
+	</RandEffect>
+</Effect>
+<Effect name="melee_hit_mat_glass" delay="0.05">
+	<Sound name="mainsnd" >
+		<Name>sounds/physics:bullet_impact:mat_glass_thick</Name>
+	</Sound>
+	<Particle>
+		<Name>melee.hit_glass.hit</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="0.06" maxscale="0.1">
+			<Material>materials/decals/glass</Material>
+		</Decal>
+		<Decal minscale="0.06" maxscale="0.1">
+			<Material>materials/decals/glass_b</Material>
+		</Decal>
+	</RandEffect>
+</Effect>
+<Effect name="melee_hit_mat_metal" delay="0.05">
+	<Particle>
+		<Name>melee.hit_metal.hit</Name>
+	</Particle>
+	<Sound name="mainsnd">
+		<Name>sounds/physics:bullet_impact:mat_metal_thick</Name>
+	</Sound>
+</Effect>
+<Effect name="melee_hit_mat_sand" delay="0.05">
+	<Sound>
+		<Name>sounds/physics:bullet_impact:mat_sand</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name>melee.hit_sand.hit</Name>
+		</Particle>
+	</RandEffect>
+	<RandEffect>
+		<Decal minscale="0.05" maxscale="0.08">
+			<Filename>textures/decal/metal.dds</Filename>
+			<Material>materials/decals/terrain_soil</Material>
+		</Decal>
+	</RandEffect>
+</Effect>
+<Effect name="melee_hit_mat_snow" delay="0.05">
+	<Sound>
+		<Name>sounds/physics:bullet_impact:mat_snow</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name>melee.hit_snow.hit</Name>
+		</Particle>
+	</RandEffect>
+	<RandEffect>
+		<Decal minscale="0.1" maxscale="0.15">
+			<Filename>textures/decal/metal.dds</Filename>
+			<Material>materials/decals/snow_melt</Material>
+		</Decal>
+	</RandEffect>
+</Effect>
+<Effect name="melee_hit_mat_mud" delay="0.05">
+	<Sound name="mastersnd1" >
+		<Name>sounds/physics:bullet_impact:mat_dirt</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name>melee.hit_mud.hit</Name>
+		</Particle>
+	</RandEffect>
+	<RandEffect>
+		<Decal minscale="0.05" maxscale="0.1">
+			<Filename>textures/decal/metal.dds</Filename>
+			<Material>materials/decals/terrain_soil</Material>
+		</Decal>
+	</RandEffect>
+</Effect>
+<Effect name="melee_hit_mat_soil" delay="0.05">
+	<Sound name="mastersnd1" >
+		<Name>sounds/physics:bullet_impact:mat_dirt</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name>melee.hit_soil.hit</Name>
+		</Particle>
+	</RandEffect>
+	<RandEffect>
+		<Decal minscale="0.05" maxscale="0.1">
+			<Filename>textures/decal/metal.dds</Filename>
+			<Material>materials/decals/terrain_soil</Material>
+		</Decal>
+	</RandEffect>
+</Effect>
+<Effect name="melee_hit_mat_water" delay="0.05">
+	<RandEffect>
+		<Particle>
+			<Name>melee.hit_water.hit</Name>
+		</Particle>
+	</RandEffect>
+	<Sound>
+		<Name>sounds/physics:bullet_impact:mat_water_heavy</Name>
+	</Sound>
+	<FlowGraph name="water_bullet_hit" maxdist="2"/>
+</Effect>
+
+
+
+<Effect name="hit_mat_alien_floor" delay="0.05">
+	<Sound>
+		<Name>sounds/physics:bullet_impact:mat_alien_floor</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name>bullet.hit_alien.floor</Name>
+		</Particle>
+	</RandEffect>
+	<RandEffect>
+		<Decal minscale="0.1" maxscale="0.16">
+			<Filename>textures/decal/metal.dds</Filename>
+			<Material>materials/decals/alien_shell</Material>
+		</Decal>
+	</RandEffect>
+</Effect>
+<Effect name="hit_mat_alien_floor_shotgun" delay="0.05">
+	<RandEffect>
+		<Particle>
+			<Name>bullet.hit_alien.floor</Name>
+		</Particle>
+	</RandEffect>
+	<RandEffect>
+		<Decal minscale="0.1" maxscale="0.16">
+			<Filename>textures/decal/metal.dds</Filename>
+			<Material>materials/decals/alien_shell</Material>
+		</Decal>
+	</RandEffect>
+</Effect>
+
+<Effect name="hit_mat_alien_machine" delay="0.05">
+	<Sound>
+		<Name>sounds/physics:bullet_impact:mat_alien_machine</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name>bullet.hit_alien.machine</Name>
+		</Particle>
+	</RandEffect>
+	<RandEffect>
+		<Decal minscale="0.1" maxscale="0.16">
+			<Filename>textures/decal/metal.dds</Filename>
+			<Material>materials/decals/alien_shell</Material>
+		</Decal>
+	</RandEffect>
+</Effect>
+
+<Effect name="hit_mat_alien_glass" delay="0.05">
+	<Sound>
+		<Name>sounds/physics:bullet_impact:mat_alien_glass</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name>bullet.hit_alien.glass</Name>
+		</Particle>
+	</RandEffect>
+	<RandEffect>
+		<Decal minscale="0.1" maxscale="0.16">
+			<Filename>textures/decal/metal.dds</Filename>
+			<Material>materials/decals/alien_shell</Material>
+		</Decal>
+	</RandEffect>
+</Effect>
+
+<Effect name="hit_mat_alien_tentacle" delay="0.05">
+	<Sound>
+		<Name>sounds/physics:bullet_impact:mat_alien_tentacle</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name>bullet.hit_alien.tentacle</Name>
+		</Particle>
+	</RandEffect>
+	<RandEffect>
+		<Decal minscale="0.1" maxscale="0.16">
+			<Filename>textures/decal/metal.dds</Filename>
+			<Material>materials/decals/alien_shell</Material>
+		</Decal>
+	</RandEffect>
+</Effect>
+
+<Effect name="hit_mat_alien_forcefield_warrior" delay="0.05">
+	<Sound>
+		<Name>sounds/physics:bullet_impact:mat_alien_wall</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name>bullet.hit_alien.forcefield_warrior</Name>
+		</Particle>
+	</RandEffect>
+</Effect>
+<Effect name="hit_mat_alien_forcefield" delay="0.05">
+	<Sound>
+		<Name>sounds/physics:bullet_impact:mat_alien_wall</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name>bullet.hit_alien.forcefield</Name>
+		</Particle>
+	</RandEffect>
+</Effect>
+<Effect name="hit_mat_alien_forcefield_shotgun" delay="0.05">
+	<RandEffect>
+		<Particle>
+			<Name>bullet.hit_alien.forcefield</Name>
+		</Particle>
+	</RandEffect>
+</Effect>
+
+<Effect name="hit_mat_alien_wall" delay="0.05">
+	<Sound>
+		<Name>sounds/physics:bullet_impact:mat_alien_wall</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name>bullet.hit_alien.wall</Name>
+		</Particle>
+	</RandEffect>
+	<RandEffect>
+		<Decal minscale="0.1" maxscale="0.16">
+			<Filename>textures/decal/metal.dds</Filename>
+			<Material>materials/decals/alien_shell</Material>
+		</Decal>
+	</RandEffect>
+</Effect>
+
+<Effect name="hit_mat_rubber" delay="0.05">
+	<Sound>
+		<Name>sounds/physics:bullet_impact:mat_dull</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name>bullet.hit_rubber.a</Name>
+		</Particle>
+	</RandEffect>
+	<RandEffect>
+		<Decal minscale="0.04" maxscale="0.06">
+			<Material>materials/decals/ground</Material>
+		</Decal>
+	</RandEffect>
+</Effect>
+
+<Effect name="TAC_bullet" delay="0.05">
+	<Sound>
+		<Name>sounds/physics:bullet_impact:tac_bullet_impact</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name>bullet.hit_TAC.impact</Name>
+		</Particle>
+	</RandEffect>
+</Effect>
+
+<Effect name="hit_mat_paper" delay="0.05">
+	<Sound>
+		<Name>sounds/physics:bullet_impact:mat_dirt</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name>bullet.hit_paper.a</Name>
+		</Particle>
+	</RandEffect>
+	<RandEffect>
+		<Decal minscale="0.04" maxscale="0.06">
+			<Material>materials/decals/ground</Material>
+		</Decal>
+	</RandEffect>
+</Effect>
+<Effect name="hit_mat_cardboard" delay="0.05">
+	<Sound>
+		<Name>sounds/physics:bullet_impact:mat_dirt</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name>bullet.hit_paper.cardboard</Name>
+		</Particle>
+	</RandEffect>
+	<RandEffect>
+		<Decal minscale="0.04" maxscale="0.06">
+			<Material>materials/decals/ground</Material>
+		</Decal>
+	</RandEffect>
+</Effect>
+
+<Effect name="hit_mat_kevlar" delay="0.05">
+	<Sound>
+		<Name>sounds/physics:bullet_impact:mat_armor</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name minscale="0.4" maxscale="1.2" maxscaledist="50">bullet.hit_flesh.metala</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.4" maxscale="1.2" maxscaledist="50">bullet.hit_flesh.metalb</Name>
+		</Particle>
+	</RandEffect>
+	<RandEffect>
+		<Decal minscale="0.04" maxscale="0.06">
+			<Material>materials/decals/ground</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="blood_bullet_hit" maxdist="2"/>
+</Effect>
+<Effect name="hit_mat_kevlar_shotgun" delay="0.05">
+	<RandEffect>
+		<Particle>
+			<Name minscale="0.2" maxscale="0.8" maxscaledist="50">bullet.hit_flesh.metala</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.2" maxscale="0.8" maxscaledist="50">bullet.hit_flesh.metalb</Name>
+		</Particle>
+	</RandEffect>
+	<FlowGraph name="blood_bullet_hit" maxdist="2"/>
+</Effect>
+
+<Effect name="hit_tank30_concrete" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:cannon_explosion_small</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name>explosions.tank30.concrete</Name>
+		</Particle>
+		<Particle>
+			<Name>explosions.tank30.concrete</Name>
+		</Particle>
+		<Particle>
+			<Name>explosions.tank30.concrete_tracer</Name>
+		</Particle>
+		<Particle>
+			<Name>explosions.tank30.concrete_tracer_bounce</Name>
+		</Particle>
+	</RandEffect>
+	<RandEffect>
+		<Decal minscale="1.2" maxscale="1.5">
+		<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+</Effect>
+
+<Effect name="hit_tank30_metal" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:cannon_explosion_small</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name>explosions.tank30.metal</Name>
+		</Particle>
+		<Particle>
+			<Name>explosions.tank30.metal</Name>
+		</Particle>
+		<Particle>
+			<Name>explosions.tank30.metal_tracer</Name>
+		</Particle>
+	</RandEffect>
+		<Decal minscale="1.2" maxscale="1.5">
+		<Material>materials/decals/default_blast</Material>
+		</Decal>
+</Effect>
+
+<Effect name="hit_tank30_wood" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:cannon_explosion_small</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name>explosions.tank30.wood</Name>
+		</Particle>
+		<Particle>
+			<Name>explosions.tank30.wood</Name>
+		</Particle>
+		<Particle>
+			<Name>explosions.tank30.wood_tracer</Name>
+		</Particle>
+	</RandEffect>
+	<RandEffect>
+		<Decal minscale="1.2" maxscale="1.5">
+		<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+</Effect>
+
+<Effect name="hit_tank30_snow" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:cannon_explosion_small</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name>explosions.tank30.snow</Name>
+		</Particle>
+		<Particle>
+			<Name>explosions.tank30.snow</Name>
+		</Particle>
+		<Particle>
+			<Name>explosions.tank30.snow_tracer</Name>
+		</Particle>
+	</RandEffect>
+	<RandEffect>
+		<Decal minscale="1.2" maxscale="1.5">
+		<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+</Effect>
+
+<Effect name="hit_tank30_glass" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:cannon_explosion_small</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name>explosions.tank30.glass</Name>
+		</Particle>
+		<Particle>
+			<Name>explosions.tank30.glass</Name>
+		</Particle>
+		<Particle>
+			<Name>explosions.tank30.glass_tracer</Name>
+		</Particle>
+	</RandEffect>
+
+	<RandEffect>
+		<Decal minscale="0.2" maxscale="0.35">
+			<Material>materials/decals/glass</Material>
+		</Decal>
+		<Decal minscale="1.2" maxscale="1.5">
+		<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+</Effect>
+
+<Effect name="hit_tank30_leaves" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:cannon_explosion_small</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name>explosions.tank30.leaves</Name>
+		</Particle>
+		<Particle>
+			<Name>explosions.tank30.leaves</Name>
+		</Particle>
+		<Particle>
+			<Name>explosions.tank30.leaves_tracer</Name>
+		</Particle>
+	</RandEffect>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+</Effect>
+
+<Effect name="hit_tank30_flesh" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:cannon_explosion_small</Name>
+	</Sound>
+	<Particle>
+		<Name>explosions.tank30.flesh</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="1.2" maxscale="1.5" lifetime="5.0">
+			<Material>materials/decals/human_body</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+</Effect>
+
+<Effect name="hit_tank30_alien" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:cannon_explosion_small</Name>
+	</Sound>
+	<Particle>
+		<Name>explosions.tank30.alien</Name>
+	</Particle>
+</Effect>
+
+<Effect name="hit_tank30_alien_shell" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:cannon_explosion_small</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name>explosions.tank30.alien_shell</Name>
+		</Particle>
+		<Particle>
+			<Name>explosions.tank30.alien_shell</Name>
+		</Particle>
+		<Particle>
+			<Name>explosions.tank30.alien_shell_tracer</Name>
+		</Particle>
+	</RandEffect>
+	<Decal>
+		<Material>materials/decals/explosions/explosion_snow</Material>
+		<Scale>1.5</Scale>
+	</Decal>
+</Effect>
+
+<Effect name="hit_tank30_soil" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:cannon_explosion_small</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name>explosions.tank30.soil</Name>
+		</Particle>
+		<Particle>
+			<Name>explosions.tank30.soil</Name>
+		</Particle>
+		<Particle>
+			<Name>explosions.tank30.soil_tracer</Name>
+		</Particle>
+	</RandEffect>
+	<RandEffect>
+		<Decal minscale="1.2" maxscale="1.5">
+		<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+</Effect>
+
+<Effect name="hit_tank30_sand" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:cannon_explosion_small</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name>explosions.tank30.sand</Name>
+		</Particle>
+		<Particle>
+			<Name>explosions.tank30.sand</Name>
+		</Particle>
+		<Particle>
+			<Name>explosions.tank30.sand_tracer</Name>
+		</Particle>
+	</RandEffect>
+	<RandEffect>
+		<Decal minscale="1.2" maxscale="1.5">
+		<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+</Effect>
+
+<Effect name="hit_tank30_water" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:water_explosion_medium</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.6" maxscale="1.3" maxscaledist="80">explosions.Grenade_SCAR.water</Name>
+	</Particle>
+	<FlowGraph name="water_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="50"/>
+</Effect>
+
+
+<Effect name="nuke_explode">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:tac_explosion</Name>
+	</Sound>
+	<Particle>
+  		<Name maxdist="200">explosions.TAC.small_close_new</Name>
+  		<Name>explosions.TAC.small_new</Name>
+	</Particle>
+	<FlowGraph name="TAC_small" maxdist="5000"/>
+	<RandEffect>
+		<Decal minscale="3.2" maxscale="4.6" lifetime="5.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+</Effect>
+
+
+<Effect name="scout_singularity">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:singularity_explo_end</Name>
+	</Sound>
+	<Particle>
+  		<Name>Alien_Weapons.singularity.Scout_Singularity_Impact</Name>
+	</Particle>
+	<FlowGraph name="Scout_singularity" maxdist="30"/>
+</Effect>
+
+<Effect name="warrior_singularity">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:singularity_explo_end</Name>
+	</Sound>
+
+	<FlowGraph name="warrior_singularity" maxdist="300"/>
+</Effect>
+
+<Effect name="standard_singularity">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:singularity_explo_end</Name>
+	</Sound>
+	<Particle>
+  		<Name>Alien_Weapons.singularity.Tank_Singularity_Impact</Name>
+	</Particle>
+</Effect>
+
+
+
+<Effect name="hit_AA_air">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:explo_grenade</Name>
+	</Sound>
+	<Particle>
+		<Name>explosions.AA_flak.airburst</Name>
+	</Particle>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+</Effect>
+<Effect name="punch_impact" delay="0.05">
+	<Sound>
+		<Name>sounds/physics:bullet_impact:punch_impact</Name>
+	</Sound>
+	<Particle>
+		<Name>bullet.hit_punch.a</Name>
+	</Particle>
+</Effect>
+
+<Effect name="melee_impact" delay="0.05">
+	<Sound>
+		<Name>sounds/physics:bullet_impact:melee_impact_mw</Name>
+	</Sound>
+	<Particle>
+		<Name>bullet.hit_punch.a</Name>
+	</Particle>
+</Effect>
+
+<Effect name="grenade_underwater">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:water_explosion_small</Name>
+	</Sound>
+	<Particle>
+		<Name>explosions.Grenade_SCAR.underwater</Name>
+	</Particle>
+	<FlowGraph name="water_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="50"/>
+</Effect>
+
+<Effect name="grenade_explode_water">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:water_explosion_small</Name>
+	</Sound>
+	<Particle>
+		<Name>explosions.Grenade_SCAR.water</Name>
+	</Particle>
+	<FlowGraph name="water_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="50"/>
+</Effect>
+
+<Effect name="grenade_explode">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:grenade_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.6" maxscale="0.9" maxscaledist="100">explosions.Grenade_terrain.explosion</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="1.2" maxscale="1.6" lifetime="5.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="dirt_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="50"/>
+</Effect>
+<Effect name="grenade_explode_nodecal">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:grenade_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.6" maxscale="0.9" maxscaledist="100">explosions.Grenade_terrain.explosion</Name>
+	</Particle>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+
+
+<Effect name="claymore_explode">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:medium_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.7" maxscale="1" maxscaledist="20">explosions.mine.claymore</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="1.2" maxscale="1.6" lifetime="5.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="dirt_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="50"/>
+</Effect>
+
+<Effect name="flashbang_explode">
+	<Particle>
+		<Name minscale="0.8" maxscale="1" maxscaledist="20">explosions.flashbang.explode</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="1.2" maxscale="1.6" lifetime="5.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+</Effect>
+
+<Effect name="nanodisruptor_explode">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:empgrenade_explo</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.8" maxscale="1" maxscaledist="20">misc.emp.sphere</Name>
+	</Particle>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+</Effect>
+
+<Effect name="c4_explode">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:c4_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.8" maxscale="1" maxscaledist="20">explosions.C4_explosion.c4</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="1.2" maxscale="1.6" lifetime="5.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="50"/>
+</Effect>
+<Effect name="c4_explode_nodecal">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:c4_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.8" maxscale="1" maxscaledist="30">explosions.C4_explosion.c4</Name>
+	</Particle>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="50"/>
+</Effect>
+
+<Effect name="mine_explode">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:c4_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.8" maxscale="1" maxscaledist="20">explosions.C4_explosion.c4</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="1.2" maxscale="1.6" lifetime="5.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="50"/>
+</Effect>
+<Effect name="mine_explode_nodecal">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:c4_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.8" maxscale="1" maxscaledist="30">explosions.C4_explosion.c4</Name>
+	</Particle>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="50"/>
+</Effect>
+
+<Effect name="hit_mat_plastic" delay="0.05">
+	<Sound>
+		<Name>sounds/physics:bullet_impact:mat_log</Name>
+	</Sound>
+	<Particle>
+		<Name>bullet.hit_plastic.a</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="0.04" maxscale="0.06">
+			<Material>materials/decals/plastic</Material>
+		</Decal>
+	</RandEffect>
+</Effect>
+
+<Effect name="hit_mat_fabric" delay="0.05">
+	<Sound>
+		<Name>sounds/physics:bullet_impact:mat_dull</Name>
+	</Sound>
+	<Particle>
+		<Name>bullet.hit_fabric.a</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="0.04" maxscale="0.06">
+			<Material>materials/decals/ground</Material>
+		</Decal>
+	</RandEffect>
+</Effect>
+
+
+<Effect name="hit_mat_default" delay="0.05">
+
+
+</Effect>
+
+<Effect name="hit_mat_default_shotgun" delay="0.05">
+	<Particle>
+		<Name>bullet.hit_shotgun.a</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="0.04" maxscale="0.06">
+			<Material>materials/decals/ground</Material>
+		</Decal>
+	</RandEffect>
+</Effect>
+<Effect name="hit_mat_metal" delay="0.05">
+	<RandEffect>
+		<Particle>
+			<Name minscale="0.18" maxscale="2" maxscaledist="60">bullet.hit_metal.a</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.18" maxscale="2" maxscaledist="60">bullet.hit_metal.b</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.18" maxscale="2" maxscaledist="60">bullet.hit_metal.c</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.18" maxscale="2" maxscaledist="60">bullet.hit_metal.a</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.18" maxscale="2" maxscaledist="60">bullet.hit_metal.b</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.18" maxscale="2" maxscaledist="60">bullet.hit_metal.c</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.18" maxscale="2" maxscaledist="60">bullet.hit_metal.e</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.18" maxscale="2" maxscaledist="60">bullet.hit_metal.e</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.18" maxscale="2" maxscaledist="60">bullet.hit_metal.d</Name>
+		</Particle>
+	</RandEffect>
+	<RandEffect>
+		<Decal minscale="0.015" maxscale="0.03">
+			<Filename>textures/decal/metal.dds</Filename>
+			<Material>materials/decals/metal_tin</Material>
+		</Decal>
+
+	</RandEffect>
+	<Sound name="mainsnd">
+		<Name>sounds/physics:bullet_impact:mat_metal_thick</Name>
+	</Sound>
+</Effect>
+<Effect name="hit_mat_metal_shotgun" delay="0.05">
+	<RandEffect>
+		<Particle>
+			<Name minscale="0.12" maxscale="2" maxscaledist="60">bullet.hit_metal.a</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.12" maxscale="2" maxscaledist="60">bullet.hit_metal.b</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.12" maxscale="2" maxscaledist="60">bullet.hit_metal.c</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.12" maxscale="2" maxscaledist="60">bullet.hit_metal.a</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.12" maxscale="2" maxscaledist="60">bullet.hit_metal.b</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.12" maxscale="2" maxscaledist="60">bullet.hit_metal.c</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.12" maxscale="2" maxscaledist="60">bullet.hit_metal.e</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.12" maxscale="2" maxscaledist="60">bullet.hit_metal.e</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.12" maxscale="2" maxscaledist="60">bullet.hit_metal.d</Name>
+		</Particle>
+	</RandEffect>
+	<RandEffect>
+		<Decal minscale="0.015" maxscale="0.03">
+			<Filename>textures/decal/metal.dds</Filename>
+			<Material>materials/decals/metal_tin</Material>
+		</Decal>
+
+	</RandEffect>
+</Effect>
+
+<Effect name="hit_mat_alien_SCAR" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:explo_grenade</Name>
+	</Sound>
+	<Particle>
+		<Name>explosions.grenade_SCAR.alien</Name>
+	</Particle>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="50"/>
+</Effect>
+
+<Effect name="tank125_alien" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:cannon_explosion_big</Name>
+	</Sound>
+	<Particle>
+		<Name>explosions.rocket.alien</Name>
+	</Particle>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="200"/>
+</Effect>
+<Effect name="tank125_hunter" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:cannon_explosion_big</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.4" maxscale="0.7" maxscaledist="100">explosions.rocket.hunter</Name>
+	</Particle>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="200"/>
+</Effect>
+<Effect name="tank125_sand" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:cannon_explosion_big</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.4" maxscale="0.7" maxscaledist="100">explosions.rocket.sand</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="1.9" maxscale="2.6" lifetime="5.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="tank125_tree" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:cannon_explosion_big</Name>
+	</Sound>
+	<Particle>
+		<Name>explosions.rocket.tree</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="1.9" maxscale="2.6" lifetime="5.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="tank125_glass" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:cannon_explosion_big</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.4" maxscale="0.7" maxscaledist="200">explosions.rocket.glass</Name>
+	</Particle>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="tank125_cliff" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:cannon_explosion_big</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.4" maxscale="0.7" maxscaledist="200">explosions.rocket.cliff</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="1.9" maxscale="2.6" lifetime="5.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="dirt_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="tank125_concrete" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:cannon_explosion_big</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.4" maxscale="0.7" maxscaledist="200">explosions.rocket.concrete</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="1.9" maxscale="2.6" lifetime="5.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="dirt_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="tank125_metal" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:cannon_explosion_big</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.8" maxscale="1.2" maxscaledist="90">explosions.rocket.metal</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="1.9" maxscale="2.6" lifetime="5.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="tank125_nodecal" delay="0.05">
+	<Particle>
+		<Name minscale="0.8" maxscale="1.2" maxscaledist="90">explosions.rocket.metal</Name>
+	</Particle>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="tank125_grass" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:cannon_explosion_big</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name minscale="0.5" maxscale="0.7" maxscaledist="200">explosions.rocket.soil</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.5" maxscale="0.7" maxscaledist="200">explosions.rocket.soil_alt1</Name>
+		</Particle>
+	</RandEffect>
+	<RandEffect>
+		<Decal minscale="1.9" maxscale="2.6" lifetime="5.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="dirt_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="tank125_soil" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:cannon_explosion_big</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name minscale="0.5" maxscale="0.7" maxscaledist="200">explosions.rocket.soil</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.5" maxscale="0.7" maxscaledist="200">explosions.rocket.soil_alt1</Name>
+		</Particle>
+	</RandEffect>
+	<RandEffect>
+		<Decal minscale="1.9" maxscale="2.6" lifetime="5.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="dirt_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="tank125_default" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:cannon_explosion_big</Name>
+	</Sound>
+	<Particle>
+		<Name>explosions.rocket.generic</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="1.9" maxscale="2.6" lifetime="5.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+
+<Effect name="tank125_flesh" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:cannon_explosion_big</Name>
+	</Sound>
+	<Particle>
+		<Name>explosions.rocket.generic</Name>
+	</Particle>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+	<FlowGraph name="blood_bullet_hit" maxdist="2"/>
+</Effect>
+
+<Effect name="tank125_wood" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:cannon_explosion_big</Name>
+	</Sound>
+	<Particle>
+		<Name>explosions.rocket.wood</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="1.9" maxscale="2.6" lifetime="5.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="tank125_snow" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:cannon_explosion_big</Name>
+	</Sound>
+	<Particle>
+		<Name>explosions.rocket.snow</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="1.2" maxscale="1.3">
+			<Filename>textures/decal/metal.dds</Filename>
+			<Material>materials/decals/snow_melt</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="tank125_water" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:water_explosion_large</Name>
+	</Sound>
+	<Particle>
+		<Name>explosions.rocket.water</Name>
+	</Particle>
+	<FlowGraph name="water_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+
+<Effect name="hit_mat_alien_rocket" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:explo_rocket</Name>
+	</Sound>
+	<Particle>
+		<Name>explosions.rocket.alien</Name>
+	</Particle>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="200"/>
+</Effect>
+<Effect name="hit_mat_hunter_rocket" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:explo_rocket</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.4" maxscale="0.7" maxscaledist="100">explosions.rocket.hunter</Name>
+	</Particle>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="200"/>
+</Effect>
+<Effect name="hit_mat_sand_rocket" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:explo_rocket</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.4" maxscale="0.7" maxscaledist="100">explosions.rocket.sand</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="2.2" maxscale="2.9" lifetime="20.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="hit_mat_tree_rocket" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:explo_rocket</Name>
+	</Sound>
+	<Particle>
+		<Name>explosions.rocket.tree</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="2.2" maxscale="2.9" lifetime="20.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="hit_mat_glass_rocket" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:explo_rocket</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.4" maxscale="0.7" maxscaledist="200">explosions.rocket.glass</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="2.2" maxscale="2.9" lifetime="20.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="hit_mat_cliff_rocket" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:explo_rocket</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.4" maxscale="0.7" maxscaledist="200">explosions.rocket.cliff</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="2.2" maxscale="2.9" lifetime="20.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="dirt_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="hit_mat_concrete_rocket" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:explo_rocket</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.4" maxscale="0.7" maxscaledist="200">explosions.rocket.concrete</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="2.2" maxscale="2.9" lifetime="20.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="dirt_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="hit_mat_metal_rocket" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:explo_rocket</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.8" maxscale="1.2" maxscaledist="90">explosions.rocket.metal</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="2.2" maxscale="2.9" lifetime="20.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="hit_mat_metal_rocket_nd" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:explo_rocket</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.8" maxscale="1.2" maxscaledist="90">explosions.rocket.metal</Name>
+	</Particle>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="hit_mat_metal_sheet_rocket_nodecal" delay="0.05">
+	<Particle>
+		<Name minscale="0.8" maxscale="1.2" maxscaledist="90">explosions.rocket.metal</Name>
+	</Particle>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="hit_mat_grass_rocket" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:explo_rocket</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name minscale="0.5" maxscale="0.7" maxscaledist="200">explosions.rocket.soil</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.5" maxscale="0.7" maxscaledist="200">explosions.rocket.soil_alt1</Name>
+		</Particle>
+	</RandEffect>
+	<RandEffect>
+		<Decal minscale="2.2" maxscale="2.9" lifetime="20.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="dirt_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="hit_mat_soil_rocket" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:explo_rocket</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name minscale="0.5" maxscale="0.7" maxscaledist="200">explosions.rocket.soil</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.5" maxscale="0.7" maxscaledist="200">explosions.rocket.soil_alt1</Name>
+		</Particle>
+	</RandEffect>
+	<RandEffect>
+		<Decal minscale="2.2" maxscale="2.9" lifetime="20.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="dirt_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="hit_mat_default_rocket" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:explo_rocket</Name>
+	</Sound>
+	<Particle>
+		<Name>explosions.rocket.generic</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="1.9" maxscale="2.6" lifetime="5.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+
+<Effect name="hit_mat_flesh_rocket" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:explo_rocket</Name>
+	</Sound>
+	<Particle>
+		<Name>explosions.rocket.generic</Name>
+	</Particle>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+	<FlowGraph name="blood_bullet_hit" maxdist="2"/>
+</Effect>
+
+<Effect name="hit_mat_wood_rocket" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:explo_rocket</Name>
+	</Sound>
+	<Particle>
+		<Name>explosions.rocket.wood</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="1.9" maxscale="2.6" lifetime="5.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="hit_mat_snow_rocket" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:explo_rocket</Name>
+	</Sound>
+	<Particle>
+		<Name>explosions.rocket.snow</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="1.2" maxscale="1.3">
+			<Filename>textures/decal/metal.dds</Filename>
+			<Material>materials/decals/snow_melt</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="hit_mat_water_rocket" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:water_explosion_large</Name>
+	</Sound>
+	<Particle>
+		<Name>explosions.rocket.water</Name>
+	</Particle>
+	<FlowGraph name="water_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+
+<Effect name="hit_mat_metal_sheet_SCAR_nodecal" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:grenade_launcher_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.9" maxscale="1.3" maxscaledist="80">explosions.Grenade_SCAR.metal</Name>
+	</Particle>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="50"/>
+</Effect>
+<Effect name="hit_mat_sand_SCAR">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:grenade_launcher_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.95" maxscale="1.3" maxscaledist="80">explosions.Grenade_SCAR.sand</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="1.2" maxscale="1.6" lifetime="5.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="dirt_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="50"/>
+</Effect>
+<Effect name="hit_mat_tree_SCAR" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:grenade_launcher_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.95" maxscale="1.3" maxscaledist="80">explosions.Grenade_SCAR.tree</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="1.2" maxscale="1.6" lifetime="5.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="50"/>
+</Effect>
+<Effect name="hit_mat_glass_SCAR" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:grenade_launcher_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.95" maxscale="1.3" maxscaledist="80">explosions.Grenade_SCAR.glass</Name>
+	</Particle>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="50"/>
+</Effect>
+<Effect name="hit_mat_cliff_SCAR" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:grenade_launcher_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.95" maxscale="1.3" maxscaledist="80">explosions.Grenade_SCAR.cliff</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="1.2" maxscale="1.6" lifetime="5.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="50"/>
+</Effect>
+<Effect name="hit_mat_concrete_SCAR" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:grenade_launcher_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.95" maxscale="1.3" maxscaledist="80">explosions.Grenade_SCAR.concrete</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="1.2" maxscale="1.6" lifetime="5.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="50"/>
+</Effect>
+<Effect name="hit_mat_metal_SCAR" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:grenade_launcher_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.95" maxscale="1.3" maxscaledist="80">explosions.Grenade_SCAR.metal</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="1.2" maxscale="1.6" lifetime="5.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="50"/>
+</Effect>
+<Effect name="hit_mat_mud_SCAR" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:grenade_launcher_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.95" maxscale="1.3" maxscaledist="80">explosions.Grenade_SCAR.mud</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="1.2" maxscale="1.6" lifetime="5.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="dirt_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="50"/>
+</Effect>
+<Effect name="hit_mat_soil_SCAR" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:grenade_launcher_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.95" maxscale="1.3" maxscaledist="80">explosions.Grenade_SCAR.soil</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="1.2" maxscale="1.6" lifetime="5.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="dirt_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="50"/>
+</Effect>
+<Effect name="hit_mat_default_SCAR" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:grenade_launcher_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.95" maxscale="1.3" maxscaledist="80">explosions.Grenade_SCAR.explosion</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="1.2" maxscale="1.6" lifetime="5.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="50"/>
+</Effect>
+<Effect name="hit_mat_wood_SCAR" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:grenade_launcher_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.95" maxscale="1.3" maxscaledist="80">explosions.Grenade_SCAR.wood</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="1.2" maxscale="1.6" lifetime="5.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="50"/>
+</Effect>
+<Effect name="hit_mat_snow_SCAR" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:grenade_launcher_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.95" maxscale="1.3" maxscaledist="80">explosions.Grenade_SCAR.snow</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="1.2" maxscale="1.25">
+			<Filename>textures/decal/metal.dds</Filename>
+			<Material>materials/decals/snow_melt</Material>
+		</Decal>
+	</RandEffect>
+</Effect>
+<Effect name="hit_mat_water_SCAR" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:water_explosion_medium</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.75" maxscale="1.3" maxscaledist="80">explosions.Grenade_SCAR.water</Name>
+	</Particle>
+	<FlowGraph name="water_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="50"/>
+</Effect>
+<Effect name="hit_mat_character_SCAR" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:grenade_launcher_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.6" maxscale="1.3" maxscaledist="80">explosions.Grenade_SCAR.character</Name>
+	</Particle>
+</Effect>
+
+<Effect name="grenade_hit_mat_metal_sheet" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:grenade_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.9" maxscale="1.3" maxscaledist="80">explosions.Grenade_SCAR.metal</Name>
+	</Particle>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="50"/>
+</Effect>
+<Effect name="grenade_hit_mat_sand">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:grenade_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.95" maxscale="1.3" maxscaledist="80">explosions.Grenade_SCAR.sand</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="1.2" maxscale="1.6" lifetime="5.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="dirt_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="50"/>
+</Effect>
+<Effect name="grenade_hit_mat_tree" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:grenade_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.95" maxscale="1.3" maxscaledist="80">explosions.Grenade_SCAR.tree</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="1.2" maxscale="1.6" lifetime="5.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="50"/>
+</Effect>
+<Effect name="grenade_hit_mat_glass" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:grenade_launcher_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.95" maxscale="1.3" maxscaledist="80">explosions.Grenade_SCAR.glass</Name>
+	</Particle>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="50"/>
+</Effect>
+<Effect name="grenade_hit_mat_cliff" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:grenade_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.95" maxscale="1.3" maxscaledist="80">explosions.Grenade_SCAR.cliff</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="1.2" maxscale="1.6" lifetime="5.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="50"/>
+</Effect>
+<Effect name="grenade_hit_mat_concrete" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:grenade_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.95" maxscale="1.3" maxscaledist="80">explosions.Grenade_SCAR.concrete</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="1.2" maxscale="1.6" lifetime="5.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="50"/>
+</Effect>
+<Effect name="grenade_hit_mat_metal" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:grenade_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.95" maxscale="1.3" maxscaledist="80">explosions.Grenade_SCAR.metal</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="1.2" maxscale="1.6" lifetime="5.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="50"/>
+</Effect>
+<Effect name="grenade_hit_mat_mud" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:grenade_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.95" maxscale="1.3" maxscaledist="80">explosions.Grenade_SCAR.mud</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="1.2" maxscale="1.6" lifetime="5.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="dirt_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="50"/>
+</Effect>
+<Effect name="grenade_hit_mat_soil" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:grenade_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.95" maxscale="1.3" maxscaledist="80">explosions.Grenade_SCAR.soil</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="1.2" maxscale="1.6" lifetime="5.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="dirt_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="50"/>
+</Effect>
+<Effect name="grenade_hit_mat_default" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:grenade_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.95" maxscale="1.3" maxscaledist="80">explosions.Grenade_SCAR.metal</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="1.2" maxscale="1.6" lifetime="5.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="50"/>
+</Effect>
+<Effect name="grenade_hit_mat_wood" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:grenade_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.95" maxscale="1.3" maxscaledist="80">explosions.Grenade_SCAR.wood</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="1.2" maxscale="1.6" lifetime="5.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="50"/>
+</Effect>
+<Effect name="grenade_hit_mat_snow" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:grenade_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.95" maxscale="1.3" maxscaledist="80">explosions.Grenade_SCAR.snow</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="1.2" maxscale="1.25">
+			<Filename>textures/decal/metal.dds</Filename>
+			<Material>materials/decals/snow_melt</Material>
+		</Decal>
+	</RandEffect>
+</Effect>
+<Effect name="grenade_hit_mat_water" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:water_explosion_medium</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.75" maxscale="1.3" maxscaledist="80">explosions.Grenade_SCAR.water</Name>
+	</Particle>
+	<FlowGraph name="water_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="50"/>
+</Effect>
+<Effect name="grenade_hit_mat_character" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:grenade_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.6" maxscale="1.3" maxscaledist="80">explosions.Grenade_SCAR.character</Name>
+	</Particle>
+</Effect>
+
+<Effect name="tankaa_nodecal" delay="0.05">
+	<Sound>
+		<Name>sounds/physics:bullet_impact:mat_sand</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name minscale="1" maxscale="1.4" maxscaledist="100">bullet.hit_sand.a50</Name>
+		</Particle>
+	</RandEffect>
+	<FlowGraph name="dirt_explosion" maxdist="8"/>
+</Effect>
+<Effect name="tankaa_sand" delay="0.05">
+	<Sound>
+		<Name>sounds/physics:bullet_impact:mat_sand</Name>
+	</Sound>
+	<RandEffect>
+		<Decal minscale="0.06" maxscale="0.08">
+			<Material>materials/decals/sand_sea</Material>
+		</Decal>
+	</RandEffect>
+	<RandEffect>
+		<Particle>
+			<Name minscale="1" maxscale="1.4" maxscaledist="100">bullet.hit_sand.a50</Name>
+		</Particle>
+	</RandEffect>
+	<FlowGraph name="dirt_explosion" maxdist="8"/>
+</Effect>
+<Effect name="tankaa_tree" delay="0.05">
+	<Sound name="mainsnd" >
+		<Name>sounds/physics:bullet_impact:mat_wood_solid</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.6" maxscale="1.3" maxscaledist="80">bullet.hit_wood.a50_tree</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="0.4" maxscale="0.6">
+			<Filename>textures/decal/metal.dds</Filename>
+			<Material>materials/decals/wood_planks</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+</Effect>
+<Effect name="tankaa_glass" delay="0.05">
+	<Sound name="mainsnd" >
+		<Name>sounds/physics:bullet_impact:vehicle_window</Name>
+	</Sound>
+	<RandEffect>
+		<Decal minscale="0.2" maxscale="0.45">
+			<Material>materials/decals/glass</Material>
+		</Decal>
+		<Decal minscale="0.2" maxscale="0.45">
+			<Material>materials/decals/glass_b</Material>
+		</Decal>
+	</RandEffect>
+	<RandEffect>
+		<Particle>
+			<Name minscale="1" maxscale="1.3" maxscaledist="100">bullet.hit_glass.a50</Name>
+		</Particle>
+	</RandEffect>
+</Effect>
+<Effect name="tankaa_rock" delay="0.05">
+	<Sound>
+		<Name>sounds/physics:bullet_impact:mat_concrete_50cal</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name minscale="1" maxscale="1.3" maxscaledist="100">bullet.hit_concrete.a50</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="1" maxscale="1.3" maxscaledist="100">bullet.hit_concrete.b50</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="1" maxscale="1.3" maxscaledist="100">bullet.hit_concrete.c50</Name>
+		</Particle>
+	</RandEffect>
+	<RandEffect>
+		<Decal minscale="0.4" maxscale="0.6">
+			<Filename>textures/decal/metal.dds</Filename>
+			<Material>materials/decals/rock_sandy</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+</Effect>
+<Effect name="tankaa_concrete" delay="0.05">
+	<Sound>
+		<Name>sounds/physics:bullet_impact:mat_concrete_50cal</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name minscale="1" maxscale="1.3" maxscaledist="100">bullet.hit_concrete.a50</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="1" maxscale="1.3" maxscaledist="100">bullet.hit_concrete.b50</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="1" maxscale="1.3" maxscaledist="100">bullet.hit_concrete.c50</Name>
+		</Particle>
+	</RandEffect>
+	<RandEffect>
+		<Decal minscale="0.4" maxscale="0.6">
+			<Filename>textures/decal/metal.dds</Filename>
+			<Material>materials/decals/rock_sandy</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+</Effect>
+<Effect name="tankaa_alienshell" delay="0.05">
+	<Sound name="mainsnd">
+		<Name>sounds/physics:bullet_impact:mat_metal_sheet</Name>
+	</Sound>
+	<RandEffect name="particles1">
+		<Particle>
+			<Name minscale="1.4" maxscale="1.7" maxscaledist="100">bullet.hit_metal.a50_alien</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="1.4" maxscale="1.7" maxscaledist="100">bullet.hit_metal.a50_alien</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="1.4" maxscale="1.7" maxscaledist="100">bullet.hit_metal.b50_alien</Name>
+		</Particle>
+	</RandEffect>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+</Effect>
+<Effect name="tankaa_metal" delay="0.05">
+	<Sound name="mainsnd">
+		<Name>sounds/physics:bullet_impact:mat_metal_sheet</Name>
+	</Sound>
+	<RandEffect name="particles1">
+		<Particle>
+			<Name minscale="1.4" maxscale="1.7" maxscaledist="100">bullet.hit_metal.a50</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="1.4" maxscale="1.7" maxscaledist="100">bullet.hit_metal.a50</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="1.4" maxscale="1.7" maxscaledist="100">bullet.hit_metal.b50</Name>
+		</Particle>
+	</RandEffect>
+	<RandEffect>
+		<Decal minscale="0.016" maxscale="0.03">
+			<Filename>textures/decal/metal.dds</Filename>
+			<Material>materials/decals/metal_tin</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+</Effect>
+<Effect name="tankaa_mud" delay="0.05">
+	<Sound>
+		<Name>sounds/physics:bullet_impact:mat_dirt_50cal</Name>
+	</Sound>
+	<RandEffect>
+		<Decal minscale="0.05" maxscale="0.1">
+			<Filename>textures/decal/metal.dds</Filename>
+			<Material>materials/decals/terrain_soil</Material>
+		</Decal>
+	</RandEffect>
+	<RandEffect name="particles1">
+		<Particle>
+			<Name minscale="1" maxscale="1.3" maxscaledist="100">bullet.hit_mud.a50</Name>
+		</Particle>
+	</RandEffect>
+	<FlowGraph name="dirt_explosion" maxdist="8"/>
+</Effect>
+<Effect name="tankaa_soil" delay="0.05">
+	<Sound>
+		<Name>sounds/physics:bullet_impact:mat_dirt_50cal</Name>
+	</Sound>
+	<RandEffect>
+		<Decal minscale="0.08" maxscale="0.15">
+			<Filename>textures/decal/metal.dds</Filename>
+			<Material>materials/decals/terrain_soil</Material>
+		</Decal>
+	</RandEffect>
+	<RandEffect name="particles1">
+		<Particle>
+			<Name minscale="1" maxscale="1.3" maxscaledist="100">bullet.hit_soil.a50</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="1" maxscale="1.3" maxscaledist="100">bullet.hit_soil.b50</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="1" maxscale="1.3" maxscaledist="100">bullet.hit_soil.c50</Name>
+		</Particle>
+	</RandEffect>
+	<FlowGraph name="dirt_explosion" maxdist="8"/>
+</Effect>
+<Effect name="tankaa_default" delay="0.05">
+	<Sound>
+		<Name>sounds/physics:bullet_impact:mat_dirt_50cal</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.6" maxscale="1.3" maxscaledist="80">bullet.hit_default.a50</Name>
+	</Particle>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+</Effect>
+<Effect name="tankaa_wood" delay="0.05">
+	<Sound name="mainsnd" >
+		<Name>sounds/physics:bullet_impact:mat_wood_solid</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.6" maxscale="1.3" maxscaledist="80">bullet.hit_wood.a50</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="0.4" maxscale="0.6">
+			<Filename>textures/decal/metal.dds</Filename>
+			<Material>materials/decals/wood_planks</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+</Effect>
+<Effect name="tankaa_snow" delay="0.05">
+	<Sound>
+		<Name>sounds/physics:bullet_impact:mat_snow</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.6" maxscale="1.3" maxscaledist="80">bullet.hit_snow.a50</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="0.4" maxscale="0.6">
+			<Filename>textures/decal/metal.dds</Filename>
+			<Material>materials/decals/snow_melt</Material>
+		</Decal>
+	</RandEffect>
+</Effect>
+<Effect name="tankaa_water" delay="0.05">
+	<Sound>
+		<Name>sounds/physics:bullet_impact:mat_water_heavy</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.6" maxscale="1.0" maxscaledist="80">explosions.Grenade_SCAR.water</Name>
+	</Particle>
+	<FlowGraph name="water_explosion" maxdist="8"/>
+</Effect>
+<Effect name="tankaa_flesh" delay="0.05">
+	<Sound>
+		<Name>sounds/physics:bullet_impact:mat_flesh</Name>
+	</Sound>
+	<RandEffect>
+		<Decal minscale="0.05" maxscale="0.1" lifetime="5.0">
+			<Filename>textures/decal/metal.dds</Filename>
+			<Material>materials/decals/human_body</Material>
+		</Decal>
+	</RandEffect>
+	<RandEffect>
+		<Particle>
+			<Name minscale="0.45" maxscale="0.65" maxscaledist="70">bullet.hit_flesh.a</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.45" maxscale="0.65" maxscaledist="70">bullet.hit_flesh.b</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.45" maxscale="0.65" maxscaledist="70">bullet.hit_flesh.c</Name>
+		</Particle>
+	</RandEffect>
+	<FlowGraph name="blood_bullet_hit" maxdist="2"/>
+</Effect>
+
+<Effect name="hit_mat_metal" delay="0.05">
+	<Sound name="mainsnd" >
+		<Name>sounds/physics:bullet_impact:mat_metal_sheet</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name minscale="0.18" maxscale="2" maxscaledist="60">bullet.hit_metal.a</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.18" maxscale="2" maxscaledist="60">bullet.hit_metal.b</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.18" maxscale="2" maxscaledist="60">bullet.hit_metal.c</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.18" maxscale="2" maxscaledist="60">bullet.hit_metal.a</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.18" maxscale="2" maxscaledist="60">bullet.hit_metal.b</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.18" maxscale="2" maxscaledist="60">bullet.hit_metal.c</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.18" maxscale="2" maxscaledist="60">bullet.hit_metal.e</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.18" maxscale="2" maxscaledist="60">bullet.hit_metal.e</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.18" maxscale="2" maxscaledist="60">bullet.hit_metal.d</Name>
+		</Particle>
+	</RandEffect>
+	<RandEffect>
+		<Decal minscale="0.015" maxscale="0.03">
+			<Filename>textures/decal/metal.dds</Filename>
+			<Material>materials/decals/metal_tin</Material>
+		</Decal>
+	</RandEffect>
+</Effect>
+<Effect name="hit_mat_metal_pipe" delay="0.05">
+	<Sound name="mainsnd" >
+		<Name>sounds/physics:bullet_impact:mat_metal_pipe</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name minscale="0.18" maxscale="2" maxscaledist="60">bullet.hit_metal.a</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.18" maxscale="2" maxscaledist="60">bullet.hit_metal.b</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.18" maxscale="2" maxscaledist="60">bullet.hit_metal.c</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.18" maxscale="2" maxscaledist="60">bullet.hit_metal.a</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.18" maxscale="2" maxscaledist="60">bullet.hit_metal.b</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.18" maxscale="2" maxscaledist="60">bullet.hit_metal.c</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.18" maxscale="2" maxscaledist="60">bullet.hit_metal.e</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.18" maxscale="2" maxscaledist="60">bullet.hit_metal.e</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.18" maxscale="2" maxscaledist="60">bullet.hit_metal.d</Name>
+		</Particle>
+	</RandEffect>
+	<RandEffect>
+		<Decal minscale="0.015" maxscale="0.03">
+			<Filename>textures/decal/metal.dds</Filename>
+			<Material>materials/decals/metal_tin</Material>
+		</Decal>
+	</RandEffect>
+</Effect>
+<Effect name="hit_mat_metal_grate" delay="0.05">
+	<Sound name="mainsnd" >
+		<Name>sounds/physics:bullet_impact:mat_metal_grate</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name minscale="0.18" maxscale="2" maxscaledist="60">bullet.hit_metal.a</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.18" maxscale="2" maxscaledist="60">bullet.hit_metal.b</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.18" maxscale="2" maxscaledist="60">bullet.hit_metal.c</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.18" maxscale="2" maxscaledist="60">bullet.hit_metal.a</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.18" maxscale="2" maxscaledist="60">bullet.hit_metal.b</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.18" maxscale="2" maxscaledist="60">bullet.hit_metal.c</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.18" maxscale="2" maxscaledist="60">bullet.hit_metal.e</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.18" maxscale="2" maxscaledist="60">bullet.hit_metal.e</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.18" maxscale="2" maxscaledist="60">bullet.hit_metal.d</Name>
+		</Particle>
+	</RandEffect>
+	<RandEffect>
+		<Decal minscale="0.015" maxscale="0.03">
+			<Filename>textures/decal/metal.dds</Filename>
+			<Material>materials/decals/metal_tin</Material>
+		</Decal>
+	</RandEffect>
+</Effect>
+<Effect name="hit_mat_metal_chainlink" delay="0.05">
+	<Sound name="mainsnd" >
+		<Name>sounds/physics:bullet_impact:mat_metal_chainlink</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name minscale="0.18" maxscale="2" maxscaledist="60">bullet.hit_metal.a</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.18" maxscale="2" maxscaledist="60">bullet.hit_metal.b</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.18" maxscale="2" maxscaledist="60">bullet.hit_metal.c</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.18" maxscale="2" maxscaledist="60">bullet.hit_metal.a</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.18" maxscale="2" maxscaledist="60">bullet.hit_metal.b</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.18" maxscale="2" maxscaledist="60">bullet.hit_metal.c</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.18" maxscale="2" maxscaledist="60">bullet.hit_metal.e</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.18" maxscale="2" maxscaledist="60">bullet.hit_metal.e</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.18" maxscale="2" maxscaledist="60">bullet.hit_metal.d</Name>
+		</Particle>
+	</RandEffect>
+</Effect>
+
+<Effect name="hit_mat_metal_sheet" delay="0.05">
+	<Sound name="mainsnd">
+		<Name>sounds/physics:bullet_impact:mat_metal_sheet</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name minscale="0.18" maxscale="2" maxscaledist="60">bullet.hit_metal.a</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.18" maxscale="2" maxscaledist="60">bullet.hit_metal.b</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.18" maxscale="2" maxscaledist="60">bullet.hit_metal.c</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.18" maxscale="2" maxscaledist="60">bullet.hit_metal.a</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.18" maxscale="2" maxscaledist="60">bullet.hit_metal.b</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.18" maxscale="2" maxscaledist="60">bullet.hit_metal.c</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.18" maxscale="2" maxscaledist="60">bullet.hit_metal.e</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.18" maxscale="2" maxscaledist="60">bullet.hit_metal.e</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.18" maxscale="2" maxscaledist="60">bullet.hit_metal.d</Name>
+		</Particle>
+	</RandEffect>
+	<RandEffect>
+		<Decal minscale="0.015" maxscale="0.03">
+			<Filename>textures/decal/metal.dds</Filename>
+			<Material>materials/decals/metal_tin</Material>
+		</Decal>
+	</RandEffect>
+</Effect>
+
+
+<Effect name="hit_mat_glass" delay="0.05">
+	<Sound name="mainsnd" >
+		<Name>sounds/physics:bullet_impact:mat_glass_thick</Name>
+	</Sound>
+	<RandEffect>
+		<Decal minscale="0.08" maxscale="0.13">
+			<Material>materials/decals/glass</Material>
+		</Decal>
+		<Decal minscale="0.08" maxscale="0.13">
+			<Material>materials/decals/glass_b</Material>
+		</Decal>
+	</RandEffect>
+	<Particle>
+		<Name>bullet.hit_glass.a</Name>
+	</Particle>
+</Effect>
+<Effect name="hit_mat_glass_shotgun" delay="0.05">
+	<RandEffect>
+		<Decal minscale="0.08" maxscale="0.13">
+			<Material>materials/decals/glass</Material>
+		</Decal>
+		<Decal minscale="0.08" maxscale="0.13">
+			<Material>materials/decals/glass_b</Material>
+		</Decal>
+	</RandEffect>
+	<Particle>
+		<Name>bullet.hit_glass.a</Name>
+	</Particle>
+</Effect>
+
+<Effect name="hit_mat_glass_unbreakable" delay="0.05">
+	<Sound name="mainsnd" >
+		<Name>sounds/physics:bullet_impact:mat_glass_unbreakable</Name>
+	</Sound>
+	<RandEffect>
+		<Decal minscale="0.08" maxscale="0.13">
+			<Material>materials/decals/glass</Material>
+		</Decal>
+		<Decal minscale="0.08" maxscale="0.13">
+			<Material>materials/decals/glass_b</Material>
+		</Decal>
+	</RandEffect>
+	<Particle>
+		<Name>bullet.hit_glass.a</Name>
+	</Particle>
+</Effect>
+
+<Effect name="hit_mat_glass_vehicle" delay="0.05">
+	<Sound name="mainsnd" >
+		<Name>sounds/physics:bullet_impact:vehicle_window</Name>
+	</Sound>
+	<RandEffect>
+		<Decal minscale="0.08" maxscale="0.13">
+			<Material>materials/decals/glass</Material>
+		</Decal>
+		<Decal minscale="0.08" maxscale="0.13">
+			<Material>materials/decals/glass_b</Material>
+		</Decal>
+	</RandEffect>
+	<Particle>
+		<Name>bullet.hit_glass.a</Name>
+	</Particle>
+</Effect>
+
+<Effect name="hit_mat_turtle" delay="0.05">
+	<Sound name="mastersnd1" >
+		<Name>sounds/physics:bullet_impact:mat_gravel</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.3" maxscaledist="80">bullet.hit_turtle.a</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.3" maxscaledist="80">bullet.hit_turtle.b</Name>
+		</Particle>
+	</RandEffect>
+	<FlowGraph name="dirt_bullet_hit" maxdist="2"/>
+</Effect>
+
+<Effect name="hit_mat_rock" delay="0.05">
+	<Sound name="mastersnd1" >
+		<Name>sounds/physics:bullet_impact:mat_gravel</Name>
+	</Sound>
+	<RandEffect>
+		<Decal minscale="0.1" maxscale="0.2">
+			<Filename>textures/decal/metal.dds</Filename>
+			<Material>materials/decals/rock_hard</Material>
+		</Decal>
+	</RandEffect>
+	<RandEffect>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.3" maxscaledist="80">bullet.hit_rock.a</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.3" maxscaledist="80">bullet.hit_rock.b</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.3" maxscaledist="80">bullet.hit_rock.c</Name>
+		</Particle>
+	</RandEffect>
+	<FlowGraph name="dirt_bullet_hit" maxdist="2"/>
+</Effect>
+
+<Effect name="hit_mat_rock_dusty" delay="0.05">
+	<Sound name="mastersnd1" >
+		<Name>sounds/physics:bullet_impact:mat_gravel</Name>
+	</Sound>
+	<RandEffect>
+		<Decal minscale="0.1" maxscale="0.2">
+			<Filename>textures/decal/metal.dds</Filename>
+			<Material>materials/decals/rock_sandy</Material>
+		</Decal>
+	</RandEffect>
+	<RandEffect>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="40">bullet.hit_rock.a_dusty</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="40">bullet.hit_rock.b_dusty</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="40">bullet.hit_rock.c_dusty</Name>
+		</Particle>
+	</RandEffect>
+	<FlowGraph name="dirt_bullet_hit" maxdist="2"/>
+</Effect>
+
+
+<Effect name="hit_mat_fruit" delay="0.05">
+	<Sound>
+		<Name>sounds/physics:bullet_impact:mat_flesh</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name minscale="0.45" maxscale="1.2" maxscaledist="200">bullet.hit_wood.fruit</Name>
+		</Particle>
+	</RandEffect>
+	<RandEffect>
+		<Decal minscale="0.02" maxscale="0.05" lifetime="5.0">
+			<Material>materials/decals/fruit</Material>
+		</Decal>
+	</RandEffect>
+</Effect>
+
+<Effect name="hit_mat_wood" delay="0.05">
+	<Sound name="mainsnd" >
+		<Name>sounds/physics:bullet_impact:mat_wood_solid</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name minscale="0.45" maxscale="1.2" maxscaledist="200">bullet.hit_wood.a</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.45" maxscale="1.2" maxscaledist="200">bullet.hit_wood.b</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.45" maxscale="1.2" maxscaledist="200">bullet.hit_wood.c</Name>
+		</Particle>
+	</RandEffect>
+	<RandEffect>
+		<Decal minscale="0.07" maxscale="0.12">
+			<Filename>textures/decal/metal.dds</Filename>
+			<Material>materials/decals/wood_planks</Material>
+		</Decal>
+	</RandEffect>
+</Effect>
+<Effect name="hit_mat_wood_shotgun" delay="0.05">
+	<RandEffect>
+		<Particle>
+			<Name minscale="0.35" maxscale="1.2" maxscaledist="200">bullet.hit_wood.a</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.35" maxscale="1.2" maxscaledist="200">bullet.hit_wood.b</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.35" maxscale="1.2" maxscaledist="200">bullet.hit_wood.c</Name>
+		</Particle>
+	</RandEffect>
+	<RandEffect>
+		<Decal minscale="0.04" maxscale="0.09">
+			<Filename>textures/decal/metal.dds</Filename>
+			<Material>materials/decals/wood_planks</Material>
+		</Decal>
+	</RandEffect>
+</Effect>
+
+<Effect name="hit_mat_wood_dusty" delay="0.05">
+	<Sound name="mainsnd" >
+		<Name>sounds/physics:bullet_impact:mat_wood_solid</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="200">bullet.hit_wood.a_dusty</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="200">bullet.hit_wood.b_dusty</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="200">bullet.hit_wood.c_dusty</Name>
+		</Particle>
+	</RandEffect>
+	<RandEffect>
+		<Decal minscale="0.07" maxscale="0.12">
+			<Filename>textures/decal/metal.dds</Filename>
+			<Material>materials/decals/wood_planks</Material>
+		</Decal>
+	</RandEffect>
+</Effect>
+
+<Effect name="hit_mat_wood_hollow" delay="0.05">
+	<Sound name="mainsnd" >
+		<Name>sounds/physics:bullet_impact:mat_wood_hollow</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name minscale="0.45" maxscale="1.2" maxscaledist="200">bullet.hit_wood.a</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.45" maxscale="1.2" maxscaledist="200">bullet.hit_wood.b</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.45" maxscale="1.2" maxscaledist="200">bullet.hit_wood.c</Name>
+		</Particle>
+	</RandEffect>
+	<RandEffect>
+		<Decal minscale="0.07" maxscale="0.12">
+			<Filename>textures/decal/metal.dds</Filename>
+			<Material>materials/decals/wood_planks</Material>
+		</Decal>
+	</RandEffect>
+</Effect>
+
+<Effect name="hit_mat_wood_breakable" delay="0.05">
+	<Sound name="mainsnd" >
+		<Name>sounds/physics:bullet_impact:mat_wood_hollow</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name minscale="0.5" maxscale="1.2" maxscaledist="200">bullet.hit_wood.a</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.5" maxscale="1.2" maxscaledist="200">bullet.hit_wood.b</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.5" maxscale="1.2" maxscaledist="200">bullet.hit_wood.c</Name>
+		</Particle>
+	</RandEffect>
+	<RandEffect>
+		<Decal minscale="0.07" maxscale="0.12">
+			<Filename>textures/decal/metal.dds</Filename>
+			<Material>materials/decals/wood_planks</Material>
+		</Decal>
+	</RandEffect>
+</Effect>
+
+<Effect name="hit_mat_snow" delay="0.05">
+	<Sound>
+		<Name>sounds/physics:bullet_impact:mat_snow</Name>
+	</Sound>
+	<RandEffect>
+		<Decal minscale="0.1" maxscale="0.15">
+			<Filename>textures/decal/metal.dds</Filename>
+			<Material>materials/decals/snow_melt</Material>
+		</Decal>
+	</RandEffect>
+	<RandEffect>
+		<Particle>
+			<Name minscale="0.5" maxscale="1.2" maxscaledist="200">bullet.hit_snow.a</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.5" maxscale="1.2" maxscaledist="200">bullet.hit_snow.b</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.5" maxscale="1.2" maxscaledist="200">bullet.hit_snow.c</Name>
+		</Particle>
+	</RandEffect>
+</Effect>
+<Effect name="hit_mat_snow_shotgun" delay="0.05">
+	<RandEffect>
+		<Decal minscale="0.06" maxscale="0.1">
+			<Filename>textures/decal/metal.dds</Filename>
+			<Material>materials/decals/snow_melt</Material>
+		</Decal>
+	</RandEffect>
+	<RandEffect>
+		<Particle>
+			<Name minscale="0.3" maxscale="1.2" maxscaledist="200">bullet.hit_snow.a</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.3" maxscale="1.2" maxscaledist="200">bullet.hit_snow.b</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.3" maxscale="1.2" maxscaledist="200">bullet.hit_snow.c</Name>
+		</Particle>
+	</RandEffect>
+</Effect>
+
+<Effect name="hit_mat_ice" delay="0.05">
+	<Sound>
+		<Name>sounds/physics:bullet_impact:mat_ice</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name minscale="0.5" maxscale="1.2" maxscaledist="200">bullet.hit_ice_shatter.a</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.5" maxscale="1.2" maxscaledist="200">bullet.hit_ice_shatter.b</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.5" maxscale="1.2" maxscaledist="200">bullet.hit_ice_shatter.c</Name>
+		</Particle>
+	</RandEffect>
+	<RandEffect>
+		<Decal minscale="0.06" maxscale="0.2">
+			<Filename>textures/decal/metal.dds</Filename>
+			<Material>materials/decals/ice</Material>
+		</Decal>
+	</RandEffect>
+</Effect>
+
+<Effect name="hit_mat_water" delay="0.05">
+	<RandEffect>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="200">bullet.hit_water.a</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="200">bullet.hit_water.b</Name>
+		</Particle>
+	</RandEffect>
+	<Sound>
+		<Name>sounds/physics:bullet_impact:mat_water_heavy</Name>
+	</Sound>
+	<FlowGraph name="water_bullet_hit" maxdist="2"/>
+</Effect>
+<Effect name="hit_mat_water_muddy" delay="0.05">
+	<RandEffect>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="200">bullet.hit_water.a_muddy</Name>
+		</Particle>
+
+	</RandEffect>
+	<Sound>
+		<Name>sounds/physics:bullet_impact:mat_water_heavy</Name>
+	</Sound>
+	<FlowGraph name="water_bullet_hit" maxdist="2"/>
+</Effect>
+
+<Effect name="hit_mat_water_shotgun" delay="0.05">
+	<RandEffect>
+		<Particle>
+			<Name minscale="0.3" maxscale="1.2" maxscaledist="200">bullet.hit_water.a</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.3" maxscale="1.2" maxscaledist="200">bullet.hit_water.b</Name>
+		</Particle>
+	</RandEffect>
+	<FlowGraph name="water_bullet_hit" maxdist="2"/>
+</Effect>
+
+<Effect name="hit_mat_wet" delay="0.05">
+	<Sound>
+		<Name>sounds/physics:bullet_impact:mat_concrete</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="200">bullet.hit_water.a</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="200">bullet.hit_water.b</Name>
+		</Particle>
+	</RandEffect>
+	<FlowGraph name="water_bullet_hit" maxdist="2"/>
+</Effect>
+
+<Effect name="hit_mat_mud" delay="0.05">
+	<Sound>
+		<Name>sounds/physics:bullet_impact:mat_mud</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.6" maxscale="1.2" maxscaledist="50">bullet.hit_mud.a</Name>
+	</Particle>
+	<FlowGraph name="dirt_bullet_hit" maxdist="2"/>
+	<RandEffect>
+		<Decal minscale="0.04" maxscale="0.06">
+			<Material>materials/decals/ground</Material>
+		</Decal>
+	</RandEffect>
+</Effect>
+
+<Effect name="hit_mat_tile" delay="0.05">
+	<Sound>
+		<Name>sounds/physics:bullet_impact:mat_concrete</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="80">bullet.hit_concrete.a</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="80">bullet.hit_concrete.b</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="80">bullet.hit_concrete.c</Name>
+		</Particle>
+	</RandEffect>
+	<RandEffect>
+		<Decal minscale="0.06" maxscale="0.16">
+			<Filename>textures/decal/metal.dds</Filename>
+			<Material>materials/decals/rock_hard</Material>
+		</Decal>
+	</RandEffect>
+</Effect>
+<Effect name="hit_mat_asphalt" delay="0.05">
+	<Sound>
+		<Name>sounds/physics:bullet_impact:mat_concrete</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="80">bullet.hit_concrete.a</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="80">bullet.hit_concrete.b</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="80">bullet.hit_concrete.c</Name>
+		</Particle>
+	</RandEffect>
+	<RandEffect>
+		<Decal minscale="0.05" maxscale="0.12">
+			<Filename>textures/decal/metal.dds</Filename>
+			<Material>materials/decals/road_asphalt</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="dirt_bullet_hit" maxdist="2"/>
+</Effect>
+<Effect name="hit_mat_concrete" delay="0.05">
+	<Sound>
+		<Name>sounds/physics:bullet_impact:mat_concrete</Name>
+	</Sound>
+	<RandEffect>
+
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="80">bullet.hit_concrete.a</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="80">bullet.hit_concrete.b</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="80">bullet.hit_concrete.c</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="80">bullet.hit_concrete.a</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="80">bullet.hit_concrete.b</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="80">bullet.hit_concrete.c</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="80">bullet.hit_concrete.d</Name>
+		</Particle>
+	</RandEffect>
+	<RandEffect>
+		<Decal minscale="0.05" maxscale="0.09">
+			<Filename>textures/decal/metal.dds</Filename>
+			<Material>materials/decals/concrete_plain</Material>
+		</Decal>
+		<Decal minscale="0.05" maxscale="0.09">
+			<Filename>textures/decal/metal.dds</Filename>
+			<Material>materials/decals/rock_sandy</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="dirt_bullet_hit" maxdist="2"/>
+</Effect>
+<Effect name="hit_mat_concrete_shotgun" delay="0.05">
+	<RandEffect>
+
+		<Particle>
+			<Name minscale="0.3" maxscale="1.0" maxscaledist="80">bullet.hit_concrete.a</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.3" maxscale="1.0" maxscaledist="80">bullet.hit_concrete.b</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.3" maxscale="1.0" maxscaledist="80">bullet.hit_concrete.c</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.3" maxscale="1.0" maxscaledist="80">bullet.hit_concrete.a</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.3" maxscale="1.0" maxscaledist="80">bullet.hit_concrete.b</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.3" maxscale="1.0" maxscaledist="80">bullet.hit_concrete.c</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.3" maxscale="1.0" maxscaledist="80">bullet.hit_concrete.d</Name>
+		</Particle>
+	</RandEffect>
+	<RandEffect>
+		<Decal minscale="0.02" maxscale="0.04">
+			<Filename>textures/decal/metal.dds</Filename>
+			<Material>materials/decals/concrete_plain</Material>
+		</Decal>
+		<Decal minscale="0.02" maxscale="0.04">
+			<Filename>textures/decal/metal.dds</Filename>
+			<Material>materials/decals/rock_sandy</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="dirt_bullet_hit" maxdist="2"/>
+</Effect>
+
+<Effect name="hit_mat_gravel" delay="0.05">
+	<Sound name="mastersnd1" >
+		<Name>sounds/physics:bullet_impact:mat_gravel</Name>
+	</Sound>
+	<RandEffect>
+		<Decal minscale="0.06" maxscale="0.12">
+			<Material>materials/decals/road_asphalt</Material>
+		</Decal>
+	</RandEffect>
+	<RandEffect>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="80">bullet.hit_pebble.a</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="80">bullet.hit_pebble.b</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="80">bullet.hit_pebble.c</Name>
+		</Particle>
+	</RandEffect>
+</Effect>
+
+<Effect name="hit_mat_soil" delay="0.05">
+	<Sound name="mastersnd1" >
+		<Name>sounds/physics:bullet_impact:mat_dirt</Name>
+	</Sound>
+	<RandEffect>
+		<Decal minscale="0.05" maxscale="0.1">
+			<Filename>textures/decal/metal.dds</Filename>
+			<Material>materials/decals/terrain_soil</Material>
+		</Decal>
+	</RandEffect>
+	<RandEffect>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="80">bullet.hit_soil.a</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="80">bullet.hit_soil.b</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="80">bullet.hit_soil.c</Name>
+		</Particle>
+	</RandEffect>
+	<FlowGraph name="dirt_bullet_hit" maxdist="2"/>
+</Effect>
+<Effect name="hit_mat_soil_shotgun" delay="0.05">
+	<RandEffect>
+		<Decal minscale="0.03" maxscale="0.07">
+			<Filename>textures/decal/metal.dds</Filename>
+			<Material>materials/decals/terrain_soil</Material>
+		</Decal>
+	</RandEffect>
+	<RandEffect>
+		<Particle>
+			<Name minscale="0.3" maxscale="1.2" maxscaledist="80">bullet.hit_soil.a</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.3" maxscale="1.2" maxscaledist="80">bullet.hit_soil.b</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.3" maxscale="1.2" maxscaledist="80">bullet.hit_soil.c</Name>
+		</Particle>
+	</RandEffect>
+	<FlowGraph name="dirt_bullet_hit" maxdist="2"/>
+</Effect>
+
+<Effect name="hit_mat_sand" delay="0.05">
+	<Sound>
+		<Name>sounds/physics:bullet_impact:mat_sand</Name>
+	</Sound>
+	<RandEffect>
+		<Decal minscale="0.06" maxscale="0.08">
+			<Material>materials/decals/sand_sea</Material>
+		</Decal>
+	</RandEffect>
+	<RandEffect>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="100">bullet.hit_sand.a</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="100">bullet.hit_sand.b</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="100">bullet.hit_sand.c</Name>
+		</Particle>
+	</RandEffect>
+</Effect>
+<Effect name="hit_mat_sand_shotgun" delay="0.05">
+	<RandEffect>
+		<Decal minscale="0.02" maxscale="0.04">
+			<Material>materials/decals/sand_sea</Material>
+		</Decal>
+	</RandEffect>
+	<RandEffect>
+		<Particle>
+			<Name minscale="0.3" maxscale="1.0" maxscaledist="100">bullet.hit_sand.a</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.3" maxscale="1.0" maxscaledist="100">bullet.hit_sand.b</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.3" maxscale="1.0" maxscaledist="100">bullet.hit_sand.c</Name>
+		</Particle>
+	</RandEffect>
+</Effect>
+
+<Effect name="hit_mat_grass" delay="0.05">
+	<Sound>
+		<Name>sounds/physics:bullet_impact:mat_grass</Name>
+	</Sound>
+	<RandEffect name="particles1">
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="80">bullet.hit_grass.a</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="80">bullet.hit_grass.b</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="80">bullet.hit_grass.c</Name>
+		</Particle>
+	</RandEffect>
+	<FlowGraph name="dirt_bullet_hit" maxdist="2"/>
+</Effect>
+<Effect name="hit_mat_grass_shotgun" delay="0.05">
+	<RandEffect>
+		<Decal minscale="0.05" maxscale="0.1">
+			<Filename>textures/decal/metal.dds</Filename>
+			<Material>materials/decals/terrain_soil</Material>
+		</Decal>
+	</RandEffect>
+	<RandEffect name="particles1">
+		<Particle>
+			<Name minscale="0.3" maxscale="1.2" maxscaledist="80">bullet.hit_grass.a</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.3" maxscale="1.2" maxscaledist="80">bullet.hit_grass.b</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.3" maxscale="1.2" maxscaledist="80">bullet.hit_grass.c</Name>
+		</Particle>
+	</RandEffect>
+	<FlowGraph name="dirt_bullet_hit" maxdist="2"/>
+</Effect>
+
+<Effect name="hit_mat_grass_frozen" delay="0.05">
+	<RandEffect name="particles1">
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="80">bullet.hit_ice_shatter.a</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="80">bullet.hit_ice_shatter.b</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="80">bullet.hit_ice_shatter.c</Name>
+		</Particle>
+	</RandEffect>
+	<Sound>
+		<Name>sounds/physics:bullet_impact:mat_grass</Name>
+	</Sound>
+	<RandEffect>
+		<Decal minscale="0.05" maxscale="0.1">
+			<Filename>textures/decal/metal.dds</Filename>
+			<Material>materials/decals/terrain_soil</Material>
+		</Decal>
+	</RandEffect>
+</Effect>
+
+<Effect name="hit_mat_vegetation" delay="0.05">
+	<Sound>
+		<Name>sounds/physics:bullet_impact:mat_grass</Name>
+	</Sound>
+	<RandEffect name="particles1">
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="80">bullet.hit_leaf.a</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="80">bullet.hit_leaf.b</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="80">bullet.hit_leaf.c</Name>
+		</Particle>
+	</RandEffect>
+	<RandEffect>
+		<Decal minscale="0.04" maxscale="0.06">
+			<Material>materials/decals/ground</Material>
+		</Decal>
+	</RandEffect>
+</Effect>
+
+<Effect name="hit_mat_canopy" delay="0.05">
+	<Sound>
+		<Name>sounds/physics:bullet_impact:mat_vegetation</Name>
+	</Sound>
+	<Particle name="masterpart1" >
+		<Name minscale="0.6" maxscale="1.2" maxscaledist="80">bullet.hit_canopy.a</Name>
+	</Particle>
+</Effect>
+
+<Effect name="hit_mat_canopy_frozen" parent="hit_mat_canopy">
+	<Particle name="masterpart1">
+		<Name minscale="0.6" maxscale="1.2" maxscaledist="80">bullet.hit_canopy.frozen</Name>
+	</Particle>
+</Effect>
+
+<Effect name="hit_mat_frog" delay="0.05">
+	<Sound>
+		<Name>sounds/physics:bullet_impact:mat_flesh</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.6" maxscale="1.2" maxscaledist="80">melee.hit_flesh.hit</Name>
+	</Particle>
+	<FlowGraph name="blood_bullet_hit" maxdist="2"/>
+</Effect>
+
+<Effect name="hit_mat_fish" delay="0.05">
+	<Sound>
+		<Name>sounds/physics:bullet_impact:mat_flesh</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.6" maxscale="1.2" maxscaledist="80">melee.hit_flesh.hit</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="0.01" maxscale="0.015" lifetime="5.0">
+			<Filename>textures/decal/metal.dds</Filename>
+			<Material>materials/decals/human_body</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="blood_bullet_hit" maxdist="2"/>
+</Effect>
+
+<Effect name="hit_mat_flesh" delay="0.05" >
+	<Sound>
+		<Name>sounds/physics:bullet_impact:mat_flesh</Name>
+	</Sound>
+	<RandEffect>
+		<Decal minscale="0.05" maxscale="0.1" lifetime="5.0">
+			<Filename>textures/decal/metal.dds</Filename>
+			<Material>materials/decals/human_body</Material>
+		</Decal>
+	</RandEffect>
+	<RandEffect>
+		<Particle>
+			<Name minscale="0.45" maxscale="0.65" maxscaledist="70">bullet.hit_flesh.a</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.45" maxscale="0.65" maxscaledist="70">bullet.hit_flesh.b</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.45" maxscale="0.65" maxscaledist="70">bullet.hit_flesh.c</Name>
+		</Particle>
+	</RandEffect>
+	<FlowGraph name="blood_bullet_hit" maxdist="2"/>
+</Effect>
+<Effect name="hit_mat_flesh_shotgun" delay="0.05" >
+	<RandEffect>
+		<Decal minscale="0.02" maxscale="0.07" lifetime="5.0">
+			<Filename>textures/decal/metal.dds</Filename>
+			<Material>materials/decals/human_body</Material>
+		</Decal>
+	</RandEffect>
+	<RandEffect>
+		<Particle>
+			<Name minscale="0.35" maxscale="0.65" maxscaledist="70">bullet.hit_flesh.a</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.35" maxscale="0.65" maxscaledist="70">bullet.hit_flesh.b</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.35" maxscale="0.65" maxscaledist="70">bullet.hit_flesh.c</Name>
+		</Particle>
+	</RandEffect>
+	<FlowGraph name="blood_bullet_hit" maxdist="2"/>
+
+</Effect>
+
+<Effect name="hit_mat_alien_basic_wall" delay="0.05">
+	<Sound>
+		<Name>sounds/physics:bullet_impact:mat_alien_hull</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="100">bullet.hit_alien.wall</Name>
+		</Particle>
+	</RandEffect>
+	<RandEffect>
+		<Decal minscale="0.1" maxscale="0.16">
+			<Filename>textures/decal/metal.dds</Filename>
+			<Material>materials/decals/alien_shell</Material>
+		</Decal>
+	</RandEffect>
+</Effect>
+
+
+<Effect name="hit_mat_alien_flesh" delay="0.05">
+	<Sound>
+		<Name>sounds/physics:bullet_impact:mat_alien_flesh</Name>
+	</Sound>
+	<RandEffect>
+		<Decal minscale="0.1" maxscale="0.16" lifetime="5.0">
+			<Filename>textures/decal/metal.dds</Filename>
+			<Material>materials/decals/alien_flesh</Material>
+		</Decal>
+	</RandEffect>
+	<RandEffect>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="100">bullet.hit_alien_body.hit</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="100">bullet.hit_alien_body.hitb</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="100">bullet.hit_alien_body.hitc</Name>
+		</Particle>
+	</RandEffect>
+</Effect>
+
+<Effect name="hit_mat_alien_flesh_incendiary" delay="0.05">
+	<Sound>
+		<Name>sounds/physics:bullet_impact:incendiary_bullet_impact</Name>
+	</Sound>
+	<Decal>
+		<Filename>textures/decal/hole_blood.dds</Filename>
+		<Scale>.15</Scale>
+	</Decal>
+	<RandEffect>
+		<Particle>
+			<Name>bullet.hit_alien_body.incendiary_hit</Name>
+		</Particle>
+		<Particle>
+			<Name>bullet.hit_alien_body.incendiary_hitb</Name>
+		</Particle>
+	</RandEffect>
+	<Particle>
+		<Name>bullet.hit_incendiary.a</Name>
+	</Particle>
+</Effect>
+
+
+<Effect name="hit_mat_alien_shell" delay="0.05">
+	<Sound>
+		<Name>sounds/physics:bullet_impact:mat_alien_shell</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="100">bullet.hit_metal.trooper</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="100">bullet.hit_metal.trooperb</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="100">bullet.hit_metal.trooperc</Name>
+		</Particle>
+	</RandEffect>
+</Effect>
+
+<Effect name="hit_mat_alien_shell_shotgun" delay="0.05">
+	<RandEffect>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="100">bullet.hit_metal.trooper</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="100">bullet.hit_metal.trooperb</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="100">bullet.hit_metal.trooperc</Name>
+		</Particle>
+	</RandEffect>
+</Effect>
+
+<Effect name="hit_mat_hunter_wet_spot" delay="0.05">
+	<Sound name="mastersnd1">
+		<Name>sounds/physics:bullet_impact:mat_alien_shell</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name>bullet.hit_hunter.wet_spot</Name>
+		</Particle>
+	</RandEffect>
+</Effect>
+
+<Effect name="hit_mat_hunter" delay="0.05">
+	<Sound name="mastersnd1">
+		<Name>sounds/physics:bullet_impact:mat_alien_shell</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="70">bullet.hit_hunter.hit</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="70">bullet.hit_hunter.hitb</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="70">bullet.hit_hunter.hitb</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="70">bullet.hit_hunter.hitb</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="70">bullet.hit_hunter.hitc</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="70">bullet.hit_hunter.hitc</Name>
+		</Particle>
+	</RandEffect>
+</Effect>
+
+<Effect name="hit_mat_hunter_leg" parent="hit_mat_hunter">
+	<Sound name="mastersnd1">
+		<Name>sounds/physics:bullet_impact:mat_metal_pipe</Name>
+	</Sound>
+</Effect>
+<Effect name="hit_mat_hunter_torso" parent="hit_mat_hunter">
+	<Sound name="mastersnd1">
+		<Name>sounds/physics:bullet_impact:mat_alien_hull</Name>
+	</Sound>
+</Effect>
+
+<Effect name="hit_mat_hunter_incendiary" delay="0.05">
+	<Sound>
+		<Name>sounds/physics:bullet_impact:incendiary_bullet_impact</Name>
+	</Sound>
+	<Particle>
+		<Name>bullet.hit_incendiary.a</Name>
+	</Particle>
+</Effect>
+
+<Effect name="hit_generic_incendiary" delay="0.05">
+	<Sound>
+		<Name>sounds/physics:bullet_impact:incendiary_bullet_impact</Name>
+	</Sound>
+	<Particle>
+		<Name>bullet.hit_incendiary.a</Name>
+	</Particle>
+	<FlowGraph name="dirt_bullet_hit" maxdist="2"/>
+</Effect>
+
+<Effect name="hit_generic_hurricane" delay="0.05">
+	<Particle>
+		<Name>bullet.hit_incendiary.hurricane</Name>
+	</Particle>
+</Effect>
+
+<Effect name="hit_hunter_hurricane" parent="hit_generic_hurricane">
+	<Sound>
+		<Name>sounds/physics:bullet_impact:mat_alien_shell</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="70">bullet.hit_hunter.hit</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="70">bullet.hit_hunter.hitb</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="70">bullet.hit_hunter.hitb</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="70">bullet.hit_hunter.hitb</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="70">bullet.hit_hunter.hitc</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="70">bullet.hit_hunter.hitc</Name>
+		</Particle>
+	</RandEffect>
+</Effect>
+
+<Effect name="hit_mat_metal_sheet_nodecal" delay="0.05">
+	<Sound name="mainsnd">
+		<Name>sounds/physics:bullet_impact:mat_metal_sheet</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name minscale="0.18" maxscale="2" maxscaledist="60">bullet.hit_metal.a</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.18" maxscale="2" maxscaledist="60">bullet.hit_metal.b</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.18" maxscale="2" maxscaledist="60">bullet.hit_metal.c</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.18" maxscale="2" maxscaledist="60">bullet.hit_metal.a</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.18" maxscale="2" maxscaledist="60">bullet.hit_metal.b</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.18" maxscale="2" maxscaledist="60">bullet.hit_metal.c</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.18" maxscale="2" maxscaledist="60">bullet.hit_metal.e</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.18" maxscale="2" maxscaledist="60">bullet.hit_metal.e</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.18" maxscale="2" maxscaledist="60">bullet.hit_metal.d</Name>
+		</Particle>
+	</RandEffect>
+</Effect>
+
+<Effect name="hit_mat_canopy_banana" delay="0.05">
+	<Sound>
+		<Name>sounds/physics:bullet_impact:mat_vegetation</Name>
+	</Sound>
+	<Particle name="masterpart1" >
+		<Name>bullet.hit_canopy.banana</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="0.04" maxscale="0.06">
+			<Material>materials/decals/ground</Material>
+		</Decal>
+	</RandEffect>
+</Effect>
+
+<Effect name="hit_mat_canopy_palm_tree" delay="0.05">
+	<Sound>
+		<Name>sounds/physics:bullet_impact:mat_vegetation</Name>
+	</Sound>
+	<Particle>
+		<Name>bullet.hit_canopy.palm</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="0.04" maxscale="0.06">
+			<Material>materials/decals/ground</Material>
+		</Decal>
+	</RandEffect>
+</Effect>
+
+<Effect name="hit_mat_dull" delay="0.05">
+	<Particle>
+		<Name>bullet.hit_default.smoke</Name>
+	</Particle>
+	<Sound>
+		<Name>sounds/physics:bullet_impact:mat_dull</Name>
+	</Sound>
+	<RandEffect>
+		<Decal minscale="0.04" maxscale="0.06">
+			<Material>materials/decals/ground</Material>
+		</Decal>
+	</RandEffect>
+</Effect>
+
+<Effect name="hit_mat_hollow" delay="0.05">
+	<Particle>
+		<Name>bullet.hit_default.smoke</Name>
+	</Particle>
+	<Sound>
+		<Name>sounds/physics:bullet_impact:mat_hollow</Name>
+	</Sound>
+	<RandEffect>
+		<Decal minscale="0.04" maxscale="0.06">
+			<Material>materials/decals/ground</Material>
+		</Decal>
+	</RandEffect>
+</Effect>
+
+<Effect name="moac_small_beam_impact" delay="0.05">
+	<Particle>
+		<Name scale="1">Alien_weapons.moac.Trooper_moac_impact</Name>		
+	</Particle>
+	<Sound>
+		<Name>sounds/physics:bullet_impact:moac_small_impact_oneshot</Name>
+	</Sound>
+</Effect>
+
+<Effect name="moar_small_beam_impact" delay="0.05">
+	<Particle>
+		<Name scale="0.75">explosions.MOAC.a</Name>		
+	</Particle>
+	<Sound>
+		<Name>sounds/physics:bullet_impact:moar_small_impact_oneshot</Name>
+	</Sound>
+</Effect>
+
+<Effect name="moar_large_beam_impact" delay="0.05">
+	<Sound>
+		<Name>sounds/physics:bullet_impact:moar_large_beam_impact</Name>
+	</Sound>
+</Effect>
+
+<Effect name="ice_hit_body" delay="0.05">
+	<Sound>
+		<Name>sounds/physics:bullet_impact:ice_bullet_body</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="80">bullet.hit_pebble.a</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="80">bullet.hit_pebble.b</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="80">bullet.hit_pebble.c</Name>
+		</Particle>
+	</RandEffect>
+	<FlowGraph name="blood_bullet_hit" maxdist="2"/>
+</Effect>
+
+<Effect name="ice_hit_concrete" delay="0.05">
+	<Sound>
+		<Name>sounds/physics:bullet_impact:ice_bullet_concrete</Name>
+	</Sound>
+	<RandEffect>
+
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="80">bullet.hit_concrete.a</Name>
+		</Particle>
+	</RandEffect>
+	<RandEffect>
+		<Decal minscale="0.05" maxscale="0.09">
+			<Filename>textures/decal/metal.dds</Filename>
+			<Material>materials/decals/concrete_plain</Material>
+		</Decal>
+		<Decal minscale="0.05" maxscale="0.09">
+			<Filename>textures/decal/metal.dds</Filename>
+			<Material>materials/decals/rock_sandy</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="dirt_bullet_hit" maxdist="2"/>
+</Effect>
+
+<Effect name="ice_hit_gravel" delay="0.05">
+	<Sound>
+		<Name>sounds/physics:bullet_impact:ice_bullet_gravel</Name>
+	</Sound>
+	<RandEffect>
+		<Decal minscale="0.06" maxscale="0.12">
+			<Material>materials/decals/road_asphalt</Material>
+		</Decal>
+	</RandEffect>
+	<RandEffect>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="80">bullet.hit_pebble.a</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="80">bullet.hit_pebble.b</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="80">bullet.hit_pebble.c</Name>
+		</Particle>
+	</RandEffect>
+</Effect>
+
+<Effect name="ice_hit_metal" delay="0.05">
+	<Sound>
+		<Name>sounds/physics:bullet_impact:ice_bullet_metal</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name minscale="0.18" maxscale="2" maxscaledist="60">bullet.hit_metal.a</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.18" maxscale="2" maxscaledist="60">bullet.hit_metal.b</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.18" maxscale="2" maxscaledist="60">bullet.hit_metal.c</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.18" maxscale="2" maxscaledist="60">bullet.hit_metal.a</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.18" maxscale="2" maxscaledist="60">bullet.hit_metal.b</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.18" maxscale="2" maxscaledist="60">bullet.hit_metal.c</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.18" maxscale="2" maxscaledist="60">bullet.hit_metal.e</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.18" maxscale="2" maxscaledist="60">bullet.hit_metal.e</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.18" maxscale="2" maxscaledist="60">bullet.hit_metal.d</Name>
+		</Particle>
+	</RandEffect>
+</Effect>
+
+<Effect name="ice_hit_vegetation" delay="0.05">
+	<Sound>
+		<Name>sounds/physics:bullet_impact:ice_bullet_vegetation</Name>
+	</Sound>
+	<RandEffect name="particles1">
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="80">bullet.hit_leaf.a</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="80">bullet.hit_leaf.b</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.6" maxscale="1.2" maxscaledist="80">bullet.hit_leaf.c</Name>
+		</Particle>
+	</RandEffect>
+</Effect>
+
+<Effect name="ice_hit_wood" delay="0.05">
+	<Sound>
+		<Name>sounds/physics:bullet_impact:ice_bullet_wood</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name minscale="0.5" maxscale="1.2" maxscaledist="200">bullet.hit_wood.a</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.5" maxscale="1.2" maxscaledist="200">bullet.hit_wood.b</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.5" maxscale="1.2" maxscaledist="200">bullet.hit_wood.c</Name>
+		</Particle>
+	</RandEffect>
+</Effect>
+
+<Effect name="hit_mat_alien_law" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:law_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name>explosions.rocket.alien</Name>
+	</Particle>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="200"/>
+</Effect>
+<Effect name="hit_mat_hunter_law" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:law_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.4" maxscale="0.7" maxscaledist="100">explosions.rocket.hunter</Name>
+	</Particle>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="200"/>
+</Effect>
+<Effect name="hit_mat_sand_law" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:law_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.4" maxscale="0.7" maxscaledist="100">explosions.rocket.sand</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="2.2" maxscale="2.9" lifetime="20.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="hit_mat_tree_law" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:law_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name>explosions.rocket.tree</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="2.2" maxscale="2.9" lifetime="20.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="hit_mat_glass_law" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:law_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.4" maxscale="0.7" maxscaledist="200">explosions.rocket.glass</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="2.2" maxscale="2.9" lifetime="20.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="hit_mat_cliff_law" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:law_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.4" maxscale="0.7" maxscaledist="200">explosions.rocket.cliff</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="2.2" maxscale="2.9" lifetime="20.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="dirt_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="hit_mat_concrete_law" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:law_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.4" maxscale="0.7" maxscaledist="200">explosions.rocket.concrete</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="2.2" maxscale="2.9" lifetime="20.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="dirt_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="hit_mat_metal_law" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:law_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.8" maxscale="1.2" maxscaledist="90">explosions.rocket.metal</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="1.0" maxscale="1.3" lifetime="20.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="hit_mat_metal_law_nd" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:law_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.8" maxscale="1.2" maxscaledist="90">explosions.rocket.metal</Name>
+	</Particle>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="hit_mat_metal_sheet_law_nodecal" delay="0.05">
+	<Particle>
+		<Name minscale="0.8" maxscale="1.2" maxscaledist="90">explosions.rocket.metal</Name>
+	</Particle>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="hit_mat_grass_law" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:law_explosion</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name minscale="0.5" maxscale="0.7" maxscaledist="200">explosions.rocket.soil</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.5" maxscale="0.7" maxscaledist="200">explosions.rocket.soil_alt1</Name>
+		</Particle>
+	</RandEffect>
+	<RandEffect>
+		<Decal minscale="2.2" maxscale="2.9" lifetime="20.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="dirt_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="hit_mat_soil_law" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:law_explosion</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name minscale="0.5" maxscale="0.7" maxscaledist="200">explosions.rocket.soil</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.5" maxscale="0.7" maxscaledist="200">explosions.rocket.soil_alt1</Name>
+		</Particle>
+	</RandEffect>
+	<RandEffect>
+		<Decal minscale="2.2" maxscale="2.9" lifetime="20.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="dirt_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="hit_mat_default_law" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:law_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name>explosions.rocket.generic</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="1.9" maxscale="2.6" lifetime="5.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="hit_mat_flesh_law" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:law_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name>explosions.rocket.generic</Name>
+	</Particle>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+	<FlowGraph name="blood_bullet_hit" maxdist="2"/>
+</Effect>
+<Effect name="hit_mat_wood_law" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:law_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name>explosions.rocket.wood</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="1.9" maxscale="2.6" lifetime="5.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="hit_mat_snow_law" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:law_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name>explosions.rocket.snow</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="1.2" maxscale="1.3">
+			<Filename>textures/decal/metal.dds</Filename>
+			<Material>materials/decals/snow_melt</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="hit_mat_water_law" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:water_explosion_large</Name>
+	</Sound>
+	<Particle>
+		<Name>explosions.rocket.water</Name>
+	</Particle>
+	<FlowGraph name="water_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+
+
+<Effect name="hit_mat_alien_helimissile" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:missile_helicopter_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name>explosions.rocket.alien</Name>
+	</Particle>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="200"/>
+</Effect>
+<Effect name="hit_mat_hunter_helimissile" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:missile_helicopter_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.4" maxscale="0.7" maxscaledist="100">explosions.rocket.hunter</Name>
+	</Particle>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="200"/>
+</Effect>
+<Effect name="hit_mat_sand_helimissile" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:missile_helicopter_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.4" maxscale="0.7" maxscaledist="100">explosions.rocket.sand</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="2.2" maxscale="2.9" lifetime="20.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="hit_mat_tree_helimissile" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:missile_helicopter_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name>explosions.rocket.tree</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="2.2" maxscale="2.9" lifetime="20.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="hit_mat_glass_helimissile" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:missile_helicopter_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.4" maxscale="0.7" maxscaledist="200">explosions.rocket.glass</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="2.2" maxscale="2.9" lifetime="20.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="hit_mat_cliff_helimissile" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:missile_helicopter_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.4" maxscale="0.7" maxscaledist="200">explosions.rocket.cliff</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="2.2" maxscale="2.9" lifetime="20.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="dirt_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="hit_mat_concrete_helimissile" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:missile_helicopter_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.4" maxscale="0.7" maxscaledist="200">explosions.rocket.concrete</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="2.2" maxscale="2.9" lifetime="20.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="dirt_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="hit_mat_metal_helimissile" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:missile_helicopter_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.8" maxscale="1.2" maxscaledist="90">explosions.rocket.metal</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="2.2" maxscale="2.9" lifetime="20.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="hit_mat_metal_helimissile_nd" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:missile_helicopter_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.8" maxscale="1.2" maxscaledist="90">explosions.rocket.metal</Name>
+	</Particle>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="hit_mat_metal_sheet_helimissile_nodecal" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:missile_helicopter_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.8" maxscale="1.2" maxscaledist="90">explosions.rocket.metal</Name>
+	</Particle>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="hit_mat_grass_helimissile" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:missile_helicopter_explosion</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name minscale="0.5" maxscale="0.7" maxscaledist="200">explosions.rocket.soil</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.5" maxscale="0.7" maxscaledist="200">explosions.rocket.soil_alt1</Name>
+		</Particle>
+	</RandEffect>
+	<RandEffect>
+		<Decal minscale="2.2" maxscale="2.9" lifetime="20.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="dirt_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="hit_mat_soil_helimissile" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:missile_helicopter_explosion</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name minscale="0.5" maxscale="0.7" maxscaledist="200">explosions.rocket.soil</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.5" maxscale="0.7" maxscaledist="200">explosions.rocket.soil_alt1</Name>
+		</Particle>
+	</RandEffect>
+	<RandEffect>
+		<Decal minscale="2.2" maxscale="2.9" lifetime="20.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="dirt_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="hit_mat_default_helimissile" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:missile_helicopter_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name>explosions.rocket.generic</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="1.9" maxscale="2.6" lifetime="5.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="hit_mat_flesh_helimissile" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:missile_helicopter_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name>explosions.rocket.generic</Name>
+	</Particle>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+	<FlowGraph name="blood_bullet_hit" maxdist="2"/>
+</Effect>
+<Effect name="hit_mat_wood_helimissile" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:missile_helicopter_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name>explosions.rocket.wood</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="1.9" maxscale="2.6" lifetime="5.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="hit_mat_snow_helimissile" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:missile_helicopter_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name>explosions.rocket.snow</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="1.2" maxscale="1.3">
+			<Filename>textures/decal/metal.dds</Filename>
+			<Material>materials/decals/snow_melt</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="hit_mat_water_helimissile" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:water_explosion_large</Name>
+	</Sound>
+	<Particle>
+		<Name>explosions.rocket.water</Name>
+	</Particle>
+	<FlowGraph name="water_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+
+
+<Effect name="hit_mat_alien_towmissile" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:missile_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name>explosions.rocket.alien</Name>
+	</Particle>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="200"/>
+</Effect>
+<Effect name="hit_mat_hunter_towmissile" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:missile_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.4" maxscale="0.7" maxscaledist="100">explosions.rocket.hunter</Name>
+	</Particle>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="200"/>
+</Effect>
+<Effect name="hit_mat_sand_towmissile" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:missile_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.4" maxscale="0.7" maxscaledist="100">explosions.rocket.sand</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="2.2" maxscale="2.9" lifetime="20.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="hit_mat_tree_towmissile" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:missile_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name>explosions.rocket.tree</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="2.2" maxscale="2.9" lifetime="20.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="hit_mat_glass_towmissile" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:missile_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.4" maxscale="0.7" maxscaledist="200">explosions.rocket.glass</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="2.2" maxscale="2.9" lifetime="20.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="hit_mat_cliff_towmissile" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:missile_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.4" maxscale="0.7" maxscaledist="200">explosions.rocket.cliff</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="2.2" maxscale="2.9" lifetime="20.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="dirt_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="hit_mat_concrete_towmissile" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:missile_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.4" maxscale="0.7" maxscaledist="200">explosions.rocket.concrete</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="2.2" maxscale="2.9" lifetime="20.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="dirt_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="hit_mat_metal_towmissile" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:missile_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.8" maxscale="1.2" maxscaledist="90">explosions.rocket.metal</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="2.2" maxscale="2.9" lifetime="20.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="hit_mat_metal_towmissile_nd" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:missile_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.8" maxscale="1.2" maxscaledist="90">explosions.rocket.metal</Name>
+	</Particle>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="hit_mat_metal_sheet_towmissile_nodecal" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:missile_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.8" maxscale="1.2" maxscaledist="90">explosions.rocket.metal</Name>
+	</Particle>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="hit_mat_grass_towmissile" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:missile_explosion</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name minscale="0.5" maxscale="0.7" maxscaledist="200">explosions.rocket.soil</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.5" maxscale="0.7" maxscaledist="200">explosions.rocket.soil_alt1</Name>
+		</Particle>
+	</RandEffect>
+	<RandEffect>
+		<Decal minscale="2.2" maxscale="2.9" lifetime="20.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="dirt_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="hit_mat_soil_towmissile" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:missile_explosion</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name minscale="0.5" maxscale="0.7" maxscaledist="200">explosions.rocket.soil</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.5" maxscale="0.7" maxscaledist="200">explosions.rocket.soil_alt1</Name>
+		</Particle>
+	</RandEffect>
+	<RandEffect>
+		<Decal minscale="2.2" maxscale="2.9" lifetime="20.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="dirt_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="hit_mat_default_towmissile" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:missile_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name>explosions.rocket.generic</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="1.9" maxscale="2.6" lifetime="5.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="hit_mat_flesh_towmissile" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:missile_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name>explosions.rocket.generic</Name>
+	</Particle>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+	<FlowGraph name="blood_bullet_hit" maxdist="2"/>
+</Effect>
+<Effect name="hit_mat_wood_towmissile" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:missile_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name>explosions.rocket.wood</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="1.9" maxscale="2.6" lifetime="5.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="hit_mat_snow_towmissile" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:missile_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name>explosions.rocket.snow</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="1.2" maxscale="1.3">
+			<Filename>textures/decal/metal.dds</Filename>
+			<Material>materials/decals/snow_melt</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="hit_mat_water_towmissile" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:water_explosion_large</Name>
+	</Sound>
+	<Particle>
+		<Name>explosions.rocket.water</Name>
+	</Particle>
+	<FlowGraph name="water_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+
+
+<Effect name="hit_mat_alien_vtolmissile" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:missile_vtol_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name>explosions.rocket.alien</Name>
+	</Particle>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="200"/>
+</Effect>
+<Effect name="hit_mat_hunter_vtolmissile" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:missile_vtol_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.4" maxscale="0.7" maxscaledist="100">explosions.rocket.hunter</Name>
+	</Particle>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="200"/>
+</Effect>
+<Effect name="hit_mat_sand_vtolmissile" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:missile_vtol_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.4" maxscale="0.7" maxscaledist="100">explosions.rocket.sand</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="2.2" maxscale="2.9" lifetime="20.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="hit_mat_tree_vtolmissile" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:missile_vtol_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name>explosions.rocket.tree</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="2.2" maxscale="2.9" lifetime="20.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="hit_mat_glass_vtolmissile" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:missile_vtol_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.4" maxscale="0.7" maxscaledist="200">explosions.rocket.glass</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="2.2" maxscale="2.9" lifetime="20.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="hit_mat_cliff_vtolmissile" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:missile_vtol_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.4" maxscale="0.7" maxscaledist="200">explosions.rocket.cliff</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="2.2" maxscale="2.9" lifetime="20.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="dirt_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="hit_mat_concrete_vtolmissile" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:missile_vtol_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.4" maxscale="0.7" maxscaledist="200">explosions.rocket.concrete</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="2.2" maxscale="2.9" lifetime="20.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="dirt_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="hit_mat_metal_vtolmissile" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:missile_vtol_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.8" maxscale="1.2" maxscaledist="90">explosions.rocket.metal</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="2.2" maxscale="2.9" lifetime="20.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="hit_mat_metal_vtolmissile_nd" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:missile_vtol_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.8" maxscale="1.2" maxscaledist="90">explosions.rocket.metal</Name>
+	</Particle>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="hit_mat_metal_sheet_vtolmissile_nodecal" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:missile_vtol_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name minscale="0.8" maxscale="1.2" maxscaledist="90">explosions.rocket.metal</Name>
+	</Particle>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="hit_mat_grass_vtolmissile" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:missile_vtol_explosion</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name minscale="0.5" maxscale="0.7" maxscaledist="200">explosions.rocket.soil</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.5" maxscale="0.7" maxscaledist="200">explosions.rocket.soil_alt1</Name>
+		</Particle>
+	</RandEffect>
+	<RandEffect>
+		<Decal minscale="2.2" maxscale="2.9" lifetime="20.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="dirt_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="hit_mat_soil_vtolmissile" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:missile_vtol_explosion</Name>
+	</Sound>
+	<RandEffect>
+		<Particle>
+			<Name minscale="0.5" maxscale="0.7" maxscaledist="200">explosions.rocket.soil</Name>
+		</Particle>
+		<Particle>
+			<Name minscale="0.5" maxscale="0.7" maxscaledist="200">explosions.rocket.soil_alt1</Name>
+		</Particle>
+	</RandEffect>
+	<RandEffect>
+		<Decal minscale="2.2" maxscale="2.9" lifetime="20.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="dirt_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="hit_mat_default_vtolmissile" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:missile_vtol_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name>explosions.rocket.generic</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="1.9" maxscale="2.6" lifetime="5.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="hit_mat_flesh_vtolmissile" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>sounds/physics:explosions:missile_vtol_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name>explosions.rocket.generic</Name>
+	</Particle>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+	<FlowGraph name="blood_bullet_hit" maxdist="2"/>
+</Effect>
+<Effect name="hit_mat_wood_vtolmissile" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:missile_vtol_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name>explosions.rocket.wood</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="1.9" maxscale="2.6" lifetime="5.0">
+			<Material>materials/decals/default_blast</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="hit_mat_snow_vtolmissile" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:missile_vtol_explosion</Name>
+	</Sound>
+	<Particle>
+		<Name>explosions.rocket.snow</Name>
+	</Particle>
+	<RandEffect>
+		<Decal minscale="1.2" maxscale="1.3">
+			<Filename>textures/decal/metal.dds</Filename>
+			<Material>materials/decals/snow_melt</Material>
+		</Decal>
+	</RandEffect>
+	<FlowGraph name="default_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+<Effect name="hit_mat_water_vtolmissile" delay="0.05">
+	<Sound bIgnoreDistMult="1">
+		<Name>Sounds/physics:explosions:water_explosion_large</Name>
+	</Sound>
+	<Particle>
+		<Name>explosions.rocket.water</Name>
+	</Particle>
+	<FlowGraph name="water_explosion" maxdist="8"/>
+	<FlowGraph name="screen_lightup" maxdist="250"/>
+</Effect>
+
+<Effect name="hit_mat_shield" delay="0.05">
+	<Particle>
+		<Name>expansion_alien_fx.Trooper.impact</Name>
+	</Particle>
+	
+	<Sound name="mainsnd">
+		<Name>sounds/physics_exp1:alien_shield_hit:alien_shield_hit</Name>
+	</Sound>
+</Effect>
+
+<Effect name="hit_mat_anything_tacxp" delay="0.05">
+  <Particle>
+    <Name>expansion_fx.weapons.tac_projectile_impact</Name>
+  </Particle>
+
+  <Sound name="mainsnd">
+    <Name>sounds/physics_exp1:explosions:tac_gun_explosion</Name>
+  </Sound>
+</Effect>
+
+<Effect name="hit_mat_default_scoutbeam" delay="0.0">
+  <Particle>
+    <Name>expansion_alien_fx.beam_impacts.default</Name>
+  </Particle>
+  <RandEffect>
+    <Decal minscale="0.3" maxscale="0.5" lifetime="10.0">
+      <Material>materials/decals/scout_beam_default</Material>
+    </Decal>
+  </RandEffect>
+  <Sound name="mainsnd">
+    <Name>hit</Name>
+  </Sound>
+</Effect>
+
+<Effect name="hit_mat_flesh_scoutbeam" delay="0.0">
+  <Particle>
+    <Name>expansion_alien_fx.beam_impacts.flesh</Name>
+  </Particle>
+  <Sound name="mainsnd">
+    <Name>hit_flesh</Name>
+  </Sound>
+</Effect>
+  
+<Effect name="hit_mat_glass_scoutbeam" delay="0.0">
+  <Particle>
+    <Name>expansion_alien_fx.beam_impacts.glass</Name>
+  </Particle>
+  <RandEffect>
+    <Decal minscale="0.3" maxscale="0.5" lifetime="10.0">
+      <Material>materials/decals/scout_beam_glass</Material>
+    </Decal>
+  </RandEffect>
+  <Sound name="mainsnd">
+    <Name>hit_glass</Name>
+  </Sound>
+</Effect>
+
+<Effect name="hit_mat_ice_scoutbeam" delay="0.0">
+  <Particle>
+    <Name>expansion_alien_fx.beam_impacts.ice</Name>
+  </Particle>
+  <RandEffect>
+    <Decal minscale="0.3" maxscale="0.5" lifetime="10.0">
+      <Material>materials/decals/scout_beam_ice</Material>
+    </Decal>
+  </RandEffect>
+  <Sound name="mainsnd">
+    <Name>hit_ice</Name>
+  </Sound>
+</Effect>
+
+<Effect name="hit_mat_metal_scoutbeam" delay="0.0">
+  <Particle>
+    <Name>expansion_alien_fx.beam_impacts.metal</Name>
+  </Particle>
+  <Decal minscale="0.3" maxscale="0.5" lifetime="10.0">
+    <Material>materials/decals/scout_beam_metal</Material>
+  </Decal>
+  <Decal minscale="0.2" maxscale="0.3" lifetime="2.0">
+    <Material>materials/decals/scout_beam_metal_melt2</Material>
+  </Decal>
+  <Sound name="mainsnd">
+    <Name>hit_metal</Name>
+  </Sound>
+</Effect>
+
+<Effect name="hit_mat_solid_scoutbeam" delay="0.0">
+  <Particle>
+    <Name>expansion_alien_fx.beam_impacts.solid</Name>
+  </Particle>
+  <RandEffect>
+    <Decal minscale="0.3" maxscale="0.5" lifetime="10.0">
+      <Material>materials/decals/scout_beam_concrete</Material>
+    </Decal>
+  </RandEffect>
+  <Sound name="mainsnd">
+    <Name>hit_concrete</Name>
+  </Sound>
+</Effect>
+
+<Effect name="hit_mat_vegetation_scoutbeam" delay="0.0">
+  <Particle>
+    <Name>expansion_alien_fx.beam_impacts.vegetation</Name>
+  </Particle>
+  <RandEffect>
+    <Decal minscale="0.3" maxscale="0.5" lifetime="10.0">
+      <Material>materials/decals/scout_beam_ground</Material>
+    </Decal>
+  </RandEffect>
+  <Sound name="mainsnd">
+    <Name>hit</Name>
+  </Sound>
+</Effect>
+
+<Effect name="hit_mat_water_scoutbeam" delay="0.0">
+  <Particle>
+    <Name>expansion_alien_fx.beam_impacts.water</Name>
+  </Particle>
+  <Sound name="mainsnd">
+    <Name>hit_water</Name>
+  </Sound>
+</Effect>
+
+<Effect name="hit_mat_wood_scoutbeam" delay="0.0">
+  <Particle>
+    <Name>expansion_alien_fx.beam_impacts.wood</Name>
+  </Particle>
+  <RandEffect>
+    <Decal minscale="0.3" maxscale="0.5" lifetime="10.0">
+      <Material>materials/decals/scout_beam_wood</Material>
+    </Decal>
+  </RandEffect>
+  <Sound name="mainsnd">
+    <Name>hit_wood</Name>
+  </Sound>
+</Effect>
+
+<Effect name="hit_mat_burned_wood" delay="0.0">
+  <Sound name="mainsnd" >
+    <Name>sounds/physics:bullet_impact:mat_wood_solid</Name>
+  </Sound>
+  <RandEffect>
+    <Particle>
+      <Name minscale="0.45" maxscale="1.2" maxscaledist="200">bullet.hit_burned_wood.a</Name>
+    </Particle>
+  </RandEffect>
+</Effect>
+
+</FXLib>

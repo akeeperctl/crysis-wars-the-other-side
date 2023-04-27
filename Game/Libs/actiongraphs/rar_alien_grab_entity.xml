@@ -1,0 +1,17 @@
+<Graph Description="Graph used in Requests and Responses system" Group="RAR" enabled="1" MultiPlayer="ClientServer">
+ <Nodes>
+  <Node Id="1" Class="AI:ActionStart" pos="340,150,0" flags="0"/>
+  <Node Id="2" Class="AI:ActionEnd" pos="940,150,0" flags="0">
+   <Inputs />
+  </Node>
+  <Node Id="15" Class="Entity:CallScriptFunction" pos="520,150,0" flags="0" GraphEntity="0">
+   <Inputs entityId="0" FuncName="GrabEntityInTentacle"/>
+  </Node>
+ </Nodes>
+ <Edges>
+  <Edge nodeIn="15" nodeOut="1" portIn="Argument1" portOut="ObjectId" enabled="1"/>
+  <Edge nodeIn="15" nodeOut="1" portIn="call" portOut="UserId" enabled="1"/>
+  <Edge nodeIn="2" nodeOut="15" portIn="cancel" portOut="Failed" enabled="1"/>
+  <Edge nodeIn="2" nodeOut="15" portIn="end" portOut="Success" enabled="1"/>
+ </Edges>
+</Graph>

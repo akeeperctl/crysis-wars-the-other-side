@@ -1,0 +1,26 @@
+<Graph Description="" Group="" enabled="1" MultiPlayer="ServerOnly">
+ <Nodes>
+  <Node Id="1" Class="AI:ActionStart" pos="-220,-50,0" flags="0"/>
+  <Node Id="2" Class="AI:ActionEnd" pos="340,-10,0" flags="0">
+   <Inputs />
+  </Node>
+  <Node Id="4" Class="AI:AIFollow" pos="160,-40,0" flags="0" GraphEntity="0">
+   <Inputs entityId="0" leaderId="0"/>
+  </Node>
+  <Node Id="6" Class="AI:AISetCharacter" pos="-90,-40,0" flags="1" GraphEntity="0">
+   <Inputs entityId="0" aicharacter_character="SquadInfantry"/>
+  </Node>
+  <Node Id="8" Class="AI:PerceptionScale" pos="-90,-130,0" flags="0" GraphEntity="0">
+   <Inputs entityId="0" Scale="1" Audio="1"/>
+  </Node>
+  <Node Id="9" Class="Game:LocalPlayer" pos="20,50,0" flags="0"/>
+ </Nodes>
+ <Edges>
+  <Edge nodeIn="6" nodeOut="1" portIn="sink" portOut="UserId" enabled="1"/>
+  <Edge nodeIn="8" nodeOut="1" portIn="Trigger" portOut="UserId" enabled="1"/>
+  <Edge nodeIn="2" nodeOut="4" portIn="cancel" portOut="fail" enabled="1"/>
+  <Edge nodeIn="2" nodeOut="4" portIn="end" portOut="succeed" enabled="1"/>
+  <Edge nodeIn="4" nodeOut="6" portIn="sink" portOut="done" enabled="1"/>
+  <Edge nodeIn="4" nodeOut="9" portIn="leaderId" portOut="entityId" enabled="1"/>
+ </Edges>
+</Graph>

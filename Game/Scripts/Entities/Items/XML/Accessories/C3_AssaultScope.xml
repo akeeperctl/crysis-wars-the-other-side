@@ -1,0 +1,14 @@
+	<item name="C3_AssaultScope" class="Item">
+	<params>
+		<param name="giveable" value="1" />
+		<param name="selectable" value="0" />
+		<param name="droppable" value="0" />
+		<param name="scopeAttachment" value="1" />
+		<param name="display_name" value="Assault_Scope" />
+	</params>
+	<geometry>
+		<firstperson name="objects/weapons/attachments/c3_assaultscope/assault_scope_fp.cgf" />
+		<thirdperson name="objects/weapons/attachments/c3_assaultscope/assault_scope_tp.cgf" />
+		<aux1  name="objects/weapons/attachments/c3_assaultscope/assault_scope_fp_zoom.cgf" />
+	</geometry>
+</item>

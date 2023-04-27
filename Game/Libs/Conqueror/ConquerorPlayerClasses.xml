@@ -1,0 +1,666 @@
+<!-- Новые фракции отображаются в меню если есть действующие (Enabled is true) захватываемые точки (CapturableArea) на текущей карте! -->
+<!-- Нужен как минимум 1 класс IsLeader="1" -->
+<!-- Equipment.primaryWeapon Больше не используется -->
+<!-- у архетипа класса должен совпадать его species со значением speciesIndex -->
+
+  <!--При типе условия UnlockedForPlayer ИИ не может случайно выбрать этот класс -->
+  <!--Вместо этого ИИ будет форсированно спавниться с этим классом перед началом матча-->
+  <!--Будет спавниться на той стратегической точке, у которой вкл. опция bCanSpawnSquadFromClasses -->
+  <!-- <Condition type="UnlockedForPlayer"/>  -->
+
+  <!--При типе условия UnlockedForAI только ИИ может выбрать этот класс для персонажа -->
+  <!--ИИ выбирает его случайным образом, исходя из доступных ему классов-->
+  <!--ИИ будет спавниться как обычно -->
+  <!-- <Condition type="UnlockedForAI"/>  -->
+
+  <!-- Если этих двух типов условий не обнаружено, то класс доступен для Игрока и для ИИ -->
+
+
+<Classes>
+  <Factions>
+    <Faction name="USA" speciesIndex="0">
+      <!-- onlyThirdPerson="0" isHumanMode="0" isLeader="0" не зависят от дефолтного класса -->
+      <!-- <ExampleClassNode name="Example" onlyThirdPerson="0" isHumanMode="0" isLeader="0">
+        <Model>
+          <param name="lobbyAnim"  value=""/>
+          <param name="char"       value=""/>
+          <param name="fp3p"       value=""/>
+          <param name="arms"       value=""/>
+          <param name="mat"        value=""/>
+          <param name="mat_helmet" value=""/>
+          <param name="mat_arms"   value=""/>
+          <param name="worldOffset"   value="0.0,0.0,0.0"/>
+          <param name="scale"   value="1.0"/>
+        </Model>
+        <Equipment>
+          <param name="equipPack"      value=""/>
+        </Equipment>
+        <AI>
+          <param name="archetype"  value=""/>
+          <param name="character"  value=""/>
+          <param name="behaviour"  value=""/>
+        </AI>
+        <Abilities>
+          <ability name=""/>
+        </Abilities>
+      </ExampleClassNode> -->
+      <Class name="Default" onlyThirdPerson="1" isHumanMode="1" isLeader="0" isAir="0">
+        <Model>
+          <param name="lobbyAnim" value="mpHUD_koreanSoldierSelectionIdle_03"/>
+          <param name="char" value="objects/characters/human/us/marine/marine_01_helmet_goggles_on.cdf"/>
+          <param name="fp3p" value="objects/characters/human/us/marine/marine_01_helmet_goggles_on.cdf"/>
+          <param name="arms" value="objects/weapons/arms_global/arms_nanosuit_us.chr"/>
+          <param name="mat" value="objects/characters/human/us/marine/Marine.mtl"/>
+          <param name="mat_helmet" value="objects/characters/human/us/nanosuit/nanosuit_us_helmet.mtl"/>
+          <param name="mat_arms"   value="objects/weapons/arms_global/arms_nanosuit_us.mtl"/>
+          <param name="worldOffset"   value="0.0,0.0,0.0"/>
+          <param name="scale"   value="1.0"/>
+        </Model>
+        <Equipment>
+          <param name="equipPack" value=""/>
+        </Equipment>
+        <AI>
+          <param name="archetype"  value="Conquest.US/Assault.Caucasian_SCAR"/>
+          <param name="character"  value=""/>
+          <param name="behaviour"  value=""/>
+        </AI>
+        <Abilities>
+          <ability name=""/>
+        </Abilities>
+        <Conditions>
+          <!-- <Condition type="" name="" speciesSide="" conditional1="" conditional2="" operator="" fvalue=""/> -->
+        </Conditions>
+      </Class>
+      <Class name="Assault" onlyThirdPerson="1" isHumanMode="1" isLeader="0" isAir="0">
+        <Model>
+          <param name="char" value="objects/characters/human/us/marine/marine_01_helmet_goggles_on.cdf"/>
+          <param name="fp3p" value="objects/characters/human/us/marine/marine_01_helmet_goggles_on.cdf"/>
+        </Model>
+        <Equipment>
+          <param name="equipPack" value="CONQ_US_Assault_SCAR"/>
+        </Equipment>
+        <AI>
+          <param name="archetype"  value="Conquest.US/Assault.Caucasian_SCAR"/>
+        </AI>
+      </Class>
+      <Class name="Engineer" onlyThirdPerson="1" isHumanMode="1" isLeader="0" isAir="0">
+        <Model>
+          <param name="char" value="objects/characters/human/us/marine/marine_05_helmet_goggles_on.cdf"/>
+          <param name="fp3p" value="objects/characters/human/us/marine/marine_05_helmet_goggles_on.cdf"/>
+        </Model>
+        <Equipment>
+          <param name="equipPack" value="CONQ_US_Medic_SMG"/>
+        </Equipment>
+        <AI>
+          <param name="archetype"  value="Conquest.US/Engineer.Caucasian_SMG"/>
+        </AI>
+        <Abilities>
+          <ability name="HmVehicleHealing"/>
+        </Abilities>
+      </Class>
+      <Class name="Scout" onlyThirdPerson="1" isHumanMode="1" isLeader="0" isAir="0">
+        <Model>
+          <param name="char" value="objects/characters/human/us/marine/marine_caucasian_11.cdf"/>
+          <param name="fp3p" value="objects/characters/human/us/marine/marine_caucasian_11.cdf"/>
+        </Model>
+        <Equipment>
+          <param name="equipPack" value="CONQ_US_Scout_DSG1"/>
+        </Equipment>
+        <AI>
+          <param name="archetype"  value="Conquest.US/Scout.Caucasian_DSG1"/>
+        </AI>
+      </Class>
+      <Class name="Support" onlyThirdPerson="1" isHumanMode="1" isLeader="0" isAir="0">
+        <Model>
+          <param name="char" value="objects/characters/human/us/marine/marine_afroamerican_11.cdf"/>
+          <param name="fp3p" value="objects/characters/human/us/marine/marine_afroamerican_11.cdf"/>
+        </Model>
+        <Equipment>
+          <param name="equipPack" value="CONQ_US_Support_Shotgun"/>
+        </Equipment>
+        <AI>
+          <param name="archetype"  value="Conquest.US/Support.Afroamerican_Shotgun"/>
+        </AI>
+      </Class>
+      <Class name="Nanosuit" onlyThirdPerson="0" isHumanMode="0" isLeader="1" isAir="0">
+        <Model>
+          <param name="char" value="objects/characters/human/us/nanosuit/nanosuit_us_multiplayer.cdf"/>
+          <param name="fp3p" value="objects/characters/human/us/nanosuit/nanosuit_us_fp3p.cdf"/>
+          <param name="arms" value="objects/weapons/arms_global/arms_nanosuit_us.chr"/>
+          <param name="mat" value="objects/characters/human/us/nanosuit/nanosuit_us.mtl"/>
+          <param name="mat_helmet" value="objects/characters/human/us/nanosuit/nanosuit_us_helmet.mtl"/>
+          <param name="mat_arms" value="objects/weapons/arms_global/arms_nanosuit_us.mtl"/>
+        </Model>
+        <Equipment>
+          <param name="equipPack" value="CONQ_US_Nanosuit_SCAR"/>
+        </Equipment>
+        <AI>
+          <param name="archetype"  value="Conquest.US/Nanosuit.Suit_SCAR"/>
+        </AI>
+      </Class>
+    </Faction>
+    <Faction name="NK" speciesIndex="1">
+      <Class name="Default" onlyThirdPerson="1" isHumanMode="1" isLeader="0" isAir="0"> 
+        <Model>
+          <param name="lobbyAnim" value="mpHUD_koreanSoldierSelectionIdle_03"/>
+          <param name="char" value="objects/characters/human/asian/nk_soldier/nk_soldier_camp_cover_light_01.cdf"/>
+          <param name="fp3p" value="objects/characters/human/asian/nk_soldier/nk_soldier_camp_cover_light_01.cdf"/>
+          <param name="arms" value="objects/weapons/arms_global/arms_nanosuit_asian.chr"/>
+          <param name="mat" value="objects/characters/human/asian/nk_soldier/NK_soldier.mtl"/>
+          <param name="mat_helmet" value="objects/characters/human/asian/nanosuit/nanosuit_asian_helmet.mtl"/>
+          <param name="mat_arms"   value="objects/weapons/arms_global/arms_nanosuit_asian.mtl"/>
+          <param name="worldOffset"   value="0.0,0.0,0.0"/>
+          <param name="scale"   value="1.0"/>
+        </Model>
+        <Equipment>
+          <param name="equipPack" value=""/>
+        </Equipment>
+        <AI>
+          <param name="archetype"  value="Conquest.NK/Assault.Korean_FY71"/>
+          <param name="character"  value=""/>
+          <param name="behaviour"  value=""/>
+        </AI>
+        <Abilities>
+          <ability name=""/>
+        </Abilities>
+        <Conditions>
+          <!-- <Condition type="" name="" speciesSide="" conditional1="" conditional2="" operator="" fvalue=""/> -->
+        </Conditions>
+      </Class>
+      <Class name="Assault" onlyThirdPerson="1" isHumanMode="1" isLeader="0" isAir="0">
+        <Model>
+          <param name="char" value="objects/characters/human/asian/nk_soldier/nk_soldier_elite_camper_light_gren_01.cdf"/>
+          <param name="fp3p" value="objects/characters/human/asian/nk_soldier/nk_soldier_elite_camper_light_gren_01.cdf"/>
+          <param name="mat_helmet" value="objects/characters/human/asian/nk_soldier/NK_soldier.mtl"/>
+        </Model>
+        <Equipment>
+          <param name="equipPack" value="CONQ_NK_Assault_FY71"/>
+        </Equipment>
+        <AI>
+          <param name="archetype"  value="Conquest.NK/Assault.Korean_FY71"/>
+        </AI>
+      </Class>
+      <Class name="Engineer" onlyThirdPerson="1" isHumanMode="1" isLeader="0" isAir="0">
+        <Model>
+          <param name="char" value="objects/characters/human/asian/nk_soldier/nk_soldier_elite_cover_light_gren_05.cdf"/>
+          <param name="fp3p" value="objects/characters/human/asian/nk_soldier/nk_soldier_elite_cover_light_gren_05.cdf"/>
+        </Model>
+        <Equipment>
+          <param name="equipPack" value="CONQ_NK_Medic_SMG"/>
+        </Equipment>
+        <AI>
+          <param name="archetype"  value="Conquest.NK/Engineer.Korean_SMG"/>
+        </AI>
+        <Abilities>
+          <ability name="HmVehicleHealing"/>
+        </Abilities>
+      </Class>
+      <Class name="Scout" onlyThirdPerson="1" isHumanMode="1" isLeader="0" isAir="0">
+        <Model>
+          <param name="char" value="objects/characters/human/asian/nk_soldier/nk_soldier_jungle_camper_light_01.cdf"/>
+          <param name="fp3p" value="objects/characters/human/asian/nk_soldier/nk_soldier_jungle_camper_light_01.cdf"/>
+          <param name="mat_helmet" value="objects/characters/human/asian/nk_soldier/NK_soldier.mtl"/>
+        </Model>
+        <Equipment>
+          <param name="equipPack" value="CONQ_NK_Scout_DSG1"/>
+        </Equipment>
+        <AI>
+          <param name="archetype"  value="Conquest.NK/Scout.Korean_DSG1"/>
+        </AI>
+      </Class>
+      <Class name="Support" onlyThirdPerson="1" isHumanMode="1" isLeader="0" isAir="0">
+        <Model>
+          <param name="char" value="objects/characters/human/asian/nk_soldier/nk_soldier_elite_camper_heavy_gren_01.cdf"/>
+          <param name="fp3p" value="objects/characters/human/asian/nk_soldier/nk_soldier_elite_camper_heavy_gren_01.cdf"/>
+          <param name="mat_helmet" value="objects/characters/human/asian/nk_soldier/NK_soldier.mtl"/>
+        </Model>
+        <Equipment>
+          <param name="equipPack" value="CONQ_NK_Support_Shotgun"/>
+        </Equipment>
+        <AI>
+          <param name="archetype"  value="Conquest.NK/Support.Korean_Shotgun"/>
+        </AI>
+      </Class>
+      <Class name="Nanosuit" onlyThirdPerson="0" isHumanMode="0" isLeader="1" isAir="0">
+        <Model>
+          <param name="char" value="objects/characters/human/asian/nanosuit/nanosuit_asian_multiplayer.cdf"/>
+          <param name="fp3p" value="objects/characters/human/asian/nanosuit/nanosuit_asian_fp3p.cdf"/>
+          <param name="arms" value="objects/weapons/arms_global/arms_nanosuit_asian.chr"/>
+          <param name="mat" value="objects/characters/human/asian/nanosuit/nanosuit_asian.mtl"/>
+          <param name="mat_helmet" value="objects/characters/human/asian/nanosuit/nanosuit_asian_helmet.mtl"/>
+          <param name="mat_arms" value="objects/weapons/arms_global/arms_nanosuit_asian.mtl"/>
+        </Model>
+        <Equipment>
+          <param name="equipPack" value="CONQ_NK_Nanosuit_FY71"/>
+        </Equipment>
+        <AI>
+          <param name="archetype"  value="Conquest.NK/Nanosuit.Suit_FY71"/>
+        </AI>
+      </Class>
+    </Faction>
+    <Faction name="Aliens" speciesIndex="2">
+      <Class name="Default" onlyThirdPerson="0" isHumanMode="0" isLeader="0" isAir="0"> 
+        <Model>
+          <param name="lobbyAnim" value="trooper_idleVert_02"/>
+          <param name="char" value="objects/characters/alien/trooper/trooper.cdf"/>
+          <param name="fp3p" value=""/>
+          <param name="arms" value=""/>
+          <param name="mat" value=""/>
+          <param name="mat_helmet" value=""/>
+          <param name="mat_arms"   value=""/>
+          <param name="worldOffset"   value="0.0,0.0,0.0"/>
+          <param name="scale"   value="1.0"/>
+        </Model>
+        <Equipment>
+          <param name="equipPack" value=""/>
+        </Equipment>
+        <AI>
+          <param name="archetype"  value="Conquest.Aliens/Trooper.MOAC"/>
+          <param name="character"  value=""/>
+          <param name="behaviour"  value=""/>
+        </AI>
+        <Abilities>
+          <ability name=""/>
+        </Abilities>
+        <Conditions>
+          <!-- <Condition type="" name="" speciesSide="" conditional1="" conditional2="" operator="" fvalue=""/> -->
+        </Conditions>
+      </Class>
+      <Class name="Trooper" onlyThirdPerson="0" isHumanMode="0" isLeader="0" isAir="0">
+        <Model>
+          <param name="char" value="objects/characters/alien/trooper/trooper.cdf"/>
+        </Model>
+        <Equipment>
+          <param name="equipPack" value="Alien_Trooper"/>
+        </Equipment>
+        <AI>
+          <param name="archetype"  value="Conquest.Aliens/Trooper.MOAC"/>
+        </AI>
+        <Abilities>
+          <ability name="TrRage"/>
+        </Abilities>
+      </Class>
+      <Class name="Trooper Guardian" onlyThirdPerson="0" isHumanMode="0" isLeader="1" isAir="0">
+        <Model>
+          <param name="char" value="objects/characters/alien/guardian/guardian.cdf"/>
+        </Model>
+        <Equipment>
+          <param name="equipPack" value="Alien_Trooper"/>
+        </Equipment>
+        <AI>
+          <param name="archetype"  value="Conquest.Aliens/Trooper.Guardian"/>
+          <param name="behaviour"  value="TrooperGuardianIdle"/>
+        </AI>
+        <Abilities>
+          <ability name="TrEMP"/>
+          <ability name="TrShield"/>
+        </Abilities>
+      </Class>
+      <Class name="Trooper Cloak" onlyThirdPerson="0" isHumanMode="0" isLeader="0" isAir="0">
+        <Model>
+          <param name="char" value="objects/characters/alien/trooper/trooper_black.cdf"/>
+        </Model>
+        <Equipment>
+          <param name="equipPack" value="Alien_Trooper"/>
+        </Equipment>
+        <AI>
+          <param name="archetype"  value="Conquest.Aliens/Trooper.Cloak"/>
+          <param name="behaviour"  value="TrooperCloakIdle"/>          
+        </AI>
+        <Abilities>
+          <ability name="TrRage"/>
+          <ability name="TrCloak"/>
+        </Abilities>
+      </Class>
+      <Class name="Scout MOAC" onlyThirdPerson="0" isHumanMode="0" isLeader="0" isAir="1"> 
+        <Model>
+          <param name="lobbyAnim" value="fly_idle"/>
+          <param name="char" value="objects/characters/alien/scout/scout_base.cdf"/>
+          <param name="worldOffset"   value="0.0,0.0,1.5"/>
+          <param name="scale"   value="0.35"/>
+        </Model>
+        <Equipment>
+          <param name="equipPack" value="Alien_Scout_Gunner_Player"/>
+        </Equipment>
+        <AI>
+          <param name="archetype"  value="Conquest.Aliens/Scout.MOAC"/>
+          <param name="character"  value="ScoutMOAC"/>
+          <param name="behaviour"  value="ScoutMOACIdle"/>
+        </AI>
+        <Abilities>
+          <ability name="ScAntigrav"/>
+          <ability name="ScSpotlight"/>
+          <ability name="ScGrab"/>
+        </Abilities>
+        <Conditions>
+          <Condition type="UnlockedForPlayer"/>
+		      <!-- <Condition type="UnlockedByArea"/> -->
+          <!-- <Condition type="Count" name="ScoutBaseCount" speciesSide="Friendly" conditional1="Areas" conditional2="AirSpawner" operator="More" fvalue="0"/> -->
+        </Conditions>
+      </Class>
+      <Class name="Scout Beam" onlyThirdPerson="0" isHumanMode="0" isLeader="1" isAir="1"> 
+        <Model>
+          <param name="lobbyAnim" value="fly_idle"/>
+          <param name="char" value="objects/characters/alien/scout/scout_leader.cdf"/>
+          <param name="worldOffset"   value="0.0,0.0,1.5"/>
+          <param name="scale"   value="0.35"/>
+        </Model>
+        <Equipment>
+          <param name="equipPack" value="Alien_Scout_Beamer_Player"/>
+        </Equipment>
+        <AI>
+          <param name="archetype"  value="Conquest.Aliens/Scout.Beam"/>
+          <param name="character"  value="ScoutMOAC"/>
+          <param name="behaviour"  value="ScoutMOACIdle"/>
+        </AI>
+        <Abilities>
+          <ability name="ScAntigrav"/>
+          <ability name="ScSpotlight"/>
+          <ability name="ScGrab"/>
+        </Abilities>
+        <Conditions>
+          <Condition type="UnlockedForPlayer"/> 
+
+		      <!-- <Condition type="UnlockedByArea"/> -->
+          <!-- <Condition type="Count" name="ScoutBaseCount" speciesSide="Friendly" conditional1="Areas" conditional2="AirSpawner" operator="More" fvalue="0"/> -->
+        </Conditions>
+      </Class>
+    </Faction>
+    <!-- <Faction name="CELL C3" speciesIndex="3" enabled="0">
+      <Class name="Default" onlyThirdPerson="1" isHumanMode="1" isLeader="0" isAir="0" enabled="1">
+        <Model>
+          <param name="lobbyAnim" value="mpHUD_koreanSoldierSelectionIdle_03"/>
+          <param name="char" value="objects/characters/c3/cell/trooper_player/cell_trooper_f3p.cdf"/>
+          <param name="fp3p" value="objects/characters/c3/cell/trooper_player/cell_trooper_f3p.cdf"/>
+          <param name="arms" value="objects/weapons/arms_global_cell/arms_nanosuit_us.chr"/>
+          <param name="mat" value="objects/characters/c3/cell/trooper_player/cell_trooper.mtl"/>
+          <param name="mat_helmet" value="objects/characters/c3/cell/trooper_player/cell_trooper.mtl"/>
+          <param name="mat_arms"   value="objects/weapons/arms_global_cell/arms_nanosuit_us.mtl"/>
+          <param name="worldOffset"   value="0.0,0.0,0.0"/>
+          <param name="scale"   value="1.0"/>
+        </Model>
+        <Equipment>
+          <param name="primaryWeapon" value=""/>
+          <param name="equipPack" value=""/>
+        </Equipment>
+        <AI>
+          <param name="archetype"  value="Conquest.CELL/Assault.C3_Trooper_Rifleman1"/>
+        </AI>
+        <Abilities>
+          <ability name=""/>
+        </Abilities>
+        <Conditions>
+        </Conditions>
+      </Class>
+      <Class name="Leader" onlyThirdPerson="0" isHumanMode="1" isLeader="1" enabled="0">
+          <Model>
+            <param name="lobbyAnim" value="mpHUD_koreanSoldierSelectionIdle_03"/>
+            <param name="char" value="objects/characters/c3/cell/trooper/cell_trooper2_attachment1_leader.cdf"/>
+            <param name="fp3p" value="objects/characters/c3/cell/trooper_player/cell_trooper_f3p.cdf"/>
+            <param name="arms" value="objects/weapons/arms_global_cell/arms_nanosuit_us.chr"/>
+            <param name="mat" value="objects/characters/c3/cell/trooper_player/cell_trooper.mtl"/>
+            <param name="mat_helmet" value="objects/characters/c3/cell/trooper_player/cell_trooper.mtl"/>
+            <param name="mat_arms"   value="objects/weapons/arms_global_cell/arms_nanosuit_us.mtl"/>
+            <param name="worldOffset"   value="0.0,0.0,0.0"/>
+            <param name="scale"   value="1.0"/>
+          </Model>
+          <Equipment>
+            <param name="equipPack" value="CONQ_CELL_Assault_CellSCAR"/>
+          </Equipment>
+          <AI>
+            <param name="archetype"  value="Conquest.CELL/Leader.C3_Rifleman"/>
+          </AI>
+          <Abilities>
+            <ability name=""/>
+          </Abilities>
+      </Class>
+      <Class name="Engineer" onlyThirdPerson="0" isHumanMode="1" isLeader="0" enabled="0">
+          <Model>
+            <param name="lobbyAnim" value="mpHUD_koreanSoldierSelectionIdle_03"/>
+            <param name="char" value="objects/characters/c3/cell/flanker/cell_flanker.chr"/>
+            <param name="fp3p" value="objects/characters/c3/cell/flanker_player/cell_flanker_fp3p.cdf"/>
+            <param name="arms" value="objects/weapons/arms_global_cell/arms_nanosuit_us.chr"/>
+            <param name="mat" value="objects/characters/c3/cell/flanker/cell_flanker.mtl"/>
+            <param name="mat_helmet" value="objects/characters/c3/cell/flanker/cell_flanker.mtl"/>
+            <param name="mat_arms"   value="objects/weapons/arms_global_cell/arms_nanosuit_us.mtl"/>
+            <param name="worldOffset"   value="0.0,0.0,0.0"/>
+            <param name="scale"   value="1.0"/>
+          </Model>
+          <Equipment>
+            <param name="equipPack" value="CONQ_CELL_Engineer_Feline"/>
+          </Equipment>
+          <AI>
+            <param name="archetype"  value="Conquest.CELL/Engineer.C3_Feline"/>
+            <param name="character"  value=""/>
+            <param name="behaviour"  value=""/>
+          </AI>
+          <Abilities>
+            <ability name=""/>
+          </Abilities>
+      </Class>
+      <Class name="Assault" onlyThirdPerson="0" isHumanMode="1" isLeader="0" enabled="0">
+          <Model>
+            <param name="lobbyAnim" value="mpHUD_koreanSoldierSelectionIdle_03"/>
+            <param name="char" value="objects/characters/c3/cell/trooper/cell_trooper2_attachment2.cdf"/>
+            <param name="fp3p" value="objects/characters/c3/cell/trooper_player/cell_trooper_f3p.cdf"/>
+            <param name="arms" value="objects/weapons/arms_global_cell/arms_nanosuit_us.chr"/>
+            <param name="mat" value="objects/characters/c3/cell/trooper_player/cell_trooper.mtl"/>
+            <param name="mat_helmet" value="objects/characters/c3/cell/trooper_player/cell_trooper.mtl"/>
+            <param name="mat_arms"   value="objects/weapons/arms_global_cell/arms_nanosuit_us.mtl"/>
+            <param name="worldOffset"   value="0.0,0.0,0.0"/>
+            <param name="scale"   value="1.0"/>
+          </Model>
+          <Equipment>
+            <param name="primaryWeapon" value="CellSCAR"/>
+            <param name="equipPack" value="CONQ_CELL_Assault_CellSCAR"/>
+          </Equipment>
+          <AI>
+            <param name="archetype"  value="Conquest.CELL/Assault.C3_Trooper_Rifleman1"/>
+          </AI>
+          <Abilities>
+            <ability name=""/>
+          </Abilities>
+      </Class>
+	  <Class name="Support_Machinegun" onlyThirdPerson="0" isHumanMode="1" isLeader="0" enabled="0">
+        <Model>
+          <param name="lobbyAnim" value="mpHUD_koreanSoldierSelectionIdle_03"/>
+          <param name="char" value="objects/characters/c3/cell/heavy/cell_heavy_attachments_1.cdf"/>
+          <param name="fp3p" value="objects/characters/c3/cell/heavy_player/cell_heavy_fp3p.cdf"/>
+          <param name="arms" value="objects/weapons/arms_global_cell/arms_nanosuit_us.chr"/>
+          <param name="mat" value="objects/characters/c3/cell/heavy_player/cell_heavy.mtl"/>
+          <param name="mat_helmet" value="objects/characters/c3/cell/heavy_player/cell_heavy.mtl"/>
+          <param name="mat_arms"   value="objects/weapons/arms_global_cell/arms_nanosuit_us.mtl"/>
+          <param name="worldOffset"   value="0.0,0.0,0.0"/>
+          <param name="scale"   value="1.0"/>
+        </Model>
+        <Equipment>
+          <param name="primaryWeapon" value="C3_MK60"/>
+          <param name="equipPack" value="CONQ_CELL_Support_MK60"/>
+        </Equipment>
+        <AI>
+          <param name="archetype"  value="Conquest.CELL/Support.C3_Heavy_MK60"/>
+        </AI>
+        <Abilities>
+          <ability name=""/>
+        </Abilities>
+      </Class>  
+	  <Class name="Support_Shotgun" onlyThirdPerson="0" isHumanMode="1" isLeader="0" enabled="0">
+      <Model>
+        <param name="lobbyAnim" value="mpHUD_koreanSoldierSelectionIdle_03"/>
+        <param name="char" value="objects/characters/c3/cell/heavy/cell_heavy_attachments_1.cdf"/>
+        <param name="fp3p" value="objects/characters/c3/cell/heavy_player/cell_heavy_fp3p.cdf"/>
+        <param name="arms" value="objects/weapons/arms_global_cell/arms_nanosuit_us.chr"/>
+        <param name="mat" value="objects/characters/c3/cell/heavy_player/cell_heavy.mtl"/>
+        <param name="mat_helmet" value="objects/characters/c3/cell/heavy_player/cell_heavy.mtl"/>
+        <param name="mat_arms"   value="objects/weapons/arms_global_cell/arms_nanosuit_us.mtl"/>
+        <param name="worldOffset"   value="0.0,0.0,0.0"/>
+        <param name="scale"   value="1.0"/>
+      </Model>
+      <Equipment>
+        <param name="equipPack" value="CONQ_US_Support_Shotgun"/>
+      </Equipment>
+      <AI>
+        <param name="archetype"  value="Conquest.CELL/Support.C3_Heavy_MK60"/>
+      </AI>
+      <Abilities>
+        <ability name=""/>
+      </Abilities>
+      </Class>
+    <Class name="Nano Operator" onlyThirdPerson="0" isHumanMode="0" isLeader="1" enabled="0">
+        <Model>
+          <param name="char" value="objects/characters/c3/cell/cw2_nanoops/nanoOps.chr"/>
+          <param name="fp3p" value="objects/characters/c3/cell/cw2_nanoops/nanoops_f3p.cdf"/>
+          <param name="arms" value="objects/weapons/arms_global_nanoops_cell/arms_nanosuit_v2.chr"/>
+          <param name="mat" value="objects/characters/c3/cell/cw2_nanoops/nanoops.mtl"/>
+          <param name="mat_helmet" value="objects/characters/c3/cell/cw2_nanoops/nanoops.mtl"/>
+          <param name="mat_arms" value="objects/weapons/arms_global_nanoops_cell/arms_nanosuit_us.mtl"/>
+        </Model>
+        <Equipment>
+		  <param name="equipPack" value="CONQ_CELL_Assault_CellSCAR"/> 
+        </Equipment>
+        <AI>
+          <param name="archetype" value="Conquest.NK/Nanosuit.Suit_FY71"/>
+        </AI>
+      </Class>
+    </Faction> -->
+    <Faction name="CELL" speciesIndex="3">
+      <Class name="Default" onlyThirdPerson="1" isHumanMode="1" isLeader="0" isAir="0" enabled="1">
+        <Model>
+          <param name="lobbyAnim" value="mpHUD_koreanSoldierSelectionIdle_03"/>
+          <param name="char" value="objects/characters/c3/cell/cw2_leader_trooper/cw2_troop_leader_1b.cdf"/>
+          <param name="fp3p" value="objects/characters/c3/cell/cw2_leader_trooper/cw2_troop_leader_1b.cdf"/>
+          <param name="arms" value="objects/weapons/arms_global_cell/arms_nanosuit_us.chr"/>
+          <param name="mat" value="objects/characters/c3/cell/cw2_leader_trooper/cw2_troop_leader.mtl"/>
+          <param name="mat_helmet" value="objects/characters/c3/cell/cw2_leader_trooper/cw2_troop_leader.mtl"/>
+          <param name="mat_arms"   value="objects/weapons/arms_global_cell/arms_nanosuit_us.mtl"/>
+          <param name="worldOffset"   value="0.0,0.0,0.0"/>
+          <param name="scale"   value="1.0"/>
+        </Model>
+        <Equipment>
+          <param name="primaryWeapon" value=""/>
+          <param name="equipPack" value=""/>
+        </Equipment>
+        <AI>
+          <param name="archetype"  value="Conquest.CELL/Assault.C2_Trooper_Rifleman1"/>
+          <!-- <param name="character"  value=""/>
+          <param name="behaviour"  value=""/> -->
+        </AI>
+        <Abilities>
+          <ability name=""/>
+        </Abilities>
+        <Conditions>
+          <!-- <Condition type="" name="" speciesSide="" conditional1="" conditional2="" operator="" fvalue=""/> -->
+        </Conditions>
+      </Class>
+      <Class name="Leader" onlyThirdPerson="1" isHumanMode="1" isLeader="1" isAir="0" enabled="1">
+          <Model>
+            <param name="lobbyAnim" value="mpHUD_koreanSoldierSelectionIdle_03"/>
+            <param name="char" value="objects/characters/c3/cell/cw2_leader_trooper/cw2_troop_leader_1b.cdf"/>
+            <param name="fp3p" value="objects/characters/c3/cell/cw2_leader_trooper/cw2_troop_leader_1b.cdf"/>
+            <param name="arms" value="objects/weapons/arms_global_cell/arms_nanosuit_us.chr"/>
+            <param name="mat" value="objects/characters/c3/cell/cw2_leader_trooper/cw2_troop_leader.mtl"/>
+            <param name="mat_helmet" value="objects/characters/c3/cell/cw2_leader_trooper/cw2_troop_leader.mtl"/>
+            <param name="mat_arms"   value="objects/weapons/arms_global_cell/arms_nanosuit_us.mtl"/>
+            <param name="worldOffset"   value="0.0,0.0,0.0"/>
+            <param name="scale"   value="1.0"/>
+          </Model>
+          <Equipment>
+            <param name="equipPack" value="CONQ_CELL_Assault_CellSCAR"/>
+          </Equipment>
+          <AI>
+            <param name="archetype"  value="Conquest.CELL/Leader.C2_Rifleman"/>
+            <!-- <param name="character"  value=""/>
+            <param name="behaviour"  value=""/> -->
+          </AI>
+          <Abilities>
+            <ability name=""/>
+          </Abilities>
+      </Class>
+      <Class name="Engineer" onlyThirdPerson="1" isHumanMode="1" isLeader="0" isAir="0" enabled="1">
+          <Model>
+            <param name="lobbyAnim" value="mpHUD_koreanSoldierSelectionIdle_03"/>
+            <param name="char" value="objects/characters/c3/cell/cw2_leader_trooper/cw2_troop_leader_2b.cdf"/>
+            <param name="fp3p" value="objects/characters/c3/cell/cw2_leader_trooper/cw2_troop_leader_2b.cdf"/>
+            <param name="arms" value="objects/weapons/arms_global_cell/arms_nanosuit_us.chr"/>
+            <param name="mat" value="objects/characters/c3/cell/cw2_leader_trooper/cw2_troop_leader.mtl"/>
+            <param name="mat_helmet" value="objects/characters/c3/cell/cw2_leader_trooper/cw2_troop_leader.mtl"/>
+            <param name="mat_arms"   value="objects/weapons/arms_global_cell/arms_nanosuit_us.mtl"/>
+            <param name="worldOffset"   value="0.0,0.0,0.0"/>
+            <param name="scale"   value="1.0"/>
+          </Model>
+          <Equipment>
+            <param name="equipPack" value="CONQ_CELL_Engineer_CellSCAR"/>
+          </Equipment>
+          <AI>
+            <param name="archetype"  value="Conquest.CELL/Engineer.C2_Feline"/>
+            <param name="character"  value=""/>
+            <param name="behaviour"  value=""/>
+          </AI>
+          <Abilities>
+            <ability name=""/>
+          </Abilities>
+      </Class>
+      <Class name="Assault" onlyThirdPerson="1" isHumanMode="1" isLeader="0" isAir="0" enabled="1">
+          <Model>
+            <param name="lobbyAnim" value="mpHUD_koreanSoldierSelectionIdle_03"/>
+            <param name="char" value="objects/characters/c3/cell/cw2_leader_trooper/cw2_troop_leader_2b.cdf"/>
+            <param name="fp3p" value="objects/characters/c3/cell/cw2_leader_trooper/cw2_troop_leader_2b.cdf"/>
+            <param name="arms" value="objects/weapons/arms_global_cell/arms_nanosuit_us.chr"/>
+            <param name="mat" value="objects/characters/c3/cell/cw2_leader_trooper/cw2_troop_leader.mtl"/>
+            <param name="mat_helmet" value="objects/characters/c3/cell/cw2_leader_trooper/cw2_troop_leader.mtl"/>
+            <param name="mat_arms"   value="objects/weapons/arms_global_cell/arms_nanosuit_us.mtl"/>
+            <param name="worldOffset"   value="0.0,0.0,0.0"/>
+            <param name="scale"   value="1.0"/>
+          </Model>
+          <Equipment>
+            <param name="primaryWeapon" value="CellSCAR"/>
+            <param name="equipPack" value="CONQ_CELL_Assault_CellSCAR"/>
+          </Equipment>
+          <AI>
+            <param name="archetype"  value="Conquest.CELL/Assault.C2_Trooper_Rifleman1"/>
+          </AI>
+          <Abilities>
+            <ability name=""/>
+          </Abilities>
+      </Class>
+	  <Class name="Support_Shotgun" onlyThirdPerson="1" isHumanMode="1" isLeader="0" isAir="0" enabled="1">
+      <Model>
+        <param name="lobbyAnim" value="mpHUD_koreanSoldierSelectionIdle_03"/>
+        <param name="char" value="objects/characters/c3/cell/cw2_leader_trooper/cw2_troop_leader_3b.cdf"/>
+        <param name="fp3p" value="objects/characters/c3/cell/cw2_leader_trooper/cw2_troop_leader_3b.cdf"/>
+        <param name="arms" value="objects/weapons/arms_global_cell/arms_nanosuit_us.chr"/>
+        <param name="mat" value="objects/characters/c3/cell/cw2_leader_trooper/cw2_troop_leader.mtl"/>
+        <param name="mat_helmet" value="objects/characters/c3/cell/cw2_leader_trooper/cw2_troop_leader.mtl"/>
+        <param name="mat_arms"   value="objects/weapons/arms_global_cell/arms_nanosuit_us.mtl"/>
+        <param name="worldOffset"   value="0.0,0.0,0.0"/>
+        <param name="scale"   value="1.0"/>
+  </Model>
+      <Equipment>
+        <param name="equipPack" value="CONQ_US_Support_Shotgun"/>
+      </Equipment>
+      <AI>
+        <param name="archetype"  value="Conquest.CELL/Support.C2_Heavy_Shotgun"/>
+      </AI>
+      <Abilities>
+        <ability name=""/>
+      </Abilities>
+      </Class>
+    <Class name="Nano Operator" onlyThirdPerson="0" isHumanMode="0" isLeader="1" isAir="0" enabled="1">
+        <Model>
+          <param name="char" value="objects/characters/c3/cell/cw2_nanoops/nanoOps.chr"/>
+          <param name="fp3p" value="objects/characters/c3/cell/cw2_nanoops/nanoops_f3p.cdf"/>
+          <param name="arms" value="objects/weapons/arms_global_nanoops_cell/arms_nanosuit_v2.chr"/>
+          <param name="mat" value="objects/characters/c3/cell/cw2_nanoops/nanoops.mtl"/>
+          <param name="mat_helmet" value="objects/characters/c3/cell/cw2_nanoops/nanoops.mtl"/>
+          <param name="mat_arms" value="objects/weapons/arms_global_nanoops_cell/arms_nanosuit_us.mtl"/>
+        </Model>
+        <Equipment>
+		  <param name="equipPack" value="CONQ_CELL_Assault_CellSCAR"/> 
+        </Equipment>
+        <AI>
+          <param name="archetype" value="Conquest.CELL/Nanosuit.Operator_Rifleman"/>
+        </AI>
+      </Class>
+    </Faction>
+  </Factions>
+</Classes>

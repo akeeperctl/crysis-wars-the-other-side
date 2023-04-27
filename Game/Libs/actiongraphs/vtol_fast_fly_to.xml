@@ -1,0 +1,69 @@
+<Graph Description="" Group="Conqueror" enabled="1" MultiPlayer="ClientServer">
+ <Nodes>
+  <Node Id="1" Class="AI:ActionStart" pos="410,-50,0" flags="0"/>
+  <Node Id="3" Class="Entity:EntityPos" pos="1800,-10,0" flags="0" GraphEntity="1">
+   <Inputs entityId="0" pos="0,0,0" rotate="0,0,0" scale="0,0,0"/>
+  </Node>
+  <Node Id="12" Class="AI:AISignal" pos="2240,-80,0" flags="0" GraphEntity="0">
+   <Inputs entityId="0" signal="TO_VTOL_FLY_TOS" posValue="0,0,0" posValue2="0,0,0" iValue="0" fValue="0" sValue="" id="0"/>
+  </Node>
+  <Node Id="18" Class="Physics:RayCast" pos="770,-50,0" flags="0" GraphEntity="0">
+   <Inputs entityId="0" direction="0,0,-1" maxLength="9000" position="0,0,1"/>
+  </Node>
+  <Node Id="22" Class="Math:Less" pos="1050,-40,0" flags="0">
+   <Inputs A="0" B="30"/>
+  </Node>
+  <Node Id="24" Class="Vec3:FromVec3" pos="1050,60,0" flags="0">
+   <Inputs vec3="0,0,0"/>
+  </Node>
+  <Node Id="25" Class="Vec3:ToVec3" pos="1370,60,0" flags="0">
+   <Inputs x="0" y="0" z="0"/>
+  </Node>
+  <Node Id="26" Class="Math:Add" pos="1220,120,0" flags="0">
+   <Inputs A="0" B="30"/>
+  </Node>
+  <Node Id="27" Class="AI:AIGotoSpeedStance" pos="1530,-50,0" flags="0" GraphEntity="0">
+   <Inputs entityId="0" pos="0,0,0" distance="5" StopDistance="0" run="3" stance="3"/>
+  </Node>
+  <Node Id="28" Class="Logic:Any" pos="1840,-140,0" flags="0">
+   <Inputs />
+  </Node>
+  <Node Id="58" Class="Logic:Any" pos="570,-50,0" flags="0">
+   <Inputs />
+  </Node>
+  <Node Id="60" Class="AI:ActionEnd" pos="2840,-90,0" flags="0">
+   <Inputs />
+  </Node>
+  <Node Id="61" Name="StopDistance" Class="Math:SetNumber" pos="1960,-70,0" flags="0">
+   <Inputs in="150"/>
+  </Node>
+  <Node Id="62" Class="AI:AIGotoSpeedStance" pos="2535.8438,-78.446327,0" flags="0" GraphEntity="0">
+   <Inputs entityId="0" pos="0,0,0" distance="0" StopDistance="0" run="3" stance="3"/>
+  </Node>
+  <Node Id="63" Class="Entity:EntityPos" pos="2333.6748,77.762161,0" flags="0" GraphEntity="1">
+   <Inputs entityId="0" pos="0,0,0" rotate="0,0,0" scale="0,0,0"/>
+  </Node>
+ </Nodes>
+ <Edges>
+  <Edge nodeIn="58" nodeOut="1" portIn="in1" portOut="UserId" enabled="1"/>
+  <Edge nodeIn="12" nodeOut="3" portIn="posValue" portOut="pos" enabled="1"/>
+  <Edge nodeIn="62" nodeOut="12" portIn="sink" portOut="succeed" enabled="1"/>
+  <Edge nodeIn="22" nodeOut="18" portIn="A" portOut="distance" enabled="1"/>
+  <Edge nodeIn="24" nodeOut="18" portIn="vec3" portOut="hitpoint" enabled="1"/>
+  <Edge nodeIn="27" nodeOut="22" portIn="sink" portOut="true" enabled="1"/>
+  <Edge nodeIn="28" nodeOut="22" portIn="in1" portOut="false" enabled="1"/>
+  <Edge nodeIn="25" nodeOut="24" portIn="x" portOut="x" enabled="1"/>
+  <Edge nodeIn="25" nodeOut="24" portIn="y" portOut="y" enabled="1"/>
+  <Edge nodeIn="26" nodeOut="24" portIn="A" portOut="z" enabled="1"/>
+  <Edge nodeIn="27" nodeOut="25" portIn="pos" portOut="vec3" enabled="1"/>
+  <Edge nodeIn="25" nodeOut="26" portIn="z" portOut="out" enabled="1"/>
+  <Edge nodeIn="28" nodeOut="27" portIn="in2" portOut="succeed" enabled="1"/>
+  <Edge nodeIn="61" nodeOut="28" portIn="set" portOut="out" enabled="1"/>
+  <Edge nodeIn="18" nodeOut="58" portIn="go" portOut="out" enabled="1"/>
+  <Edge nodeIn="12" nodeOut="61" portIn="fValue" portOut="out" enabled="1"/>
+  <Edge nodeIn="12" nodeOut="61" portIn="sink" portOut="out" enabled="1"/>
+  <Edge nodeIn="60" nodeOut="62" portIn="cancel" portOut="fail" enabled="1"/>
+  <Edge nodeIn="60" nodeOut="62" portIn="end" portOut="succeed" enabled="1"/>
+  <Edge nodeIn="62" nodeOut="63" portIn="pos" portOut="pos" enabled="1"/>
+ </Edges>
+</Graph>

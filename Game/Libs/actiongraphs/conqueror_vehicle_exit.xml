@@ -1,0 +1,22 @@
+<Graph Description="Graph used in Conquest game mode" Group="Conqueror" enabled="1" MultiPlayer="ClientServer">
+ <Nodes>
+  <Node Id="1" Class="AI:ActionStart" pos="-80,10,0" flags="0"/>
+  <Node Id="2" Class="AI:ActionEnd" pos="370,10,0" flags="0">
+   <Inputs />
+  </Node>
+  <Node Id="4" Class="Vehicle:Exit" pos="80,10,0" flags="0">
+   <Inputs entityId="0"/>
+  </Node>
+  <Node Id="5" Class="Logic:Any" pos="240,-10,0" flags="0" InHideMask="63" OutHideMask="1">
+   <Inputs />
+  </Node>
+ </Nodes>
+ <Edges>
+  <Edge nodeIn="4" nodeOut="1" portIn="Synk" portOut="UserId" enabled="1"/>
+  <Edge nodeIn="4" nodeOut="1" portIn="entityId" portOut="UserId" enabled="1"/>
+  <Edge nodeIn="2" nodeOut="4" portIn="cancel" portOut="fail" enabled="1"/>
+  <Edge nodeIn="5" nodeOut="4" portIn="in1" portOut="done" enabled="1"/>
+  <Edge nodeIn="5" nodeOut="4" portIn="in2" portOut="succeed" enabled="1"/>
+  <Edge nodeIn="2" nodeOut="5" portIn="end" portOut="out" enabled="1"/>
+ </Edges>
+</Graph>

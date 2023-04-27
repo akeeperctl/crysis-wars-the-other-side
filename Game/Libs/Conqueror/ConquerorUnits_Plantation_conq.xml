@@ -1,0 +1,9 @@
+<Factions>
+  <!-- <Faction name="example" speciesIndex="0" unitsCount="4" squadsCount="2"/> -->
+  <!-- name attribute now is not using from 11.09.2022 -->
+  <!-- количество unitsCount всегда должно быть меньше чем количество спавнпоинтов, иначе не все смогут заспавнится-->
+  <Faction name="USA" speciesIndex="0" unitsCount="16" squadsCount="4" reinforcements="250"/>
+  <Faction name="NK" speciesIndex="1" unitsCount="16" squadsCount="4" reinforcements="250"/>
+  <Faction name="Aliens" speciesIndex="2" unitsCount="0" squadsCount="0" reinforcements="0"/>
+  <Faction name="CELL" speciesIndex="3" unitsCount="0" squadsCount="0" reinforcements="0"/>
+</Factions>

@@ -1,0 +1,126 @@
+<FrontEndAudio>
+
+	<Set name="main">
+		<Signals>
+			<Start signal = "FrontEnd_Start" />
+			<Confirm signal = "FrontEnd_Confirm" />
+			<Cancel signal = "FrontEnd_Cancel" />
+			<Move signal = "FrontEnd_Move" />
+			<!-- <EnterScreen signal = "Multiplayer_Cache_Music_Lobby" /> --> <!-- in-code caching of this is already sufficient! -->
+		</Signals>
+	</Set>
+
+	<Set name="menu" default="1">
+		<Menus>
+			<Menu name="Menu" />
+			<Menu name="AttractMode" />
+			<Menu name="LanguageSelection" />
+		</Menus>
+		<Signals>
+			<Start signal = "FrontEnd_Start" />
+			<Confirm signal = "FrontEnd_Confirm" />
+			<Cancel signal = "FrontEnd_Cancel" />
+			<Move signal = "FrontEnd_Move" />
+			<EnterMenu signal = "FrontEnd_Music_EnterMenu" />
+			<LeaveMenu signal = "FrontEnd_Music_LeaveMenu" />
+		</Signals>
+	</Set>
+	
+	<Set name="showroom" default="1">
+		<Menus>
+			<Menu name="Showroom" />
+		</Menus>
+		<Signals>
+			<Start signal = "FrontEnd_Start" />
+			<Confirm signal = "FrontEnd_Confirm" />
+			<Cancel signal = "FrontEnd_Cancel" />
+			<Move signal = "FrontEnd_Move" />
+		</Signals>
+	</Set>
+	
+	<Set name="loading">
+		<Menus>
+			<Menu name="LoadingScreen" />
+		</Menus>
+		<Signals>
+			<EnterMenu signal = "Multiplayer_FrontEnd_Music_EnterLoading" />
+		</Signals>
+	</Set>
+	
+	<Set name="pause">
+		<Menus>
+			<Menu name="IngameMenu" />
+		</Menus>
+		<Signals>
+			<Start signal = "FrontEnd_Start"/>
+			<Confirm signal = "FrontEnd_Confirm"/>
+			<Cancel signal = "FrontEnd_Cancel"/>
+			<Move signal = "FrontEnd_Move"/>
+			<EnterMenu signal = "Menu_Muted_Enter"/>
+			<LeaveMenu signal = "Menu_Muted_Leave"/>
+		</Signals>
+	</Set>
+
+	<Set name="scoreboard">
+		<Menus>
+			<Menu name="Scoreboard" />
+		</Menus>
+		<Signals>
+			<Start signal = "FrontEnd_Start"/>
+			<Confirm signal = "FrontEnd_Confirm"/>
+			<Cancel signal = "FrontEnd_Cancel"/>
+			<Move signal = "FrontEnd_Move"/>
+		</Signals>
+	</Set>
+
+
+	<Set name="infiction">
+		<Menus>
+			<Menu name="WeaponCustomization" />
+			<Menu name="SuitCustomization" />
+		</Menus>
+		<Signals>
+		</Signals>
+	</Set>
+
+	<Set name="map">
+		<Signals>
+			<Confirm signal = "FrontEndMap_Confirm"/>
+			<Cancel signal = "FrontEndMap_Cancel"/>
+			<Ambient signal = "FrontEndMap_Ambient"/>
+			<EnterMenu signal = "Menu_Muted_Enter"/>
+			<LeaveMenu signal = "Menu_Muted_Leave"/>
+		</Signals>
+	</Set>
+
+	<Set name="post_game">
+		<Signals>
+			<Start signal = "FrontEnd_Start" />
+			<Confirm signal = "FrontEnd_Confirm" />
+			<Cancel signal = "FrontEnd_Cancel" />
+			<Move signal = "FrontEnd_Move" />
+			<EnterScreen signal = "Multiplayer_Music_PostGame" />
+		</Signals>
+	</Set>
+
+	<Set name="play_online" neverOverrideMe="1" >
+		<Signals>
+			<Start signal = "FrontEnd_Start" />
+			<Confirm signal = "FrontEnd_Confirm" />
+			<Cancel signal = "FrontEnd_Cancel" />
+			<Move signal = "FrontEnd_Move" />
+			<EnterScreen signal = "Multiplayer_Music_Menu" />
+		</Signals>
+	</Set>
+
+	<Set name="game_lobby" stopEnterScreenSignalOnLeave="1" neverOverrideMe="1" >
+		<Signals>
+			<Start signal = "FrontEnd_Start" />
+			<Confirm signal = "FrontEnd_Confirm" />
+			<Cancel signal = "FrontEnd_Cancel" />
+			<Move signal = "FrontEnd_Move" />
+			<EnterScreen signal = "Multiplayer_Music_Lobby" />
+		</Signals>
+	</Set>
+
+</FrontEndAudio>

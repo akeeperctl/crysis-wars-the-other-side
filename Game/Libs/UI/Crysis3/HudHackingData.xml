@@ -1,0 +1,93 @@
+<Root>
+	<Animations>
+		<TimedAnimationGroups>			
+			<TimedAnimationGroup Time="4.5">
+				<Animation>
+					<AnimItem ItemType="Video" Time="0" VideoId="0" />
+					<AnimItem ItemType="Video" Time="2.8" VideoId="10" />
+					<AnimItem ItemType="Text" Time="0.0" TextId="1" />
+					<AnimItem ItemType="Text" Time="2.0" TextId="5" />
+					<AnimItem ItemType="Text" Time="4.0" TextId="7" />
+					<AnimItem ItemType="Text" Time="5.0" TextId="10" />
+					<AnimItem ItemType="Sound" Time="1.8" SoundName="HUD_Hacking_CurveDots" />
+					<AnimItem ItemType="Sound" Time="2.5" SoundName="HUD_Hacking_CurveLine" />
+					<AnimItem ItemType="Hexagon" Time="1.5" Pos="0" Anim="1" />
+					<AnimItem ItemType="Hexagon" Time="2.5" Pos="1" Anim="4" />
+				</Animation>
+			</TimedAnimationGroup>
+
+			<TimedAnimationGroup Time="5.5">
+				<Animation>
+					<AnimItem ItemType="Video" Time="0" VideoId="0" />
+					<AnimItem ItemType="Video" Time="2.8" VideoId="1" />
+					<AnimItem ItemType="Video" Time="4.0" VideoId="10" />
+					<AnimItem ItemType="Text" Time="0.0" TextId="1" />
+					<AnimItem ItemType="Text" Time="2.0" TextId="5" />
+					<AnimItem ItemType="Text" Time="4.0" TextId="7" />
+					<AnimItem ItemType="Text" Time="5.0" TextId="10" />
+					<AnimItem ItemType="Sound" Time="1.8" SoundName="HUD_Hacking_CurveDots" />
+					<AnimItem ItemType="Sound" Time="2.5" SoundName="HUD_Hacking_CurveLine" />
+					<AnimItem ItemType="Sound" Time="3.1" SoundName="HUD_Hacking_CurveDots" />
+					<AnimItem ItemType="Hexagon" Time="1.5" Pos="0" Anim="3" />
+					<AnimItem ItemType="Hexagon" Time="2.5" Pos="1" Anim="1" />
+					<AnimItem ItemType="Hexagon" Time="4.0" Pos="0" Anim="3" />
+				</Animation>
+			</TimedAnimationGroup>
+			
+			<TimedAnimationGroup Time="6.5">
+				<Animation>
+					<AnimItem ItemType="Video" Time="0" VideoId="0" />
+					<AnimItem ItemType="Video" Time="2.8" VideoId="1" />
+					<AnimItem ItemType="Video" Time="3.8" VideoId="2" />
+					<AnimItem ItemType="Video" Time="4.8" VideoId="10" />
+					<AnimItem ItemType="Text" Time="0.0" TextId="1" />
+					<AnimItem ItemType="Text" Time="2.0" TextId="5" />
+					<AnimItem ItemType="Text" Time="4.0" TextId="7" />
+					<AnimItem ItemType="Text" Time="5.0" TextId="10" />
+					<AnimItem ItemType="Sound" Time="1.8" SoundName="HUD_Hacking_CurveDots" />
+					<AnimItem ItemType="Sound" Time="2.5" SoundName="HUD_Hacking_CurveLine" />
+					<AnimItem ItemType="Sound" Time="3.1" SoundName="HUD_Hacking_CurveDots" />
+					<AnimItem ItemType="Sound" Time="4.1" SoundName="HUD_Hacking_CurveDots" />
+					<AnimItem ItemType="Hexagon" Time="1.5" Pos="0" Anim="3" />
+					<AnimItem ItemType="Hexagon" Time="2.5" Pos="1" Anim="1" />
+					<AnimItem ItemType="Hexagon" Time="6.0" Pos="1" Anim="0" />
+				</Animation>
+			</TimedAnimationGroup>
+			
+		</TimedAnimationGroups>
+		
+		<CustomAnimationGroups>
+			<CustomAnimationGroup Name="CELL_VideoLog_01">
+				<Animation>
+					<AnimItem ItemType="Video" Time="0" VideoId="0" />
+					<AnimItem ItemType="Video" Time="2.8" VideoId="1" />
+					<AnimItem ItemType="Video" Time="3.8" VideoId="2" />
+					<AnimItem ItemType="Video" Time="4.8" VideoId="10" />
+					<AnimItem ItemType="Text" Time="0.0" TextId="1" />
+					<AnimItem ItemType="Text" Time="2.0" TextId="5" />
+					<AnimItem ItemType="Text" Time="4.0" TextId="7" />
+					<AnimItem ItemType="Text" Time="5.0" TextId="10" />
+					<AnimItem ItemType="Sound" Time="1.8" SoundName="HUD_Hacking_CurveDots" />
+					<AnimItem ItemType="Sound" Time="2.5" SoundName="HUD_Hacking_CurveLine" />
+					<AnimItem ItemType="Sound" Time="3.1" SoundName="HUD_Hacking_CurveDots" />
+					<AnimItem ItemType="Sound" Time="4.1" SoundName="HUD_Hacking_CurveDots" />
+
+					<AnimItem ItemType="Hexagon" Time="0.0" Pos="1" Anim="0" />
+				</Animation>
+			</CustomAnimationGroup>
+		</CustomAnimationGroups>
+	</Animations>
+	
+	<ProgressData>	
+		<param name="HackingSuccessTime" value="0.35" />
+		<param name="TextSucessLength" value="1.5" />
+		<param name="TextStartFromSucessTime" value="0.35" />
+		<param name="PercentMatchedStartFromSucessTime" value="99" />
+		<param name="SoundStartFromSuccessTime" value="0.35" />
+
+		<param name="HackingFailureTime" value="0.0" />
+		<param name="TextFailureLength" value="1.5" />
+		<param name="TextStartFromFailureTime" value="0.0" />
+		<param name="SoundStartFromFailureTime" value="0.0" />
+	</ProgressData>
+</Root>

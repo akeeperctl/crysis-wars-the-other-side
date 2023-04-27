@@ -1,0 +1,463 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Root>
+
+	<Screen name="perks" allowTabSwitching="0" keepInStack="0" noIngameBackground="1">
+		<PadIconSet name="perkmenu_base"/>
+		<PerkCustomization frame="1">
+			<ControllerButtons name="confirm" setType="ACTIONBUTTON" assetRootPath="Root.POPUP.ConsoleBtns.Button1.Icon" actionName="menu_confirm" actionMapName="menu" controlFlags="NONE" />
+			<ControllerButtons name="confirm" setType="ACTIONBUTTON" assetRootPath="Root.POPUP.ConsoleBtns.Button2.Icon" actionName="menu_back" actionMapName="menu" controlFlags="NONE" />
+		</PerkCustomization>
+	</Screen>
+
+	<Screen name="attachments_standalone" allowTabSwitching="0" keepInStack="0" noIngameBackground="1">
+		<PadIconSet />
+		<WeaponCustomization frame="1">
+			<ControllerButtons name="ButtonBack" setType="MENUBUTTON" assetRootPath="ButtonBack" actionName="back_btn" />
+			<ControllerButtons name="ButtonLeft" setType="MENUBUTTON" assetRootPath="Root.ButtonLeft" actionName="tab_backward" />
+			<ControllerButtons name="barrel" setType="ACTIONBUTTON" assetRootPath="Root.barrel.ButtonIcon" actionName="menu_toggle_barrel" actionMapName="menu" controlFlags="NONE" />
+			<ControllerButtons name="bottom" setType="ACTIONBUTTON" assetRootPath="Root.bottom.ButtonIcon" actionName="menu_toggle_bottom" actionMapName="menu" controlFlags="NONE" />
+			<ControllerButtons name="scope" setType="ACTIONBUTTON" assetRootPath="Root.scope.ButtonIcon" actionName="menu_toggle_scope" actionMapName="menu" controlFlags="NONE" />
+			<ControllerButtons name="ammo" setType="ACTIONBUTTON" assetRootPath="Root.ammo.ButtonIcon" actionName="menu_toggle_ammo" actionMapName="menu" controlFlags="NONE" />
+			<CustomData>
+				<Weapon class="NanoBow">
+					<Attachment>
+						<param name="helper" value="barrel" />
+						<param name="x" value="0" />
+						<param name="y" value="-110" />
+					</Attachment>
+					<Attachment>
+						<param name="helper" value="ammo" />
+						<param name="x" value="150" />
+						<param name="y" value="50" />
+					</Attachment>
+				</Weapon>
+				<Weapon class="HunterBow">
+					<Attachment>
+						<param name="helper" value="barrel" />
+						<param name="x" value="0" />
+						<param name="y" value="-110" />
+					</Attachment>
+					<Attachment>
+						<param name="helper" value="ammo" />
+						<param name="x" value="150" />
+						<param name="y" value="50" />
+					</Attachment>
+				</Weapon>				
+			<Weapon class="CellSCAR">
+					<Attachment>
+						<param name="helper" value="barrel" />
+						<param name="x" value="10" />
+						<param name="y" value="10" />
+					</Attachment>
+					<Attachment>
+						<param name="helper" value="bottom" />
+						<param name="x" value="100" />
+						<param name="y" value="100" />
+					</Attachment>
+					<Attachment>
+						<param name="helper" value="scope" />
+						<param name="x" value="-100" />
+						<param name="y" value="-60" />
+					</Attachment>
+				</Weapon>
+			<Weapon class="CellSCAR_Tutorial">
+					<Attachment>
+						<param name="helper" value="barrel" />
+						<param name="x" value="10" />
+						<param name="y" value="10" />
+					</Attachment>
+					<Attachment>
+						<param name="helper" value="bottom" />
+						<param name="x" value="100" />
+						<param name="y" value="100" />
+					</Attachment>
+					<Attachment>
+						<param name="helper" value="scope" />
+						<param name="x" value="-100" />
+						<param name="y" value="-60" />
+					</Attachment>
+				</Weapon>
+				<Weapon class="SCAR">
+					<Attachment>
+						<param name="helper" value="barrel" />
+						<param name="x" value="10" />
+						<param name="y" value="10" />
+					</Attachment>
+					<Attachment>
+						<param name="helper" value="bottom" />
+						<param name="x" value="100" />
+						<param name="y" value="100" />
+					</Attachment>
+					<Attachment>
+						<param name="helper" value="scope" />
+						<param name="x" value="-100" />
+						<param name="y" value="-60" />
+					</Attachment>
+				</Weapon>
+				<Weapon class="UrbanSCAR">
+					<Attachment>
+						<param name="helper" value="barrel" />
+						<param name="x" value="10" />
+						<param name="y" value="10" />
+					</Attachment>
+					<Attachment>
+						<param name="helper" value="bottom" />
+						<param name="x" value="100" />
+						<param name="y" value="100" />
+					</Attachment>
+					<Attachment>
+						<param name="helper" value="scope" />
+						<param name="x" value="-100" />
+						<param name="y" value="-60" />
+					</Attachment>
+				</Weapon>	
+				<Weapon class="DesertSCAR">
+					<Attachment>
+						<param name="helper" value="barrel" />
+						<param name="x" value="10" />
+						<param name="y" value="10" />
+					</Attachment>
+					<Attachment>
+						<param name="helper" value="bottom" />
+						<param name="x" value="100" />
+						<param name="y" value="100" />
+					</Attachment>
+					<Attachment>
+						<param name="helper" value="scope" />
+						<param name="x" value="-100" />
+						<param name="y" value="-60" />
+					</Attachment>
+				</Weapon>
+				<Weapon class="CamoSCAR">
+					<Attachment>
+						<param name="helper" value="barrel" />
+						<param name="x" value="10" />
+						<param name="y" value="10" />
+					</Attachment>
+					<Attachment>
+						<param name="helper" value="bottom" />
+						<param name="x" value="100" />
+						<param name="y" value="100" />
+					</Attachment>
+					<Attachment>
+						<param name="helper" value="scope" />
+						<param name="x" value="-100" />
+						<param name="y" value="-60" />
+					</Attachment>
+				</Weapon>				
+				<Weapon class="CellSCARAB">
+					<Attachment>
+						<param name="helper" value="barrel" />
+						<param name="x" value="10" />
+						<param name="y" value="10" />
+					</Attachment>
+					<Attachment>
+						<param name="helper" value="bottom" />
+						<param name="x" value="100" />
+						<param name="y" value="100" />
+					</Attachment>
+					<Attachment>
+						<param name="helper" value="scope" />
+						<param name="x" value="-100" />
+						<param name="y" value="-60" />
+					</Attachment>
+				</Weapon>
+				<Weapon class="SCARAB">
+					<Attachment>
+						<param name="helper" value="barrel" />
+						<param name="x" value="10" />
+						<param name="y" value="10" />
+					</Attachment>
+					<Attachment>
+						<param name="helper" value="bottom" />
+						<param name="x" value="100" />
+						<param name="y" value="100" />
+					</Attachment>
+					<Attachment>
+						<param name="helper" value="scope" />
+						<param name="x" value="-100" />
+						<param name="y" value="-60" />
+					</Attachment>
+				</Weapon>
+				<Weapon class="CellFeline" GAME="SP">
+					<Attachment>
+						<param name="helper" value="scope" />
+						<param name="x" value="50" />
+						<param name="y" value="-10" />
+					</Attachment>
+					<Attachment>
+						<param name="helper" value="bottom" />
+						<param name="x" value="-50" />
+						<param name="y" value="-50" />
+					</Attachment>
+				</Weapon>
+				<Weapon class="Feline" GAME="SP">
+					<Attachment>
+						<param name="helper" value="scope" />
+						<param name="x" value="50" />
+						<param name="y" value="-10" />
+					</Attachment>
+					<Attachment>
+						<param name="helper" value="bottom" />
+						<param name="x" value="-50" />
+						<param name="y" value="-50" />
+					</Attachment>
+				</Weapon>
+				<Weapon class="PredatorFeline" GAME="MP">
+					<Attachment>
+						<param name="helper" value="scope" />
+						<param name="x" value="50" />
+						<param name="y" value="-10" />
+					</Attachment>
+					<Attachment>
+						<param name="helper" value="bottom" />
+						<param name="x" value="-200" />
+						<param name="y" value="-60" />
+					</Attachment>
+				</Weapon>				
+				<Weapon class="Feline" GAME="MP">
+					<Attachment>
+						<param name="helper" value="scope" />
+						<param name="x" value="50" />
+						<param name="y" value="-10" />
+					</Attachment>
+					<Attachment>
+						<param name="helper" value="bottom" />
+						<param name="x" value="-200" />
+						<param name="y" value="-60" />
+					</Attachment>
+				</Weapon>
+				<Weapon class="CELLFeline" GAME="MP">
+					<Attachment>
+						<param name="helper" value="scope" />
+						<param name="x" value="50" />
+						<param name="y" value="-10" />
+					</Attachment>
+					<Attachment>
+						<param name="helper" value="bottom" />
+						<param name="x" value="-200" />
+						<param name="y" value="-60" />
+					</Attachment>
+				</Weapon>				
+				<Weapon class="Grendel" GAME="SP" >
+				<Attachment>
+						<param name="helper" value="scope" />
+						<param name="x" value="-180" />
+						<param name="y" value="-130" />
+					</Attachment>
+					<Attachment>
+						<param name="helper" value="bottom" />
+						<param name="x" value="80" />
+						<param name="y" value="100" />
+					</Attachment>
+					<Attachment>
+						<param name="helper" value="ammo" />
+						<param name="x" value="-50" />
+						<param name="y" value="120" />
+					</Attachment>
+				</Weapon>
+				<Weapon class="Grendel" GAME="MP" >
+					<Attachment>
+						<param name="helper" value="bottom" />
+						<param name="x" value="0" />
+						<param name="y" value="100" />
+					</Attachment>
+				</Weapon>				
+				<Weapon class="Mk60" GAME="SP">
+					<Attachment>
+						<param name="helper" value="scope" />
+						<param name="x" value="-150" />
+						<param name="y" value="-70" />
+					</Attachment>
+				</Weapon>
+				<Weapon class="Mk60" GAME="MP">
+					<Attachment>
+						<param name="helper" value="barrel" />
+						<param name="x" value="-30" />
+						<param name="y" value="30" />
+					</Attachment>
+					<Attachment>
+						<param name="helper" value="bottom" />
+						<param name="x" value="50" />
+						<param name="y" value="15" />
+					</Attachment>
+					<Attachment>
+						<param name="helper" value="scope" />
+						<param name="x" value="-20" />
+						<param name="y" value="0" />
+					</Attachment>
+				</Weapon>
+				<Weapon class="Nova" GAME="SP">
+					<Attachment>
+						<param name="helper" value="barrel" />
+						<param name="x" value="30" />
+						<param name="y" value="30" />
+					</Attachment>
+					<Attachment>
+						<param name="helper" value="ammo" />
+						<param name="x" value="20" />
+						<param name="y" value="-50" />
+					</Attachment>
+				</Weapon>
+				<Weapon class="Nova" GAME="MP">
+					<Attachment>
+						<param name="helper" value="barrel" />
+						<param name="x" value="30" />
+						<param name="y" value="30" />
+					</Attachment>
+					<Attachment>
+						<param name="helper" value="bottom" />
+						<param name="x" value="-10" />
+						<param name="y" value="-30" />
+					</Attachment>
+				</Weapon>
+				<Weapon class="FY71" GAME="MP">
+					<Attachment>
+						<param name="helper" value="barrel" />
+						<param name="x" value="50" />
+						<param name="y" value="100" />
+					</Attachment>
+					<Attachment>
+						<param name="helper" value="bottom" />
+						<param name="x" value="30" />
+						<param name="y" value="150" />
+					</Attachment>
+				</Weapon>
+				<Weapon class="Marshall" GAME="SP">
+					<Attachment>
+						<param name="helper" value="barrel" />
+						<param name="x" value="80" />
+						<param name="y" value="100" />
+					</Attachment>
+					<Attachment>
+						<param name="helper" value="bottom" />
+						<param name="x" value="30" />
+						<param name="y" value="100" />
+					</Attachment>
+					<Attachment>
+						<param name="helper" value="ammo" />
+						<param name="x" value="80" />
+						<param name="y" value="180" />
+					</Attachment>
+					<Attachment>
+						<param name="helper" value="scope" />
+						<param name="x" value="-10" />
+						<param name="y" value="-20" />
+					</Attachment>
+				</Weapon>
+				<Weapon class="Marshall" GAME="MP">
+					<Attachment>
+						<param name="helper" value="barrel" />
+						<param name="x" value="0" />
+						<param name="y" value="60" />
+					</Attachment>
+					<Attachment>
+						<param name="helper" value="bottom" />
+						<param name="x" value="30" />
+						<param name="y" value="100" />
+					</Attachment>
+				</Weapon>
+				<Weapon class="DSG1" GAME="MP">
+					<Attachment>
+						<param name="helper" value="bottom" />
+						<param name="x" value="-200" />
+						<param name="y" value="-40" />
+					</Attachment>
+					<Attachment>
+						<param name="helper" value="scope" />
+						<param name="x" value="0" />
+						<param name="y" value="0" />
+					</Attachment>
+				</Weapon>
+				<Weapon class="Jackal" GAME="SP">
+					<Attachment>
+						<param name="helper" value="bottom" />
+						<param name="x" value="0" />
+						<param name="y" value="-50" />
+					</Attachment>
+					<Attachment>
+						<param name="helper" value="scope" />
+						<param name="x" value="-20" />
+						<param name="y" value="-40" />
+					</Attachment>
+					<Attachment>
+						<param name="helper" value="ammo" />
+						<param name="x" value="50" />
+						<param name="y" value="0" />
+					</Attachment>
+				</Weapon>
+				<Weapon class="Jackal" GAME="MP">
+					<Attachment>
+						<param name="helper" value="bottom" />
+						<param name="x" value="0" />
+						<param name="y" value="150" />
+					</Attachment>
+					<Attachment>
+						<param name="helper" value="scope" />
+						<param name="x" value="0" />
+						<param name="y" value="40" />
+					</Attachment>
+				</Weapon>
+				<Weapon class="JakJackal" GAME="MP">
+					<Attachment>
+						<param name="helper" value="bottom" />
+						<param name="x" value="0" />
+						<param name="y" value="150" />
+					</Attachment>
+					<Attachment>
+						<param name="helper" value="scope" />
+						<param name="x" value="0" />
+						<param name="y" value="40" />
+					</Attachment>
+				</Weapon>				
+				<Weapon class="K-Volt" GAME="MP">
+					<Attachment>
+						<param name="helper" value="scope" />
+						<param name="x" value="20" />
+						<param name="y" value="-50" />
+					</Attachment>
+					<Attachment>
+						<param name="helper" value="bottom" />
+						<param name="x" value="-200" />
+						<param name="y" value="-20" />
+					</Attachment>
+				</Weapon>
+				<Weapon class="AY69" GAME="MP">
+					<Attachment>
+						<param name="helper" value="barrel" />
+						<param name="x" value="-20" />
+						<param name="y" value="0" />
+					</Attachment>
+					<Attachment>
+						<param name="helper" value="bottom" />
+						<param name="x" value="-60" />
+						<param name="y" value="80" />
+					</Attachment>
+					<Attachment>
+						<param name="helper" value="scope" />
+						<param name="x" value="10" />
+						<param name="y" value="50" />
+					</Attachment>
+				</Weapon>
+				<Weapon class="Takedown">
+					<Attachment>
+						<param name="helper" value="barrel" />
+						<param name="x" value="10" />
+						<param name="y" value="10" />
+					</Attachment>
+					<Attachment>
+						<param name="helper" value="bottom" />
+						<param name="x" value="100" />
+						<param name="y" value="100" />
+					</Attachment>
+					<Attachment>
+						<param name="helper" value="scope" />
+						<param name="x" value="-100" />
+						<param name="y" value="-60" />
+					</Attachment>
+				</Weapon>
+			</CustomData>
+		</WeaponCustomization>
+	</Screen>
+
+</Root>

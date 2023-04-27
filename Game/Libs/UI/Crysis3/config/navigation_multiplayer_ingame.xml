@@ -1,0 +1,507 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Root>
+	<Screen name="main" buttonsYPos="-80">
+		<NavigationInput navigation="x" action="mp_invite" param=""/>
+
+		<SubScreen path="/libs/ui/generalandpc/map.gfx"/>
+		<RadarMap />
+		<Button caption="@menu_btn_resumegame" tooltip="@menu_tooltip_mp_resumegame" action="resume"/>
+		<Button caption="SUICIDE - DEV" tooltip="@menu_tooltip_suicide" action="suicide" DEV="1"/>
+		<Button caption="@menu_btn_switchteam" tooltip="@menu_tooltip_switchteam" action="mp_switch_team" canSwitchTeam="1"/>
+		<Button caption="@menu_btn_loadout" tooltip="@menu_tooltip_loadout" action="goto" param="loadout_select_tabbed" isPostGame="0" isHunterMode="0"/>
+		<Button caption="@menu_btn_options" tooltip="@menu_tooltip_mp_options" action="goto" param="options" platform="pc"/>
+		<Button caption="@menu_btn_settings" tooltip="@menu_tooltip_settings" action="goto" param="options" platform="xbox|ps3"/>
+		<!--<Button caption="@menu_btn_friends" tooltip="@menu_tooltip_friends" EPD="0" action="goto" param="mp_friends_list" platform="pc" />-->
+		<Button caption="@menu_btn_friends" EPD="0" tooltip="@menu_tooltip_friends" action="squad_quicksquad_open" param="" />
+		<Button caption="@menu_btn_leave_lobby" tooltip="@menu_tooltip_mp_quitingame" action="back_to_mainmenu" platform="xbox|ps3"/>
+		<Button caption="@menu_btn_leave_lobby" tooltip="@menu_tooltip_mp_quitingame" action="back_to_mainmenu" platform="pc"/>
+		<Button caption="@menu_btn_enter_spectator" tooltip="@menu_tooltip_mp_enter_spectator" action="mp_enter_spectator" spectatingEnabled="1" isSpectating="0" />
+		<Button caption="@menu_btn_leave_spectator" tooltip="@menu_tooltip_mp_leave_spectator" action="mp_leave_spectator" spectatingEnabled="1" isSpectating="1" />
+		<MPChallengeBar flashPath="cw2_menus_challengebar.gfx" loaderPath="ChallengeLoader" selectable="0" showProgress="1" useDarkBG="1" alwaysShowLobbyTask="1" />
+	</Screen>
+
+	<Screen name="map" audio="map" noProfileDisplay="1">
+		<PadIconSet name="continue"/>
+		<SubScreen path="/libs/ui/generalandpc/mapdeployment.gfx"/>
+		<RadarMap interactive="1" />
+	</Screen>
+
+	<Screen name="choose_team">
+		<SubScreen path="/libs/ui/generalandpc/cw2_chooseteam.gfx"/>
+	</Screen>	
+
+	<!-- MP Equipment Loadouts -->
+	<Screen name="loadout_select" title="@menu_heading_loadoutselect" audio="pause" noProfileDisplay="1">
+		<PadIcon icon="confirm" caption="@menu_nav_caption_select" />
+
+		<SubScreen path="/libs/ui/generalandpc/cw2_loadout_select.gfx"/>
+	</Screen>
+
+	<Screen name="scoreboard" verticalLine="0" audio="scoreboard">
+		<PadIcon icon="confirm" caption="" />
+
+		<SubScreen path="/libs/ui/cw2_hud_multiplayerscoreboard.gfx"/>
+	</Screen>
+
+		<!-- MP Equipment Loadouts -->
+	<Screen name="loadout_select_tabbed" audio="pause" noProfileDisplay="1">
+		<SubScreen path="generalandpc/cw3_loadoutselect.gfx"/>
+		<ControllerButtons name="ButtonLeft" setType="ActionButton" assetRootPath="Root.SubScreen.TabPrev" actionName="menu_switchtab_left" actionMapName="menu" />
+		<ControllerButtons name="ButtonRight" setType="ActionButton" assetRootPath="Root.SubScreen.TabNext" actionName="menu_switchtab_right" actionMapName="menu" />
+		<PadIcon icon="confirm" caption="@menu_nav_caption_select" />
+
+		<menu3dModels>
+			<models>
+
+        <model name="character">
+					<orientation rot="0.0,0.0,3.5" posOffset="0.0,0.0,-0.2" scale="1.35" />
+					<screenRect x1="0.0" y1="0.0" x2="0.3" y2="0.8" />
+				</model>
+
+				<model name="character_primary">
+					<attachment parent="character" location="weapon"/>
+				</model>
+				<model name="character_primary_attachment0">
+					<attachment parent="character_primary" location="attachment_top"/>
+				</model>
+				<model name="character_primary_attachment1">
+					<attachment parent="character_primary" location="attachment_barrel"/>
+				</model>
+				<model name="character_primary_attachment2">
+					<attachment parent="character_primary" location="attachment_bottom"/>
+				</model>
+
+
+				<model name="character_secondary">
+					<attachment parent="character" location="stow_secondary1"/>
+				</model>
+				<model name="character_secondary_attachment0">
+					<attachment parent="character_secondary" location="attachment_top"/>
+				</model>
+				<model name="character_secondary_attachment1">
+					<attachment parent="character_secondary" location="attachment_barrel"/>
+				</model>
+				<model name="character_secondary_attachment2">
+					<attachment parent="character_secondary" location="attachment_bottom"/>
+				</model>
+
+				<model name="character_explosive">
+					<attachment parent="character" location="stow_primary1"/>
+				</model>
+
+				<!--PrimaryWeapon-->
+				<model name="primary">
+					<orientation rot="0.0, 0.0, 1.55" scale="0.9"/>
+					<screenRect x1="0.3" y1="0.0" x2="0.6" y2="0.2" />
+				</model>
+
+				<!--PrimaryAttachments-->
+				<model name="primary_attachment0">
+					<orientation rot="0.0, 0.0, 1.55" scale="0.9"/>
+					<screenRect x1="0.0" y1="0.8" x2="0.2" y2="1.0" />
+				</model>
+				<model name="primary_attachment1">
+					<orientation rot="0.0, 0.0, 1.55" scale="0.9"/>
+					<screenRect x1="0.2" y1="0.8" x2="0.4" y2="1.0" />
+				</model>
+				<model name="primary_attachment2">
+					<orientation rot="0.0, 0.0, 1.55" scale="0.9"/>
+					<screenRect x1="0.4" y1="0.8" x2="0.6" y2="1.0" />
+				</model>
+
+				
+				<!--SecondaryWeapon-->
+				<model name="secondary">
+					<orientation rot="0.0, 0.0, 1.55" scale="0.9"/>
+					<screenRect x1="0.3" y1="0.2" x2="0.6" y2="0.4" />
+				</model>
+
+				<!--SecondaryAttachments-->
+				<model name="secondary_attachment0">
+					<orientation rot="0.0, 0.0, 1.55" scale="0.9"/>
+					<screenRect x1="0.6" y1="0.8" x2="0.8" y2="1.0" />
+				</model>
+				<model name="secondary_attachment1">
+					<orientation rot="0.0, 0.0, 1.55" scale="0.9"/>
+					<screenRect x1="0.8" y1="0.8" x2="1.0" y2="1.0" />
+				</model>
+				<model name="secondary_attachment2">
+					<orientation rot="0.0, 0.0, 1.55" scale="0.9"/>
+					<screenRect x1="0.3" y1="0.6" x2="0.5" y2="0.8" />
+				</model>
+				
+				<!--ExplosiveWeapon-->
+				<model name="explosive">
+					<orientation rot="0.0, 0.0, 1.55" scale="0.9" rot2="0.75, 0.0, 1.55" scale2="5.4" posOffset2="0.22, 0.0, -0.22"/>
+					<screenRect x1="0.3" y1="0.4" x2="0.6" y2="0.6" />
+				</model>
+
+        <!--HunterBow-->
+        <model name="hunter_bow">
+          <orientation rot="0.0, 0.0, 1.55" scale="0.9"/>
+          <screenRect x1="0.6" y1="0.0" x2="0.9" y2="0.6" />
+        </model>
+			</models>
+
+			<scene fovScale="0.5" fadeInSpeed="0.01" flashEdgeFadeScale="0.2">
+        <ambientLight color="0.0,0.0,0.0" alpha="0.8"/>
+        <lights>
+			<light pos="-25.0,-10.0,50.0" color="7.0,7.0,7.0" specular="1.0" radius="400.0"/>
+			<light pos="25.0,-4.0,50.0" color="0.7,0.7,0.7" specular="1.0" radius="400.0"/>
+			<light pos="60.0,40.0,20.0" color="0.5,1.0,0.7" specular="7.0" radius="400.0"/>
+        </lights>
+      </scene>
+		</menu3dModels>
+
+		<MPEquipmentSelect /> <!-- Must be after 3d models -->
+
+	</Screen>
+
+
+	<!--
+	<screen name="mp_friends_list" verticalLine="0" title="@menu_mp_title_friends_list" platform="pc">
+		<FriendsMenu subscreen="/libs/ui/pconly/cw2_friendslist.gfx"/>
+		<PadIconSet name="backonly" />
+		<BackButton platform="pc"/>
+	</screen>
+
+	<screen name="mp_friend_search_results" verticalLine="0"  platform="pc">
+		<FriendSearchResults subscreen="/libs/ui/pconly/cw2_friendsearchresultslist.gfx" />
+		<PadIconSet name="backonly" />
+	</screen>
+	-->
+
+
+	<OptionsScreen name="options" title="@menu_header_options">
+		<Button caption="@menu_btn_game" tooltip="@menu_tooltip_game" action="goto" param="options_game"/>
+		<Button caption="@menu_btn_soundoptions" tooltip="@menu_tooltip_soundoptions" action="goto" param="options_sound"/>
+		<Button caption="@menu_btn_graphics" tooltip="@menu_tooltip_graphics" action="goto" param="options_graphics" platform="pc"/>
+		<Button caption="@menu_btn_visuals" tooltip="@menu_tooltip_visuals" action="goto" param="options_graphics_console" platform="xbox|ps3"/>
+		<Button caption="@menu_btn_graphics_adv" tooltip="@menu_tooltip_graphics_adv" action="goto" param="options_graphics_adv" platform="pc"/>
+		<Button caption="@menu_btn_brightness_gamma" tooltip="@menu_tooltip_brightness_gamma" action="goto" param="gamma_setup"/>
+    <Button caption="@menu_btn_overscanBorders" tooltip="@menu_tooltip_overscanBorders" action="goto" param="overscanBorders_setup" disableif3D="1"/>
+    <S3DMenuButton caption="@menu_btn_stereo" tooltip="@menu_tooltip_stereo" action="goto_stereo" param=""/>
+		<Button caption="@menu_btn_controls" tooltip="@menu_tooltip_controls" action="goto" param="options_controls"/>
+		<BackButton platform="pc"/>
+	</OptionsScreen>
+
+	<ApplyScreen name="options_game" title="@menu_header_optionsgame">
+		<PadIconSet name="apply_back"/>
+		<Button caption="ENABLE DEFAULT UNLOCK ALL - DEV" tooltip="Unlock everything as default" action="cmd" param="pp_defaultUnlockAll 1" EPD="0" DEV="1">
+			<Action action="back" />
+		</Button>
+		<Button caption="DISABLE DEFAULT UNLOCK ALL - DEV" tooltip="Restore standard unlock state" action="cmd" param="pp_defaultUnlockAll 0" EPD="0" DEV="1">
+			<Action action="back" />
+		</Button>
+		<Switch caption="@menu_btn_crosshairenabled" tooltip="@menu_tooltip_crosshairenabled" action="Crosshair">
+			<Option caption="@menu_btn_Disabled" value="0"/>
+			<Option caption="@menu_btn_Enabled" value="1"/>
+		</Switch>
+		<Switch caption="@menu_btn_zoomtoggling" tooltip="@menu_tooltip_zoomtoggling" action="HoldToggleZoom" platform="pc">
+			<Option caption="@menu_btn_no" value="0"/>
+			<Option caption="@menu_btn_yes" value="1"/>
+		</Switch>
+		<Switch caption="@menu_btn_crouchtoggling" tooltip="@menu_tooltip_crouchtoggling" action="CrouchToggle" platform="pc">
+			<Option caption="@menu_btn_no" value="0"/>
+			<Option caption="@menu_btn_yes" value="1"/>
+		</Switch>
+    <Switch caption="@menu_btn_sprinttoggling" tooltip="@menu_tooltip_sprinttoggling" action="SprintToggle" platform="pc">
+      <Option caption="@menu_btn_no" value="0"/>
+      <Option caption="@menu_btn_yes" value="1"/>
+    </Switch>
+		<Switch caption="@menu_btn_subtitles" tooltip="@menu_tooltip_subtitles" action="Subtitles">
+			<Option caption="@menu_btn_no" value="0"/>
+			<Option caption="@menu_btn_yes" value="1"/>
+		</Switch>
+		<Slider caption="@menu_btn_hudbobbing" tooltip="@menu_tooltip_hudbobbing" action="HUDBobbing" min="0" max="2.0" step="0.2"/>
+		<ApplyButton platform="pc" />
+		<BackButton platform="pc"/>
+	</ApplyScreen>
+
+
+	<ApplyScreen name="options_sound" title="@menu_header_optionssound">
+		<PadIconSet name="apply_back"/>
+		<Slider caption="@menu_btn_musicvolume" tooltip="@menu_tooltip_musicvolume" action="MusicVolume" min="0.0" max="1.0" step="0.1"/>
+		<Slider caption="@menu_btn_sfxvolume" tooltip="@menu_tooltip_sfxvolume" action="SFXVolume" min="0.0" max="1.0" step="0.1"/>
+		<Slider caption="@menu_btn_dialoguevolume" tooltip="@menu_tooltip_dialoguevolume" action="DialogueVolume" min="0.0" max="1.0" step="0.1"/>
+
+		<Switch caption="@menu_btn_VOIPEnable" tooltip="@menu_tooltip_voipenable" action="VOIPEnable" platform="pc">
+			<Option caption="@menu_btn_no" value="0"/>
+			<Option caption="@menu_btn_yes" value="1"/>
+		</Switch>
+		<Slider caption="@menu_btn_VOIPPlaybackVolume" tooltip="@menu_tooltip_voipplaybackvolume" action="VOIPPlaybackVolume" min="0.0" max="1.0" step="0.05" platform="pc"/>
+		<Switch caption="@menu_btn_VOIPPushToTalk" tooltip="@menu_tooltip_voippushtotalk" action="VOIPPushToTalk" platform="pc">
+			<Option caption="@menu_btn_disabled" value="0"/>
+			<Option caption="@menu_btn_enabled" value="1"/>
+		</Switch>
+
+		<ApplyButton platform="pc" />
+		<BackButton platform="pc"/>
+	</ApplyScreen>
+	
+	<ApplyScreen name="options_graphics" title="@menu_header_optionsgraphic">
+		<PadIconSet name="apply_back"/>
+		<SwitchResolution caption="@menu_btn_resolution" tooltip="@menu_tooltip_resolution" action="Resolution" platform="pc"/>
+		<Switch caption="@menu_btn_fullscreen" tooltip="@menu_tooltip_fullscreen" action="Fullscreen" platform="pc">
+			<Option caption="@menu_btn_no" value="0" />
+			<Option caption="@menu_btn_yes" value="1" />
+		</Switch>
+		<MSAASelector caption="@menu_btn_options_msaa" tooltip="@menu_tooltip_options_msaa" action="MSAAPostAA" platform="pc">
+			<Option caption="@menu_btn_disabled" key="disabled" value="0" />
+			<Option caption="@menu_msaa_2x" key="msaa_2x" value="8" />
+			<Option caption="@menu_msaa_4x" key="msaa_4x" value="9" />
+			<Option caption="@menu_msaa_8x" key="msaa_8x" value="10" />
+			<Option caption="@menu_smaa_1x" key="smaa_1x" value="1" />
+			<Option caption="@menu_smaa_2tx" key="smaa_2tx" value="2" />
+			<Option caption="@menu_smaa_mgpu" key="smaa_mgpu" value="3" />
+			<Option caption="@menu_smaa_4x" key="smaa_4x" value="4" />
+			<Option caption="@menu_fxaa_1x" key="fxaa_1x" value="5" />
+			<Option caption="@menu_txaa_2x" key="txaa_2x" value="6" />
+			<Option caption="@menu_txaa_4x" key="txaa_4x" value="7" />
+		</MSAASelector>
+		<DropdownBox caption="@menu_btn_sysspec_texture" tooltip="@menu_tooltip_sysspec_texture" action="TextureResolution" platform="pc">
+			<Option caption="@menu_btn_graphics_setting1" value="1"/>
+			<Option caption="@menu_btn_graphics_setting2" value="2"/>
+			<Option caption="@menu_btn_graphics_setting3" value="3"/>
+			<Option caption="@menu_btn_graphics_setting4" value="4"/>
+		</DropdownBox>
+		<Switch caption="@menu_btn_vsync" tooltip="@menu_tooltip_vsync" action="VSync" platform="pc">
+			<Option caption="@menu_btn_no" value="0"/>
+			<Option caption="@menu_btn_yes" value="1"/>
+		</Switch>
+		<DropdownBox caption="@menu_btn_sysspec" tooltip="@menu_tooltip_sysspec" action="SysSpec" platform="pc">
+			<Option caption="@menu_btn_graphics_setting1" value="1"/>
+			<Option caption="@menu_btn_graphics_setting2" value="2"/>
+			<Option caption="@menu_btn_graphics_setting3" value="3"/>
+			<Option caption="@menu_btn_graphics_setting4" value="4"/>
+		</DropdownBox>
+		<ApplyButton platform="pc" />
+		<BackButton platform="pc"/>
+	</ApplyScreen>
+	
+	<ApplyScreen name="options_graphics_console" title="@menu_header_optionsvisuals">
+		<PadIconSet name="apply_back"/>
+		<Switch caption="@menu_btn_lensflares" tooltip="@menu_tooltip_lensflares" action="LensFlares" platform="xbox|ps3">
+			<Option caption="@menu_btn_no" value="0"/>
+			<Option caption="@menu_btn_yes" value="1"/>
+		</Switch>
+	</ApplyScreen>
+	
+	<ApplyScreen name="options_graphics_adv" title="@menu_header_optionsgraphic_adv" buttonsXPos="-500" buttonsYPos="0">
+		<PadIconSet name="apply_back"/>
+		<DropdownBox caption="@menu_btn_sysspec_gameeffects" tooltip="@menu_tooltip_sysspec_gameeffects" action="SysSpecGameEffects" platform="pc">
+			<Option caption="@menu_btn_graphics_setting1" value="1"/>
+			<Option caption="@menu_btn_graphics_setting2" value="2"/>
+			<Option caption="@menu_btn_graphics_setting3" value="3"/>
+			<Option caption="@menu_btn_graphics_setting4" value="4"/>
+		</DropdownBox>
+		<DropdownBox caption="@menu_btn_sysspec_objectdetail" tooltip="@menu_tooltip_sysspec_objectdetail" action="SysSpecObjectDetail" platform="pc">
+			<Option caption="@menu_btn_graphics_setting1" value="1"/>
+			<Option caption="@menu_btn_graphics_setting2" value="2"/>
+			<Option caption="@menu_btn_graphics_setting3" value="3"/>
+			<Option caption="@menu_btn_graphics_setting4" value="4"/>
+		</DropdownBox>
+		<DropdownBox caption="@menu_btn_sysspec_particles" tooltip="@menu_tooltip_sysspec_particles" action="SysSpecParticles" platform="pc">
+			<Option caption="@menu_btn_graphics_setting1" value="1"/>
+			<Option caption="@menu_btn_graphics_setting2" value="2"/>
+			<Option caption="@menu_btn_graphics_setting3" value="3"/>
+			<Option caption="@menu_btn_graphics_setting4" value="4"/>
+		</DropdownBox>
+		<DropdownBox caption="@menu_btn_sysspec_postprocessing" tooltip="@menu_tooltip_sysspec_postprocessing" action="SysSpecPostProcessing" platform="pc">
+			<Option caption="@menu_btn_graphics_setting1" value="1"/>
+			<Option caption="@menu_btn_graphics_setting2" value="2"/>
+			<Option caption="@menu_btn_graphics_setting3" value="3"/>
+			<Option caption="@menu_btn_graphics_setting4" value="4"/>
+		</DropdownBox>
+		<DropdownBox caption="@menu_btn_sysspec_shading" tooltip="@menu_tooltip_sysspec_shading" action="SysSpecShading" platform="pc">
+			<Option caption="@menu_btn_graphics_setting1" value="1"/>
+			<Option caption="@menu_btn_graphics_setting2" value="2"/>
+			<Option caption="@menu_btn_graphics_setting3" value="3"/>
+			<Option caption="@menu_btn_graphics_setting4" value="4"/>
+		</DropdownBox>
+		<DropdownBox caption="@menu_btn_sysspec_shadows" tooltip="@menu_tooltip_sysspec_shadows" action="SysSpecShadows" platform="pc">
+			<Option caption="@menu_btn_graphics_setting1" value="1"/>
+			<Option caption="@menu_btn_graphics_setting2" value="2"/>
+			<Option caption="@menu_btn_graphics_setting3" value="3"/>
+			<Option caption="@menu_btn_graphics_setting4" value="4"/>
+		</DropdownBox>
+		<DropdownBox caption="@menu_btn_sysspec_water" tooltip="@menu_tooltip_sysspec_water" action="SysSpecWater" platform="pc">
+			<Option caption="@menu_btn_graphics_setting1" value="1"/>
+			<Option caption="@menu_btn_graphics_setting2" value="2"/>
+			<Option caption="@menu_btn_graphics_setting3" value="3"/>
+			<Option caption="@menu_btn_graphics_setting4" value="4"/>
+		</DropdownBox>
+		<DropdownBox caption="@menu_btn_anisotropicfiltering" tooltip="@menu_tooltip_anisotropicfiltering" action="AnisotropicFiltering" platform="pc">
+			<Option caption="1X" value="1"/>
+			<Option caption="2X" value="2"/>
+			<Option caption="4X" value="4"/>
+			<Option caption="8X" value="8"/>
+			<Option caption="16X" value="16"/>
+		</DropdownBox>
+		<Switch caption="@menu_btn_options_motionblur" tooltip="@menu_tooltip_options_motionblur" action="MotionBlurState" platform="pc">
+			<Option caption="@menu_btn_disabled" value="0">
+					<Action action="MotionBlurStrength" value="0" />
+			</Option>
+			<Option caption="@menu_btn_low" value="1">
+					<Action action="MotionBlurStrength" value="0.0025" />
+			</Option>
+			<Option caption="@menu_btn_medium" value="2">
+					<Action action="MotionBlurStrength" value="0.004" />
+			</Option>
+			<Option caption="@menu_btn_high" value="3">
+					<Action action="MotionBlurStrength" value="0.0055" />
+			</Option>
+		</Switch>
+		<Switch caption="@menu_btn_lensflares" tooltip="@menu_tooltip_lensflares" action="LensFlares" platform="pc">
+			<Option caption="@menu_btn_no" value="0"/>
+			<Option caption="@menu_btn_yes" value="1"/>
+		</Switch>
+		<ApplyButton platform="pc" />
+		<BackButton platform="pc"/>
+	</ApplyScreen>
+	
+	<Screen name="stereo_warning" keepInStack="0">
+		<SubScreen path="/libs/ui/general/stereo_warning.gfx"/>
+	</Screen>
+		
+	<ApplyScreen name="options_stereo" title="@menu_header_optionss3D">
+		<PadIconSet name="apply_back"/>
+		<StereoOptionsSwitch caption="@menu_btn_stereo_output" tooltip="@menu_tooltip_stereo_output" action="Stereo" platform="pc">
+			<Option caption="@menu_btn_disabled" value="none">
+					<Action action="StereoDevice" value="100" />
+					<Action action="StereoMode" value="0" />
+					<Action action="StereoOutput" value="0" />
+			</Option>
+			<Option caption="@menu_btn_stereo_sidebyside" value="sidebyside">
+					<Action action="StereoDevice" value="1" />
+					<Action action="StereoMode" value="2" />
+					<Action action="StereoOutput" value="4" />
+			</Option>
+			<Option caption="@menu_btn_stereo_interlaced" value="interlaced">
+					<Action action="StereoDevice" value="1" />
+					<Action action="StereoMode" value="2" />
+					<Action action="StereoOutput" value="5" />
+			</Option>
+			<Option caption="@menu_btn_stereo_driver" value="driver">
+					<Action action="StereoDevice" value="3" />
+					<Action action="StereoMode" value="2" />
+					<Action action="StereoOutput" value="4" />
+			</Option>
+		</StereoOptionsSwitch>
+		<Switch caption="@menu_btn_stereo_output" tooltip="@menu_tooltip_stereo_output" action="Stereo" platform="xbox">
+			<Option caption="@menu_btn_disabled" value="none">
+					<Action action="StereoDevice" value="100" />
+					<Action action="StereoMode" value="0" />
+					<Action action="StereoOutput" value="0" />
+			</Option>
+			<Option caption="@menu_btn_stereo_sidebyside" value="sidebyside">
+					<Action action="StereoDevice" value="100" />
+					<Action action="StereoMode" value="2" />
+					<Action action="StereoOutput" value="4" />
+			</Option>
+		</Switch>
+		<Switch caption="@menu_btn_stereo_output" tooltip="@menu_tooltip_stereo_output" action="Stereo" platform="ps3" disabled="1">
+			<Option caption="@menu_btn_disabled" value="none">
+					<Action action="StereoMode" value="0" />
+			</Option>
+			<Option caption="@menu_btn_enabled" value="hdmi">
+					<Action action="StereoMode" value="2" />
+			</Option>
+		</Switch>
+		<Switch caption="@menu_btn_flipeyes" tooltip="@menu_tooltip_flipeyes" action="FlipEyes" platform="pc|xbox">
+			<Option caption="@menu_btn_yes" value="1"/>
+			<Option caption="@menu_btn_no" value="0"/>
+		</Switch>
+		<Slider caption="@menu_btn_eyedistance" tooltip="@menu_tooltip_eyedistance" action="EyeDistance" min="0.5" max="1.5" step="0.05"/>
+		<ApplyButton platform="pc" />
+		<BackButton platform="pc"/>
+	</ApplyScreen>
+	
+	<ApplyScreen name="gamma_setup">
+		<PadIconSet name="apply_back"/>
+		<SubScreen path="/libs/ui/general/gammasetup.gfx"/>
+		<Slider caption="@menu_btn_gamma" tooltip="@menu_tooltip_gamma" action="Gamma" min="0.8" max="1.25" step="0.0225"/>
+		<ApplyButton platform="pc" />
+		<BackButton platform="pc"/>
+	</ApplyScreen>
+
+	<ApplyScreen name="overscanBorders_setup" title="@menu_header_overscanBorders">
+		<SubScreen path="/libs/ui/general/overscanborderssetup.gfx"/>
+    <PadIconSet name="apply_back"/>
+		<OverscanBordersSizer min="0.0" max="0.075" step="0.00375"/>
+    <ApplyButton platform="pc" />
+    <BackButton platform="pc"/>
+		<ControllerButtons name="ButtonLeftRight" setType="MenuButton" assetRootPath="Root.SubScreen.HorizontalPadButton" actionName="dpad_horizontal" />
+		<ControllerButtons name="ButtonUpDown" setType="MenuButton" assetRootPath="Root.SubScreen.VerticalPadButton" actionName="dpad_vertical" />
+  </ApplyScreen>
+	
+	<Screen name="options_controls" title="@menu_header_controls">
+		<Button caption="@menu_btn_controls_general" tooltip="@menu_tooltip_controls_general" action="goto" param="options_controls_general"/>
+		<Button caption="@menu_btn_keybindings" tooltip="@menu_tooltip_keybindings" action="goto" param="options_keybinds" platform="pc"/>
+		<Button caption="@menu_btn_mouse" tooltip="@menu_tooltip_mouse" action="goto" param="options_mouse" platform="pc"/>
+		<Button caption="@menu_btn_gamepad" tooltip="@menu_tooltip_gamepad" action="goto" param="options_gamepad" platform="pc"/>
+		<Button caption="@menu_btn_controlleroptions" tooltip="@menu_tooltip_controlleroptions" action="goto" param="options_controller" platform="xbox|ps3"/>
+		<Button caption="@menu_btn_player_controls" tooltip="@menu_tooltip_player_controls" action="goto" param="options_player_controls" platform="xbox|ps3"/>
+		<BackButton platform="pc"/>
+	</Screen>	
+
+	<ApplyScreen name="options_controls_general" maxButtons="10" title="@menu_btn_controls_general">
+		<PadIconSet name="apply_back"/>
+		<Switch caption="@menu_btn_invertyaxis" tooltip="@menu_tooltip_invertyaxis" action="InvertY">
+			<Option caption="@menu_btn_no" value="0"/>
+			<Option caption="@menu_btn_yes" value="1"/>
+		</Switch>
+		<ApplyButton platform="pc" />
+		<BackButton platform="pc"/>
+	</ApplyScreen>
+
+	<OptionsController name="options_controller" title="@menu_header_gamepadoptions">
+		<PadIconSet name="apply_back"/>
+		<Slider caption="@menu_btn_controllersensitivity" tooltip="@menu_tooltip_controllersensitivity" action="SensitivityMP" min="0.0" max="2.0" step="0.1" platform="pc"/>
+		<Slider caption="@menu_btn_sensitivity" tooltip="@menu_tooltip_sensitivity" action="SensitivityMP" min="0.0" max="2.0" step="0.1" platform="xbox"/>
+		<Slider caption="@menu_btn_sensitivity" tooltip="@menu_tooltip_sensitivity_wireless" action="SensitivityMP" min="0.0" max="2.0" step="0.1" platform="ps3"/>
+		<Switch caption="@menu_btn_vibration" tooltip="@menu_tooltip_vibration" action="Vibration" platform="pc">
+			<Option caption="@menu_btn_no" value="0"/>
+			<Option caption="@menu_btn_yes" value="1"/>
+		</Switch>
+		<Switch caption="@menu_btn_aimAssistance" tooltip="@menu_tooltip_aimAssistance" action="AimAssistance" platform="xbox|ps3" >
+			<Option caption="@menu_btn_Disabled" value="0"/>
+			<Option caption="@menu_btn_Enabled" value="1"/>
+		</Switch>
+		<ApplyButton platform="pc" />
+		<BackButton platform="pc"/>
+	</OptionsController>
+		
+	<OptionsKeybindingsScreen name="options_keybinds" maxButtons="10" title="@menu_header_keybindings">
+		<SubScreen path="/libs/ui/general/menus_keybinding.gfx"/>
+		<PadIconSet name="apply_back_default"/>
+		<ApplyButton platform="pc" />
+		<BackButton platform="pc"/>
+		<DefaultButton platform="pc"/>
+		<ControllerButtons name="ButtonLeft" setType="ActionButton" assetRootPath="Root.SubScreen.TabPrev" actionName="menu_switchtab_left" actionMapName="menu" />
+		<ControllerButtons name="ButtonRight" setType="ActionButton" assetRootPath="Root.SubScreen.TabNext" actionName="menu_switchtab_right" actionMapName="menu" />
+	</OptionsKeybindingsScreen>
+	
+	<ApplyScreen name="options_mouse" maxButtons="10" title="@menu_header_mouse" platform="pc">
+		<PadIconSet name="apply_back"/>
+		<Slider caption="@menu_btn_mousesensitivity" tooltip="@menu_tooltip_mousesensitivity" action="MouseSensitivity" min="2" max="60" step="2.9" platform="pc"/>
+		<ApplyButton platform="pc" />
+		<BackButton platform="pc"/>
+	</ApplyScreen>
+		
+	<Screen name="options_gamepad" maxButtons="10" title="@menu_header_gamepad" platform="pc">
+		<Button caption="@menu_btn_player_gamepadControls" tooltip="@menu_tooltip_gamepadControls" action="goto" param="options_controller"/>
+		<Button caption="@menu_btn_player_controls" tooltip="@menu_tooltip_player_controls" action="goto" param="options_player_controls"/>
+		<BackButton platform="pc"/>
+	</Screen>
+
+	<PlayerControlsScreen name="options_player_controls" title="@menu_player_controls">
+		<PadIconSet name="apply_back"/>
+		<SubScreen path="/libs/ui/general/controller_layout_player.gfx"/>
+		<ApplyButton platform="pc" />
+		<BackButton platform="pc"/>
+	</PlayerControlsScreen>	
+	
+
+
+</Root>

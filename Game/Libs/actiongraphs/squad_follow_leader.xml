@@ -1,0 +1,16 @@
+<Graph Description="" Group="Squad" enabled="1" MultiPlayer="ClientServer">
+ <Nodes>
+  <Node Id="1" Class="AI:ActionStart" pos="-370,-20,0" flags="0"/>
+  <Node Id="2" Class="AI:ActionEnd" pos="80,-20,0" flags="0">
+   <Inputs />
+  </Node>
+  <Node Id="4" Class="AI:AISelectGoalPipe" pos="-230,-50,0" flags="0">
+   <Inputs entityId="0" GoalPipeName="squad_follow_leader" TargetEntity="0" TargetPos="0,0,0" Update="1" SubPipe="1" GoalFlag="8"/>
+  </Node>
+ </Nodes>
+ <Edges>
+  <Edge nodeIn="4" nodeOut="1" portIn="TargetEntity" portOut="ObjectId" enabled="1"/>
+  <Edge nodeIn="4" nodeOut="1" portIn="Trigger" portOut="UserId" enabled="1"/>
+  <Edge nodeIn="4" nodeOut="1" portIn="entityId" portOut="UserId" enabled="1"/>
+ </Edges>
+</Graph>

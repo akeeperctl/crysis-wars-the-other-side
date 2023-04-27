@@ -1,0 +1,18 @@
+<Graph Description="Graph used in squad system" Group="Squad" enabled="1" MultiPlayer="ClientServer">
+ <Nodes>
+  <Node Id="1" Class="AI:ActionStart" pos="470,150,0" flags="0"/>
+  <Node Id="2" Class="AI:ActionEnd" pos="820,150,0" flags="0">
+   <Inputs />
+  </Node>
+  <Node Id="136" Class="Inventory:ActorPickupItem" pos="620,140,0" flags="1">
+   <Inputs entityId="0" ItemId="0"/>
+  </Node>
+ </Nodes>
+ <Edges>
+  <Edge nodeIn="136" nodeOut="1" portIn="ItemId" portOut="ObjectId" enabled="1"/>
+  <Edge nodeIn="136" nodeOut="1" portIn="Trigger" portOut="UserId" enabled="1"/>
+  <Edge nodeIn="136" nodeOut="1" portIn="entityId" portOut="UserId" enabled="1"/>
+  <Edge nodeIn="2" nodeOut="136" portIn="cancel" portOut="Failed" enabled="1"/>
+  <Edge nodeIn="2" nodeOut="136" portIn="end" portOut="Success" enabled="1"/>
+ </Edges>
+</Graph>

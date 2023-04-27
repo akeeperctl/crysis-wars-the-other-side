@@ -1,0 +1,110 @@
+<item name="Scout_Beam" class="Weapon" >
+	<params>
+		<param name="equipeable"	value="1" />
+		<param name="giveable" 		value="1" />
+		<param name="selectable" 	value="1" />
+		<param name="pickable" 		value="0" />
+		<param name="mountable" 	value="0" />
+		<param name="usable"		 	value="0" />
+		<param name="arms"			 	value="0" />
+		<param name="droppable" value="0" />
+	</params>
+	<ai_descriptor 
+		handler="fast_light_moar" 
+		speed="20" 
+		damage_radius="10" 
+		charge_time="2" 
+		signal_on_shoot="0" 
+	/>
+	<geometry>
+ 		<thirdperson name="objects/weapons/alien/moar/beam_cannon.cgf" angles="0,0,0" position="0,0,0" /> 		
+ 	</geometry>	
+	<actions>
+	<action name="fire">
+	  <sound target="firstperson" name="sounds/alien_exp1:alien_beam:alien_beam" radius="100" />
+	  <sound target="thirdperson" name="sounds/alien_exp1:alien_beam:alien_beam" radius="100" />
+	</action>
+	<action name="blast">
+      <sound target="firstperson" name="sounds/weapons:moar_large:fire_fp" radius="100" />
+      <sound target="thirdperson" name="sounds/weapons:moar_large:fire" radius="100" />
+    </action>
+    <action name="hit">
+      <sound target="firstperson" name="sounds/physics_exp1:beam_hit_ground:beam_hit" radius="100" />
+      <sound target="thirdperson" name="sounds/physics_exp1:beam_hit_ground:beam_hit" radius="100" static="1" />
+    </action>
+    <action name="hit_concrete">
+      <sound target="firstperson" name="sounds/physics_exp1:beam_hit_ground:beam_hit_concrete" radius="100" />
+      <sound target="thirdperson" name="sounds/physics_exp1:beam_hit_ground:beam_hit_concrete" radius="100" static="1" />
+    </action>
+    <action name="hit_flesh">
+      <sound target="firstperson" name="sounds/physics_exp1:beam_hit_ground:beam_hit_body" radius="100" />
+      <sound target="thirdperson" name="sounds/physics_exp1:beam_hit_ground:beam_hit_body" radius="100" static="1" />
+    </action>
+    <action name="hit_glass">
+      <sound target="firstperson" name="sounds/physics_exp1:beam_hit_ground:beam_hit_glass" radius="100" />
+      <sound target="thirdperson" name="sounds/physics_exp1:beam_hit_ground:beam_hit_glass" radius="100" static="1" />
+    </action>
+    <action name="hit_ice">
+      <sound target="firstperson" name="sounds/physics_exp1:beam_hit_ground:beam_hit_ice" radius="100" />
+      <sound target="thirdperson" name="sounds/physics_exp1:beam_hit_ground:beam_hit_ice" radius="100" static="1" />
+    </action>
+    <action name="hit_metal">
+      <sound target="firstperson" name="sounds/physics_exp1:beam_hit_ground:beam_hit_metal" radius="100" />
+      <sound target="thirdperson" name="sounds/physics_exp1:beam_hit_ground:beam_hit_metal" radius="100" static="1" />
+    </action>
+    <action name="hit_water">
+      <sound target="firstperson" name="sounds/physics_exp1:beam_hit_ground:beam_hit_water" radius="100" />
+      <sound target="thirdperson" name="sounds/physics_exp1:beam_hit_ground:beam_hit_water" radius="100" static="1" />
+    </action>
+    <action name="hit_wood">
+      <sound target="firstperson" name="sounds/physics_exp1:beam_hit_ground:beam_hit_wood" radius="100" />
+      <sound target="thirdperson" name="sounds/physics_exp1:beam_hit_ground:beam_hit_wood" radius="100" static="1" />
+    </action>
+	</actions>
+	<firemodes>
+		<firemode name="Beam" type="LaserBeam">
+			<fire>
+				<param name="clip_size" value="-1" />
+				<param name="ammo_type" value="acmo" />
+				<param name="offset" value="0.15" />
+				<param name="spin_up_time" value="2" />
+				<param name="damage" value="3" />
+				<param name="reload_time" value="3.8" />
+				<param name="hit_type" value="exp1_scout_beam" />						
+        		<param name="helper_tp" value="beam_effect" />
+			</fire>
+			<heating>				
+				<param name="overheat_time" value="12.5" /> 
+				<param name="duration" value="0.75" />
+				<param name="cooldown_time" value="5.5" />
+				<param name="helper_fp" value="overheat_effect" />
+				<param name="effect_fp" value="weapon_fx.gun.cold_steam_on_barrel" />
+				<param name="helper_tp" value="weapon_term_moac" />
+				<param name="effect_tp" value="weapon_fx.gun.cold_steam_on_barrel" />
+			</heating>
+			<beam>			  	  			  
+				<param name="tick" value="0.1" />
+				<param name="range" value="150" />
+				<param name="hit_decal" value="materials/decals/burnt/decal_fireplace_ash1.mtl" />
+				<param name="hit_decal_size" value="0.5" />
+				<param name="hit_decal_size_min" value="0.3" />
+				<param name="hit_decal_lifetime" value="10" />
+				<!-- <param name="hit_effect" value="expansion_alien_fx.alien_beam_intense.scout_beam_impact" /> -->
+				<param name="hit_effect" value="expansion_alien_fx.alien_beam_intense.scout_beam_impact" />
+				<param name="hit_effect_scale" value="1" />
+				<param name="decal_density" value="0.05" />
+				<param name="secondary_decal_density" value="0.03" />
+				<param name="decals_random_rotation" value="1" />
+				<param name="force_beam_correction" value="1" />
+				<param name="linked_impacts" value="1" />
+			</beam>
+			<effect>
+				<thirdperson effect="expansion_alien_fx.alien_beam_intense.scout_beam_firing" helper="beam_effect" light_radius="0" scale="0.01"/>
+			</effect>
+			<spinup>
+				<firstperson effect="expansion_alien_fx.alien_beam_intense.scout_beam_charging" helper="weapon_term" light_radius="0" />
+				<thirdperson effect="expansion_alien_fx.alien_beam_intense.scout_beam_charging" helper="weapon_term" light_radius="0" />	
+			</spinup>
+		</firemode>
+	</firemodes>
+</item>

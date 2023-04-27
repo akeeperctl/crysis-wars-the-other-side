@@ -1,0 +1,443 @@
+<EntityPrototypeLibrary Name="ControlSystem" SandboxVersion="0.1.1.6670">
+ <EntityPrototype Name="Scouts.Scout_MOAC_Ascension_Player" Id="{8FFDD587-278A-471A-B76F-B049F269EE71}" Class="Scout" Description="">
+  <Properties accuracy="1" AnimPack="Basic" attackrange="400" autoDestructionProbability="100" awarenessOfPlayer="0" bCannotSwim="0" aicharacter_character="ScoutMOAC" eiColliderMode="4" commrange="400" equip_EquipmentPack="Alien_Scout_Gunner_Player" bExactPos="0" objFrozenModel="" bGrabableByHunter="1" bGrenades="0" fGroupHostility="0" IdleSequence="None" bIdleStartOnSpawn="0" bInvulnerable="0" maxDeadShellNum="3" fileModel="Objects/Characters/Alien/Scout/Scout_base.cdf" nModelVariations="0" bNanoSuit="0" physicMassMult="1" ragdollPersistence="0" rank="4" reaction="1" soclasses_SmartObjectClass="Scout" SoundPack="scout_big_rolloff" SoundPackAlternative="" SpawnedEntityName="" special="0" species="2" bSpeciesHostility="1" bSquadMate="0" bSquadMateIncendiary="0" strafingPitch="16" bTrackable="1" bUsable="0" UseText="" bVehicleIsDangerous="1" nVoiceID="0">
+   <Beam criticalDistance="40" force="5">
+    <holdPosition x="0" y="0" z="-20"/>
+   </Beam>
+   <Damage AIMult="0.5" bulletMult="1" explosionMult="1" health="2000" bLogDamages="0" shieldBulletMult="0.5" shieldExplosionMult="0.5" bUseShield="1">
+    <DamageMultipliers AACannon="1" AlienMount="0.4" APCCannon_AscMod="1" DSG1="1.3" FastLightMOAC="0" FastLightMOAR="0" FragGrenade="1" FY71="0.65" GaussRifle="2" Hurricane="0.8" LAW="2" SCAR="0.45" ScoutMOAC="0" ScoutMOAR="0" ShiTen="1" Shotgun="0.7" SideWinder_AscMod="2" SMG="1" SOCOM="0.7"/>
+   </Damage>
+   <Perception audioScale="1" camoScale="1" collisionReactionScale="1" FOVPrimary="240" FOVSecondary="350" heatScale="1" bIsAffectedByLight="0" minAlarmLevel="0" persistence="0" reactionSpeed="1" sightrange="400" sightrangeVehicle="-1" stanceScale="1.8" stuntReactionTimeOut="3" bThermalVision="1" velBase="1" velScale="0.03"/>
+   <Vulnerability dmgMult="2" dmgRatio="0.1"/>
+  </Properties>
+  <ObjectVars OutdoorOnly="0" CastShadow="1" MotionBlurMultiplier="1" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0"/>
+ </EntityPrototype>
+ <EntityPrototype Name="Scouts.Scout_MOAC_Player" Id="{F5CDD7B3-3351-4CDD-9CAC-EB66BCE9FB44}" Class="Scout" Description="">
+  <Properties accuracy="2" AnimPack="Basic" attackrange="1000" autoDestructionProbability="100" awarenessOfPlayer="0" bCannotSwim="0" aicharacter_character="ScoutMOAC" eiColliderMode="4" commrange="400" equip_EquipmentPack="Alien_Scout_Gunner_Player" bExactPos="0" objFrozenModel="" bGrabableByHunter="1" bGrenades="0" fGroupHostility="0" IdleSequence="None" bIdleStartOnSpawn="0" bInvulnerable="0" maxDeadShellNum="3" fileModel="Objects/Characters/Alien/Scout/Scout_base.cdf" nModelVariations="0" bNanoSuit="0" physicMassMult="1" ragdollPersistence="0" rank="4" reaction="1" soclasses_SmartObjectClass="Scout" SoundPack="Scout" SoundPackAlternative="" SpawnedEntityName="" special="0" species="2" bSpeciesHostility="1" bSquadMate="0" bSquadMateIncendiary="0" strafingPitch="16" bTrackable="1" bUsable="0" UseText="" bVehicleIsDangerous="1" nVoiceID="0">
+   <Beam criticalDistance="40" force="5">
+    <holdPosition x="0" y="0" z="-20"/>
+   </Beam>
+   <Damage AIMult="0.5" bulletMult="1" explosionMult="1" health="2000" bLogDamages="0" shieldBulletMult="0.5" shieldExplosionMult="0.5" bUseShield="1">
+    <DamageMultipliers AACannon="1" AlienMount="0.4" APCCannon_AscMod="1" DSG1="1.3" FastLightMOAC="0" FastLightMOAR="0" FragGrenade="1" FY71="0.65" GaussRifle="2" Hurricane="0.8" LAW="2" SCAR="0.45" ScoutMOAC="0" ScoutMOAR="0" ShiTen="1" Shotgun="0.7" SideWinder_AscMod="2" SMG="1" SOCOM="0.7"/>
+   </Damage>
+   <Perception audioScale="1" camoScale="1" collisionReactionScale="1" FOVPrimary="240" FOVSecondary="350" heatScale="1" bIsAffectedByLight="0" minAlarmLevel="0" persistence="0" reactionSpeed="1" sightrange="400" sightrangeVehicle="-1" stanceScale="1.8" stuntReactionTimeOut="3" bThermalVision="1" velBase="1" velScale="0.03"/>
+   <Vulnerability dmgMult="2" dmgRatio="0.1"/>
+  </Properties>
+  <ObjectVars OutdoorOnly="0" CastShadow="1" MotionBlurMultiplier="1" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0"/>
+ </EntityPrototype>
+ <EntityPrototype Name="Scouts.Scout_MOAR_Player" Id="{55DFAD56-F7E7-4B1D-8D0A-607AC674FD0B}" Class="Scout" Description="">
+  <Properties accuracy="1" AnimPack="Basic" attackrange="400" autoDestructionProbability="100" awarenessOfPlayer="0" bCannotSwim="0" aicharacter_character="ScoutMOAC" eiColliderMode="4" commrange="400" equip_EquipmentPack="Alien_Scout_Player" bExactPos="0" objFrozenModel="" bGrabableByHunter="1" bGrenades="0" fGroupHostility="0" IdleSequence="None" bIdleStartOnSpawn="0" bInvulnerable="0" maxDeadShellNum="3" fileModel="Objects/Characters/Alien/Scout/Scout_base.cdf" nModelVariations="0" bNanoSuit="0" physicMassMult="1" ragdollPersistence="0" rank="4" reaction="1" soclasses_SmartObjectClass="Scout" SoundPack="Scout" SoundPackAlternative="" SpawnedEntityName="" special="0" species="2" bSpeciesHostility="1" bSquadMate="0" bSquadMateIncendiary="0" strafingPitch="16" bTrackable="1" bUsable="0" UseText="" bVehicleIsDangerous="1" nVoiceID="0">
+   <Beam criticalDistance="40" force="5">
+    <holdPosition x="0" y="0" z="-20"/>
+   </Beam>
+   <Damage AIMult="0.5" bulletMult="1" explosionMult="1" health="2000" bLogDamages="0" shieldBulletMult="0.5" shieldExplosionMult="0.5" bUseShield="1">
+    <DamageMultipliers AACannon="1" AlienMount="0.4" APCCannon_AscMod="1" DSG1="1.3" FastLightMOAC="0" FastLightMOAR="0" FragGrenade="1" FY71="0.65" GaussRifle="2" Hurricane="0.8" LAW="2" SCAR="0.45" ScoutMOAC="0" ScoutMOAR="0" ShiTen="1" Shotgun="0.7" SideWinder_AscMod="2" SMG="1" SOCOM="0.7"/>
+   </Damage>
+   <Perception audioScale="1" camoScale="1" collisionReactionScale="1" FOVPrimary="240" FOVSecondary="350" heatScale="1" bIsAffectedByLight="0" minAlarmLevel="0" persistence="0" reactionSpeed="1" sightrange="400" sightrangeVehicle="-1" stanceScale="1.8" stuntReactionTimeOut="3" bThermalVision="1" velBase="1" velScale="0.03"/>
+   <Vulnerability dmgMult="2" dmgRatio="0.1"/>
+  </Properties>
+  <ObjectVars OutdoorOnly="0" CastShadow="1" MotionBlurMultiplier="1" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0"/>
+ </EntityPrototype>
+ <EntityPrototype Name="Troopers.Trooper_MOAC_Player" Id="{DD117F10-EC5C-4ED7-83C9-F16532D5B5E5}" Class="Trooper" Description="">
+  <Properties accuracy="1" AnimPack="Trooper" attackrange="70" awarenessOfPlayer="1" bCannotSwim="0" bCanSelfDestruct="1" aicharacter_character="Trooper" eiColliderMode="0" commrange="30" bCorridor="0" damageScale="1" distanceToHideFrom="3" equip_EquipmentPack="Alien_Trooper_Player" bExactPos="0" bForceOutdoor="1" objFrozenModel="objects/characters/alien/trooper/trooper_frozen_shatter.cgf" fsoundRadius="16" bGrabableByHunter="1" bGrenades="0" fGroupHostility="0" horizontal_fov="160" IdleSequence="None" bIdleStartOnSpawn="0" bIndoor="0" bInvulnerable="0" fileModel="objects/characters/alien/trooper/trooper.cdf" nModelVariations="0" bNanoSuit="0" physicMassMult="1" ragdollPersistence="0" rank="4" reaction="1" soclasses_SmartObjectClass="Trooper" SoundPack="Trooper" SoundPackAlternative="" SpawnedEntityName="" special="0" species="2" bSpeciesHostility="1" bSquadMate="0" bSquadMateIncendiary="0" bTrackable="1" bUsable="0" UseText="" bVehicleIsDangerous="1" nVoiceID="0">
+   <Behavior Defend="0" DefendDistance="10" Melee="0"/>
+   <Damage customGrabDistance="2" dieEffect="alien_special.Trooper.death_explosion" FallPercentage="0" health="700" bLogDamages="0">
+    <DamageMultipliers AlienMount="0.3" DSG1="1.5" FastLightMOAC="0" FastLightMOAR="0" Fists="1" FragGrenade="3" FY71="0.9" GaussRifle="1.5" Hurricane="0.5" LAW="3" MeleeVehicle="0.35" SCAR="0.9" ScoutMOAC="0" ScoutMOAR="0" ShiTen="0.2" Shotgun="0.7" SMG="0.8" SOCOM="1.2" VehicleUSMachinegun="1"/>
+    <ImpulseMultipliers AlienMount="1" DSG1="3" FastLightMOAC="0" FastLightMOAR="0" Fists="1" FragGrenade="1" FY71="5" GaussRifle="1" Hurricane="1" LAW="1" SCAR="5" ScoutMOAC="0" ScoutMOAR="0" ShiTen="5" Shotgun="1" SMG="1" SOCOM="5" VehicleUSMachinegun="1"/>
+   </Damage>
+   <Explosion Damage="400" Radius="7"/>
+   <Perception audioScale="1" bulletHitRadius="20" camoScale="1" collisionReactionScale="1" FOVPrimary="130" FOVSecondary="160" heatScale="1" bIsAffectedByLight="0" minAlarmLevel="0" persistence="3" reactionSpeed="1" sightrange="60" sightrangeVehicle="-1" stanceScale="1.8" stuntReactionTimeOut="3" bThermalVision="1" velBase="1" velScale="0.03"/>
+   <Vulnerability dmgMult="1" dmgRatio="1"/>
+  </Properties>
+  <ObjectVars OutdoorOnly="0" CastShadow="1" MotionBlurMultiplier="1" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0"/>
+ </EntityPrototype>
+ <EntityPrototype Name="Troopers.Trooper_Leader_MOAR_Player" Id="{016189BE-AA7B-4A5E-A703-B642D2335667}" Class="Trooper" Description="">
+  <Properties accuracy="1" AnimPack="Trooper" attackrange="70" awarenessOfPlayer="1" bCannotSwim="0" bCanSelfDestruct="1" aicharacter_character="TrooperLeaderMKII" eiColliderMode="0" commrange="30" bCorridor="0" damageScale="1" distanceToHideFrom="3" equip_EquipmentPack="Alien_TrooperMOAR_Player" bExactPos="0" bForceOutdoor="1" objFrozenModel="objects/characters/alien/trooper/trooper_frozen_shatter.cgf" fsoundRadius="16" bGrabableByHunter="1" bGrenades="0" fGroupHostility="0" horizontal_fov="160" IdleSequence="None" bIdleStartOnSpawn="0" bIndoor="0" bInvulnerable="0" fileModel="objects/characters/alien/trooper/trooper_leader.chr" nModelVariations="0" bNanoSuit="0" physicMassMult="1" ragdollPersistence="0" rank="4" reaction="1" soclasses_SmartObjectClass="Trooper" SoundPack="Trooper" SoundPackAlternative="" SpawnedEntityName="" special="0" species="2" bSpeciesHostility="1" bSquadMate="0" bSquadMateIncendiary="0" bTrackable="1" bUsable="0" UseText="" bVehicleIsDangerous="1" nVoiceID="0">
+   <Behavior Defend="0" DefendDistance="10" Melee="0"/>
+   <Damage customGrabDistance="2" dieEffect="alien_special.Trooper.death_explosion" FallPercentage="0" health="700" bLogDamages="0">
+    <DamageMultipliers AlienMount="0.3" DSG1="1.5" FastLightMOAC="0" FastLightMOAR="0" Fists="1" FragGrenade="3" FY71="0.9" GaussRifle="1.5" Hurricane="0.5" LAW="1.1" MeleeVehicle="0.35" SCAR="0.9" ScoutMOAC="0" ScoutMOAR="0" ShiTen="0.2" Shotgun="0.7" SMG="0.8" SOCOM="1.2" VehicleUSMachinegun="1"/>
+    <ImpulseMultipliers AlienMount="1" DSG1="3" FastLightMOAC="0" FastLightMOAR="0" Fists="1" FragGrenade="1" FY71="5" GaussRifle="1" Hurricane="1" LAW="1" SCAR="5" ScoutMOAC="0" ScoutMOAR="0" ShiTen="5" Shotgun="1" SMG="1" SOCOM="5" VehicleUSMachinegun="1"/>
+   </Damage>
+   <Explosion Damage="400" Radius="7"/>
+   <Perception audioScale="1" bulletHitRadius="20" camoScale="1" collisionReactionScale="1" FOVPrimary="130" FOVSecondary="160" heatScale="1" bIsAffectedByLight="0" minAlarmLevel="0" persistence="0" reactionSpeed="1" sightrange="50" sightrangeVehicle="-1" stanceScale="1.8" stuntReactionTimeOut="3" bThermalVision="1" velBase="1" velScale="0.03"/>
+   <Vulnerability dmgMult="2" dmgRatio="0.1"/>
+  </Properties>
+  <ObjectVars OutdoorOnly="0" CastShadow="1" MotionBlurMultiplier="1" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0"/>
+ </EntityPrototype>
+ <EntityPrototype Name="Scouts.Scout_MOAR_Ascension_Player" Id="{D05B81FE-54DA-4C1B-8FA0-63200B19D55E}" Class="Scout" Description="">
+  <Properties accuracy="1" AnimPack="Basic" attackrange="400" autoDestructionProbability="100" awarenessOfPlayer="0" bCannotSwim="0" aicharacter_character="ScoutMOAC" eiColliderMode="4" commrange="400" equip_EquipmentPack="Alien_Scout_Player" bExactPos="0" objFrozenModel="" bGrabableByHunter="1" bGrenades="0" fGroupHostility="0" IdleSequence="None" bIdleStartOnSpawn="0" bInvulnerable="0" maxDeadShellNum="3" fileModel="Objects/Characters/Alien/Scout/Scout_base.cdf" nModelVariations="0" bNanoSuit="0" physicMassMult="1" ragdollPersistence="0" rank="4" reaction="1" soclasses_SmartObjectClass="Scout" SoundPack="scout_big_rolloff" SoundPackAlternative="" SpawnedEntityName="" special="0" species="2" bSpeciesHostility="1" bSquadMate="0" bSquadMateIncendiary="0" strafingPitch="16" bTrackable="1" bUsable="0" UseText="" bVehicleIsDangerous="1" nVoiceID="0">
+   <Beam criticalDistance="40" force="5">
+    <holdPosition x="0" y="0" z="-20"/>
+   </Beam>
+   <Damage AIMult="0.5" bulletMult="1" explosionMult="1" health="2000" bLogDamages="0" shieldBulletMult="0.5" shieldExplosionMult="0.5" bUseShield="1">
+    <DamageMultipliers AACannon="1" AlienMount="0.4" APCCannon_AscMod="1" DSG1="1.3" FastLightMOAC="0" FastLightMOAR="0" FragGrenade="1" FY71="0.65" GaussRifle="2" Hurricane="0.8" LAW="2" SCAR="0.45" ScoutMOAC="0" ScoutMOAR="0" ShiTen="1" Shotgun="0.7" SideWinder_AscMod="2" SMG="1" SOCOM="0.7"/>
+   </Damage>
+   <Perception audioScale="1" camoScale="1" collisionReactionScale="1" FOVPrimary="240" FOVSecondary="350" heatScale="1" bIsAffectedByLight="0" minAlarmLevel="0" persistence="0" reactionSpeed="1" sightrange="400" sightrangeVehicle="-1" stanceScale="1.8" stuntReactionTimeOut="3" bThermalVision="1" velBase="1" velScale="0.03"/>
+   <Vulnerability dmgMult="2" dmgRatio="0.1"/>
+  </Properties>
+  <ObjectVars OutdoorOnly="0" CastShadow="1" MotionBlurMultiplier="1" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0"/>
+ </EntityPrototype>
+ <EntityPrototype Name="Naked.Alien_Patrol_Player" Id="{3260800A-D051-4371-B2A6-BBDCD642AF7B}" Class="Alien" Description="">
+  <Properties accuracy="1" AnimPack="Basic" attackrange="70" awarenessOfPlayer="0" bCannotSwim="0" aicharacter_character="GuardAssault" eiColliderMode="0" commrange="70" damageScale="1" equip_EquipmentPack="Alien_naked_Player" bExactPos="0" objFrozenModel="" bGrabableByHunter="1" bGrenades="0" fGroupHostility="0" IdleSequence="None" bIdleStartOnSpawn="0" bInvulnerable="0" fileModel="objects/characters/alien/alienbase/alienbase.cdf" nModelVariations="0" bNanoSuit="0" physicMassMult="1" ragdollPersistence="0" rank="4" reaction="1" soclasses_SmartObjectClass="Alien, Alien_Patrol" SoundPack="Alien" SoundPackAlternative="" SpawnedEntityName="" special="0" species="2" bSpeciesHostility="1" bSquadMate="0" bSquadMateIncendiary="0" bTrackable="1" bUsable="0" UseText="" bVehicleIsDangerous="1" nVoiceID="0" voiceType="alien">
+   <Behavior alarmLevel="1" cloakLevel="0" targetEntity="" targetRange="18"/>
+   <Damage health="600" bLogDamages="0"/>
+   <Perception audioScale="1" camoScale="1" collisionReactionScale="1" FOVPrimary="80" FOVSecondary="160" heatScale="1" bIsAffectedByLight="0" minAlarmLevel="0" persistence="0" reactionSpeed="1.5" sightrange="70" sightrangeVehicle="-1" stanceScale="1.8" stuntReactionTimeOut="3" bThermalVision="1" velBase="1" velScale="0.03"/>
+   <Vulnerability dmgMult="2" dmgRatio="0.1"/>
+  </Properties>
+  <ObjectVars OutdoorOnly="0" CastShadow="1" MotionBlurMultiplier="1" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0"/>
+ </EntityPrototype>
+ <EntityPrototype Name="Hunters.Hunter_Player" Id="{47DBE895-1AFE-4560-8646-92CF9D38EFEB}" Class="Hunter" Description="">
+  <Properties accuracy="1" AnimPack="Basic" attackrange="170" awarenessOfPlayer="0" bCannotSwim="0" aicharacter_character="Hunter" eiColliderMode="4" commrange="140" equip_EquipmentPack="Alien_Hunter_Player" bExactPos="0" objFrozenModel="" bGrabableByHunter="1" bGrenades="0" fGroupHostility="0" horizontal_fov="270" IdleSequence="None" bIdleStartOnSpawn="0" bInvulnerable="0" fileModel="objects/characters/alien/hunter/hunter_hg.cdf" nModelVariations="0" bNanoSuit="0" physicMassMult="1" ragdollPersistence="0" rank="4" reaction="1" soclasses_SmartObjectClass="Hunter" SoundPack="Hunter" SoundPackAlternative="" SpawnedEntityName="" special="0" species="2" bSpeciesHostility="1" bSquadMate="0" bSquadMateIncendiary="0" bTrackable="1" bUsable="0" UseText="" bVehicleIsDangerous="1" nVoiceID="0">
+   <Damage AIMult="0.45" bulletMult="0.45" explosionMult="1" headMult="1" health="6000" HighPoseAccumulator="1.5" HighPoseDuration="2" HitAccumulator="2" legsMult="0.25" bLogDamages="0" playerMult="1" torsoMult="0.5" weakSpotMult="2"/>
+   <Explosion damage="200" effectDelay="4.5" explosionDelay="7.5" pressure="100" radius="15"/>
+   <Perception audioScale="1" camoScale="1" collisionReactionScale="1" FOV="160" FOVPrimary="120" FOVSecondary="160" FOVsure="80" heatScale="1" bIsAffectedByLight="0" minAlarmLevel="0" persistence="0" reactionSpeed="1" sightrange="250" sightrangeVehicle="1" stanceScale="1.8" stuntReactionTimeOut="3" bThermalVision="0" velBase="1" velScale="0.03"/>
+   <Shield bulletDamageMult="0.05" explosionDamageMult="0.1" regenTime="100"/>
+   <Vulnerability dmgMult="2" dmgRatio="0.1"/>
+  </Properties>
+  <ObjectVars OutdoorOnly="0" CastShadow="1" MotionBlurMultiplier="1" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0"/>
+ </EntityPrototype>
+ <EntityPrototype Name="Troopers.Trooper_Leader_MOAC_Player" Id="{A6176B05-F1A5-4B82-AADA-D020A8C29AAC}" Class="Trooper" Description="">
+  <Properties accuracy="1" AnimPack="Trooper" attackrange="70" awarenessOfPlayer="1" bCannotSwim="0" bCanSelfDestruct="1" aicharacter_character="TrooperLeaderMKII" eiColliderMode="0" commrange="30" bCorridor="0" damageScale="1" distanceToHideFrom="3" equip_EquipmentPack="Alien_Trooper_Player" bExactPos="0" bForceOutdoor="1" objFrozenModel="objects/characters/alien/trooper/trooper_frozen_shatter.cgf" fsoundRadius="16" bGrabableByHunter="1" bGrenades="0" fGroupHostility="0" horizontal_fov="160" IdleSequence="None" bIdleStartOnSpawn="0" bIndoor="0" bInvulnerable="0" fileModel="objects/characters/alien/trooper/trooper_leader.chr" nModelVariations="0" bNanoSuit="0" physicMassMult="1" ragdollPersistence="0" rank="4" reaction="1" soclasses_SmartObjectClass="Trooper" SoundPack="Trooper" SoundPackAlternative="" SpawnedEntityName="" special="0" species="2" bSpeciesHostility="1" bSquadMate="0" bSquadMateIncendiary="0" bTrackable="1" bUsable="0" UseText="" bVehicleIsDangerous="1" nVoiceID="0">
+   <Behavior Defend="0" DefendDistance="10" Melee="0"/>
+   <Damage customGrabDistance="2" dieEffect="alien_special.Trooper.death_explosion" FallPercentage="0" health="700" bLogDamages="0">
+    <DamageMultipliers AlienMount="0.3" DSG1="1.5" FastLightMOAC="0" FastLightMOAR="0" Fists="1" FragGrenade="3" FY71="0.9" GaussRifle="1.5" Hurricane="0.5" LAW="1.1" MeleeVehicle="0.35" SCAR="0.9" ScoutMOAC="0" ScoutMOAR="0" ShiTen="0.2" Shotgun="0.7" SMG="0.8" SOCOM="1.2" VehicleUSMachinegun="1"/>
+    <ImpulseMultipliers AlienMount="1" DSG1="3" FastLightMOAC="0" FastLightMOAR="0" Fists="1" FragGrenade="1" FY71="5" GaussRifle="1" Hurricane="1" LAW="1" SCAR="5" ScoutMOAC="0" ScoutMOAR="0" ShiTen="5" Shotgun="1" SMG="1" SOCOM="5" VehicleUSMachinegun="1"/>
+   </Damage>
+   <Explosion Damage="400" Radius="7"/>
+   <Perception audioScale="1" bulletHitRadius="20" camoScale="1" collisionReactionScale="1" FOVPrimary="130" FOVSecondary="160" heatScale="1" bIsAffectedByLight="0" minAlarmLevel="0" persistence="0" reactionSpeed="1" sightrange="50" sightrangeVehicle="-1" stanceScale="1.8" stuntReactionTimeOut="3" bThermalVision="1" velBase="1" velScale="0.03"/>
+   <Vulnerability dmgMult="2" dmgRatio="0.1"/>
+  </Properties>
+  <ObjectVars OutdoorOnly="0" CastShadow="1" MotionBlurMultiplier="1" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0"/>
+ </EntityPrototype>
+ <EntityPrototype Name="Troopers.Trooper_MOAR_Player" Id="{A933FD80-F0DF-457D-B11E-BF6EB1F59425}" Class="Trooper" Description="">
+  <Properties accuracy="1" AnimPack="Trooper" attackrange="70" awarenessOfPlayer="1" bCannotSwim="0" bCanSelfDestruct="1" aicharacter_character="Trooper" eiColliderMode="0" commrange="30" bCorridor="0" damageScale="1" distanceToHideFrom="3" equip_EquipmentPack="Alien_TrooperMOAR_Player" bExactPos="0" bForceOutdoor="1" objFrozenModel="objects/characters/alien/trooper/trooper_frozen_shatter.cgf" fsoundRadius="16" bGrabableByHunter="1" bGrenades="0" fGroupHostility="0" horizontal_fov="160" IdleSequence="None" bIdleStartOnSpawn="0" bIndoor="0" bInvulnerable="0" fileModel="objects/characters/alien/trooper/trooper_base.chr" nModelVariations="0" bNanoSuit="0" physicMassMult="1" ragdollPersistence="0" rank="4" reaction="1" soclasses_SmartObjectClass="Trooper" SoundPack="Trooper" SoundPackAlternative="" SpawnedEntityName="" special="0" species="2" bSpeciesHostility="1" bSquadMate="0" bSquadMateIncendiary="0" bTrackable="1" bUsable="0" UseText="" bVehicleIsDangerous="1" nVoiceID="0">
+   <Behavior Defend="0" DefendDistance="10" Melee="0"/>
+   <Damage customGrabDistance="2" dieEffect="alien_special.Trooper.death_explosion" FallPercentage="0" health="700" bLogDamages="0">
+    <DamageMultipliers AlienMount="0.3" DSG1="1.5" FastLightMOAC="0" FastLightMOAR="0" Fists="1" FragGrenade="3" FY71="0.9" GaussRifle="1.5" Hurricane="0.5" LAW="1.1" MeleeVehicle="0.35" SCAR="0.9" ScoutMOAC="0" ScoutMOAR="0" ShiTen="0.2" Shotgun="0.7" SMG="0.8" SOCOM="1.2" VehicleUSMachinegun="1"/>
+    <ImpulseMultipliers AlienMount="1" DSG1="3" FastLightMOAC="0" FastLightMOAR="0" Fists="1" FragGrenade="1" FY71="5" GaussRifle="1" Hurricane="1" LAW="1" SCAR="5" ScoutMOAC="0" ScoutMOAR="0" ShiTen="5" Shotgun="1" SMG="1" SOCOM="5" VehicleUSMachinegun="1"/>
+   </Damage>
+   <Explosion Damage="400" Radius="7"/>
+   <Perception audioScale="1" bulletHitRadius="20" camoScale="1" collisionReactionScale="1" FOVPrimary="130" FOVSecondary="160" heatScale="1" bIsAffectedByLight="0" minAlarmLevel="0" persistence="0" reactionSpeed="1" sightrange="50" sightrangeVehicle="-1" stanceScale="1.8" stuntReactionTimeOut="3" bThermalVision="1" velBase="1" velScale="0.03"/>
+   <Vulnerability dmgMult="2" dmgRatio="0.1"/>
+  </Properties>
+  <ObjectVars OutdoorOnly="0" CastShadow="1" MotionBlurMultiplier="1" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0"/>
+ </EntityPrototype>
+ <EntityPrototype Name="Scouts.Scout_Leader_MOAC" Id="{2B3D5B68-77F0-4E95-AE43-6BF3D01E2367}" Class="Scout" Description="">
+  <Properties accuracy="2" AnimPack="Basic" attackrange="1000" autoDestructionProbability="100" awarenessOfPlayer="0" bCannotSwim="0" aicharacter_character="ScoutMOAC" eiColliderMode="4" commrange="400" equip_EquipmentPack="Alien_Scout_Gunner_Player" bExactPos="0" objFrozenModel="" bGrabableByHunter="1" bGrenades="0" fGroupHostility="0" IdleSequence="None" bIdleStartOnSpawn="0" bInvulnerable="0" maxDeadShellNum="3" fileModel="objects/characters/alien/scout/scout_leader.cdf" nModelVariations="0" bNanoSuit="0" physicMassMult="1" ragdollPersistence="0" rank="4" reaction="1" soclasses_SmartObjectClass="Scout" SoundPack="Scout" SoundPackAlternative="" SpawnedEntityName="" special="0" species="2" bSpeciesHostility="1" bSquadMate="0" bSquadMateIncendiary="0" strafingPitch="16" bTrackable="1" bUsable="0" UseText="" bVehicleIsDangerous="1" nVoiceID="0">
+   <Beam criticalDistance="40" force="5">
+    <holdPosition x="0" y="0" z="-20"/>
+   </Beam>
+   <Damage AIMult="0.5" bulletMult="1" explosionMult="1" health="2000" bLogDamages="0" shieldBulletMult="0.5" shieldExplosionMult="0.5" bUseShield="1">
+    <DamageMultipliers AACannon="1" AlienMount="0.4" APCCannon_AscMod="1" DSG1="1.3" FastLightMOAC="0" FastLightMOAR="0" FragGrenade="1" FY71="0.65" GaussRifle="2" Hurricane="0.8" LAW="2" SCAR="0.45" ScoutMOAC="0" ScoutMOAR="0" ShiTen="1" Shotgun="0.7" SideWinder_AscMod="2" SMG="1" SOCOM="0.7"/>
+   </Damage>
+   <Perception audioScale="1" camoScale="1" collisionReactionScale="1" FOVPrimary="240" FOVSecondary="350" heatScale="1" bIsAffectedByLight="0" minAlarmLevel="0" persistence="0" reactionSpeed="1" sightrange="400" sightrangeVehicle="-1" stanceScale="1.8" stuntReactionTimeOut="3" bThermalVision="1" velBase="1" velScale="0.03"/>
+   <Vulnerability dmgMult="2" dmgRatio="0.1"/>
+  </Properties>
+  <ObjectVars OutdoorOnly="0" CastShadow="1" MotionBlurMultiplier="1" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0"/>
+ </EntityPrototype>
+ <EntityPrototype Name="Scouts.Scout_Leader_MOAR" Id="{19C4EA7F-91B9-453B-A80A-D2090A38A4F2}" Class="Scout" Description="">
+  <Properties accuracy="2" AnimPack="Basic" attackrange="1000" autoDestructionProbability="100" awarenessOfPlayer="0" bCannotSwim="0" aicharacter_character="ScoutMOAC" eiColliderMode="4" commrange="400" equip_EquipmentPack="Alien_Scout_MOAR_Player" bExactPos="0" objFrozenModel="" bGrabableByHunter="1" bGrenades="0" fGroupHostility="0" IdleSequence="None" bIdleStartOnSpawn="0" bInvulnerable="0" maxDeadShellNum="3" fileModel="objects/characters/alien/scout/scout_leader.cdf" nModelVariations="0" bNanoSuit="0" physicMassMult="1" ragdollPersistence="0" rank="4" reaction="1" soclasses_SmartObjectClass="Scout" SoundPack="Scout" SoundPackAlternative="" SpawnedEntityName="" special="0" species="2" bSpeciesHostility="1" bSquadMate="0" bSquadMateIncendiary="0" strafingPitch="16" bTrackable="1" bUsable="0" UseText="" bVehicleIsDangerous="1" nVoiceID="0">
+   <Beam criticalDistance="40" force="5">
+    <holdPosition x="0" y="0" z="-20"/>
+   </Beam>
+   <Damage AIMult="0.5" bulletMult="1" explosionMult="1" health="2000" bLogDamages="0" shieldBulletMult="0.5" shieldExplosionMult="0.5" bUseShield="1">
+    <DamageMultipliers AACannon="1" AlienMount="0.4" APCCannon_AscMod="1" DSG1="1.3" FastLightMOAC="0" FastLightMOAR="0" FragGrenade="1" FY71="0.65" GaussRifle="2" Hurricane="0.8" LAW="2" SCAR="0.45" ScoutMOAC="0" ScoutMOAR="0" ShiTen="1" Shotgun="0.7" SideWinder_AscMod="2" SMG="1" SOCOM="0.7"/>
+   </Damage>
+   <Perception audioScale="1" camoScale="1" collisionReactionScale="1" FOVPrimary="240" FOVSecondary="350" heatScale="1" bIsAffectedByLight="0" minAlarmLevel="0" persistence="0" reactionSpeed="1" sightrange="400" sightrangeVehicle="-1" stanceScale="1.8" stuntReactionTimeOut="3" bThermalVision="1" velBase="1" velScale="0.03"/>
+   <Vulnerability dmgMult="2" dmgRatio="0.1"/>
+  </Properties>
+  <ObjectVars OutdoorOnly="0" CastShadow="1" MotionBlurMultiplier="1" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0"/>
+ </EntityPrototype>
+ <EntityPrototype Name="Scouts.Scout_Leader_NoSearch_MOAC" Id="{1AB2839C-ED49-4681-BDE1-ACBA0E24D06C}" Class="Scout" Description="">
+  <Properties accuracy="2" AnimPack="Basic" attackrange="1000" autoDestructionProbability="100" awarenessOfPlayer="0" bCannotSwim="0" aicharacter_character="ScoutMOAC" eiColliderMode="4" commrange="400" equip_EquipmentPack="Alien_Scout_Gunner_NoSearch_Player" bExactPos="0" objFrozenModel="" bGrabableByHunter="1" bGrenades="0" fGroupHostility="0" IdleSequence="None" bIdleStartOnSpawn="0" bInvulnerable="0" maxDeadShellNum="3" fileModel="objects/characters/alien/scout/scout_leader.cdf" nModelVariations="0" bNanoSuit="0" physicMassMult="1" ragdollPersistence="0" rank="4" reaction="1" soclasses_SmartObjectClass="Scout" SoundPack="Scout" SoundPackAlternative="" SpawnedEntityName="" special="0" species="2" bSpeciesHostility="1" bSquadMate="0" bSquadMateIncendiary="0" strafingPitch="16" bTrackable="1" bUsable="0" UseText="" bVehicleIsDangerous="1" nVoiceID="0">
+   <Beam criticalDistance="40" force="5">
+    <holdPosition x="0" y="0" z="-20"/>
+   </Beam>
+   <Damage AIMult="0.5" bulletMult="1" explosionMult="1" health="2000" bLogDamages="0" shieldBulletMult="0.5" shieldExplosionMult="0.5" bUseShield="1">
+    <DamageMultipliers AACannon="1" AlienMount="0.4" APCCannon_AscMod="1" DSG1="1.3" FastLightMOAC="0" FastLightMOAR="0" FragGrenade="1" FY71="0.65" GaussRifle="2" Hurricane="0.8" LAW="2" SCAR="0.45" ScoutMOAC="0" ScoutMOAR="0" ShiTen="1" Shotgun="0.7" SideWinder_AscMod="2" SMG="1" SOCOM="0.7"/>
+   </Damage>
+   <Perception audioScale="1" camoScale="1" collisionReactionScale="1" FOVPrimary="240" FOVSecondary="350" heatScale="1" bIsAffectedByLight="0" minAlarmLevel="0" persistence="0" reactionSpeed="1" sightrange="400" sightrangeVehicle="-1" stanceScale="1.8" stuntReactionTimeOut="3" bThermalVision="1" velBase="1" velScale="0.03"/>
+   <Vulnerability dmgMult="2" dmgRatio="0.1"/>
+  </Properties>
+  <ObjectVars OutdoorOnly="0" CastShadow="1" MotionBlurMultiplier="1" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0"/>
+ </EntityPrototype>
+ <EntityPrototype Name="Scouts.Scout_MOAC_NoSearch_Player" Id="{753F1358-A9ED-4FE2-9737-F85728FBE82F}" Class="Scout" Description="">
+  <Properties accuracy="2" AnimPack="Basic" attackrange="1000" autoDestructionProbability="100" awarenessOfPlayer="0" bCannotSwim="0" aicharacter_character="ScoutMOAC" eiColliderMode="4" commrange="400" equip_EquipmentPack="Alien_Scout_Gunner_NoSearch_Player" bExactPos="0" objFrozenModel="" bGrabableByHunter="1" bGrenades="0" fGroupHostility="0" IdleSequence="None" bIdleStartOnSpawn="0" bInvulnerable="0" maxDeadShellNum="3" fileModel="Objects/Characters/Alien/Scout/Scout_base.cdf" nModelVariations="0" bNanoSuit="0" physicMassMult="1" ragdollPersistence="0" rank="4" reaction="1" soclasses_SmartObjectClass="Scout" SoundPack="Scout" SoundPackAlternative="" SpawnedEntityName="" special="0" species="2" bSpeciesHostility="1" bSquadMate="0" bSquadMateIncendiary="0" strafingPitch="16" bTrackable="1" bUsable="0" UseText="" bVehicleIsDangerous="1" nVoiceID="0">
+   <Beam criticalDistance="40" force="5">
+    <holdPosition x="0" y="0" z="-20"/>
+   </Beam>
+   <Damage AIMult="0.5" bulletMult="1" explosionMult="1" health="2000" bLogDamages="0" shieldBulletMult="0.5" shieldExplosionMult="0.5" bUseShield="1">
+    <DamageMultipliers AACannon="1" AlienMount="0.4" APCCannon_AscMod="1" DSG1="1.3" FastLightMOAC="0" FastLightMOAR="0" FragGrenade="1" FY71="0.65" GaussRifle="2" Hurricane="0.8" LAW="2" SCAR="0.45" ScoutMOAC="0" ScoutMOAR="0" ShiTen="1" Shotgun="0.7" SideWinder_AscMod="2" SMG="1" SOCOM="0.7"/>
+   </Damage>
+   <Perception audioScale="1" camoScale="1" collisionReactionScale="1" FOVPrimary="240" FOVSecondary="350" heatScale="1" bIsAffectedByLight="0" minAlarmLevel="0" persistence="0" reactionSpeed="1" sightrange="400" sightrangeVehicle="-1" stanceScale="1.8" stuntReactionTimeOut="3" bThermalVision="1" velBase="1" velScale="0.03"/>
+   <Vulnerability dmgMult="2" dmgRatio="0.1"/>
+  </Properties>
+  <ObjectVars OutdoorOnly="0" CastShadow="1" MotionBlurMultiplier="1" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0"/>
+ </EntityPrototype>
+ <EntityPrototype Name="Scouts.Scout_MOAR_NoSearch_Player" Id="{8C316263-5F69-410E-8348-8F76BE9719E5}" Class="Scout" Description="">
+  <Properties accuracy="2" AnimPack="Basic" attackrange="1000" autoDestructionProbability="100" awarenessOfPlayer="0" bCannotSwim="0" aicharacter_character="ScoutMOAC" eiColliderMode="4" commrange="400" equip_EquipmentPack="Alien_Scout_NoSearch_Player" bExactPos="0" objFrozenModel="" bGrabableByHunter="1" bGrenades="0" fGroupHostility="0" IdleSequence="None" bIdleStartOnSpawn="0" bInvulnerable="0" maxDeadShellNum="3" fileModel="Objects/Characters/Alien/Scout/Scout_base.cdf" nModelVariations="0" bNanoSuit="0" physicMassMult="1" ragdollPersistence="0" rank="4" reaction="1" soclasses_SmartObjectClass="Scout" SoundPack="Scout" SoundPackAlternative="" SpawnedEntityName="" special="0" species="2" bSpeciesHostility="1" bSquadMate="0" bSquadMateIncendiary="0" strafingPitch="16" bTrackable="1" bUsable="0" UseText="" bVehicleIsDangerous="1" nVoiceID="0">
+   <Beam criticalDistance="40" force="5">
+    <holdPosition x="0" y="0" z="-20"/>
+   </Beam>
+   <Damage AIMult="0.5" bulletMult="1" explosionMult="1" health="2000" bLogDamages="0" shieldBulletMult="0.5" shieldExplosionMult="0.5" bUseShield="1">
+    <DamageMultipliers AACannon="1" AlienMount="0.4" APCCannon_AscMod="1" DSG1="1.3" FastLightMOAC="0" FastLightMOAR="0" FragGrenade="1" FY71="0.65" GaussRifle="2" Hurricane="0.8" LAW="2" SCAR="0.45" ScoutMOAC="0" ScoutMOAR="0" ShiTen="1" Shotgun="0.7" SideWinder_AscMod="2" SMG="1" SOCOM="0.7"/>
+   </Damage>
+   <Perception audioScale="1" camoScale="1" collisionReactionScale="1" FOVPrimary="240" FOVSecondary="350" heatScale="1" bIsAffectedByLight="0" minAlarmLevel="0" persistence="0" reactionSpeed="1" sightrange="400" sightrangeVehicle="-1" stanceScale="1.8" stuntReactionTimeOut="3" bThermalVision="1" velBase="1" velScale="0.03"/>
+   <Vulnerability dmgMult="2" dmgRatio="0.1"/>
+  </Properties>
+  <ObjectVars OutdoorOnly="0" CastShadow="1" MotionBlurMultiplier="1" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0"/>
+ </EntityPrototype>
+ <EntityPrototype Name="Troopers.Trooper_MOAC_NoSelfDestruct_Player" Id="{F8DE30C0-6B62-4C88-96BB-5ED8AF7279C1}" Class="Trooper" Description="">
+  <Properties accuracy="1" AnimPack="Trooper" attackrange="70" awarenessOfPlayer="1" bCannotSwim="0" bCanSelfDestruct="0" aicharacter_character="Trooper" eiColliderMode="0" commrange="30" bCorridor="0" damageScale="1" distanceToHideFrom="3" equip_EquipmentPack="Alien_Trooper_Player" bExactPos="0" bForceOutdoor="1" objFrozenModel="objects/characters/alien/trooper/trooper_frozen_shatter.cgf" fsoundRadius="16" bGrabableByHunter="1" bGrenades="0" fGroupHostility="0" horizontal_fov="160" IdleSequence="None" bIdleStartOnSpawn="0" bIndoor="0" bInvulnerable="0" fileModel="objects/characters/alien/trooper/trooper_base.chr" nModelVariations="0" bNanoSuit="0" physicMassMult="1" ragdollPersistence="0" rank="4" reaction="1" soclasses_SmartObjectClass="Trooper" SoundPack="Trooper" SoundPackAlternative="" SpawnedEntityName="" special="0" species="2" bSpeciesHostility="1" bSquadMate="0" bSquadMateIncendiary="0" bTrackable="1" bUsable="0" UseText="" bVehicleIsDangerous="1" nVoiceID="0">
+   <Behavior Defend="0" DefendDistance="10" Melee="0"/>
+   <Damage customGrabDistance="2" dieEffect="alien_special.Trooper.death_explosion" FallPercentage="0" health="700" bLogDamages="0">
+    <DamageMultipliers AlienMount="0.3" DSG1="1.5" FastLightMOAC="0" FastLightMOAR="0" Fists="1" FragGrenade="3" FY71="0.9" GaussRifle="1.5" Hurricane="0.5" LAW="3" MeleeVehicle="0.35" SCAR="0.9" ScoutMOAC="0" ScoutMOAR="0" ShiTen="0.2" Shotgun="0.7" SMG="0.8" SOCOM="1.2" VehicleUSMachinegun="1"/>
+    <ImpulseMultipliers AlienMount="1" DSG1="3" FastLightMOAC="0" FastLightMOAR="0" Fists="1" FragGrenade="1" FY71="5" GaussRifle="1" Hurricane="1" LAW="1" SCAR="5" ScoutMOAC="0" ScoutMOAR="0" ShiTen="5" Shotgun="1" SMG="1" SOCOM="5" VehicleUSMachinegun="1"/>
+   </Damage>
+   <Explosion Damage="400" Radius="7"/>
+   <Perception audioScale="1" bulletHitRadius="20" camoScale="1" collisionReactionScale="1" FOVPrimary="130" FOVSecondary="160" heatScale="1" bIsAffectedByLight="0" minAlarmLevel="0" persistence="3" reactionSpeed="1" sightrange="60" sightrangeVehicle="-1" stanceScale="1.8" stuntReactionTimeOut="3" bThermalVision="1" velBase="1" velScale="0.03"/>
+   <Vulnerability dmgMult="1" dmgRatio="1"/>
+  </Properties>
+  <ObjectVars OutdoorOnly="0" CastShadow="1" MotionBlurMultiplier="1" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0"/>
+ </EntityPrototype>
+ <EntityPrototype Name="Troopers.Trooper_MOAR_NoSelfDestruct_Player" Id="{38B90A94-AB31-41C2-88B9-029DF1698E45}" Class="Trooper" Description="">
+  <Properties accuracy="1" AnimPack="Trooper" attackrange="70" awarenessOfPlayer="1" bCannotSwim="0" bCanSelfDestruct="0" aicharacter_character="Trooper" eiColliderMode="0" commrange="30" bCorridor="0" damageScale="1" distanceToHideFrom="3" equip_EquipmentPack="Alien_TrooperMOAR_Player" bExactPos="0" bForceOutdoor="1" objFrozenModel="objects/characters/alien/trooper/trooper_frozen_shatter.cgf" fsoundRadius="16" bGrabableByHunter="1" bGrenades="0" fGroupHostility="0" horizontal_fov="160" IdleSequence="None" bIdleStartOnSpawn="0" bIndoor="0" bInvulnerable="0" fileModel="objects/characters/alien/trooper/trooper_base.chr" nModelVariations="0" bNanoSuit="0" physicMassMult="1" ragdollPersistence="0" rank="4" reaction="1" soclasses_SmartObjectClass="Trooper" SoundPack="Trooper" SoundPackAlternative="" SpawnedEntityName="" special="0" species="2" bSpeciesHostility="1" bSquadMate="0" bSquadMateIncendiary="0" bTrackable="1" bUsable="0" UseText="" bVehicleIsDangerous="1" nVoiceID="0">
+   <Behavior Defend="0" DefendDistance="10" Melee="0"/>
+   <Damage customGrabDistance="2" dieEffect="alien_special.Trooper.death_explosion" FallPercentage="0" health="700" bLogDamages="0">
+    <DamageMultipliers AlienMount="0.3" DSG1="1.5" FastLightMOAC="0" FastLightMOAR="0" Fists="1" FragGrenade="3" FY71="0.9" GaussRifle="1.5" Hurricane="0.5" LAW="1.1" MeleeVehicle="0.35" SCAR="0.9" ScoutMOAC="0" ScoutMOAR="0" ShiTen="0.2" Shotgun="0.7" SMG="0.8" SOCOM="1.2" VehicleUSMachinegun="1"/>
+    <ImpulseMultipliers AlienMount="1" DSG1="3" FastLightMOAC="0" FastLightMOAR="0" Fists="1" FragGrenade="1" FY71="5" GaussRifle="1" Hurricane="1" LAW="1" SCAR="5" ScoutMOAC="0" ScoutMOAR="0" ShiTen="5" Shotgun="1" SMG="1" SOCOM="5" VehicleUSMachinegun="1"/>
+   </Damage>
+   <Explosion Damage="400" Radius="7"/>
+   <Perception audioScale="1" bulletHitRadius="20" camoScale="1" collisionReactionScale="1" FOVPrimary="130" FOVSecondary="160" heatScale="1" bIsAffectedByLight="0" minAlarmLevel="0" persistence="0" reactionSpeed="1" sightrange="50" sightrangeVehicle="-1" stanceScale="1.8" stuntReactionTimeOut="3" bThermalVision="1" velBase="1" velScale="0.03"/>
+   <Vulnerability dmgMult="2" dmgRatio="0.1"/>
+  </Properties>
+  <ObjectVars OutdoorOnly="0" CastShadow="1" MotionBlurMultiplier="1" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0"/>
+ </EntityPrototype>
+ <EntityPrototype Name="Troopers.Trooper_Leader_MOAR_NoSelfDestruct_Player" Id="{9A839999-1BDE-4EA1-A80A-EDDA600B2524}" Class="Trooper" Description="">
+  <Properties accuracy="1" AnimPack="Trooper" attackrange="70" awarenessOfPlayer="1" bCannotSwim="0" bCanSelfDestruct="0" aicharacter_character="TrooperLeaderMKII" eiColliderMode="0" commrange="30" bCorridor="0" damageScale="1" distanceToHideFrom="3" equip_EquipmentPack="Alien_TrooperMOAR_Player" bExactPos="0" bForceOutdoor="1" objFrozenModel="objects/characters/alien/trooper/trooper_frozen_shatter.cgf" fsoundRadius="16" bGrabableByHunter="1" bGrenades="0" fGroupHostility="0" horizontal_fov="160" IdleSequence="None" bIdleStartOnSpawn="0" bIndoor="0" bInvulnerable="0" fileModel="objects/characters/alien/trooper/trooper_leader.chr" nModelVariations="0" bNanoSuit="0" physicMassMult="1" ragdollPersistence="0" rank="4" reaction="1" soclasses_SmartObjectClass="Trooper" SoundPack="Trooper" SoundPackAlternative="" SpawnedEntityName="" special="0" species="2" bSpeciesHostility="1" bSquadMate="0" bSquadMateIncendiary="0" bTrackable="1" bUsable="0" UseText="" bVehicleIsDangerous="1" nVoiceID="0">
+   <Behavior Defend="0" DefendDistance="10" Melee="0"/>
+   <Damage customGrabDistance="2" dieEffect="alien_special.Trooper.death_explosion" FallPercentage="0" health="700" bLogDamages="0">
+    <DamageMultipliers AlienMount="0.3" DSG1="1.5" FastLightMOAC="0" FastLightMOAR="0" Fists="1" FragGrenade="3" FY71="0.9" GaussRifle="1.5" Hurricane="0.5" LAW="1.1" MeleeVehicle="0.35" SCAR="0.9" ScoutMOAC="0" ScoutMOAR="0" ShiTen="0.2" Shotgun="0.7" SMG="0.8" SOCOM="1.2" VehicleUSMachinegun="1"/>
+    <ImpulseMultipliers AlienMount="1" DSG1="3" FastLightMOAC="0" FastLightMOAR="0" Fists="1" FragGrenade="1" FY71="5" GaussRifle="1" Hurricane="1" LAW="1" SCAR="5" ScoutMOAC="0" ScoutMOAR="0" ShiTen="5" Shotgun="1" SMG="1" SOCOM="5" VehicleUSMachinegun="1"/>
+   </Damage>
+   <Explosion Damage="400" Radius="7"/>
+   <Perception audioScale="1" bulletHitRadius="20" camoScale="1" collisionReactionScale="1" FOVPrimary="130" FOVSecondary="160" heatScale="1" bIsAffectedByLight="0" minAlarmLevel="0" persistence="0" reactionSpeed="1" sightrange="50" sightrangeVehicle="-1" stanceScale="1.8" stuntReactionTimeOut="3" bThermalVision="1" velBase="1" velScale="0.03"/>
+   <Vulnerability dmgMult="2" dmgRatio="0.1"/>
+  </Properties>
+  <ObjectVars OutdoorOnly="0" CastShadow="1" MotionBlurMultiplier="1" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0"/>
+ </EntityPrototype>
+ <EntityPrototype Name="Troopers.Trooper_Leader_MOAC_NoSelfDestruct_Player" Id="{C00BD903-DCC3-48CC-8257-4F7F895D6089}" Class="Trooper" Description="">
+  <Properties accuracy="1" AnimPack="Trooper" attackrange="70" awarenessOfPlayer="1" bCannotSwim="0" bCanSelfDestruct="0" aicharacter_character="TrooperLeaderMKII" eiColliderMode="0" commrange="30" bCorridor="0" damageScale="1" distanceToHideFrom="3" equip_EquipmentPack="Alien_Trooper_Player" bExactPos="0" bForceOutdoor="1" objFrozenModel="objects/characters/alien/trooper/trooper_frozen_shatter.cgf" fsoundRadius="16" bGrabableByHunter="1" bGrenades="0" fGroupHostility="0" horizontal_fov="160" IdleSequence="None" bIdleStartOnSpawn="0" bIndoor="0" bInvulnerable="0" fileModel="objects/characters/alien/trooper/trooper_leader.chr" nModelVariations="0" bNanoSuit="0" physicMassMult="1" ragdollPersistence="0" rank="4" reaction="1" soclasses_SmartObjectClass="Trooper" SoundPack="Trooper" SoundPackAlternative="" SpawnedEntityName="" special="0" species="2" bSpeciesHostility="1" bSquadMate="0" bSquadMateIncendiary="0" bTrackable="1" bUsable="0" UseText="" bVehicleIsDangerous="1" nVoiceID="0">
+   <Behavior Defend="0" DefendDistance="10" Melee="0"/>
+   <Damage customGrabDistance="2" dieEffect="alien_special.Trooper.death_explosion" FallPercentage="0" health="700" bLogDamages="0">
+    <DamageMultipliers AlienMount="0.3" DSG1="1.5" FastLightMOAC="0" FastLightMOAR="0" Fists="1" FragGrenade="3" FY71="0.9" GaussRifle="1.5" Hurricane="0.5" LAW="1.1" MeleeVehicle="0.35" SCAR="0.9" ScoutMOAC="0" ScoutMOAR="0" ShiTen="0.2" Shotgun="0.7" SMG="0.8" SOCOM="1.2" VehicleUSMachinegun="1"/>
+    <ImpulseMultipliers AlienMount="1" DSG1="3" FastLightMOAC="0" FastLightMOAR="0" Fists="1" FragGrenade="1" FY71="5" GaussRifle="1" Hurricane="1" LAW="1" SCAR="5" ScoutMOAC="0" ScoutMOAR="0" ShiTen="5" Shotgun="1" SMG="1" SOCOM="5" VehicleUSMachinegun="1"/>
+   </Damage>
+   <Explosion Damage="400" Radius="7"/>
+   <Perception audioScale="1" bulletHitRadius="20" camoScale="1" collisionReactionScale="1" FOVPrimary="130" FOVSecondary="160" heatScale="1" bIsAffectedByLight="0" minAlarmLevel="0" persistence="0" reactionSpeed="1" sightrange="50" sightrangeVehicle="-1" stanceScale="1.8" stuntReactionTimeOut="3" bThermalVision="1" velBase="1" velScale="0.03"/>
+   <Vulnerability dmgMult="2" dmgRatio="0.1"/>
+  </Properties>
+  <ObjectVars OutdoorOnly="0" CastShadow="1" MotionBlurMultiplier="1" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0"/>
+ </EntityPrototype>
+ <EntityPrototype Name="Scouts.Scout_Leader_BEAM" Id="{96E3ABC3-3EB2-4BF9-B243-17321C67CD67}" Class="Scout" Description="">
+  <Properties accuracy="2" AnimPack="Basic" attackrange="1000" autoDestructionProbability="100" awarenessOfPlayer="0" bCannotSwim="0" aicharacter_character="ScoutMOAC" eiColliderMode="4" commrange="400" equip_EquipmentPack="Alien_Scout_Beamer_Player" bExactPos="0" objFrozenModel="" bGrabableByHunter="1" bGrenades="0" fGroupHostility="0" IdleSequence="None" bIdleStartOnSpawn="0" bInvulnerable="0" maxDeadShellNum="3" fileModel="objects/characters/alien/scout/scout_leader.cdf" nModelVariations="0" bNanoSuit="0" physicMassMult="1" ragdollPersistence="0" rank="4" reaction="1" soclasses_SmartObjectClass="Scout" SoundPack="Scout" SoundPackAlternative="" SpawnedEntityName="" special="0" species="2" bSpeciesHostility="1" bSquadMate="0" bSquadMateIncendiary="0" strafingPitch="16" bTrackable="1" bUsable="0" UseText="" bVehicleIsDangerous="1" nVoiceID="0">
+   <Beam criticalDistance="40" force="5">
+    <holdPosition x="0" y="0" z="-20"/>
+   </Beam>
+   <Damage AIMult="0.5" bulletMult="1" explosionMult="1" health="2000" bLogDamages="0" shieldBulletMult="0.5" shieldExplosionMult="0.5" bUseShield="1">
+    <DamageMultipliers AACannon="1" AlienMount="0.4" APCCannon_AscMod="1" DSG1="1.3" FastLightMOAC="0" FastLightMOAR="0" FragGrenade="1" FY71="0.65" GaussRifle="2" Hurricane="0.8" LAW="2" SCAR="0.45" ScoutMOAC="0" ScoutMOAR="0" ShiTen="1" Shotgun="0.7" SideWinder_AscMod="2" SMG="1" SOCOM="0.7"/>
+   </Damage>
+   <Perception audioScale="1" camoScale="1" collisionReactionScale="1" FOVPrimary="240" FOVSecondary="350" heatScale="1" bIsAffectedByLight="0" minAlarmLevel="0" persistence="0" reactionSpeed="1" sightrange="400" sightrangeVehicle="-1" stanceScale="1.8" stuntReactionTimeOut="3" bThermalVision="1" velBase="1" velScale="0.03"/>
+   <Vulnerability dmgMult="2" dmgRatio="0.1"/>
+  </Properties>
+  <ObjectVars OutdoorOnly="0" CastShadow="1" MotionBlurMultiplier="1" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0"/>
+ </EntityPrototype>
+ <EntityPrototype Name="Scouts.Scout_Leader_NoSearch_BEAM" Id="{D6228721-E69C-4811-8814-B786A6BCA6C4}" Class="Scout" Description="">
+  <Properties accuracy="2" AnimPack="Basic" attackrange="1000" autoDestructionProbability="100" awarenessOfPlayer="0" bCannotSwim="0" aicharacter_character="ScoutMOAC" eiColliderMode="4" commrange="400" equip_EquipmentPack="Alien_Scout_Beamer_NoSearch_Player" bExactPos="0" objFrozenModel="" bGrabableByHunter="1" bGrenades="0" fGroupHostility="0" IdleSequence="None" bIdleStartOnSpawn="0" bInvulnerable="0" maxDeadShellNum="3" fileModel="objects/characters/alien/scout/scout_leader.cdf" nModelVariations="0" bNanoSuit="0" physicMassMult="1" ragdollPersistence="0" rank="4" reaction="1" soclasses_SmartObjectClass="Scout" SoundPack="Scout" SoundPackAlternative="" SpawnedEntityName="" special="0" species="2" bSpeciesHostility="1" bSquadMate="0" bSquadMateIncendiary="0" strafingPitch="16" bTrackable="1" bUsable="0" UseText="" bVehicleIsDangerous="1" nVoiceID="0">
+   <Beam criticalDistance="40" force="5">
+    <holdPosition x="0" y="0" z="-20"/>
+   </Beam>
+   <Damage AIMult="0.5" bulletMult="1" explosionMult="1" health="2000" bLogDamages="0" shieldBulletMult="0.5" shieldExplosionMult="0.5" bUseShield="1">
+    <DamageMultipliers AACannon="1" AlienMount="0.4" APCCannon_AscMod="1" DSG1="1.3" FastLightMOAC="0" FastLightMOAR="0" FragGrenade="1" FY71="0.65" GaussRifle="2" Hurricane="0.8" LAW="2" SCAR="0.45" ScoutMOAC="0" ScoutMOAR="0" ShiTen="1" Shotgun="0.7" SideWinder_AscMod="2" SMG="1" SOCOM="0.7"/>
+   </Damage>
+   <Perception audioScale="1" camoScale="1" collisionReactionScale="1" FOVPrimary="240" FOVSecondary="350" heatScale="1" bIsAffectedByLight="0" minAlarmLevel="0" persistence="0" reactionSpeed="1" sightrange="400" sightrangeVehicle="-1" stanceScale="1.8" stuntReactionTimeOut="3" bThermalVision="1" velBase="1" velScale="0.03"/>
+   <Vulnerability dmgMult="2" dmgRatio="0.1"/>
+  </Properties>
+  <ObjectVars OutdoorOnly="0" CastShadow="1" MotionBlurMultiplier="1" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0"/>
+ </EntityPrototype>
+ <EntityPrototype Name="Scouts.Scout_BEAM_Player" Id="{1ED92606-A20B-49CA-A486-1454D82C6A10}" Class="Scout" Description="">
+  <Properties accuracy="2" AnimPack="Basic" attackrange="1000" autoDestructionProbability="100" awarenessOfPlayer="0" bCannotSwim="0" aicharacter_character="ScoutMOAC" eiColliderMode="4" commrange="400" equip_EquipmentPack="Alien_Scout_Beamer_Player" bExactPos="0" objFrozenModel="" bGrabableByHunter="1" bGrenades="0" fGroupHostility="0" IdleSequence="None" bIdleStartOnSpawn="0" bInvulnerable="0" maxDeadShellNum="3" fileModel="Objects/Characters/Alien/Scout/Scout_base.cdf" nModelVariations="0" bNanoSuit="0" physicMassMult="1" ragdollPersistence="0" rank="4" reaction="1" soclasses_SmartObjectClass="Scout" SoundPack="Scout" SoundPackAlternative="" SpawnedEntityName="" special="0" species="2" bSpeciesHostility="1" bSquadMate="0" bSquadMateIncendiary="0" strafingPitch="16" bTrackable="1" bUsable="0" UseText="" bVehicleIsDangerous="1" nVoiceID="0">
+   <Beam criticalDistance="40" force="5">
+    <holdPosition x="0" y="0" z="-20"/>
+   </Beam>
+   <Damage AIMult="0.5" bulletMult="1" explosionMult="1" health="2000" bLogDamages="0" shieldBulletMult="0.5" shieldExplosionMult="0.5" bUseShield="1">
+    <DamageMultipliers AACannon="1" AlienMount="0.4" APCCannon_AscMod="1" DSG1="1.3" FastLightMOAC="0" FastLightMOAR="0" FragGrenade="1" FY71="0.65" GaussRifle="2" Hurricane="0.8" LAW="2" SCAR="0.45" ScoutMOAC="0" ScoutMOAR="0" ShiTen="1" Shotgun="0.7" SideWinder_AscMod="2" SMG="1" SOCOM="0.7"/>
+   </Damage>
+   <Perception audioScale="1" camoScale="1" collisionReactionScale="1" FOVPrimary="240" FOVSecondary="350" heatScale="1" bIsAffectedByLight="0" minAlarmLevel="0" persistence="0" reactionSpeed="1" sightrange="400" sightrangeVehicle="-1" stanceScale="1.8" stuntReactionTimeOut="3" bThermalVision="1" velBase="1" velScale="0.03"/>
+   <Vulnerability dmgMult="2" dmgRatio="0.1"/>
+  </Properties>
+  <ObjectVars OutdoorOnly="0" CastShadow="1" MotionBlurMultiplier="1" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0"/>
+ </EntityPrototype>
+ <EntityPrototype Name="Scouts.Scout_BEAM_NoSearch_Player" Id="{272B6FCA-95C2-4CF9-86E4-08F642365C7C}" Class="Scout" Description="">
+  <Properties accuracy="2" AnimPack="Basic" attackrange="1000" autoDestructionProbability="100" awarenessOfPlayer="0" bCannotSwim="0" aicharacter_character="ScoutMOAC" eiColliderMode="4" commrange="400" equip_EquipmentPack="Alien_Scout_Beamer_NoSearch_Player" bExactPos="0" objFrozenModel="" bGrabableByHunter="1" bGrenades="0" fGroupHostility="0" IdleSequence="None" bIdleStartOnSpawn="0" bInvulnerable="0" maxDeadShellNum="3" fileModel="Objects/Characters/Alien/Scout/Scout_base.cdf" nModelVariations="0" bNanoSuit="0" physicMassMult="1" ragdollPersistence="0" rank="4" reaction="1" soclasses_SmartObjectClass="Scout" SoundPack="Scout" SoundPackAlternative="" SpawnedEntityName="" special="0" species="2" bSpeciesHostility="1" bSquadMate="0" bSquadMateIncendiary="0" strafingPitch="16" bTrackable="1" bUsable="0" UseText="" bVehicleIsDangerous="1" nVoiceID="0">
+   <Beam criticalDistance="40" force="5">
+    <holdPosition x="0" y="0" z="-20"/>
+   </Beam>
+   <Damage AIMult="0.5" bulletMult="1" explosionMult="1" health="2000" bLogDamages="0" shieldBulletMult="0.5" shieldExplosionMult="0.5" bUseShield="1">
+    <DamageMultipliers AACannon="1" AlienMount="0.4" APCCannon_AscMod="1" DSG1="1.3" FastLightMOAC="0" FastLightMOAR="0" FragGrenade="1" FY71="0.65" GaussRifle="2" Hurricane="0.8" LAW="2" SCAR="0.45" ScoutMOAC="0" ScoutMOAR="0" ShiTen="1" Shotgun="0.7" SideWinder_AscMod="2" SMG="1" SOCOM="0.7"/>
+   </Damage>
+   <Perception audioScale="1" camoScale="1" collisionReactionScale="1" FOVPrimary="240" FOVSecondary="350" heatScale="1" bIsAffectedByLight="0" minAlarmLevel="0" persistence="0" reactionSpeed="1" sightrange="400" sightrangeVehicle="-1" stanceScale="1.8" stuntReactionTimeOut="3" bThermalVision="1" velBase="1" velScale="0.03"/>
+   <Vulnerability dmgMult="2" dmgRatio="0.1"/>
+  </Properties>
+  <ObjectVars OutdoorOnly="0" CastShadow="1" MotionBlurMultiplier="1" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0"/>
+ </EntityPrototype>
+ <EntityPrototype Name="Scouts.Scout_BEAM_Ascension_Player" Id="{759D0911-EDA9-4317-AD3F-91B8623EBB97}" Class="Scout" Description="">
+  <Properties accuracy="1" AnimPack="Basic" attackrange="400" autoDestructionProbability="100" awarenessOfPlayer="0" bCannotSwim="0" aicharacter_character="ScoutMOAC" eiColliderMode="4" commrange="400" equip_EquipmentPack="Alien_Scout_Beamer_Player" bExactPos="0" objFrozenModel="" bGrabableByHunter="1" bGrenades="0" fGroupHostility="0" IdleSequence="None" bIdleStartOnSpawn="0" bInvulnerable="0" maxDeadShellNum="3" fileModel="Objects/Characters/Alien/Scout/Scout_base.cdf" nModelVariations="0" bNanoSuit="0" physicMassMult="1" ragdollPersistence="0" rank="4" reaction="1" soclasses_SmartObjectClass="Scout" SoundPack="scout_big_rolloff" SoundPackAlternative="" SpawnedEntityName="" special="0" species="2" bSpeciesHostility="1" bSquadMate="0" bSquadMateIncendiary="0" strafingPitch="16" bTrackable="1" bUsable="0" UseText="" bVehicleIsDangerous="1" nVoiceID="0">
+   <Beam criticalDistance="40" force="5">
+    <holdPosition x="0" y="0" z="-20"/>
+   </Beam>
+   <Damage AIMult="0.5" bulletMult="1" explosionMult="1" health="2000" bLogDamages="0" shieldBulletMult="0.5" shieldExplosionMult="0.5" bUseShield="1">
+    <DamageMultipliers AACannon="1" AlienMount="0.4" APCCannon_AscMod="1" DSG1="1.3" FastLightMOAC="0" FastLightMOAR="0" FragGrenade="1" FY71="0.65" GaussRifle="2" Hurricane="0.8" LAW="2" SCAR="0.45" ScoutMOAC="0" ScoutMOAR="0" ShiTen="1" Shotgun="0.7" SideWinder_AscMod="2" SMG="1" SOCOM="0.7"/>
+   </Damage>
+   <Perception audioScale="1" camoScale="1" collisionReactionScale="1" FOVPrimary="240" FOVSecondary="350" heatScale="1" bIsAffectedByLight="0" minAlarmLevel="0" persistence="0" reactionSpeed="1" sightrange="400" sightrangeVehicle="-1" stanceScale="1.8" stuntReactionTimeOut="3" bThermalVision="1" velBase="1" velScale="0.03"/>
+   <Vulnerability dmgMult="2" dmgRatio="0.1"/>
+  </Properties>
+  <ObjectVars OutdoorOnly="0" CastShadow="1" MotionBlurMultiplier="1" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0"/>
+ </EntityPrototype>
+ <EntityPrototype Name="Troopers.Trooper_Guardian_MOAC_Player" Id="{7186A21C-98A6-4C37-8265-B8FF0402D98D}" Class="Trooper" Description="">
+  <Properties accuracy="1" AnimPack="Trooper" attackrange="70" awarenessOfPlayer="0.1" bCannotSwim="0" bCanSelfDestruct="1" aicharacter_character="TrooperGuardian" eiColliderMode="0" commrange="30" bCorridor="0" damageScale="1" distanceToHideFrom="3" equip_EquipmentPack="Alien_Trooper_Player" bExactPos="0" bForceOutdoor="1" objFrozenModel="objects/characters/alien/trooper/trooper_frozen_shatter.cgf" fsoundRadius="16" bGrabableByHunter="1" bGrenades="0" fGroupHostility="0" horizontal_fov="160" IdleSequence="None" bIdleStartOnSpawn="0" bIndoor="0" bInvulnerable="0" fileModel="objects/characters/alien/guardian/guardian.cdf" nModelVariations="0" bNanoSuit="0" physicMassMult="1" ragdollPersistence="0" rank="4" reaction="1" soclasses_SmartObjectClass="Trooper" SoundPack="Trooper" SoundPackAlternative="" SpawnedEntityName="" special="0" species="2" bSpeciesHostility="1" bSquadMate="0" bSquadMateIncendiary="0" bTrackable="1" bUsable="0" UseText="" bVehicleIsDangerous="1" nVoiceID="0">
+   <Behavior Defend="0" DefendDistance="10" Melee="0"/>
+   <Damage customGrabDistance="2" dieEffect="expansion_alien_fx.Death_Explosion.Guardian_Explosion" FallPercentage="0" health="750" bLogDamages="0">
+    <DamageMultipliers AlienMount="0.3" DSG1="1.5" FastLightMOAC="0" FastLightMOAR="0" Fists="1" FragGrenade="3" FY71="0.9" GaussRifle="1.5" Hurricane="0.5" LAW="3" MeleeVehicle="0.35" SCAR="0.9" ScoutMOAC="0" ScoutMOAR="0" ShiTen="0.2" Shotgun="0.7" SMG="0.8" SOCOM="1.2" VehicleUSMachinegun="1"/>
+    <ImpulseMultipliers AlienMount="1" DSG1="3" FastLightMOAC="0" FastLightMOAR="0" Fists="1" FragGrenade="1" FY71="5" GaussRifle="1" Hurricane="1" LAW="1" SCAR="5" ScoutMOAC="0" ScoutMOAR="0" ShiTen="5" Shotgun="1" SMG="1" SOCOM="5" VehicleUSMachinegun="1"/>
+   </Damage>
+   <Explosion Damage="400" Radius="7"/>
+   <Perception audioScale="1" bulletHitRadius="20" camoScale="1" collisionReactionScale="1" FOVPrimary="130" FOVSecondary="160" heatScale="1" bIsAffectedByLight="0" minAlarmLevel="0" persistence="3" reactionSpeed="1" sightrange="90" sightrangeVehicle="-1" stanceScale="1.8" stuntReactionTimeOut="3" bThermalVision="1" velBase="1" velScale="0.03"/>
+   <Vulnerability dmgMult="1" dmgRatio="1"/>
+  </Properties>
+  <ObjectVars OutdoorOnly="0" CastShadow="1" MotionBlurMultiplier="1" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0"/>
+ </EntityPrototype>
+ <EntityPrototype Name="Troopers.Trooper_Guardian_MOAR_Player" Id="{501A7D53-276B-4428-AE88-34CF1E4EAB89}" Class="Trooper" Description="">
+  <Properties accuracy="1" AnimPack="Trooper" attackrange="70" awarenessOfPlayer="0.1" bCannotSwim="0" bCanSelfDestruct="1" aicharacter_character="TrooperGuardian" eiColliderMode="0" commrange="30" bCorridor="0" damageScale="1" distanceToHideFrom="3" equip_EquipmentPack="Alien_TrooperMOAR_Player" bExactPos="0" bForceOutdoor="1" objFrozenModel="objects/characters/alien/trooper/trooper_frozen_shatter.cgf" fsoundRadius="16" bGrabableByHunter="1" bGrenades="0" fGroupHostility="0" horizontal_fov="160" IdleSequence="None" bIdleStartOnSpawn="0" bIndoor="0" bInvulnerable="0" fileModel="objects/characters/alien/guardian/guardian.cdf" nModelVariations="0" bNanoSuit="0" physicMassMult="1" ragdollPersistence="0" rank="4" reaction="1" soclasses_SmartObjectClass="Trooper" SoundPack="Trooper" SoundPackAlternative="" SpawnedEntityName="" special="0" species="2" bSpeciesHostility="1" bSquadMate="0" bSquadMateIncendiary="0" bTrackable="1" bUsable="0" UseText="" bVehicleIsDangerous="1" nVoiceID="0">
+   <Behavior Defend="0" DefendDistance="10" Melee="0"/>
+   <Damage customGrabDistance="2" dieEffect="expansion_alien_fx.Death_Explosion.Guardian_Explosion" FallPercentage="0" health="750" bLogDamages="0">
+    <DamageMultipliers AlienMount="0.3" DSG1="1.5" FastLightMOAC="0" FastLightMOAR="0" Fists="1" FragGrenade="3" FY71="0.9" GaussRifle="1.5" Hurricane="0.5" LAW="3" MeleeVehicle="0.35" SCAR="0.9" ScoutMOAC="0" ScoutMOAR="0" ShiTen="0.2" Shotgun="0.7" SMG="0.8" SOCOM="1.2" VehicleUSMachinegun="1"/>
+    <ImpulseMultipliers AlienMount="1" DSG1="3" FastLightMOAC="0" FastLightMOAR="0" Fists="1" FragGrenade="1" FY71="5" GaussRifle="1" Hurricane="1" LAW="1" SCAR="5" ScoutMOAC="0" ScoutMOAR="0" ShiTen="5" Shotgun="1" SMG="1" SOCOM="5" VehicleUSMachinegun="1"/>
+   </Damage>
+   <Explosion Damage="400" Radius="7"/>
+   <Perception audioScale="1" bulletHitRadius="20" camoScale="1" collisionReactionScale="1" FOVPrimary="130" FOVSecondary="160" heatScale="1" bIsAffectedByLight="0" minAlarmLevel="0" persistence="3" reactionSpeed="1" sightrange="90" sightrangeVehicle="-1" stanceScale="1.8" stuntReactionTimeOut="3" bThermalVision="1" velBase="1" velScale="0.03"/>
+   <Vulnerability dmgMult="1" dmgRatio="1"/>
+  </Properties>
+  <ObjectVars OutdoorOnly="0" CastShadow="1" MotionBlurMultiplier="1" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0"/>
+ </EntityPrototype>
+ <EntityPrototype Name="Troopers.Trooper_Jungle_MOAC_Player" Id="{12674D6C-A299-416A-BDC5-1C131917DC32}" Class="Trooper" Description="">
+  <Properties accuracy="1" AnimPack="Trooper" attackrange="70" awarenessOfPlayer="1" bCannotSwim="0" bCanSelfDestruct="1" aicharacter_character="Trooper" eiColliderMode="0" commrange="30" bCorridor="0" damageScale="1" distanceToHideFrom="3" equip_EquipmentPack="Alien_Trooper_Player" bExactPos="0" bForceOutdoor="1" objFrozenModel="objects/characters/alien/trooper/trooper_frozen_shatter.cgf" fsoundRadius="16" bGrabableByHunter="1" bGrenades="0" fGroupHostility="0" horizontal_fov="160" IdleSequence="None" bIdleStartOnSpawn="0" bIndoor="0" bInvulnerable="0" fileModel="objects/characters/alien/trooper/trooper_jungle.cdf" nModelVariations="0" bNanoSuit="0" physicMassMult="1" ragdollPersistence="0" rank="4" reaction="1" soclasses_SmartObjectClass="Trooper" SoundPack="Trooper" SoundPackAlternative="" SpawnedEntityName="" special="0" species="2" bSpeciesHostility="1" bSquadMate="0" bSquadMateIncendiary="0" bTrackable="1" bUsable="0" UseText="" bVehicleIsDangerous="1" nVoiceID="0">
+   <Behavior Defend="0" DefendDistance="10" Melee="0"/>
+   <Damage customGrabDistance="2" dieEffect="alien_special.Trooper.death_explosion" FallPercentage="0" health="700" bLogDamages="0">
+    <DamageMultipliers AlienMount="0.3" DSG1="1.5" FastLightMOAC="0" FastLightMOAR="0" Fists="1" FragGrenade="3" FY71="0.9" GaussRifle="1.5" Hurricane="0.5" LAW="3" MeleeVehicle="0.35" SCAR="0.9" ScoutMOAC="0" ScoutMOAR="0" ShiTen="0.2" Shotgun="0.7" SMG="0.8" SOCOM="1.2" VehicleUSMachinegun="1"/>
+    <ImpulseMultipliers AlienMount="1" DSG1="3" FastLightMOAC="0" FastLightMOAR="0" Fists="1" FragGrenade="1" FY71="5" GaussRifle="1" Hurricane="1" LAW="1" SCAR="5" ScoutMOAC="0" ScoutMOAR="0" ShiTen="5" Shotgun="1" SMG="1" SOCOM="5" VehicleUSMachinegun="1"/>
+   </Damage>
+   <Explosion Damage="400" Radius="7"/>
+   <Perception audioScale="1" bulletHitRadius="20" camoScale="1" collisionReactionScale="1" FOVPrimary="130" FOVSecondary="160" heatScale="1" bIsAffectedByLight="0" minAlarmLevel="0" persistence="3" reactionSpeed="1" sightrange="60" sightrangeVehicle="-1" stanceScale="1.8" stuntReactionTimeOut="3" bThermalVision="1" velBase="1" velScale="0.03"/>
+   <Vulnerability dmgMult="1" dmgRatio="1"/>
+  </Properties>
+  <ObjectVars OutdoorOnly="0" CastShadow="1" MotionBlurMultiplier="1" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0"/>
+ </EntityPrototype>
+ <EntityPrototype Name="Troopers.Trooper_Jungle_MOAR_Player" Id="{E463FDDF-22DC-4C06-B1C9-7088B8DE7121}" Class="Trooper" Description="">
+  <Properties accuracy="1" AnimPack="Trooper" attackrange="70" awarenessOfPlayer="1" bCannotSwim="0" bCanSelfDestruct="1" aicharacter_character="Trooper" eiColliderMode="0" commrange="30" bCorridor="0" damageScale="1" distanceToHideFrom="3" equip_EquipmentPack="Alien_TrooperMOAR_Player" bExactPos="0" bForceOutdoor="1" objFrozenModel="objects/characters/alien/trooper/trooper_frozen_shatter.cgf" fsoundRadius="16" bGrabableByHunter="1" bGrenades="0" fGroupHostility="0" horizontal_fov="160" IdleSequence="None" bIdleStartOnSpawn="0" bIndoor="0" bInvulnerable="0" fileModel="objects/characters/alien/trooper/trooper_jungle.cdf" nModelVariations="0" bNanoSuit="0" physicMassMult="1" ragdollPersistence="0" rank="4" reaction="1" soclasses_SmartObjectClass="Trooper" SoundPack="Trooper" SoundPackAlternative="" SpawnedEntityName="" special="0" species="2" bSpeciesHostility="1" bSquadMate="0" bSquadMateIncendiary="0" bTrackable="1" bUsable="0" UseText="" bVehicleIsDangerous="1" nVoiceID="0">
+   <Behavior Defend="0" DefendDistance="10" Melee="0"/>
+   <Damage customGrabDistance="2" dieEffect="alien_special.Trooper.death_explosion" FallPercentage="0" health="700" bLogDamages="0">
+    <DamageMultipliers AlienMount="0.3" DSG1="1.5" FastLightMOAC="0" FastLightMOAR="0" Fists="1" FragGrenade="3" FY71="0.9" GaussRifle="1.5" Hurricane="0.5" LAW="1.1" MeleeVehicle="0.35" SCAR="0.9" ScoutMOAC="0" ScoutMOAR="0" ShiTen="0.2" Shotgun="0.7" SMG="0.8" SOCOM="1.2" VehicleUSMachinegun="1"/>
+    <ImpulseMultipliers AlienMount="1" DSG1="3" FastLightMOAC="0" FastLightMOAR="0" Fists="1" FragGrenade="1" FY71="5" GaussRifle="1" Hurricane="1" LAW="1" SCAR="5" ScoutMOAC="0" ScoutMOAR="0" ShiTen="5" Shotgun="1" SMG="1" SOCOM="5" VehicleUSMachinegun="1"/>
+   </Damage>
+   <Explosion Damage="400" Radius="7"/>
+   <Perception audioScale="1" bulletHitRadius="20" camoScale="1" collisionReactionScale="1" FOVPrimary="130" FOVSecondary="160" heatScale="1" bIsAffectedByLight="0" minAlarmLevel="0" persistence="0" reactionSpeed="1" sightrange="50" sightrangeVehicle="-1" stanceScale="1.8" stuntReactionTimeOut="3" bThermalVision="1" velBase="1" velScale="0.03"/>
+   <Vulnerability dmgMult="2" dmgRatio="0.1"/>
+  </Properties>
+  <ObjectVars OutdoorOnly="0" CastShadow="1" MotionBlurMultiplier="1" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0"/>
+ </EntityPrototype>
+ <EntityPrototype Name="Multiplayer.Player_Trooper" Id="{1008A505-DB84-48A0-8CA2-BB13E38624A7}" Class="Trooper" Description="">
+  <Properties accuracy="1" AnimPack="Trooper" attackrange="70" awarenessOfPlayer="1" bCannotSwim="0" bCanSelfDestruct="1" aicharacter_character="Trooper" eiColliderMode="0" commrange="30" bCorridor="0" damageScale="1" distanceToHideFrom="3" equip_EquipmentPack="Alien_Trooper_Player" bExactPos="0" bForceOutdoor="1" objFrozenModel="" fsoundRadius="16" bGrabableByHunter="1" bGrenades="0" fGroupHostility="0" horizontal_fov="160" IdleSequence="None" bIdleStartOnSpawn="0" bIndoor="0" bInvulnerable="0" fileModel="objects/characters/alien/trooper/trooper_base.chr" nModelVariations="0" bNanoSuit="0" physicMassMult="1" ragdollPersistence="0" rank="4" reaction="1" soclasses_SmartObjectClass="Trooper" SoundPack="Trooper" SoundPackAlternative="" SpawnedEntityName="" special="0" species="2" bSpeciesHostility="1" bSquadMate="0" bSquadMateIncendiary="0" bTrackable="1" bUsable="0" UseText="" bVehicleIsDangerous="1" nVoiceID="0">
+   <Behavior Defend="0" DefendDistance="10" Melee="0"/>
+   <Damage customGrabDistance="2" dieEffect="alien_special.Trooper.death_explosion" FallPercentage="0" health="700" bLogDamages="0">
+    <DamageMultipliers AlienMount="0.3" DSG1="1.5" FastLightMOAC="0" FastLightMOAR="0" Fists="1" FragGrenade="3" FY71="0.9" GaussRifle="1.5" Hurricane="0.5" LAW="3" MeleeVehicle="0.35" SCAR="0.9" ScoutMOAC="0" ScoutMOAR="0" ShiTen="0.2" Shotgun="0.7" SMG="0.8" SOCOM="1.2" VehicleUSMachinegun="1"/>
+    <ImpulseMultipliers AlienMount="1" DSG1="3" FastLightMOAC="0" FastLightMOAR="0" Fists="1" FragGrenade="1" FY71="5" GaussRifle="1" Hurricane="1" LAW="1" SCAR="5" ScoutMOAC="0" ScoutMOAR="0" ShiTen="5" Shotgun="1" SMG="1" SOCOM="5" VehicleUSMachinegun="1"/>
+   </Damage>
+   <Explosion Damage="400" Radius="7"/>
+   <Perception audioScale="1" bulletHitRadius="20" camoScale="1" collisionReactionScale="1" FOVPrimary="130" FOVSecondary="160" heatScale="1" bIsAffectedByLight="0" minAlarmLevel="0" persistence="3" reactionSpeed="1" sightrange="60" sightrangeVehicle="-1" stanceScale="1.8" stuntReactionTimeOut="3" bThermalVision="1" velBase="1" velScale="0.03"/>
+   <Vulnerability dmgMult="1" dmgRatio="1"/>
+  </Properties>
+  <ObjectVars OutdoorOnly="0" CastShadow="1" MotionBlurMultiplier="1" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0"/>
+ </EntityPrototype>
+ <EntityPrototype Name="Multiplayer.Player_Alien" Id="{3BFB77E2-E11D-4B0F-A0DF-61FF72526360}" Class="Alien" Description="">
+  <Properties accuracy="1" AnimPack="Basic" attackrange="70" awarenessOfPlayer="0" bCannotSwim="0" aicharacter_character="GuardAssault" eiColliderMode="0" commrange="70" damageScale="1" equip_EquipmentPack="Alien_naked_Player" bExactPos="0" objFrozenModel="" bGrabableByHunter="1" bGrenades="0" fGroupHostility="0" IdleSequence="None" bIdleStartOnSpawn="0" bInvulnerable="0" fileModel="objects/characters/alien/alienbase/alienbase.cdf" nModelVariations="0" bNanoSuit="0" physicMassMult="1" ragdollPersistence="0" rank="4" reaction="1" soclasses_SmartObjectClass="Alien, Alien_Patrol" SoundPack="Alien" SoundPackAlternative="" SpawnedEntityName="" special="0" species="2" bSpeciesHostility="1" bSquadMate="0" bSquadMateIncendiary="0" bTrackable="1" bUsable="0" UseText="" bVehicleIsDangerous="1" nVoiceID="0" voiceType="alien">
+   <Behavior alarmLevel="1" cloakLevel="0" targetEntity="" targetRange="18"/>
+   <Damage health="600" bLogDamages="0"/>
+   <Perception audioScale="1" camoScale="1" collisionReactionScale="1" FOVPrimary="80" FOVSecondary="160" heatScale="1" bIsAffectedByLight="0" minAlarmLevel="0" persistence="0" reactionSpeed="1.5" sightrange="70" sightrangeVehicle="-1" stanceScale="1.8" stuntReactionTimeOut="3" bThermalVision="1" velBase="1" velScale="0.03"/>
+   <Vulnerability dmgMult="2" dmgRatio="0.1"/>
+  </Properties>
+  <ObjectVars OutdoorOnly="0" CastShadow="1" MotionBlurMultiplier="1" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0"/>
+ </EntityPrototype>
+ <EntityPrototype Name="Multiplayer.Player_Hunter" Id="{73626AF8-8557-4F6A-AEC0-F88E6DE6D2C3}" Class="Hunter" Description="">
+  <Properties accuracy="1" AnimPack="Basic" attackrange="170" awarenessOfPlayer="0" bCannotSwim="0" aicharacter_character="Hunter" eiColliderMode="4" commrange="140" equip_EquipmentPack="Alien_Hunter_Player" bExactPos="0" objFrozenModel="" bGrabableByHunter="1" bGrenades="0" fGroupHostility="0" horizontal_fov="270" IdleSequence="None" bIdleStartOnSpawn="0" bInvulnerable="0" fileModel="objects/characters/alien/hunter/hunter_hg.cdf" nModelVariations="0" bNanoSuit="0" physicMassMult="1" ragdollPersistence="0" rank="4" reaction="1" soclasses_SmartObjectClass="Hunter" SoundPack="Hunter" SoundPackAlternative="" SpawnedEntityName="" special="0" species="2" bSpeciesHostility="1" bSquadMate="0" bSquadMateIncendiary="0" bTrackable="1" bUsable="0" UseText="" bVehicleIsDangerous="1" nVoiceID="0">
+   <Damage AIMult="0.75" bulletMult="0.3" explosionMult="1" headMult="1" health="6000" HighPoseAccumulator="1.5" HighPoseDuration="2" HitAccumulator="2" legsMult="0.25" bLogDamages="0" playerMult="1" torsoMult="0.5" weakSpotMult="2"/>
+   <Explosion damage="200" effectDelay="4.5" explosionDelay="7.5" pressure="100" radius="15"/>
+   <Perception audioScale="1" camoScale="1" collisionReactionScale="1" FOV="160" FOVPrimary="120" FOVSecondary="160" FOVsure="80" heatScale="1" bIsAffectedByLight="0" minAlarmLevel="0" persistence="0" reactionSpeed="1" sightrange="250" sightrangeVehicle="1" stanceScale="1.8" stuntReactionTimeOut="3" bThermalVision="0" velBase="1" velScale="0.03"/>
+   <Shield bulletDamageMult="0.1" explosionDamageMult="0.3" regenTime="100"/>
+   <Vulnerability dmgMult="2" dmgRatio="0.1"/>
+  </Properties>
+  <ObjectVars OutdoorOnly="0" CastShadow="1" MotionBlurMultiplier="1" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0"/>
+ </EntityPrototype>
+ <EntityPrototype Name="Multiplayer.Player_TrooperLeader" Id="{38C2D1ED-2B54-4BE2-A4D3-F2A3B24E19E8}" Class="Trooper" Description="">
+  <Properties accuracy="1" AnimPack="Trooper" attackrange="70" awarenessOfPlayer="1" bCannotSwim="0" bCanSelfDestruct="1" aicharacter_character="TrooperLeaderMKII" eiColliderMode="0" commrange="30" bCorridor="0" damageScale="1" distanceToHideFrom="3" equip_EquipmentPack="Alien_Trooper_Player" bExactPos="0" bForceOutdoor="1" objFrozenModel="" fsoundRadius="16" bGrabableByHunter="1" bGrenades="0" fGroupHostility="0" horizontal_fov="160" IdleSequence="None" bIdleStartOnSpawn="0" bIndoor="0" bInvulnerable="0" fileModel="objects/characters/alien/trooper/trooper_leader.chr" nModelVariations="0" bNanoSuit="0" physicMassMult="1" ragdollPersistence="0" rank="4" reaction="1" soclasses_SmartObjectClass="Trooper" SoundPack="Trooper" SoundPackAlternative="" SpawnedEntityName="" special="0" species="2" bSpeciesHostility="1" bSquadMate="0" bSquadMateIncendiary="0" bTrackable="1" bUsable="0" UseText="" bVehicleIsDangerous="1" nVoiceID="0">
+   <Behavior Defend="0" DefendDistance="10" Melee="0"/>
+   <Damage customGrabDistance="2" dieEffect="alien_special.Trooper.death_explosion" FallPercentage="0" health="700" bLogDamages="0">
+    <DamageMultipliers AlienMount="0.3" DSG1="1.5" FastLightMOAC="0" FastLightMOAR="0" Fists="1" FragGrenade="3" FY71="0.9" GaussRifle="1.5" Hurricane="0.5" LAW="1.1" MeleeVehicle="0.35" SCAR="0.9" ScoutMOAC="0" ScoutMOAR="0" ShiTen="0.2" Shotgun="0.7" SMG="0.8" SOCOM="1.2" VehicleUSMachinegun="1"/>
+    <ImpulseMultipliers AlienMount="1" DSG1="3" FastLightMOAC="0" FastLightMOAR="0" Fists="1" FragGrenade="1" FY71="5" GaussRifle="1" Hurricane="1" LAW="1" SCAR="5" ScoutMOAC="0" ScoutMOAR="0" ShiTen="5" Shotgun="1" SMG="1" SOCOM="5" VehicleUSMachinegun="1"/>
+   </Damage>
+   <Explosion Damage="400" Radius="7"/>
+   <Perception audioScale="1" bulletHitRadius="20" camoScale="1" collisionReactionScale="1" FOVPrimary="130" FOVSecondary="160" heatScale="1" bIsAffectedByLight="0" minAlarmLevel="0" persistence="0" reactionSpeed="1" sightrange="50" sightrangeVehicle="-1" stanceScale="1.8" stuntReactionTimeOut="3" bThermalVision="1" velBase="1" velScale="0.03"/>
+   <Vulnerability dmgMult="2" dmgRatio="0.1"/>
+  </Properties>
+  <ObjectVars OutdoorOnly="0" CastShadow="1" MotionBlurMultiplier="1" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0"/>
+ </EntityPrototype>
+ <EntityPrototype Name="Multiplayer.Player_TrooperGuardian" Id="{AD1F0010-2AAB-480E-9793-A135ED2DE7B0}" Class="Trooper" Description="">
+  <Properties accuracy="1" AnimPack="Trooper" attackrange="70" awarenessOfPlayer="1" bCannotSwim="0" bCanSelfDestruct="1" aicharacter_character="TrooperGuardian" eiColliderMode="0" commrange="30" bCorridor="0" damageScale="1" distanceToHideFrom="3" equip_EquipmentPack="Alien_Trooper_Player" bExactPos="0" bForceOutdoor="1" objFrozenModel="" fsoundRadius="16" bGrabableByHunter="1" bGrenades="0" fGroupHostility="0" horizontal_fov="160" IdleSequence="None" bIdleStartOnSpawn="0" bIndoor="0" bInvulnerable="0" fileModel="objects/characters/alien/guardian/guardian.cdf" nModelVariations="0" bNanoSuit="0" physicMassMult="1" ragdollPersistence="0" rank="4" reaction="1" soclasses_SmartObjectClass="Trooper" SoundPack="Trooper" SoundPackAlternative="" SpawnedEntityName="" special="0" species="2" bSpeciesHostility="1" bSquadMate="0" bSquadMateIncendiary="0" bTrackable="1" bUsable="0" UseText="" bVehicleIsDangerous="1" nVoiceID="0">
+   <Behavior Defend="0" DefendDistance="10" Melee="0"/>
+   <Damage customGrabDistance="2" dieEffect="expansion_alien_fx.Death_Explosion.Guardian_Explosion" FallPercentage="0" health="750" bLogDamages="0">
+    <DamageMultipliers AlienMount="0.3" DSG1="1.5" FastLightMOAC="0" FastLightMOAR="0" Fists="1" FragGrenade="3" FY71="0.9" GaussRifle="1.5" Hurricane="0.5" LAW="3" MeleeVehicle="0.35" SCAR="0.9" ScoutMOAC="0" ScoutMOAR="0" ShiTen="0.2" Shotgun="0.7" SMG="0.8" SOCOM="1.2" VehicleUSMachinegun="1"/>
+    <ImpulseMultipliers AlienMount="1" DSG1="3" FastLightMOAC="0" FastLightMOAR="0" Fists="1" FragGrenade="1" FY71="5" GaussRifle="1" Hurricane="1" LAW="1" SCAR="5" ScoutMOAC="0" ScoutMOAR="0" ShiTen="5" Shotgun="1" SMG="1" SOCOM="5" VehicleUSMachinegun="1"/>
+   </Damage>
+   <Explosion Damage="400" Radius="7"/>
+   <Perception audioScale="1" bulletHitRadius="20" camoScale="1" collisionReactionScale="1" FOVPrimary="130" FOVSecondary="160" heatScale="1" bIsAffectedByLight="0" minAlarmLevel="0" persistence="3" reactionSpeed="1" sightrange="90" sightrangeVehicle="-1" stanceScale="1.8" stuntReactionTimeOut="3" bThermalVision="1" velBase="1" velScale="0.03"/>
+   <Vulnerability dmgMult="1" dmgRatio="1"/>
+  </Properties>
+  <ObjectVars OutdoorOnly="0" CastShadow="1" MotionBlurMultiplier="1" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0"/>
+ </EntityPrototype>
+ <EntityPrototype Name="Multiplayer.Player_Scout" Id="{4A69CBF9-403F-46E0-A1AD-3BEBC8049970}" Class="Scout" Description="">
+  <Properties accuracy="2" AnimPack="Basic" attackrange="1000" autoDestructionProbability="100" awarenessOfPlayer="0" bCannotSwim="0" aicharacter_character="ScoutMOAC" eiColliderMode="4" commrange="400" equip_EquipmentPack="Alien_Scout_Gunner_Player" bExactPos="0" objFrozenModel="" bGrabableByHunter="1" bGrenades="0" fGroupHostility="0" IdleSequence="None" bIdleStartOnSpawn="0" bInvulnerable="0" maxDeadShellNum="3" fileModel="Objects/Characters/Alien/Scout/Scout_base.cdf" nModelVariations="0" bNanoSuit="0" physicMassMult="1" ragdollPersistence="0" rank="4" reaction="1" soclasses_SmartObjectClass="Scout" SoundPack="Scout" SoundPackAlternative="" SpawnedEntityName="" special="0" species="2" bSpeciesHostility="1" bSquadMate="0" bSquadMateIncendiary="0" strafingPitch="16" bTrackable="1" bUsable="0" UseText="" bVehicleIsDangerous="1" nVoiceID="0">
+   <Beam criticalDistance="40" force="5">
+    <holdPosition x="0" y="0" z="-20"/>
+   </Beam>
+   <Damage AIMult="0.5" bulletMult="1" explosionMult="1" health="2000" bLogDamages="0" shieldBulletMult="0.5" shieldExplosionMult="0.5" bUseShield="1">
+    <DamageMultipliers AACannon="1" AlienMount="0.4" APCCannon_AscMod="1" DSG1="1.3" FastLightMOAC="0" FastLightMOAR="0" FragGrenade="1" FY71="0.65" GaussRifle="2" Hurricane="0.8" LAW="2" SCAR="0.45" ScoutMOAC="0" ScoutMOAR="0" ShiTen="1" Shotgun="0.7" SideWinder_AscMod="2" SMG="1" SOCOM="0.7"/>
+   </Damage>
+   <Perception audioScale="1" camoScale="1" collisionReactionScale="1" FOVPrimary="240" FOVSecondary="350" heatScale="1" bIsAffectedByLight="0" minAlarmLevel="0" persistence="0" reactionSpeed="1" sightrange="400" sightrangeVehicle="-1" stanceScale="1.8" stuntReactionTimeOut="3" bThermalVision="1" velBase="1" velScale="0.03"/>
+   <Vulnerability dmgMult="2" dmgRatio="0.1"/>
+  </Properties>
+  <ObjectVars OutdoorOnly="0" CastShadow="1" MotionBlurMultiplier="1" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0"/>
+ </EntityPrototype>
+ <EntityPrototype Name="Multiplayer.Player_ScoutLeader" Id="{9D18D394-6DE1-4FA1-9EDF-2817C166ACC8}" Class="Scout" Description="">
+  <Properties accuracy="2" AnimPack="Basic" attackrange="1000" autoDestructionProbability="100" awarenessOfPlayer="0" bCannotSwim="0" aicharacter_character="ScoutMOAC" eiColliderMode="4" commrange="400" equip_EquipmentPack="Alien_Scout_Gunner_Player" bExactPos="0" objFrozenModel="" bGrabableByHunter="1" bGrenades="0" fGroupHostility="0" IdleSequence="None" bIdleStartOnSpawn="0" bInvulnerable="0" maxDeadShellNum="3" fileModel="objects/characters/alien/scout/scout_leader.cdf" nModelVariations="0" bNanoSuit="0" physicMassMult="1" ragdollPersistence="0" rank="4" reaction="1" soclasses_SmartObjectClass="Scout" SoundPack="Scout" SoundPackAlternative="" SpawnedEntityName="" special="0" species="2" bSpeciesHostility="1" bSquadMate="0" bSquadMateIncendiary="0" strafingPitch="16" bTrackable="1" bUsable="0" UseText="" bVehicleIsDangerous="1" nVoiceID="0">
+   <Beam criticalDistance="40" force="5">
+    <holdPosition x="0" y="0" z="-20"/>
+   </Beam>
+   <Damage AIMult="0.5" bulletMult="1" explosionMult="1" health="2000" bLogDamages="0" shieldBulletMult="0.5" shieldExplosionMult="0.5" bUseShield="1">
+    <DamageMultipliers AACannon="1" AlienMount="0.4" APCCannon_AscMod="1" DSG1="1.3" FastLightMOAC="0" FastLightMOAR="0" FragGrenade="1" FY71="0.65" GaussRifle="2" Hurricane="0.8" LAW="2" SCAR="0.45" ScoutMOAC="0" ScoutMOAR="0" ShiTen="1" Shotgun="0.7" SideWinder_AscMod="2" SMG="1" SOCOM="0.7"/>
+   </Damage>
+   <Perception audioScale="1" camoScale="1" collisionReactionScale="1" FOVPrimary="240" FOVSecondary="350" heatScale="1" bIsAffectedByLight="0" minAlarmLevel="0" persistence="0" reactionSpeed="1" sightrange="400" sightrangeVehicle="-1" stanceScale="1.8" stuntReactionTimeOut="3" bThermalVision="1" velBase="1" velScale="0.03"/>
+   <Vulnerability dmgMult="2" dmgRatio="0.1"/>
+  </Properties>
+  <ObjectVars OutdoorOnly="0" CastShadow="1" MotionBlurMultiplier="1" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0"/>
+ </EntityPrototype>
+</EntityPrototypeLibrary>

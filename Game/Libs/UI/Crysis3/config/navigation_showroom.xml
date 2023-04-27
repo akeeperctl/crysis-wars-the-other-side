@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='utf-8'?>
+<root>
+	<Screen name="showroom" allowTabSwitching="0" tabSwitchPrevious="0" tabSwitchNext="0" keepInStack="0" noIngameBackground="1">
+	<PadIconSet name="showroom_navigation" />
+	<Showroom frame="1">
+	</Showroom>
+	</Screen>
+</root>

@@ -1,0 +1,296 @@
+<Root>
+  <Tutorial>
+    <Objective_01 Name="@Tutorial_Goal_Prepare_Mission" Description="@Tutorial_Goal_Prepare_Mission_Text" />
+    <Objective_02 Name="@Tutorial_Objective_Training" Description="@Tutorial_Objective_Training_Text" />
+    <Objective_03 Name="@Tutorial_Task_Meet_Squad" Description="@Tutorial_Task_Meet_Squad_Text" />
+    <Objective_04 Name="@Tutorial_Task_Obstacle_Course" Description="@Tutorial_Task_Obstacle_Course_Text" />
+    <Objective_05 Name="@Tutorial_Task_Weapons_Training" Description="@Tutorial_Task_Weapons_Training_Text" />
+    <Objective_06 Name="@Tutorial_Objective_Additional_Training" Description="@Tutorial_Objective_Additional_Training_Text" Secondary="true" />
+    <Objective_07 Name="@Tutorial_Task_Ground_Combat_Training" Description="@Tutorial_Task_Ground_Combat_Training_Text" Secondary="true" />
+    <Objective_08 Name="@Tutorial_Task_Ground_Vehicle_Training" Description="@Tutorial_Task_Ground_Vehicle_Training_Text" Secondary="true" />
+    <Objective_09 Name="@Tutorial_Task_Vtol_Training" Description="@Tutorial_Task_Vtol_Training_Text" Secondary="true" />
+    <Objective_10 Name="@Tutorial_Task_Antenna" Description="@Tutorial_Task_Antenna_Text" Secondary="true" />
+    <Objective_11 Name="@Tutorial_Task_Landing_pad" Description="@Tutorial_Task_Landing_pad_Text" Secondary="true" />
+    <Objective_12 Name="@Tutorial_Objective_Meet_Squad" Description="@Tutorial_Objective_Meet_Squad_Text">
+    </Objective_12>
+    <Objective_13 Name="@Tutorial_Task_Meet_Squad_Airfield" Description="@Tutorial_Task_Meet_Squad_Airfield_Text" />
+    <Objective_90 Name="" Description="" />
+    <Objective_91 Name="" Description="" />
+    <Objective_92 Name="" Description="" />
+    <Objective_93 Name="" Description="" />
+    <Objective_94 Name="" Description="" />
+    <Objective_95 Name="" Description="" />
+  </Tutorial>
+  <Island>
+    <Objective_01 Name="@Island_Goal_Rescue_Hostages_01" Description="@Island_Goal_Rescue_Hostages_01_Text" />
+    <Objective_02 Name="@Island_Task_Land_At_LZ" Description="" MapLabel="@Island_Task_Land_At_LZ_Loc" />
+    <Objective_03 Name="@Island_Task_Get_To_Beach" Description="" MapLabel="@Island_Task_Get_To_Beach_Loc" />
+    <Objective_04 Name="@Island_Task_Meet_Jester" Description="" MapLabel="@Island_Task_Meet_Jester_Loc" />
+    <Objective_05 Name="@Island_Task_Aid_Aztec" Description="" MapLabel="@Island_Task_Aid_Aztec_Loc" />
+    <Objective_06 Name="@Island_Task_Rendezvous_At_LZ" Description="" MapLabel="@Island_Task_Rendezvous_At_LZ_Loc" />
+    <Objective_07 Name="@Island_Task_Disable_Jammer" Description="@Island_Task_Disable_Jammer_Text" Secondary="true" MapLabel="@Island_Task_Disable_Jammer_Loc" />
+    <Objective_08 Name="@Island_Task_Retrieve_Data" Description="" Secondary="true" MapLabel="@Island_Task_Retrieve_Data_Loc" />
+    <Objective_09 Name="@Island_Task_Investigate_Command_Post" Description="" Secondary="true" MapLabel="@Island_Task_Investigate_Command_Post_Loc" />
+    <Objective_9a Name="@Island_Task_Break_KPA_Checkpoint" Description="" MapLabel="@Island_Task_Break_KPA_Checkpoint_Loc" />
+    <Objective_10 Name="@Island_Task_Rendezvous_At_Signal_Location" Description="" MapLabel="@Island_Task_Rendezvous_At_Signal_Location_Loc">
+    </Objective_10>
+    <Objective_11 Name="@Island_Goal_Locate_Excavation_Site" Description="@Island_Goal_Locate_Excavation_Site_Text" />
+    <Objective_12 Name="@Island_Task_Find_Jester" Description="@Island_Task_Find_Jester_Text" MapLabel="@Island_Task_Find_Jester_Loc" />
+    <Objective_90 Name="" Description="" />
+  </Island>
+  <Village>
+    <Objective_01 Name="@Village_Goal_Rescue_Hostages_02" Description="@Village_Goal_Rescue_Hostages_02_Text" />
+    <Objective_02 Name="" Description="" />
+    <Objective_03 Name="@Village_Task_Comms_Trailer" Description="" MapLabel="@Village_Task_Comms_Trailer_Loc" />
+    <Objective_04 Name="@Village_Task_Find_Hostage_Village" Description="@Village_Task_Find_Hostage_Village_Text" MapLabel="@Village_Task_Find_Hostage_Village_Loc" />
+    <Objective_04a Name="@Village_Task_Radar_Dish" Description="" Secondary="true" MapLabel="@Village_Task_Radar_Dish_Loc" />
+    <Objective_05 Name="" Description="" />
+    <Objective_06 Name="@Village_Task_Find_Hostage_School" Description="" MapLabel="@Village_Task_Find_Hostage_School_Loc" />
+    <Objective_07 Name="@Village_Task_Destoy_Tanks" Description="@Village_Task_Destoy_Tanks_Text" MapLabel="@Village_Task_Destoy_Tanks_Loc" />
+    <Objective_08 Name="" Description="" />
+    <Objective_09 Name="@Village_Task_Meet_With_Barnes" Description="@Village_Task_Meet_With_Barnes_Text" MapLabel="@Village_Task_Meet_With_Barnes_Loc" />
+    <Objective_09a Name="@Village_Task_Meet_With_Barnes_02" Description="@Village_Task_Meet_With_Barnes_02_Text" MapLabel="@Village_Task_Meet_With_Barnes_02_Loc" />
+    <Objective_10 Name="@Village_Goal_Rescue_Hostages_03" Description="@Village_Goal_Rescue_Hostages_03_Text" />
+    <Objective_11 Name="@Village_Task_Rescue_Barnes" Description="@Village_Task_Rescue_Barnes_Text" MapLabel="@Village_Task_Rescue_Barnes_Loc" />
+    <Objective_12 Name="@Village_Goal_Rescue_Hostages_04" Description="@Village_Goal_Rescue_Hostages_04_Text" />
+    <Objective_13 Name="@Village_Task_Proceed_To_Cave" Description="@Village_Task_Proceed_To_Cave_Text" MapLabel="@Village_Task_Proceed_To_Cave_Loc" />
+    <Objective_90 Name="" Description="" MapLabel="@Village_Task_Tank1_Loc">
+    </Objective_90>
+    <Objective_91 Name="" Description="" MapLabel="@Village_Task_Tank2_Loc" />
+    <Objective_92 Name="" Description="" />
+    <Objective_93 Name="" Description="">
+    </Objective_93>
+    <Objective_94 Name="" Description="">
+    </Objective_94>
+    <Objective_95 Name="" Description="" />
+  </Village>
+  <Rescue>
+    <Objective_01 Name="@Rescue_Goal_Rescue_Hostages_05" Description="@Rescue_Goal_Rescue_Hostages_05_Text" />
+    <Objective_02 Name="" Description="" />
+    <Objective_03 Name="@Rescue_Task_Destroy_Jammer" Description="@Rescue_Task_Destroy_Jammer_Text" Secondary="true" MapLabel="@Rescue_Task_Destroy_Jammer_Loc" />
+    <Objective_04 Name="@Rescue_Task_Infiltrate_Base" Description="" MapLabel="@Rescue_Task_Infiltrate_Base_Loc" />
+    <Objective_05 Name="@Rescue_Objective_Rescue_Scientist" Description="@Rescue_Objective_Rescue_Scientist_Text" />
+    <Objective_06 Name="@Rescue_Task_Get_To_Excavation_Site" Description="@Rescue_Task_Get_To_Excavation_Site_Text" MapLabel="@Rescue_Task_Get_To_Excavation_Site_Loc" />
+    <Objective_07 Name="@Rescue_Task_Get_Inside_The_Dome" Description="@Rescue_Task_Get_Inside_The_Dome_Text" MapLabel="@Rescue_Task_Get_Inside_The_Dome_Loc" />
+    <Objective_08 Name="@Rescue_Goal_Rescue_Hostages_06" Description="@Rescue_Goal_Rescue_Hostages_06_Text">
+    </Objective_08>
+    <Objective_09 Name="" Description="" />
+    <Objective_10 Name="@Rescue_Task_Get_To_Extraction_Point" Description="@Rescue_Task_Get_To_Extraction_Point_Text" MapLabel="@Rescue_Task_Get_To_Extraction_Point_Loc" />
+    <Objective_11 Name="@Rescue_Task_Secure_Extraction_Point" Description="@Rescue_Task_Secure_Extraction_Point_Text" MapLabel="@Rescue_Task_Secure_Extraction_Point_Loc" />
+    <Objective_12 Name="@Rescue_Task_Get_In_Vtol" Description="@Rescue_Task_Get_In_Vtol_Text" MapLabel="@Rescue_Task_Get_In_Vtol_Loc" />
+    <Objective_90 Name="" Description="" />
+    <Objective_91 Name="" Description="" />
+    <Objective_92 Name="" Description="">
+    </Objective_92>
+    <Objective_93 Name="" Description="" />
+    <Objective_94 Name="" Description="">
+    </Objective_94>
+    <Objective_95 Name="" Description="" />
+  </Rescue>
+  <Harbor>
+    <Objective_01 Name="@Harbor_Goal_Rescue_Civilian_Hostages_06" Description="@Harbor_Goal_Rescue_Civilian_Hostages_06_Text" />
+    <Objective_02 Name="" Description="" />
+    <Objective_03 Name="@Harbor_Task_Meet_Bradley" Description="" MapLabel="@Harbor_Task_Meet_Bradley_Loc" />
+    <Objective_04 Name="@Harbor_Task_Destroy_AAAs" Description="@Harbor_Task_Destroy_AAAs_Text" MapLabel="@Harbor_Task_Destroy_AAAs_Loc" />
+    <Objective_05 Name="@Harbor_Task_Infiltrate_Village" Description="" Secondary="true" MapLabel="@Harbor_Task_Infiltrate_Village_Loc" />
+    <Objective_06 Name="@Harbor_Task_Destroy_Jammer" Description="@Harbor_Task_Destroy_Jammer_Text" MapLabel="@Harbor_Task_Destroy_Jammer_Loc" />
+    <Objective_07 Name="@Harbor_Task_Paint_Target" Description="@Harbor_Task_Paint_Target_Text" MapLabel="@Harbor_Task_Paint_Target_Loc" />
+    <Objective_08 Name="@Harbor_Task_Defend_Position" Description="@Harbor_Task_Defend_Position_Text" MapLabel="@Harbor_Task_Defend_Position_Loc" />
+    <Objective_09 Name="" Description="" />
+    <Objective_10 Name="@Harbor_Task_Meet_Strickland" Description="@Harbor_Task_Meet_Strickland_Text" MapLabel="@Harbor_Task_Meet_Strickland_Loc" />
+    <Objective_90 Name="" Description="" MapLabel="@Harbor_AAA1_Loc" />
+    <Objective_91 Name="" Description="" MapLabel="@Harbor_AAA2_Loc" />
+    <Objective_92 Name="" Description="" MapLabel="@Harbor_AAA3_Loc" />
+    <Objective_93 Name="" Description="" />
+    <Objective_94 Name="" Description="" />
+    <Objective_95 Name="" Description="" />
+    <Objective_96 Name="" Description="" />
+    <Objective_97 Name="" Description="" />
+  </Harbor>
+  <Tank>
+    <Objective_01 Name="@Tank_Goal_Rescue_Civilian_Hostages_07" Description="@Tank_Goal_Rescue_Civilian_Hostages_07_Text" />
+    <Objective_02 Name="" Description="" />
+    <Objective_03 Name="@Tank_Task_Push_Train" Description="@Tank_Task_Push_Train_Text" MapLabel="@Tank_Task_Push_Train_Loc" />
+    <Objective_04 Name="@Tank_Task_Secure_Train" Description="@Tank_Task_Secure_Train_Text" MapLabel="@Tank_Task_Secure_Train_Loc" />
+    <Objective_05 Name="@Tank_Task_Destroy_Boxcar" Description="@Tank_Task_Destroy_Boxcar_Text" Secondary="true" MapLabel="@Tank_Task_Destroy_Boxcar_Loc" />
+    <Objective_06 Name="@Tank_Task_Push_TankStorage" Description="" MapLabel="@Tank_Task_Push_TankStorage_Loc" />
+    <Objective_07 Name="@Tank_Task_Destroy_Tank_Depot" Description="@Tank_Task_Destroy_Tank_Depot_Text" MapLabel="@Tank_Task_Destroy_Tank_Depot_Loc" />
+    <Objective_08 Name="@Tank_Task_Destroy_AAA" Description="@Tank_Task_Destroy_AAA_Text" Secondary="true" MapLabel="@Tank_Task_Destroy_AAA_Loc" />
+    <Objective_09 Name="@Tank_Task_Paint_Target" Description="@Tank_Task_Paint_Target_Text" Secondary="true" MapLabel="@Tank_Task_Paint_Target_Loc" />
+    <Objective_10 Name="@Tank_Task_Retrieve_Gauss_Rifle" Description="@Tank_Task_Retrieve_Gauss_Rifle_Text" Secondary="true" MapLabel="@Tank_Task_Retrieve_Gauss_Rifle_Loc" />
+    <Objective_11 Name="@Tank_Task_Get_To_Mine" Description="@Tank_Task_Get_To_Mine_Text" MapLabel="@Tank_Task_Get_To_Mine_Loc" />
+    <Objective_90 Name="" Description="" MapLabel="@Tank_AAA1_Loc" Secondary="true" />
+    <Objective_91 Name="" Description="" MapLabel="@Tank_AAA2_Loc" Secondary="true" />
+    <Objective_92 Name="" Description="" MapLabel="@Tank_AAA3_Loc" Secondary="true" />
+    <Objective_93 Name="" Description="" />
+    <Objective_94 Name="" Description="" />
+    <Objective_95 Name="" Description="" />
+  </Tank>
+  <Mine>
+    <Objective_01 Name="@Mine_Goal_Rescue_Civilian_Hostages_08" Description="@Mine_Goal_Rescue_Civilian_Hostages_08_Text" />
+    <Objective_02 Name="" Description="">
+    </Objective_02>
+    <Objective_03 Name="@Mine_Task_Infiltrate_Office" Description="@Mine_Task_Infiltrate_Office_Text" Secondary="true" MapLabel="@Mine_Task_Infiltrate_Office_Loc" />
+    <Objective_04 Name="" Description="" />
+    <Objective_05 Name="@Mine_Task_Get_To_LZ" Description="" MapLabel="@Mine_Task_Get_To_LZ_Loc" />
+    <Objective_06 Name="@Mine_Task_Clear_Crusher" Description="@Mine_Task_Clear_Crusher_Text" MapLabel="@Mine_Task_Clear_Crusher_Loc" />
+    <Objective_07 Name="@Mine_Task_Destroy_AAAs" Description="@Mine_Task_Destroy_AAAs_Text" MapLabel="@Mine_Task_Destroy_AAAs_Loc" />
+    <Objective_08 Name="@Mine_Task_Infiltrate_Mine" Description="@Mine_Task_Infiltrate_Mine_Text" MapLabel="@Mine_Task_Infiltrate_Mine_Loc" />
+    <Objective_09 Name="" Description="" />
+    <Objective_10 Name="@Mine_Task_Locate_Hostages" Description="@Mine_Task_Locate_Hostages_Text" MapLabel="@Mine_Task_Locate_Hostages_Loc" />
+    <Objective_10a Name="@Mine_Task_Locate_Hostages" Description="@Mine_Task_Locate_Hostages_Text" MapLabel="@Mine_Task_Locate_Hostages_Loc" />
+    <Objective_11 Name="@Mine_Task_Kill_Kyong" Description="" MapLabel="@Mine_Task_Kill_Kyong_Loc" />
+    <Objective_12 Name="@Mine_Task_Escort_Helena" Description="@Mine_Task_Escort_Helena_Text" MapLabel="@Mine_Task_Escort_Helena_Loc" />
+    <Objective_13 Name="@Mine_Goal_Reach_Extraction_Point" Description="@Mine_Goal_Reach_Extraction_Point_Text" />
+    <Objective_90 Name="" Description="" />
+    <Objective_91 Name="" Description="" />
+    <Objective_92 Name="" Description="" />
+    <Objective_93 Name="" Description="" />
+    <Objective_94 Name="" Description="">
+    </Objective_94>
+    <Objective_95 Name="" Description="" />
+  </Mine>
+  <Core>
+    <Objective_01 Name="@Core_Goal_Reach_Extraction_Point" Description="@Core_Goal_Reach_Extraction_Point_Text" />
+    <Objective_02 Name="@Core_Task_Find_A_Way_Out" Description="@Core_Task_Find_A_Way_Out_Text" />
+    <Objective_90 Name="" Description="" />
+  </Core>
+  <Ice>
+    <Objective_01 Name="@Ice_Goal_Evacuate_Island_01" Description="@Ice_Goal_Evacuate_Island_01_Text" />
+    <Objective_02 Name="" Description="" />
+    <Objective_03 Name="@Ice_Task_Locate_Soldiers" Description="@Ice_Task_Locate_Soldiers_Text" MapLabel="@Ice_Task_Locate_Soldiers_Loc" />
+    <Objective_04 Name="@Ice_Task_Stay_Alive" Description="" MapLabel="@Ice_Task_Stay_Alive_Loc">
+    </Objective_04>
+    <Objective_05 Name="@Ice_Task_Stay_Escort_Barnes" Description="@Ice_Task_Stay_Escort_Barnes_Text" MapLabel="@Ice_Task_Stay_Escort_Barnes_Loc" />
+    <Objective_90 Name="" Description="" MapLabel="@Ice_Task_Stay_Escort_Barnes_Loc">
+    </Objective_90>
+    <Objective_91 Name="" Description="" MapLabel="@Ice_Task_Stay_Escort_Barnes_Loc">
+    </Objective_91>
+    <Objective_92 Name="" Description="" MapLabel="@Ice_Task_Stay_Escort_Barnes_Loc" />
+    <Objective_93 Name="" Description="" MapLabel="@Ice_Task_Stay_Escort_Barnes_Loc" />
+    <Objective_94 Name="" Description="" MapLabel="@Ice_Task_Stay_Escort_Barnes_Loc" />
+    <Objective_95 Name="" Description="" MapLabel="@Ice_Task_Stay_Escort_Barnes_Loc" />
+    <Objective_96 Name="" Description="" MapLabel="@Ice_Task_Stay_Escort_Barnes_Loc" />
+    <Objective_97 Name="" Description="" MapLabel="@Ice_Task_Stay_Escort_Barnes_Loc" />
+    <Objective_98 Name="" Description="" MapLabel="@Ice_Task_Stay_Escort_Barnes_Loc" />
+    <Objective_99 Name="" Description="" MapLabel="@Ice_Task_Stay_Escort_Barnes_Loc" />
+  </Ice>
+  <Sphere>
+    <Objective_00 Name="@Sphere_Task_Meet_Team" Description="" MapLabel="@Sphere_Task_Meet_Team_Loc" />
+    <Objective_01 Name="@Sphere_Goal_Evac_Island_02" Description="@Sphere_Goal_Evac_Island_02_Text" />
+    <Objective_10 Name="@Sphere_Task_Enter_Vtol" Description="@Sphere_Task_Enter_Vtol_Text" MapLabel="@Sphere_Task_Enter_Vtol_Loc" />
+    <Objective_02 Name="" Description="" />
+    <Objective_03 Name="@Sphere_Task_Talk_Keegan" Description="@Sphere_Task_Talk_Keegan_Text" MapLabel="@Sphere_Task_Talk_Keegan_Loc" />
+    <Objective_04 Name="@Sphere_Task_Assist_Stricklands_Men" Description="" MapLabel="@Sphere_Task_Assist_Stricklands_Men_Loc" />
+    <Objective_05 Name="@Sphere_Task_Get_In_LTV" Description="@Sphere_Task_Get_In_LTV_Text" MapLabel="@Sphere_Task_Get_In_LTV_Loc">
+    </Objective_05>
+    <Objective_06 Name="@Sphere_Task_Assist_Helena" Description="@Sphere_Task_Assist_Helena_Text" MapLabel="@Sphere_Task_Assist_Helena_Loc" />
+    <Objective_07 Name="@Sphere_Task_Protect_Helena" Description="@Sphere_Task_Protect_Helena_Text" MapLabel="@Sphere_Task_Protect_Helena_Loc" />
+    <Objective_07a Name="@Sphere_Task_Meet_Strickland" Description="@Sphere_Task_Meet_Strickland_Text" MapLabel="@Sphere_Task_Meet_Strickland_Loc" />
+    <Objective_08 Name="@Sphere_Task_Defend_Evac" Description="@Sphere_Task_Defend_Evac_Text" MapLabel="@Sphere_Task_Defend_Evac_Loc" />
+    <Objective_09 Name="" Description="" />
+    <Objective_90 Name="" Description="" />
+  </Sphere>
+  <Ascension>
+    <Objective_01 Name="@Ascension_Goal" Description="@Ascension_Goal_Text" />
+    <Objective_02 Name="" Description="" />
+    <Objective_03 Name="@Ascension_Task" Description="@Ascension_Task_Text" MapLabel="@Ascension_Task_Loc">
+    </Objective_03>
+    <Objective_04 Name="@Ascension_Plateau" Description="@Ascension_Plateau_Text" Secondary="true" MapLabel="@Ascension_Plateau_Loc" />
+    <Objective_04a Name="@Ascension_Task_Camp" Description="" Secondary="true" MapLabel="@Ascension_Task_Camp_Loc" />
+    <Objective_05 Name="@Ascension_Vtols" Description="@Ascension_Vtols_Text" Secondary="true" MapLabel="@Ascension_Vtols_Loc">
+    </Objective_05>
+    <Objective_05a Name="@Ascension_Vtols2" Description="@Ascension_Vtols2_Text" Secondary="true" MapLabel="@Ascension_Vtols2_Loc" />
+    <Objective_06 Name="@Ascension_Task_Convoy" Description="" Secondary="true" MapLabel="@Ascension_Task_Convoy_Loc" />
+  </Ascension>
+  <Fleet>
+    <Objective_01 Name="@Fleet_Goal_Debrief" Description="" />
+    <Objective_02 Name="" Description="">
+    </Objective_02>
+    <Objective_03 Name="@Fleet_Task_Go_To_CDC" Description="@Fleet_Task_Go_To_CDC_Text" MapLabel="@Fleet_Task_Go_To_CDC_Loc" />
+    <Objective_04 Name="@Fleet_Task_Go_To_Armory" Description="@Fleet_Task_Go_To_Armory_Text" MapLabel="@Fleet_Task_Go_To_Armory_Loc">
+    </Objective_04>
+    <Objective_04a Name="@Fleet_Task_Go_To_Armory_Chair" Description="@Fleet_Task_Go_To_Armory_Chair_Text" MapLabel="@Fleet_Task_Go_To_Armory_Chair_Loc" />
+    <Objective_05 Name="@Fleet_Task_Go_To_Bridge" Description="@Fleet_Task_Go_To_Bridge_Text" MapLabel="@Fleet_Task_Go_To_Bridge_Loc" />
+    <Objective_06 Name="@Fleet_Goal_Defend_Carrier" Description="@Fleet_Goal_Defend_Carrier_Text" MapLabel="@Fleet_Goal_Defend_Carrier_Loc" />
+    <Objective_07 Name="@Fleet_Task_Defend_Flight_Deck" Description="@Fleet_Task_Defend_Flight_Deck_Text" MapLabel="@Fleet_Task_Defend_Flight_Deck_Loc" />
+    <Objective_08 Name="@Fleet_Task_Defend_Flight_Deck" Description="@Fleet_Task_Defend_Flight_Deck_Text" MapLabel="@Fleet_Task_Defend_Flight_Deck_Loc" />
+    <Objective_09 Name="@Fleet_Goal_Prevent_Meltdown" Description="@Fleet_Goal_Prevent_Meltdown_Text" />
+    <Objective_10 Name="@Fleet_Task_Locate_Engineer" Description="@Fleet_Task_Locate_Engineer_Text" MapLabel="@Fleet_Task_Locate_Engineer_Loc" />
+    <Objective_11 Name="@Fleet_Task_Disable_Circuit_Breakers" Description="@Fleet_Task_Disable_Circuit_Breakers_Text" MapLabel="@Fleet_Task_Disable_Circuit_Breakers_Loc" />
+    <Objective_12 Name="@Fleet_Task_Shut_Down_Reactor" Description="@Fleet_Task_Shut_Down_Reactor_Text" MapLabel="@Fleet_Task_Shut_Down_Reactor_Loc" />
+    <Objective_13 Name="@Fleet_Task_Lower_Control_Rods" Description="@Fleet_Task_Lower_Control_Rods_Text" MapLabel="@Fleet_Task_Lower_Control_Rods_Loc" />
+    <Objective_14 Name="" Description="" />
+    <Objective_15 Name="@Fleet_Task_Retrieve_TAC" Description="@Fleet_Task_Retrieve_TAC_Text" MapLabel="@Fleet_Task_Retrieve_TAC_Loc" />
+    <Objective_16 Name="@Fleet_Task_Get_To_Flight_Deck" Description="" MapLabel="@Fleet_Task_Get_To_Flight_Deck_Loc" />
+    <Objective_17 Name="@Fleet_Task_Destroy_Hunter" Description="@Fleet_Task_Destroy_Hunter_Text" MapLabel="@Fleet_Task_Destroy_Hunter_Loc" />
+    <Objective_18 Name="@Fleet_Task_Destroy_Warrior" Description="@Fleet_Task_Destroy_Warrior_Text" MapLabel="@Fleet_Task_Destroy_Warrior_Loc" />
+    <Objective_19 Name="@Fleet_Task_Get_In_Vtol" Description="@Fleet_Task_Get_In_Vtol_Text" MapLabel="@Fleet_Task_Get_In_Vtol_Loc" />
+    <Objective_20 Name="@Fleet_Goal_Escape_Carrier" Description="@Fleet_Goal_Escape_Carrier_Text" />
+    <Objective_90 Name="" Description="" />
+    <Objective_90 Name="" Description="" />
+    <Objective_91 Name="" Description="" />
+    <Objective_92 Name="" Description="" />
+    <Objective_93 Name="" Description="" />
+    <Objective_94 Name="" Description="" />
+    <Objective_95 Name="" Description="" />
+    <Objective_96 Name="" Description="">
+    </Objective_96>
+    <Objective_97 Name="" Description="" />
+    <Objective_98 Name="" Description="" />
+    <Objective_99 Name="" Description="" />
+  </Fleet>
+  <Zero>
+    <Objective_01 Name="@Zero_Task_Go_To_Panel" Description=""  MapLabel="@Zero_Task_Go_To_Panel_Loc"/>
+	<Objective_02 Name="@Zero_Goal_Complete_Training" Description="@Zero_Goal_Complete_Training_Text" />
+  </Zero>
+  <First>
+    <Objective_01 Name="@First_Goal_Find_Scout" Description="@First_Goal_Find_Scout_Text" />
+	<Objective_02 Name="@First_Task_Destroy_Jammers" Description="@First_Task_Destroy_Jammers_Text" Secondary="true" />
+	<Objective_02a Name="" Description="" Secondary="true" MapLabel="@First_Jammer1_Loc" /> 
+	<Objective_02b Name="" Description="" Secondary="true" MapLabel="@First_Jammer2_Loc" /> 
+	<Objective_03 Name="@First_Task_Activate_Trooper" Description="@First_Task_Activate_Trooper_Text" Secondary="true" MapLabel="@First_Task_Activate_Trooper_Loc" /> 
+	<Objective_04 Name="@First_Task_Go_To_Scout" Description="@First_Task_Go_To_Scout_Text" MapLabel="" />
+	<Objective_04a Name="@First_Task_Final_Kill_Enemies" Description="@First_Task_Final_Kill_Enemies_Text" MapLabel="" />
+	<Objective_05 Name="@First_Task_Deactivate_Scout" Description="@First_Task_Deactivate_Scout_Text" MapLabel="" />
+  </First>
+  <tutorial_tos>
+    <Objective_01 Name="@tutorial_tos_Task_Jump_up"             Description="@tutorial_tos_Task_Jump_up_Text"      MapLabel="@tutorial_tos_Task_Jump_up_Loc"/>
+    <Objective_02 Name="@tutorial_tos_Task_Melee_Attack"        Description="" MapLabel="@tutorial_tos_Task_Melee_Attack_Loc"/>
+    <Objective_03 Name="@tutorial_tos_Task_Fire_Enemy"          Description=""   MapLabel="@tutorial_tos_Task_Fire_Enemy_Loc"/>
+	  <Objective_04 Name="@tutorial_tos_Task_Make_Troopers_Goto"  Description="@tutorial_tos_Task_Make_Troopers_Goto_Text" MapLabel="@tutorial_tos_Task_Make_Troopers_Goto_Loc"/>
+    <Objective_05 Name="" Description="" MapLabel="@tutorial_tos_Task_Make_Troopers_Goto_Loc"/>
+    <Objective_06 Name="@tutorial_tos_Task_Make_Troopers_Search" Description="@tutorial_tos_Task_Make_Troopers_Search_Text" MapLabel="@tutorial_tos_Task_Make_Troopers_Search_Loc"/>
+    <Objective_07 Name="@tutorial_tos_Task_Make_Troopers_Follow" Description="@tutorial_tos_Task_Make_Troopers_Follow_Text" MapLabel=""/>
+    <Objective_08 Name="@tutorial_tos_Task_Scout_Path_Go_To"     Description=""/>
+    <Objective_09 Name="" Description="" MapLabel="@tutorial_tos_Task_Scout_Path_Go_To_Loc"/>
+    <Objective_10 Name="@tutorial_tos_Task_Scout_Destroy_Tank"   Description="@tutorial_tos_Task_Scout_Destroy_Tank_Text" MapLabel="@tutorial_tos_Task_Scout_Destroy_Tank_Loc"/>
+    <Objective_11 Name="@tutorial_tos_Task_Go_To_Panel"          Description="" MapLabel="@tutorial_tos_Task_Go_To_Panel_Loc"/>
+    <Objective_12 Name="@tutorial_tos_Task_Scout_Do_Lean"        Description="@tutorial_tos_Task_Scout_Do_Lean_Text" MapLabel=""/>
+    <Objective_13 Name="@tutorial_tos_Task_Scout_"               Description="@tutorial_tos_Task_Scout__Text" MapLabel="@tutorial_tos_Task_Scout__Loc"/>
+  </tutorial_tos>
+ <tutorial_tos_demo>
+    <Objective_01 Name="@tutorial_tos_demo_Spawn_Enemy" Description="@tutorial_tos_demo_Spawn_Enemy_Text" MapLabel="@tutorial_tos_demo_Spawn_Enemy_Loc" Secondary="true"/>
+    <Objective_02 Name="@tutorial_tos_demo_Spawn_Enemy" Description="@tutorial_tos_demo_Spawn_Enemy_Text" MapLabel="@tutorial_tos_demo_Spawn_Enemy_Loc" Secondary="true"/>
+    <Objective_03 Name="@tutorial_tos_demo_Exit_Training" Description="" MapLabel="@tutorial_tos_demo_Exit_Training_Loc"/>
+</tutorial_tos_demo>
+  <heavenly_angels>
+    <Objective_01 Name="@heavenly_angels_Goal_Eliminate_Human_Race" Description="@heavenly_angels_Goal_Eliminate_Human_Race_Text"/>
+    <Objective_02 Name="@heavenly_angels_Task_Eliminate_Human_Race" Description="" MapLabel=""/>
+    <Objective_03 Name="" Description="" MapLabel="@heavenly_angels_Task_Checkpoint_Loc"/>
+    <Objective_04 Name="@heavenly_angels_Task_Destroy_Human_Escort" Description="" MapLabel="@heavenly_angels_Task_Destroy_Human_Escort_Loc" Secondary="true"/>
+    <Objective_05 Name="@heavenly_angels_Task_Destroy_Vtols" Description="" MapLabel="@heavenly_angels_Task_Destroy_Vtols_Loc"/>
+  </heavenly_angels>
+  <island_tos> 
+    <Objective_01 Name="@island_tos_follow_leader" Description="" MapLabel="island_tos_follow_leader_Loc"/>
+    <Objective_02 Name="@island_tos_destroy_jammer" Description="" MapLabel="island_tos_destroy_jammer_Loc"/>
+    <Objective_03 Name="@island_tos_destroy_aaa" Description="" MapLabel="island_tos_destroy_aaa_Loc"/>
+    <Objective_03a Name="@island_tos_destroy_aaa_heavy" Description="" MapLabel="island_tos_destroy_aaa_heavy_Loc"/>
+  	<Objective_04 Name="" Description="" MapLabel="island_tos_destroy_aaa_Loc"/>
+    <Objective_05 Name="@island_tos_heal" Description="@island_tos_heal_Text" MapLabel="@island_tos_heal_Loc" Secondary="true"/>
+  </island_tos>
+  <conquest> 
+    <Objective_01 Name="@conquest_Goal_eliminate_enemy_factions" Description="@conquest_Goal_eliminate_enemy_factions_Text"/>
+    <Objective_02 Name="@conquest_Task_capture_strategic_areas" Description="" MapLabel=""/>
+  </conquest>
+</Root>

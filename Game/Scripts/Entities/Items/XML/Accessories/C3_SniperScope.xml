@@ -1,0 +1,14 @@
+<item name="C3_SniperScope" class="Item">
+	<params>
+		<param name="giveable" value="1" />
+		<param name="selectable" value="0" />
+		<param name="droppable" value="0" />
+		<param name="scopeAttachment" value="1" />
+		<param name="display_name" value="Sniper_Scope" />
+	</params>
+	<geometry>
+		<firstperson name="objects/weapons/attachments/c3_sscope/scope_sniper_FP_.cgf"/>
+		<thirdperson name="objects/weapons/attachments/c3_sscope/scope_sniper_TP_.cgf" />
+		<aux1  name="objects/weapons/attachments/c3_sscope/scope_sniper_zoom.cgf" />
+	</geometry>
+</item>

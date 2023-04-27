@@ -1,0 +1,12 @@
+<item name="C3_Takedown_ironsight" class="Item">
+	<params>
+		<param name="giveable" value="1" />
+		<param name="selectable" value="0" />
+		<param name="droppable" value="0" />
+		<param name="display_name" value="Ironsight" />
+	</params>
+	<geometry>
+		<firstperson name="objects/weapons/c3_us/takedown/takedown_ironsight_fp.cgf"/>
+		<thirdperson name="objects/weapons/c3_us/takedown/takedown_ironsight_tp.cgf" />
+	</geometry>
+</item>

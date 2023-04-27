@@ -1,0 +1,24 @@
+<Graph Description="" Group="" enabled="1" MultiPlayer="ServerOnly">
+ <Nodes>
+  <Node Id="1" Class="AI:ActionStart" pos="-230,0,0" flags="0"/>
+  <Node Id="2" Class="AI:ActionEnd" pos="370,0,0" flags="0">
+   <Inputs />
+  </Node>
+  <Node Id="3" Class="Entity:EntityPos" pos="-130,80,0" flags="0" InHideMask="15" OutHideMask="63" GraphEntity="1">
+   <Inputs entityId="0" pos="0,0,0" rotate="0,0,0" scale="0,0,0"/>
+  </Node>
+  <Node Id="6" Class="AI:AIAnimEx" pos="130,-20,0" flags="0" GraphEntity="0">
+   <Inputs entityId="0" OneShot="0" animstateEx_Animation="idle_rifle" Speed="1" Stance="4" Position="0,0,0" StartRadius="0.1,0.1,0.1" Direction="0,0,0" DirTolerance="3" TargetRadius="0.05"/>
+  </Node>
+  <Node Id="7" Class="AI:AIWeaponDraw" pos="-60,-20,0" flags="0" GraphEntity="0">
+   <Inputs entityId="0"/>
+  </Node>
+ </Nodes>
+ <Edges>
+  <Edge nodeIn="7" nodeOut="1" portIn="sink" portOut="UserId" enabled="1"/>
+  <Edge nodeIn="6" nodeOut="3" portIn="Direction" portOut="fwdDir" enabled="1"/>
+  <Edge nodeIn="6" nodeOut="3" portIn="Position" portOut="pos" enabled="1"/>
+  <Edge nodeIn="2" nodeOut="6" portIn="end" portOut="done" enabled="1"/>
+  <Edge nodeIn="6" nodeOut="7" portIn="Sync" portOut="done" enabled="1"/>
+ </Edges>
+</Graph>

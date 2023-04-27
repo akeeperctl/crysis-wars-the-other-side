@@ -1,0 +1,51 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Root>
+	<Screen name="intro" returnImmediately="1">
+		<Video path="/Videos/StartUpVideos/EA_Sig.usm" background="0" coverfullscreen="1" keepaspectratio="1" skippable="2" platform="pc"/>
+		<Video path="/Videos/StartUpVideos/Crytek_logo.usm" background="0" coverfullscreen="1" keepaspectratio="1" skippable="2" platform="pc"/>
+		<Video path="/Videos/StartUpVideos/CryEngine3.usm" background="0" coverfullscreen="1" keepaspectratio="1" skippable="2" forceSubtitles="1" platform="pc"/>
+		<Video path="/Videos/StartUpVideos/AMD_Splash.usm" background="0" coverfullscreen="1" keepaspectratio="1" skippable="2" platform="pc"/>
+		<Video path="/Libs/UI/General/LegalScreen.gfx" background="0" coverfullscreen="1" keepaspectratio="1" skippable="2" />	
+		<Video path="/Libs/UI/General/Dolby_DTS.gfx" background="0" coverfullscreen="1" keepaspectratio="1" skippable="2" platform="ps3"/>
+	</Screen>
+	<Screen name="signout" returnImmediately="1">
+		<Video path="/Libs/UI/General/LegalScreen.gfx" background="0" coverfullscreen="1" keepaspectratio="1" skippable="2" />
+	</Screen>
+	<Screen name="attract" returnImmediately="1">
+		<Video path="/Videos/Levels/Intro.usm" background="0" coverfullscreen="0" keepaspectratio="1" skippable="1" overlay="/Libs/UI/Overlays/Intro.gfx"/>
+	</Screen>
+	<Screen name="previously_in_crysis" returnImmediately="1" returnTo="singleplayer">
+		<Video path="/Videos/Previously_in_Crysis.usm" background="0" coverfullscreen="0" keepaspectratio="1" skippable="1"/>
+	</Screen>
+	<Screen name="campaign_intro" returnImmediately="0">
+		<CampaignIntroVideo path="/Videos/Levels/Intro.usm" background="0" fademusic="1" coverfullscreen="0" keepaspectratio="1" skippable="1" blackbackground="1" overlay="/Libs/UI/Overlays/Intro.gfx"/>
+	</Screen>
+	
+	<Screen name="canyon" returnImmediately="1" returnTo="singleplayer">
+		<Video path="/Videos/Levels/Canyon.usm" background="0" coverfullscreen="0" keepaspectratio="1" skippable="1"/>
+	</Screen>
+	<Screen name="cave" returnImmediately="1" returnTo="singleplayer">
+		<Video path="/Videos/Levels/Cave.usm" background="0" coverfullscreen="0" keepaspectratio="1" skippable="1"/>
+	</Screen>
+	<Screen name="fields" returnImmediately="1" returnTo="singleplayer">
+		<Video path="/Videos/Levels/Fields.usm" background="0" coverfullscreen="0" keepaspectratio="1" skippable="1"/>
+	</Screen>
+	<Screen name="introvideo" returnImmediately="1" returnTo="singleplayer">
+		<Video path="/Videos/Levels/Intro.usm" background="0" coverfullscreen="0" keepaspectratio="1" skippable="1"/>
+	</Screen>
+	<Screen name="islands" returnImmediately="1" returnTo="singleplayer">
+		<Video path="/Videos/Levels/Islands.usm" background="0" coverfullscreen="0" keepaspectratio="1" skippable="1"/>
+	</Screen>
+	<Screen name="jailbreak" returnImmediately="1" returnTo="singleplayer">
+		<Video path="/Videos/Levels/Jailbreak.usm" background="0" coverfullscreen="0" keepaspectratio="1" skippable="1"/>
+	</Screen>
+	<Screen name="river" returnImmediately="1" returnTo="singleplayer">
+		<Video path="/Videos/Levels/River.usm" background="0" coverfullscreen="0" keepaspectratio="1" skippable="1"/>
+	</Screen>
+	<Screen name="swamp" returnImmediately="1" returnTo="singleplayer">
+		<Video path="/Videos/Levels/Swamp.usm" background="0" coverfullscreen="0" keepaspectratio="1" skippable="1"/>
+	</Screen>
+	<Screen name="credits" returnImmediately="1" returnTo="credits">
+		<Video path="/Videos/SecretScene.usm" background="0" coverfullscreen="0" keepaspectratio="1" skippable="2" fademusic="1" disablescenerendering="1"/>
+	</Screen>
+</Root>

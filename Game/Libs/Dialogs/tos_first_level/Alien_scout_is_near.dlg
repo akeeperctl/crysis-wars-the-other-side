@@ -1,0 +1,3 @@
+<DialogScript Name="tos_first_level.Alien_scout_is_near" Description="">
+ <Line actor="0" lookatActor="255" flagLookAtSticky="0" flagSoundStopsAnim="0" flagAGSignal="0" flagAGEP="0" sound="tos_first_level/alienbase_scout_near_1" anim="" facial="" delay="0.2" facialWeight="0.5" facialFadeTime="0.5" desc="Base: There is something in this area that prevents us from finding a downed scout. If possible, destroy the threat."/>
+</DialogScript>

@@ -1,0 +1,218 @@
+<Strategies>
+	<Strategy name="GameStart_US">
+		<SelectConditions>
+			<Condition type="Game" name="GameStatus" conditional1="GameStatus" operator="Equal" strvalue="GameStart"/>
+			<Condition type="OurSpecies" name="WeAreUSA" relationship="" conditional1="USA" conditional2="" operator="Equal"/>
+		</SelectConditions>
+		<Settings>
+			<param name="vehicleUseDistance" value="30"/> 
+			<param name="aggression" value="100"/> 
+			<param name="numberOfAttacks" value="5"/>
+			<param name="numberOfDefences" value="0"/>
+			<param name="timeLimit" value="60"/>
+		</Settings>
+		<Goals>
+			<Goal type="Count" name="CapturedAreasWhileInStrategy" relationship="Friendly" conditional1="Areas" conditional2="ControlPoint" operator="Equal" fvalue="1"/>
+		</Goals>
+		<AreaStrategyPriorities>
+			<Area flag="ControlPoint" priority="20" status="Any"/>
+			<Area flag="Base" priority="20" status="Any"/>
+			<Area flag="ControlPoint" priority="200" status="Neutral"/>
+			<Area flag="ControlPoint" priority="200" status="Hostile"/>
+		</AreaStrategyPriorities>
+	</Strategy>
+	<Strategy name="GameStart_NK">
+		<SelectConditions>
+			<Condition type="Game" name="GameStatus" conditional1="GameStatus" operator="Equal" strvalue="GameStart"/>
+			<Condition type="OurSpecies" name="WeAreNK" relationship="" conditional1="NK" conditional2="" operator="Equal"/>
+		</SelectConditions>
+		<Settings>
+			<param name="vehicleUseDistance" value="30"/> 
+			<param name="aggression" value="100"/> 
+			<param name="numberOfAttacks" value="5"/>
+			<param name="numberOfDefences" value="0"/>
+			<param name="timeLimit" value="60"/>
+		</Settings>
+		<Goals>
+			<Goal type="Count" name="CapturedAreasWhileInStrategy" relationship="Friendly" conditional1="Areas" conditional2="ControlPoint" operator="Equal" fvalue="1"/>
+		</Goals>
+		<AreaStrategyPriorities>
+			<Area flag="ControlPoint" priority="20" status="Any"/>
+			<Area flag="Base" priority="20" status="Any"/>
+			<Area flag="ControlPoint" priority="200" status="Neutral"/>
+			<Area flag="ControlPoint" priority="200" status="Hostile"/>
+		</AreaStrategyPriorities>
+	</Strategy>
+	<Strategy name="GameStart_Aliens">
+		<SelectConditions>
+			<Condition type="Game" name="GameStatus" conditional1="GameStatus" operator="Equal" strvalue="GameStart"/>
+			<Condition type="OurSpecies" name="WeAreAliens" relationship="" conditional1="Aliens" conditional2="" operator="Equal"/>
+		</SelectConditions>
+		<Settings>
+			<param name="vehicleUseDistance" value="30"/> 
+			<param name="aggression" value="100"/> 
+			<param name="numberOfAttacks" value="5"/>
+			<param name="numberOfDefences" value="0"/>
+			<param name="timeLimit" value="60"/>
+		</Settings>
+		<Goals>
+			<Goal type="Count" name="CapturedAreasWhileInStrategy" relationship="Friendly" conditional1="Areas" conditional2="ControlPoint" operator="Equal" fvalue="1"/>
+		</Goals>
+		<AreaStrategyPriorities>
+			<Area flag="Base" priority="20" status="Any"/>
+			<Area flag="ControlPoint" priority="200" status="Neutral"/>
+			<Area flag="ControlPoint" priority="200" status="Hostile"/>
+		</AreaStrategyPriorities>
+	</Strategy>
+	<Strategy name="SimpleAttack2x75">
+		<SelectConditions>
+			<Condition type="Count" name="Attack1_AreasCount1" relationship="Friendly" conditional1="Areas" conditional2="ControlPoint" operator="NotEqual" fvalue="0"/>
+		</SelectConditions>
+		<Settings>
+			<param name="vehicleUseDistance" value="30"/> 
+			<param name="aggression" value="75"/> 
+			<param name="numberOfAttacks" value="2"/>
+			<param name="numberOfDefences" value="0"/>
+			<param name="timeLimit" value="40"/>
+		</Settings>
+		<Goals>
+			<!-- <Goal type="Count" name="CapturedAreasWhileInStrategy" relationship="Friendly" conditional1="Areas" conditional2="ControlPoint" operator="Equal" fvalue="1"/> -->
+		</Goals>
+		<AreaStrategyPriorities>
+			<Area flag="ControlPoint" priority="20" status="Any"/>
+			<Area flag="Base" priority="20" status="Any"/>
+			<Area flag="ControlPoint" priority="200" status="Neutral"/>
+			<Area flag="ControlPoint" priority="200" status="Hostile"/>
+		</AreaStrategyPriorities>
+	</Strategy>
+	<Strategy name="SimpleAttack3x100">
+		<SelectConditions>
+			<Condition type="Count" name="Attack1_AreasCount1" relationship="Friendly" conditional1="Areas" conditional2="ControlPoint" operator="NotEqual" fvalue="0"/>
+		</SelectConditions>
+		<Settings>
+			<param name="vehicleUseDistance" value="30"/> 
+			<param name="aggression" value="100"/> 
+			<param name="numberOfAttacks" value="3"/>
+			<param name="numberOfDefences" value="0"/>
+			<param name="timeLimit" value="40"/>
+		</Settings>
+		<Goals>
+			<!-- <Goal type="Count" name="CapturedAreasWhileInStrategy" relationship="Friendly" conditional1="Areas" conditional2="ControlPoint" operator="Equal" fvalue="1"/> -->
+		</Goals>
+		<AreaStrategyPriorities>
+			<Area flag="ControlPoint" priority="20" status="Any"/>
+			<Area flag="Base" priority="20" status="Any"/>
+			<Area flag="ControlPoint" priority="200" status="Neutral"/>
+			<Area flag="ControlPoint" priority="200" status="Hostile"/>
+		</AreaStrategyPriorities>
+	</Strategy>
+	<Strategy name="StopFail1x100">
+		<SelectConditions>
+			<Condition type="Count" name="Attack1_AreasCount1" relationship="Hostile" conditional1="Areas" conditional2="ControlPoint" operator="Equal" fvalue="9"/>
+		</SelectConditions>
+		<Settings>
+			<param name="vehicleUseDistance" value="30"/> 
+			<param name="aggression" value="100"/> 
+			<param name="numberOfAttacks" value="1"/>
+			<param name="numberOfDefences" value="0"/>
+			<param name="timeLimit" value="60"/>
+		</Settings>
+		<Goals>
+			<!-- <Goal type="Count" name="CapturedAreasWhileInStrategy" relationship="Friendly" conditional1="Areas" conditional2="ControlPoint" operator="Equal" fvalue="1"/> -->
+		</Goals>
+		<AreaStrategyPriorities>
+			<Area flag="ControlPoint" priority="20" status="Any"/>
+			<Area flag="Base" priority="20" status="Any"/>
+			<Area flag="ControlPoint" priority="200" status="Neutral"/>
+			<Area flag="ControlPoint" priority="200" status="Hostile"/>
+		</AreaStrategyPriorities>
+	</Strategy>
+	<!-- <Strategy name="Attack3">
+		<SelectConditions>
+			<Condition type="Game" name="Attack3_GameStatus" conditional1="GameStatus" operator="Equal" strvalue="InBattle"/>
+			<Condition type="Count" name="Attack3_AreasCount1" relationship="Hostile" conditional1="Areas" conditional2="ControlPoint" operator="Equal" fvalue="3"/>
+		</SelectConditions>
+		<Settings>
+			<param name="vehicleUseDistance" value="30"/> 
+			<param name="aggression" value="75"/> 
+			<param name="numberOfAttacks" value="1"/>
+			<param name="numberOfDefences" value="0"/>
+			<param name="timeLimit" value="40"/>
+		</Settings>
+		<Goals>
+			<Goal type="Count" name="CapturedAreasWhileInStrategy" relationship="Friendly" conditional1="Areas" conditional2="ControlPoint" operator="Equal" fvalue="1"/>
+		</Goals>
+		<AreaStrategyPriorities>
+			<Area flag="Base" priority="20" status="Any"/>
+			<Area flag="ControlPoint" priority="20" status="Any"/>
+			<Area flag="ControlPoint" priority="200" status="Hostile"/>
+		</AreaStrategyPriorities>
+	</Strategy>
+	<Strategy name="Attack2">
+		<SelectConditions>
+			<Condition type="Game" name="Attack2_GameStatus" conditional1="GameStatus" operator="Equal" strvalue="InBattle"/>
+			<Condition type="Count" name="Attack2_AreasCount1" relationship="Hostile" conditional1="Areas" conditional2="ControlPoint" operator="Equal" fvalue="2"/>
+		</SelectConditions>
+		<Settings>
+			<param name="vehicleUseDistance" value="30"/> 
+			<param name="aggression" value="50"/> 
+			<param name="numberOfAttacks" value="1"/>
+			<param name="numberOfDefences" value="0"/>
+			<param name="timeLimit" value="40"/>
+		</Settings>
+		<Goals>
+			<Goal type="Count" name="CapturedAreasWhileInStrategy" relationship="Friendly" conditional1="Areas" conditional2="ControlPoint" operator="Equal" fvalue="1"/>
+		</Goals>
+		<AreaStrategyPriorities>
+			<Area flag="Base" priority="20" status="Any"/>
+			<Area flag="ControlPoint" priority="20" status="Any"/>
+			<Area flag="ControlPoint" priority="200" status="Hostile"/>
+		</AreaStrategyPriorities>
+	</Strategy>
+	<Strategy name="Attack1">
+		<SelectConditions>
+			<Condition type="Game" name="Attack1_GameStatus" conditional1="GameStatus" operator="Equal" strvalue="InBattle"/>
+			<Condition type="Count" name="Attack1_AreasCount1" relationship="Hostile" conditional1="Areas" conditional2="ControlPoint" operator="Equal" fvalue="1"/>
+		</SelectConditions>
+		<Settings>
+			<param name="vehicleUseDistance" value="30"/> 
+			<param name="aggression" value="20"/> 
+			<param name="numberOfAttacks" value="1"/>
+			<param name="numberOfDefences" value="0"/>
+			<param name="timeLimit" value="40"/>
+		</Settings>
+		<Goals>
+			<Goal type="Count" name="CapturedAreasWhileInStrategy" relationship="Friendly" conditional1="Areas" conditional2="ControlPoint" operator="Equal" fvalue="1"/>
+		</Goals>
+		<AreaStrategyPriorities>
+			<Area flag="ControlPoint" priority="20" status="Any"/>
+			<Area flag="Base" priority="20" status="Any"/>
+			<Area flag="ControlPoint" priority="200" status="Any"/>
+		</AreaStrategyPriorities>
+	</Strategy> -->
+		<!-- <Strategy name="EleminateEnemyCELL"> -->
+		<!-- <SelectConditions> -->
+			<!-- <Condition type="Game" name="EleminateEnemy_GameStatus" conditional1="GameStatus" operator="Equal" strvalue="InBattle"/> -->
+			<!-- <Condition type="Count" name="EleminateEnemy_AreasCount" relationship="Friendly" conditional1="Areas" conditional2="ControlPoint" operator="Equal" fvalue="3"/> -->
+			<!-- <Condition type="OurSpecies" name="NotCELLSpecies" relationship="" conditional1="CELL" conditional2="" operator="NotEqual"/> -->
+		<!-- </SelectConditions> -->
+		<!-- <Settings> -->
+			<!-- <param name="aggression" value="100"/>  -->
+			<!-- <param name="numberOfAttacks" value="1"/> -->
+			<!-- <param name="numberOfDefences" value="0"/> -->
+			<!-- <param name="timeLimit" value="40"/> -->
+			<!-- <param name="targetSpecies" value="CELL"/> -->
+		<!-- </Settings> -->
+		<!-- <Goals> -->
+			<!-- <Goal type="Count" name="CapturedAreasWhileInStrategy" relationship="Friendly" conditional1="Areas" conditional2="ControlPoint" operator="Equal" fvalue="1"/> -->
+		<!-- </Goals> -->
+		<!-- <AreaStrategyPriorities> -->
+			<!-- <Area flag="ControlPoint" priority="20" status="Any"/>\ -->
+			<!-- <Area flag="Base" priority="20" status="Any"/> -->
+			<!-- <Area flag="Base" priority="200" targetSpecies="CELL"/> -->
+			<!-- <Area flag="ControlPoint" priority="200" status="Hostile"/> -->
+		<!-- </AreaStrategyPriorities> -->
+	<!-- </Strategy> -->
+
+
+</Strategies>

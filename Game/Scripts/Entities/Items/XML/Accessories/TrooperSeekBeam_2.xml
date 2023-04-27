@@ -1,0 +1,28 @@
+<item name="TrooperSeekBeam_2" class="LAM" >
+	<params>
+		<param name="giveable" value="1" />
+		<param name="selectable" value="0" />
+		<param name="droppable" value="0" />
+	</params>
+	<lam>
+    <firstperson  laser_dot="expansion_alien_fx.Trooper.laser_aimpoint"  laser_range="350" />
+    <thirdperson  laser_geometry_tp="Objects/Effects/trooper_laser/beam_laser_02.cgf" fake_laser_geometry_tp="objects/effects/targetbox_10m.cgf" laser_dot="expansion_alien_fx.Trooper.laser_aimpoint" laser_range="30" laser_max_len="16" laser_max_scale="8" light_range="7" light_fov="40" light_color="1,1,1" light_diffuse_mul="1" light_texture="textures/lights/flashlight3.dds" light_material="materials/lightbeams/lightbeam_floodlight.mtl" light_hdr_dyn="1" />
+    <special		 	isLaser="1" isFlashLight="0" isLamRifle="1" giveExtraAccessory="1" extraAccessoryName="" />
+	</lam>
+  <geometry>
+  </geometry>
+  <actions>
+    <action name="enable_light">
+      <sound target="firstperson" name="Sounds/alien:scout:searchbeam_start" />
+      <sound target="thirdperson" name="Sounds/alien:scout:searchbeam_start" />
+    </action>
+    <action name="disable_light">
+      <sound target="firstperson" name="Sounds/alien:scout:searchbeam_stop" />
+      <sound target="thirdperson" name="Sounds/alien:scout:searchbeam_stop" />
+    </action>
+    <action name="use_light">
+      <sound target="firstperson" name="Sounds/alien:scout:searchbeam_loop" />
+      <sound target="thirdperson" name="Sounds/alien:scout:searchbeam_loop" />
+    </action>
+  </actions>
+</item>
