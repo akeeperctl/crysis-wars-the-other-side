@@ -1,0 +1,717 @@
+<Objects>
+ <Object Type="Entity" Layer="Lobby" Id="{2FE8E603-228D-4CFB-B11C-701E76E86E71}" Name="Light5" Pos="1051.0835,830.62463,228.00427" ColorRGB="65535" MatLayersMask="0" OutdoorOnly="0" ViewDistRatio="100" HiddenInGame="0" EntityClass="Light">
+  <Properties bActive="1" Radius="10">
+   <Color clrDiffuse="1,1,1" fDiffuseMultiplier="2.3" fHDRDynamic="1" fSpecularMultiplier="1"/>
+   <Options bAffectsThisAreaOnly="1" bCastShadow="0" bFakeLight="0" object_RenderGeometry="" bUsedInRealTime="0"/>
+   <Projector bProjectInAllDirs="0" fProjectorFov="90" fProjectorNearPlane="0" texture_Texture=""/>
+   <Style fCoronaDistIntensityFactor="1" fCoronaDistSizeFactor="1" fCoronaScale="1" nLightStyle="0"/>
+   <Test bFillLight="0" bNegativeLight="0"/>
+  </Properties>
+ </Object>
+ <Object Type="SequenceObject" Layer="Lobby" Id="{EFCFDD0F-2D56-47E9-8A1F-78602E34C6D0}" Name="Lobby_Cine" Pos="1050.2047,827.83875,224.92737" ColorRGB="16744319">
+  <Sequence Name="Lobby_Cine" Flags="2092" StartTime="0" EndTime="99999">
+   <Nodes>
+    <Node Id="0" Type="2" Name="Scene">
+     <Track ParamId="6" Flags="0" StartTime="0" EndTime="99999">
+      <Key time="0" node="Lobby_cam"/>
+     </Track>
+    </Node>
+   </Nodes>
+  </Sequence>
+ </Object>
+ <Object Type="TagPoint" Layer="Lobby" Id="{40004312-7FD6-4E0B-85F0-2F983FAB8599}" Name="Lobby_playerPos" Pos="1051.0134,831.10144,225.70633" ColorRGB="16711680" EntityClass="TagPoint"/>
+ <Object Type="GeomEntity" Layer="Lobby" Id="{6237E413-F925-43F1-B109-F4C35B7ACB85}" Name="objects/characters/c3/cell/cw2_leader_trooper/cw2_troop_leader.chr" Pos="1046.3657,822.56097,224.33954" ColorRGB="65535" MatLayersMask="0" Geometry="objects/characters/c3/cell/cw2_leader_trooper/cw2_troop_leader_1b.cdf" OutdoorOnly="0" CastShadow="0" MotionBlurMultiplier="0" LodRatio="0" ViewDistRatio="0" HiddenInGame="0" RecvWind="0" EntityClass="GeomEntity"/>
+ <Object Type="Camera" Layer="Lobby" Id="{A0ABCE14-E16A-48F1-89EA-B12AFC06F346}" Name="Lobby_cam" Pos="1050.984,827.33002,226.24133" Rotate="0.99921179,-0.039695811,0,0" ColorRGB="16776960" FOV="0.785398" EntityClass="CameraSource"/>
+ <Object Type="Entity" Layer="Lobby" Id="{90CEED48-B868-43A0-8FCD-6FAB5A9B6C95}" Name="Lobby_FG1" Pos="1051.9559,824.97754,261.65002" ColorRGB="65535" MatLayersMask="0" OutdoorOnly="0" CastShadow="1" MotionBlurMultiplier="1" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0" EntityClass="AreaTrigger">
+  <Properties bEnabled="0" bInVehicleOnly="0" bOnlyLocalPlayer="0" bOnlyPlayers="0" ScriptCommand="" species="-1" bTriggerOnce="0"/>
+  <FlowGraph Description="" Group="" enabled="1" MultiPlayer="ClientServer">
+   <Nodes>
+    <Node Id="23" Class="Start" pos="-1290,-3660,0" flags="0">
+     <Inputs InGame="1" InEditor="1"/>
+    </Node>
+    <Node Id="28" Class="ConquerorSystem:ConquestGamemode" pos="160,-3070,0" flags="0">
+     <Inputs LobbyAnimEntityId="0"/>
+    </Node>
+    <Node Id="31" Class="Entity:EntityId" pos="-260,-3020,0" flags="0" EntityGUID="{AE08C5F5-A8D7-496B-A8BF-27431F688B3F}" EntityGUID_64="496BA8D7AE08C5F5">
+     <Inputs entityId="0"/>
+    </Node>
+    <Node Id="32" Class="Control:OnStartControl" pos="-280,-1120,0" flags="0"/>
+    <Node Id="33" Class="String:Compare" pos="1830,-1020,0" flags="0">
+     <Inputs A="" B="Trooper" IgnoreCase="1"/>
+    </Node>
+    <Node Id="35" Class="HUD:OverlayMsg" pos="960,-1020,0" flags="0">
+     <Inputs Message="@tutorial_abil_1" PosX="400" PosY="300" Color="1,1,1" Timeout="3"/>
+    </Node>
+    <Node Id="36" Class="HUD:OverlayMsg" pos="690,-3170,0" flags="0">
+     <Inputs Message="@tutorial_conq_1" PosX="400" PosY="300" Color="1,1,1" Timeout="3"/>
+    </Node>
+    <Node Id="37" Class="Logic:Once" pos="420,-3080,0" flags="0">
+     <Inputs />
+    </Node>
+    <Node Id="38" Class="Time:Delay" pos="690,-3040,0" flags="0">
+     <Inputs delay="4"/>
+    </Node>
+    <Node Id="39" Class="HUD:OverlayMsg" pos="980,-3170,0" flags="0">
+     <Inputs Message="@tutorial_conq_2" PosX="400" PosY="300" Color="1,1,1" Timeout="3"/>
+    </Node>
+    <Node Id="40" Class="Time:Delay" pos="1040,-3040,0" flags="0">
+     <Inputs delay="4"/>
+    </Node>
+    <Node Id="41" Class="HUD:OverlayMsg" pos="1320,-3170,0" flags="0">
+     <Inputs Message="@tutorial_conq_3" PosX="400" PosY="300" Color="1,1,1" Timeout="3"/>
+    </Node>
+    <Node Id="42" Name="Delay" Class="Math:SetNumber" pos="410,-2910,0" flags="0">
+     <Inputs in="9"/>
+    </Node>
+    <Node Id="43" Class="Time:Delay" pos="1400,-3040,0" flags="0">
+     <Inputs delay="4"/>
+    </Node>
+    <Node Id="44" Class="HUD:OverlayMsg" pos="1680,-3170,0" flags="0">
+     <Inputs Message="@tutorial_conq_4" PosX="400" PosY="300" Color="1,1,1" Timeout="3"/>
+    </Node>
+    <Node Id="45" Class="Time:Delay" pos="1760,-3040,0" flags="0">
+     <Inputs delay="4"/>
+    </Node>
+    <Node Id="46" Class="HUD:OverlayMsg" pos="2040,-3170,0" flags="0">
+     <Inputs Message="@tutorial_conq_5" PosX="400" PosY="300" Color="1,1,1" Timeout="3"/>
+    </Node>
+    <Node Id="47" Class="Time:Delay" pos="2130,-3040,0" flags="0">
+     <Inputs delay="4"/>
+    </Node>
+    <Node Id="48" Class="HUD:OverlayMsg" pos="2400,-3170,0" flags="0">
+     <Inputs Message="@tutorial_conq_6" PosX="400" PosY="300" Color="1,1,1" Timeout="3"/>
+    </Node>
+    <Node Id="49" Name="Timeout" Class="Math:SetNumber" pos="410,-2960,0" flags="0">
+     <Inputs in="8"/>
+    </Node>
+    <Node Id="51" Class="String:Compare" pos="1830,-830,0" flags="0">
+     <Inputs A="" B="Scout" IgnoreCase="1"/>
+    </Node>
+    <Node Id="52" Class="HUD:OverlayMsg" pos="1220,-1020,0" flags="0">
+     <Inputs Message="@tutorial_abil_2" PosX="400" PosY="300" Color="1,1,1" Timeout="3"/>
+    </Node>
+    <Node Id="53" Class="Time:Delay" pos="970,-900,0" flags="0">
+     <Inputs delay="4"/>
+    </Node>
+    <Node Id="55" Class="Time:Delay" pos="1220,-900,0" flags="0">
+     <Inputs delay="4"/>
+    </Node>
+    <Node Id="56" Class="HUD:OverlayMsg" pos="1510,-1020,0" flags="0">
+     <Inputs Message="@tutorial_abil_3" PosX="400" PosY="300" Color="1,1,1" Timeout="3"/>
+    </Node>
+    <Node Id="58" Class="Time:Delay" pos="1510,-900,0" flags="0">
+     <Inputs delay="4"/>
+    </Node>
+    <Node Id="59" Class="HUD:OverlayMsg" pos="2640,-1030,0" flags="0">
+     <Inputs Message="@tutorial_tr_control_1" PosX="400" PosY="300" Color="1,1,1" Timeout="3"/>
+    </Node>
+    <Node Id="61" Class="Time:Delay" pos="2640,-910,0" flags="0">
+     <Inputs delay="4"/>
+    </Node>
+    <Node Id="62" Class="HUD:OverlayMsg" pos="2940,-1030,0" flags="0">
+     <Inputs Message="@tutorial_tr_control_2" PosX="400" PosY="300" Color="1,1,1" Timeout="3"/>
+    </Node>
+    <Node Id="63" Class="Time:Delay" pos="2940,-910,0" flags="0">
+     <Inputs delay="4"/>
+    </Node>
+    <Node Id="64" Class="HUD:OverlayMsg" pos="3230,-1030,0" flags="0">
+     <Inputs Message="@tutorial_tr_control_3" PosX="400" PosY="300" Color="1,1,1" Timeout="3"/>
+    </Node>
+    <Node Id="65" Class="Time:Delay" pos="3230,-910,0" flags="0">
+     <Inputs delay="4"/>
+    </Node>
+    <Node Id="66" Class="HUD:OverlayMsg" pos="3530,-1030,0" flags="0">
+     <Inputs Message="@tutorial_tr_control_4" PosX="400" PosY="300" Color="1,1,1" Timeout="3"/>
+    </Node>
+    <Node Id="68" Class="HUD:OverlayMsg" pos="2640,-820,0" flags="0">
+     <Inputs Message="@tutorial_sc_control_1" PosX="400" PosY="300" Color="1,1,1" Timeout="3"/>
+    </Node>
+    <Node Id="69" Class="Time:Delay" pos="2640,-700,0" flags="0">
+     <Inputs delay="4"/>
+    </Node>
+    <Node Id="70" Class="HUD:OverlayMsg" pos="2940,-820,0" flags="0">
+     <Inputs Message="@tutorial_sc_control_2" PosX="400" PosY="300" Color="1,1,1" Timeout="3"/>
+    </Node>
+    <Node Id="71" Class="Time:Delay" pos="2940,-700,0" flags="0">
+     <Inputs delay="4"/>
+    </Node>
+    <Node Id="72" Class="HUD:OverlayMsg" pos="3230,-820,0" flags="0">
+     <Inputs Message="@tutorial_sc_control_3" PosX="400" PosY="300" Color="1,1,1" Timeout="3"/>
+    </Node>
+    <Node Id="73" Class="Time:Delay" pos="3230,-700,0" flags="0">
+     <Inputs delay="4"/>
+    </Node>
+    <Node Id="74" Class="HUD:OverlayMsg" pos="3530,-820,0" flags="0">
+     <Inputs Message="@tutorial_sc_control_4" PosX="400" PosY="300" Color="1,1,1" Timeout="3"/>
+    </Node>
+    <Node Id="81" Class="Mission:SetGameToken" pos="-1080,-3660,0" flags="0">
+     <Inputs gametoken_Token="ConquestTutorials.Common.Any.IsActive" Value="0"/>
+    </Node>
+    <Node Id="82" Class="Start" pos="-250,-3070,0" flags="0">
+     <Inputs InGame="1" InEditor="1"/>
+    </Node>
+    <Node Id="83" Name="Tutorial start" Class="_comment" pos="-1050,-3720,0" flags="0"/>
+    <Node Id="84" Class="Mission:SetGameToken" pos="690,-3250,0" flags="0">
+     <Inputs gametoken_Token="ConquestTutorials.Common.Any.IsActive" Value="1"/>
+    </Node>
+    <Node Id="85" Class="Mission:CheckGameToken" pos="110,-930,0" flags="0">
+     <Inputs gametoken_Token="ConquestTutorials.Common.Any.IsActive" CheckValue="0"/>
+    </Node>
+    <Node Id="86" Class="Time:Delay" pos="210,-810,0" flags="0">
+     <Inputs delay="1"/>
+    </Node>
+    <Node Id="87" Class="Logic:Any" pos="-20,-880,0" flags="0">
+     <Inputs />
+    </Node>
+    <Node Id="88" Class="Mission:SetGameToken" pos="4250,-3050,0" flags="0">
+     <Inputs gametoken_Token="ConquestTutorials.Common.Any.IsActive" Value="0"/>
+    </Node>
+    <Node Id="89" Class="Time:Delay" pos="2400,-3040,0" flags="0">
+     <Inputs delay="4"/>
+    </Node>
+    <Node Id="90" Class="Mission:SetGameToken" pos="960,-1200,0" flags="0">
+     <Inputs gametoken_Token="ConquestTutorials.Common.Any.IsActive" Value="1"/>
+    </Node>
+    <Node Id="92" Class="Mission:SetGameToken" pos="1830,-1190,0" flags="0">
+     <Inputs gametoken_Token="ConquestTutorials.Common.Any.IsActive" Value="0"/>
+    </Node>
+    <Node Id="93" Class="Mission:SetGameToken" pos="2640,-1220,0" flags="0">
+     <Inputs gametoken_Token="ConquestTutorials.Common.Any.IsActive" Value="1"/>
+    </Node>
+    <Node Id="94" Class="Mission:SetGameToken" pos="3780,-930,0" flags="0">
+     <Inputs gametoken_Token="ConquestTutorials.Common.Any.IsActive" Value="0"/>
+    </Node>
+    <Node Id="95" Class="Time:Delay" pos="3530,-910,0" flags="0">
+     <Inputs delay="4"/>
+    </Node>
+    <Node Id="97" Class="Time:Delay" pos="3530,-690,0" flags="0">
+     <Inputs delay="4"/>
+    </Node>
+    <Node Id="98" Class="Mission:SetGameToken" pos="4060,-700,0" flags="0">
+     <Inputs gametoken_Token="ConquestTutorials.Common.Any.IsActive" Value="0"/>
+    </Node>
+    <Node Id="99" Class="Mission:SetGameToken" pos="2640,-630,0" flags="0">
+     <Inputs gametoken_Token="ConquestTutorials.Common.Any.IsActive" Value="1"/>
+    </Node>
+    <Node Id="104" Class="Mission:SetGameToken" pos="2640,-1160,0" flags="0">
+     <Inputs gametoken_Token="ConquestTutorials.Aliens.Trooper.WasActive" Value="1"/>
+    </Node>
+    <Node Id="105" Class="Mission:SetGameToken" pos="-1080,-3600,0" flags="0">
+     <Inputs gametoken_Token="ConquestTutorials.Aliens.Trooper.WasActive" Value="0"/>
+    </Node>
+    <Node Id="106" Class="Mission:SetGameToken" pos="-1080,-3540,0" flags="0">
+     <Inputs gametoken_Token="ConquestTutorials.Aliens.Scout.WasActive" Value="0"/>
+    </Node>
+    <Node Id="107" Class="Mission:SetGameToken" pos="2640,-570,0" flags="0">
+     <Inputs gametoken_Token="ConquestTutorials.Aliens.Scout.WasActive" Value="1"/>
+    </Node>
+    <Node Id="108" Class="Mission:SetGameToken" pos="957.52509,-1136.1064,0" flags="0">
+     <Inputs gametoken_Token="ConquestTutorials.Abilities.Buttons.WasActive" Value="1"/>
+    </Node>
+    <Node Id="109" Class="Mission:CheckGameToken" pos="490,-930,0" flags="0">
+     <Inputs gametoken_Token="ConquestTutorials.Abilities.Buttons.WasActive" CheckValue="1"/>
+    </Node>
+    <Node Id="110" Class="Logic:Any" pos="960,-790,0" flags="0" InHideMask="63" OutHideMask="1">
+     <Inputs />
+    </Node>
+    <Node Id="111" Class="Logic:Any" pos="1520,-790,0" flags="0">
+     <Inputs />
+    </Node>
+    <Node Id="112" Class="Logic:Any" pos="1700,-900,0" flags="0">
+     <Inputs />
+    </Node>
+    <Node Id="113" Class="Mission:CheckGameToken" pos="2110,-1010,0" flags="0">
+     <Inputs gametoken_Token="ConquestTutorials.Aliens.Trooper.WasActive" CheckValue="0"/>
+    </Node>
+    <Node Id="114" Class="Mission:CheckGameToken" pos="2120,-840,0" flags="0">
+     <Inputs gametoken_Token="ConquestTutorials.Aliens.Scout.WasActive" CheckValue="0"/>
+    </Node>
+    <Node Id="115" Name="Abilities tutorial" Class="_comment" pos="960,-1250,0" flags="0"/>
+    <Node Id="116" Name="Aliens tutorial" Class="_comment" pos="1830,-1240,0" flags="0"/>
+    <Node Id="117" Name="Conquest tutorial" Class="_comment" pos="500,-3280,0" flags="0"/>
+    <Node Id="129" Class="Mission:SetGameToken" pos="-1080,-3480,0" flags="0">
+     <Inputs gametoken_Token="ConquestTutorials.Aliens.CanHeal.WasActive" Value="0"/>
+    </Node>
+    <Node Id="133" Class="Time:Timer" pos="-300,-2210,0" flags="0">
+     <Inputs period="1" min="0" max="0" paused="0"/>
+    </Node>
+    <Node Id="134" Class="Control:GetControlledId" pos="-110,-2210,0" flags="0">
+     <Inputs />
+    </Node>
+    <Node Id="137" Class="Game:ActorGetMaxHealth" pos="-110,-2160,0" flags="0">
+     <Inputs entityId="0"/>
+    </Node>
+    <Node Id="138" Class="Math:Div" pos="-50,-2100,0" flags="0">
+     <Inputs A="0" B="4"/>
+    </Node>
+    <Node Id="139" Class="Game:ActorCheckHealth" pos="100,-2210,0" flags="0">
+     <Inputs entityId="0" MinHealth="0" MaxHealth="100"/>
+    </Node>
+    <Node Id="140" Class="Mission:CheckGameToken" pos="450,-2200,0" flags="0">
+     <Inputs gametoken_Token="ConquestTutorials.Common.Any.IsActive" CheckValue="1"/>
+    </Node>
+    <Node Id="141" Class="Mission:CheckGameToken" pos="-90,-2000,0" flags="0">
+     <Inputs gametoken_Token="ConquestTutorials.Aliens.CanHeal.WasActive" CheckValue="1"/>
+    </Node>
+    <Node Id="142" Class="Math:ToBoolean" pos="-300,-2130,0" flags="0">
+     <Inputs />
+    </Node>
+    <Node Id="143" Class="Logic:All" pos="800,-2060,0" flags="0">
+     <Inputs />
+    </Node>
+    <Node Id="144" Class="Entity:EntityInfo" pos="1010,-2340,0" flags="0">
+     <Inputs entityId="0"/>
+    </Node>
+    <Node Id="145" Class="Entity:EntityId" pos="-300,-2360,0" flags="0">
+     <Inputs entityId="0"/>
+    </Node>
+    <Node Id="146" Class="String:Compare" pos="1200,-2340,0" flags="0">
+     <Inputs A="" B="Scout" IgnoreCase="1"/>
+    </Node>
+    <Node Id="147" Class="Mission:SetGameToken" pos="1630,-2520,0" flags="0">
+     <Inputs gametoken_Token="ConquestTutorials.Aliens.CanHeal.WasActive" Value="1"/>
+    </Node>
+    <Node Id="148" Class="HUD:OverlayMsg" pos="1630,-2320,0" flags="0">
+     <Inputs Message="@tutorial_sc_heal_1" PosX="400" PosY="300" Color="1,1,1" Timeout="3"/>
+    </Node>
+    <Node Id="149" Class="Logic:Any" pos="1460,-2410,0" flags="0">
+     <Inputs />
+    </Node>
+    <Node Id="150" Class="String:Compare" pos="1200,-2230,0" flags="0">
+     <Inputs A="" B="Trooper" IgnoreCase="1"/>
+    </Node>
+    <Node Id="151" Class="HUD:OverlayMsg" pos="1630,-2190,0" flags="0">
+     <Inputs Message="@tutorial_tr_heal_1" PosX="400" PosY="300" Color="1,1,1" Timeout="3"/>
+    </Node>
+    <Node Id="152" Class="Time:Delay" pos="1630,-2060,0" flags="0">
+     <Inputs delay="4"/>
+    </Node>
+    <Node Id="153" Class="Mission:SetGameToken" pos="1630,-2590,0" flags="0">
+     <Inputs gametoken_Token="ConquestTutorials.Common.Any.IsActive" Value="1"/>
+    </Node>
+    <Node Id="154" Class="Mission:SetGameToken" pos="1850,-2070,0" flags="0">
+     <Inputs gametoken_Token="ConquestTutorials.Common.Any.IsActive" Value="0"/>
+    </Node>
+    <Node Id="155" Name="Alien heal tutorial" Class="_comment" pos="-100,-2410,0" flags="0"/>
+    <Node Id="156" Class="Time:RandomDelay" pos="20,-340,0" flags="0">
+     <Inputs MinDelay="120" MaxDelay="180"/>
+    </Node>
+    <Node Id="159" Class="ConquerorSystem:MatchStatus" pos="-300,-340,0" flags="0">
+     <Inputs MatchEndTrigger="25"/>
+    </Node>
+    <Node Id="163" Class="Logic:Any" pos="200,-340,0" flags="0">
+     <Inputs />
+    </Node>
+    <Node Id="164" Class="Time:Delay" pos="370,-210,0" flags="0">
+     <Inputs delay="1"/>
+    </Node>
+    <Node Id="165" Class="Mission:CheckGameToken" pos="350,-340,0" flags="0">
+     <Inputs gametoken_Token="ConquestTutorials.Common.Any.IsActive" CheckValue="1"/>
+    </Node>
+    <Node Id="166" Class="Mission:CheckGameToken" pos="770,-340,0" flags="0">
+     <Inputs gametoken_Token="ConquestTutorials.Squad.Controls.WasActive" CheckValue="1"/>
+    </Node>
+    <Node Id="167" Class="Mission:SetGameToken" pos="-1080,-3420,0" flags="0">
+     <Inputs gametoken_Token="ConquestTutorials.Squad.Controls.WasActive" Value="0"/>
+    </Node>
+    <Node Id="168" Class="Mission:SetGameToken" pos="-1080,-3360,0" flags="0">
+     <Inputs gametoken_Token="ConquestTutorials.Abilities.Buttons.WasActive" Value="0"/>
+    </Node>
+    <Node Id="169" Class="Mission:SetGameToken" pos="-1080,-3300,0" flags="0">
+     <Inputs gametoken_Token="ConquestTutorials.Lobby.WasActive" Value="0"/>
+    </Node>
+    <Node Id="171" Class="HUD:OverlayMsg" pos="1220,-340,0" flags="0">
+     <Inputs Message="@tutorial_sqd_1" PosX="400" PosY="300" Color="1,1,1" Timeout="3"/>
+    </Node>
+    <Node Id="172" Class="Mission:SetGameToken" pos="1220,-560,0" flags="0">
+     <Inputs gametoken_Token="ConquestTutorials.Squad.Controls.WasActive" Value="1"/>
+    </Node>
+    <Node Id="173" Class="Mission:SetGameToken" pos="1220,-500,0" flags="0">
+     <Inputs gametoken_Token="ConquestTutorials.Common.Any.IsActive" Value="1"/>
+    </Node>
+    <Node Id="174" Class="Time:Delay" pos="1220,-220,0" flags="0">
+     <Inputs delay="4"/>
+    </Node>
+    <Node Id="175" Class="HUD:OverlayMsg" pos="1480,-340,0" flags="0">
+     <Inputs Message="@tutorial_sqd_2" PosX="400" PosY="300" Color="1,1,1" Timeout="3"/>
+    </Node>
+    <Node Id="176" Class="Time:Delay" pos="1480,-220,0" flags="0">
+     <Inputs delay="4"/>
+    </Node>
+    <Node Id="177" Class="HUD:OverlayMsg" pos="1730,-340,0" flags="0">
+     <Inputs Message="@tutorial_sqd_3" PosX="400" PosY="300" Color="1,1,1" Timeout="3"/>
+    </Node>
+    <Node Id="178" Class="Time:Delay" pos="1730,-220,0" flags="0">
+     <Inputs delay="4"/>
+    </Node>
+    <Node Id="179" Class="HUD:OverlayMsg" pos="1970,-340,0" flags="0">
+     <Inputs Message="@tutorial_sqd_4" PosX="400" PosY="300" Color="1,1,1" Timeout="3"/>
+    </Node>
+    <Node Id="180" Class="Time:Delay" pos="1970,-220,0" flags="0">
+     <Inputs delay="4"/>
+    </Node>
+    <Node Id="181" Class="HUD:OverlayMsg" pos="2230,-340,0" flags="0">
+     <Inputs Message="@tutorial_sqd_5" PosX="400" PosY="300" Color="1,1,1" Timeout="3"/>
+    </Node>
+    <Node Id="182" Class="Time:Delay" pos="2230,-220,0" flags="0">
+     <Inputs delay="4"/>
+    </Node>
+    <Node Id="185" Class="Mission:SetGameToken" pos="2460,-230,0" flags="0">
+     <Inputs gametoken_Token="ConquestTutorials.Common.Any.IsActive" Value="0"/>
+    </Node>
+    <Node Id="186" Class="Logic:Any" pos="-15.384615,-1040.6593,0" flags="0">
+     <Inputs />
+    </Node>
+    <Node Id="188" Class="HUD:OverlayMsg" pos="2690,-3170,0" flags="0">
+     <Inputs Message="@tutorial_conq_7" PosX="400" PosY="300" Color="1,1,1" Timeout="3"/>
+    </Node>
+    <Node Id="189" Class="Time:Delay" pos="2770,-3040,0" flags="0">
+     <Inputs delay="4"/>
+    </Node>
+    <Node Id="190" Class="HUD:OverlayMsg" pos="3050,-3170,0" flags="0">
+     <Inputs Message="@tutorial_conq_8" PosX="400" PosY="300" Color="1,1,1" Timeout="3"/>
+    </Node>
+    <Node Id="191" Class="Time:Delay" pos="3130,-3040,0" flags="0">
+     <Inputs delay="4"/>
+    </Node>
+    <Node Id="192" Class="HUD:OverlayMsg" pos="3410,-3170,0" flags="0">
+     <Inputs Message="@tutorial_conq_9" PosX="400" PosY="300" Color="1,1,1" Timeout="3"/>
+    </Node>
+    <Node Id="193" Class="Time:Delay" pos="3410,-3040,0" flags="0">
+     <Inputs delay="4"/>
+    </Node>
+    <Node Id="194" Name="Squad Control tutorial" Class="_comment" pos="-88.888878,-420.98761,0" flags="0"/>
+    <Node Id="195" Class="Start" pos="-587.12866,-2115.8413,0" flags="0">
+     <Inputs InGame="1" InEditor="1"/>
+    </Node>
+    <Node Id="196" Class="Math:FromBoolean" pos="300,-2190,0" flags="0">
+     <Inputs Value="0"/>
+    </Node>
+    <Node Id="197" Class="HUD:OverlayMsg" pos="3720,-3170,0" flags="0">
+     <Inputs Message="@tutorial_conq_10" PosX="400" PosY="300" Color="1,1,1" Timeout="3"/>
+    </Node>
+    <Node Id="198" Class="Time:Delay" pos="3700,-3040,0" flags="0">
+     <Inputs delay="4"/>
+    </Node>
+    <Node Id="199" Class="HUD:OverlayMsg" pos="4040,-3170,0" flags="0">
+     <Inputs Message="@tutorial_conq_11" PosX="400" PosY="300" Color="1,1,1" Timeout="3"/>
+    </Node>
+    <Node Id="200" Class="Time:Delay" pos="4020,-3040,0" flags="0">
+     <Inputs delay="4"/>
+    </Node>
+    <Node Id="201" Class="HUD:OverlayMsg" pos="3810,-820,0" flags="0">
+     <Inputs Message="@tutorial_sqd_6" PosX="400" PosY="300" Color="1,1,1" Timeout="3"/>
+    </Node>
+    <Node Id="204" Class="Time:Delay" pos="3815.4646,-693.62628,0" flags="0">
+     <Inputs delay="4"/>
+    </Node>
+   </Nodes>
+   <Edges>
+    <Edge nodeIn="81" nodeOut="23" portIn="Trigger" portOut="output" enabled="1"/>
+    <Edge nodeIn="105" nodeOut="23" portIn="Trigger" portOut="output" enabled="1"/>
+    <Edge nodeIn="106" nodeOut="23" portIn="Trigger" portOut="output" enabled="1"/>
+    <Edge nodeIn="129" nodeOut="23" portIn="Trigger" portOut="output" enabled="1"/>
+    <Edge nodeIn="167" nodeOut="23" portIn="Trigger" portOut="output" enabled="1"/>
+    <Edge nodeIn="168" nodeOut="23" portIn="Trigger" portOut="output" enabled="1"/>
+    <Edge nodeIn="169" nodeOut="23" portIn="Trigger" portOut="output" enabled="1"/>
+    <Edge nodeIn="37" nodeOut="28" portIn="Input1" portOut="Started" enabled="1"/>
+    <Edge nodeIn="42" nodeOut="28" portIn="set" portOut="Started" enabled="1"/>
+    <Edge nodeIn="49" nodeOut="28" portIn="set" portOut="Started" enabled="1"/>
+    <Edge nodeIn="28" nodeOut="31" portIn="LobbyAnimEntityId" portOut="Id" enabled="1"/>
+    <Edge nodeIn="33" nodeOut="32" portIn="A" portOut="ClassName" enabled="1"/>
+    <Edge nodeIn="51" nodeOut="32" portIn="A" portOut="ClassName" enabled="1"/>
+    <Edge nodeIn="186" nodeOut="32" portIn="in1" portOut="ClassName" enabled="1"/>
+    <Edge nodeIn="113" nodeOut="33" portIn="Trigger" portOut="True" enabled="1"/>
+    <Edge nodeIn="36" nodeOut="37" portIn="Show" portOut="Out" enabled="1"/>
+    <Edge nodeIn="38" nodeOut="37" portIn="in" portOut="Out" enabled="1"/>
+    <Edge nodeIn="84" nodeOut="37" portIn="Trigger" portOut="Out" enabled="1"/>
+    <Edge nodeIn="39" nodeOut="38" portIn="Show" portOut="out" enabled="1"/>
+    <Edge nodeIn="40" nodeOut="38" portIn="in" portOut="out" enabled="1"/>
+    <Edge nodeIn="41" nodeOut="40" portIn="Show" portOut="out" enabled="1"/>
+    <Edge nodeIn="43" nodeOut="40" portIn="in" portOut="out" enabled="1"/>
+    <Edge nodeIn="38" nodeOut="42" portIn="delay" portOut="out" enabled="1"/>
+    <Edge nodeIn="40" nodeOut="42" portIn="delay" portOut="out" enabled="1"/>
+    <Edge nodeIn="43" nodeOut="42" portIn="delay" portOut="out" enabled="1"/>
+    <Edge nodeIn="45" nodeOut="42" portIn="delay" portOut="out" enabled="1"/>
+    <Edge nodeIn="47" nodeOut="42" portIn="delay" portOut="out" enabled="1"/>
+    <Edge nodeIn="53" nodeOut="42" portIn="delay" portOut="out" enabled="1"/>
+    <Edge nodeIn="55" nodeOut="42" portIn="delay" portOut="out" enabled="1"/>
+    <Edge nodeIn="58" nodeOut="42" portIn="delay" portOut="out" enabled="1"/>
+    <Edge nodeIn="61" nodeOut="42" portIn="delay" portOut="out" enabled="1"/>
+    <Edge nodeIn="63" nodeOut="42" portIn="delay" portOut="out" enabled="1"/>
+    <Edge nodeIn="65" nodeOut="42" portIn="delay" portOut="out" enabled="1"/>
+    <Edge nodeIn="69" nodeOut="42" portIn="delay" portOut="out" enabled="1"/>
+    <Edge nodeIn="71" nodeOut="42" portIn="delay" portOut="out" enabled="1"/>
+    <Edge nodeIn="73" nodeOut="42" portIn="delay" portOut="out" enabled="1"/>
+    <Edge nodeIn="174" nodeOut="42" portIn="delay" portOut="out" enabled="1"/>
+    <Edge nodeIn="176" nodeOut="42" portIn="delay" portOut="out" enabled="1"/>
+    <Edge nodeIn="178" nodeOut="42" portIn="delay" portOut="out" enabled="1"/>
+    <Edge nodeIn="180" nodeOut="42" portIn="delay" portOut="out" enabled="1"/>
+    <Edge nodeIn="182" nodeOut="42" portIn="delay" portOut="out" enabled="1"/>
+    <Edge nodeIn="189" nodeOut="42" portIn="delay" portOut="out" enabled="1"/>
+    <Edge nodeIn="191" nodeOut="42" portIn="delay" portOut="out" enabled="1"/>
+    <Edge nodeIn="44" nodeOut="43" portIn="Show" portOut="out" enabled="1"/>
+    <Edge nodeIn="45" nodeOut="43" portIn="in" portOut="out" enabled="1"/>
+    <Edge nodeIn="46" nodeOut="45" portIn="Show" portOut="out" enabled="1"/>
+    <Edge nodeIn="47" nodeOut="45" portIn="in" portOut="out" enabled="1"/>
+    <Edge nodeIn="48" nodeOut="47" portIn="Show" portOut="out" enabled="1"/>
+    <Edge nodeIn="89" nodeOut="47" portIn="in" portOut="out" enabled="1"/>
+    <Edge nodeIn="35" nodeOut="49" portIn="Timeout" portOut="out" enabled="1"/>
+    <Edge nodeIn="36" nodeOut="49" portIn="Timeout" portOut="out" enabled="1"/>
+    <Edge nodeIn="39" nodeOut="49" portIn="Timeout" portOut="out" enabled="1"/>
+    <Edge nodeIn="41" nodeOut="49" portIn="Timeout" portOut="out" enabled="1"/>
+    <Edge nodeIn="44" nodeOut="49" portIn="Timeout" portOut="out" enabled="1"/>
+    <Edge nodeIn="46" nodeOut="49" portIn="Timeout" portOut="out" enabled="1"/>
+    <Edge nodeIn="48" nodeOut="49" portIn="Timeout" portOut="out" enabled="1"/>
+    <Edge nodeIn="52" nodeOut="49" portIn="Timeout" portOut="out" enabled="1"/>
+    <Edge nodeIn="56" nodeOut="49" portIn="Timeout" portOut="out" enabled="1"/>
+    <Edge nodeIn="59" nodeOut="49" portIn="Timeout" portOut="out" enabled="1"/>
+    <Edge nodeIn="62" nodeOut="49" portIn="Timeout" portOut="out" enabled="1"/>
+    <Edge nodeIn="64" nodeOut="49" portIn="Timeout" portOut="out" enabled="1"/>
+    <Edge nodeIn="66" nodeOut="49" portIn="Timeout" portOut="out" enabled="1"/>
+    <Edge nodeIn="68" nodeOut="49" portIn="Timeout" portOut="out" enabled="1"/>
+    <Edge nodeIn="70" nodeOut="49" portIn="Timeout" portOut="out" enabled="1"/>
+    <Edge nodeIn="72" nodeOut="49" portIn="Timeout" portOut="out" enabled="1"/>
+    <Edge nodeIn="74" nodeOut="49" portIn="Timeout" portOut="out" enabled="1"/>
+    <Edge nodeIn="89" nodeOut="49" portIn="delay" portOut="out" enabled="1"/>
+    <Edge nodeIn="95" nodeOut="49" portIn="delay" portOut="out" enabled="1"/>
+    <Edge nodeIn="97" nodeOut="49" portIn="delay" portOut="out" enabled="1"/>
+    <Edge nodeIn="148" nodeOut="49" portIn="Timeout" portOut="out" enabled="1"/>
+    <Edge nodeIn="151" nodeOut="49" portIn="Timeout" portOut="out" enabled="1"/>
+    <Edge nodeIn="152" nodeOut="49" portIn="delay" portOut="out" enabled="1"/>
+    <Edge nodeIn="171" nodeOut="49" portIn="Timeout" portOut="out" enabled="1"/>
+    <Edge nodeIn="175" nodeOut="49" portIn="Timeout" portOut="out" enabled="1"/>
+    <Edge nodeIn="177" nodeOut="49" portIn="Timeout" portOut="out" enabled="1"/>
+    <Edge nodeIn="179" nodeOut="49" portIn="Timeout" portOut="out" enabled="1"/>
+    <Edge nodeIn="181" nodeOut="49" portIn="Timeout" portOut="out" enabled="1"/>
+    <Edge nodeIn="188" nodeOut="49" portIn="Timeout" portOut="out" enabled="1"/>
+    <Edge nodeIn="190" nodeOut="49" portIn="Timeout" portOut="out" enabled="1"/>
+    <Edge nodeIn="192" nodeOut="49" portIn="Timeout" portOut="out" enabled="1"/>
+    <Edge nodeIn="193" nodeOut="49" portIn="delay" portOut="out" enabled="1"/>
+    <Edge nodeIn="197" nodeOut="49" portIn="Timeout" portOut="out" enabled="1"/>
+    <Edge nodeIn="198" nodeOut="49" portIn="delay" portOut="out" enabled="1"/>
+    <Edge nodeIn="199" nodeOut="49" portIn="Timeout" portOut="out" enabled="1"/>
+    <Edge nodeIn="200" nodeOut="49" portIn="delay" portOut="out" enabled="1"/>
+    <Edge nodeIn="204" nodeOut="49" portIn="delay" portOut="out" enabled="1"/>
+    <Edge nodeIn="114" nodeOut="51" portIn="Trigger" portOut="True" enabled="1"/>
+    <Edge nodeIn="52" nodeOut="53" portIn="Show" portOut="out" enabled="1"/>
+    <Edge nodeIn="55" nodeOut="53" portIn="in" portOut="out" enabled="1"/>
+    <Edge nodeIn="58" nodeOut="53" portIn="in" portOut="out" enabled="1"/>
+    <Edge nodeIn="56" nodeOut="55" portIn="Show" portOut="out" enabled="1"/>
+    <Edge nodeIn="112" nodeOut="58" portIn="in1" portOut="out" enabled="1"/>
+    <Edge nodeIn="62" nodeOut="61" portIn="Show" portOut="out" enabled="1"/>
+    <Edge nodeIn="63" nodeOut="61" portIn="in" portOut="out" enabled="1"/>
+    <Edge nodeIn="64" nodeOut="63" portIn="Show" portOut="out" enabled="1"/>
+    <Edge nodeIn="65" nodeOut="63" portIn="in" portOut="out" enabled="1"/>
+    <Edge nodeIn="66" nodeOut="65" portIn="Show" portOut="out" enabled="1"/>
+    <Edge nodeIn="95" nodeOut="65" portIn="in" portOut="out" enabled="1"/>
+    <Edge nodeIn="70" nodeOut="69" portIn="Show" portOut="out" enabled="1"/>
+    <Edge nodeIn="71" nodeOut="69" portIn="in" portOut="out" enabled="1"/>
+    <Edge nodeIn="72" nodeOut="71" portIn="Show" portOut="out" enabled="1"/>
+    <Edge nodeIn="73" nodeOut="71" portIn="in" portOut="out" enabled="1"/>
+    <Edge nodeIn="74" nodeOut="73" portIn="Show" portOut="out" enabled="1"/>
+    <Edge nodeIn="97" nodeOut="73" portIn="in" portOut="out" enabled="1"/>
+    <Edge nodeIn="28" nodeOut="82" portIn="Start" portOut="output" enabled="1"/>
+    <Edge nodeIn="86" nodeOut="85" portIn="in" portOut="False" enabled="1"/>
+    <Edge nodeIn="109" nodeOut="85" portIn="Trigger" portOut="True" enabled="1"/>
+    <Edge nodeIn="87" nodeOut="86" portIn="in2" portOut="out" enabled="1"/>
+    <Edge nodeIn="85" nodeOut="87" portIn="Trigger" portOut="out" enabled="1"/>
+    <Edge nodeIn="188" nodeOut="89" portIn="Show" portOut="out" enabled="1"/>
+    <Edge nodeIn="189" nodeOut="89" portIn="in" portOut="out" enabled="1"/>
+    <Edge nodeIn="94" nodeOut="95" portIn="Trigger" portOut="out" enabled="1"/>
+    <Edge nodeIn="201" nodeOut="97" portIn="Show" portOut="out" enabled="1"/>
+    <Edge nodeIn="204" nodeOut="97" portIn="in" portOut="out" enabled="1"/>
+    <Edge nodeIn="35" nodeOut="109" portIn="Show" portOut="False" enabled="1"/>
+    <Edge nodeIn="53" nodeOut="109" portIn="in" portOut="False" enabled="1"/>
+    <Edge nodeIn="90" nodeOut="109" portIn="Trigger" portOut="False" enabled="1"/>
+    <Edge nodeIn="108" nodeOut="109" portIn="Trigger" portOut="False" enabled="1"/>
+    <Edge nodeIn="110" nodeOut="109" portIn="in1" portOut="True" enabled="1"/>
+    <Edge nodeIn="111" nodeOut="110" portIn="in1" portOut="out" enabled="1"/>
+    <Edge nodeIn="112" nodeOut="111" portIn="in2" portOut="out" enabled="1"/>
+    <Edge nodeIn="33" nodeOut="112" portIn="Compare" portOut="out" enabled="1"/>
+    <Edge nodeIn="51" nodeOut="112" portIn="Compare" portOut="out" enabled="1"/>
+    <Edge nodeIn="92" nodeOut="112" portIn="Trigger" portOut="out" enabled="1"/>
+    <Edge nodeIn="59" nodeOut="113" portIn="Show" portOut="True" enabled="1"/>
+    <Edge nodeIn="61" nodeOut="113" portIn="in" portOut="True" enabled="1"/>
+    <Edge nodeIn="93" nodeOut="113" portIn="Trigger" portOut="True" enabled="1"/>
+    <Edge nodeIn="104" nodeOut="113" portIn="Trigger" portOut="True" enabled="1"/>
+    <Edge nodeIn="68" nodeOut="114" portIn="Show" portOut="True" enabled="1"/>
+    <Edge nodeIn="69" nodeOut="114" portIn="in" portOut="True" enabled="1"/>
+    <Edge nodeIn="99" nodeOut="114" portIn="Trigger" portOut="True" enabled="1"/>
+    <Edge nodeIn="107" nodeOut="114" portIn="Trigger" portOut="True" enabled="1"/>
+    <Edge nodeIn="134" nodeOut="133" portIn="Trigger" portOut="out" enabled="1"/>
+    <Edge nodeIn="137" nodeOut="134" portIn="Get" portOut="EntityId" enabled="1"/>
+    <Edge nodeIn="139" nodeOut="134" portIn="Trigger" portOut="EntityId" enabled="1"/>
+    <Edge nodeIn="145" nodeOut="134" portIn="entityId" portOut="EntityId" enabled="1"/>
+    <Edge nodeIn="138" nodeOut="137" portIn="A" portOut="MaxHealth" enabled="1"/>
+    <Edge nodeIn="139" nodeOut="138" portIn="MaxHealth" portOut="out" enabled="1"/>
+    <Edge nodeIn="196" nodeOut="139" portIn="Value" portOut="InRange" enabled="1"/>
+    <Edge nodeIn="143" nodeOut="140" portIn="in1" portOut="False" enabled="1"/>
+    <Edge nodeIn="142" nodeOut="141" portIn="true" portOut="True" enabled="1"/>
+    <Edge nodeIn="143" nodeOut="141" portIn="in2" portOut="False" enabled="1"/>
+    <Edge nodeIn="133" nodeOut="142" portIn="paused" portOut="out" enabled="1"/>
+    <Edge nodeIn="144" nodeOut="143" portIn="Get" portOut="Out" enabled="1"/>
+    <Edge nodeIn="146" nodeOut="144" portIn="A" portOut="Class" enabled="1"/>
+    <Edge nodeIn="146" nodeOut="144" portIn="Compare" portOut="Class" enabled="1"/>
+    <Edge nodeIn="150" nodeOut="144" portIn="A" portOut="Class" enabled="1"/>
+    <Edge nodeIn="150" nodeOut="144" portIn="Compare" portOut="Class" enabled="1"/>
+    <Edge nodeIn="137" nodeOut="145" portIn="entityId" portOut="Id" enabled="1"/>
+    <Edge nodeIn="139" nodeOut="145" portIn="entityId" portOut="Id" enabled="1"/>
+    <Edge nodeIn="144" nodeOut="145" portIn="entityId" portOut="Id" enabled="1"/>
+    <Edge nodeIn="148" nodeOut="146" portIn="Show" portOut="True" enabled="1"/>
+    <Edge nodeIn="149" nodeOut="146" portIn="in1" portOut="True" enabled="1"/>
+    <Edge nodeIn="147" nodeOut="149" portIn="Trigger" portOut="out" enabled="1"/>
+    <Edge nodeIn="153" nodeOut="149" portIn="Trigger" portOut="out" enabled="1"/>
+    <Edge nodeIn="149" nodeOut="150" portIn="in2" portOut="True" enabled="1"/>
+    <Edge nodeIn="151" nodeOut="150" portIn="Show" portOut="True" enabled="1"/>
+    <Edge nodeIn="152" nodeOut="150" portIn="in" portOut="True" enabled="1"/>
+    <Edge nodeIn="154" nodeOut="152" portIn="Trigger" portOut="out" enabled="1"/>
+    <Edge nodeIn="163" nodeOut="156" portIn="in1" portOut="Out" enabled="1"/>
+    <Edge nodeIn="156" nodeOut="159" portIn="In" portOut="OnMatchStarted" enabled="1"/>
+    <Edge nodeIn="165" nodeOut="163" portIn="Trigger" portOut="out" enabled="1"/>
+    <Edge nodeIn="163" nodeOut="164" portIn="in2" portOut="out" enabled="1"/>
+    <Edge nodeIn="164" nodeOut="165" portIn="in" portOut="True" enabled="1"/>
+    <Edge nodeIn="166" nodeOut="165" portIn="Trigger" portOut="False" enabled="1"/>
+    <Edge nodeIn="171" nodeOut="166" portIn="Show" portOut="False" enabled="1"/>
+    <Edge nodeIn="172" nodeOut="166" portIn="Trigger" portOut="False" enabled="1"/>
+    <Edge nodeIn="173" nodeOut="166" portIn="Trigger" portOut="False" enabled="1"/>
+    <Edge nodeIn="174" nodeOut="166" portIn="in" portOut="False" enabled="1"/>
+    <Edge nodeIn="175" nodeOut="174" portIn="Show" portOut="out" enabled="1"/>
+    <Edge nodeIn="176" nodeOut="174" portIn="in" portOut="out" enabled="1"/>
+    <Edge nodeIn="177" nodeOut="176" portIn="Show" portOut="out" enabled="1"/>
+    <Edge nodeIn="178" nodeOut="176" portIn="in" portOut="out" enabled="1"/>
+    <Edge nodeIn="179" nodeOut="178" portIn="Show" portOut="out" enabled="1"/>
+    <Edge nodeIn="180" nodeOut="178" portIn="in" portOut="out" enabled="1"/>
+    <Edge nodeIn="181" nodeOut="180" portIn="Show" portOut="out" enabled="1"/>
+    <Edge nodeIn="182" nodeOut="180" portIn="in" portOut="out" enabled="1"/>
+    <Edge nodeIn="185" nodeOut="182" portIn="Trigger" portOut="out" enabled="1"/>
+    <Edge nodeIn="87" nodeOut="186" portIn="in3" portOut="out" enabled="1"/>
+    <Edge nodeIn="190" nodeOut="189" portIn="Show" portOut="out" enabled="1"/>
+    <Edge nodeIn="191" nodeOut="189" portIn="in" portOut="out" enabled="1"/>
+    <Edge nodeIn="192" nodeOut="191" portIn="Show" portOut="out" enabled="1"/>
+    <Edge nodeIn="193" nodeOut="191" portIn="in" portOut="out" enabled="1"/>
+    <Edge nodeIn="197" nodeOut="193" portIn="Show" portOut="out" enabled="1"/>
+    <Edge nodeIn="198" nodeOut="193" portIn="in" portOut="out" enabled="1"/>
+    <Edge nodeIn="142" nodeOut="195" portIn="false" portOut="output" enabled="1"/>
+    <Edge nodeIn="140" nodeOut="196" portIn="Trigger" portOut="True" enabled="1"/>
+    <Edge nodeIn="141" nodeOut="196" portIn="Trigger" portOut="True" enabled="1"/>
+    <Edge nodeIn="199" nodeOut="198" portIn="Show" portOut="out" enabled="1"/>
+    <Edge nodeIn="200" nodeOut="198" portIn="in" portOut="out" enabled="1"/>
+    <Edge nodeIn="88" nodeOut="200" portIn="Trigger" portOut="out" enabled="1"/>
+    <Edge nodeIn="98" nodeOut="204" portIn="Trigger" portOut="out" enabled="1"/>
+   </Edges>
+  </FlowGraph>
+ </Object>
+ <Object Type="GeomEntity" Layer="Lobby" Id="{3826BE59-FA88-411B-8AB1-7D1713097F55}" Name="objects/characters/c3/cell/trooper/cell_trooper2_attachment2.cdf" Pos="1052.7722,824.92102,224.33904" ColorRGB="65535" MatLayersMask="0" Geometry="objects/characters/c3/cell/trooper/cell_trooper2_attachment2.cdf" OutdoorOnly="0" CastShadow="0" MotionBlurMultiplier="0" LodRatio="0" ViewDistRatio="0" HiddenInGame="0" RecvWind="0" EntityClass="GeomEntity"/>
+ <Object Type="Entity" Layer="Lobby" Id="{96D8495E-831D-447E-998F-ECB6817E6A63}" Name="Light4" Pos="1059.432,831.34576,227.05453" Rotate="0.13002953,-0.17216252,0.011376125,0.97638261" ColorRGB="65535" MatLayersMask="0" OutdoorOnly="0" ViewDistRatio="100" HiddenInGame="0" EntityClass="Light">
+  <Properties bActive="1" Radius="40">
+   <Color clrDiffuse="1,1,1" fDiffuseMultiplier="1" fHDRDynamic="1" fSpecularMultiplier="1"/>
+   <Options bAffectsThisAreaOnly="1" bCastShadow="1" bFakeLight="0" object_RenderGeometry="" bUsedInRealTime="1"/>
+   <Projector bProjectInAllDirs="0" fProjectorFov="90" fProjectorNearPlane="0" texture_Texture="textures/lights/tunnel_light.dds"/>
+   <Style fCoronaDistIntensityFactor="1" fCoronaDistSizeFactor="1" fCoronaScale="1" nLightStyle="0"/>
+   <Test bFillLight="0" bNegativeLight="0"/>
+  </Properties>
+ </Object>
+ <Object Type="GeomEntity" Layer="Lobby" Id="{A0B13365-CDD2-49E3-B7F0-FC27C9DEE2DC}" Name="objects/characters/c3/cell/flanker/cell_flanker.chr" Pos="1054.6968,824.92102,224.33939" ColorRGB="65535" MatLayersMask="0" Geometry="objects/characters/c3/cell/flanker/cell_flanker.chr" OutdoorOnly="0" CastShadow="0" MotionBlurMultiplier="0" LodRatio="0" ViewDistRatio="0" HiddenInGame="0" RecvWind="0" EntityClass="GeomEntity"/>
+ <Object Type="GeomEntity" Layer="Lobby" Id="{9E1FCA67-4538-480F-B4D6-B0EF52A6DE5F}" Name="objects/characters/human/us/nanosuit/nanosuit_us_multiplayer.cdf" Pos="1048.0436,823.7951,224.33961" ColorRGB="65535" MatLayersMask="0" Geometry="objects/characters/human/us/nanosuit/nanosuit_us_multiplayer.cdf" OutdoorOnly="0" CastShadow="0" MotionBlurMultiplier="0" LodRatio="0" ViewDistRatio="0" HiddenInGame="0" RecvWind="0" EntityClass="GeomEntity"/>
+ <Object Type="Solid" Layer="Lobby" Id="{C4AEF06E-6758-487C-9532-7ECA951B66FB}" Name="Solid5" Pos="1074.0447,831.53137,234.21236" Rotate="0.70710671,0,0,0.70710683" ColorRGB="16776960" Material="sewer" MatLayersMask="0" RndFlags="0" ViewDistRatio="100" LMQuality="1">
+  <Brush>
+   <Face p1="-20.002075,0.4987793,3.3521729" p2="-20.002075,-0.49884033,3.3521729" p3="-20.002075,-0.49884033,-10.001656" MatId="0" TexScale="1,1,0" TexShift="0,0,0" TexRotate="0"/>
+   <Face p1="11.239746,0.4987793,3.3521729" p2="-20.002075,0.4987793,3.3521729" p3="-20.002075,0.4987793,-10.001656" MatId="0" TexScale="1,1,0" TexShift="0,0,0" TexRotate="0"/>
+   <Face p1="20.001953,-0.52069092,3.352211" p2="20.001953,0.47692871,3.352211" p3="20.001953,0.47692871,-10.001617" MatId="0" TexScale="1,1,0" TexShift="0,0,0" TexRotate="0"/>
+   <Face p1="-20.002075,-0.49884033,3.3521729" p2="11.239746,-0.49884033,3.3521729" p3="11.239746,-0.49884033,-10.001656" MatId="0" TexScale="1,1,0" TexShift="0,0,0" TexRotate="0"/>
+   <Face p1="-20.002075,-0.49884033,10.001659" p2="-20.002075,0.4987793,10.001659" p3="11.239746,0.4987793,10.001659" MatId="0" TexScale="1,1,0" TexShift="0,0,0" TexRotate="0"/>
+   <Face p1="11.239746,0.4987793,-10.001656" p2="-20.002075,0.4987793,-10.001656" p3="-20.002075,-0.49884033,-10.001656" MatId="0" TexScale="1,1,0" TexShift="0,0,0" TexRotate="0"/>
+  </Brush>
+ </Object>
+ <Object Type="Entity" Layer="Lobby" Id="{9D67747C-BCA1-4EB3-ADC2-D52FA9A36255}" Name="Light3" Pos="1041.8408,831.35211,227.05453" Rotate="0.97629601,0,0.21643971,0" ColorRGB="65535" MatLayersMask="0" OutdoorOnly="0" ViewDistRatio="100" HiddenInGame="0" EntityClass="Light">
+  <Properties bActive="1" Radius="40">
+   <Color clrDiffuse="1,1,1" fDiffuseMultiplier="1" fHDRDynamic="1" fSpecularMultiplier="1"/>
+   <Options bAffectsThisAreaOnly="1" bCastShadow="1" bFakeLight="0" object_RenderGeometry="" bUsedInRealTime="1"/>
+   <Projector bProjectInAllDirs="0" fProjectorFov="90" fProjectorNearPlane="0" texture_Texture="textures/lights/tunnel_light.dds"/>
+   <Style fCoronaDistIntensityFactor="1" fCoronaDistSizeFactor="1" fCoronaScale="1" nLightStyle="0"/>
+   <Test bFillLight="0" bNegativeLight="0"/>
+  </Properties>
+ </Object>
+ <Object Type="GeomEntity" Layer="Lobby" Id="{8AEC2A82-0B5E-4709-9020-2AD99BD572C5}" Name="objects/characters/human/us/marine/marine_01_helmet_goggles_on.cdf" Pos="1046.3657,823.7951,224.33954" ColorRGB="65535" MatLayersMask="0" Geometry="objects/characters/human/us/marine/marine_01_helmet_goggles_on.cdf" OutdoorOnly="0" CastShadow="0" MotionBlurMultiplier="0" LodRatio="0" ViewDistRatio="0" HiddenInGame="0" RecvWind="0" EntityClass="GeomEntity"/>
+ <Object Type="GeomEntity" Layer="Lobby" Id="{1D20DA85-B633-4D41-B420-468D5E12D0F4}" Name="objects/characters/human/asian/nk_soldier/nk_soldier_elite_camper_light_gren_01.cdf" Pos="1051.9404,823.7951,224.33858" ColorRGB="65535" MatLayersMask="0" Geometry="objects/characters/human/asian/nk_soldier/nk_soldier_elite_camper_light_gren_01.cdf" OutdoorOnly="0" CastShadow="0" MotionBlurMultiplier="0" LodRatio="0" ViewDistRatio="0" HiddenInGame="0" RecvWind="0" EntityClass="GeomEntity"/>
+ <Object Type="Solid" Layer="Lobby" Id="{5DDFB68D-3F5E-4F01-9845-6714D7CA3D7D}" Name="Solid6" Pos="1034.0447,831.53839,234.09122" Rotate="0.70710671,0,0,0.70710683" ColorRGB="16776960" Material="sewer" MatLayersMask="0" RndFlags="0" ViewDistRatio="100" LMQuality="1">
+  <Brush>
+   <Face p1="-20.002075,0.4987793,3.3521729" p2="-20.002075,-0.49884033,3.3521729" p3="-20.002075,-0.49884033,-10.001656" MatId="0" TexScale="1,1,0" TexShift="0,0,0" TexRotate="0"/>
+   <Face p1="11.239746,0.4987793,3.3521729" p2="-20.002075,0.4987793,3.3521729" p3="-20.002075,0.4987793,-10.001656" MatId="0" TexScale="1,1,0" TexShift="0,0,0" TexRotate="0"/>
+   <Face p1="20.001953,-0.52069092,3.352211" p2="20.001953,0.47692871,3.352211" p3="20.001953,0.47692871,-10.001617" MatId="0" TexScale="1,1,0" TexShift="0,0,0" TexRotate="0"/>
+   <Face p1="-20.002075,-0.49884033,3.3521729" p2="11.239746,-0.49884033,3.3521729" p3="11.239746,-0.49884033,-10.001656" MatId="0" TexScale="1,1,0" TexShift="0,0,0" TexRotate="0"/>
+   <Face p1="-20.002075,-0.49884033,10.001659" p2="-20.002075,0.4987793,10.001659" p3="11.239746,0.4987793,10.001659" MatId="0" TexScale="1,1,0" TexShift="0,0,0" TexRotate="0"/>
+   <Face p1="11.239746,0.4987793,-10.001656" p2="-20.002075,0.4987793,-10.001656" p3="-20.002075,-0.49884033,-10.001656" MatId="0" TexScale="1,1,0" TexShift="0,0,0" TexRotate="0"/>
+  </Brush>
+ </Object>
+ <Object Type="GeomEntity" Layer="Lobby" Id="{17DE8494-A073-4781-A97D-42BE81617D81}" Name="GeomEntity6" Pos="1050.8708,831.90796,224.37032" Rotate="0.70710671,0,0,0.70710683" Scale="0.56999999,0.56999999,0.57000005" ColorRGB="65535" Material="sewer" MatLayersMask="0" Geometry="Objects\Hexagons\small_hex.cgf" OutdoorOnly="0" CastShadow="1" MotionBlurMultiplier="1" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0" EntityClass="GeomEntity"/>
+ <Object Type="GeomEntity" Layer="Lobby" Id="{5C2C8699-8971-4B5F-8D2F-1941AC5E7374}" Name="objects/characters/human/asian/nk_soldier/nk_soldier_jungle_camper_light_01.cdf" Pos="1055.3544,823.7951,224.3403" ColorRGB="65535" MatLayersMask="0" Geometry="objects/characters/human/asian/nk_soldier/nk_soldier_jungle_camper_light_01.cdf" OutdoorOnly="0" CastShadow="0" MotionBlurMultiplier="0" LodRatio="0" ViewDistRatio="0" HiddenInGame="0" RecvWind="0" EntityClass="GeomEntity"/>
+ <Object Type="GeomEntity" Layer="Lobby" Id="{81FCE49E-18BE-4889-8B6C-C3729BC0A09E}" Name="objects/characters/c3/cell/trooper/cell_trooper2_attachment1_leader.cdf" Pos="1056.8018,824.92102,224.33824" ColorRGB="65535" MatLayersMask="0" Geometry="objects/characters/c3/cell/trooper/cell_trooper2_attachment1_leader.cdf" OutdoorOnly="0" CastShadow="0" MotionBlurMultiplier="0" LodRatio="0" ViewDistRatio="0" HiddenInGame="0" RecvWind="0" EntityClass="GeomEntity"/>
+ <Object Type="Portal" Layer="Lobby" Id="{88FFF4A2-0113-4EEA-AA26-29A9B1A21BA7}" Name="Portal1" Pos="1079.2803,806.96185,223.65657" ColorRGB="3996260" Height="30" DisplayFilled="0" AmbientColor="0.0901961,0.0901961,0.0901961" AffectedBySun="0" IgnoreSkyColor="0" ViewDistRatio="100" SkyOnly="0" MergeBrushes="0" OceanIsVisible="0" UseDeepness="1" DoubleSide="1" EntityClass="AreaShape">
+  <Points>
+   <Point Pos="0,0,0"/>
+   <Point Pos="0.54345703,50.401306,-0.92396164"/>
+   <Point Pos="-49.925781,50.4328,-0.16328621"/>
+   <Point Pos="-50.236938,1.758728,-0.5028038"/>
+  </Points>
+ </Object>
+ <Object Type="GeomEntity" Layer="Lobby" Id="{E9FCA6AB-7B3F-4D91-A2C4-2DF0957724F7}" Name="objects/characters/human/asian/nk_soldier/nk_soldier_elite_cover_light_gren_05.cdf" Pos="1053.6681,823.7951,224.33844" ColorRGB="65535" MatLayersMask="0" Geometry="objects/characters/human/asian/nk_soldier/nk_soldier_elite_cover_light_gren_05.cdf" OutdoorOnly="0" CastShadow="0" MotionBlurMultiplier="0" LodRatio="0" ViewDistRatio="0" HiddenInGame="0" RecvWind="0" EntityClass="GeomEntity"/>
+ <Object Type="GeomEntity" Layer="Lobby" Id="{E41919AE-B995-4F55-B4E5-491B639CF5C0}" Name="objects/characters/human/asian/nanosuit/nanosuit_asian_multiplayer.cdf" Pos="1058.834,823.7951,224.33893" ColorRGB="65535" MatLayersMask="0" Geometry="objects/characters/human/asian/nanosuit/nanosuit_asian_multiplayer.cdf" OutdoorOnly="0" CastShadow="0" MotionBlurMultiplier="0" LodRatio="0" ViewDistRatio="0" HiddenInGame="0" RecvWind="0" EntityClass="GeomEntity"/>
+ <Object Type="Solid" Layer="Lobby" Id="{30B6A1C0-88F1-4686-8E99-A73827B84C64}" Name="Solid4" Pos="1053.9868,831.53986,223.86578" ColorRGB="16776960" Material="sewer" MatLayersMask="0" RndFlags="0" ViewDistRatio="100" LMQuality="1">
+  <Brush>
+   <Face p1="-20.03064,19.718323,0.47460365" p2="-20.03064,-19.718262,0.47460365" p3="-20.03064,-19.718262,-0.47460365" MatId="0" TexScale="1,1,0" TexShift="0,0,0" TexRotate="0"/>
+   <Face p1="20.030518,19.718323,0.47460365" p2="-20.03064,19.718323,0.47460365" p3="-20.03064,19.718323,-0.47460365" MatId="0" TexScale="1,1,0" TexShift="0,0,0" TexRotate="0"/>
+   <Face p1="20.030518,-19.718262,0.47460365" p2="20.030518,19.718323,0.47460365" p3="20.030518,19.718323,-0.47460365" MatId="0" TexScale="1,1,0" TexShift="0,0,0" TexRotate="0"/>
+   <Face p1="-20.03064,-19.718262,0.47460365" p2="20.030518,-19.718262,0.47460365" p3="20.030518,-19.718262,-0.47460365" MatId="0" TexScale="1,1,0" TexShift="0,0,0" TexRotate="0"/>
+   <Face p1="-20.03064,-19.718262,0.47460365" p2="-20.03064,19.718323,0.47460365" p3="20.030518,19.718323,0.47460365" MatId="0" TexScale="1,1,0" TexShift="0,0,0" TexRotate="0"/>
+   <Face p1="20.030518,19.718323,-0.47460365" p2="-20.03064,19.718323,-0.47460365" p3="-20.03064,-19.718262,-0.47460365" MatId="0" TexScale="1,1,0" TexShift="0,0,0" TexRotate="0"/>
+  </Brush>
+ </Object>
+ <Object Type="GeomEntity" Layer="Lobby" Id="{9D8230CD-7E0E-44E6-BA8F-4A102C417079}" Name="objects/characters/c3/cell/cw2_nanoops/nanoops.chr" Pos="1048.0929,822.56097,224.33954" ColorRGB="65535" MatLayersMask="0" Geometry="objects/characters/c3/cell/cw2_nanoops/nanoops.chr" OutdoorOnly="0" CastShadow="0" MotionBlurMultiplier="0" LodRatio="0" ViewDistRatio="0" HiddenInGame="0" RecvWind="0" EntityClass="GeomEntity"/>
+ <Object Type="Solid" Layer="Lobby" Id="{DCD586CE-3F0A-42D2-BBE2-235723D03854}" Name="Solid8" Pos="1054.0447,851.53839,234.09119" ColorRGB="16776960" Material="sewer" MatLayersMask="0" RndFlags="0" ViewDistRatio="100" LMQuality="1">
+  <Brush>
+   <Face p1="-20.002075,0.4987793,3.3521729" p2="-20.002075,-0.49884033,3.3521729" p3="-20.002075,-0.49884033,-10.001656" MatId="0" TexScale="1,1,0" TexShift="0,0,0" TexRotate="0"/>
+   <Face p1="11.239746,0.4987793,3.3521729" p2="-20.002075,0.4987793,3.3521729" p3="-20.002075,0.4987793,-10.001656" MatId="0" TexScale="1,1,0" TexShift="0,0,0" TexRotate="0"/>
+   <Face p1="20.001953,-0.52069092,3.352211" p2="20.001953,0.47692871,3.352211" p3="20.001953,0.47692871,-10.001617" MatId="0" TexScale="1,1,0" TexShift="0,0,0" TexRotate="0"/>
+   <Face p1="-20.002075,-0.49884033,3.3521729" p2="11.239746,-0.49884033,3.3521729" p3="11.239746,-0.49884033,-10.001656" MatId="0" TexScale="1,1,0" TexShift="0,0,0" TexRotate="0"/>
+   <Face p1="-20.002075,-0.49884033,10.001659" p2="-20.002075,0.4987793,10.001659" p3="11.239746,0.4987793,10.001659" MatId="0" TexScale="1,1,0" TexShift="0,0,0" TexRotate="0"/>
+   <Face p1="11.239746,0.4987793,-10.001656" p2="-20.002075,0.4987793,-10.001656" p3="-20.002075,-0.49884033,-10.001656" MatId="0" TexScale="1,1,0" TexShift="0,0,0" TexRotate="0"/>
+  </Brush>
+ </Object>
+ <Object Type="GeomEntity" Layer="Lobby" Id="{E2710ED5-A798-4C82-8F1E-525BF243E7EB}" Name="objects/characters/human/asian/nk_soldier/nk_soldier_camp_cover_light_01.cdf" Pos="1050.1731,823.7951,224.33974" ColorRGB="65535" MatLayersMask="0" Geometry="objects/characters/human/asian/nk_soldier/nk_soldier_camp_cover_light_01.cdf" OutdoorOnly="0" CastShadow="0" MotionBlurMultiplier="0" LodRatio="0" ViewDistRatio="0" HiddenInGame="0" RecvWind="0" EntityClass="GeomEntity"/>
+ <Object Type="Solid" Layer="Lobby" Id="{C665F9DA-3DA1-4D02-A61F-799147C2AE29}" Name="Solid7" Pos="1054.0518,831.45782,243.40807" ColorRGB="16776960" Material="sewer" MatLayersMask="0" RndFlags="0" ViewDistRatio="100" LMQuality="1">
+  <Brush>
+   <Face p1="-20.03064,19.718323,0.47460365" p2="-20.03064,-19.718262,0.47460365" p3="-20.03064,-19.718262,-0.47460365" MatId="0" TexScale="1,1,0" TexShift="0,0,0" TexRotate="0"/>
+   <Face p1="20.030518,19.718323,0.47460365" p2="-20.03064,19.718323,0.47460365" p3="-20.03064,19.718323,-0.47460365" MatId="0" TexScale="1,1,0" TexShift="0,0,0" TexRotate="0"/>
+   <Face p1="20.030518,-19.718262,0.47460365" p2="20.030518,19.718323,0.47460365" p3="20.030518,19.718323,-0.47460365" MatId="0" TexScale="1,1,0" TexShift="0,0,0" TexRotate="0"/>
+   <Face p1="-20.03064,-19.718262,0.47460365" p2="20.030518,-19.718262,0.47460365" p3="20.030518,-19.718262,-0.47460365" MatId="0" TexScale="1,1,0" TexShift="0,0,0" TexRotate="0"/>
+   <Face p1="-20.03064,-19.718262,0.47460365" p2="-20.03064,19.718323,0.47460365" p3="20.030518,19.718323,0.47460365" MatId="0" TexScale="1,1,0" TexShift="0,0,0" TexRotate="0"/>
+   <Face p1="20.030518,19.718323,-0.47460365" p2="-20.03064,19.718323,-0.47460365" p3="-20.03064,-19.718262,-0.47460365" MatId="0" TexScale="1,1,0" TexShift="0,0,0" TexRotate="0"/>
+  </Brush>
+ </Object>
+ <Object Type="Entity" Layer="Lobby" Id="{CF9305EC-331C-44DB-BE6E-E0D84DF12E85}" Name="FogVolume" Pos="1052.3916,831.54767,231.24004" ColorRGB="65535" MatLayersMask="0" OutdoorOnly="0" CastShadow="1" MotionBlurMultiplier="1" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0" EntityClass="FogVolume">
+  <Properties bActive="1" color_Color="0,0,0" FallOffDirLati="90" FallOffDirLong="0" FallOffScale="0" FallOffShift="0" GlobalDensity="0.2" fHDRDynamic="0" SoftEdges="4" bUseGlobalFogColor="0" VolumeType="1">
+   <Size x="40" y="40" z="30"/>
+  </Properties>
+ </Object>
+ <Object Type="Solid" Layer="Lobby" Id="{0F9024F0-2981-4C93-B175-30154CF6BB8F}" Name="Solid3" Pos="1054.0447,811.53839,234.09122" ColorRGB="16776960" Material="sewer" MatLayersMask="0" RndFlags="0" ViewDistRatio="100" LMQuality="1">
+  <Brush>
+   <Face p1="-20.002075,0.4987793,3.3521729" p2="-20.002075,-0.49884033,3.3521729" p3="-20.002075,-0.49884033,-10.001656" MatId="0" TexScale="1,1,0" TexShift="0,0,0" TexRotate="0"/>
+   <Face p1="11.239746,0.4987793,3.3521729" p2="-20.002075,0.4987793,3.3521729" p3="-20.002075,0.4987793,-10.001656" MatId="0" TexScale="1,1,0" TexShift="0,0,0" TexRotate="0"/>
+   <Face p1="20.001953,-0.52069092,3.352211" p2="20.001953,0.47692871,3.352211" p3="20.001953,0.47692871,-10.001617" MatId="0" TexScale="1,1,0" TexShift="0,0,0" TexRotate="0"/>
+   <Face p1="-20.002075,-0.49884033,3.3521729" p2="11.239746,-0.49884033,3.3521729" p3="11.239746,-0.49884033,-10.001656" MatId="0" TexScale="1,1,0" TexShift="0,0,0" TexRotate="0"/>
+   <Face p1="-20.002075,-0.49884033,10.001659" p2="-20.002075,0.4987793,10.001659" p3="11.239746,0.4987793,10.001659" MatId="0" TexScale="1,1,0" TexShift="0,0,0" TexRotate="0"/>
+   <Face p1="11.239746,0.4987793,-10.001656" p2="-20.002075,0.4987793,-10.001656" p3="-20.002075,-0.49884033,-10.001656" MatId="0" TexScale="1,1,0" TexShift="0,0,0" TexRotate="0"/>
+  </Brush>
+ </Object>
+ <Object Type="GeomEntity" Layer="Lobby" Id="{CDC6EBF0-42BA-4220-BE0E-A0DBEFD01D74}" Name="objects/characters/human/asian/nk_soldier/nk_soldier_elite_camper_heavy_gren_01.cdf" Pos="1057.0519,823.7951,224.33963" ColorRGB="65535" MatLayersMask="0" Geometry="objects/characters/human/asian/nk_soldier/nk_soldier_elite_camper_heavy_gren_01.cdf" OutdoorOnly="0" CastShadow="0" MotionBlurMultiplier="0" LodRatio="0" ViewDistRatio="0" HiddenInGame="0" RecvWind="0" EntityClass="GeomEntity"/>
+ <Object Type="Entity" Layer="Lobby" Id="{AE08C5F5-A8D7-496B-A8BF-27431F688B3F}" Name="Lobby_animCharacter" Pos="1050.9844,831.97198,224.67142" Rotate="-8.1460342e-008,0,0,1" ColorRGB="65535" MatLayersMask="0" OutdoorOnly="0" CastShadow="1" MotionBlurMultiplier="1" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0" EntityClass="AnimObject">
+  <Properties ActivatePhysicsDist="50" ActivatePhysicsThreshold="0" bAutoGenAIHidePts="0" bCanShatter="1" bFreezable="1" object_Model="objects/characters/human/us/nanosuit/nanosuit_us.cdf" object_ModelFrozen="" bNoFriendlyFire="0" bPickable="0" soclasses_SmartObjectClass="" bUsable="0" UseText="">
+   <Animation bAlwaysUpdate="0" Animation="Default" bLoop="0" bPhysicalizeAfterAnimation="0" playerAnimationState="" bPlaying="0" Speed="1"/>
+   <Physics bArticulated="0" Density="-1" Mass="-1" bPhysicalize="0" bPushableByPlayers="0" bRigidBody="0"/>
+  </Properties>
+ </Object>
+ <Object Type="GeomEntity" Layer="Lobby" Id="{746265F8-9888-4AFF-A0D1-1B247AFA70D7}" Name="objects/characters/c3/cell/heavy/cell_heavy_attachments_1.cdf" Pos="1050.5698,824.92102,224.33932" ColorRGB="65535" MatLayersMask="0" Geometry="objects/characters/c3/cell/heavy/cell_heavy_attachments_1.cdf" OutdoorOnly="0" CastShadow="0" MotionBlurMultiplier="0" LodRatio="0" ViewDistRatio="0" HiddenInGame="0" RecvWind="0" EntityClass="GeomEntity"/>
+ <Object Type="GeomEntity" Layer="Lobby" Id="{C84445FF-5863-4CFB-9167-E8E9CE5C8063}" Name="objects/characters/c3/cell/trooper_player/cell_trooper_f3p.cdf" Pos="1058.834,824.92102,224.33969" ColorRGB="65535" MatLayersMask="0" Geometry="objects/characters/c3/cell/trooper_player/cell_trooper_f3p.cdf" OutdoorOnly="0" CastShadow="0" MotionBlurMultiplier="0" LodRatio="0" ViewDistRatio="0" HiddenInGame="0" RecvWind="0" EntityClass="GeomEntity"/>
+</Objects>
