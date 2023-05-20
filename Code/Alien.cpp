@@ -3029,6 +3029,7 @@ void CAlien::SerializeXML(XmlNodeRef& node, bool bLoading)
 
 void CAlien::SetAuthority(bool auth)
 {
+	
 }
 
 IActorMovementController* CAlien::CreateMovementController()

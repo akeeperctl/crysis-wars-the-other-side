@@ -43,11 +43,11 @@ void CBullet::HandleEvent(const SGameObjectEvent& event)
 		if (m_destroying)
 			return;
 
-		EventPhysCollision* pCollision = reinterpret_cast<EventPhysCollision*>(event.ptr);
+		auto* pCollision = static_cast<EventPhysCollision*>(event.ptr);
 		if (!pCollision)
 			return;
 
-		IEntity* pTarget = pCollision->iForeignData[1] == PHYS_FOREIGN_ID_ENTITY ? (IEntity*)pCollision->pForeignData[1] : 0;
+		IEntity* pTarget = pCollision->iForeignData[1] == PHYS_FOREIGN_ID_ENTITY ? static_cast<IEntity*>(pCollision->pForeignData[1]) : 0;
 
 		//Only process hits that have a target
 		if (pTarget)
@@ -150,7 +150,7 @@ void CBullet::HandleEvent(const SGameObjectEvent& event)
 
 			//Under water trail
 			Vec3 pos = pCollision->pt;
-			if ((pCollision->idmat[1] == CBullet::m_waterMaterialId) &&
+			if ((pCollision->idmat[1] == m_waterMaterialId) &&
 				(pCollision->pEntity[1] != gEnv->pPhysicalWorld->AddGlobalArea() || !gEnv->p3DEngine->GetVisAreaFromPos(pos)))
 			{
 				//Reduce drastically bullet velocity (to be able to see the trail effect)

@@ -4024,6 +4024,7 @@ void CPlayer::SerializeXML(XmlNodeRef& node, bool bLoading)
 
 void CPlayer::SetAuthority(bool auth)
 {
+	
 }
 
 //------------------------------------------------------------------------

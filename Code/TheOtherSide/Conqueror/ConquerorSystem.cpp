@@ -9,7 +9,6 @@
 #include "Actor.h"
 
 #include "Menus/FlashMenuObject.h"
-#include "GameActions.h"
 
 #include "HUD/HUD.h"
 #include "HUD/HUDScore.h"
@@ -25,6 +24,7 @@
 #include "TheOtherSide/Control/ControlSystem.h"
 #include "TheOtherSide/Conqueror/SpawnPoint.h"
 #include "TheOtherSide/Conqueror/ConquerorSystem.h"
+
 #include "TheOtherSide/Conqueror/ConquerorChannel.h"
 #include "TheOtherSide/Conqueror/ConquerorSpeciesClass.h"
 #include "TheOtherSide/Squad/SquadSystem.h"
@@ -117,7 +117,7 @@ CConquerorSystem::CConquerorSystem()
 	m_pXMLAICountInfo = new CConquerAICountInfo();
 
 	for (int i = eST_FirstPlayableSpecies; i <= eST_LastPlayableSpecies; ++i)
-		m_speciesLeadersCountMap[ESpeciesType(i)] = 0;
+		m_speciesLeadersCountMap[static_cast<ESpeciesType>(i)] = 0;
 
 	//for (int i = eST_FirstPlayableSpecies; i <= eST_LastPlayableSpecies; ++i)
 	//	m_speciesFlagIndexMap[ESpeciesType(i)] = -1;
@@ -731,7 +731,7 @@ bool CConquerorSystem::IsExistStrategicArea(CStrategicArea* area)
 	return false;
 }
 
-void CConquerorSystem::GetStrategicAreas(std::vector<CStrategicArea*>& areas, ESpeciesType targetSpecies, EAreaGameStatusFlag gameStatus, ESpeciesType owner, EAreaBusyFlags busyFlags, EAreaFlag areaFlag)
+void CConquerorSystem::GetStrategicAreas(std::vector<CStrategicArea*>& areas, ESpeciesType targetSpecies, EAreaGameStatusFlag gameStatus, ESpeciesType owner, EAreaBusyFlags busyFlags, EAreaFlag areaFlag) const
 {
 	for (auto pArea : m_strategicAreas)
 	{
@@ -757,8 +757,7 @@ void CConquerorSystem::GetStrategicAreas(std::vector<CStrategicArea*>& areas, ES
 				continue;
 		}
 
-		const auto& flags = pArea->GetFlags();
-		if (!stl::find(flags, areaFlag))
+		if (!pArea->IsHaveFlag(areaFlag))
 			continue;
 
 		const auto pCommander = GetSpeciesCommander(owner);
@@ -767,7 +766,7 @@ void CConquerorSystem::GetStrategicAreas(std::vector<CStrategicArea*>& areas, ES
 			if (busyFlags == eABF_AreaIsSquadTarget)
 			{
 				const auto pSquads = pCommander->GetAssignedSquadsForArea(pArea);
-				if (!pSquads || (pSquads && pSquads->size() == 0))
+				if (!pSquads || (pSquads && pSquads->empty()))
 					continue;
 			}
 			else if (busyFlags == eABF_AreaIsHaveEnemyGuards)
@@ -778,7 +777,7 @@ void CConquerorSystem::GetStrategicAreas(std::vector<CStrategicArea*>& areas, ES
 			else if (busyFlags == eABF_AreaIsNOTSquadTarget)
 			{
 				const auto pSquads = pCommander->GetAssignedSquadsForArea(pArea);
-				if (!pSquads || (pSquads && pSquads->size() == 0))
+				if (!pSquads || (pSquads && pSquads->empty()))
 					continue;
 			}
 			else if (busyFlags == eABF_AreaIsNOTHaveEnemyGuards)
@@ -792,8 +791,10 @@ void CConquerorSystem::GetStrategicAreas(std::vector<CStrategicArea*>& areas, ES
 	}
 }
 
-CStrategicArea* CConquerorSystem::GetNearestStrategicArea(const Vec3& pos, const string& areaStatus, EAreaGameStatusFlag gameStatus, ESpeciesType desiredOwner, EAreaBusyFlags busyFlags, EAreaFlag areaFlag)
+CStrategicArea* CConquerorSystem::GetNearestStrategicArea(const Vec3& pos, const string& areaStatus, EAreaGameStatusFlag gameStatus, ESpeciesType desiredOwner, EAreaBusyFlags busyFlags, EAreaFlag areaFlag) const
 {
+	//O(n)
+	
 	std::vector<CStrategicArea*> allAreasVector;
 	for (auto pArea : m_strategicAreas)
 	{
@@ -826,11 +827,8 @@ CStrategicArea* CConquerorSystem::GetNearestStrategicArea(const Vec3& pos, const
 			if (!pArea->IsCapturable())
 				continue;
 		}
-
-
-		const auto& flags = pArea->GetFlags();
-
-		if (!stl::find(flags, areaFlag))
+		
+		if (!pArea->IsHaveFlag(areaFlag))
 			continue;
 
 		const auto pCommander = GetSpeciesCommander(desiredOwner);
@@ -839,7 +837,7 @@ CStrategicArea* CConquerorSystem::GetNearestStrategicArea(const Vec3& pos, const
 			if (busyFlags == eABF_AreaIsSquadTarget)
 			{
 				const auto pSquads = pCommander->GetAssignedSquadsForArea(pArea);
-				if (!pSquads || (pSquads && pSquads->size() == 0))
+				if (!pSquads || (pSquads && pSquads->empty()))
 					continue;
 			}
 			else if (busyFlags == eABF_AreaIsHaveEnemyGuards)
@@ -850,7 +848,7 @@ CStrategicArea* CConquerorSystem::GetNearestStrategicArea(const Vec3& pos, const
 			else if (busyFlags == eABF_AreaIsNOTSquadTarget)
 			{
 				const auto pSquads = pCommander->GetAssignedSquadsForArea(pArea);
-				if (!pSquads || (pSquads && pSquads->size() == 0))
+				if (!pSquads || (pSquads && pSquads->empty()))
 					continue;
 			}
 			else if (busyFlags == eABF_AreaIsNOTHaveEnemyGuards)
@@ -864,7 +862,7 @@ CStrategicArea* CConquerorSystem::GetNearestStrategicArea(const Vec3& pos, const
 		allAreasVector.push_back(pArea);
 	}
 
-	if (allAreasVector.size() == 0)
+	if (allAreasVector.empty())
 		return nullptr;
 
 	const auto pFirstArea = allAreasVector[0];
@@ -885,7 +883,7 @@ CStrategicArea* CConquerorSystem::GetNearestStrategicArea(const Vec3& pos, const
 
 	for (const auto pArea : allAreasVector)
 	{
-		auto& areaPos = pArea->GetEntity()->GetWorldPos();
+		const auto areaPos = pArea->GetEntity()->GetWorldPos();
 		const float distance = (areaPos - pos).GetLength();
 
 		if (distance < minDistance)
@@ -901,7 +899,7 @@ CStrategicArea* CConquerorSystem::GetNearestStrategicArea(const Vec3& pos, const
 	return pNearestArea;
 }
 
-CStrategicArea* CConquerorSystem::GetNearestStrategicArea(const Vec3& pos, ESpeciesType targetSpecies, EAreaGameStatusFlag gameStatus, ESpeciesType desiredOwner, EAreaBusyFlags busyFlags, EAreaFlag areaFlag)
+CStrategicArea* CConquerorSystem::GetNearestStrategicArea(const Vec3& pos, ESpeciesType targetSpecies, EAreaGameStatusFlag gameStatus, ESpeciesType desiredOwner, EAreaBusyFlags busyFlags, EAreaFlag areaFlag) const
 {
 	std::vector<CStrategicArea*> allAreasVector;
 	for (auto pArea : m_strategicAreas)
@@ -928,10 +926,7 @@ CStrategicArea* CConquerorSystem::GetNearestStrategicArea(const Vec3& pos, ESpec
 				continue;
 		}
 
-
-		const auto& flags = pArea->GetFlags();
-
-		if (!stl::find(flags, areaFlag))
+		if (!pArea->IsHaveFlag(areaFlag))
 			continue;
 
 		const auto pCommander = GetSpeciesCommander(desiredOwner);
@@ -940,7 +935,7 @@ CStrategicArea* CConquerorSystem::GetNearestStrategicArea(const Vec3& pos, ESpec
 			if (busyFlags == eABF_AreaIsSquadTarget)
 			{
 				const auto pSquads = pCommander->GetAssignedSquadsForArea(pArea);
-				if (!pSquads || (pSquads && pSquads->size() == 0))
+				if (!pSquads || (pSquads && pSquads->empty()))
 					continue;
 			}
 			else if (busyFlags == eABF_AreaIsHaveEnemyGuards)
@@ -951,7 +946,7 @@ CStrategicArea* CConquerorSystem::GetNearestStrategicArea(const Vec3& pos, ESpec
 			else if (busyFlags == eABF_AreaIsNOTSquadTarget)
 			{
 				const auto pSquads = pCommander->GetAssignedSquadsForArea(pArea);
-				if (!pSquads || (pSquads && pSquads->size() == 0))
+				if (!pSquads || (pSquads && pSquads->empty()))
 					continue;
 			}
 			else if (busyFlags == eABF_AreaIsNOTHaveEnemyGuards)
@@ -965,7 +960,7 @@ CStrategicArea* CConquerorSystem::GetNearestStrategicArea(const Vec3& pos, ESpec
 		allAreasVector.push_back(pArea);
 	}
 
-	if (allAreasVector.size() == 0)
+	if (allAreasVector.empty())
 		return nullptr;
 
 	const auto pFirstArea = allAreasVector[0];
@@ -986,7 +981,7 @@ CStrategicArea* CConquerorSystem::GetNearestStrategicArea(const Vec3& pos, ESpec
 
 	for (const auto pArea : allAreasVector)
 	{
-		auto& areaPos = pArea->GetEntity()->GetWorldPos();
+		const auto areaPos = pArea->GetEntity()->GetWorldPos();
 		const float distance = (areaPos - pos).GetLength();
 
 		if (distance < minDistance)
@@ -1002,7 +997,7 @@ CStrategicArea* CConquerorSystem::GetNearestStrategicArea(const Vec3& pos, ESpec
 	return pNearestArea;
 }
 
-CStrategicArea* CConquerorSystem::GetBaseStrategicArea(ESpeciesType species)
+CStrategicArea* CConquerorSystem::GetBaseStrategicArea(ESpeciesType species) const
 {
 	for (const auto pArea : m_strategicAreas)
 	{
@@ -1016,7 +1011,7 @@ CStrategicArea* CConquerorSystem::GetBaseStrategicArea(ESpeciesType species)
 	return nullptr;
 }
 
-CStrategicArea* CConquerorSystem::GetStrategicArea(EntityId id, std::vector<EntityId>* excludeAreaIds, bool getOnlyEnabled /*= true*/)
+CStrategicArea* CConquerorSystem::GetStrategicArea(EntityId id, std::vector<EntityId>* excludeAreaIds, bool getOnlyEnabled /*= true*/) const
 {
 	for (const auto pArea : m_strategicAreas)
 	{
@@ -1031,7 +1026,7 @@ CStrategicArea* CConquerorSystem::GetStrategicArea(EntityId id, std::vector<Enti
 	return nullptr;
 }
 
-CStrategicArea* CConquerorSystem::GetStrategicArea(ESpeciesType species, std::vector<EntityId>* excludeAreaIds, bool getOnlyEnabled /*= true*/)
+CStrategicArea* CConquerorSystem::GetStrategicArea(ESpeciesType species, std::vector<EntityId>* excludeAreaIds, bool getOnlyEnabled /*= true*/) const
 {
 	for (const auto pArea : m_strategicAreas)
 	{
@@ -1092,7 +1087,7 @@ int CConquerorSystem::GetHostileAreasCount(ESpeciesType myspecies, const std::ve
 {
 	//int count = 0;
 	std::vector<EntityId> countedIds;
-	const bool needCompareFlags = flags.size() > 0;
+	const bool needCompareFlags = !flags.empty();
 
 	for (const auto pArea : m_strategicAreas)
 	{
@@ -1230,7 +1225,7 @@ int CConquerorSystem::GetStrategicAreaCount(ESpeciesType species, const std::vec
 {
 	//int count = 0;
 	std::vector<EntityId> countedIds;
-	const bool needCompareFlags = flags.size() > 0;
+	const bool needCompareFlags = !flags.empty();
 
 	for (const auto pArea : m_strategicAreas)
 	{
@@ -1287,7 +1282,7 @@ int CConquerorSystem::GetStrategicAreaCount(const std::vector<EAreaFlag>& flags,
 {
 	int count = 0;
 	std::vector<EntityId> countedIds;
-	const bool needCompareFlags = flags.size() > 0;
+	const bool needCompareFlags = !flags.empty();
 
 	for (const auto pArea : m_strategicAreas)
 	{
@@ -1507,14 +1502,14 @@ CConquerorChannel* CConquerorSystem::CreateConquerorChannel(IEntity* pEntity, CS
 	return pNewChannel;
 }
 
-void CConquerorSystem::RemoveConquerorChannel(IEntity* pEntity)
+void CConquerorSystem::RemoveConquerorChannel(const IEntity* pEntity)
 {
 	if (!pEntity)
 		return;
 
 	auto it = m_conquerorChannels.begin();
 	const auto end = m_conquerorChannels.end();
-	for (; it != end; it++)
+	for (; it != end; ++it)
 	{
 		auto* pChannel = *it;
 		if (pChannel && pChannel->GetEntity() == pEntity)
@@ -1538,7 +1533,7 @@ void CConquerorSystem::RemoveAllChannels()
 {
 	auto it = m_conquerorChannels.begin();
 	const auto end = m_conquerorChannels.end();
-	for (; it != end; it++)
+	for (; it != end; ++it)
 	{
 		const auto iter = *it;
 		const auto pEntity = iter->GetEntity();
@@ -1555,7 +1550,7 @@ void CConquerorSystem::RemoveAllChannels()
 			gEnv->pEntitySystem->RemoveEntity(pEntity->GetId(), false);
 		}
 
-		SAFE_DELETE(*it);
+		SAFE_DELETE(*it)
 	}	
 
 	m_conquerorChannels.clear();
@@ -1579,7 +1574,7 @@ CConquerorChannel* CConquerorSystem::GetClientConquerorChannel()
 	return GetConquerorChannel(EntityID);
 }
 
-CConquerorChannel* CConquerorSystem::GetConquerorChannel(IEntity* pEntity)
+CConquerorChannel* CConquerorSystem::GetConquerorChannel(const IEntity* pEntity) const
 {
 	if (!pEntity)
 		return nullptr;
@@ -1593,12 +1588,12 @@ CConquerorChannel* CConquerorSystem::GetConquerorChannel(IEntity* pEntity)
 	return nullptr;
 }
 
-CConquerorChannel* CConquerorSystem::GetConquerorChannel(int idx)
+CConquerorChannel* CConquerorSystem::GetConquerorChannel(const int idx) const
 {
 	return m_conquerorChannels.at(idx);
 }
 
-CConquerorChannel* CConquerorSystem::GetConquerorChannel(EntityId entityId)
+CConquerorChannel* CConquerorSystem::GetConquerorChannel(EntityId entityId) const
 {
 	if (entityId == 0)
 		return nullptr;
@@ -1612,7 +1607,7 @@ CConquerorChannel* CConquerorSystem::GetConquerorChannel(EntityId entityId)
 	return nullptr;
 }
 
-CConquerorChannel* CConquerorSystem::GetConquerorChannelById(int id)
+CConquerorChannel* CConquerorSystem::GetConquerorChannelById(int id) const
 {
 	for (const auto pChannel : m_conquerorChannels)
 	{
@@ -1625,14 +1620,16 @@ CConquerorChannel* CConquerorSystem::GetConquerorChannelById(int id)
 
 ESpeciesType CConquerorSystem::GetSpeciesLobby()
 {
-	return (ESpeciesType)m_lobbyConfirmedSpeciesIndex;
+	return static_cast<ESpeciesType>(m_lobbyConfirmedSpeciesIndex);
 }
 
 void CConquerorSystem::InitAllowedSpecies()
 {
+	//TODO: remove O(n^2) #1
+	
 	for (int i = eST_FirstPlayableSpecies; i <= eST_LastPlayableSpecies; i++)
 	{
-		auto species = ESpeciesType(i);
+		auto species = static_cast<ESpeciesType>(i);
 
 		const auto pArea = GetStrategicArea(species, 0, true);
 		if (pArea && pArea->IsEnabled())
@@ -1667,6 +1664,8 @@ void CConquerorSystem::InitPlayerClasses(bool forceReload)
 		return;
 	}
 
+	//TODO: remove O(n^2) #2
+	
 	for (int i = 0; i < factionsNode->getChildCount(); i++)
 	{
 		auto factionNode = factionsNode->getChild(i);
@@ -1685,7 +1684,7 @@ void CConquerorSystem::InitPlayerClasses(bool forceReload)
 		if (!factionEnabled)
 			continue;
 
-		auto speciesType = ESpeciesType(speciesIndex);
+		auto speciesType = static_cast<ESpeciesType>(speciesIndex);
 		//~faction attributes
 
 		m_speciesCharNameMap[speciesType] = factionName;
@@ -1725,205 +1724,198 @@ void CConquerorSystem::InitPlayerClasses(bool forceReload)
 			classRootNode->getAttr("isAir", isAir);
 			classRootNode->getAttr("enabled", classEnabled);
 			//~class attributes
-
-			//class childs
-			//for (int x = 0; x < classRootNode->getChildCount(); ++x)
-			//{
-				auto classModelNode = classRootNode->findChild("Model");
-				if (classModelNode)
-				{
-					for (int z = 0; z < classModelNode->getChildCount(); ++z)
-					{
-						auto modelParam = classModelNode->getChild(z);
-						if (modelParam)
-						{
-							const string paramName = modelParam->getAttr("name");
-							const string paramValue = modelParam->getAttr("value");
-
-							if (paramName == "lobbyAnim")
-							{
-								conquerorClass->m_model.m_lobbyAnim = paramValue;
-							}
-							else if (paramName == "char")
-							{
-								conquerorClass->m_model.m_character = paramValue;
-							}
-							else if (paramName == "fp3p")
-							{
-								conquerorClass->m_model.m_fp3p = paramValue;
-							}
-							else if (paramName == "arms")
-							{
-								conquerorClass->m_model.m_arms = paramValue;
-							}
-							else if (paramName == "mat")
-							{
-								conquerorClass->m_model.m_mat = paramValue;
-							}
-							else if (paramName == "mat_helmet")
-							{
-								conquerorClass->m_model.m_helmetMat = paramValue;
-							}
-							else if (paramName == "mat_arms")
-							{
-								conquerorClass->m_model.m_armsMat = paramValue;
-							}
-							else if (paramName == "worldOffset")
-							{
-								auto worldOffset = Vec3(0, 0, 0);
-								if (modelParam->getAttr("value", worldOffset))
-								{
-									//CryLogAlways("[C++][Species %s][Class %s worldOffset (%1.f,%1.f,%1.f)]",
-										/*GetSpeciesName(speciesType),
-										name,
-										worldOffset.x,
-										worldOffset.y,
-										worldOffset.z);*/
-								}
-
-
-								conquerorClass->m_model.m_worldOffset = worldOffset;
-							}
-							else if (paramName == "scale")
-							{
-								float scale = 0.0f;
-								if (modelParam->getAttr("value", scale))
-								{
-									//CryLogAlways("[C++][Species %s][Class %s Scale %f]",
-									//	GetSpeciesName(speciesType), name, classModel.m_scale);
-
-								}
-								conquerorClass->m_model.m_scale = scale;
-							}
-						}
-					}				
-				}
-
-				auto classEquipmentNode = classRootNode->findChild("Equipment");
-				if (classEquipmentNode)
-				{
-					for (int z = 0; z < classEquipmentNode->getChildCount(); ++z)
-					{
-						auto modelParam = classEquipmentNode->getChild(z);
-						if (modelParam)
-						{
-							const string paramName = modelParam->getAttr("name");
-							const string paramValue = modelParam->getAttr("value");
-
-							//if (paramName == "primaryWeapon")
-							//{
-							//	classEquip.m_primaryWeapon = paramValue;
-							//}
-							/*else*/ 
-							if (paramName == "equipPack")
-							{
-								conquerorClass->m_equipment.m_equipPack = paramValue;
-							}
-						}
-					}
-				}
-
-				auto classAINode = classRootNode->findChild("AI");
-				if (classAINode)
-				{
-					for (int z = 0; z < classAINode->getChildCount(); ++z)
-					{
-						auto modelParam = classAINode->getChild(z);
-						if (modelParam)
-						{
-							const string paramName = modelParam->getAttr("name");
-							const string paramValue = modelParam->getAttr("value");
-
-							if (paramName == "archetype")
-							{
-								conquerorClass->m_ai.m_archetype = paramValue;
-							}
-							else if (paramName == "character")
-							{
-								conquerorClass->m_ai.m_character = paramValue;
-							}
-							else if (paramName == "behaviour")
-							{
-								conquerorClass->m_ai.m_behaviour = paramValue;
-							}
-						}
-					}
-				}
-
-				auto classAbilitiesNode = classRootNode->findChild("Abilities");
-				if (classAbilitiesNode)
-				{
-					for (int z = 0; z < classAbilitiesNode->getChildCount(); ++z)
-					{
-						auto modelParam = classAbilitiesNode->getChild(z);
-						if (modelParam)
-						{
-							const string abilityName = modelParam->getAttr("name");
-
-							if (!abilityName.empty())
-							{
-								conquerorClass->m_abilities.insert(abilityName);
-							}
-						}
-					}
-				}
-
-				auto classConditionsNode = classRootNode->findChild("Conditions");
-				if (classConditionsNode)
-				{
-					for (int z = 0; z < classConditionsNode->getChildCount(); ++z)
-					{
-						auto conditionNode = classConditionsNode->getChild(z);
-						if (conditionNode)
-						{
-							const string type = conditionNode->getAttr("type");
-							const string name = conditionNode->getAttr("name");
-							const string relationship = conditionNode->getAttr("relationship");
-							const string conditional1 = conditionNode->getAttr("conditional1");
-							const string conditional2 = conditionNode->getAttr("conditional2");
-							const string oper = conditionNode->getAttr("operator");
-							const string svalue = conditionNode->getAttr("strvalue");
-							float fvalue = 0; conditionNode->getAttr("fvalue", fvalue);
-
-							SGenericCondition condition;
-							condition.m_type = type;
-							condition.m_name = name;
-							condition.m_relationship = relationship;
-							condition.m_conditional1 = conditional1;
-							condition.m_conditional2 = conditional2;
-							condition.m_operator = oper;
-							condition.m_fvalue = fvalue;
-							condition.m_svalue = svalue;
-
-							conquerorClass->m_conditions.push_back(condition);
-
-							if (type == "UnlockedByArea")
-							{
-								conquerorClass->CleanFlag(eSCF_UnlockedForAI);
-								conquerorClass->CleanFlag(eSCF_UnlockedForPlayer);
-								conquerorClass->PushFlag(eSCF_UnlockedByArea);
-								//conquerorClass->m_flags |= eSCF_UnlockedByArea;
-								//conquerorClass->m_flags &= ~eSCF_UnlockedForAll;
-							}
-							else if (type == "UnlockedForPlayer")
-							{
-								conquerorClass->CleanFlag(eSCF_UnlockedForAI);
-								conquerorClass->CleanFlag(eSCF_UnlockedByArea);
-								conquerorClass->PushFlag(eSCF_UnlockedForPlayer);
-							}
-							else if (type == "UnlockedForAI")
-							{
-								conquerorClass->CleanFlag(eSCF_UnlockedByArea);
-								conquerorClass->CleanFlag(eSCF_UnlockedForPlayer);
-								conquerorClass->PushFlag(eSCF_UnlockedForAI);
-							}
-						}
-					}
-				}
-			//}
-			//~class childs
-
 			
+			auto classModelNode = classRootNode->findChild("Model");
+			if (classModelNode)
+			{
+				for (int z = 0; z < classModelNode->getChildCount(); ++z)
+				{
+					auto modelParam = classModelNode->getChild(z);
+					if (modelParam)
+					{
+						const string paramName = modelParam->getAttr("name");
+						const string paramValue = modelParam->getAttr("value");
+
+						if (paramName == "lobbyAnim")
+						{
+							conquerorClass->m_model.m_lobbyAnim = paramValue;
+						}
+						else if (paramName == "char")
+						{
+							conquerorClass->m_model.m_character = paramValue;
+						}
+						else if (paramName == "fp3p")
+						{
+							conquerorClass->m_model.m_fp3p = paramValue;
+						}
+						else if (paramName == "arms")
+						{
+							conquerorClass->m_model.m_arms = paramValue;
+						}
+						else if (paramName == "mat")
+						{
+							conquerorClass->m_model.m_mat = paramValue;
+						}
+						else if (paramName == "mat_helmet")
+						{
+							conquerorClass->m_model.m_helmetMat = paramValue;
+						}
+						else if (paramName == "mat_arms")
+						{
+							conquerorClass->m_model.m_armsMat = paramValue;
+						}
+						else if (paramName == "worldOffset")
+						{
+							auto worldOffset = Vec3(0, 0, 0);
+							if (modelParam->getAttr("value", worldOffset))
+							{
+								//CryLogAlways("[C++][Species %s][Class %s worldOffset (%1.f,%1.f,%1.f)]",
+									/*GetSpeciesName(speciesType),
+									name,
+									worldOffset.x,
+									worldOffset.y,
+									worldOffset.z);*/
+							}
+
+
+							conquerorClass->m_model.m_worldOffset = worldOffset;
+						}
+						else if (paramName == "scale")
+						{
+							float scale = 0.0f;
+							if (modelParam->getAttr("value", scale))
+							{
+								//CryLogAlways("[C++][Species %s][Class %s Scale %f]",
+								//	GetSpeciesName(speciesType), name, classModel.m_scale);
+
+							}
+							conquerorClass->m_model.m_scale = scale;
+						}
+					}
+				}				
+			}
+
+			auto classEquipmentNode = classRootNode->findChild("Equipment");
+			if (classEquipmentNode)
+			{
+				for (int z = 0; z < classEquipmentNode->getChildCount(); ++z)
+				{
+					auto modelParam = classEquipmentNode->getChild(z);
+					if (modelParam)
+					{
+						const string paramName = modelParam->getAttr("name");
+						const string paramValue = modelParam->getAttr("value");
+
+						//if (paramName == "primaryWeapon")
+						//{
+						//	classEquip.m_primaryWeapon = paramValue;
+						//}
+						/*else*/ 
+						if (paramName == "equipPack")
+						{
+							conquerorClass->m_equipment.m_equipPack = paramValue;
+						}
+					}
+				}
+			}
+
+			auto classAINode = classRootNode->findChild("AI");
+			if (classAINode)
+			{
+				for (int z = 0; z < classAINode->getChildCount(); ++z)
+				{
+					auto modelParam = classAINode->getChild(z);
+					if (modelParam)
+					{
+						const string paramName = modelParam->getAttr("name");
+						const string paramValue = modelParam->getAttr("value");
+
+						if (paramName == "archetype")
+						{
+							conquerorClass->m_ai.m_archetype = paramValue;
+						}
+						else if (paramName == "character")
+						{
+							conquerorClass->m_ai.m_character = paramValue;
+						}
+						else if (paramName == "behaviour")
+						{
+							conquerorClass->m_ai.m_behaviour = paramValue;
+						}
+					}
+				}
+			}
+
+			auto classAbilitiesNode = classRootNode->findChild("Abilities");
+			if (classAbilitiesNode)
+			{
+				for (int z = 0; z < classAbilitiesNode->getChildCount(); ++z)
+				{
+					auto modelParam = classAbilitiesNode->getChild(z);
+					if (modelParam)
+					{
+						const string abilityName = modelParam->getAttr("name");
+
+						if (!abilityName.empty())
+						{
+							conquerorClass->m_abilities.insert(abilityName);
+						}
+					}
+				}
+			}
+
+			auto classConditionsNode = classRootNode->findChild("Conditions");
+			if (classConditionsNode)
+			{
+				for (int z = 0; z < classConditionsNode->getChildCount(); ++z)
+				{
+					auto conditionNode = classConditionsNode->getChild(z);
+					if (conditionNode)
+					{
+						const string type = conditionNode->getAttr("type");
+						const string name = conditionNode->getAttr("name");
+						const string relationship = conditionNode->getAttr("relationship");
+						const string conditional1 = conditionNode->getAttr("conditional1");
+						const string conditional2 = conditionNode->getAttr("conditional2");
+						const string oper = conditionNode->getAttr("operator");
+						const string svalue = conditionNode->getAttr("strvalue");
+						float fvalue = 0; conditionNode->getAttr("fvalue", fvalue);
+
+						SGenericCondition condition;
+						condition.m_type = type;
+						condition.m_name = name;
+						condition.m_relationship = relationship;
+						condition.m_conditional1 = conditional1;
+						condition.m_conditional2 = conditional2;
+						condition.m_operator = oper;
+						condition.m_fvalue = fvalue;
+						condition.m_svalue = svalue;
+
+						conquerorClass->m_conditions.push_back(condition);
+
+						if (type == "UnlockedByArea")
+						{
+							conquerorClass->CleanFlag(eSCF_UnlockedForAI);
+							conquerorClass->CleanFlag(eSCF_UnlockedForPlayer);
+							conquerorClass->PushFlag(eSCF_UnlockedByArea);
+							//conquerorClass->m_flags |= eSCF_UnlockedByArea;
+							//conquerorClass->m_flags &= ~eSCF_UnlockedForAll;
+						}
+						else if (type == "UnlockedForPlayer")
+						{
+							conquerorClass->CleanFlag(eSCF_UnlockedForAI);
+							conquerorClass->CleanFlag(eSCF_UnlockedByArea);
+							conquerorClass->PushFlag(eSCF_UnlockedForPlayer);
+						}
+						else if (type == "UnlockedForAI")
+						{
+							conquerorClass->CleanFlag(eSCF_UnlockedByArea);
+							conquerorClass->CleanFlag(eSCF_UnlockedForPlayer);
+							conquerorClass->PushFlag(eSCF_UnlockedForAI);
+						}
+					}
+				}
+			}			
 
 			conquerorClass->SetName(className.c_str());
 			//conquerorClass->SetOnlyThirdPerson(onlyTP);
@@ -2030,15 +2022,12 @@ void CConquerorSystem::InitPlayerClasses(bool forceReload)
 		}
 		//~faction childs
 	}
-
-	//Map Settings Node
-	//auto factionsNode = rootNode->findChild("Factions");
-	//if (!factionsNode)
-	//	return;
 }
 
 void CConquerorSystem::InitVehicleClasses(bool forceReload)
 {
+	//o(n)
+	
 	if (forceReload)
 		m_vehicleClasses.clear();
 
@@ -2279,7 +2268,7 @@ void CConquerorSystem::InitGamemodeFromFG(SConquerLobbyInfo& info)
 	InitVehicleClasses(true);
 	InitAllowedSpecies();
 
-	if (m_lobbyAllowedSpecies.size() == 0)
+	if (m_lobbyAllowedSpecies.empty())
 	{
 		CryLogAlways("%s[C++][Conqueror Start Error][Cause: Not Defined Allowed Species]", STR_RED);
 		return;
@@ -2379,7 +2368,7 @@ void CConquerorSystem::InitGamemodeFromFG(SConquerLobbyInfo& info)
 		for (int i = 0; i < squadsCount; i++)
 		{
 			//GetSpeciesRandomLeaderClasses(allowedSpeciesType, squadsCount, randomClasses);
-			const uint flags = eSCF_LeaderClass | eSCF_UnlockedForAI;
+			constexpr uint flags = eSCF_LeaderClass | eSCF_UnlockedForAI;
 			GetSpeciesRandomClasses(allowedSpeciesType, flags, squadsCount, randomClasses);
 
 			CSpeciesClass* aiClassInfo = randomClasses[i];
@@ -2399,7 +2388,7 @@ void CConquerorSystem::InitGamemodeFromFG(SConquerLobbyInfo& info)
 			const uint flags = eSCF_UnlockedForAI;
 			GetSpeciesRandomClasses(allowedSpeciesType, flags, unitsCount - m_speciesLeadersCountMap[allowedSpeciesType], randomClasses);
 
-			if (randomClasses.size() > 0)
+			if (!randomClasses.empty())
 			{
 				CSpeciesClass* aiClassInfo = randomClasses[i];
 
@@ -2585,7 +2574,7 @@ void CConquerorSystem::Update(float frametime)
 				std::vector<EntityId> teammates;
 				GetSpeciesTeammates(species, teammates, true);
 
-				if (reinforcements == 0 && (teammates.size() == 0))
+				if (reinforcements == 0 && (teammates.empty()))
 				{
 					OnSpeciesDestroyed(species);
 
@@ -2737,18 +2726,18 @@ void CConquerorSystem::Update(float frametime)
 				}
 
 				const auto finalProgress = currentProgress;
-				m_animConquerorProgress.Invoke("setCaptureProgress", (int)finalProgress);
+				m_animConquerorProgress.Invoke("setCaptureProgress", static_cast<int>(finalProgress));
 			}
 		}
 
 	}
-
-	for (int i = 0; i < m_speciesCommanders.size(); i++)
+	
+	for (const auto species : m_gameAllowedSpecies)
 	{
-		CConquerorCommander* pCommander = m_speciesCommanders[i];
+		const auto pCommander = GetSpeciesCommander(species);
 		if (!pCommander)
 			continue;
-
+		
 		std::vector<EntityId> teammates; 
 		GetSpeciesTeammates(pCommander->GetSpecies(), teammates, true);
 
@@ -2761,10 +2750,10 @@ void CConquerorSystem::Update(float frametime)
 		if (g_pGameCVars->conq_debug_draw_commanders > 0)
 		{
 			static float color[] = { 1,1,1,1 };
-			const auto size = 1.1f;
-			const auto scale = 15;
-			const auto xoffset = TOS_Debug::XOFFSET_COMMON;
-			const auto yoffset = TOS_Debug::YOFFSET_CONQ_CMDRS;
+			constexpr auto size = 1.1f;
+			constexpr auto scale = 15;
+			constexpr auto xoffset = TOS_Debug::XOFFSET_COMMON;
+			constexpr auto yoffset = TOS_Debug::YOFFSET_CONQ_CMDRS;
 
 			gEnv->pRenderer->Draw2dLabel(xoffset, yoffset - 20, 1.3f, color, false,
 				"Conqueror commanders: ");
@@ -2786,15 +2775,15 @@ void CConquerorSystem::Update(float frametime)
 				//CryLogAlways("Commander Species %s, Squads Count %i, Timelimit %1.f (%1.f), Current Strategy %s",
 				//	GetSpeciesName(pCommander.m_species), pCommander.m_subordinateSquadIds.size(), curStrategyTimelimit, timelimit, curStrategyName);
 
-				gEnv->pRenderer->Draw2dLabel(xoffset, yoffset + i * scale, size, color, false,
-					"Commander Species %s, Squads Count %i, Timelimit %1.f (%1.f), Goals %i, Current Strategy %s, Last Time Strategy Change %1.f",
-					GetSpeciesName(pCommander->m_species), pCommander->m_subordinateSquadIds.size(), curStrategyTimelimit, timelimit, curStrategyGoals, curStrategyName, lastTimeStrategyChange);
+				// gEnv->pRenderer->Draw2dLabel(xoffset, yoffset + i * scale, size, color, false,
+				// 	"Commander Species %s, Squads Count %i, Timelimit %1.f (%1.f), Goals %i, Current Strategy %s, Last Time Strategy Change %1.f",
+				// 	GetSpeciesName(pCommander->m_species), pCommander->m_subordinateSquadIds.size(), curStrategyTimelimit, timelimit, curStrategyGoals, curStrategyName, lastTimeStrategyChange);
 			}
 			else
 			{
-				gEnv->pRenderer->Draw2dLabel(xoffset, yoffset + i * scale, size, color, false,
-					"Commander Species %s, Squads Count %i, Timelimit NULL (NULL), Current Strategy NULL, Last Time Strategy Change %1.f",
-					GetSpeciesName(pCommander->m_species), pCommander->m_subordinateSquadIds.size(), lastTimeStrategyChange);
+				// gEnv->pRenderer->Draw2dLabel(xoffset, yoffset + i * scale, size, color, false,
+				// 	"Commander Species %s, Squads Count %i, Timelimit NULL (NULL), Current Strategy NULL, Last Time Strategy Change %1.f",
+				// 	GetSpeciesName(pCommander->m_species), pCommander->m_subordinateSquadIds.size(), lastTimeStrategyChange);
 			}
 		}
 	}
@@ -3239,13 +3228,13 @@ void CConquerorSystem::SetPlayerMaterial(IActor* pActor, const SClassModel& info
 
 CConquerorCommander* CConquerorSystem::GetSpeciesCommander(ESpeciesType species) const
 {
-	for (CConquerorCommander* pCmdr : m_speciesCommanders)
-	{
-		if (pCmdr->GetSpecies() == species)
-			return pCmdr;
-	}
-
-	return nullptr;
+	// for (CConquerorCommander* pCmdr : m_speciesCommanders)
+	// {
+	// 	if (pCmdr->GetSpecies() == species)
+	// 		return pCmdr;
+	// }
+	const auto it = m_speciesCommanders.find(species);
+	return  it != m_speciesCommanders.end() ? it->second : nullptr;
 }
 
 bool CConquerorSystem::CreateAIEntity(CSpeciesClass* classInfo, string entityName, ESpeciesType species)
@@ -3347,13 +3336,10 @@ bool CConquerorSystem::CreateAIEntity(CSpeciesClass* classInfo, string entityNam
 
 void CConquerorSystem::CreateAICommander(ESpeciesType species)
 {
-	for (const auto& commander : m_speciesCommanders)
-	{
-		if (commander->GetSpecies() == species)
-			return;
-	}
+	if (m_speciesCommanders.find(species) != m_speciesCommanders.end())
+		return;
 
-	m_speciesCommanders.push_back(new CConquerorCommander(species));
+	m_speciesCommanders[species] = new CConquerorCommander(species);
 
 	//m_speciesCommanders.push_back(new CConquerorCommander(species);
 }
@@ -3695,7 +3681,7 @@ bool CConquerorSystem::ReadStrategyCondition(const CConquerorCommander* pDesired
 			};
 
 			std::vector<EAreaFlag> flags;
-			if (cond2 != "")
+			if (!cond2.empty())
 				flags.push_back(getAreaFlag(cond2));
 
 			const auto& relationship = condition.m_relationship;
@@ -4376,7 +4362,7 @@ void CConquerorSystem::OnSpeciesDestroyed(ESpeciesType species)
 		}
 	}
 
-	const auto pCommander = GetSpeciesCommander(species);
+	auto pCommander = GetSpeciesCommander(species);
 	if (pCommander)
 	{
 		const auto pSquadSystem = g_pControlSystem->GetSquadSystem();
@@ -4385,12 +4371,13 @@ void CConquerorSystem::OnSpeciesDestroyed(ESpeciesType species)
 		for (const auto id : squads)
 			pSquadSystem->RemoveSquad(id);
 
-		stl::find_and_erase(m_speciesCommanders, pCommander);
+		m_speciesCommanders.erase(species);
+		//stl::find_and_erase(m_speciesCommanders, pCommander);
 	}
 
 	if (m_speciesCommanders.size() == 1)
 	{
-		const CConquerorCommander* pCommander = m_speciesCommanders.at(0);
+		pCommander = (*m_speciesCommanders.begin()).second;
 		if (pCommander)
 			m_winnerSpecies = pCommander->GetSpecies();
 	}
@@ -4419,7 +4406,7 @@ void CConquerorSystem::OnSpeciesDestroyed(ESpeciesType species)
 bool CConquerorSystem::CanJoinGame()
 {
 	const auto backups = GetSpeciesReinforcements(GetClientSpecies()) > 0;
-	const auto speciesCount = m_lobbyAllowedSpecies.size() > 0;
+	const auto speciesCount = !m_lobbyAllowedSpecies.empty();
 	const auto speciesAllowed = IsSpeciesAllowed(GetClientSpecies(), true);
 
 	return backups && speciesCount && speciesAllowed;
@@ -4695,7 +4682,7 @@ void CConquerorSystem::HUDSOMSetFlagRelationship(int flagIndex, const char* rela
 
 ESpeciesType CConquerorSystem::GetFlagIndexSpecies(int index)
 {
-	if (m_speciesFlagIndexMap.size() != 0)
+	if (!m_speciesFlagIndexMap.empty())
 	{
 		auto it = m_speciesFlagIndexMap.begin();
 		const auto end = m_speciesFlagIndexMap.end();
@@ -5087,7 +5074,7 @@ void CConquerorSystem::GetSpeciesRandomClasses(ESpeciesType species, uint flags,
 //	}
 //}
 
-void CConquerorSystem::GetSpeciesTeammates(ESpeciesType species, std::vector<EntityId>& teammates, bool onlyAlive /*= false*/)
+void CConquerorSystem::GetSpeciesTeammates(ESpeciesType species, std::vector<EntityId>& teammates, bool onlyAlive /*= false*/) const
 {
 	auto it = m_conquerorChannels.begin();
 	auto end = m_conquerorChannels.end();
@@ -5159,8 +5146,8 @@ void CConquerorSystem::OnActorDeath(IActor* pActor)
 	if (m_gameStatus != eGS_Battle)
 		m_gameStatus = eGS_Battle;
 
-	for (CConquerorCommander* pCommander : m_speciesCommanders)
-		pCommander->OnActorDeath(pActor);
+	for (const auto pair : m_speciesCommanders)
+		pair.second->OnActorDeath(pActor);
 
 	const auto pExecutor = GetRAR()->GetExecutorInstance(pActor->GetEntityId());
 	if (pExecutor)
@@ -5297,14 +5284,16 @@ void CConquerorSystem::OnActorDrop(IActor* pActor, EntityId dropId)
 
 void CConquerorSystem::OnEnterVehicle(IActor* pActor, IVehicle* pVehicle)
 {
+	//O(n)
+		
 	for (const auto pArea : m_strategicAreas)
 		pArea->OnEnterVehicle(pActor, pVehicle);
 
-	for (CConquerorCommander* pCommander : m_speciesCommanders)
-		pCommander->OnEnterVehicle(pActor, pVehicle);
+	for (const auto pair : m_speciesCommanders)
+		pair.second->OnEnterVehicle(pActor, pVehicle);
 
 	const auto todHour = gEnv->p3DEngine->GetTimeOfDay()->GetTime();
-	const auto value = (todHour > 18 || todHour < 6) ? 1 : 0;
+	const auto value = (todHour > 18.0f || todHour < 6.0f) ? 1.0f : 0.0f;
 		
 	pVehicle->OnAction(eVAI_ToggleLights, eAAM_OnPress, value, pActor->GetEntityId());
 }
@@ -5314,11 +5303,11 @@ void CConquerorSystem::OnExitVehicle(IActor* pActor)
 	for (const auto pArea : m_strategicAreas)
 		pArea->OnExitVehicle(pActor);
 
-	for (CConquerorCommander* pCommander : m_speciesCommanders)
-		pCommander->OnExitVehicle(pActor);
+	for (const auto pair : m_speciesCommanders)
+		pair.second->OnExitVehicle(pActor);
 }
 
-void CConquerorSystem::OnVehicleDestroyed(IVehicle* pVehicle)
+void CConquerorSystem::OnVehicleDestroyed(IVehicle* pVehicle) const
 {
 	if (!pVehicle)
 		return;
@@ -5326,17 +5315,17 @@ void CConquerorSystem::OnVehicleDestroyed(IVehicle* pVehicle)
 	for (const auto pArea : m_strategicAreas)
 		pArea->OnVehicleDestroyed(pVehicle);
 
-	for (CConquerorCommander* pCmdr : m_speciesCommanders)
-		pCmdr->OnVehicleDestroyed(pVehicle);
+	for (const auto pair : m_speciesCommanders)
+		pair.second->OnVehicleDestroyed(pVehicle);
 }
 
-void CConquerorSystem::OnVehicleStuck(IVehicle* pVehicle, bool stuck)
+void CConquerorSystem::OnVehicleStuck(IVehicle* pVehicle, bool stuck) const
 {
 	if (!pVehicle)
 		return;
 
-	for (CConquerorCommander* pCmdr : m_speciesCommanders)
-		pCmdr->OnVehicleStuck(pVehicle, stuck);
+	for (const auto pair : m_speciesCommanders)
+		pair.second->OnVehicleStuck(pVehicle, stuck);
 
 	if (g_pGameCVars->conq_debug_log)
 	{
@@ -5393,8 +5382,8 @@ void CConquerorSystem::OnLobbySetInfo(SConquerLobbyInfo& info)
 			m_haveBotsSpawned = true;
 			m_botsSpawnedTime = gEnv->pTimer->GetFrameStartTime().GetSeconds();
 
-			for (CConquerorCommander* pCommander : m_speciesCommanders)
-				pCommander->OnAIJoinGame();
+			for (const auto& pair : m_speciesCommanders)
+				pair.second->OnAIJoinGame();
 
 			for (const auto pArea : m_strategicAreas)
 				pArea->OnAIJoinGame();
@@ -5428,8 +5417,8 @@ void CConquerorSystem::OnLobbySetInfo(SConquerLobbyInfo& info)
 			m_haveBotsSpawned = true;
 			m_botsSpawnedTime = gEnv->pTimer->GetFrameStartTime().GetSeconds();
 
-			for (CConquerorCommander* pCommander : m_speciesCommanders)
-				pCommander->OnAIJoinGame();
+			for (const auto& pair : m_speciesCommanders)
+				pair.second->OnAIJoinGame();
 
 			for (const auto pArea : m_strategicAreas)
 				pArea->OnAIJoinGame();
@@ -5533,7 +5522,7 @@ void CConquerorSystem::OnLobbySetInfo(SConquerLobbyInfo& info)
 
 				auto it = m_strategicAreas.begin();
 				const auto end = m_strategicAreas.end();
-				for (; it != end; it++)
+				for (; it != end; ++it)
 				{
 					const auto pArea = *it;
 					if (pArea->IsActorInside(pAlienEntity->GetId()))
@@ -5542,8 +5531,7 @@ void CConquerorSystem::OnLobbySetInfo(SConquerLobbyInfo& info)
 
 				g_pControlSystem->StopLocal(false);
 
-				Matrix34 conMat;
-				conMat = pAlienEntity->GetWorldTM();
+				Matrix34 conMat = pAlienEntity->GetWorldTM();
 				conMat.SetTranslation(Vec3(ZERO));
 
 				pAlienEntity->SetWorldTM(conMat);
@@ -5559,7 +5547,7 @@ void CConquerorSystem::OnLobbySetInfo(SConquerLobbyInfo& info)
 		//The Lobby character update
 		m_lobbySelectedClassIndex = m_lobbyConfirmedClassIndex = 0;
 		m_lobbySelectedSpeciesIndex = m_lobbyConfirmedSpeciesIndex = GetClientSpecies();
-		OnLobbySetTeam((ESpeciesType)m_lobbyConfirmedSpeciesIndex, m_lobbyConfirmedClassIndex);
+		OnLobbySetTeam(static_cast<ESpeciesType>(m_lobbyConfirmedSpeciesIndex), m_lobbyConfirmedClassIndex);
 	
 		//HUD
 		HUDLobbyUpdateSpeciesMenu(true, false);
@@ -5878,38 +5866,20 @@ void CConquerorSystem::GameStartSpawnAI()
 
 
 	//spawn leaders first here
-	auto it = m_gameAllowedSpecies.begin();
-	const auto end = m_gameAllowedSpecies.end();
-
-	for (; it != end; it++)
+	//stl::binary_find()
+	
+	//TODO: fix O(n^2)
+	for (const auto speciesType : m_gameAllowedSpecies)
 	{
-		const auto speciesType = *it;
-
 		int squadsCount = m_pXMLAICountInfo->GetSquadsCount(speciesType);
 		const int unitsCount = m_pXMLAICountInfo->GetUnitsCount(speciesType);
 
 		if (GetClientSpecies() == speciesType)
 			squadsCount--;
 
-		//const int areasCount = GetStrategicAreaCount(speciesType, eAGSF_Enabled);
-		//const int remain = squadsCount % areasCount;
-
-		//int count = (squadsCount / areasCount);
-		//int unitsCount = m_pXMLAICountInfo->GetUnitsCount(speciesType);
-
-		//if (remain != 0)
-			//count++;
-
-		//if (GetClientSpecies() == speciesType)
-			//count++;
-
-		auto it = m_conquerorChannels.begin();
-		auto end = m_conquerorChannels.end();
-
-		for (; it != end; it++)
+		//TODO: fix O(n^2)
+		for (const auto pChannel : m_conquerorChannels)
 		{
-			const auto pChannel = *it;
-
 			const auto pActor = pChannel->GetActor();
 			if (!pActor)
 				continue;
@@ -5921,11 +5891,10 @@ void CConquerorSystem::GameStartSpawnAI()
 			if (!pClass)
 				continue;
 
-			const auto isLeader = pClass->IsLeaderClass();
-			auto isSuccessSpawned = false;
-
-			if (!pChannel->IsPlayer() && isLeader)
+			if (!pChannel->IsPlayer() && pClass->IsLeaderClass())
 			{
+				auto isSuccessSpawned = false;
+				
 				TAreas areas;
 				GetStrategicAreas(areas, speciesType, eAGSF_Enabled, speciesType, eABF_NoMatter, EAreaFlag::SoldierSpawner);
 				
@@ -5934,12 +5903,8 @@ void CConquerorSystem::GameStartSpawnAI()
 				//Find all areas who can spawn all units at game start
 				for (auto pArea : areas)
 				{
-					//const auto queueIsCreated = pArea->IsQueueCreated();
-					//const auto queueSize = pArea->GetQueueSize();
-					const auto spawnsCount = pArea->GetSpawnPointCount();
-
 					//Here unitsCount is primary
-					if (unitsCount >= spawnsCount)
+					if (unitsCount >= pArea->GetSpawnPointCount())
 					{
 						CryLogAlways("%s[C++][Strategic Area][ERROR][Species %i][Can not spawn %s][Cause: count of spawn points <= respawn queue size]",
 							STR_RED, speciesType, pChannel->GetName());
@@ -5951,6 +5916,13 @@ void CConquerorSystem::GameStartSpawnAI()
 				}
 
 				const int areasCount = filteredAreas.size();
+				if (areasCount == 0)
+				{
+					CryLogAlways("%s[C++][GameStartSpawnAI][ERROR][Areas not defined]",
+							STR_RED);
+					return;
+				}
+				
 				const float squadsPerArea = round(squadsCount / areasCount);
 
 				for (auto pArea : filteredAreas)
@@ -6029,6 +6001,7 @@ void CConquerorSystem::GameStartSpawnAI()
 		}
 	}
 
+	//TODO: fix O(n^2)
 	//spawn squad members on leader's spawn area here
 	for (const auto id : aiLeadersIds)
 	{
@@ -6278,9 +6251,11 @@ bool CConquerorSystem::CopyQueue(CStrategicArea* pAreaSource, CStrategicArea* pA
 
 bool CConquerorSystem::IsBookedVehicle(IVehicle* pVehicle) const
 {
-	for (CConquerorCommander* pCmdr : m_speciesCommanders)
+	//TODO: fix O(n^2)
+	
+	for (const auto& pair : m_speciesCommanders)
 	{
-		if (pCmdr->IsBookedVehicle(pVehicle))
+		if (pair.second->IsBookedVehicle(pVehicle))
 			return true;
 	}
 
@@ -6398,12 +6373,12 @@ void CConquerorSystem::AddConquerorClass(ESpeciesType species, CSpeciesClass* pC
 void CConquerorSystem::RemoveAllClasses()
 {
 	//smart ptr crash fix
-	if (m_speciesDefaultClassesMap.size())
+	if (!m_speciesDefaultClassesMap.empty())
 	{
 		m_speciesDefaultClassesMap.clear();
 	}
 
-	if (m_speciesClassesMap.size())
+	if (!m_speciesClassesMap.empty())
 	{
 		m_speciesClassesMap.clear();
 	}
@@ -6412,7 +6387,7 @@ void CConquerorSystem::RemoveAllClasses()
 int CConquerorSystem::GetRandomSquadId(ESpeciesType species)
 {
 	const std::vector<int> squadIds = g_pControlSystem->GetSquadSystem()->GetSquadIdsFromSpecies(species, false);
-	if (squadIds.size() > 0)
+	if (!squadIds.empty())
 		return TOS_STL::GetRandomFromSTL<std::vector<int>, int>(squadIds);
 
 	//Причина комментирования: Иногда отряд могло выдать из другой фракции

@@ -144,18 +144,22 @@ CWeaponSystem::CWeaponSystem(CGame* pGame, ISystem* pSystem)
 CWeaponSystem::~CWeaponSystem()
 {
 	// cleanup current projectiles
-	for (TProjectileMap::iterator pit = m_projectiles.begin(); pit != m_projectiles.end(); ++pit)
-		gEnv->pEntitySystem->RemoveEntity(pit->first, true);
-
-	for (TAmmoTypeParams::iterator it = m_ammoparams.begin(); it != m_ammoparams.end(); ++it)
+	for (const auto& m_projectile : m_projectiles)
 	{
-		SAmmoTypeDesc& desc = it->second;
+		gEnv->pEntitySystem->RemoveEntity(m_projectile.first, true);
+	}
+
+	for (auto& m_ammoparam : m_ammoparams)
+	{
+		SAmmoTypeDesc& desc = m_ammoparam.second;
 		delete desc.params;
 
 		if (!desc.configurations.empty())
 		{
-			for (std::map<string, const SAmmoParams*>::iterator ait = desc.configurations.begin(); ait != desc.configurations.end(); ait++)
-				delete ait->second;
+			for (const auto& configuration : desc.configurations)
+			{
+				delete configuration.second;
+			}
 		}
 	}
 
@@ -191,14 +195,14 @@ void CWeaponSystem::Reload()
 	}
 	m_projectiles.clear();
 
-	for (TAmmoTypeParams::iterator it = m_ammoparams.begin(); it != m_ammoparams.end(); ++it)
+	for (auto& m_ammoparam : m_ammoparams)
 	{
-		SAmmoTypeDesc& desc = it->second;
+		SAmmoTypeDesc& desc = m_ammoparam.second;
 		delete desc.params;
 		if (!desc.configurations.empty())
 		{
-			for (std::map<string, const SAmmoParams*>::iterator ait = desc.configurations.begin(); ait != desc.configurations.end(); ait++)
-				delete ait->second;
+			for (const auto& configuration : desc.configurations)
+				delete configuration.second;
 		}
 	}
 
@@ -206,8 +210,8 @@ void CWeaponSystem::Reload()
 
 	m_tracerManager.Reset();
 
-	for (TFolderList::iterator it = m_folders.begin(); it != m_folders.end(); ++it)
-		Scan(it->c_str());
+	for (auto& m_folder : m_folders)
+		Scan(m_folder.c_str());
 
 	m_reloading = false;
 }
@@ -231,9 +235,9 @@ void CWeaponSystem::OnLoadingComplete(ILevel* pLevel)
 //	ICVar *sys_preload=m_pSystem->GetIConsole()->GetCVar("sys_preload");
 //	if ((!sys_preload || sys_preload->GetIVal()) && m_pPrecache->GetIVal())
 	{
-		for (TAmmoTypeParams::iterator it = m_ammoparams.begin(); it != m_ammoparams.end(); ++it)
+		for (const auto& m_ammoparam : m_ammoparams)
 		{
-			const SAmmoParams* pParams = GetAmmoParams(it->first);
+			const SAmmoParams* pParams = GetAmmoParams(m_ammoparam.first);
 			const IItemParamsNode* params = pParams->pItemParams;
 			const IItemParamsNode* geometry = params ? params->GetChild("geometry") : 0;
 
@@ -267,7 +271,7 @@ void CWeaponSystem::OnLoadingComplete(ILevel* pLevel)
 //------------------------------------------------------------------------
 IFireMode* CWeaponSystem::CreateFireMode(const char* name)
 {
-	TFireModeRegistry::iterator it = m_fmregistry.find(CONST_TEMP_STRING(name));
+	const TFireModeRegistry::iterator it = m_fmregistry.find(CONST_TEMP_STRING(name));
 	if (it != m_fmregistry.end())
 		return it->second();
 	return 0;
@@ -282,7 +286,7 @@ void CWeaponSystem::RegisterFireMode(const char* name, IFireMode* (*CreateProc)(
 //------------------------------------------------------------------------
 IZoomMode* CWeaponSystem::CreateZoomMode(const char* name)
 {
-	TZoomModeRegistry::iterator it = m_zmregistry.find(CONST_TEMP_STRING(name));
+	const TZoomModeRegistry::iterator it = m_zmregistry.find(CONST_TEMP_STRING(name));
 	if (it != m_zmregistry.end())
 		return it->second();
 	return 0;
@@ -297,7 +301,7 @@ void CWeaponSystem::RegisterZoomMode(const char* name, IZoomMode* (*CreateProc)(
 //------------------------------------------------------------------------
 CProjectile* CWeaponSystem::SpawnAmmo(IEntityClass* pAmmoType, bool isRemote)
 {
-	TAmmoTypeParams::const_iterator it = m_ammoparams.find(pAmmoType);
+	const TAmmoTypeParams::const_iterator it = m_ammoparams.find(pAmmoType);
 	if (it == m_ammoparams.end())
 	{
 		GameWarning("Failed to spawn ammo '%s'! Unknown class or entity class not registered...", pAmmoType ? pAmmoType->GetName() : "");
@@ -307,14 +311,14 @@ CProjectile* CWeaponSystem::SpawnAmmo(IEntityClass* pAmmoType, bool isRemote)
 	const SAmmoParams* pAmmoParams = it->second.params;
 	if (!m_config.empty())
 	{
-		std::map<string, const SAmmoParams*>::const_iterator cit = it->second.configurations.find(m_config);
+		const std::map<string, const SAmmoParams*>::const_iterator cit = it->second.configurations.find(m_config);
 		if (cit != it->second.configurations.end())
 			pAmmoParams = cit->second;
 		else
 			pAmmoParams = it->second.params;
 	}
 
-	bool isServer = gEnv->bServer;
+	const bool isServer = gEnv->bServer;
 	bool isClient = gEnv->bClient;
 
 	if (pAmmoParams->serverSpawn && (!isServer || IsDemoPlayback()))
@@ -328,7 +332,7 @@ CProjectile* CWeaponSystem::SpawnAmmo(IEntityClass* pAmmoType, bool isRemote)
 	spawnParams.sName = "ammo";
 	spawnParams.nFlags = pAmmoParams->flags | ENTITY_FLAG_NO_PROXIMITY; // No proximity for this entity.
 
-	IEntity* pEntity = gEnv->pEntitySystem->SpawnEntity(spawnParams);
+	const IEntity* pEntity = gEnv->pEntitySystem->SpawnEntity(spawnParams);
 	if (!pEntity)
 	{
 		GameWarning("Failed to spawn ammo '%s'! Entity creation failed...", pAmmoType->GetName());
@@ -363,14 +367,14 @@ void CWeaponSystem::RegisterProjectile(const char* name, IGameObjectExtensionCre
 //------------------------------------------------------------------------
 const SAmmoParams* CWeaponSystem::GetAmmoParams(IEntityClass* pAmmoType) const
 {
-	TAmmoTypeParams::const_iterator it = m_ammoparams.find(pAmmoType);
+	const TAmmoTypeParams::const_iterator it = m_ammoparams.find(pAmmoType);
 	if (it == m_ammoparams.end())
 		return 0;
 
 	if (m_config.empty())
 		return it->second.params;
 
-	std::map<string, const SAmmoParams*>::const_iterator cit = it->second.configurations.find(m_config);
+	const std::map<string, const SAmmoParams*>::const_iterator cit = it->second.configurations.find(m_config);
 	if (cit != it->second.configurations.end())
 		return cit->second;
 
@@ -392,7 +396,7 @@ void CWeaponSystem::RemoveProjectile(CProjectile* pProjectile)
 //------------------------------------------------------------------------
 CProjectile* CWeaponSystem::GetProjectile(EntityId entityId)
 {
-	TProjectileMap::iterator it = m_projectiles.find(entityId);
+	const TProjectileMap::iterator it = m_projectiles.find(entityId);
 	if (it != m_projectiles.end())
 		return it->second;
 	return 0;
@@ -401,22 +405,22 @@ CProjectile* CWeaponSystem::GetProjectile(EntityId entityId)
 //------------------------------------------------------------------------
 int  CWeaponSystem::QueryProjectiles(SProjectileQuery& q)
 {
-	IEntityClass* pClass = q.ammoName ? gEnv->pEntitySystem->GetClassRegistry()->FindClass(q.ammoName) : 0;
+	const IEntityClass* pClass = q.ammoName ? gEnv->pEntitySystem->GetClassRegistry()->FindClass(q.ammoName) : 0;
 	m_queryResults.resize(0);
 	if (q.box.IsEmpty())
 	{
-		for (TProjectileMap::iterator it = m_projectiles.begin(); it != m_projectiles.end(); ++it)
+		for (const auto& m_projectile : m_projectiles)
 		{
-			IEntity* pEntity = it->second->GetEntity();
+			IEntity* pEntity = m_projectile.second->GetEntity();
 			if (pClass == 0 || pEntity->GetClass() == pClass)
 				m_queryResults.push_back(pEntity);
 		}
 	}
 	else
 	{
-		for (TProjectileMap::iterator it = m_projectiles.begin(); it != m_projectiles.end(); ++it)
+		for (const auto& m_projectile : m_projectiles)
 		{
-			IEntity* pEntity = it->second->GetEntity();
+			IEntity* pEntity = m_projectile.second->GetEntity();
 			if (q.box.IsContainPoint(pEntity->GetWorldPos()))
 			{
 				m_queryResults.push_back(pEntity);
@@ -433,14 +437,14 @@ int  CWeaponSystem::QueryProjectiles(SProjectileQuery& q)
 //------------------------------------------------------------------------
 void CWeaponSystem::Scan(const char* folderName)
 {
-	string folder = folderName;
+	const string folder = folderName;
 	string search = folder;
 	search += "/*.*";
 
 	ICryPak* pPak = m_pSystem->GetIPak();
 
 	_finddata_t fd;
-	intptr_t handle = pPak->FindFirst(search.c_str(), &fd);
+	const intptr_t handle = pPak->FindFirst(search.c_str(), &fd);
 
 	if (!m_recursing)
 		CryLog("Loading ammo XML definitions from '%s'!", folderName);
@@ -511,7 +515,7 @@ bool CWeaponSystem::ScanXML(XmlNodeRef& root, const char* xmlFile)
 		return false;
 	}
 
-	TProjectileRegistry::iterator it = m_projectileregistry.find(CONST_TEMP_STRING(className));
+	const TProjectileRegistry::iterator it = m_projectileregistry.find(CONST_TEMP_STRING(className));
 	if (it == m_projectileregistry.end())
 	{
 		GameWarning("Unknown ammo class '%s' specified in XML '%s'! Skipping...", className, xmlFile);
@@ -538,7 +542,7 @@ bool CWeaponSystem::ScanXML(XmlNodeRef& root, const char* xmlFile)
 	TAmmoTypeParams::iterator ait = m_ammoparams.find(pClass);
 	if (ait == m_ammoparams.end())
 	{
-		std::pair<TAmmoTypeParams::iterator, bool> result = m_ammoparams.insert(TAmmoTypeParams::value_type(pClass, SAmmoTypeDesc()));
+		const std::pair<TAmmoTypeParams::iterator, bool> result = m_ammoparams.insert(TAmmoTypeParams::value_type(pClass, SAmmoTypeDesc()));
 		ait = result.first;
 	}
 
@@ -581,7 +585,7 @@ void CWeaponSystem::DebugGun(IConsoleCmdArgs* args)
 	if (!pActor || !pActor->IsPlayer())
 		return;
 
-	IInventory* pInventory = pActor->GetInventory();
+	const IInventory* pInventory = pActor->GetInventory();
 	if (!pInventory)
 		return;
 
@@ -608,7 +612,7 @@ void CWeaponSystem::RefGun(IConsoleCmdArgs* args)
 	if (!pActor || !pActor->IsPlayer())
 		return;
 
-	IInventory* pInventory = pActor->GetInventory();
+	const IInventory* pInventory = pActor->GetInventory();
 	if (!pInventory)
 		return;
 
@@ -647,13 +651,13 @@ void CWeaponSystem::ApplyEnvironmentChanges()
 	IGameFramework* pGF = gEnv->pGame->GetIGameFramework();
 	IActorSystem* pAS = pGF->GetIActorSystem();
 
-	int count = pAS->GetActorCount();
+	const int count = pAS->GetActorCount();
 	if (count)
 	{
-		IActorIteratorPtr it = pAS->CreateActorIterator();
+		const IActorIteratorPtr it = pAS->CreateActorIterator();
 		while (CActor* pActor = (CActor*)it->Next())
 		{
-			CPlayer* pPlayer = (pActor->GetActorClass() == CPlayer::GetActorClassType()) ? static_cast<CPlayer*>(pActor) : 0;
+			const CPlayer* pPlayer = (pActor->GetActorClass() == CPlayer::GetActorClassType()) ? static_cast<CPlayer*>(pActor) : 0;
 			if (pPlayer && pPlayer->GetNanoSuit())
 			{
 				// go through all players and turn their ice effects on/off
@@ -661,7 +665,7 @@ void CWeaponSystem::ApplyEnvironmentChanges()
 				if (pRenderProxy)
 				{
 					uint8 mask = pRenderProxy->GetMaterialLayersMask();
-					uint32 blend = pRenderProxy->GetMaterialLayersBlend();
+					const uint32 blend = pRenderProxy->GetMaterialLayersBlend();
 					mask = IsFrozenEnvironment() ? mask | MTL_LAYER_DYNAMICFROZEN : mask & ~MTL_LAYER_DYNAMICFROZEN;
 					mask = IsWetEnvironment() ? mask | MTL_LAYER_WET : mask & ~MTL_LAYER_WET;
 					pRenderProxy->SetMaterialLayersMask(mask);
@@ -729,7 +733,7 @@ void CWeaponSystem::Serialize(TSerialize ser)
 void CWeaponSystem::GetMemoryStatistics(ICrySizer* s)
 {
 	SIZER_SUBCOMPONENT_NAME(s, "WeaponSystem");
-	int nSize = sizeof(*this);
+	const int nSize = sizeof(*this);
 	s->AddObject(this, nSize);
 
 	m_tracerManager.GetMemoryStatistics(s);
@@ -743,12 +747,13 @@ void CWeaponSystem::GetMemoryStatistics(ICrySizer* s)
 	{
 		SIZER_SUBCOMPONENT_NAME(s, "AmmoParams");
 		int nSize = m_ammoparams.size() * sizeof(TAmmoTypeParams::value_type);
-		for (TAmmoTypeParams::iterator iter = m_ammoparams.begin(); iter != m_ammoparams.end(); ++iter)
+		for (auto& m_ammoparam : m_ammoparams)
 		{
-			nSize += iter->second.params->GetMemorySize();
-			nSize += iter->second.configurations.size() * sizeof(std::map<string, SAmmoTypeDesc>::value_type);
+			nSize += m_ammoparam.second.params->GetMemorySize();
+			nSize += m_ammoparam.second.configurations.size() * sizeof(std::map<string, SAmmoTypeDesc>::value_type);
 
-			for (std::map<string, const SAmmoParams*>::iterator it = iter->second.configurations.begin(); it != iter->second.configurations.end(); it++)
+			for (std::map<string, const SAmmoParams*>::iterator it = m_ammoparam.second.configurations.begin(); it !=
+			     m_ammoparam.second.configurations.end(); it++)
 			{
 				nSize += it->first.size();
 				nSize += it->second->GetMemorySize();
@@ -760,9 +765,9 @@ void CWeaponSystem::GetMemoryStatistics(ICrySizer* s)
 	{
 		SIZER_SUBCOMPONENT_NAME(s, "Projectiles");
 		int nSize = m_projectiles.size() * sizeof(TProjectileMap::value_type);
-		for (TProjectileMap::iterator iter = m_projectiles.begin(); iter != m_projectiles.end(); ++iter)
+		for (const auto& m_projectile : m_projectiles)
 		{
-			nSize += iter->second->GetMemorySize();
+			nSize += m_projectile.second->GetMemorySize();
 		}
 		s->AddObject(&m_projectiles, nSize);
 	}

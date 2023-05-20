@@ -15,7 +15,6 @@ History:
 #include "GameCVars.h"
 #include <IEntitySystem.h>
 #include <IScriptSystem.h>
-#include <IActionMapManager.h>
 #include <IGameObject.h>
 #include <IGameObjectSystem.h>
 #include <IVehicleSystem.h>
@@ -33,8 +32,6 @@ History:
 #include "Projectile.h"
 #include "OffHand.h"
 #include "Lam.h"
-#include "GameActions.h"
-#include "IronSight.h"
 #include "Single.h"
 #include "Environment/BattleDust.h"
 

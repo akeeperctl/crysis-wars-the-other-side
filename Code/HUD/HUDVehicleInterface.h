@@ -77,7 +77,7 @@ public:
 	ILINE void AmmoForceNextUpdate() { m_bAmmoForceNextUpdate = true; }
 
 	//select current interface
-	EVehicleHud ChooseVehicleHUD(IVehicle* pVehicle);
+	EVehicleHud ChooseVehicleHUD(const IVehicle* pVehicle) const;
 	//update damaged parts in stats
 	float UpdateDamages(EVehicleHud eHud, IVehicle* pVehicle, bool updateFlash = true);
 	float GetVehicleHeading();
@@ -90,7 +90,7 @@ private:
 	void OnExitVehicle(IActor* pActor);
 
 	//main enter function
-	void OnEnterVehicle(CPlayer* pPlayer);
+	void OnEnterVehicle(const CPlayer* pPlayer);
 	//update used seats
 	void UpdateSeats();
 	//display specific interface
@@ -107,7 +107,7 @@ private:
 	//get vehicle data
 	float GetVehicleSpeed();
 
-	bool ForceCrosshair();
+	bool ForceCrosshair() const;
 
 	//****************************************** MEMBER VARIABLES ***********************************
 
@@ -127,16 +127,16 @@ private:
 	//which HUD animation is shown ?
 	EVehicleHud	m_eCurVehicleHUD;
 	//saves whether the specified hud has a main window
-	bool			m_hasMainHUD[EHUD_LAST];
+	bool			m_hasMainHUD[EHUD_LAST]{};
 	//saves the displayed tank names
 	std::map<string, string> m_hudTankNames;
 	//saving invokes
-	int				m_statsSpeed, m_statsHeading;
+	int				m_statsSpeed{}, m_statsHeading{};
 	//aim-at-friend state settings
 	bool			m_lastSetFriendly, m_friendlyFire;
 	//ammo values last send
 	int m_iSecondaryAmmoCount, m_iPrimaryAmmoCount, m_iSecondaryClipSize, m_iPrimaryClipSize/*, m_iHeat*/;
-	int m_iLastReloadBarValue, m_iLastReloadBarValue2;
+	int m_iLastReloadBarValue, m_iLastReloadBarValue2{};
 	//ammo Flash anim is shared and can be wrong when tokens set the values
 	bool			m_bAmmoForceNextUpdate;
 };

@@ -209,31 +209,8 @@ void CPinger::Revive(bool fromInit)
 	}
 
 	//TheOtherSide
-	//isShieldEnabled = false;
 	m_energyParams.isHunterShieldEnabled = false;
 	m_energyParams.cannotRegen = false;
-
-	//pCharacter->GetISkeletonAnim()->SetBlendSpaceOverride()
-	//m_pAnimatedCharacter->SetMovementControlMethods(eMCM_DecoupledCatchUp, eMCM_Entity);
-
-	//auto pSoundProxy = (IEntitySoundProxy*)GetEntity()->GetProxy(ENTITY_PROXY_SOUND);
-	//if (pSoundProxy)
-	//{
-	//	pSoundProxy->StopSound(m_shieldSoundId);
-	//	m_shieldSoundId = 0;
-	//}
-
-	//auto pSound = gEnv->pSoundSystem->GetSound(m_shieldSoundId);
-	//if (pSound)
-	//{
-	//	pSound->Stop();
-	//	m_shieldSoundId = 0;
-	//}
-
-	//auto pHeadShield = GetEntity()->GetCharacter(0)->GetIAttachmentManager()->GetInterfaceByName("hunter_head_shield");
-	//if (pHeadShield)
-	//	pHeadShield->HideAttachment(1);
-
 	//~TheOtherSide
 }
 
@@ -497,16 +474,6 @@ void CPinger::PlayFootliftEffects(int tentacle) const
 	}
 }
 
-//void CPinger::UpdateAnimGraph(IAnimationGraphState* pState)
-//{
-//	CAlien::UpdateAnimGraph(pState);
-//
-//	if (pState)
-//	{
-//		pState->SetInput(m_inputAngleDeviation, m_angleDeviation);
-//	}
-//}
-
 void CPinger::SetFiring(bool fire)
 {
 	if (fire != m_stats.isFiring)
@@ -747,7 +714,4 @@ void CPinger::FullSerialize(TSerialize ser)
 void CPinger::PostInit(IGameObject* pGameObject)
 {
 	CAlien::PostInit(pGameObject);
-
-	//pCharacter->GetISkeletonAnim()->SetBlendSpaceOverride()
-	//GetEntity()->GetCharacter(0)->GetISkeletonAnim()->SetAnimationDrivenMotion(true);
 }

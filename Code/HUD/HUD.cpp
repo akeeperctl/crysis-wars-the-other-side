@@ -41,11 +41,9 @@ History:
 #include "IUIDraw.h"
 #include "ISound.h"
 #include "IPlayerInput.h"
-#include "IWorldQuery.h"
 #include "IInput.h"
 #include "IMaterialEffects.h"
 #include "ISaveGame.h"
-#include "ILoadGame.h"
 #include "ICryPak.h"
 #include "IMovieSystem.h"
 
@@ -69,12 +67,9 @@ History:
 #include "WeaponSystem.h"
 #include "Radio.h"
 
-#include "LCD/LCDWrapper.h"
-
 //TheOtherSide
 #include "TheOtherSide/Control/ControlSystem.h"
 #include "TheOtherSide/Squad/SquadSystem.h"
-#include "TheOtherSide/Abilities/AbilitiesSystem.h"
 #include "TheOtherSide/Conqueror/ConquerorSystem.h"
 #include "TheOtherSide/Conqueror/StrategicArea.h"
 //~TheOtherSide
@@ -2944,7 +2939,7 @@ bool CHUD::ShowPDA(bool show, bool buyMenu)
 		//return false;
 	auto pConqueror = g_pControlSystem->GetConquerorSystem();
 
-	if (show && gEnv->pGame->GetIGameFramework()->GetIViewSystem()->IsPlayingCutScene() && 
+	if (show && gEnv->pGame->GetIGameFramework()->GetIViewSystem()->IsPlayingCutScene() &&
 		pConqueror->GetLobbyInfo().state != EConquerLobbyState::IN_LOBBY)
 		return false;
 
@@ -2964,7 +2959,7 @@ bool CHUD::ShowPDA(bool show, bool buyMenu)
 
 	//if (buyMenu && (!m_pHUDPowerStruggle || !isConquest))
 		//return false;
-		
+
 	if (buyMenu)
 	{
 		if (!m_pHUDPowerStruggle && !isConquest)
@@ -3126,7 +3121,7 @@ bool CHUD::ShowPDA(bool show, bool buyMenu)
 
 			int value = info.state == EConquerLobbyState::IN_LOBBY ? 1 : 0;
 			anim->SetVariable("SpectatorMode", SFlashVarValue(value));
-			
+
 			if (pConqueror->GetSpeciesLobby() == ESpeciesType::eST_USA)
 				anim->SetVariable("PlayerTeam", SFlashVarValue("US"));
 			else if (pConqueror->GetSpeciesLobby() == ESpeciesType::eST_NK)
@@ -3560,7 +3555,7 @@ void CHUD::OnPostUpdate(float frameTime)
 	//}
 	//else if (g_pControlSystem->GetLocalEnabled() && g_pControlSystem->GetLocalControlClient()->GetControlledActor())
 		//UpdatePlayerAmmo(g_pControlSystem->GetLocalControlClient()->GetControlledActor());
-		UpdatePlayerAmmo(pClientActor);
+	UpdatePlayerAmmo(pClientActor);
 	//~TheOtherSide
 
 	if (m_iOpenTextChat)

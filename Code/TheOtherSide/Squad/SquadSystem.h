@@ -1027,10 +1027,10 @@ public:
 	std::vector<int> GetSquadIdsFromSpecies(ESpeciesType species, bool ignoreBookedVehicle);//ignore detached squad leaders
 	CSquad*		GetSquadFromMember(const IActor* pActor, bool includeLeader);
 	CSquad*		GetSquadFromLeader(IActor* pLeader);
-	CSquad*		GetSquadFromId(int squadId);
-	CSquad*		GetClientSquad();
+	CSquad*		GetSquadFromId(int squadId) const;
+	CSquad*		GetClientSquad() const;
 
-	int			GetSquadsCount();
+	int			GetSquadsCount() const;
 
 	CSquad*		CreateSquad();//Return true when Squad with its id is created
 	//bool		RemoveSquad(CSquad* pSquad);//Return true when Squad is removed

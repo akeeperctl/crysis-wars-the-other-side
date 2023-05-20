@@ -15,14 +15,13 @@ History:
 #include "StdAfx.h"
 #include "HUDVehicleInterface.h"
 #include "GameFlashAnimation.h"
-#include "GameFlashLogic.h"
 #include "HUD.h"
 #include "HUDRadar.h"
 #include "Weapon.h"
 #include "IWorldQuery.h"
 #include "GameCVars.h"
 
-CHUDVehicleInterface::CHUDVehicleInterface(CHUD* pHUD, CGameFlashAnimation* pAmmo) : m_pVehicle(NULL)
+CHUDVehicleInterface::CHUDVehicleInterface(CHUD* pHUD, CGameFlashAnimation* pAmmo) : m_pVehicle(nullptr)
 {
 	m_bParachute = false;
 	m_bAmmoForceNextUpdate = false;
@@ -32,13 +31,14 @@ CHUDVehicleInterface::CHUDVehicleInterface(CHUD* pHUD, CGameFlashAnimation* pAmm
 	m_lastSetFriendly = m_friendlyFire = false;
 	m_seatId = InvalidVehicleSeatId;
 
-	m_iSecondaryAmmoCount = m_iPrimaryAmmoCount = m_iSecondaryClipSize = m_iPrimaryClipSize = 0;// m_iHeat = 0;
+	m_iSecondaryAmmoCount = m_iPrimaryAmmoCount = m_iSecondaryClipSize = m_iPrimaryClipSize = 0; // m_iHeat = 0;
 	m_iLastReloadBarValue = -1;
 
-	m_animMainWindow.Init("Libs/UI/HUD_VehicleHUD.gfx", eFD_Center, eFAF_ManualRender | eFAF_Visible | eFAF_ThisHandler);
+	m_animMainWindow.Init("Libs/UI/HUD_VehicleHUD.gfx", eFD_Center,
+	                      eFAF_ManualRender | eFAF_Visible | eFAF_ThisHandler);
 	m_animStats.Init("Libs/UI/HUD_VehicleStats.gfx", eFD_Center, eFAF_ManualRender | eFAF_Visible);
 
-	memset(m_hasMainHUD, 0, (int)EHUD_LAST);
+	memset(m_hasMainHUD, 0, EHUD_LAST);
 
 	//fill "hasMainHUD" list
 	m_hasMainHUD[EHUD_TANKUS] = true;
@@ -71,7 +71,7 @@ CHUDVehicleInterface::~CHUDVehicleInterface()
 	if (m_pVehicle)
 	{
 		m_pVehicle->UnregisterVehicleEventListener(this);
-		m_pVehicle = NULL;
+		m_pVehicle = nullptr;
 	}
 }
 
@@ -101,7 +101,7 @@ void CHUDVehicleInterface::Update(float fDeltaTime)
 
 //-----------------------------------------------------------------------------------------------------
 
-bool CHUDVehicleInterface::ForceCrosshair()
+bool CHUDVehicleInterface::ForceCrosshair() const
 {
 	if (m_pVehicle && m_seatId != InvalidVehicleSeatId)
 	{
@@ -116,7 +116,7 @@ bool CHUDVehicleInterface::ForceCrosshair()
 
 //-----------------------------------------------------------------------------------------------------
 
-CHUDVehicleInterface::EVehicleHud CHUDVehicleInterface::ChooseVehicleHUD(IVehicle* pVehicle)
+CHUDVehicleInterface::EVehicleHud CHUDVehicleInterface::ChooseVehicleHUD(const IVehicle* pVehicle) const
 {
 	if (m_bParachute)
 		return EHUD_PARACHUTE;
@@ -124,8 +124,8 @@ CHUDVehicleInterface::EVehicleHud CHUDVehicleInterface::ChooseVehicleHUD(IVehicl
 	if (!pVehicle)
 		return EHUD_NONE;
 
-	IEntityClass* cls = pVehicle->GetEntity()->GetClass();
-	CHUDRadar* pRadar = g_pHUD->GetRadar();
+	const IEntityClass* cls = pVehicle->GetEntity()->GetClass();
+	const CHUDRadar* pRadar = g_pHUD->GetRadar();
 
 	if (!cls || !pRadar)
 		return EHUD_NONE;
@@ -153,89 +153,88 @@ CHUDVehicleInterface::EVehicleHud CHUDVehicleInterface::ChooseVehicleHUD(IVehicl
 	{
 		return EHUD_TANKUS;
 	}
-	else if (cls == pRadar->m_pTankA)
+	if (cls == pRadar->m_pTankA)
 	{
 		return EHUD_TANKA;
 	}
-	else if (cls == pRadar->m_pAAA)
+	if (cls == pRadar->m_pAAA)
 	{
 		return EHUD_AAA;
 	}
-	else if (cls == pRadar->m_pVTOL)
+	if (cls == pRadar->m_pVTOL)
 	{
 		return EHUD_VTOL;
 	}
-	else if (cls == pRadar->m_pHeli)
+	if (cls == pRadar->m_pHeli)
 	{
 		return EHUD_HELI;
 	}
-	else if (cls == pRadar->m_pLTVA || cls == pRadar->m_pLTVUS)
+	if (cls == pRadar->m_pLTVA || cls == pRadar->m_pLTVUS)
 	{
 		return EHUD_LTV;
 	}
-	else if (cls == pRadar->m_pAPCUS)
+	if (cls == pRadar->m_pAPCUS)
 	{
 		return EHUD_APC;
 	}
-	else if (cls == pRadar->m_pAPCA)
+	if (cls == pRadar->m_pAPCA)
 	{
 		return EHUD_APC2;
 	}
-	else if (cls == pRadar->m_pTruck)
+	if (cls == pRadar->m_pTruck)
 	{
 		return EHUD_TRUCK;
 	}
-	else if (cls == pRadar->m_pBoatCiv)
+	if (cls == pRadar->m_pBoatCiv)
 	{
 		return EHUD_CIVBOAT;
 	}
-	else if (cls == pRadar->m_pCarCiv)
+	if (cls == pRadar->m_pCarCiv)
 	{
 		return EHUD_CIVCAR;
 	}
-	else if (cls == pRadar->m_pBoatUS)
+	if (cls == pRadar->m_pBoatUS)
 	{
 		return EHUD_SMALLBOAT;
 	}
-	else if (cls == pRadar->m_pBoatA)
+	if (cls == pRadar->m_pBoatA)
 	{
 		return EHUD_PATROLBOAT;
 	}
-	else if (cls == pRadar->m_pHover)
+	if (cls == pRadar->m_pHover)
 	{
 		return EHUD_HOVER;
 	}
-	else if (cls == pRadar->m_pUSASV)
+	if (cls == pRadar->m_pUSASV)
 	{
 		return EHUD_ASV;
 	}
-	else
-		return EHUD_NONE;
+	return EHUD_NONE;
 }
 
 //-----------------------------------------------------------------------------------------------------
 
 void CHUDVehicleInterface::OnEnterVehicle(IActor* pActor, const char* szVehicleClassName, const char* szSeatName)
 {
-	m_bParachute = (bool)(!strcmpi(szVehicleClassName, "Parachute"));
+	m_bParachute = !strcmpi(szVehicleClassName, "Parachute");
 	if (m_bParachute)
 	{
-		bool open = (bool)(!strcmpi(szSeatName, "Open"));
+		bool open = !strcmpi(szSeatName, "Open");
 		m_animStats.Reload();
 		CRY_ASSERT_MESSAGE(NULL == m_pVehicle, "Attempt to enter in parachute while already in a vehicle!");
 		m_animStats.Invoke("setActiveParachute", open);
 		m_animMainWindow.Invoke("setActiveParachute", open);
 		if (!open || !m_animMainWindow.GetVisible())
-			OnEnterVehicle(static_cast<CPlayer*> (pActor));
+			OnEnterVehicle(dynamic_cast<CPlayer*>(pActor));
 	}
 	else
-		OnEnterVehicle(static_cast<CPlayer*> (pActor));
+		OnEnterVehicle(dynamic_cast<CPlayer*>(pActor));
 	g_pHUD->HideInventoryOverview();
 }
 
 //-----------------------------------------------------------------------------------------------------
 
-void CHUDVehicleInterface::OnEnterVehicle(CPlayer* pPlayer)
+void CHUDVehicleInterface::OnEnterVehicle(const CPlayer* pPlayer)
 {
 	if (!pPlayer || !pPlayer->IsClient())
 		return;
@@ -289,7 +288,7 @@ void CHUDVehicleInterface::OnExitVehicle(IActor* pActor)
 	if (m_pVehicle)
 	{
 		m_pVehicle->UnregisterVehicleEventListener(this);
-		m_pVehicle = NULL;
+		m_pVehicle = nullptr;
 	}
 	else
 		m_bParachute = false;
@@ -314,7 +313,7 @@ void CHUDVehicleInterface::InitVehicleHuds()
 {
 	if (m_eCurVehicleHUD != EHUD_NONE)
 	{
-		const char* szVehicleClassName = NULL;
+		const char* szVehicleClassName = nullptr;
 
 		if (m_pVehicle)
 		{
@@ -322,11 +321,11 @@ void CHUDVehicleInterface::InitVehicleHuds()
 		}
 
 		m_animMainWindow.Invoke("showHUD");
-		m_animMainWindow.Invoke("setVehicleHUDMode", (int)m_eCurVehicleHUD);
+		m_animMainWindow.Invoke("setVehicleHUDMode", m_eCurVehicleHUD);
 		m_animMainWindow.SetVisible(true);
 
 		m_animStats.Invoke("showStats");
-		m_animStats.Invoke("setVehicleStatsMode", (int)m_eCurVehicleHUD);
+		m_animStats.Invoke("setVehicleStatsMode", m_eCurVehicleHUD);
 		m_animStats.SetVisible(true);
 
 		UpdateVehicleHUDDisplay();
@@ -345,13 +344,14 @@ void CHUDVehicleInterface::InitVehicleHuds()
 		m_friendlyFire = false;
 
 		if (m_eCurVehicleHUD == EHUD_VTOL)
-			m_animStats.Invoke("disableEject", !(gEnv->bMultiplayer));	//no eject warning in SP
+			m_animStats.Invoke("disableEject", !(gEnv->bMultiplayer)); //no eject warning in SP
 	}
 }
 
 //-----------------------------------------------------------------------------------------------------
 
-float CHUDVehicleInterface::UpdateDamages(EVehicleHud eHud, IVehicle* pVehicle, bool updateFlash)	//this could be put in an xml file for better mod-ability
+float CHUDVehicleInterface::UpdateDamages(EVehicleHud eHud, IVehicle* pVehicle, bool updateFlash)
+//this could be put in an xml file for better mod-ability
 {
 	CHUDRadar* pRadar = g_pHUD->GetRadar();
 	if (!pVehicle || !pVehicle->GetEntity() || !pRadar)
@@ -367,7 +367,7 @@ float CHUDVehicleInterface::UpdateDamages(EVehicleHud eHud, IVehicle* pVehicle, 
 			float fH = pVehicle->GetComponent("hull")->GetDamageRatio();
 			if (updateFlash)
 			{
-				SFlashVarValue args[5] = { fH, engineDisabled ? 1.0f : fH, fH, fH, fH };	// same health for all.
+				SFlashVarValue args[5] = {fH, engineDisabled ? 1.0f : fH, fH, fH, fH}; // same health for all.
 				m_animStats.Invoke("setDamage", args, 5);
 			}
 			return fH;
@@ -388,7 +388,7 @@ float CHUDVehicleInterface::UpdateDamages(EVehicleHud eHud, IVehicle* pVehicle, 
 			float fW8 = pVehicle->GetComponent("wheel8")->GetDamageRatio();
 			if (updateFlash)
 			{
-				SFlashVarValue args[11] = { fH, engineDisabled ? 1.0f : fH, fH, fW1, fW5, fW2, fW6, fW3, fW7, fW4, fW8 };
+				SFlashVarValue args[11] = {fH, engineDisabled ? 1.0f : fH, fH, fW1, fW5, fW2, fW6, fW3, fW7, fW4, fW8};
 				m_animStats.Invoke("setDamage", args, 11);
 			}
 			return fH;
@@ -401,7 +401,7 @@ float CHUDVehicleInterface::UpdateDamages(EVehicleHud eHud, IVehicle* pVehicle, 
 			float hull = pVehicle->GetComponent("hull")->GetDamageRatio();
 			if (updateFlash)
 			{
-				SFlashVarValue args[3] = { hull, hull, hull };
+				SFlashVarValue args[3] = {hull, hull, hull};
 				m_animStats.Invoke("setDamage", args, 3);
 			}
 			return hull;
@@ -414,7 +414,7 @@ float CHUDVehicleInterface::UpdateDamages(EVehicleHud eHud, IVehicle* pVehicle, 
 			float fH = pVehicle->GetComponent("Hull")->GetDamageRatio();
 			if (updateFlash)
 			{
-				SFlashVarValue args[3] = { fH, fH, fH };
+				SFlashVarValue args[3] = {fH, fH, fH};
 				m_animStats.Invoke("setDamage", args, 3);
 			}
 			return fH;
@@ -427,7 +427,7 @@ float CHUDVehicleInterface::UpdateDamages(EVehicleHud eHud, IVehicle* pVehicle, 
 			float fH = pVehicle->GetComponent("Hull")->GetDamageRatio();
 			if (updateFlash)
 			{
-				SFlashVarValue args[4] = { fH, fH, engineDisabled ? 1.0f : fH, fH };
+				SFlashVarValue args[4] = {fH, fH, engineDisabled ? 1.0f : fH, fH};
 				m_animStats.Invoke("setDamage", args, 4);
 			}
 			return fH;
@@ -435,7 +435,8 @@ float CHUDVehicleInterface::UpdateDamages(EVehicleHud eHud, IVehicle* pVehicle, 
 	}
 	else if (eHud == EHUD_LTV)
 	{
-		if (pVehicle->GetEntity()->GetClass() == pRadar->m_pLTVA || pVehicle->GetEntity()->GetClass() == pRadar->m_pLTVUS)
+		if (pVehicle->GetEntity()->GetClass() == pRadar->m_pLTVA || pVehicle->GetEntity()->GetClass() == pRadar->
+			m_pLTVUS)
 		{
 			float fH = pVehicle->GetComponent("Hull")->GetDamageRatio();
 			float fT = pVehicle->GetComponent("FuelCan")->GetDamageRatio();
@@ -445,7 +446,7 @@ float CHUDVehicleInterface::UpdateDamages(EVehicleHud eHud, IVehicle* pVehicle, 
 			float fW4 = pVehicle->GetComponent("wheel4")->GetDamageRatio();
 			if (updateFlash)
 			{
-				SFlashVarValue args[7] = { fH, engineDisabled ? 1.0f : fH, fT, fW1, fW2, fW3, fW4 };
+				SFlashVarValue args[7] = {fH, engineDisabled ? 1.0f : fH, fT, fW1, fW2, fW3, fW4};
 				m_animStats.Invoke("setDamage", args, 7);
 			}
 			return fH;
@@ -466,7 +467,7 @@ float CHUDVehicleInterface::UpdateDamages(EVehicleHud eHud, IVehicle* pVehicle, 
 			float fW6 = pVehicle->GetComponent("wheel6")->GetDamageRatio();
 			if (updateFlash)
 			{
-				SFlashVarValue args[10] = { fH, engineDisabled ? 1.0f : fH, fT1, fT2, fW1, fW2, fW3, fW4, fW5, fW6 };
+				SFlashVarValue args[10] = {fH, engineDisabled ? 1.0f : fH, fT1, fT2, fW1, fW2, fW3, fW4, fW5, fW6};
 				m_animStats.Invoke("setDamage", args, 10);
 			}
 			return fH;
@@ -474,12 +475,13 @@ float CHUDVehicleInterface::UpdateDamages(EVehicleHud eHud, IVehicle* pVehicle, 
 	}
 	else if (eHud == EHUD_SMALLBOAT || m_eCurVehicleHUD == EHUD_CIVBOAT)
 	{
-		if (pVehicle->GetEntity()->GetClass() == pRadar->m_pBoatUS || pVehicle->GetEntity()->GetClass() == pRadar->m_pBoatCiv)
+		if (pVehicle->GetEntity()->GetClass() == pRadar->m_pBoatUS || pVehicle->GetEntity()->GetClass() == pRadar->
+			m_pBoatCiv)
 		{
 			float fH = pVehicle->GetComponent("Hull")->GetDamageRatio();
 			if (updateFlash)
 			{
-				SFlashVarValue args[3] = { fH, fH, fH };
+				SFlashVarValue args[3] = {fH, fH, fH};
 				m_animStats.Invoke("setDamage", args, 3);
 			}
 			return fH;
@@ -492,7 +494,7 @@ float CHUDVehicleInterface::UpdateDamages(EVehicleHud eHud, IVehicle* pVehicle, 
 			float fH = pVehicle->GetComponent("Hull")->GetDamageRatio();
 			if (updateFlash)
 			{
-				SFlashVarValue args[3] = { fH, 0, 0 };
+				SFlashVarValue args[3] = {fH, 0, 0};
 				m_animStats.Invoke("setDamage", args, 3);
 			}
 			return fH;
@@ -505,7 +507,7 @@ float CHUDVehicleInterface::UpdateDamages(EVehicleHud eHud, IVehicle* pVehicle, 
 			float fH = pVehicle->GetComponent("Hull")->GetDamageRatio();
 			if (updateFlash)
 			{
-				SFlashVarValue args[3] = { fH, 0, 0 };
+				SFlashVarValue args[3] = {fH, 0, 0};
 				m_animStats.Invoke("setDamage", args, 3);
 			}
 			return fH;
@@ -522,7 +524,7 @@ float CHUDVehicleInterface::UpdateDamages(EVehicleHud eHud, IVehicle* pVehicle, 
 			float fW4 = pVehicle->GetComponent("wheel4")->GetDamageRatio();
 			if (updateFlash)
 			{
-				SFlashVarValue args[6] = { fH, engineDisabled ? 1.0f : fH, fW1, fW2, fW3, fW4 };
+				SFlashVarValue args[6] = {fH, engineDisabled ? 1.0f : fH, fW1, fW2, fW3, fW4};
 				m_animStats.Invoke("setDamage", args, 6);
 			}
 			return fH;
@@ -537,7 +539,7 @@ float CHUDVehicleInterface::UpdateDamages(EVehicleHud eHud, IVehicle* pVehicle, 
 		float fW4 = pVehicle->GetComponent("wheel4")->GetDamageRatio();
 		if (updateFlash)
 		{
-			SFlashVarValue args[6] = { fH, engineDisabled ? 1.0f : fH, fW1, fW3, fW2, fW4 };
+			SFlashVarValue args[6] = {fH, engineDisabled ? 1.0f : fH, fW1, fW3, fW2, fW4};
 			m_animStats.Invoke("setDamage", args, 6);
 		}
 		return fH;
@@ -554,7 +556,7 @@ void CHUDVehicleInterface::UpdateSeats()
 	int seatCount = m_pVehicle->GetSeatCount();
 	for (int i = 1; i <= seatCount; ++i)
 	{
-		IVehicleSeat* pSeat = m_pVehicle->GetSeatById(TVehicleSeatId(i));
+		IVehicleSeat* pSeat = m_pVehicle->GetSeatById(i);
 		if (pSeat)
 		{
 			EntityId passenger = pSeat->GetPassenger();
@@ -562,14 +564,16 @@ void CHUDVehicleInterface::UpdateSeats()
 			//set seats in flash
 			if (m_eCurVehicleHUD)
 			{
-				SFlashVarValue args[2] = { i, 0 };
+				SFlashVarValue args[2] = {i, 0};
 				if (passenger)
 				{
 					IActor* pActor = gEnv->pGame->GetIGameFramework()->GetIActorSystem()->GetActor(passenger);
 					if (pActor && pActor->GetHealth() > 0) // don't show dead players on the hud
 					{
 						// set different colors if the passenger is the player
-						args[1] = (passenger == gEnv->pGame->GetIGameFramework()->GetClientActor()->GetEntityId()) ? 2 : 1;
+						args[1] = (passenger == gEnv->pGame->GetIGameFramework()->GetClientActor()->GetEntityId())
+							          ? 2
+							          : 1;
 					}
 				}
 				else if (pSeat->IsLocked())
@@ -588,14 +592,14 @@ void CHUDVehicleInterface::OnVehicleEvent(EVehicleEvent event, const SVehicleEve
 {
 	if (eVE_VehicleDeleted == event)
 	{
-		m_pVehicle = NULL;
+		m_pVehicle = nullptr;
 		m_seatId = InvalidVehicleSeatId;
 	}
 
 	if (!m_pVehicle)
 		return;
 
-	CActor* pPlayerActor = static_cast<CActor*>(gEnv->pGame->GetIGameFramework()->GetClientActor());
+	auto pPlayerActor = static_cast<CActor*>(gEnv->pGame->GetIGameFramework()->GetClientActor());
 	if (!pPlayerActor)
 		return;
 
@@ -619,11 +623,12 @@ void CHUDVehicleInterface::OnVehicleEvent(EVehicleEvent event, const SVehicleEve
 		{
 			if (IEntity* pEntity = gEnv->pEntitySystem->GetEntity(params.entityId))
 			{
-				IEntitySoundProxy* pSoundProxy = (IEntitySoundProxy*)pEntity->GetProxy(ENTITY_PROXY_SOUND);
+				auto pSoundProxy = static_cast<IEntitySoundProxy*>(pEntity->GetProxy(ENTITY_PROXY_SOUND));
 				if (pSoundProxy)
-					pSoundProxy->PlaySound("sounds/physics:player_foley:switch_seat", Vec3Constants<float>::fVec3_Zero, Vec3Constants<float>::fVec3_OneY, 0, eSoundSemantic_Player_Foley);
+					pSoundProxy->PlaySound("sounds/physics:player_foley:switch_seat", Vec3Constants<float>::fVec3_Zero,
+					                       Vec3Constants<float>::fVec3_OneY, 0, eSoundSemantic_Player_Foley);
 				if (pPlayerActor->GetEntity() == pEntity)
-					g_pHUD->SetFireMode(NULL, NULL, true);
+					g_pHUD->SetFireMode(nullptr, nullptr, true);
 			}
 		}
 
@@ -639,11 +644,11 @@ void CHUDVehicleInterface::OnVehicleEvent(EVehicleEvent event, const SVehicleEve
 
 void CHUDVehicleInterface::UpdateVehicleHUDDisplay()
 {
-	CActor* pPlayerActor = static_cast<CActor*>(gEnv->pGame->GetIGameFramework()->GetClientActor());
+	auto pPlayerActor = static_cast<CActor*>(gEnv->pGame->GetIGameFramework()->GetClientActor());
 	if (!pPlayerActor)
 		return;
 
-	IVehicleSeat* seat = NULL;
+	IVehicleSeat* seat = nullptr;
 	if (m_pVehicle)
 	{
 		seat = m_pVehicle->GetSeatForPassenger(pPlayerActor->GetEntityId());
@@ -676,7 +681,7 @@ void CHUDVehicleInterface::UpdateVehicleHUDDisplay()
 	{
 		m_animMainWindow.Invoke("hideHUD");
 		m_animMainWindow.SetVisible(false);
-		g_pAmmo->Invoke("setAmmoMode", 0);
+		g_pAmmo->Invoke("setAmmoMode", nullptr);
 	}
 	else
 	{
@@ -717,7 +722,7 @@ bool CHUDVehicleInterface::IsAbleToBuy()
 			{
 				if (IItem* pItem = gEnv->pGame->GetIGameFramework()->GetIItemSystem()->GetItem(weaponId))
 				{
-					CWeapon* pWeapon = static_cast<CWeapon*>(pItem->GetIWeapon());
+					auto pWeapon = static_cast<CWeapon*>(pItem->GetIWeapon());
 					if (!pWeapon)
 						continue;
 
@@ -754,7 +759,7 @@ float CHUDVehicleInterface::GetVehicleSpeed()
 	}
 	else
 	{
-		CActor* pPlayerActor = static_cast<CActor*>(gEnv->pGame->GetIGameFramework()->GetClientActor());
+		auto pPlayerActor = static_cast<CActor*>(gEnv->pGame->GetIGameFramework()->GetClientActor());
 		if (pPlayerActor)
 		{
 			fSpeed = pPlayerActor->GetActorStats()->velocity.len();
@@ -789,7 +794,7 @@ float CHUDVehicleInterface::GetRelativeHeading()
 	float fAngle = 0.0;
 	if (m_pVehicle)
 	{
-		CActor* pPlayerActor = static_cast<CActor*>(gEnv->pGame->GetIGameFramework()->GetClientActor());
+		auto pPlayerActor = static_cast<CActor*>(gEnv->pGame->GetIGameFramework()->GetClientActor());
 		if (pPlayerActor)
 		{
 			if (IVehicleSeat* pSeat = m_pVehicle->GetSeatForPassenger(pPlayerActor->GetEntityId()))
@@ -822,9 +827,9 @@ void CHUDVehicleInterface::ShowVehicleInterface(EVehicleHud type, bool forceFlas
 	if (!m_pVehicle && !m_bParachute)
 		return;
 
-	CActor* pPlayerActor = static_cast<CActor*>(gEnv->pGame->GetIGameFramework()->GetClientActor());
+	auto pPlayerActor = static_cast<CActor*>(gEnv->pGame->GetIGameFramework()->GetClientActor());
 
-	IVehicleSeat* pSeat = NULL;
+	IVehicleSeat* pSeat = nullptr;
 	if (m_pVehicle)
 	{
 		pSeat = m_pVehicle->GetSeatForPassenger(pPlayerActor->GetEntityId());
@@ -841,7 +846,8 @@ void CHUDVehicleInterface::ShowVehicleInterface(EVehicleHud type, bool forceFlas
 
 		if (m_pVehicle)
 		{
-			CWeapon* pWeapon = pPlayerActor->GetWeapon(m_pVehicle->GetCurrentWeaponId(pPlayerActor->GetEntity()->GetId()));
+			CWeapon* pWeapon = pPlayerActor->GetWeapon(
+				m_pVehicle->GetCurrentWeaponId(pPlayerActor->GetEntity()->GetId()));
 			if (pWeapon)
 			{
 				IFireMode* pFireMode = pWeapon->GetFireMode(pWeapon->GetCurrentFireMode());
@@ -880,7 +886,7 @@ void CHUDVehicleInterface::ShowVehicleInterface(EVehicleHud type, bool forceFlas
 			else
 			{
 				if (IItem* pFists = pPlayerActor->GetItemByClass(CItem::sFistsClass))
-					g_pHUD->SetFireMode(pFists, NULL);
+					g_pHUD->SetFireMode(pFists, nullptr);
 			}
 
 			pWeapon = pPlayerActor->GetWeapon(m_pVehicle->GetCurrentWeaponId(pPlayerActor->GetEntity()->GetId(), true));
@@ -910,7 +916,9 @@ void CHUDVehicleInterface::ShowVehicleInterface(EVehicleHud type, bool forceFlas
 				m_iPrimaryClipSize != iPrimaryClipSize ||
 				m_bAmmoForceNextUpdate)
 			{
-				SFlashVarValue args[7] = { iSecondaryAmmoCount, iPrimaryAmmoCount, iSecondaryClipSize, iPrimaryClipSize, 0, "", false };
+				SFlashVarValue args[7] = {
+					iSecondaryAmmoCount, iPrimaryAmmoCount, iSecondaryClipSize, iPrimaryClipSize, 0, "", false
+				};
 				g_pAmmo->Invoke("setAmmo", args, 7);
 				//if(iSecondaryClipSize == -1)
 				//	g_pAmmo->Invoke("setFireMode", 8);
@@ -958,21 +966,22 @@ void CHUDVehicleInterface::ShowVehicleInterface(EVehicleHud type, bool forceFlas
 
 	float fAltitude;
 
-	if (((int)fSpeed) != m_statsSpeed)
+	if (static_cast<int>(fSpeed) != m_statsSpeed)
 	{
-		SFlashVarValue args[2] = { szSpeed, (int)fSpeed };
+		SFlashVarValue args[2] = {szSpeed, static_cast<int>(fSpeed)};
 		m_animStats.CheckedInvoke("setSpeed", args, 2);
-		m_statsSpeed = (int)fSpeed;
+		m_statsSpeed = static_cast<int>(fSpeed);
 	}
 
 	// Note: this needs to be done even if we are not the driver, as the driver
 	// may change the direction of the main turret while we'are at the gunner seat
-	if (pSeat && (type == EHUD_TANKA || type == EHUD_TANKUS || type == EHUD_AAA || type == EHUD_APC || type == EHUD_APC2))
+	if (pSeat && (type == EHUD_TANKA || type == EHUD_TANKUS || type == EHUD_AAA || type == EHUD_APC || type ==
+		EHUD_APC2))
 	{
-		if ((int)fRelAngle != m_statsHeading)
+		if (static_cast<int>(fRelAngle) != m_statsHeading)
 		{
-			m_animStats.CheckedInvoke("setDirection", (int)fRelAngle);	//vehicle/turret angle
-			m_statsHeading = (int)fRelAngle;
+			m_animStats.CheckedInvoke("setDirection", static_cast<int>(fRelAngle)); //vehicle/turret angle
+			m_statsHeading = static_cast<int>(fRelAngle);
 		}
 	}
 
@@ -983,7 +992,8 @@ void CHUDVehicleInterface::ShowVehicleInterface(EVehicleHud type, bool forceFlas
 		{
 			Vec3 vWorldPos = m_pVehicle->GetEntity()->GetWorldPos();
 			float waterLevel = gEnv->p3DEngine->GetWaterLevel(&vWorldPos);
-			float terrainZ = GetISystem()->GetI3DEngine()->GetTerrainZ((int)vWorldPos.x, (int)vWorldPos.y);
+			float terrainZ = GetISystem()->GetI3DEngine()->GetTerrainZ(static_cast<int>(vWorldPos.x),
+			                                                           static_cast<int>(vWorldPos.y));
 			if (terrainZ < waterLevel)
 				terrainZ = waterLevel;
 			fAltitude = vWorldPos.z - terrainZ;
@@ -993,7 +1003,8 @@ void CHUDVehicleInterface::ShowVehicleInterface(EVehicleHud type, bool forceFlas
 		{
 			Vec3 vWorldPos = pPlayerActor->GetEntity()->GetWorldPos();
 			float waterLevel = gEnv->p3DEngine->GetWaterLevel(&vWorldPos);
-			float terrainZ = GetISystem()->GetI3DEngine()->GetTerrainZ((int)vWorldPos.x, (int)vWorldPos.y);
+			float terrainZ = GetISystem()->GetI3DEngine()->GetTerrainZ(static_cast<int>(vWorldPos.x),
+			                                                           static_cast<int>(vWorldPos.y));
 			if (terrainZ < waterLevel)
 				terrainZ = waterLevel;
 			fAltitude = vWorldPos.z - terrainZ;
@@ -1016,11 +1027,13 @@ void CHUDVehicleInterface::ShowVehicleInterface(EVehicleHud type, bool forceFlas
 	}
 	if (type == EHUD_VTOL || type == EHUD_HELI || type == EHUD_TANKA || type == EHUD_TANKUS ||
 		type == EHUD_AAA || type == EHUD_LTV || type == EHUD_APC || type == EHUD_TRUCK ||
-		type == EHUD_SMALLBOAT || type == EHUD_PATROLBOAT || type == EHUD_APC2 || type == EHUD_ASV || type == EHUD_HOVER)
+		type == EHUD_SMALLBOAT || type == EHUD_PATROLBOAT || type == EHUD_APC2 || type == EHUD_ASV || type ==
+		EHUD_HOVER)
 	{
 		if (g_pAmmo)
 		{
-			IWeapon* pPlayerWeapon = pPlayerActor->GetWeapon(m_pVehicle->GetCurrentWeaponId(pPlayerActor->GetEntity()->GetId()));
+			IWeapon* pPlayerWeapon = pPlayerActor->GetWeapon(
+				m_pVehicle->GetCurrentWeaponId(pPlayerActor->GetEntity()->GetId()));
 			if (pPlayerWeapon)
 			{
 				if (IFireMode* pFireMode = pPlayerWeapon->GetFireMode(pPlayerWeapon->GetCurrentFireMode()))
@@ -1028,7 +1041,7 @@ void CHUDVehicleInterface::ShowVehicleInterface(EVehicleHud type, bool forceFlas
 					int duration = 0;
 					if (pFireMode->CanOverheat())
 					{
-						duration = (int)(pFireMode->GetHeat() * 100);
+						duration = static_cast<int>(pFireMode->GetHeat() * 100);
 						if (duration != m_iLastReloadBarValue)
 						{
 							g_pAmmo->Invoke("setOverheatBar", duration);
@@ -1039,11 +1052,12 @@ void CHUDVehicleInterface::ShowVehicleInterface(EVehicleHud type, bool forceFlas
 					{
 						float fFireRate = 60.0f / pFireMode->GetFireRate();
 						float fNextShotTime = pFireMode->GetNextShotTime();
-						duration = int(((fFireRate - fNextShotTime) / fFireRate) * 100.0f + 1.0f);
+						duration = static_cast<int>(((fFireRate - fNextShotTime) / fFireRate) * 100.0f + 1.0f);
 						if (duration != m_iLastReloadBarValue)
 						{
 							g_pAmmo->Invoke("setReloadDuration", duration);
-							if (g_pGameCVars->hud_showBigVehicleReload && m_hasMainHUD[m_eCurVehicleHUD] && type != EHUD_PATROLBOAT)
+							if (g_pGameCVars->hud_showBigVehicleReload && m_hasMainHUD[m_eCurVehicleHUD] && type !=
+								EHUD_PATROLBOAT)
 								m_animMainWindow.Invoke("setReloadDuration", duration);
 							m_iLastReloadBarValue = duration;
 						}
@@ -1051,7 +1065,8 @@ void CHUDVehicleInterface::ShowVehicleInterface(EVehicleHud type, bool forceFlas
 				}
 			}
 
-			if (type == EHUD_AAA || type == EHUD_APC || type == EHUD_APC2 || type == EHUD_TANKA || type == EHUD_TANKUS || type == EHUD_VTOL || type == EHUD_HELI)	//get reload for secondary guns
+			if (type == EHUD_AAA || type == EHUD_APC || type == EHUD_APC2 || type == EHUD_TANKA || type == EHUD_TANKUS
+				|| type == EHUD_VTOL || type == EHUD_HELI) //get reload for secondary guns
 			{
 				IItem* pItem = gEnv->pGame->GetIGameFramework()->GetIItemSystem()->GetItem(m_pVehicle->GetWeaponId(1));
 				if (pItem)
@@ -1062,7 +1077,7 @@ void CHUDVehicleInterface::ShowVehicleInterface(EVehicleHud type, bool forceFlas
 						int duration = 0;
 						if (pFireMode->CanOverheat())
 						{
-							duration = (int)(pFireMode->GetHeat() * 100);
+							duration = static_cast<int>(pFireMode->GetHeat() * 100);
 							if (duration != m_iLastReloadBarValue2)
 							{
 								g_pAmmo->Invoke("setOverheatBar2", duration);
@@ -1073,7 +1088,7 @@ void CHUDVehicleInterface::ShowVehicleInterface(EVehicleHud type, bool forceFlas
 						{
 							float fFireRate = 60.0f / pFireMode->GetFireRate();
 							float fNextShotTime = pFireMode->GetNextShotTime();
-							duration = int(((fFireRate - fNextShotTime) / fFireRate) * 100.0f + 1.0f);
+							duration = static_cast<int>(((fFireRate - fNextShotTime) / fFireRate) * 100.0f + 1.0f);
 							if (duration != m_iLastReloadBarValue2)
 							{
 								g_pAmmo->Invoke("setReloadDuration2", duration);
@@ -1102,7 +1117,11 @@ void CHUDVehicleInterface::ShowVehicleInterface(EVehicleHud type, bool forceFlas
 	}
 
 	{
-		SFlashVarValue args[10] = { (int)fPosHeading, szN, szW, szAltitude, fAltitude, (int)(sMovementState.eyeDirection.z * 90.0), szSpeed, (int)fSpeed, (int)fAngle, szDistance };
+		SFlashVarValue args[10] = {
+			static_cast<int>(fPosHeading), szN, szW, szAltitude, fAltitude,
+			static_cast<int>(sMovementState.eyeDirection.z * 90.0), szSpeed, static_cast<int>(fSpeed),
+			static_cast<int>(fAngle), szDistance
+		};
 		m_animMainWindow.Invoke("setVehicleValues", args, 10);
 	}
 }

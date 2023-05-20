@@ -220,17 +220,20 @@ CScriptBind_Actor::~CScriptBind_Actor()
 
 int CScriptBind_Actor::GetSquadMembersCount(IFunctionHandler* pH)
 {
-	CActor* pActor = GetActor(pH);
+	const CActor* pActor = GetActor(pH);
 	if (!pActor)
 		return pH->EndFunction(0);
 
 	if (g_pControlSystem)
 	{
-		if (CSquadSystem* pSS = g_pControlSystem->GetSquadSystem())
+		if (CSquadSystem* pSquadSystem = g_pControlSystem->GetSquadSystem())
 		{
-			auto pSquad = pSS->GetSquadFromMember(pActor, 1);
-			if (pSquad->GetLeader() != 0)
-				return pH->EndFunction(pSquad->GetMembersCount());
+			const CSquad* pSquad = pSquadSystem->GetSquadFromMember(pActor, true);
+			if (pSquad->GetLeader() != nullptr)
+			{
+				const int endFunction = pH->EndFunction(pSquad->GetMembersCount());
+				return endFunction;
+			}
 		}
 	}
 
@@ -238,7 +241,7 @@ int CScriptBind_Actor::GetSquadMembersCount(IFunctionHandler* pH)
 }
 
 //------------------------------------------------------------------------
-int CScriptBind_Actor::SetAlienEnergy(IFunctionHandler* pH, float energyValue)
+int CScriptBind_Actor::SetAlienEnergy(IFunctionHandler* pH, const float energy)
 {
 	CActor* pActor = GetActor(pH);
 
@@ -247,8 +250,8 @@ int CScriptBind_Actor::SetAlienEnergy(IFunctionHandler* pH, float energyValue)
 
 	if (pActor && pActor->IsAlien())
 	{
-		CAlien* pAlien = static_cast<CAlien*>(pActor);
-		pAlien->SetAlienEnergy(energyValue);
+		const auto pAlien = dynamic_cast<CAlien*>(pActor);
+		pAlien->SetAlienEnergy(energy);
 	}
 	return pH->EndFunction();
 }
@@ -262,13 +265,12 @@ int CScriptBind_Actor::GetAlienEnergy(IFunctionHandler* pH)
 
 	if (pActor && pActor->IsAlien())
 	{
-		CAlien* pAlien = static_cast<CAlien*>(pActor);
+		const auto pAlien = dynamic_cast<CAlien*>(pActor);
+		const float energy = pAlien->GetEnergyParams().energy;
 
-		float energy = pAlien->GetEnergyParams().energy;
 		return pH->EndFunction(energy);
 	}
-	else
-		return pH->EndFunction();
+	return pH->EndFunction();
 }
 
 int CScriptBind_Actor::SetShieldEnergy(IFunctionHandler* pH, float energy)
@@ -283,12 +285,12 @@ int CScriptBind_Actor::SetShieldEnergy(IFunctionHandler* pH, float energy)
 		const string className = pActor->GetEntity()->GetClass()->GetName();
 		if (className == "Trooper")
 		{
-			CTrooper* pTrooper = static_cast<CTrooper*>(pActor);
+			const auto pTrooper = dynamic_cast<CTrooper*>(pActor);
 			pTrooper->SetShieldEnergy(energy);
 		}
 		else if (className == "Hunter")
 		{
-			CAlien* pHunter = static_cast<CAlien*>(pActor);
+			const auto pHunter = dynamic_cast<CAlien*>(pActor);
 			pHunter->SetAlienEnergy(energy);
 		}
 	}
@@ -334,13 +336,14 @@ int CScriptBind_Actor::IsShieldProjected(IFunctionHandler* pH)
 		const string className = pActor->GetEntity()->GetClass()->GetName();
 		if (className == "Trooper")
 		{
-			CTrooper* pTrooper = static_cast<CTrooper*>(pActor);
+
+			const auto* pTrooper = static_cast<CTrooper*>(pActor);
 			if (pTrooper->m_shieldParams.isProjecting)
 				return pH->EndFunction(1);
 		}
 		else if (className == "Hunter")
 		{
-			CHunter* pHunter = static_cast<CHunter*>(pActor);
+			const auto pHunter = dynamic_cast<CHunter*>(pActor);
 			if (pHunter->IsShieldEnabled())
 				return pH->EndFunction(1);
 		}

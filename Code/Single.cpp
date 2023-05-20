@@ -533,7 +533,7 @@ void CSingle::StartLocking(EntityId targetId, int partId /*=0*/)
 	m_bLocked = false;
 	m_fStareTime = 0.0f;
 
-	if (CActor* pActor = m_pWeapon->GetOwnerActor())
+	if (const CActor* pActor = m_pWeapon->GetOwnerActor())
 	{
 		if (pActor->IsClient())
 		{
@@ -570,7 +570,8 @@ void CSingle::UpdateAutoAim(float frameTime)
 	int nSkipEnts = GetSkipEntities(m_pWeapon, pSkipEnts, 10);
 
 	const int objects = ent_all;
-	const int flags = (geom_colltype_ray << rwi_colltype_bit) | rwi_colltype_any | (8 & rwi_pierceability_mask) | (geom_colltype14 << rwi_colltype_bit);
+	const int flags = (geom_colltype_ray << rwi_colltype_bit) | rwi_colltype_any | (8 & rwi_pierceability_mask) | (
+		geom_colltype14 << rwi_colltype_bit);
 
 	int result = gEnv->pPhysicalWorld->RayWorldIntersection(aimPos, aimDir * 2.f * maxDistance,
 		objects, flags, &ray, 1, pSkipEnts, nSkipEnts);

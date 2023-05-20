@@ -442,8 +442,9 @@ CSquad* CSquadSystem::GetSquadFromLeader(IActor* pLeader)
 	return nullptr;
 }
 
-CSquad* CSquadSystem::GetSquadFromId(int squadId)
+CSquad* CSquadSystem::GetSquadFromId(int squadId) const
 {
+	//TODO: fix O(n^2)
 	for (CSquad* pSquad : m_allSquads)
 	{
 		if (pSquad->GetId() == squadId)
@@ -453,7 +454,7 @@ CSquad* CSquadSystem::GetSquadFromId(int squadId)
 	return nullptr;
 }
 
-CSquad* CSquadSystem::GetClientSquad()
+CSquad* CSquadSystem::GetClientSquad() const
 {
 	for (CSquad* pSquad : m_allSquads)
 	{
@@ -464,7 +465,7 @@ CSquad* CSquadSystem::GetClientSquad()
 	return nullptr;
 }
 
-int CSquadSystem::GetSquadsCount()
+int CSquadSystem::GetSquadsCount() const
 {
 	return m_allSquads.size();
 }
@@ -488,7 +489,7 @@ CSquad* CSquadSystem::CreateSquad()
 	pSquad->SetId(GetFreeSquadIndex());
 
 	m_allSquads.push_back(pSquad);
-
+	
 	if (g_pGameCVars->sqd_debug_log_creating)
 		CryLogAlways("[C++][Squad System][Create Squad %i] Success!", pSquad->GetId());
 

@@ -21,11 +21,11 @@ struct SStrategyPriority;
 struct ILevelInfo;
 struct ILevel;
 struct IPipeUser;
+enum class EAreaFlag;
 enum ESpeciesType;
 enum EAreaBusyFlags;
 enum EAreaGameStatusFlag;
 enum ESquadOrders;
-enum class EAreaFlag;
 enum ERespawnEvent;
 enum EGoalPipeEvent;
 
@@ -107,73 +107,78 @@ struct SVehicleClass
 class CConquerAICountInfo
 {
 public:
+	friend class CConquerorSystem;
+
 	CConquerAICountInfo()
+	{
+
+	}
+	
+	void Clear()
 	{
 		speciesSquadsCountMap.clear();
 		speciesUnitsCountMap.clear();
 		speciesReinforcementCountMap.clear();
-	};
-
-	friend class CConquerorSystem;
-
-	void Clear() { speciesSquadsCountMap.clear(); speciesUnitsCountMap.clear(); speciesReinforcementCountMap.clear(); };
-	inline int GetSquadsCount(ESpeciesType species) const
-	{ 
-		auto it = speciesSquadsCountMap.cbegin();
-		auto end = speciesSquadsCountMap.cend();
-
-		for (; it != end; it++)
-		{
-			if (it->first == species)
-				return it->second;
-		}
-
-		return 0;
-	};
-	inline int GetUnitsCount(ESpeciesType species) const 
-	{ 
-		auto it = speciesUnitsCountMap.cbegin();
-		auto end = speciesUnitsCountMap.cend();
-
-		for (; it != end; it++)
-		{
-			if (it->first == species)
-				return it->second;
-		}
-
-		return 0;
-	};
-	inline int GetReinforcementsCount(ESpeciesType species) const
-	{
-		auto it = speciesReinforcementCountMap.cbegin();
-		auto end = speciesReinforcementCountMap.cend();
-
-		for (;it!=end;it++)
-		{
-			if (it->first == species)
-				return it->second;
-		}
-
-		return 0;
 	}
 
-	inline int GetMaxReinforcementsCount(ESpeciesType species) const
+	int GetSquadsCount(const ESpeciesType species) const
+	{ 
+		// auto it = speciesSquadsCountMap.cbegin();
+		// auto end = speciesSquadsCountMap.cend();
+		//
+		// for (; it != end; ++it)
+		// {
+		// 	if (it->first == species)
+		// 		return it->second;
+		// }
+		const auto it = speciesSquadsCountMap.find(species);
+		return it == speciesSquadsCountMap.end() ? 0 : it->second;
+	}
+
+	int GetUnitsCount(const ESpeciesType species) const 
+	{ 
+		// auto it = speciesUnitsCountMap.cbegin();
+		// const auto end = speciesUnitsCountMap.cend();
+		//
+		// for (; it != end; ++it)
+		// {
+		// 	if (it->first == species)
+		// 		return it->second;
+		// }
+
+		const auto it = speciesUnitsCountMap.find(species);
+		return it == speciesUnitsCountMap.end() ? 0 : it->second;
+	}
+
+	int GetReinforcementsCount(const ESpeciesType species) const
 	{
-		auto it = speciesReinforcementCountConstMap.cbegin();
-		auto end = speciesReinforcementCountConstMap.cend();
+		const auto it = speciesReinforcementCountMap.find(species);
+		return it != speciesReinforcementCountMap.end() ? it->second : 0;
+	}
 
-		for (; it != end; it++)
-		{
-			if (it->first == species)
-				return it->second;
-		}
+	int GetMaxReinforcementsCount(const ESpeciesType species) const
+	{
+		// auto it = speciesReinforcementCountConstMap.cbegin();
+		// auto end = speciesReinforcementCountConstMap.cend();
+		//
+		// for (; it != end; it++)
+		// {
+		// 	if (it->first == species)
+		// 		return it->second;
+		// }
 
-		return 0;
+		//return 0;
+
+		const auto it = speciesReinforcementCountConstMap.find(species);
+		return it != speciesReinforcementCountConstMap.end() ? it->second : 0;
 	}
 
 
 private:
-	inline void SetReinforcementsCount(ESpeciesType species, int count) { speciesReinforcementCountMap[species] = count; };
+	void SetReinforcementsCount(const ESpeciesType species, const int count)
+	{
+		speciesReinforcementCountMap[species] = count;
+	}
 
 	std::map<ESpeciesType, int> speciesUnitsCountMap;
 	std::map<ESpeciesType, int> speciesSquadsCountMap;
@@ -202,10 +207,10 @@ struct SPreRespawnData
 	{
 		actorId = 0;
 		areaId = 0;
-		event = ERespawnEvent(0);
+		event = static_cast<ERespawnEvent>(0);
 	}
 
-	SPreRespawnData(EntityId _actorid, EntityId _areaId, ERespawnEvent _event)
+	SPreRespawnData(const EntityId _actorid, const EntityId _areaId, const ERespawnEvent _event)
 	{
 		actorId = _actorid;
 		areaId = _areaId;
@@ -241,12 +246,12 @@ public:
 	void		OnActorDrop(IActor* pActor, EntityId dropId) override;
 	void		OnEnterVehicle(IActor* pActor, IVehicle* pVehicle) override;
 	void		OnExitVehicle(IActor* pActor) override;
-	virtual bool OnInputEvent(const SInputEvent& event) override;
+	bool		OnInputEvent(const SInputEvent& event) override;
 	void		Init() override;
 	void		Update(float frametime) override;
 	void		Serialize(TSerialize ser) override;
 	void		GetMemoryStatistics(ICrySizer* s) override;
-	const char* GetChildName() { return "CConquerorSystem"; };
+	const char* GetChildName() override { return "CConquerorSystem"; }
 	//~IControlSystemChild
 
 	//Events
@@ -256,12 +261,12 @@ public:
 
 	void			OnAreaCaptured(CStrategicArea* pArea, ESpeciesType ownerSpecies);
 	void			OnAreaLost(CStrategicArea* pArea, ESpeciesType oldSpecies);
-	void			OnAreaUnderAttack(const CStrategicArea* pArea);
+	//void			OnAreaUnderAttack(const CStrategicArea* pArea);
 
-	void			OnCmdJoinGame(IActor* pActor);
+	void			OnCmdJoinGame(IActor* pDude);
 	void			OnCmdSpectator(IActor* pActor);
-	void			OnVehicleDestroyed(IVehicle* pVehicle);
-	void			OnVehicleStuck(IVehicle* pVehicle, bool stuck);
+	void			OnVehicleDestroyed(IVehicle* pVehicle) const;
+	void			OnVehicleStuck(IVehicle* pVehicle, bool stuck) const;
 
 	void			OnGoalPipeEvent(IEntity* pUserEntity, IPipeUser* pPipeUser, EGoalPipeEvent event, int goalPipeId);
 
@@ -272,7 +277,7 @@ private:
 	void			OnClientAreaEnter(CStrategicArea* area, bool vehicle);
 	void			OnClientAreaExit();
 	void			OnLobbySetInfo(SConquerLobbyInfo& info);
-	void			OnLobbySetTeam(ESpeciesType index, int variationIndex);
+	void			OnLobbySetTeam(ESpeciesType speciesIndex, int classIndex);
 	//~Events
 
 public:
@@ -287,14 +292,14 @@ public:
 	void			RemoveStrategicArea(CStrategicArea* area);
 	bool			IsExistStrategicArea(CStrategicArea* area);
 
-	void			GetStrategicAreas(std::vector<CStrategicArea*>& areas, ESpeciesType targetSpecies, EAreaGameStatusFlag gameStatus, ESpeciesType owner, EAreaBusyFlags busyFlags, EAreaFlag areaFlag);
+	void			GetStrategicAreas(std::vector<CStrategicArea*>& areas, ESpeciesType targetSpecies, EAreaGameStatusFlag gameStatus, ESpeciesType owner, EAreaBusyFlags busyFlags, EAreaFlag areaFlag) const;
 	
-	CStrategicArea* GetNearestStrategicArea(const Vec3& pos, const string& areaStatus, EAreaGameStatusFlag gameStatus, ESpeciesType desiredOwner, EAreaBusyFlags busyFlags, EAreaFlag areaFlag);
-	CStrategicArea* GetNearestStrategicArea(const Vec3& pos, ESpeciesType targetSpecies, EAreaGameStatusFlag gameStatus, ESpeciesType desiredOwner, EAreaBusyFlags busyFlags, EAreaFlag areaFlag);
+	CStrategicArea* GetNearestStrategicArea(const Vec3& pos, const string& areaStatus, EAreaGameStatusFlag gameStatus, ESpeciesType desiredOwner, EAreaBusyFlags busyFlags, EAreaFlag areaFlag) const;
+	CStrategicArea* GetNearestStrategicArea(const Vec3& pos, ESpeciesType targetSpecies, EAreaGameStatusFlag gameStatus, ESpeciesType desiredOwner, EAreaBusyFlags busyFlags, EAreaFlag areaFlag) const;
 	
-	CStrategicArea* GetStrategicArea(EntityId id, std::vector<EntityId>* excludeAreaIds, bool getOnlyEnabled = true);
-	CStrategicArea* GetStrategicArea(ESpeciesType species, std::vector<EntityId>* excludeAreaIds, bool getOnlyEnabled = true);
-	CStrategicArea* GetBaseStrategicArea(ESpeciesType species);
+	CStrategicArea* GetStrategicArea(EntityId id, std::vector<EntityId>* excludeAreaIds, bool getOnlyEnabled = true) const;
+	CStrategicArea* GetStrategicArea(ESpeciesType species, std::vector<EntityId>* excludeAreaIds, bool getOnlyEnabled = true) const;
+	CStrategicArea* GetBaseStrategicArea(ESpeciesType species) const;
 	
 	int				GetHostileAreasCount(ESpeciesType myspecies, const std::vector<EAreaFlag>& flags, EAreaGameStatusFlag gameStatus) const;
 	int				GetHostileAreasCount(ESpeciesType myspecies, EAreaGameStatusFlag gameStatus) const;
@@ -308,20 +313,20 @@ public:
 
 	//Channels
 	CConquerorChannel* CreateConquerorChannel(IEntity* pEntity, CSpeciesClass& classInfo);
-	void			RemoveConquerorChannel(IEntity* pEntity);
+	void			RemoveConquerorChannel(const IEntity* pEntity);
 	void			RemoveAllChannels();
 	bool			IsExistConquerorChannel(IEntity* pEntity);
 	CConquerorChannel* GetClientConquerorChannel();
-	CConquerorChannel* GetConquerorChannel(IEntity* pEntity);
-	CConquerorChannel* GetConquerorChannel(EntityId entityId);
-	CConquerorChannel* GetConquerorChannel(int index);
-	CConquerorChannel* GetConquerorChannelById(int id);
+	CConquerorChannel* GetConquerorChannel(const IEntity* pEntity) const;
+	CConquerorChannel* GetConquerorChannel(EntityId entityId) const;
+	CConquerorChannel* GetConquerorChannel(int idx) const;
+	CConquerorChannel* GetConquerorChannelById(int id) const;
 	int				GetConquerorChannelsCount();
 	//~Channels
 
 	int				GetSpeciesFromEntity(IEntity* pEntity);
 	const char*		GetSpeciesName(ESpeciesType type) const;
-	void			GetSpeciesTeammates(ESpeciesType species, std::vector<EntityId>& teammates, bool onlyAlive = false);
+	void			GetSpeciesTeammates(ESpeciesType species, std::vector<EntityId>& teammates, bool onlyAlive = false) const;
 	void			SetSpeciesReinforcements(ESpeciesType species, int count);
 	void			AddSpeciesReinforcements(ESpeciesType species, int count, int multiplyer);
 	int				GetSpeciesReinforcements(ESpeciesType species) const;//Get the species reinforcements info from the .xml file
@@ -379,10 +384,10 @@ public:
 	int				GetSpeciesChangeLimit() const;
 	int				GetSpeciesChangeCount() const;
 
-	inline bool		IsGameOver() const { return m_gameOver; };
-	inline ESpeciesType	GetWinnerSpecies() const { return m_winnerSpecies; };
+	bool		IsGameOver() const { return m_gameOver; };
+	ESpeciesType	GetWinnerSpecies() const { return m_winnerSpecies; };
 
-	inline EGameStatus	GetGameStatus() { return m_gameStatus; };
+	EGameStatus	GetGameStatus() const { return m_gameStatus; }
 
 	void			ForceKillSpecies(ESpeciesType species);
 
@@ -475,8 +480,8 @@ private:
 	std::vector<ESpeciesType> m_gameAllowedSpecies;
 	std::vector<ESpeciesType> m_lobbyAllowedSpecies;
 
-	//std::map<ESpeciesType, _smart_ptr<CConquerorCommander>> m_speciesCommandersMap;
-	std::vector<_smart_ptr<CConquerorCommander>> m_speciesCommanders;
+	std::map<ESpeciesType, _smart_ptr<CConquerorCommander>> m_speciesCommanders;
+	//std::vector<_smart_ptr<CConquerorCommander>> m_speciesCommanders;
 	std::map<ESpeciesType, string> m_speciesCharNameMap;
 	std::map<ESpeciesType, int> m_speciesLeadersCountMap;
 	std::map<ESpeciesType, int> m_speciesFlagIndexMap;

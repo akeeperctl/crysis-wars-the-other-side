@@ -140,7 +140,7 @@ void CStrategicArea::ChangeAgentCount(EntityId entityId, const char* operation)
 	if (m_DefinedMultiplayerSide == EMultiplayerSide::SPECIES)
 	{
 		IAIObject* pEntityAI = pEntity->GetAI();
-		ESpeciesType speciesType = (ESpeciesType)pEntityAI->CastToIAIActor()->GetParameters().m_nSpecies;
+		const ESpeciesType speciesType = (ESpeciesType)pEntityAI->CastToIAIActor()->GetParameters().m_nSpecies;
 
 		if (!m_SpeciesMembers.empty())
 		{
@@ -171,8 +171,8 @@ void CStrategicArea::GetMaxAgentInfo(int& agentCount, ESpeciesType& agentSpecies
 
 	for (int i = ESpeciesType::eST_FirstPlayableSpecies; i < ESpeciesType::eST_LastPlayableSpecies; i++)
 	{
-		int currentAgentCount = m_SpeciesMembers.at(ESpeciesType(i));
-		ESpeciesType currentAgentSpecies= ESpeciesType(i);
+		const int currentAgentCount = m_SpeciesMembers.at(ESpeciesType(i));
+		const ESpeciesType currentAgentSpecies= ESpeciesType(i);
 
 		//max = currentAgentCount;
 		//maxAgentSpecies = currentAgentSpecies;
@@ -209,11 +209,11 @@ int CStrategicArea::GetEnemiesCount(ESpeciesType species)
 
 	for (int i = ESpeciesType::eST_FirstPlayableSpecies; i < ESpeciesType::eST_LastPlayableSpecies; i++)
 	{
-		ESpeciesType currentAgentSpecies = ESpeciesType(i);
+		const ESpeciesType currentAgentSpecies = ESpeciesType(i);
 	
 		if (species != currentAgentSpecies)
 		{
-			int currentAgentCount = m_SpeciesMembers.at(ESpeciesType(i));
+			const int currentAgentCount = m_SpeciesMembers.at(ESpeciesType(i));
 			finalAgentCount += currentAgentCount;
 		}
 	}
@@ -278,22 +278,22 @@ void CStrategicArea::SetNeutral(bool reset)
 {
 	if (!reset && (m_Species != eST_NEUTRAL))
 	{
-		auto pConqueror = g_pControlSystem->GetConquerorSystem();
+		const auto pConqueror = g_pControlSystem->GetConquerorSystem();
 		if (pConqueror)
 		{
 			//Disable respawn for old spawned squad
 			if (m_forcedspawnedSquadId[m_Species] > 0)
 			{
-				auto pSquad = g_pControlSystem->GetSquadSystem()->GetSquadFromId(m_forcedspawnedSquadId[m_Species]);
+				const auto pSquad = g_pControlSystem->GetSquadSystem()->GetSquadFromId(m_forcedspawnedSquadId[m_Species]);
 				if (pSquad)
 				{
 					for (auto& member : pSquad->GetAllMembers())
 					{
-						auto pActor = g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(member.GetId());
+						const auto pActor = g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(member.GetId());
 						if (!pActor)
 							continue;
 
-						auto pChannel = pConqueror->GetConquerorChannel(pActor->GetEntity());
+						const auto pChannel = pConqueror->GetConquerorChannel(pActor->GetEntity());
 						if (!pChannel)
 							continue;
 
@@ -304,9 +304,9 @@ void CStrategicArea::SetNeutral(bool reset)
 
 			pConqueror->OnAreaLost(this, m_Species);
 
-			for (auto spawnerId : m_vehicleSpawners)
+			for (const auto spawnerId : m_vehicleSpawners)
 			{
-				auto pSpawner = pConqueror->GetVehicleSpawner(spawnerId);
+				const auto pSpawner = pConqueror->GetVehicleSpawner(spawnerId);
 				if (!pSpawner)
 					continue;
 
@@ -321,7 +321,7 @@ void CStrategicArea::SetNeutral(bool reset)
 	m_CapturingSpecies = ESpeciesType::eST_NEUTRAL;
 	m_CaptureState = ECaptureState::NOTCAPTURED;
 
-	auto pFlagEntity = gEnv->pEntitySystem->GetEntity(m_flagEntityId);
+	const auto pFlagEntity = gEnv->pEntitySystem->GetEntity(m_flagEntityId);
 	if (pFlagEntity)
 		Script::CallMethod(pFlagEntity->GetScriptTable(), "SetSpecies", m_Species);
 	
@@ -335,12 +335,12 @@ void CStrategicArea::OnCaptured(ESpeciesType species)
 {
 	if (species != eST_NEUTRAL)
 	{
-		auto pConqueror = g_pControlSystem->GetConquerorSystem();
+		const auto pConqueror = g_pControlSystem->GetConquerorSystem();
 
 		//First of all, you need to respawn vehicles, and then do everything else
-		for (auto spawnerId : m_vehicleSpawners)
+		for (const auto spawnerId : m_vehicleSpawners)
 		{
-			auto pSpawner = pConqueror->GetVehicleSpawner(spawnerId);
+			const auto pSpawner = pConqueror->GetVehicleSpawner(spawnerId);
 			if (!pSpawner)
 				continue;
 
@@ -358,7 +358,7 @@ void CStrategicArea::OnCaptured(ESpeciesType species)
 			SpawnSquadForced(species, classes);
 		}
 
-		auto pFlagEntity = gEnv->pEntitySystem->GetEntity(m_flagEntityId);
+		const auto pFlagEntity = gEnv->pEntitySystem->GetEntity(m_flagEntityId);
 		if (pFlagEntity)
 			Script::CallMethod(pFlagEntity->GetScriptTable(), "SetSpecies", species);
 	}
@@ -406,9 +406,9 @@ void CStrategicArea::OnEnterVehicle(IActor* pActor, IVehicle* pVehicle)
 		return;
 
 	//Vehicle spawner OnEnterVehicle
-	for (auto spawnerId : m_vehicleSpawners)
+	for (const auto spawnerId : m_vehicleSpawners)
 	{
-		auto pSpawner = g_pControlSystem->GetConquerorSystem()->GetVehicleSpawner(spawnerId);
+		const auto pSpawner = g_pControlSystem->GetConquerorSystem()->GetVehicleSpawner(spawnerId);
 		if (!pSpawner)
 			continue;
 
@@ -423,17 +423,17 @@ void CStrategicArea::OnExitVehicle(IActor* pActor)
 
 	//Vehicle spawner OnExitVehicle
 
-	for (auto spawnerId : m_vehicleSpawners)
+	for (const auto spawnerId : m_vehicleSpawners)
 	{
-		auto pSpawner = g_pControlSystem->GetConquerorSystem()->GetVehicleSpawner(spawnerId);
+		const auto pSpawner = g_pControlSystem->GetConquerorSystem()->GetVehicleSpawner(spawnerId);
 		if (!pSpawner)
 			continue;
 
 		pSpawner->OnExitVehicle(pActor);
 	}
 
-	auto pNewActor = static_cast<CActor*>(pActor);
-	auto pVehicle = g_pGame->GetIGameFramework()->GetIVehicleSystem()->GetVehicle(pNewActor->m_vehicleStats.lastOperatedVehicleId);
+	const auto pNewActor = static_cast<CActor*>(pActor);
+	const auto pVehicle = g_pGame->GetIGameFramework()->GetIVehicleSystem()->GetVehicle(pNewActor->m_vehicleStats.lastOperatedVehicleId);
 	if (pVehicle && TOS_Vehicle::ActorIsDriver(pActor))
 		UnbookUnloadSpot(pVehicle->GetEntity());	
 }
@@ -460,11 +460,11 @@ float CStrategicArea::GetEnemyCaptureProgress(ESpeciesType species) const
 {
 	for (int i = ESpeciesType::eST_FirstPlayableSpecies; i < ESpeciesType::eST_LastPlayableSpecies; i++)
 	{
-		ESpeciesType currentAgentSpecies = ESpeciesType(i);
+		const ESpeciesType currentAgentSpecies = ESpeciesType(i);
 
 		if (species != currentAgentSpecies)
 		{
-			float currentProgress = GetCaptureProgress(currentAgentSpecies);
+			const float currentProgress = GetCaptureProgress(currentAgentSpecies);
 
 			if (currentProgress != 0.0f)
 				return currentProgress;
@@ -484,7 +484,7 @@ bool CStrategicArea::IsNeutral() const
 
 void CStrategicArea::CreateScriptEvent(const char* event, float value, const char* str /*= NULL*/)
 {
-	IEntity* pEntity = GetEntity();
+	const IEntity* pEntity = GetEntity();
 	IScriptTable* pScriptTable = pEntity ? pEntity->GetScriptTable() : 0;
 
 	if (pScriptTable)
@@ -502,7 +502,7 @@ void CStrategicArea::CreateScriptEvent(const char* event, float value, const cha
 
 void CStrategicArea::AddSpawnPoint(EntityId id)
 {
-	auto pEntity = gEnv->pEntitySystem->GetEntity(id);
+	const auto pEntity = gEnv->pEntitySystem->GetEntity(id);
 	if (pEntity)
 	{
 		if (!FindSpawnPoint(pEntity->GetId()))
@@ -529,7 +529,7 @@ void CStrategicArea::AddSpawnPoint(EntityId id)
 
 bool CStrategicArea::FindSpawnPoint(EntityId id)
 {
-	for (auto pSpawnpoint : m_spawnPoints)
+	for (const auto pSpawnpoint : m_spawnPoints)
 	{
 		if (pSpawnpoint->GetEntityId() == id)
 			return true;
@@ -541,7 +541,7 @@ bool CStrategicArea::FindSpawnPoint(EntityId id)
 void CStrategicArea::RemoveSpawnPoint(EntityId id)
 {
 	auto it = m_spawnPoints.begin();
-	auto end = m_spawnPoints.end();
+	const auto end = m_spawnPoints.end();
 
 	for (; it != end; it++)
 	{
@@ -578,7 +578,7 @@ void CStrategicArea::AddVehicleSpawner(CAreaVehicleSpawnPoint* pSpawner)
 
 bool CStrategicArea::FindVehicleSpawner(EntityId id) const
 {
-	for (auto spwId : m_vehicleSpawners)
+	for (const auto spwId : m_vehicleSpawners)
 	{
 		if (spwId == id)
 			return true;
@@ -587,7 +587,7 @@ bool CStrategicArea::FindVehicleSpawner(EntityId id) const
 
 CAreaVehicleSpawnPoint* CStrategicArea::GetVehicleSpawner(EntityId id) const
 {
-	auto pSpawner = g_pControlSystem->GetConquerorSystem()->GetVehicleSpawner(id);
+	const auto pSpawner = g_pControlSystem->GetConquerorSystem()->GetVehicleSpawner(id);
 	if (!pSpawner)
 		return nullptr;
 
@@ -623,7 +623,7 @@ void CStrategicArea::RemoveVehicleSpawner(CAreaVehicleSpawnPoint* pSpawner)
 
 CSpawnPoint* CStrategicArea::GetSpawnPointInstance(EntityId entityId)
 {
-	for (auto pSpawnpoint : m_spawnPoints)
+	for (const auto pSpawnpoint : m_spawnPoints)
 	{
 		if (pSpawnpoint->m_entityId == entityId)
 			return pSpawnpoint;
@@ -634,7 +634,7 @@ CSpawnPoint* CStrategicArea::GetSpawnPointInstance(EntityId entityId)
 
 CSpawnPoint* CStrategicArea::GetSpawnPoint(ESpawnpointGameStatusFlag flag)
 {
-	for (auto pSpawnPoint : m_spawnPoints)
+	for (const auto pSpawnPoint : m_spawnPoints)
 	{
 		//Get only spawn point which have no recently spawned
 		if (flag == eSGSF_NotHaveRecentlySpawned)
@@ -655,7 +655,7 @@ CSpawnPoint* CStrategicArea::GetSpawnPoint(ESpawnpointGameStatusFlag flag)
 
 CSpawnPoint* CStrategicArea::GetSpawnPoint(ESpawnpointGameStatusFlag flag, uint speciesClassFlags)
 {
-	for (auto pSpawnpoint : m_spawnPoints)
+	for (const auto pSpawnpoint : m_spawnPoints)
 	{
 		//Get only spawn point which have no recently spawned
 		if (flag == eSGSF_NotHaveRecentlySpawned)
@@ -680,7 +680,7 @@ CSpawnPoint* CStrategicArea::GetSpawnPoint(ESpawnpointGameStatusFlag flag, uint 
 }
 CSpawnPoint* CStrategicArea::GetSpawnPointAt(int index, bool air)
 {
-	for (auto pSpawnpoint : m_spawnPoints)
+	for (const auto pSpawnpoint : m_spawnPoints)
 	{
 		if (pSpawnpoint->IsForAir() != air)
 			continue;
@@ -714,11 +714,11 @@ void CStrategicArea::GetUnlockedClasses(ESpeciesType species, std::vector<const 
 
 void CStrategicArea::SpawnSquadForced(ESpeciesType species, const std::vector<const char*>& classes)
 {
-	auto pSquadSystem = g_pControlSystem->GetSquadSystem();
+	const auto pSquadSystem = g_pControlSystem->GetSquadSystem();
 	if (!pSquadSystem)
 		return;
 
-	auto pConqueror = g_pControlSystem->GetConquerorSystem();
+	const auto pConqueror = g_pControlSystem->GetConquerorSystem();
 	if (!pConqueror)
 		return;
 
@@ -734,7 +734,7 @@ void CStrategicArea::SpawnSquadForced(ESpeciesType species, const std::vector<co
 	if (classes.size() == 0)
 		return;
 
-	auto pSquad = pConqueror->CreateSquadFromSpecies(species);
+	const auto pSquad = pConqueror->CreateSquadFromSpecies(species);
 	if (!pSquad)
 	{
 		CryLogAlways("%s[C++][Forced Spawn Squad][FAILED][Cause: Can not create the squad]", STR_RED);
@@ -743,14 +743,14 @@ void CStrategicArea::SpawnSquadForced(ESpeciesType species, const std::vector<co
 
 	if (m_forcedspawnedSquadId[species] > 0)
 	{
-		auto pSquad = pSquadSystem->GetSquadFromId(m_forcedspawnedSquadId[m_Species]);
+		const auto pSquad = pSquadSystem->GetSquadFromId(m_forcedspawnedSquadId[m_Species]);
 		if (!pSquad)
 			return;
 
-		auto pLeader = pSquad->GetLeader();
+		const auto pLeader = pSquad->GetLeader();
 		if (pLeader)
 		{
-			auto pChannel = pConqueror->GetConquerorChannel(pLeader->GetEntity());
+			const auto pChannel = pConqueror->GetConquerorChannel(pLeader->GetEntity());
 			if (pChannel)
 			{
 				//const auto classFlags = pChannel->GetClass()->GetFlags();
@@ -762,11 +762,11 @@ void CStrategicArea::SpawnSquadForced(ESpeciesType species, const std::vector<co
 
 		for (auto& member : pSquad->GetAllMembers())
 		{
-			auto pActor = g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(member.GetId());
+			const auto pActor = g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(member.GetId());
 			if (!pActor)
 				continue;
 
-			auto pChannel = pConqueror->GetConquerorChannel(pActor->GetEntity());
+			const auto pChannel = pConqueror->GetConquerorChannel(pActor->GetEntity());
 			if (!pChannel)
 				continue;
 
@@ -786,7 +786,7 @@ void CStrategicArea::SpawnSquadForced(ESpeciesType species, const std::vector<co
 		std::vector<const char*> memberClasses;
 
 		auto it = classes.begin();
-		auto end = classes.end();
+		const auto end = classes.end();
 
 		for (; it != end; it++)
 		{
@@ -813,7 +813,7 @@ void CStrategicArea::SpawnSquadForced(ESpeciesType species, const std::vector<co
 		if (memberClasses.size() == 0)
 			return;
 
-		string randomClassName = TOS_STL::GetRandomFromSTL<std::vector<const char*>, const char*>(memberClasses);
+		const string randomClassName = TOS_STL::GetRandomFromSTL<std::vector<const char*>, const char*>(memberClasses);
 
 		//Spawn Leader AI
 		const string soldierSuffix = " FS";
@@ -826,15 +826,15 @@ void CStrategicArea::SpawnSquadForced(ESpeciesType species, const std::vector<co
 
 		if (pSelectedClass)
 		{
-			auto pEntity = pConqueror->EmergencyCreateAIEntity(pSelectedClass, aiName.c_str());
+			const auto pEntity = pConqueror->EmergencyCreateAIEntity(pSelectedClass, aiName.c_str());
 			if (pEntity)
 			{
-				auto pChannel = pConqueror->CreateConquerorChannel(pEntity, *pSelectedClass);
+				const auto pChannel = pConqueror->CreateConquerorChannel(pEntity, *pSelectedClass);
 				if (pChannel)
 				{
 					pChannel->SetForcedStrategicArea(this);
 
-					auto pActor = g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pEntity->GetId());
+					const auto pActor = g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pEntity->GetId());
 					if (pActor)
 					{
 						if (!pSquad->GetLeader())
@@ -910,17 +910,17 @@ void CStrategicArea::SpawnSquadForced(ESpeciesType species, const std::vector<co
 				break;
 			}
 
-			auto pEntity = pConqueror->EmergencyCreateAIEntity(pSelectedClass, aiName);
+			const auto pEntity = pConqueror->EmergencyCreateAIEntity(pSelectedClass, aiName);
 			if (!pEntity)
 				continue;
 
-			auto pChannel = pConqueror->CreateConquerorChannel(pEntity, *pSelectedClass);
+			const auto pChannel = pConqueror->CreateConquerorChannel(pEntity, *pSelectedClass);
 			if (!pChannel)
 				continue;
 
 			pChannel->SetForcedStrategicArea(this);
 
-			auto pActor = g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pEntity->GetId());
+			const auto pActor = g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pEntity->GetId());
 			if (!pActor)
 				continue;
 
@@ -975,7 +975,7 @@ bool CStrategicArea::IsQueueCreated()
 
 bool CStrategicArea::IsInQueue(EntityId entityId)
 {
-	for (auto& queueInfo : m_pQueue->respawns)
+	for (const auto& queueInfo : m_pQueue->respawns)
 	{
 		if (queueInfo.entityId == entityId)
 			return true;
@@ -987,7 +987,7 @@ bool CStrategicArea::IsInQueue(EntityId entityId)
 void CStrategicArea::AddToQueue(EntityId entityId, ERespawnEvent event)
 {
 	auto found = false;
-	for (auto& queueInfo : m_pQueue->respawns)
+	for (const auto& queueInfo : m_pQueue->respawns)
 	{
 		if (queueInfo.entityId == entityId)
 		{
@@ -1074,15 +1074,15 @@ void CStrategicArea::UpdateQueue(float frametime)
 
 	//Update booked spawnpoints here
 	auto it = m_bookedSpawnPoints.begin();
-	auto end = m_bookedSpawnPoints.end();
+	const auto end = m_bookedSpawnPoints.end();
 
 	for (; it!=end;it++)
 	{
-		auto pActor = static_cast<CActor*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(it->first));
+		const auto pActor = static_cast<CActor*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(it->first));
 		if (!pActor)
 			continue;
 
-		auto pChannel = g_pControlSystem->GetConquerorSystem()->GetConquerorChannel(pActor->GetEntity());
+		const auto pChannel = g_pControlSystem->GetConquerorSystem()->GetConquerorChannel(pActor->GetEntity());
 		if (!pChannel)
 			continue;
 
@@ -1128,7 +1128,7 @@ void CStrategicArea::UpdateQueue(float frametime)
 			//	return;
 			//}
 
-			auto pChannel = g_pControlSystem->GetConquerorSystem()->GetConquerorChannel(info.entityId);
+			const auto pChannel = g_pControlSystem->GetConquerorSystem()->GetConquerorChannel(info.entityId);
 			if (!pChannel)
 			{
 				CryLogAlways("%s[C++][ERROR][Can't respawn %i in %s][Cause: channel not defined]",
@@ -1139,7 +1139,7 @@ void CStrategicArea::UpdateQueue(float frametime)
 
 			const auto isHaveReinf = g_pControlSystem->GetConquerorSystem()->GetSpeciesReinforcements(pChannel->GetSpecies()) > 0;
 
-			auto pActor = pChannel->GetActor();
+			const auto pActor = pChannel->GetActor();
 			auto spawned = false;
 
 			//Booked spawnpoint must be defined for actor before adding them into queue
@@ -1233,7 +1233,7 @@ bool CStrategicArea::IsBookedSpawnPoint(EntityId spawnpointId)
 	if (spawnpointId == 0)
 		return false;
 
-	for (auto& bookedPair : m_bookedSpawnPoints)
+	for (const auto& bookedPair : m_bookedSpawnPoints)
 	{
 		if (bookedPair.second == spawnpointId)
 			return true;
@@ -1247,11 +1247,11 @@ CSpawnPoint* CStrategicArea::GetBookedSpawnPoint(IActor* pActor)
 	if (!pActor)
 		return nullptr;
 
-	for (auto& bookedPair : m_bookedSpawnPoints)
+	for (const auto& bookedPair : m_bookedSpawnPoints)
 	{
 		if (bookedPair.first == pActor->GetEntityId())
 		{
-			for (auto pSpawnpoint : m_spawnPoints)
+			for (const auto pSpawnpoint : m_spawnPoints)
 			{
 				if (pSpawnpoint->m_entityId == bookedPair.second)
 					return pSpawnpoint;
@@ -1270,7 +1270,7 @@ CSpawnPoint* CStrategicArea::BookFreeSpawnPoint(IActor* pActor, bool forAIR)
 	std::vector<EntityId> freeSpawnpoints;
 	//std::vector<CSpawnPoint> spawnpoints = forAIR ? m_airSpawnPoints : m_spawnPoints;
 
-	for (auto pSpawnpoint : m_spawnPoints)
+	for (const auto pSpawnpoint : m_spawnPoints)
 	{
 		if (IsBookedSpawnPoint(pSpawnpoint->m_entityId))
 			continue;
@@ -1317,7 +1317,7 @@ bool CStrategicArea::UnbookSpawnPoint(IActor* pActor)
 	if (!pActor)
 		return false;
 
-	auto iter = m_bookedSpawnPoints.find(pActor->GetEntityId());
+	const auto iter = m_bookedSpawnPoints.find(pActor->GetEntityId());
 	if (iter != m_bookedSpawnPoints.end())
 	{
 		m_bookedSpawnPoints.erase(iter);
@@ -1334,7 +1334,7 @@ bool CStrategicArea::UnbookSpawnPoint(EntityId spawnpointId)
 
 	IActor* pActor = nullptr;
 
-	for (auto &bookedPair : m_bookedSpawnPoints)
+	for (const auto &bookedPair : m_bookedSpawnPoints)
 	{
 		if (bookedPair.second == spawnpointId)
 		{
@@ -1361,13 +1361,13 @@ bool CStrategicArea::IsMyUnloadSpot(EntityId spotId)
 
 void CStrategicArea::GetSpawnedVehicles(std::vector<EntityId>& vehicles) const
 {
-	for (auto spawnerId : m_vehicleSpawners)
+	for (const auto spawnerId : m_vehicleSpawners)
 	{
-		auto pSpawner = g_pControlSystem->GetConquerorSystem()->GetVehicleSpawner(spawnerId);
+		const auto pSpawner = g_pControlSystem->GetConquerorSystem()->GetVehicleSpawner(spawnerId);
 		if (!pSpawner)
 			continue;
 
-		auto pVehicle = pSpawner->GetSpawnedVehicle();
+		const auto pVehicle = pSpawner->GetSpawnedVehicle();
 		if (!pVehicle)
 			continue;
 
@@ -1377,13 +1377,13 @@ void CStrategicArea::GetSpawnedVehicles(std::vector<EntityId>& vehicles) const
 
 void CStrategicArea::GetSpawnedVehicles(std::vector<EntityId>& vehicles, uint flags, int minSeatCount) const
 {
-	for (auto spawnerId : m_vehicleSpawners)
+	for (const auto spawnerId : m_vehicleSpawners)
 	{
-		auto pSpawner = g_pControlSystem->GetConquerorSystem()->GetVehicleSpawner(spawnerId);
+		const auto pSpawner = g_pControlSystem->GetConquerorSystem()->GetVehicleSpawner(spawnerId);
 		if (!pSpawner)
 			continue;
 
-		auto pVehicle = pSpawner->GetSpawnedVehicle();
+		const auto pVehicle = pSpawner->GetSpawnedVehicle();
 		if (!pVehicle)
 			continue;
 
@@ -1393,6 +1393,7 @@ void CStrategicArea::GetSpawnedVehicles(std::vector<EntityId>& vehicles, uint fl
 		if (pVehicle->IsDestroyed())
 			continue;
 
+		//TODO: fix O(n^2)
 		if (g_pControlSystem->GetConquerorSystem()->IsBookedVehicle(pVehicle))
 			continue;
 
@@ -1402,7 +1403,7 @@ void CStrategicArea::GetSpawnedVehicles(std::vector<EntityId>& vehicles, uint fl
 		if ((minSeatCount != -1 && minSeatCount > 0) && (pVehicle->GetSeatCount() < minSeatCount))
 			continue;
 
-		auto movType = pVehicle->GetMovement()->GetMovementType();
+		const auto movType = pVehicle->GetMovement()->GetMovementType();
 
 		if (flags & eVGF_Air)
 		{
@@ -1438,7 +1439,7 @@ void CStrategicArea::GetSpawnedVehicles(std::vector<EntityId>& vehicles, uint fl
 
 void CStrategicArea::GetUnloadSpots(const char* spotType, std::vector<EntityId>& spots)
 {
-	auto iter = m_unloadSpots.find(spotType);
+	const auto iter = m_unloadSpots.find(spotType);
 	if (iter == m_unloadSpots.end())
 		return;
 
@@ -1508,7 +1509,7 @@ Vec3 CStrategicArea::GetWorldPos()
 {
 	auto worldPos = GetEntity()->GetWorldPos();
 
-	auto pCenter = gEnv->pEntitySystem->GetEntity(m_centreAnchorId);
+	const auto pCenter = gEnv->pEntitySystem->GetEntity(m_centreAnchorId);
 	if (pCenter)
 		worldPos = pCenter->GetWorldPos();
 
@@ -1530,7 +1531,7 @@ EntityId CStrategicArea::GetBookedUnloadSpot(IEntity* pEntity)
 	if (!pEntity)
 		return 0;
 
-	auto iter = m_bookedUnloadSpots.find(pEntity->GetId());
+	const auto iter = m_bookedUnloadSpots.find(pEntity->GetId());
 	if (iter != m_bookedUnloadSpots.end())
 		return iter->second;
 
@@ -1548,7 +1549,7 @@ EntityId CStrategicArea::BookFreeUnloadSpot(IEntity* pEntity)
 	const string className = pEntity->GetClass()->GetName();
 	const auto entId = pEntity->GetId();
 
-	auto pVehicle = TOS_Vehicle::GetVehicle(pEntity);
+	const auto pVehicle = TOS_Vehicle::GetVehicle(pEntity);
 	const auto isAir = (pVehicle && TOS_Vehicle::IsAir(pVehicle)) || (className == "Scout" || className == "Drone");
 
 	std::vector<EntityId> allspots;
@@ -1577,9 +1578,9 @@ EntityId CStrategicArea::BookFreeUnloadSpot(IEntity* pEntity)
 
 		float minDistToAreaCenter = (pNearestSpot->GetWorldPos() - GetEntity()->GetWorldPos()).GetLength();
 
-		for (auto spotId : freespots)
+		for (const auto spotId : freespots)
 		{
-			auto pSpotEntity = gEnv->pEntitySystem->GetEntity(spotId);
+			const auto pSpotEntity = gEnv->pEntitySystem->GetEntity(spotId);
 			if (!pSpotEntity)
 				continue;
 
@@ -1626,7 +1627,7 @@ bool CStrategicArea::UnbookUnloadSpot(IEntity* pEntity)
 
 	const auto entId = pEntity->GetId();
 
-	auto iter = m_bookedUnloadSpots.find(entId);
+	const auto iter = m_bookedUnloadSpots.find(entId);
 	if (iter != m_bookedUnloadSpots.end())
 	{
 		m_bookedUnloadSpots.erase(entId);
@@ -1835,7 +1836,7 @@ bool CStrategicArea::UnbookUnloadSpot(IEntity* pEntity)
 //		return Vec3(0);
 //	}
 //
-//	//Забронированные точки не сохраняются
+//	//Р—Р°Р±СЂРѕРЅРёСЂРѕРІР°РЅРЅС‹Рµ С‚РѕС‡РєРё РЅРµ СЃРѕС…СЂР°РЅСЏСЋС‚СЃСЏ
 //
 //	for (auto& pairs : m_unloadSpots)
 //	{
@@ -1877,7 +1878,7 @@ bool CStrategicArea::UnbookUnloadSpot(IEntity* pEntity)
 
 void CStrategicArea::AddVehicleUnloadSpot(const char* spotType, EntityId spotId)
 {
-	auto iter = m_unloadSpots.find(spotType);
+	const auto iter = m_unloadSpots.find(spotType);
 	if (iter == m_unloadSpots.end())
 		return;
 
@@ -1969,7 +1970,7 @@ bool CStrategicArea::IsCapturable()
 	//const auto isConquest = g_pControlSystem->GetConquerorSystem()->IsGamemode();
 	if (GetEntity() /*&& !isConquest*/)
 	{
-		auto pTable = GetEntity()->GetScriptTable();
+		const auto pTable = GetEntity()->GetScriptTable();
 		if (pTable)
 		{
 			SmartScriptTable props;
@@ -1985,7 +1986,7 @@ bool CStrategicArea::IsEnabled()
 {
 	//const auto isConquest = g_pControlSystem->GetConquerorSystem()->IsGamemode();
 
-	auto pTable = GetEntity()->GetScriptTable();
+	const auto pTable = GetEntity()->GetScriptTable();
 	if (pTable /*&& !isConquest*/)
 	{
 		SmartScriptTable props;
@@ -2018,11 +2019,11 @@ bool CStrategicArea::CanSpawnSquadFromClasses()
 
 bool CStrategicArea::IsUnlockedClass(ESpeciesType species, const char* name) const
 {
-	auto iter = m_unlockedClasses.find(species);
+	const auto iter = m_unlockedClasses.find(species);
 	if (iter == m_unlockedClasses.end())
 		return false;
 
-	for (auto className : iter->second)
+	for (const auto className : iter->second)
 	{
 		if (strcmp(className, name) == 0 && (m_Species == species))
 			return true;
@@ -2534,9 +2535,9 @@ void CStrategicArea::OnGameStart()
 	if (g_pGameCVars->conq_debug_log_area)
 		CryLogAlways("[C++][Strategic Area %s][On Game Start][Add Entities from Links]", GetEntity()->GetName());
 
-	for (IEntityLink* pLink = GetEntity()->GetEntityLinks(); pLink; pLink = pLink->next)
+	for (const IEntityLink* pLink = GetEntity()->GetEntityLinks(); pLink; pLink = pLink->next)
 	{
-		auto pEntity = gEnv->pEntitySystem->GetEntity(pLink->entityId);
+		const auto pEntity = gEnv->pEntitySystem->GetEntity(pLink->entityId);
 		if (!pEntity)
 			continue;
 
@@ -2549,7 +2550,7 @@ void CStrategicArea::OnGameStart()
 		{
 			m_flagEntityId = pLink->entityId;
 
-			auto pFlagEntity = gEnv->pEntitySystem->GetEntity(m_flagEntityId);
+			const auto pFlagEntity = gEnv->pEntitySystem->GetEntity(m_flagEntityId);
 			if (pFlagEntity)
 				Script::CallMethod(pFlagEntity->GetScriptTable(), "SetSpecies", m_Species);
 		}
@@ -2559,7 +2560,7 @@ void CStrategicArea::OnGameStart()
 
 		if (stype == "AreaVehicleSpawnPoint")
 		{
-			auto pSpawner = g_pControlSystem->GetConquerorSystem()->GetVehicleSpawner(pLink->entityId);
+			const auto pSpawner = g_pControlSystem->GetConquerorSystem()->GetVehicleSpawner(pLink->entityId);
 			AddVehicleSpawner(pSpawner);		
 		}
 		
@@ -2661,7 +2662,7 @@ void CStrategicArea::GetMemoryStatistics(ICrySizer* s)
 	s->AddContainer(m_SpeciesMembers);
 	s->AddContainer(m_CaptureProgress);
 
-	for (auto pSpawnpoint : m_spawnPoints)
+	for (const auto pSpawnpoint : m_spawnPoints)
 		pSpawnpoint->GetMemoryStatistics(s);
 
 	//for (auto iter = m_airSpawnPoints.begin(); iter != m_airSpawnPoints.end(); ++iter)
@@ -2882,7 +2883,7 @@ void CStrategicArea::AddToArea(EntityId entityId, bool vehicle)
 	{
 		m_ActorsInside.push_back(entityId);
 
-		IEntity* pEntity = g_pControlSystem->GetLocalControlClient()->GetControlledEntity();
+		const IEntity* pEntity = g_pControlSystem->GetLocalControlClient()->GetControlledEntity();
 		if (pEntity)
 		{
 			if (entityId == pEntity->GetId())
@@ -2908,7 +2909,7 @@ void CStrategicArea::AddToArea(IActor* pActor, bool vehicle)
 	{
 		m_ActorsInside.push_back(pActor->GetEntityId());
 
-		IEntity* pEntity = g_pControlSystem->GetLocalControlClient()->GetControlledEntity();
+		const IEntity* pEntity = g_pControlSystem->GetLocalControlClient()->GetControlledEntity();
 		if (pEntity)
 		{
 			if (pActor->GetEntityId() == pEntity->GetId())
@@ -2959,7 +2960,7 @@ void CStrategicArea::RemoveFromArea(EntityId entityId)
 	{
 		stl::find_and_erase(m_ActorsInside, entityId);
 
-		IEntity* pEntity = g_pControlSystem->GetLocalControlClient()->GetControlledEntity();
+		const IEntity* pEntity = g_pControlSystem->GetLocalControlClient()->GetControlledEntity();
 		if (pEntity)
 		{
 			if (entityId == pEntity->GetId())
@@ -2981,7 +2982,7 @@ void CStrategicArea::RemoveFromArea(EntityId entityId)
 void CStrategicArea::RemoveActorAt(int entityIndex)
 {
 	const EntityId id = m_ActorsInside.at(entityIndex);
-	IActor* pActor = g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(id);
+	const IActor* pActor = g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(id);
 
 	if (pActor)
 	{
@@ -3059,7 +3060,7 @@ EEntityType CStrategicArea::GetEntityType(EntityId id)
 {
 	int type = EEntityType::UNKNOWN;
 
-	IEntitySystem* pEntitySystem = gEnv->pEntitySystem;
+	const IEntitySystem* pEntitySystem = gEnv->pEntitySystem;
 	if (pEntitySystem)
 	{
 		IEntity* pEntity = pEntitySystem->GetEntity(id);
@@ -3067,7 +3068,7 @@ EEntityType CStrategicArea::GetEntityType(EntityId id)
 		{
 			type = EEntityType::VALID;
 
-			IEntityClass* pClass = pEntity->GetClass();
+			const IEntityClass* pClass = pEntity->GetClass();
 			if (pClass)
 			{
 				const char* className = pClass->GetName();
@@ -3082,7 +3083,7 @@ EEntityType CStrategicArea::GetEntityType(EntityId id)
 				IActorSystem* pActorSystem = gEnv->pGame->GetIGameFramework()->GetIActorSystem();
 				if (pActorSystem)
 				{
-					IActor* pActor = pActorSystem->GetActor(id);
+					const IActor* pActor = pActorSystem->GetActor(id);
 					if (pActor)
 					{
 						type |= EEntityType::ACTOR;
@@ -3090,7 +3091,7 @@ EEntityType CStrategicArea::GetEntityType(EntityId id)
 				}
 
 				// Check vehicle
-				IVehicleSystem* pVehicleSystem = gEnv->pGame->GetIGameFramework()->GetIVehicleSystem();
+				const IVehicleSystem* pVehicleSystem = gEnv->pGame->GetIGameFramework()->GetIVehicleSystem();
 				if (pVehicleSystem)
 				{
 					if (pVehicleSystem->IsVehicleClass(className))
@@ -3100,7 +3101,7 @@ EEntityType CStrategicArea::GetEntityType(EntityId id)
 				}
 
 				// Check item
-				IItemSystem* pItemSystem = gEnv->pGame->GetIGameFramework()->GetIItemSystem();
+				const IItemSystem* pItemSystem = gEnv->pGame->GetIGameFramework()->GetIItemSystem();
 				if (pItemSystem)
 				{
 					if (pItemSystem->IsItemClass(className))
@@ -3118,11 +3119,11 @@ EEntityType CStrategicArea::GetEntityType(EntityId id)
 int CStrategicArea::GetActorCountBySpecies(int _species)
 {
 	int aiEntitiesNum = 0;
-	int entitiesCount = GetActorCount();
+	const int entitiesCount = GetActorCount();
 
 	for (int i = 0; i < entitiesCount; i++)
 	{
-		EntityId entityId = m_ActorsInside.at(i);
+		const EntityId entityId = m_ActorsInside.at(i);
 		IEntity* pEntity = gEnv->pEntitySystem->GetEntity(entityId);
 
 		if (IAIObject* pEntityAI = pEntity->GetAI())

@@ -143,6 +143,7 @@ protected:
 	int				m_trailSoundId;
 	int				m_trailEffectId;
 	int				m_trailUnderWaterId;
+	
 	Vec3			m_last;
 
 	EntityId	m_ownerId;

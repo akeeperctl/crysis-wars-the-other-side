@@ -728,7 +728,7 @@ void CAbilityOwner::ToggleAbility(int index, EntityId targetId)
                         if (isVehicle)
                         {
                             //28.01.2023
-                            //Akeeper: Транспорт не поддаётся физике после броска, пока с ним не столкнешься
+                            //Akeeper: Транспорт не поддаётся физике после броска, пока с ним не столкнешься  // NOLINT(clang-diagnostic-invalid-utf8)
                             return;
                             //const auto isCar = TOS_Vehicle::IsCar(pCrossVehicle);
                             //if (!isCar)

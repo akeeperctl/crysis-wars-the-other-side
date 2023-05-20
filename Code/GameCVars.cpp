@@ -20,10 +20,8 @@
 #include <IActorSystem.h>
 #include <IItemSystem.h>
 #include "WeaponSystem.h"
-#include "ServerSynchedStorage.h"
 #include "ItemString.h"
 #include "HUD/HUD.h"
-#include "Menus/QuickGame.h"
 #include "Environment/BattleDust.h"
 #include "NetInputChainDebug.h"
 
@@ -35,10 +33,9 @@
 #include "TheOtherSide/Control/ControlSystem.h"
 #include "TheOtherSide/Conqueror/ConquerorSystem.h"
 #include "TheOtherSide/Conqueror/StrategicArea.h"
-#include "TheOtherSide/Conqueror/ConquerorCommander.h"
-#include "TheOtherSide/Conqueror/ConquerorChannel.h"
 #include "Single.h"
 #include "Actor.h"
+#include "TheOtherSide/Squad/SquadSystem.h"
 //~TheOtherSide
 
 static void BroadcastChangeSafeMode(ICVar*)
@@ -80,7 +77,7 @@ void CmdGOCMode(IConsoleCmdArgs* cmdArgs)
 	g_pGameCVars->bt_end_melee = 0;
 
 	//
-	CPlayer* pPlayer = static_cast<CPlayer*>(gEnv->pGame->GetIGameFramework()->GetClientActor());
+	auto* pPlayer = dynamic_cast<CPlayer*>(gEnv->pGame->GetIGameFramework()->GetClientActor());
 	if (pPlayer && !pPlayer->IsThirdPerson())
 	{
 		pPlayer->ToggleThirdPerson();
@@ -89,12 +86,12 @@ void CmdGOCMode(IConsoleCmdArgs* cmdArgs)
 
 void CmdListInvisiblePlayers(IConsoleCmdArgs* cmdArgs)
 {
-	IActorIteratorPtr it = g_pGame->GetIGameFramework()->GetIActorSystem()->CreateActorIterator();
-	while (IActor* pActor = it->Next())
+	const IActorIteratorPtr it = g_pGame->GetIGameFramework()->GetIActorSystem()->CreateActorIterator();
+	while (const IActor* pActor = it->Next())
 	{
 		if (pActor->IsPlayer() && !pActor->IsClient())
 		{
-			IEntityRenderProxy* pProxy = static_cast<IEntityRenderProxy*>(pActor->GetEntity()->GetProxy(ENTITY_PROXY_RENDER));
+			const auto* pProxy = dynamic_cast<IEntityRenderProxy*>(pActor->GetEntity()->GetProxy(ENTITY_PROXY_RENDER));
 			if (pProxy)
 			{
 				CryLogAlways("Player %s is %s", pActor->GetEntity()->GetName(), pProxy->IsRenderProxyVisAreaVisible() ? "visible" : "invisible");

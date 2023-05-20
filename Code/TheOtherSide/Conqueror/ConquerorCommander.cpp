@@ -190,6 +190,7 @@ void CConquerorCommander::UpdateNew(float frameTime)
 		}
 	}
 
+	//TODO: fix O(n^2)
 	for (auto id : m_subordinateSquadIds)
 	{
 		auto pSquad = m_pSquadSystem->GetSquadFromId(id);
@@ -204,6 +205,7 @@ void CConquerorCommander::UpdateNew(float frameTime)
 		if (!pOrder)
 			continue;
 
+		//TODO: fix O(n^3) oh my god... 06.05.2023
 		for (auto pArea : m_pConqueror->m_strategicAreas)
 		{
 			auto it = m_targettedAreasMap[pArea].begin();

@@ -52,7 +52,7 @@ void CC4Projectile::HandleEvent(const SGameObjectEvent& event)
 
 	if (event.event == eGFE_OnCollision)
 	{
-		EventPhysCollision* pCollision = (EventPhysCollision*)event.ptr;
+		auto* pCollision = static_cast<EventPhysCollision*>(event.ptr);
 
 		if (gEnv->bServer && !m_stuck && !m_notStick)
 			Stick(pCollision);
@@ -266,9 +266,9 @@ bool CC4Projectile::StickToCharacter(bool stick, IEntity* pActor)
 	//Check for friendly AI
 	if (pActor->GetAI())
 	{
-		if (CWeapon* pWeapon = GetWeapon())
+		if (const CWeapon* pWeapon = GetWeapon())
 		{
-			if (CActor* pPlayer = pWeapon->GetOwnerActor())
+			if (const CActor* pPlayer = pWeapon->GetOwnerActor())
 			{
 				if (pPlayer->GetEntity()->GetAI())
 					if (!pActor->GetAI()->IsHostile(pPlayer->GetEntity()->GetAI(), false))
@@ -281,19 +281,19 @@ bool CC4Projectile::StickToCharacter(bool stick, IEntity* pActor)
 	if (!pCharacter)
 		return false;
 
-	//Actors doesn't support constraints, try to stick as character attachment
-	IAttachmentManager* pAttachmentManager = pCharacter->GetIAttachmentManager();
-	IAttachment* pAttachment = NULL;
 
 	//Select one of the attachment points
-	Vec3 charOrientation = pActor->GetRotation().GetColumn1();
-	Vec3 c4ToChar = pActor->GetWorldPos() - GetEntity()->GetWorldPos();
-	c4ToChar.Normalize();
+	// Vec3 charOrientation = pActor->GetRotation().GetColumn1();
+	// Vec3 c4ToChar = pActor->GetWorldPos() - GetEntity()->GetWorldPos();
+	// c4ToChar.Normalize();
 
 	//if(c4ToChar.Dot(charOrientation)>0.0f)
 		//pAttachment = pAttachmentManager->GetInterfaceByName("c4_back");
 	//else
-	pAttachment = pAttachmentManager->GetInterfaceByName("c4_front");
+	
+	//Actors doesn't support constraints, try to stick as character attachment
+	IAttachmentManager* pAttachmentManager = pCharacter->GetIAttachmentManager();
+	IAttachment* pAttachment = pAttachmentManager->GetInterfaceByName("c4_front");
 
 	if (!pAttachment)
 	{
@@ -305,10 +305,10 @@ bool CC4Projectile::StickToCharacter(bool stick, IEntity* pActor)
 	if (stick)
 	{
 		//Check if there's already one
-		if (IAttachmentObject* pAO = pAttachment->GetIAttachmentObject())
+		if (pAttachment->GetIAttachmentObject())
 			return false;
 
-		CEntityAttachment* pEntityAttachment = new CEntityAttachment();
+		auto* pEntityAttachment = new CEntityAttachment();
 		pEntityAttachment->SetEntityId(GetEntityId());
 
 		pAttachment->AddBinding(pEntityAttachment);
