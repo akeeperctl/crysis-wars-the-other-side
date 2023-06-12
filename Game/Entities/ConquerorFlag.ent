@@ -1,4 +1,0 @@
-<Entity
- Name="ConquerorFlag" 
- Script="Scripts/Entities/Conqueror/ConquerorFlag.lua"
-/>

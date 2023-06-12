@@ -1,4 +1,0 @@
-<Entity
- Name="ConquerorSpawnPoint" 
- Script="Scripts/Entities/Conqueror/ConquerorSpawnPoint.lua"
-/>

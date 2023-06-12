@@ -1,5 +1,0 @@
-<?xml version='1.0' encoding='utf-8'?>
-  <globals>
-    <globals object="Plattform" parameter="PC"/>
-    <globals object="GameMode" parameter="Singleplayer"/>
-  </globals>
