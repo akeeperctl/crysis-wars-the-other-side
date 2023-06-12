@@ -211,7 +211,7 @@ void CC4Projectile::Stick(EventPhysCollision* pCollision)
 
 			Matrix34 mat = pTargetEntity->GetWorldTM();
 			mat.Invert();
-			Matrix33 rotMat = Matrix33::CreateOrientation(mat.TransformVector(-pCollision->n), GetEntity()->GetWorldTM().TransformVector(Vec3(0, 0, 1)), g_PI);
+			const Matrix33 rotMat = Matrix33::CreateOrientation(mat.TransformVector(-pCollision->n), GetEntity()->GetWorldTM().TransformVector(Vec3(0, 0, 1)), g_PI);
 			m_localChildPos = mat.TransformPoint(pCollision->pt);
 			m_localChildRot = Quat(rotMat);
 

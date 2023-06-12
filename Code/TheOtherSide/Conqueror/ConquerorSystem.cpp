@@ -558,7 +558,7 @@ void CConquerorSystem::OnActorRespawned(IActor* pActor, ERespawnEvent event)
 
 				for (auto& members : pPlayerSquad->GetAllMembers())
 				{
-					auto pMemberActor = g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(members.GetId());
+					const auto pMemberActor = g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(members.GetId());
 					if (!pMemberActor)
 						continue;
 

@@ -1189,7 +1189,7 @@ void CPlayer::Update(SEntityUpdateContext& ctx, int updateSlot)
 
 	UpdateSounds(ctx.fFrameTime);
 
-	//TheOtherSide
+	//TheOtherSide auto pickup items
 
 	if (!gEnv->pSystem->IsEditorMode())
 	{
