@@ -167,20 +167,20 @@ void CControlSystem::OnGameplayEvent(IEntity* pEntity, const GameplayEvent& even
 		if (m_isDebugLog && pEntity)
 			CryLogAlways("[C++][ControlSystem][OnGameplayEvent][eGE_Revive][Entity Name %s]", pEntity->GetName());
 		break;
-	case eGE_PreGameStarted:
-		if (m_isDebugLog)
-			CryLogAlways("[C++][ControlSystem][OnGameplayEvent][eGE_PreGameStarted][Value %f]",event.value);
-		break;
-	case eGE_PreGameEnd:
-		if (m_isDebugLog)
-			CryLogAlways("[C++][ControlSystem][OnGameplayEvent][eGE_PreGameEnd][Value %f]", event.value);
-		break;
-	case eGE_OnChangeDesiredActor:
-		if (m_pLocalControlClient && pEntity)
-			m_pLocalControlClient->m_mpLastControlledId = pEntity->GetId();
-		if (m_isDebugLog && pEntity)
-			CryLogAlways("[C++][ControlSystem][OnGameplayEvent][eGE_OnChangeDesiredActor][Entity Name %s, ActorName %s]", pEntity->GetName(), event.description);
-		break;
+	//case eGE_PreGameStarted:
+	//	if (m_isDebugLog)
+	//		CryLogAlways("[C++][ControlSystem][OnGameplayEvent][eGE_PreGameStarted][Value %f]",event.value);
+	//	break;
+	//case eGE_PreGameEnd:
+	//	if (m_isDebugLog)
+	//		CryLogAlways("[C++][ControlSystem][OnGameplayEvent][eGE_PreGameEnd][Value %f]", event.value);
+	//	break;
+	//case eGE_OnChangeDesiredActor:
+	//	if (m_pLocalControlClient && pEntity)
+	//		m_pLocalControlClient->m_mpLastControlledId = pEntity->GetId();
+	//	if (m_isDebugLog && pEntity)
+	//		CryLogAlways("[C++][ControlSystem][OnGameplayEvent][eGE_OnChangeDesiredActor][Entity Name %s, ActorName %s]", pEntity->GetName(), event.description);
+	//	break;
 	}
 }
 

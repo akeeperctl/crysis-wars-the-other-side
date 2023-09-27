@@ -359,7 +359,7 @@ bool CGame::Init(IGameFramework* pFramework)
 	const bool bResetProfile = gEnv->pSystem->GetICmdLine()->FindArg(eCLAT_Pre, "ResetProfile") != 0;
 	if (m_pPlayerProfileManager)
 	{
-		const char* userName = gEnv->pSystem->GetUserName();
+		const char* userName = getenv("username");
 
 		bool ok = m_pPlayerProfileManager->LoginUser(userName, bIsFirstTime);
 		if (ok)
@@ -698,7 +698,7 @@ string CGame::InitMapReloading()
 	bool foundSaveGame = false;
 	if (m_pPlayerProfileManager)
 	{
-		const char* userName = GetISystem()->GetUserName();
+		const char* userName = getenv("username");
 		IPlayerProfile* pProfile = m_pPlayerProfileManager->GetCurrentProfile(userName);
 		if (pProfile)
 		{
@@ -1162,7 +1162,7 @@ const string& CGame::GetLastSaveGame(string& levelName)
 {
 	if (m_pPlayerProfileManager)
 	{
-		const char* userName = GetISystem()->GetUserName();
+		const char* userName = getenv("username");
 		IPlayerProfile* pProfile = m_pPlayerProfileManager->GetCurrentProfile(userName);
 		if (pProfile)
 		{

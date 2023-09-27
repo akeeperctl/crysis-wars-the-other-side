@@ -5,7 +5,7 @@
 namespace TOS_STL
 {
 	template <class Container, typename DataType>
-	DataType GetRandomFromSTL(const Container& containter)
+	inline DataType GetRandomFromSTL(const Container& containter)
 	{
 		const float itemsCount = containter.size();
 
@@ -36,8 +36,24 @@ namespace TOS_STL
 	}
 
 	template <class Container, typename DataType>
-	int GetIndexFromMapKey(const Container& containter, DataType keyValue)
+	inline int GetIndexFromMapKey(const Container& containter, DataType keyValue)
 	{
 		return std::distance(containter.begin(), containter.find(keyValue));
+	}
+
+	//! Find element in container.
+	// @return true if item found.
+	template <class Container, class Value>
+	inline bool Find(Container& container, const Value& value)
+	{
+		return std::find(container.begin(), container.end(), value) != container.end();
+	}
+
+	//! Find element in container.
+	// @return true if item found.
+	template <class Container, class Value>
+	inline bool Find(Container* container, const Value& value)
+	{
+		return std::find(container->begin(), container->end(), value) != container->end();
 	}
 }

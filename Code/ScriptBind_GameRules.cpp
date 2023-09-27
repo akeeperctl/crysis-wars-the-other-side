@@ -91,9 +91,9 @@ void CScriptBind_GameRules::RegisterGlobals()
 	m_pSS->SetGlobalValue("eTE_ApproachEnemyCarrier", eTE_ApproachEnemyCarrier);
 
 	//TheOtherSide
-	m_pSS->SetGlobalValue("eGE_PreGameStarted", eGE_PreGameStarted);
-	m_pSS->SetGlobalValue("eGE_PreGameEnd", eGE_PreGameEnd);
-	m_pSS->SetGlobalValue("eGE_OnChangeDesiredActor", eGE_OnChangeDesiredActor);
+	//m_pSS->SetGlobalValue("eGE_PreGameStarted", eGE_PreGameStarted);
+	//m_pSS->SetGlobalValue("eGE_PreGameEnd", eGE_PreGameEnd);
+	//m_pSS->SetGlobalValue("eGE_OnChangeDesiredActor", eGE_OnChangeDesiredActor);
 	//~TheOtherSide
 }
 

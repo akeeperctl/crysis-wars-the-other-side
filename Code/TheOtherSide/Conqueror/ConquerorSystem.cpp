@@ -696,7 +696,7 @@ void CConquerorSystem::RemoveVehicleSpawner(CAreaVehicleSpawnPoint* pSpawner)
 
 bool CConquerorSystem::IsExistVehicleSpawner(CAreaVehicleSpawnPoint* pSpawner) const
 {
-	return stl::find(m_vehicleSpawners, pSpawner);
+	return TOS_STL::Find(m_vehicleSpawners, pSpawner);
 }
 
 SConquerLobbyInfo::SConquerLobbyInfo()
@@ -726,7 +726,7 @@ void CConquerorSystem::RemoveStrategicArea(CStrategicArea* area)
 bool CConquerorSystem::IsExistStrategicArea(CStrategicArea* area)
 {
 	if (area)
-		return stl::find(m_strategicAreas, area);
+		return TOS_STL::Find(m_strategicAreas, area);
 	
 	return false;
 }
@@ -1015,7 +1015,7 @@ CStrategicArea* CConquerorSystem::GetStrategicArea(EntityId id, std::vector<Enti
 {
 	for (const auto pArea : m_strategicAreas)
 	{
-		if ((pArea && excludeAreaIds && !stl::find(excludeAreaIds, pArea->GetEntityId())) || (pArea && !excludeAreaIds))
+		if ((pArea && excludeAreaIds && !TOS_STL::Find(excludeAreaIds, pArea->GetEntityId())) || (pArea && !excludeAreaIds))
 		{
 			if (pArea->GetEntityId() == id && (pArea->IsEnabled() && getOnlyEnabled))
 				return pArea;
@@ -1030,7 +1030,7 @@ CStrategicArea* CConquerorSystem::GetStrategicArea(ESpeciesType species, std::ve
 {
 	for (const auto pArea : m_strategicAreas)
 	{
-		if (pArea && excludeAreaIds && !stl::find(excludeAreaIds, pArea->GetEntityId()) || (pArea && !excludeAreaIds))
+		if (pArea && excludeAreaIds && !TOS_STL::Find(excludeAreaIds, pArea->GetEntityId()) || (pArea && !excludeAreaIds))
 		{
 			if (pArea->GetSpecies() == species)
 			{
@@ -1093,7 +1093,7 @@ int CConquerorSystem::GetHostileAreasCount(ESpeciesType myspecies, const std::ve
 	{
 		if (pArea)
 		{
-			if (stl::find(countedIds, pArea->GetEntityId()))
+			if (TOS_STL::Find(countedIds, pArea->GetEntityId()))
 				continue;
 
 			if (pArea->GetSpecies() == myspecies)
@@ -1231,7 +1231,7 @@ int CConquerorSystem::GetStrategicAreaCount(ESpeciesType species, const std::vec
 	{
 		if (pArea)
 		{
-			if (stl::find(countedIds, pArea->GetEntityId()))
+			if (TOS_STL::Find(countedIds, pArea->GetEntityId()))
 				continue;
 
 			if (pArea->GetSpecies() != species)
@@ -1288,7 +1288,7 @@ int CConquerorSystem::GetStrategicAreaCount(const std::vector<EAreaFlag>& flags,
 	{
 		if (pArea)
 		{
-			if (stl::find(countedIds, pArea->GetEntityId()))
+			if (TOS_STL::Find(countedIds, pArea->GetEntityId()))
 				continue;
 
 			if (gameStatus == eAGSF_Capturable)
@@ -6324,9 +6324,9 @@ bool CConquerorSystem::IsBookedVehicle(IVehicle* pVehicle) const
 bool CConquerorSystem::IsSpeciesAllowed(ESpeciesType species, bool inLobby)
 {
 	if (!inLobby)
-		return stl::find(m_gameAllowedSpecies, species);
+		return TOS_STL::Find(m_gameAllowedSpecies, species);
 	else
-		return stl::find(m_lobbyAllowedSpecies, species);
+		return TOS_STL::Find(m_lobbyAllowedSpecies, species);
 }
 
 void CConquerorSystem::AddConquerorClass(ESpeciesType species, CSpeciesClass* pConquerorClass, bool isDefaultClass /*= false*/)

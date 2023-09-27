@@ -97,7 +97,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">
     <OutDir>$(SolutionDir)..\Bin64\</OutDir>
     <IntDir>$(SolutionDir)..\..\..\BinTemp\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
-    <LinkIncremental>false</LinkIncremental>
+    <LinkIncremental>true</LinkIncremental>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <TargetName>TheOtherSide</TargetName>
   </PropertyGroup>
@@ -165,9 +165,11 @@
       <SubSystem>Windows</SubSystem>
       <ImportLibrary>$(OutDir)GameDll.lib</ImportLibrary>
       <TargetMachine>MachineX64</TargetMachine>
+      <AdditionalDependencies>version.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>"D:\Games\Crysis Wars\Mods\TheOtherSide\Code\version_increment.bat"</Command>
+      <Command>"$(ProjectDir)version_increment.bat"</Command>
+      <Message>VERSION INCREMENTATION STARTED.. EXECUTING .BAT FILE</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">
@@ -251,7 +253,8 @@
       <AdditionalDependencies>version.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>"D:\Games\Crysis Wars\Mods\TheOtherSide\Code\version_increment.bat"</Command>
+      <Command>"$(ProjectDir)version_increment.bat"</Command>
+      <Message>VERSION INCREMENTATION STARTED.. EXECUTING .BAT FILE</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
