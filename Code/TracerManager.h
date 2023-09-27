@@ -18,22 +18,23 @@ History:
 # pragma once
 #endif
 
+
 class CTracer
 {
 	friend class CTracerManager;
 public:
-	CTracer(const Vec3& pos);
+	CTracer(const Vec3 &pos);
 	virtual ~CTracer();
 
-	void Reset(const Vec3& pos);
+	void Reset(const Vec3 &pos);
 	void CreateEntity();
-	void SetGeometry(const char* name, float scale);
-	void SetEffect(const char* name, float scale);
+	void SetGeometry(const char *name, float scale);
+	void SetEffect(const char *name, float scale);
 	void SetLifeTime(float lifeTime);
-	bool Update(float frameTime, const Vec3& campos);
-	void UpdateVisual(const Vec3& pos, const Vec3& dir, float scale, float length);
+	bool Update(float frameTime, const Vec3 &campos);
+	void UpdateVisual(const Vec3 &pos, const Vec3 &dir, float scale, float length);
 	float GetAge() const;
-	void GetMemoryStatistics(ICrySizer* s) const;
+	void GetMemoryStatistics(ICrySizer * s) const;
 
 private:
 	float				m_speed;
@@ -48,9 +49,10 @@ private:
 	EntityId		m_entityId;
 };
 
+
 class CTracerManager
 {
-	typedef std::vector<CTracer*>	TTracerPool;
+	typedef std::vector<CTracer *>	TTracerPool;
 	typedef std::vector<int>				TTracerIdVector;
 public:
 	CTracerManager();
@@ -58,18 +60,18 @@ public:
 
 	typedef struct STracerParams
 	{
-		const char* geometry;
-		const char* effect;
+		const char *geometry;
+		const char *effect;
 		Vec3				position;
 		Vec3				destination;
 		float				speed;
 		float				lifetime;
 	};
 
-	void EmitTracer(const STracerParams& params);
+	void EmitTracer(const STracerParams &params);
 	void Update(float frameTime);
 	void Reset();
-	void GetMemoryStatistics(ICrySizer*);
+	void GetMemoryStatistics(ICrySizer *);
 
 private:
 	TTracerPool			m_pool;
@@ -77,5 +79,6 @@ private:
 	TTracerIdVector	m_actives;
 	int							m_lastFree;
 };
+
 
 #endif //__TRACERMANAGER_H__

@@ -4,7 +4,7 @@ Copyright (C), Crytek Studios, 2001-2005.
 -------------------------------------------------------------------------
 $Id$
 $DateTime$
-Description:
+Description: 
 	Silhouettes manager
 
 -------------------------------------------------------------------------
@@ -21,29 +21,27 @@ class CHUDSilhouettes
 {
 public:
 
-	CHUDSilhouettes();
-	~CHUDSilhouettes();
+		CHUDSilhouettes();
+	~	CHUDSilhouettes();
 
-	void SetSilhouette(IActor* pActor, float r, float g, float b, float a, float fDuration, bool bHighlightCurrentItem = true, bool bHighlightAccessories = true);
-	void SetSilhouette(IItem* pItem, float r, float g, float b, float a, float fDuration, bool bHighlightAccessories = true);
-	void SetSilhouette(IVehicle* pVehicle, float r, float g, float b, float a, float fDuration);
-	void SetSilhouette(IEntity* pEntity, float r, float g, float b, float a, float fDuration);
-	void SetFlowGraphSilhouette(IEntity* pEntity, float r, float g, float b, float a, float fDuration);
-
-	bool GetSilhouette(IEntity* pEntity);
+	void SetSilhouette(IActor *pActor,		float r,float g,float b,float a,float fDuration,bool bHighlightCurrentItem=true,bool bHighlightAccessories=true);
+	void SetSilhouette(IItem	*pItem,			float r,float g,float b,float a,float fDuration,bool bHighlightAccessories=true);
+	void SetSilhouette(IVehicle	*pVehicle,float r,float g,float b,float a,float fDuration);
+	void SetSilhouette(IEntity *pEntity,	float r,float g,float b,float a,float fDuration);
+	void SetFlowGraphSilhouette(IEntity *pEntity,	float r,float g,float b,float a,float fDuration);
 
 	void ResetSilhouette(EntityId uiEntityId);
 	void ResetFlowGraphSilhouette(EntityId uiEntityId);
 
 	void SetType(int iType);
 
-	void Serialize(TSerialize& ser);
+	void Serialize(TSerialize &ser);
 
 	void Update(float frameTime);
 
 private:
 
-	void SetVisionParams(EntityId uiEntityId, float r, float g, float b, float a);
+	void SetVisionParams(EntityId uiEntityId,float r,float g,float b,float a);
 
 	std::map<EntityId, Vec3>::iterator GetFGSilhouette(EntityId id);
 
@@ -58,7 +56,7 @@ private:
 		{
 		}
 
-		void Serialize(TSerialize& ser)
+		void Serialize(TSerialize &ser)
 		{
 			ser.Value("uiEntityId", uiEntityId);
 			ser.Value("fTime", fTime);

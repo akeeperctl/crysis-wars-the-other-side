@@ -2,163 +2,118 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Actor Files">
-      <UniqueIdentifier>{89629f24-de75-4a07-aacc-1feca6b26f94}</UniqueIdentifier>
+      <UniqueIdentifier>{0bfab771-a486-4204-94f0-4ffc5095b4ca}</UniqueIdentifier>
     </Filter>
     <Filter Include="Actor Files\player">
-      <UniqueIdentifier>{91a8dc3d-7128-4bc5-bf71-5cc1ecadccba}</UniqueIdentifier>
+      <UniqueIdentifier>{1b091301-1b2f-4aae-bddf-fc888adbdeaf}</UniqueIdentifier>
     </Filter>
     <Filter Include="Actor Files\aliens">
-      <UniqueIdentifier>{6dbe8c2e-fdd5-46f7-84b0-f3db270ea74c}</UniqueIdentifier>
+      <UniqueIdentifier>{1578413d-4d92-42cf-8a05-130cd00092c7}</UniqueIdentifier>
     </Filter>
     <Filter Include="Actor Files\grab">
-      <UniqueIdentifier>{1805ccf1-924f-4746-abe7-f6625069ad22}</UniqueIdentifier>
+      <UniqueIdentifier>{2d293e60-1088-45d6-9949-1f2c04c89a82}</UniqueIdentifier>
     </Filter>
     <Filter Include="Game Files">
-      <UniqueIdentifier>{7510732f-ea64-4e92-8646-a6ff66e459c1}</UniqueIdentifier>
+      <UniqueIdentifier>{e3d1aca9-7538-4f39-8cda-9aaa6d0143fd}</UniqueIdentifier>
     </Filter>
     <Filter Include="Game Files\Environment">
-      <UniqueIdentifier>{db01a564-cd91-4299-bffa-f18ea6b41d4e}</UniqueIdentifier>
+      <UniqueIdentifier>{dbab6002-d48c-4d1c-8579-0259d43f4207}</UniqueIdentifier>
     </Filter>
     <Filter Include="Game Files\Environment\Tornado">
-      <UniqueIdentifier>{613256d7-ab99-4adc-adda-2363626ce2cf}</UniqueIdentifier>
+      <UniqueIdentifier>{cb70f6dc-76f9-4bec-9976-ec7d730f8927}</UniqueIdentifier>
     </Filter>
     <Filter Include="Vehicle Files">
-      <UniqueIdentifier>{252c029d-c28b-4008-9abd-a7a47eef9c5b}</UniqueIdentifier>
+      <UniqueIdentifier>{df631858-d30a-414a-85fb-8dd78719671d}</UniqueIdentifier>
     </Filter>
     <Filter Include="Vehicle Files\Movement Files">
-      <UniqueIdentifier>{7a353087-eb86-4e78-bd7f-9d5ebc5bd052}</UniqueIdentifier>
+      <UniqueIdentifier>{4e1f0c8a-c1a0-47f5-82cb-8f53d08f2060}</UniqueIdentifier>
     </Filter>
     <Filter Include="Vehicle Files\Damage Files">
-      <UniqueIdentifier>{bcdfea9c-768b-4493-b524-6aba3dda3103}</UniqueIdentifier>
+      <UniqueIdentifier>{b2c95251-88b6-45ef-9a53-20f1507b32ad}</UniqueIdentifier>
     </Filter>
     <Filter Include="Vehicle Files\Action Files">
-      <UniqueIdentifier>{24fdd216-3345-4464-a8e2-cbc1391893d4}</UniqueIdentifier>
+      <UniqueIdentifier>{b2148ea6-99da-47c1-b8b2-8a390413f15d}</UniqueIdentifier>
     </Filter>
     <Filter Include="Item Files">
-      <UniqueIdentifier>{7d43bef6-c1c7-414e-9cec-8c6484978bfb}</UniqueIdentifier>
+      <UniqueIdentifier>{a8e2e925-0d07-414a-a677-d2d27cd032f3}</UniqueIdentifier>
     </Filter>
     <Filter Include="Item Files\Weapon Files">
-      <UniqueIdentifier>{9f913e5a-18d7-454c-a4a2-85752472d28c}</UniqueIdentifier>
+      <UniqueIdentifier>{86d91ab9-084f-4456-b3f5-b664e344944e}</UniqueIdentifier>
     </Filter>
     <Filter Include="Item Files\Weapon Files\Fire Modes">
-      <UniqueIdentifier>{5e7c7643-c376-4b56-807a-9aa4b3c8791a}</UniqueIdentifier>
+      <UniqueIdentifier>{836933d0-6a92-4b6d-a7f1-daf3d2d1ca96}</UniqueIdentifier>
     </Filter>
     <Filter Include="Item Files\Weapon Files\Projectiles">
-      <UniqueIdentifier>{881b2b96-5103-4cac-b341-0d7ad17df5ba}</UniqueIdentifier>
+      <UniqueIdentifier>{88760707-e28b-4b18-8db5-f59169fb46de}</UniqueIdentifier>
     </Filter>
     <Filter Include="Item Files\Weapon Files\Zoom Modes">
-      <UniqueIdentifier>{8409cce1-4f92-4206-ba96-d440e63a0648}</UniqueIdentifier>
+      <UniqueIdentifier>{d9c7ac72-2325-4241-b964-cd53b4323843}</UniqueIdentifier>
     </Filter>
     <Filter Include="Item Files\Weapon Files\Weapons">
-      <UniqueIdentifier>{85bc6b6b-ebd8-4ad9-96b4-8ff15835bd7a}</UniqueIdentifier>
+      <UniqueIdentifier>{c54d54ef-7564-42fc-b9f8-f6c0dd9f0ee9}</UniqueIdentifier>
     </Filter>
     <Filter Include="Item Files\Items">
-      <UniqueIdentifier>{e14c1184-9435-49af-9a9c-1734e8a77dd2}</UniqueIdentifier>
+      <UniqueIdentifier>{83eae30d-ecb1-4e66-9be8-bff2d9242e4f}</UniqueIdentifier>
     </Filter>
     <Filter Include="Utility">
-      <UniqueIdentifier>{b9c0d798-57e5-463d-93e7-ef847d2e5eec}</UniqueIdentifier>
+      <UniqueIdentifier>{1092a613-06f9-47ba-aa79-a2b90273eb68}</UniqueIdentifier>
     </Filter>
     <Filter Include="HUD">
-      <UniqueIdentifier>{2b787828-3c91-4f85-a7b5-6bd2b58964c8}</UniqueIdentifier>
+      <UniqueIdentifier>{acac7706-1650-4767-8de7-ac75b39868cb}</UniqueIdentifier>
     </Filter>
     <Filter Include="HUD\Tweaks">
-      <UniqueIdentifier>{b39f80b3-6ce5-4a76-a16f-eafa9eee877b}</UniqueIdentifier>
+      <UniqueIdentifier>{e1165ff3-40b9-44ba-a7d5-0fb2505965eb}</UniqueIdentifier>
     </Filter>
     <Filter Include="HUD\Main">
-      <UniqueIdentifier>{8441dbfb-1a47-4053-820c-b0877c1f1257}</UniqueIdentifier>
+      <UniqueIdentifier>{66f40029-7021-4da3-916f-46346903442b}</UniqueIdentifier>
     </Filter>
     <Filter Include="GameRules">
-      <UniqueIdentifier>{c16dec8e-f13f-4aee-8f77-91a63127d355}</UniqueIdentifier>
+      <UniqueIdentifier>{912629c2-da97-4033-998b-f444d0536aab}</UniqueIdentifier>
     </Filter>
     <Filter Include="Nodes">
-      <UniqueIdentifier>{53f3c1b0-ef02-4938-80e6-467b4642583b}</UniqueIdentifier>
+      <UniqueIdentifier>{8d02e22d-2884-4ec5-ba5b-d32584e7b487}</UniqueIdentifier>
     </Filter>
     <Filter Include="Menus">
-      <UniqueIdentifier>{ea1f22ee-0fe1-49ca-8c3c-77cb19dd3e6a}</UniqueIdentifier>
+      <UniqueIdentifier>{2fc060d6-bf8f-4c6c-afac-466ce6b69b06}</UniqueIdentifier>
     </Filter>
     <Filter Include="Flash">
-      <UniqueIdentifier>{5b77e724-30c6-4293-ac43-0f380141111c}</UniqueIdentifier>
+      <UniqueIdentifier>{e333b71a-dced-49c9-8730-287fd1ed05ee}</UniqueIdentifier>
     </Filter>
     <Filter Include="LCD">
-      <UniqueIdentifier>{38c07e1f-2464-476b-a0da-ca66af3730a5}</UniqueIdentifier>
+      <UniqueIdentifier>{f82992bb-4ef3-4e95-b118-c8c976e69291}</UniqueIdentifier>
     </Filter>
     <Filter Include="LCD\Pages">
-      <UniqueIdentifier>{c2968215-3d81-4fe3-9dcc-235e061d5c48}</UniqueIdentifier>
+      <UniqueIdentifier>{6d444b48-3282-4fa9-ab18-cde7910cbfa4}</UniqueIdentifier>
     </Filter>
     <Filter Include="Resources">
-      <UniqueIdentifier>{b1c26b27-f6a2-401c-8453-d2728ba68a52}</UniqueIdentifier>
+      <UniqueIdentifier>{c0df79d2-1593-4621-a048-2d91564f03b2}</UniqueIdentifier>
     </Filter>
     <Filter Include="Resources\G15">
-      <UniqueIdentifier>{198e9e18-e9f2-4ee1-aaff-556820592125}</UniqueIdentifier>
+      <UniqueIdentifier>{e2800455-9428-4095-a281-bae0acdaca91}</UniqueIdentifier>
     </Filter>
     <Filter Include="Resources\G15\Grenades">
-      <UniqueIdentifier>{685ec147-c94d-4498-adf2-2c156618e9a0}</UniqueIdentifier>
+      <UniqueIdentifier>{64fb0f6c-57ed-48b2-9070-8151709f9e4d}</UniqueIdentifier>
     </Filter>
     <Filter Include="Resources\G15\Items">
-      <UniqueIdentifier>{6eecb6cf-ef9a-4296-b679-22d4d97478ea}</UniqueIdentifier>
+      <UniqueIdentifier>{2223ae9a-f546-4505-b5e5-541726fa6e73}</UniqueIdentifier>
     </Filter>
     <Filter Include="Resources\G15\Suit">
-      <UniqueIdentifier>{0a61c61f-bf60-43fa-8087-a9e716e2a0d6}</UniqueIdentifier>
+      <UniqueIdentifier>{b6e529ff-af2f-4e63-a53b-827563ed1d5e}</UniqueIdentifier>
     </Filter>
     <Filter Include="Resources\G15\Vehicles">
-      <UniqueIdentifier>{b3bbb513-2d07-4a88-b58a-b772f53c9625}</UniqueIdentifier>
+      <UniqueIdentifier>{198126f7-eff0-43ea-b595-102d77a4f3c2}</UniqueIdentifier>
     </Filter>
     <Filter Include="Expansion">
-      <UniqueIdentifier>{16b4e689-a886-49e4-8dc9-9db3a8f24013}</UniqueIdentifier>
+      <UniqueIdentifier>{8c3848d0-82d4-40a3-9e44-30bcccba3c05}</UniqueIdentifier>
     </Filter>
     <Filter Include="Expansion\Weapons">
-      <UniqueIdentifier>{eb79cbc4-2a9c-40d2-97f9-c818000c89b2}</UniqueIdentifier>
+      <UniqueIdentifier>{0712f8a5-59d7-4c6d-95c2-22b44333edcf}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Nodes\FGPS">
-      <UniqueIdentifier>{67e63ffc-8106-4d19-9916-cf2eea341a84}</UniqueIdentifier>
+    <Filter Include="TheOtherSideMP">
+      <UniqueIdentifier>{0da10752-ee18-40bc-850f-d90011a1a7a8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="TheOtherSide">
-      <UniqueIdentifier>{da554eaa-786a-4f32-9d38-559821bf2589}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="TheOtherSide\Nodes">
-      <UniqueIdentifier>{c9e640d1-39a5-4996-ab11-81d46a1396a2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="TheOtherSide\Conqueror">
-      <UniqueIdentifier>{f65f84eb-cbc8-4fff-a83f-e29c69db59f9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="TheOtherSide\Abilities">
-      <UniqueIdentifier>{2afe25ba-d8c0-49ae-a0fa-09f2cf41ddda}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="TheOtherSide\Control">
-      <UniqueIdentifier>{0ee33ea8-e312-449d-b9e5-f6bf9f36ec11}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="TheOtherSide\Squad">
-      <UniqueIdentifier>{e77e0cee-a6df-453c-a750-042d94b8adb5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="TheOtherSide\Inventory">
-      <UniqueIdentifier>{ceac7430-8ff5-4b3d-b00a-56247b398f52}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="TheOtherSide\Item Files">
-      <UniqueIdentifier>{ea85b7c0-cca4-47c4-aa3a-bbc9f00b40cf}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="TheOtherSide\Item Files\Weapon Files">
-      <UniqueIdentifier>{0376bf58-8307-48a3-9780-f4853d44fe7b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="TheOtherSide\Item Files\Weapon Files\Projectiles">
-      <UniqueIdentifier>{b941de2f-2825-4940-9f47-175e2634d3de}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="TheOtherSide\Helpers">
-      <UniqueIdentifier>{a4ceeaec-b278-4ca8-ae09-d7e93e1885e0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="TheOtherSide\Actor Files">
-      <UniqueIdentifier>{fa86c358-b887-404d-83c6-cabebe436743}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="TheOtherSide\Actor Files\aliens">
-      <UniqueIdentifier>{610538fa-4837-4f02-84c4-64e74a57caa9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="TheOtherSide\Conqueror\RequestsAndResponses">
-      <UniqueIdentifier>{da6b3c39-2035-4e78-bf1d-194eeef32ace}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="TheOtherSide\Item Files\Fire Modes">
-      <UniqueIdentifier>{0c25a6ca-1b7c-4722-84cf-b76ffda5f590}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="TheOtherSide\AI Files">
-      <UniqueIdentifier>{eaed8956-f9e1-4db5-8c13-7d29dba86466}</UniqueIdentifier>
+    <Filter Include="TheOtherSideMP\Actor Files">
+      <UniqueIdentifier>{9c15a8d5-e10f-4dce-9b4d-835c97230a4f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -755,129 +710,6 @@
     </ClCompile>
     <ClCompile Include="DllMain.cpp" />
     <ClCompile Include="StdAfx.cpp" />
-    <ClCompile Include="Nodes\FGPS\FlowEntityScreenPos.cpp">
-      <Filter>Nodes\FGPS</Filter>
-    </ClCompile>
-    <ClCompile Include="Nodes\FGPS\FlowIterator1.cpp">
-      <Filter>Nodes\FGPS</Filter>
-    </ClCompile>
-    <ClCompile Include="Nodes\FGPS\FlowLookAtNode.cpp">
-      <Filter>Nodes\FGPS</Filter>
-    </ClCompile>
-    <ClCompile Include="Nodes\FGPS\FlowSequin.cpp">
-      <Filter>Nodes\FGPS</Filter>
-    </ClCompile>
-    <ClCompile Include="Nodes\FGPS\FlowSpawnEntity.cpp">
-      <Filter>Nodes\FGPS</Filter>
-    </ClCompile>
-    <ClCompile Include="Nodes\FGPS\FlowStringCombine.cpp">
-      <Filter>Nodes\FGPS</Filter>
-    </ClCompile>
-    <ClCompile Include="Nodes\FGPS\FlowFlashHUD.cpp">
-      <Filter>Nodes\FGPS</Filter>
-    </ClCompile>
-    <ClCompile Include="VehicleMovementAlienGunship.cpp">
-      <Filter>Vehicle Files\Movement Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TheOtherSide\Squad\SquadInput.cpp">
-      <Filter>TheOtherSide\Squad</Filter>
-    </ClCompile>
-    <ClCompile Include="TheOtherSide\Squad\SquadSystem.cpp">
-      <Filter>TheOtherSide\Squad</Filter>
-    </ClCompile>
-    <ClCompile Include="TheOtherSide\Nodes\TOSAbilityNodes.cpp">
-      <Filter>TheOtherSide\Nodes</Filter>
-    </ClCompile>
-    <ClCompile Include="TheOtherSide\Nodes\TOSControlNodes.cpp">
-      <Filter>TheOtherSide\Nodes</Filter>
-    </ClCompile>
-    <ClCompile Include="TheOtherSide\Nodes\TOSSquadNodes.cpp">
-      <Filter>TheOtherSide\Nodes</Filter>
-    </ClCompile>
-    <ClCompile Include="TheOtherSide\Control\ControlAction.cpp">
-      <Filter>TheOtherSide\Control</Filter>
-    </ClCompile>
-    <ClCompile Include="TheOtherSide\Control\ControlClient.cpp">
-      <Filter>TheOtherSide\Control</Filter>
-    </ClCompile>
-    <ClCompile Include="TheOtherSide\Control\ControlSystem.cpp">
-      <Filter>TheOtherSide\Control</Filter>
-    </ClCompile>
-    <ClCompile Include="TheOtherSide\Abilities\AbilitiesSystem.cpp">
-      <Filter>TheOtherSide\Abilities</Filter>
-    </ClCompile>
-    <ClCompile Include="TheOtherSide\Nodes\TOSKayriatNodes.cpp">
-      <Filter>TheOtherSide\Nodes</Filter>
-    </ClCompile>
-    <ClCompile Include="TheOtherSide\Squad\Member.cpp">
-      <Filter>TheOtherSide\Squad</Filter>
-    </ClCompile>
-    <ClCompile Include="TheOtherSide\Squad\Squad.cpp">
-      <Filter>TheOtherSide\Squad</Filter>
-    </ClCompile>
-    <ClCompile Include="TheOtherSide\Nodes\TOSConquerorNodes.cpp">
-      <Filter>TheOtherSide\Nodes</Filter>
-    </ClCompile>
-    <ClCompile Include="TheOtherSide\Control\NetControlClient.cpp">
-      <Filter>TheOtherSide\Control</Filter>
-    </ClCompile>
-    <ClCompile Include="Nodes\FGPS\FlowMouseInfo.cpp">
-      <Filter>Nodes\FGPS</Filter>
-    </ClCompile>
-    <ClCompile Include="TheOtherSide\Conqueror\ConquerorChannel.cpp">
-      <Filter>TheOtherSide\Conqueror</Filter>
-    </ClCompile>
-    <ClCompile Include="TheOtherSide\Item Files\Weapon Files\Projectiles\KvoltBullet.cpp">
-      <Filter>TheOtherSide\Item Files\Weapon Files\Projectiles</Filter>
-    </ClCompile>
-    <ClCompile Include="TheOtherSide\Squad\Order.cpp">
-      <Filter>TheOtherSide\Squad</Filter>
-    </ClCompile>
-    <ClCompile Include="TheOtherSide\Conqueror\SpawnPoint.cpp">
-      <Filter>TheOtherSide\Conqueror</Filter>
-    </ClCompile>
-    <ClCompile Include="TheOtherSide\Abilities\AbilityOwner.cpp">
-      <Filter>TheOtherSide\Abilities</Filter>
-    </ClCompile>
-    <ClCompile Include="TheOtherSide\Abilities\Ability.cpp">
-      <Filter>TheOtherSide\Abilities</Filter>
-    </ClCompile>
-    <ClCompile Include="TheOtherSide\Conqueror\ConquerorCommander.cpp">
-      <Filter>TheOtherSide\Conqueror</Filter>
-    </ClCompile>
-    <ClCompile Include="TheOtherSide\Conqueror\StrategicArea.cpp">
-      <Filter>TheOtherSide\Conqueror</Filter>
-    </ClCompile>
-    <ClCompile Include="TheOtherSide\Conqueror\CommanderOrder.cpp">
-      <Filter>TheOtherSide\Conqueror</Filter>
-    </ClCompile>
-    <ClCompile Include="TheOtherSide\Actor Files\Drone.cpp">
-      <Filter>TheOtherSide\Actor Files\aliens</Filter>
-    </ClCompile>
-    <ClCompile Include="TheOtherSide\Actor Files\Pinger.cpp">
-      <Filter>TheOtherSide\Actor Files\aliens</Filter>
-    </ClCompile>
-    <ClCompile Include="TheOtherSide\Conqueror\AreaVehicleSpawnPoint.cpp">
-      <Filter>TheOtherSide\Conqueror</Filter>
-    </ClCompile>
-    <ClCompile Include="TheOtherSide\Conqueror\RequestsAndResponses\Executor.cpp">
-      <Filter>TheOtherSide\Conqueror\RequestsAndResponses</Filter>
-    </ClCompile>
-    <ClCompile Include="TheOtherSide\Conqueror\RequestsAndResponses\RARSystem.cpp">
-      <Filter>TheOtherSide\Conqueror\RequestsAndResponses</Filter>
-    </ClCompile>
-    <ClCompile Include="TheOtherSide\Conqueror\ConquerorSystem.cpp">
-      <Filter>TheOtherSide\Conqueror</Filter>
-    </ClCompile>
-    <ClCompile Include="TheOtherSide\Item Files\Fire Modes\LaserBeam.cpp">
-      <Filter>TheOtherSide\Item Files\Fire Modes</Filter>
-    </ClCompile>
-    <ClCompile Include="TheOtherSide\AI Files\AIActionTracker.cpp">
-      <Filter>TheOtherSide\AI Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TheOtherSide\Conqueror\ConquerorShop.cpp">
-      <Filter>TheOtherSide\Conqueror</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor.h">
@@ -1406,117 +1238,6 @@
       <Filter>Expansion\Weapons</Filter>
     </ClInclude>
     <ClInclude Include="StdAfx.h" />
-    <ClInclude Include="Nodes\FGPS\FlowSystemCvarsC3.h">
-      <Filter>Nodes\FGPS</Filter>
-    </ClInclude>
-    <ClInclude Include="VehicleMovementAlienGunship.h">
-      <Filter>Vehicle Files\Movement Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TheOtherSide\Squad\SquadSystem.h">
-      <Filter>TheOtherSide\Squad</Filter>
-    </ClInclude>
-    <ClInclude Include="TheOtherSide\Conqueror\StrategicArea.h">
-      <Filter>TheOtherSide\Conqueror</Filter>
-    </ClInclude>
-    <ClInclude Include="TheOtherSide\Abilities\AbilitiesSystem.h">
-      <Filter>TheOtherSide\Abilities</Filter>
-    </ClInclude>
-    <ClInclude Include="TheOtherSide\Nodes\TOSKayriatNodes.h">
-      <Filter>TheOtherSide\Nodes</Filter>
-    </ClInclude>
-    <ClInclude Include="TheOtherSide\Control\ControlSystem.h">
-      <Filter>TheOtherSide\Control</Filter>
-    </ClInclude>
-    <ClInclude Include="TheOtherSide\Nodes\TOSNodesIncludes.h">
-      <Filter>TheOtherSide\Nodes</Filter>
-    </ClInclude>
-    <ClInclude Include="TheOtherSide\Conqueror\ConquerorSystem.h">
-      <Filter>TheOtherSide\Conqueror</Filter>
-    </ClInclude>
-    <ClInclude Include="TheOtherSide\Conqueror\ConquerorChannel.h">
-      <Filter>TheOtherSide\Conqueror</Filter>
-    </ClInclude>
-    <ClInclude Include="TheOtherSide\Conqueror\ConquerorSpeciesClass.h">
-      <Filter>TheOtherSide\Conqueror</Filter>
-    </ClInclude>
-    <ClInclude Include="TheOtherSide\Item Files\Weapon Files\Projectiles\KvoltBullet.h">
-      <Filter>TheOtherSide\Item Files\Weapon Files\Projectiles</Filter>
-    </ClInclude>
-    <ClInclude Include="TheOtherSide\Helpers\TOS_Debug.h">
-      <Filter>TheOtherSide\Helpers</Filter>
-    </ClInclude>
-    <ClInclude Include="TheOtherSide\Helpers\TOS_AI.h">
-      <Filter>TheOtherSide\Helpers</Filter>
-    </ClInclude>
-    <ClInclude Include="TheOtherSide\Helpers\TOS_Vehicle.h">
-      <Filter>TheOtherSide\Helpers</Filter>
-    </ClInclude>
-    <ClInclude Include="TheOtherSide\Conqueror\SpawnPoint.h">
-      <Filter>TheOtherSide\Conqueror</Filter>
-    </ClInclude>
-    <ClInclude Include="TheOtherSide\Abilities\AbilityOwner.h">
-      <Filter>TheOtherSide\Abilities</Filter>
-    </ClInclude>
-    <ClInclude Include="TheOtherSide\Abilities\Ability.h">
-      <Filter>TheOtherSide\Abilities</Filter>
-    </ClInclude>
-    <ClInclude Include="TheOtherSide\Conqueror\ConquerorCommander.h">
-      <Filter>TheOtherSide\Conqueror</Filter>
-    </ClInclude>
-    <ClInclude Include="TheOtherSide\Helpers\TOS_Inventory.h">
-      <Filter>TheOtherSide\Helpers</Filter>
-    </ClInclude>
-    <ClInclude Include="TheOtherSide\Conqueror\CommanderOrder.h">
-      <Filter>TheOtherSide\Conqueror</Filter>
-    </ClInclude>
-    <ClInclude Include="TheOtherSide\Conqueror\ConquerorStrategy.h">
-      <Filter>TheOtherSide\Conqueror</Filter>
-    </ClInclude>
-    <ClInclude Include="TheOtherSide\Helpers\TOS_Enums.h">
-      <Filter>TheOtherSide\Helpers</Filter>
-    </ClInclude>
-    <ClInclude Include="TheOtherSide\Helpers\TOS_Script.h">
-      <Filter>TheOtherSide\Helpers</Filter>
-    </ClInclude>
-    <ClInclude Include="TheOtherSide\Helpers\TOS_Sounds.h">
-      <Filter>TheOtherSide\Helpers</Filter>
-    </ClInclude>
-    <ClInclude Include="TheOtherSide\Actor Files\Drone.h">
-      <Filter>TheOtherSide\Actor Files\aliens</Filter>
-    </ClInclude>
-    <ClInclude Include="TheOtherSide\Actor Files\Pinger.h">
-      <Filter>TheOtherSide\Actor Files\aliens</Filter>
-    </ClInclude>
-    <ClInclude Include="TheOtherSide\Conqueror\AreaVehicleSpawnPoint.h">
-      <Filter>TheOtherSide\Conqueror</Filter>
-    </ClInclude>
-    <ClInclude Include="TheOtherSide\Helpers\TOS_STL.h">
-      <Filter>TheOtherSide\Helpers</Filter>
-    </ClInclude>
-    <ClInclude Include="TheOtherSide\Conqueror\RequestsAndResponses\Executor.h">
-      <Filter>TheOtherSide\Conqueror\RequestsAndResponses</Filter>
-    </ClInclude>
-    <ClInclude Include="TheOtherSide\Conqueror\RequestsAndResponses\RARSystem.h">
-      <Filter>TheOtherSide\Conqueror\RequestsAndResponses</Filter>
-    </ClInclude>
-    <ClInclude Include="TheOtherSide\Conqueror\RequestsAndResponses\Request.h">
-      <Filter>TheOtherSide\Conqueror\RequestsAndResponses</Filter>
-    </ClInclude>
-    <ClInclude Include="TheOtherSide\Control\IControlSystemChild.h">
-      <Filter>TheOtherSide\Control</Filter>
-    </ClInclude>
-    <ClInclude Include="TheOtherSide\Item Files\Fire Modes\LaserBeam.h">
-      <Filter>TheOtherSide\Item Files\Fire Modes</Filter>
-    </ClInclude>
-    <ClInclude Include="TheOtherSide\AI Files\AIActionTracker.h">
-      <Filter>TheOtherSide\AI Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TheOtherSide\AI Files\IAIActionTrackerListener.h">
-      <Filter>TheOtherSide\AI Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TheOtherSide\Conqueror\ConquerorShop.h">
-      <Filter>TheOtherSide\Conqueror</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="GameActions.actions">
@@ -1525,8 +1246,6 @@
     <None Include="..\Launcher\Cursor_White.cur">
       <Filter>Resources</Filter>
     </None>
-    <None Include="Cursor_White.cur" />
-    <None Include="cpp.hint" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Crysis.ico">
@@ -1667,10 +1386,9 @@
     <Image Include="G15\Vehicles\ustank.bmp">
       <Filter>Resources\G15\Vehicles</Filter>
     </Image>
-    <Image Include="Wars.ico" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="CrysisTheOtherSide.rc">
+    <ResourceCompile Include="GameDll.rc">
       <Filter>Resources</Filter>
     </ResourceCompile>
   </ItemGroup>

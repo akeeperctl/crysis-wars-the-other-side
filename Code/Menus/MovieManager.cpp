@@ -23,42 +23,41 @@ History:
 #include "Game.h"
 #include "GameCVars.h"
 
+
 //-----------------------------------------------------------------------------------------------------
 
 CMovieManager::CMovieManager()
 {
 	m_movieList.clear();
 
-	//TheOtherSide
-	XmlNodeRef movieInfo = GetISystem()->LoadXmlFile("Mods/TheOtherSide/Game/Config/movielist.xml");
-	//~TheOtherSide
+	XmlNodeRef movieInfo = GetISystem()->LoadXmlFile("Languages/movielist.xml");
 
-	if (movieInfo == 0)
+	if(movieInfo == 0)
 	{
 		GameWarning("CMovieManager: Could not load movielist.xml!");
 	}
 	else
 	{
-		if (movieInfo)
+		if(movieInfo)
 		{
-			for (int n = 0; n < movieInfo->getChildCount(); ++n)
+			for(int n = 0; n < movieInfo->getChildCount(); ++n)
 			{
 				XmlNodeRef movieNode = movieInfo->getChild(n);
 				const char* name = movieNode->getTag();
-				if (!stricmp(name, "Movie"))
+				if(!stricmp(name, "Movie"))
 				{
 					SMovieInfo info;
 					int attribs = movieNode->getNumAttributes();
 					const char* key;
 					const char* value;
-					for (int i = 0; i < attribs; ++i)
+					for(int i = 0; i < attribs; ++i)
 					{
 						movieNode->getAttributeByIndex(i, &key, &value);
-						if (!stricmp(key, "FileName"))
+						if(!stricmp(key,"FileName"))
 						{
 							info.filename = value;
 						}
-						else if (!stricmp(key, "AllowSkip") && value)
+						else if(!stricmp(key,"AllowSkip") && value)
 						{
 							info.allowskip = atoi(value);
 						}
@@ -83,30 +82,31 @@ CMovieManager::~CMovieManager()
 
 bool CMovieManager::Update(float fDeltaTime)
 {
-	if (g_pGameCVars->g_skipIntro == 1)
+
+	if(g_pGameCVars->g_skipIntro==1)
 	{
 		m_current = m_movieList.size();
 	}
 
-	if (!IsPlaying())
+	if(!IsPlaying())
 		return false;
 
-	IVideoPlayer* player = g_pGame->GetMenu()->GetVideoPlayer();
-	if (!player)
+	IVideoPlayer *player = g_pGame->GetMenu()->GetVideoPlayer();
+	if(!player)
 	{
 		PlayVideo(m_current);
 		return true;
 	}
 
-	IVideoPlayer::EPlaybackStatus status = player->GetStatus();
+	IVideoPlayer::EPlaybackStatus status =  player->GetStatus();
 
-	if (status == IVideoPlayer::PBS_STOPPED)
+	if(status == IVideoPlayer::PBS_STOPPED)
 	{
 		g_pGame->GetMenu()->StopVideo();
 		return true;
 	}
 
-	if (status == IVideoPlayer::PBS_ERROR || status == IVideoPlayer::PBS_FINISHED)
+	if(status == IVideoPlayer::PBS_ERROR || status == IVideoPlayer::PBS_FINISHED)
 	{
 		NextVideo();
 		return true;
@@ -134,7 +134,7 @@ void CMovieManager::SkipVideo()
 	bool firstStart = g_pGame->GetOptions()->IsFirstStart();
 	bool devmode = gEnv->pSystem->IsDevMode();
 
-	if (devmode || info.allowskip == 0 || (info.allowskip == 1 && !firstStart))
+	if(devmode || info.allowskip==0 || (info.allowskip==1 && !firstStart))
 	{
 		NextVideo();
 	}
@@ -147,17 +147,17 @@ void CMovieManager::NextVideo()
 	g_pGame->GetMenu()->StopVideo();
 
 	ColorF cBlack(Col_Black);
-	gEnv->pRenderer->ClearBuffer(FRT_CLEAR | FRT_CLEAR_IMMEDIATE, &cBlack);
+	gEnv->pRenderer->ClearBuffer(FRT_CLEAR | FRT_CLEAR_IMMEDIATE,&cBlack);
 
 	++m_current;
 }
 
 bool CMovieManager::IsPlaying()
 {
-	if (!m_movieList.size())
+	if(!m_movieList.size())
 		return false;
 
-	if (m_current < 0 || m_current >= m_movieList.size())
+	if(m_current<0 || m_current>=m_movieList.size())
 		return false;
 
 	return true;

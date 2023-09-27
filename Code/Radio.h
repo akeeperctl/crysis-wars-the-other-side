@@ -8,7 +8,7 @@
 
 class CGameRules;
 
-class CRadio :public IInputEventListener
+class CRadio:public IInputEventListener
 {
 public:
 	CRadio(CGameRules*);
@@ -20,13 +20,13 @@ public:
 	static const int RADIO_MESSAGE_NUM;
 
 	//from IInputEventListener
-	virtual bool	OnInputEvent(const SInputEvent& event);
+	virtual bool	OnInputEvent( const SInputEvent &event );
 	void			OnRadioMessage(int id, EntityId fromId);
 	void			CancelRadio();
 	void			SetTeam(const string& name);
-	void			GetMemoryStatistics(ICrySizer* s);
+	void			GetMemoryStatistics(ICrySizer * s);
 private:
-	CGameRules* m_pGameRules;
+	CGameRules	*m_pGameRules;
 	int			m_currentGroup;
 	string		m_TeamName;
 	float		m_lastMessageTime;

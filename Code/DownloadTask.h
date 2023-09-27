@@ -28,16 +28,17 @@ enum EDownloadState
 	eDS_Done,									// finished successfully
 };
 
+
 struct IDownloadTaskListener
 {
 	// called every frame while downloading with latest status
-	virtual void OnDownloadProgress(float percent) = 0;
+	virtual void OnDownloadProgress(float percent) = 0;	
 
 	// called on completion (with filename) or error (filename == NULL, result is a EDownloadState or EFileDownloadError
 	virtual void OnDownloadFinished(int result, const char* filename) = 0;
 };
 
-class CDownloadTask
+class CDownloadTask 
 {
 public:
 	CDownloadTask();
@@ -59,7 +60,7 @@ public:
 private:
 
 	void DownloadNextFile();
-	int ValidateDownload();
+	int ValidateDownload();	
 	bool FileExists(string file, int expectedSize);
 
 	bool GetUserDataFolder(string& path);

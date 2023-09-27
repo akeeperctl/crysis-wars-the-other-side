@@ -10,7 +10,7 @@
 #include <StringUtils.h>
 
 #if defined(WHOLE_PROJECT)
-#define GetPlayer GetPlayerSensor
+	#define GetPlayer GetPlayerSensor
 #endif
 
 CPlayer* GetPlayer(EntityId id)
@@ -33,7 +33,7 @@ IVehicle* GetVehicle(EntityId id)
 class CFlowNode_ActorSensor : public CFlowBaseNode, public IPlayerEventListener, public IVehicleEventListener
 {
 public:
-	CFlowNode_ActorSensor(SActivationInfo* pActInfo) : m_entityId(0), m_vehicleId(0)
+	CFlowNode_ActorSensor( SActivationInfo * pActInfo ) : m_entityId(0), m_vehicleId(0)
 	{
 	}
 
@@ -91,29 +91,29 @@ public:
 		EOP_ONDEATH,
 	};
 
-	void GetConfiguration(SFlowNodeConfig& config)
+	void GetConfiguration( SFlowNodeConfig& config )
 	{
-		static const SInputPortConfig in_ports[] =
+		static const SInputPortConfig in_ports[] = 
 		{
-			InputPortConfig_Void("Enable", _HELP("Trigger to enable")),
-			InputPortConfig_Void("Disable", _HELP("Trigger to enable")),
+			InputPortConfig_Void( "Enable", _HELP("Trigger to enable")),
+			InputPortConfig_Void( "Disable", _HELP("Trigger to enable")),
 			{0}
 		};
-		static const SOutputPortConfig out_ports[] =
+		static const SOutputPortConfig out_ports[] = 
 		{
-			OutputPortConfig<EntityId>("EnterVehicle", _HELP("Triggered when entering a vehicle")),
-			OutputPortConfig<EntityId>("ExitVehicle", _HELP("Triggered when exiting a vehicle")),
-			OutputPortConfig<int>("SeatChange", _HELP("Triggered when seat has changed")),
-			OutputPortConfig<EntityId>("ItemPickedUp", _HELP("Triggered when an item is picked up")),
-			OutputPortConfig<EntityId>("ItemDropped", _HELP("Triggered when an item is dropped")),
-			OutputPortConfig<EntityId>("ItemUsed", _HELP("Triggered when an item is used")),
-			OutputPortConfig<EntityId>("NPCGrabbed", _HELP("Triggered when an NPC is grabbed")),
-			OutputPortConfig<EntityId>("NPCThrown", _HELP("Triggered when an NPC is thrown")),
-			OutputPortConfig<EntityId>("ObjectGrabbed", _HELP("Triggered when an object is grabbed")),
-			OutputPortConfig<EntityId>("ObjectThrown", _HELP("Triggered when an object is thrown")),
-			OutputPortConfig<int>("StanceChanged", _HELP("Triggered when Stance changed. 0=Stand,1=Crouch,2=Prone,3=Relaxed,4=Stealth,5=Swim,6=ZeroG")),
-			OutputPortConfig<int>("SpecialMove", _HELP("Triggered On SpecialMove. 0=Jump,1=SpeedSprint,2=StrengthJump")),
-			OutputPortConfig<int>("OnDeath", _HELP("Triggered when Actor dies. Outputs 0 if not god. 1 if god.")),
+			OutputPortConfig<EntityId> ( "EnterVehicle", _HELP("Triggered when entering a vehicle")),
+			OutputPortConfig<EntityId> ( "ExitVehicle", _HELP("Triggered when exiting a vehicle")),
+			OutputPortConfig<int>      ( "SeatChange", _HELP("Triggered when seat has changed")),
+			OutputPortConfig<EntityId> ( "ItemPickedUp", _HELP("Triggered when an item is picked up")),
+			OutputPortConfig<EntityId> ( "ItemDropped", _HELP("Triggered when an item is dropped")),
+			OutputPortConfig<EntityId> ( "ItemUsed", _HELP("Triggered when an item is used")),
+			OutputPortConfig<EntityId> ( "NPCGrabbed", _HELP("Triggered when an NPC is grabbed")),
+			OutputPortConfig<EntityId> ( "NPCThrown", _HELP("Triggered when an NPC is thrown")),
+			OutputPortConfig<EntityId> ( "ObjectGrabbed", _HELP("Triggered when an object is grabbed")),
+			OutputPortConfig<EntityId> ( "ObjectThrown", _HELP("Triggered when an object is thrown")),
+			OutputPortConfig<int>      ( "StanceChanged", _HELP("Triggered when Stance changed. 0=Stand,1=Crouch,2=Prone,3=Relaxed,4=Stealth,5=Swim,6=ZeroG")),
+			OutputPortConfig<int>      ( "SpecialMove", _HELP("Triggered On SpecialMove. 0=Jump,1=SpeedSprint,2=StrengthJump")),
+			OutputPortConfig<int>      ( "OnDeath", _HELP("Triggered when Actor dies. Outputs 0 if not god. 1 if god.")),
 			{0}
 		};
 		config.nFlags |= EFLN_TARGET_ENTITY;
@@ -123,7 +123,7 @@ public:
 		config.SetCategory(EFLN_APPROVED);
 	}
 
-	void ProcessEvent(EFlowEvent event, SActivationInfo* pActInfo)
+	void ProcessEvent( EFlowEvent event, SActivationInfo *pActInfo )
 	{
 		switch (event)
 		{
@@ -146,6 +146,7 @@ public:
 		}
 	}
 
+	
 	void RegisterActor()
 	{
 		if (m_entityId == 0)
@@ -176,14 +177,14 @@ public:
 	}
 
 	// IPlayerEventListener
-	virtual void OnEnterVehicle(IActor* pActor, const char* strVehicleClassName, const char* strSeatName, bool bThirdPerson)
+	virtual void OnEnterVehicle(IActor *pActor,const char *strVehicleClassName,const char *strSeatName,bool bThirdPerson)
 	{
 		if (pActor->GetEntityId() != m_entityId)
 			return;
 		CPlayer* pPlayer = static_cast<CPlayer*> (pActor);
-		if (m_vehicleId)
+		if(m_vehicleId)
 		{
-			if (IVehicle* pVehicle = GetVehicle(m_vehicleId))
+			if(IVehicle *pVehicle = GetVehicle(m_vehicleId))
 				pVehicle->UnregisterVehicleEventListener(this);
 		}
 		IVehicle* pVehicle = pPlayer->GetLinkedVehicle();
@@ -197,7 +198,7 @@ public:
 			ActivateOutput(&m_actInfo, EOP_SEAT, pSeat->GetSeatId());
 	}
 
-	virtual void OnExitVehicle(IActor* pActor)
+	virtual void OnExitVehicle(IActor *pActor)
 	{
 		if (pActor->GetEntityId() != m_entityId)
 			return;
@@ -214,8 +215,9 @@ public:
 		m_vehicleId = 0;
 	}
 
-	virtual void OnToggleThirdPerson(IActor* pActor, bool bThirdPerson)
+	virtual void OnToggleThirdPerson(IActor *pActor,bool bThirdPerson)
 	{
+
 	}
 
 	virtual void OnItemDropped(IActor* pActor, EntityId itemId)
@@ -275,7 +277,7 @@ public:
 	}
 	// ~IVehicleEventListener
 
-	virtual void GetMemoryStatistics(ICrySizer* s)
+	virtual void GetMemoryStatistics(ICrySizer * s)
 	{
 		s->Add(*this);
 	}
@@ -286,7 +288,7 @@ protected:
 	SActivationInfo m_actInfo;
 };
 
-class CFlowNode_DifficultyLevel : public CFlowBaseNode
+class CFlowNode_DifficultyLevel : public CFlowBaseNode 
 {
 	enum INPUTS
 	{
@@ -302,21 +304,21 @@ class CFlowNode_DifficultyLevel : public CFlowBaseNode
 	};
 
 public:
-	CFlowNode_DifficultyLevel(SActivationInfo* pActInfo) { }
+	CFlowNode_DifficultyLevel( SActivationInfo * pActInfo ) { }
 
-	void GetConfiguration(SFlowNodeConfig& config)
+	void GetConfiguration( SFlowNodeConfig& config )
 	{
-		static const SInputPortConfig in_ports[] =
+		static const SInputPortConfig in_ports[] = 
 		{
-			InputPortConfig_Void("Trigger", _HELP("Trigger to get difficulty level.")),
+			InputPortConfig_Void  ( "Trigger", _HELP("Trigger to get difficulty level." )),
 			{0}
 		};
-		static const SOutputPortConfig out_ports[] =
+		static const SOutputPortConfig out_ports[] = 
 		{
-			OutputPortConfig_Void("Easy", _HELP("Easy")),
-			OutputPortConfig_Void("Normal", _HELP("Normal")),
-			OutputPortConfig_Void("Hard", _HELP("Hard")),
-			OutputPortConfig_Void("Delta", _HELP("Delta")),
+			OutputPortConfig_Void  ( "Easy", _HELP("Easy") ),
+			OutputPortConfig_Void  ( "Normal", _HELP("Normal") ),
+			OutputPortConfig_Void  ( "Hard", _HELP("Hard") ),
+			OutputPortConfig_Void  ( "Delta", _HELP("Delta") ),
 			{0}
 		};
 		config.pInputPorts = in_ports;
@@ -325,19 +327,19 @@ public:
 		config.SetCategory(EFLN_APPROVED);
 	}
 
-	virtual void GetMemoryStatistics(ICrySizer* s)
+	virtual void GetMemoryStatistics(ICrySizer * s)
 	{
 		s->Add(*this);
 	}
 
-	void ProcessEvent(EFlowEvent event, SActivationInfo* pActInfo)
+	void ProcessEvent( EFlowEvent event, SActivationInfo *pActInfo )
 	{
-		if (eFE_Activate == event && IsPortActive(pActInfo, EIP_Trigger))
+		if(eFE_Activate == event && IsPortActive(pActInfo, EIP_Trigger))
 		{
 			const int level = g_pGameCVars->g_difficultyLevel; // [0] or 1-4
 			if (level > EOP_Easy && level <= EOP_Delta)
 			{
-				ActivateOutput(pActInfo, level - 1, true);
+				ActivateOutput(pActInfo, level-1, true);
 			}
 		}
 	}
@@ -345,7 +347,7 @@ public:
 
 // THIS FLOWNODE IS A SINGLETON, although it has member variables!
 // THIS IS INTENDED!!!!
-class CFlowNode_OverrideFOV : public CFlowBaseNode
+class CFlowNode_OverrideFOV : public CFlowBaseNode 
 {
 	enum INPUTS
 	{
@@ -361,7 +363,7 @@ class CFlowNode_OverrideFOV : public CFlowBaseNode
 	};
 
 public:
-	CFlowNode_OverrideFOV(SActivationInfo* pActInfo) { m_storedFOV = 0.0f; }
+	CFlowNode_OverrideFOV( SActivationInfo * pActInfo ) { m_storedFOV = 0.0f; }
 
 	~CFlowNode_OverrideFOV()
 	{
@@ -373,19 +375,19 @@ public:
 		}
 	}
 
-	void GetConfiguration(SFlowNodeConfig& config)
+	void GetConfiguration( SFlowNodeConfig& config )
 	{
-		static const SInputPortConfig in_ports[] =
+		static const SInputPortConfig in_ports[] = 
 		{
-			InputPortConfig<float>("SetFOV", _HELP("Trigger to override Camera's FieldOfView.")),
-			InputPortConfig_Void("GetFOV", _HELP("Trigger to get current Camera's FieldOfView.")),
-			InputPortConfig_Void("ResetFOV", _HELP("Trigger to reset FieldOfView to default value.")),
+			InputPortConfig<float> ( "SetFOV", _HELP("Trigger to override Camera's FieldOfView." )),
+			InputPortConfig_Void   ( "GetFOV", _HELP("Trigger to get current Camera's FieldOfView." )),
+			InputPortConfig_Void   ( "ResetFOV", _HELP("Trigger to reset FieldOfView to default value." )),
 			{0}
 		};
-		static const SOutputPortConfig out_ports[] =
+		static const SOutputPortConfig out_ports[] = 
 		{
-			OutputPortConfig<float>("CurFOV", _HELP("Current FieldOfView")),
-			OutputPortConfig_Void("ResetDone", _HELP("Triggered after Reset")),
+			OutputPortConfig<float>  ( "CurFOV", _HELP("Current FieldOfView") ),
+			OutputPortConfig_Void    ( "ResetDone", _HELP("Triggered after Reset") ),
 			{0}
 		};
 		config.pInputPorts = in_ports;
@@ -394,7 +396,7 @@ public:
 		config.SetCategory(EFLN_ADVANCED);
 	}
 
-	virtual void GetMemoryStatistics(ICrySizer* s)
+	virtual void GetMemoryStatistics(ICrySizer * s)
 	{
 		s->Add(*this);
 	}
@@ -422,7 +424,7 @@ public:
 			ser.Value("curFOV", curFOV);
 
 			// if we're currently active, restore first
-			if (m_storedFOV > 0.0f)
+			if(m_storedFOV > 0.0f)
 			{
 				if (pCVar)
 					pCVar->Set(m_storedFOV);
@@ -435,7 +437,7 @@ public:
 		}
 	}
 
-	void ProcessEvent(EFlowEvent event, SActivationInfo* pActInfo)
+	void ProcessEvent( EFlowEvent event, SActivationInfo *pActInfo )
 	{
 		ICVar* pCVar = gEnv->pConsole->GetCVar("cl_fov");
 		if (pCVar == 0)
@@ -478,10 +480,11 @@ public:
 	float m_storedFOV;
 };
 
-REGISTER_FLOW_NODE("Game:ActorSensor", CFlowNode_ActorSensor);
-REGISTER_FLOW_NODE_SINGLETON("Game:DifficultyLevel", CFlowNode_DifficultyLevel);
-REGISTER_FLOW_NODE_SINGLETON("Camera:OverrideFOV", CFlowNode_OverrideFOV); // Intended: Singleton although contains members!
+REGISTER_FLOW_NODE("Game:ActorSensor",	CFlowNode_ActorSensor);
+REGISTER_FLOW_NODE_SINGLETON("Game:DifficultyLevel",	CFlowNode_DifficultyLevel);
+REGISTER_FLOW_NODE_SINGLETON("Camera:OverrideFOV",	CFlowNode_OverrideFOV); // Intended: Singleton although contains members!
 
 #if defined(WHOLE_PROJECT)
-#undef GetPlayer
+	#undef GetPlayer
 #endif
+

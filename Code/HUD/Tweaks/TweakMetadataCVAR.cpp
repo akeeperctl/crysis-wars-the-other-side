@@ -3,7 +3,7 @@ Crytek Source File.
 Copyright (C), Crytek Studios, 2006.
 -------------------------------------------------------------------------
 
-Description:
+Description: 
 	Wraps a unit of Tweak metadata
 
 -------------------------------------------------------------------------
@@ -18,7 +18,7 @@ History:
 
 //-------------------------------------------------------------------------
 
-CTweakMetadataCVAR::CTweakMetadataCVAR(IScriptTable* pTable) : CTweakMetadata(pTable)
+CTweakMetadataCVAR::CTweakMetadataCVAR(IScriptTable *pTable) : CTweakMetadata(pTable)
 {
 	// Already fetched by base classes: DELTA, NAME
 
@@ -27,23 +27,23 @@ CTweakMetadataCVAR::CTweakMetadataCVAR(IScriptTable* pTable) : CTweakMetadata(pT
 
 	// Fetch the variable name (we know this exists)
 	m_sVariable = FetchStringValue(pTable, "CVAR");
-
+		
 	// There's probably other checks that should be done, including looking for unrecognised elements
-
+	
 	// What type is the CVAR?
 	m_CVarType = 0;
-	if (GetCVar()) m_CVarType = GetCVar()->GetType();
+	if (GetCVar()) m_CVarType  = GetCVar()->GetType();
 }
 
 //-------------------------------------------------------------------------
 
 string CTweakMetadataCVAR::GetValue(void) {
 	string result = "Not found";
-	ICVar* cVar = GetCVar();
+	ICVar *cVar = GetCVar();
 	if (cVar) result = cVar->GetString();
 	return result;
 }
-
+		
 //-------------------------------------------------------------------------
 
 bool CTweakMetadataCVAR::ChangeValue(bool bIncrement) {
@@ -52,20 +52,20 @@ bool CTweakMetadataCVAR::ChangeValue(bool bIncrement) {
 	if (!bIncrement) fDelta *= -1.0;
 
 	// Get and check CVAR
-	ICVar* cVar = GetCVar();
+	ICVar *cVar = GetCVar();
 	if (!cVar) return false;
-
+	
 	// Deal with appropriate type
 	switch (cVar->GetType()) {
-	case CVAR_INT:
-		cVar->Set((int)(cVar->GetIVal() + fDelta));
-		break;
-	case CVAR_FLOAT:
-		cVar->Set((float)(cVar->GetFVal() + fDelta));
-		break;
-	default:;
-		// Strings are non-obvious
-		// Might also be a non-exisitent variable
+		case CVAR_INT:
+			cVar->Set( (int) (cVar->GetIVal() + fDelta)	);
+			break;
+		case CVAR_FLOAT:
+			cVar->Set( (float) (cVar->GetFVal() + fDelta) );
+			break;
+		default:;
+			// Strings are non-obvious
+			// Might also be a non-exisitent variable			
 	}
 	return true;
 }
@@ -73,9 +73,10 @@ bool CTweakMetadataCVAR::ChangeValue(bool bIncrement) {
 //-------------------------------------------------------------------------
 
 // Wraps fetching the console variable
-ICVar* CTweakMetadataCVAR::GetCVar(void) const
+ICVar * CTweakMetadataCVAR::GetCVar(void) const 
 {
 	return gEnv->pConsole->GetCVar(m_sVariable.c_str());
 }
 
 //-------------------------------------------------------------------------
+

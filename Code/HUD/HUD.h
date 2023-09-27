@@ -4,15 +4,15 @@ Copyright (C), Crytek Studios, 2001-2005.
 -------------------------------------------------------------------------
 $Id$
 $DateTime$
-Description:
+Description: 
 	Header for G02 CHUD class
 
 -------------------------------------------------------------------------
 History:
 - 07:11:2005: Created by Julien Darre
-- 01:02:2006: Modified by Jan Mï¿½ller
+- 01:02:2006: Modified by Jan Müller
 - 22:02:2006: Refactored for G04 by Matthew Jack
-- 2007: Refactored by Jan Mï¿½ller
+- 2007: Refactored by Jan Müller
 
 *************************************************************************/
 #ifndef __HUD_H__
@@ -66,27 +66,23 @@ class CWeapon;
 
 //-----------------------------------------------------------------------------------------------------
 
-class CHUD : public CHUDCommon,
-	public IGameFrameworkListener,
-	public IInputEventListener,
-	public IPlayerEventListener,
-	public IItemSystemListener,
-	public IWeaponEventListener,
-	public CNanoSuit::INanoSuitListener,
-	public IViewSystemListener,
-	public ISubtitleHandler,
-	public IEquipmentManager::IListener,
-	public CGameRules::SGameRulesListener
+class CHUD :	public CHUDCommon, 
+							public IGameFrameworkListener, 
+							public IInputEventListener, 
+							public IPlayerEventListener, 
+							public IItemSystemListener, 
+							public IWeaponEventListener, 
+							public CNanoSuit::INanoSuitListener,
+							public IViewSystemListener,
+							public ISubtitleHandler,
+							public IEquipmentManager::IListener,
+							public CGameRules::SGameRulesListener
 {
 	friend class CFlashMenuObject;
 	friend class CHUDPowerStruggle;
 	friend class CHUDVehicleInterface;
 	friend class CHUDScopes;
 	friend class CHUDCrosshair;
-
-	//TheOtherSide
-	friend class CConquerorSystem;
-	//~TheOtherSide
 
 public:
 
@@ -97,8 +93,8 @@ public:
 		string  description;
 		int			status;
 		SHudObjective() {}
-		SHudObjective(const string& msg, const string& desc, const int stat) : message(msg), description(desc), status(stat) {}
-		void GetMemoryStatistics(ICrySizer* s)
+		SHudObjective(const string &msg, const string &desc, const int stat) : message(msg), description(desc), status(stat) {}
+		void GetMemoryStatistics(ICrySizer * s)
 		{
 			s->Add(*this);
 			s->Add(message);
@@ -120,14 +116,16 @@ public:
 		float rotation;
 		int healthValue;
 
-		bool operator ==(const CHUD::SOnScreenIcon& compare) const
+		bool operator ==( const CHUD::SOnScreenIcon& compare ) const
 		{
-			return id == compare.id;
+			return id==compare.id;
 		}
+
 	};
 
 	struct SBuyMenuKeyLog
 	{
+
 		enum EBMKL_State
 		{
 			eBMKL_NoInput = -1,
@@ -157,7 +155,7 @@ public:
 	typedef std::map<string, SHudObjective> THUDObjectiveList;
 
 	CHUD();
-	virtual	~CHUD();
+	virtual	~	CHUD();
 
 	//HUD initialisation
 	bool Init();
@@ -165,11 +163,11 @@ public:
 	void ResetPostSerElements();
 	void PlayerIdSet(EntityId playerId);
 	void PostSerialize();
-	void GameRulesSet(const char* name);
+  void GameRulesSet(const char* name);
 	//handle game events
-	void HandleEvent(const SGameObjectEvent& rGameObjectEvent);
+	void HandleEvent(const SGameObjectEvent &rGameObjectEvent);
 	void WeaponAccessoriesInterface(bool visible, bool force = false);
-	void SetFireMode(IItem* pItem, IFireMode* pFM, bool forceUpdate = false);
+	void SetFireMode(IItem *pItem, IFireMode *pFM, bool forceUpdate = false);
 
 	void AddTrackedProjectile(EntityId id);
 	void RemoveTrackedProjectile(EntityId id);
@@ -184,27 +182,27 @@ public:
 	void TextMessage(const char* message);
 
 	void UpdateHUDElements();
-	void UpdateCrosshair(IItem* pItem = NULL);
+	void UpdateCrosshair(IItem *pItem = NULL);
 	virtual void UpdateCrosshairVisibility();
 	bool ReturnFromLastModalScreen();
 
-	void GetMemoryStatistics(ICrySizer*);
+	void GetMemoryStatistics( ICrySizer * );
 
 	// IGameFrameworkListener
 	virtual void OnPostUpdate(float fDeltaTime);
 	virtual void OnSaveGame(ISaveGame* pSaveGame);
 	virtual void OnLoadGame(ILoadGame* pLoadGame) {};
 	virtual void OnLevelEnd(const char* nextLevel) {};
-	virtual void OnActionEvent(const SActionEvent& event);
+  virtual void OnActionEvent(const SActionEvent& event);
 	// ~IGameFrameworkListener
 
 	// IInputEventListener
-	virtual bool OnInputEvent(const SInputEvent& rInputEvent);
-	virtual bool OnInputEventUI(const SInputEvent& rInputEvent);
+	virtual bool OnInputEvent(const SInputEvent &rInputEvent);
+	virtual bool OnInputEventUI(const SInputEvent &rInputEvent);
 	// ~IInputEventListener
 
 	// IFSCommandHandler
-	void HandleFSCommand(const char* strCommand, const char* strArgs);
+	void HandleFSCommand(const char *strCommand,const char *strArgs);
 	// ~IFSCommandHandler
 
 	// CGameRules::SGameRulesListener
@@ -225,45 +223,40 @@ public:
 
 	virtual bool OnAction(const ActionId& action, int activationMode, float value);
 
-	virtual void BattleLogEvent(int type, const char* msg, const char* p0 = 0, const char* p1 = 0, const char* p2 = 0, const char* p3 = 0);
-	virtual const char* GetPlayerRank(EntityId playerId, bool shortName = false);
-
+	virtual void BattleLogEvent(int type, const char *msg, const char *p0=0, const char *p1=0, const char *p2=0, const char *p3=0);
+	virtual const char *GetPlayerRank(EntityId playerId, bool shortName=false);
+	
 	// IPlayerEventListener
-	virtual void OnEnterVehicle(IActor* pActor, const char* strVehicleClassName, const char* strSeatName, bool bThirdPerson);
-	virtual void OnExitVehicle(IActor* pActor);
-	virtual void OnToggleThirdPerson(IActor* pActor, bool bThirdPerson);
+	virtual void OnEnterVehicle(IActor *pActor,const char *strVehicleClassName,const char *strSeatName,bool bThirdPerson);
+	virtual void OnExitVehicle(IActor *pActor);
+	virtual void OnToggleThirdPerson(IActor *pActor,bool bThirdPerson);
 	virtual void OnItemDropped(IActor* pActor, EntityId itemId);
 	virtual void OnItemUsed(IActor* pActor, EntityId itemId);
 	virtual void OnItemPickedUp(IActor* pActor, EntityId itemId);
 	virtual void OnStanceChanged(IActor* pActor, EStance stance) {}
 	// ~IPlayerEventListener
-	
-	//TheOtherSide
-	virtual void OnToggleHumanMode(IActor* pActor, bool bHumanMode);
-	virtual void SetModalHUD(CGameFlashAnimation* pAnim);	
-	//~TheOtherSide
-	 
+
 	// IItemSystemListener
-	virtual void OnSetActorItem(IActor* pActor, IItem* pItem);
-	virtual void OnDropActorItem(IActor* pActor, IItem* pItem);
-	virtual void OnSetActorAccessory(IActor* pActor, IItem* pItem);
-	virtual void OnDropActorAccessory(IActor* pActor, IItem* pItem);
+	virtual void OnSetActorItem(IActor *pActor, IItem *pItem );
+	virtual void OnDropActorItem(IActor *pActor, IItem *pItem );
+	virtual void OnSetActorAccessory(IActor *pActor, IItem *pItem );
+	virtual void OnDropActorAccessory(IActor *pActor, IItem *pItem );
 	// ~IItemSystemListener
 
 	// IWeaponEventListener
-	virtual void OnShoot(IWeapon* pWeapon, EntityId shooterId, EntityId ammoId, IEntityClass* pAmmoType, const Vec3& pos, const Vec3& dir, const Vec3& vel) {}
-	virtual void OnStartFire(IWeapon* pWeapon, EntityId shooterId) {}
-	virtual void OnStopFire(IWeapon* pWeapon, EntityId shooterId) {}
-	virtual void OnStartReload(IWeapon* pWeapon, EntityId shooterId, IEntityClass* pAmmoType) {}
-	virtual void OnEndReload(IWeapon* pWeapon, EntityId shooterId, IEntityClass* pAmmoType) {}
-	virtual void OnOutOfAmmo(IWeapon* pWeapon, IEntityClass* pAmmoType) {}
-	virtual void OnReadyToFire(IWeapon* pWeapon) {}
-	virtual void OnPickedUp(IWeapon* pWeapon, EntityId actorId, bool destroyed) {}
-	virtual void OnDropped(IWeapon* pWeapon, EntityId actorId) {}
+	virtual void OnShoot(IWeapon *pWeapon, EntityId shooterId, EntityId ammoId, IEntityClass* pAmmoType,	const Vec3 &pos, const Vec3 &dir, const Vec3 &vel) {}
+	virtual void OnStartFire(IWeapon *pWeapon, EntityId shooterId) {}
+	virtual void OnStopFire(IWeapon *pWeapon, EntityId shooterId) {}
+	virtual void OnStartReload(IWeapon *pWeapon, EntityId shooterId, IEntityClass* pAmmoType) {}
+	virtual void OnEndReload(IWeapon *pWeapon, EntityId shooterId, IEntityClass* pAmmoType) {}
+	virtual void OnOutOfAmmo(IWeapon *pWeapon, IEntityClass* pAmmoType) {}
+	virtual void OnReadyToFire(IWeapon *pWeapon) {}
+	virtual void OnPickedUp(IWeapon *pWeapon, EntityId actorId, bool destroyed) {}
+	virtual void OnDropped(IWeapon *pWeapon, EntityId actorId) {}
 	virtual void OnMelee(IWeapon* pWeapon, EntityId shooterId) {}
-	virtual void OnStartTargetting(IWeapon* pWeapon);
-	virtual void OnStopTargetting(IWeapon* pWeapon);
-	virtual void OnSelected(IWeapon* pWeapon, bool select) {}
+	virtual void OnStartTargetting(IWeapon *pWeapon);
+	virtual void OnStopTargetting(IWeapon *pWeapon);
+	virtual void OnSelected(IWeapon *pWeapon, bool select) {}
 	// ~IWeaponEventListener
 
 	// INanoSuitListener
@@ -277,13 +270,13 @@ public:
 	// ~ISubTitleHandler
 
 	// IEquipmentPackManager::IListener
-	virtual void OnBeginGiveEquipmentPack() { m_quietMode = true; }
-	virtual void OnEndGiveEquipmentPack() { m_quietMode = false; }
+	virtual void OnBeginGiveEquipmentPack()	{	m_quietMode = true;	}
+	virtual void OnEndGiveEquipmentPack()	{ m_quietMode = false;	}
 	// ~IEquipmentPackManager::IListener
 
 	// ILevelSystemListener - handled by FlashMenuObject
-	virtual void OnLoadingStart(ILevelInfo* pLevel);
-	virtual void OnLoadingComplete(ILevel* pLevel);
+	virtual void OnLoadingStart(ILevelInfo *pLevel);
+	virtual void OnLoadingComplete(ILevel *pLevel);
 	// ~ILevelSystemListener
 
 	// IViewSystemListener
@@ -294,10 +287,10 @@ public:
 	// ~IViewSystemListener
 
 	// Console Variable Changed callbacks (registered in GameCVars)
-	static void OnCrosshairCVarChanged(ICVar* pCVar);
-	static void OnSubtitleCVarChanged(ICVar* pCVar);
-	static void OnSubtitlePanoramicHeightCVarChanged(ICVar* pCVar);
-	//
+	static void OnCrosshairCVarChanged(ICVar *pCVar);
+	static void OnSubtitleCVarChanged (ICVar* pCVar);
+	static void OnSubtitlePanoramicHeightCVarChanged (ICVar* pCVar);
+	// 
 
 	enum HUDSubtitleMode
 	{
@@ -313,28 +306,23 @@ public:
 	void UnloadVehicleHUD(bool bShow);
 	void UnloadSimpleHUDElements(bool unload);
 
-	//Game rules specific stuff - load/unload stuff
-	void LoadGameRulesHUD(bool load);
+  //Game rules specific stuff - load/unload stuff
+  void LoadGameRulesHUD(bool load);
 
 	struct SWeaponAccessoriesHelpersOffsets
 	{
 		int iX;
 		int iY;
 	};
-	typedef std::map<string, SWeaponAccessoriesHelpersOffsets> TMapWeaponAccessoriesHelperOffsets;
-	std::map<string, TMapWeaponAccessoriesHelperOffsets> m_mapWeaponAccessoriesHelpersOffsets;
+	typedef std::map<string,SWeaponAccessoriesHelpersOffsets> TMapWeaponAccessoriesHelperOffsets;
+	std::map<string,TMapWeaponAccessoriesHelperOffsets> m_mapWeaponAccessoriesHelpersOffsets;
 	void LoadWeaponAccessories(XmlNodeRef weaponAccessoriesXmlNode);
 	void LoadWeaponsAccessories();
-	void AdjustWeaponAccessory(const char* szWeapon, const char* szHelper, Vec3* pvScreenSpace);
+	void AdjustWeaponAccessory(const char *szWeapon,const char *szHelper,Vec3 *pvScreenSpace);
 	bool UpdateWeaponAccessoriesScreen();
 	void UpdateBuyMenuPages();
 
-	void SetInMenu(bool m);
-
-	//TheOtherSide
-	//sets the current under health text
-	void SetWeaponName(const char* text);
-	//~TheOtherSide
+  void SetInMenu(bool m);
 
 	//sets the color to all hud elements
 	void SetHUDColor();
@@ -365,21 +353,21 @@ public:
 	void DrawAirstrikeTargetMarkers();
 	// ~Airstrike interface
 
-	bool GetShowAllOnScreenObjectives() { return m_bShowAllOnScreenObjectives; }
-	void SetShowAllOnScreenObjectives(bool show) { m_bShowAllOnScreenObjectives = show; }
-	const THUDObjectiveList& GetHUDObjectiveList() { return m_hudObjectivesList; }
+	bool GetShowAllOnScreenObjectives(){ return m_bShowAllOnScreenObjectives; }
+	void SetShowAllOnScreenObjectives(bool show) {m_bShowAllOnScreenObjectives = show; }
+	const THUDObjectiveList& GetHUDObjectiveList()	{	return m_hudObjectivesList;	}
 
 	// display a flash message
 	// label can be a plain text message or a localization label
 	// @pos   position: 1=top,2=middle,3=bottom
-	void DisplayFlashMessage(const char* label, int pos = 1, const ColorF& col = Col_White, bool formatWStringWithParams = false, const char* paramLabel1 = 0, const char* paramLabel2 = 0, const char* paramLabel3 = 0, const char* paramLabel4 = 0);
-	void DisplayOverlayFlashMessage(const char* label, const ColorF& col = Col_White, bool formatWStringWithParams = false, const char* paramLabel1 = 0, const char* paramLabel2 = 0, const char* paramLabel3 = 0, const char* paramLabel4 = 0);
-	void DisplayBigOverlayFlashMessage(const char* label, float duration = 3.0f, int posX = 400, int posY = 300, ColorF col = Col_White);
+	void DisplayFlashMessage(const char* label, int pos = 1, const ColorF &col = Col_White, bool formatWStringWithParams = false, const char* paramLabel1 = 0, const char* paramLabel2 = 0, const char* paramLabel3 = 0, const char* paramLabel4 = 0);
+	void DisplayOverlayFlashMessage(const char* label, const ColorF &col = Col_White, bool formatWStringWithParams = false, const char* paramLabel1 = 0, const char* paramLabel2 = 0, const char* paramLabel3 = 0, const char* paramLabel4 = 0);
+	void DisplayBigOverlayFlashMessage(const char* label, float duration=3.0f, int posX=400, int posY=300, ColorF col = Col_White);
 	void DisplayAmmoPickup(const char* ammoName, int ammoAmount);
 	void FadeOutBigOverlayFlashMessage();
-	void DisplayTempFlashText(const char* label, float seconds, const ColorF& col = Col_White);
+	void DisplayTempFlashText(const char* label, float seconds, const ColorF &col = Col_White);
 	void SetQuietMode(bool enabled);
-	bool GetQuietMode() const { return m_quietMode; }
+	bool GetQuietMode() const	{	return m_quietMode;	}
 	void DisplayGameStartMessage(const char* label, const char* seconds = NULL, const char* scoreLimit = NULL, const char* timeLimit = NULL);
 
 	//Get and Set
@@ -390,14 +378,14 @@ public:
 	void AddToScoreBoard(EntityId player, int kills, int deaths, int ping, int teamKills);
 	void ForceScoreBoard(bool force);
 	void ResetScoreBoard();
-	void SetVotingState(EVotingState state, int timeout, EntityId id, const char* descr);
+  void SetVotingState(EVotingState state, int timeout, EntityId id, const char* descr);
 
 	//RadioButtons & Chat
 	void SetRadioButtons(bool active, int buttonNo = 0);
 	void ShowGamepadConnected(bool active);
 
 	//Kill messages
-	void ObituaryMessage(EntityId targetId, EntityId shooterId, const char* weaponClassName, int material, int hit_type);
+	void ObituaryMessage(EntityId targetId, EntityId shooterId, const char *weaponClassName, int material, int hit_type);
 	void DisplayKillMessage(const char* name, int times, bool teamkill, bool frag, bool selfkill, int points);
 	void DisplayFunMessage(const char* msg);
 	void DisplayObjectivesMessage(const char* msg, const char* name = NULL, bool enemy = true);
@@ -408,27 +396,27 @@ public:
 	void SetRadarScanningEffect(bool show);
 
 	//get sub-hud
-	ILINE CHUDRadar* GetRadar() { return m_pHUDRadar; }
+	ILINE CHUDRadar* GetRadar() {return m_pHUDRadar;}
 	ILINE CHUDVehicleInterface* GetVehicleInterface() { return m_pHUDVehicleInterface; }
 	ILINE CHUDPowerStruggle* GetPowerStruggleHUD() { return m_pHUDPowerStruggle; }
-	ILINE CHUDTextChat* GetMPChat() { return m_pHUDTextChat; }
+	ILINE CHUDTextChat* GetMPChat() {return m_pHUDTextChat;}
 	ILINE CHUDScopes* GetScopes() { return m_pHUDScopes; }
 	ILINE CHUDCrosshair* GetCrosshair() { return m_pHUDCrosshair; }
 	ILINE CHUDTagNames* GetTagNames() { return m_pHUDTagNames; }
 	ILINE CHUDSilhouettes* GetSilhouettes() { return m_pHUDSilhouettes; }
 
 	//mission objectives
-	void UpdateMissionObjectiveIcon(EntityId objective, int friendly, FlashOnScreenIcon iconType, bool forceNoOffset = false, const Vec3 rotationTarget = Vec3(0, 0, 0), bool characterhead = false, bool forceshow = false);
+	void UpdateMissionObjectiveIcon(EntityId objective, int friendly, FlashOnScreenIcon iconType, bool forceNoOffset = false, const Vec3 rotationTarget=Vec3(0, 0, 0), bool characterhead = false, bool forceshow=false);
 	void UpdateAllMissionObjectives();
 	void UpdateObjective(CHUDMissionObjective* pObjective);
 	void SetMainObjective(const char* objectiveKey, bool isGoal);
 	const char* GetMainObjective();
-	void AddOnScreenMissionObjective(IEntity* pEntity, int friendly);
+	void AddOnScreenMissionObjective(IEntity *pEntity, int friendly);
 	void SetOnScreenObjective(EntityId pID);
-	EntityId GetOnScreenObjective() { return m_iOnScreenObjective; }
-	bool IsUnderAttack(IEntity* pEntity);
+	EntityId GetOnScreenObjective() {return m_iOnScreenObjective; }
+	bool IsUnderAttack(IEntity *pEntity);
 	ILINE CHUDMissionObjectiveSystem& GetMissionObjectiveSystem() { return m_missionObjectiveSystem; }
-	const wchar_t* LocalizeWithParams(const char* label, bool bAdjustActions = true, const char* param1 = 0, const char* param2 = 0, const char* param3 = 0, const char* param4 = 0);
+	const wchar_t* LocalizeWithParams(const char* label, bool bAdjustActions=true, const char* param1 = 0, const char* param2 = 0, const char* param3 = 0, const char* param4 = 0);
 	//~mission objectives
 
 	//BattleStatus code : consult Marco C.
@@ -455,23 +443,23 @@ public:
 	void MP_ResetEnd();
 
 	//script function helper
-	int CallScriptFunction(IEntity* pEntity, const char* function);
+	int CallScriptFunction(IEntity *pEntity, const char *function);
 
 	void OnFlashbang(float blindTime, float recoverTime);
 
 	//HUDPDA.cpp
-	//(de)activate buttons in the quick menu
+	//(de)activate buttons in the quick menu 
 	void ActivateQuickMenuButton(EQuickMenuButtons button, bool active = true);
 	void SetQuickMenuButtonDefect(EQuickMenuButtons button, bool defect = true);
-	ILINE bool IsQuickMenuButtonActive(EQuickMenuButtons button) const { return (m_activeButtons & (1 << button)) ? true : false; }
-	ILINE bool IsQuickMenuButtonDefect(EQuickMenuButtons button) const { return (m_defectButtons & (1 << button)) ? true : false; }
+	ILINE bool IsQuickMenuButtonActive(EQuickMenuButtons button) const { return (m_activeButtons & (1<<button))?true:false;}
+	ILINE bool IsQuickMenuButtonDefect(EQuickMenuButtons button) const { return (m_defectButtons & (1<<button))?true:false;}
 	void ResetQuickMenu();
-	void GetGPSPosition(wchar_t* szN, wchar_t* szW);
+	void GetGPSPosition(wchar_t *szN,wchar_t *szW);
 	//~HUDPDA.cpp
 
 	// Some special HUD fx
 	void BreakHUD(int state = 1);  //1 malfunction, 2 dead
-	int GetBreakHud() { return m_iBreakHUD; };
+	int GetBreakHud(){return m_iBreakHUD; };
 	void RebootHUD();
 
 	//bool ShowPDA(bool bShow, int iTab=-1);
@@ -492,27 +480,26 @@ public:
 	void SpawnPointInvalid();
 
 	//interface effects
-	void IndicateControlDamage(EntityId weaponId, Vec3 direction, bool onVehicle = false);
 	void IndicateDamage(EntityId weaponId, Vec3 direction, bool onVehicle = false);
-	void IndicateHit(bool enemyIndicator = false, IEntity* pEntity = NULL, bool explosionFeedback = false);
+	void IndicateHit(bool enemyIndicator = false,IEntity *pEntity = NULL, bool explosionFeedback = false);
 	void ShowKillAreaWarning(bool active, int timer);
 	void ShowTargettingAI(EntityId id);
 	void ShowProgress(int progress = -1, bool init = false, int posX = 0, int posY = 0, const char* text = NULL, bool topText = true, bool lockingBar = false);
 	void FakeDeath(bool revive = false);
-	ILINE bool IsFakeDead() { return (m_fPlayerRespawnTimer) ? true : false; }
+	ILINE bool IsFakeDead() { return (m_fPlayerRespawnTimer)?true:false; }
 	void ShowDataUpload(bool active);
 	void ShowSpectate(bool active);
 	void ShowWeaponsOnGround();
 	void ShowTeamMates();
 	void FireModeSwitch(bool grenades = false);
 	ILINE int GetSelectedFiremode() const { return m_curFireMode; }
-	void DrawGroundCircle(Vec3 pos, float radius, float thickness = 1.0f, float anglePerSection = 5.0f, ColorB col = ColorB(255, 0, 0, 255), bool aligned = true, float offset = 0.1f, bool useSecondColor = false, ColorB colB = ColorB(0, 255, 0, 255));
+	void DrawGroundCircle(Vec3 pos, float radius, float thickness = 1.0f, float anglePerSection = 5.0f, ColorB col = ColorB(255,0,0,255), bool aligned = true, float offset = 0.1f, bool useSecondColor = false, ColorB colB = ColorB(0,255,0,255));
 
 	// called from CHUDRadar
 	void OnEntityAddedToRadar(EntityId entityId);
 
 	// IHardwareMouseEventListener
-	virtual void OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eHardwareMouseEvent);
+	virtual void OnHardwareMouseEvent(int iX,int iY,EHARDWAREMOUSEEVENT eHardwareMouseEvent);
 
 	//HUDSoundImpl
 	void PlaySound(ESound eSound, bool play = true);
@@ -550,7 +537,7 @@ public:
 	//assistance restriction
 	bool IsInputAssisted();
 
-	CWeapon* GetCurrentWeapon();
+	CWeapon *GetCurrentWeapon();
 
 	void RecordExplosivePlaced(EntityId eid);
 	void RecordExplosiveDestroyed(EntityId eid);
@@ -561,29 +548,15 @@ public:
 	ILINE bool InSpectatorMode() { return m_animSpectate.GetVisible(); }
 	void RefreshSpectatorHUDText() { m_prevSpectatorMode = -1; }	// mark it as changed, so values are fetched again from the target actor
 
-	CGameFlashAnimation* GetWeaponMenu() { return &m_animWeaponAccessories; }
-
-	//TheOtherSide
-	void ShowInventoryOverview(IActor* pActor, const char* curCategory, const char* curItem, bool grenades);
-	void DisplayTimedOverlayFlashMessage(const char* label, float time, const ColorF& col = Col_White, bool formatWStringWithParams = false, const char* paramLabel1 = 0, const char* paramLabel2 = 0, const char* paramLabel3 = 0, const char* paramLabel4 = 0);
-	//CGameFlashAnimation m_animMapMouseLayer;
-	CGameFlashAnimation m_animHitIndicator;
-	friend struct CControlClient;
-	friend struct CAbilitiesSystem;
-	//~TheOtherSide
+	CGameFlashAnimation *GetWeaponMenu() { return &m_animWeaponAccessories; }
 
 	// marcok: I know it's bad to even have this in the HUD, but the way gamerulessystem is currently used I don't want to duplicate this elsewhere
-	EHUDGAMERULES GetCurrentGameRules() { return m_currentGameRules; }
-
-	//modal hud management
-	void SwitchToModalHUD(CGameFlashAnimation* pModalHUD, bool bNeedMouse);
-	bool IsModalHUDAvailable() { return m_pModalHUD == 0; }
-
+	EHUDGAMERULES GetCurrentGameRules()	{	return m_currentGameRules;	}
 
 private:
 
 	//some Update functions
-	void UpdateHealth(IActor* pActor);
+	void UpdateHealth();
 	bool UpdateTimers(float frameTime);
 	void UpdateWarningMessages(float frameTime);
 	void UpdateTeamActionHUD();
@@ -591,21 +564,21 @@ private:
 	void RequestRevive();
 
 	void InitPDA();
-	void HandleFSCommandPDA(const char* strCommand, const char* strArgs);
-	void UpdatePlayerAmmo(IActor* pActor);
+	void HandleFSCommandPDA(const char *strCommand,const char *strArgs);
+	void UpdatePlayerAmmo();
 
 	void ChangeBuyMenuLayer(SBuyMenuKeyLog::EBMKL_State state);
 
 	//HUDInterfaceEffects
 	void QuickMenuSnapToMode(ENanoMode mode);
 	void AutoSnap();
-	void TrackProjectiles(IActor* pPlayerActor);
-	void UpdateProjectileTracker(CGameFlashAnimation& anim, IEntity* pProjectile, uint8& status, const Vec3& player);
+	void TrackProjectiles(CPlayer* pPlayerActor);
+	void UpdateProjectileTracker(CGameFlashAnimation &anim, IEntity *pProjectile, uint8 &status, const Vec3 &player);
 	void Targetting(EntityId pTargetEntity, bool bStatic);
 	void UpdateVoiceChat();
 	//~HUDInterfaceEffects
 
-	int FillUpMOArray(std::vector<double>* doubleArray, double a, double b, double c, double d, double e, double f, double g, double h);
+	int FillUpMOArray(std::vector<double> *doubleArray, double a, double b, double c, double d, double e, double f, double g, double h);
 
 	void UpdateCinematicAnim(float frameTime);
 	void UpdateSubtitlesAnim(float frameTime);
@@ -613,42 +586,46 @@ private:
 	void InternalShowSubtitle(const char* subtitleLabel, ISound* pSound, bool bShow);
 	// returns pointer to static buffer! so NOT re-entrant!
 
-	//void ShowInventoryOverview(const char* curCategory, const char* curItem, bool grenades = false);
+	void ShowInventoryOverview(const char* curCategory, const char* curItem, bool grenades = false);
+
+	//modal hud management
+	void SwitchToModalHUD(CGameFlashAnimation* pModalHUD,bool bNeedMouse);
+	bool IsModalHUDAvailable() { return m_pModalHUD == 0; }
 
 	//helper funcs
-	void GetProjectionScale(CGameFlashAnimation* pGameFlashAnimation, float* pfScaleX, float* pfScaleY, float* pfHalfUselessSize);
+	void GetProjectionScale(CGameFlashAnimation *pGameFlashAnimation,float *pfScaleX,float *pfScaleY,float *pfHalfUselessSize);
 	bool WeaponHasAttachments();
 
 	bool ShowWeaponAccessories(bool enable);
-	
+
 	//member hud objects (sub huds)
-	CHUDRadar* m_pHUDRadar;
-	CHUDScore* m_pHUDScore;
-	CHUDTextChat* m_pHUDTextChat;
-	CHUDObituary* m_pHUDObituary;
-	CHUDTextArea* m_pHUDTextArea;
-	CHUDTweakMenu* m_pHUDTweakMenu;
-	CHUDVehicleInterface* m_pHUDVehicleInterface;
-	CHUDPowerStruggle* m_pHUDPowerStruggle;
-	CHUDTeamInstantAction* m_pHUDTeamInstantAction;
-	CHUDInstantAction* m_pHUDInstantAction;
-	CHUDScopes* m_pHUDScopes;
-	CHUDCrosshair* m_pHUDCrosshair;
-	CHUDTagNames* m_pHUDTagNames;
-	CHUDSilhouettes* m_pHUDSilhouettes;
+	CHUDRadar							*m_pHUDRadar;
+	CHUDScore							*m_pHUDScore;
+	CHUDTextChat					*m_pHUDTextChat;
+	CHUDObituary					*m_pHUDObituary;
+	CHUDTextArea					*m_pHUDTextArea;
+	CHUDTweakMenu					*m_pHUDTweakMenu;
+	CHUDVehicleInterface	*m_pHUDVehicleInterface;
+	CHUDPowerStruggle			*m_pHUDPowerStruggle;
+	CHUDTeamInstantAction	*m_pHUDTeamInstantAction;
+	CHUDInstantAction			*m_pHUDInstantAction;
+	CHUDScopes						*m_pHUDScopes;
+	CHUDCrosshair					*m_pHUDCrosshair;
+	CHUDTagNames					*m_pHUDTagNames;
+	CHUDSilhouettes 			*m_pHUDSilhouettes;
 
 	bool					m_forceScores;
 
 	//cached pointer to renderer
-	IRenderer* m_pRenderer;
-	IUIDraw* m_pUIDraw;
+	IRenderer			*m_pRenderer;
+	IUIDraw				*m_pUIDraw;
 
-	IFFont* m_pDefaultFont;
+	IFFont *m_pDefaultFont;
 
 	//sound related
 	float	m_fLastSoundPlayedCritical;
 	float m_fSpeedTimer, m_fStrengthTimer, m_fDefenseTimer;
-	float	m_fBattleStatus, m_fBattleStatusDelay;
+	float	m_fBattleStatus,m_fBattleStatusDelay;	
 
 	//this manages the mission objectives
 	CHUDMissionObjectiveSystem		m_missionObjectiveSystem;
@@ -663,15 +640,15 @@ private:
 	bool					m_acceptNextWeaponCommand;
 
 	//NanoSuit-pointer for suit interaction
-	CNanoSuit* m_pNanoSuit;
+	CNanoSuit    *m_pNanoSuit;
 	//NanoSuit
 	ENanoSlot m_eNanoSlotMax;
 	float		m_fHealth;
 	float		m_fSuitEnergy;
-
+	
 	//interface logic
-	CGameFlashAnimation* m_pModalHUD;
-	CGameFlashAnimation* m_pSwitchScoreboardHUD;
+	CGameFlashAnimation*	m_pModalHUD;
+	CGameFlashAnimation*	m_pSwitchScoreboardHUD;
 	bool m_bScoreboardCursor;
 	bool m_bFirstFrame;
 	bool m_bHideCrosshair;
@@ -711,11 +688,6 @@ private:
 	int m_bigOverlayTextX; // serialized
 	int m_bigOverlayTextY; // serialized
 
-	//TheOtherSide
-	int m_missionObjectiveNumEntries;
-	std::vector<double> m_missionObjectiveValues;
-	//~TheOtherSide
-
 	int m_iOpenTextChat;
 	bool m_bNoMiniMap;
 	int m_iProgressBar;
@@ -744,7 +716,7 @@ private:
 	EntityId m_iOnScreenObjective;
 	bool m_hasTACWeapon;
 
-	EHUDGAMERULES m_currentGameRules;
+  EHUDGAMERULES m_currentGameRules;
 
 	CGameFlashAnimation	m_animFriendlyProjectileTracker;
 	CGameFlashAnimation	m_animHostileProjectileTracker;
@@ -794,9 +766,10 @@ private:
 	CGameFlashAnimation m_animNetworkConnection;
 	CGameFlashAnimation m_animMPMessages;
 	CGameFlashAnimation m_animPlayerPPChange;
+	CGameFlashAnimation m_animHitIndicator;
 
 	// HUD objects
-	typedef std::list<CHUDObject*> THUDObjectsList;
+	typedef std::list<CHUDObject *> THUDObjectsList;
 	THUDObjectsList m_hudObjectsList;
 	THUDObjectsList m_externalHUDObjectList;
 
@@ -827,12 +800,12 @@ private:
 	float m_fFlashTimer;
 	float m_fFlashTime;
 	float m_fBlindTime;
-	//	float m_fSetAgressorIcon;
-	//	EntityId  m_agressorIconID;
+//	float m_fSetAgressorIcon;
+//	EntityId  m_agressorIconID;
 	int		m_lastPlayerPPSet;
 
 	//entity classes for faster comparison
-	IEntityClass* m_pSCAR, * m_pSCARTut, * m_pFY71, * m_pSMG, * m_pDSG1, * m_pShotgun, * m_pLAW, * m_pGauss, * m_pClaymore, * m_pAVMine;
+	IEntityClass *m_pSCAR, *m_pSCARTut, *m_pFY71, *m_pSMG, *m_pDSG1, *m_pShotgun, *m_pLAW, *m_pGauss, *m_pClaymore, *m_pAVMine;
 
 	THUDObjectiveList m_hudObjectivesList;
 
@@ -915,7 +888,7 @@ private:
 	//list of ammos
 	std::map<string, int> m_hudAmmunition;
 	std::vector<EntityId> m_trackedProjectiles;
-
+	
 	uint8 m_friendlyTrackerStatus;
 	uint8 m_hostileTrackerStatus;
 
@@ -928,6 +901,7 @@ private:
 	std::list<string> m_listBoughtItems;
 
 	bool ToScreenCheck(const Vec3& src, Vec3& vScreenSpace) const;
+
 };
 
 //-----------------------------------------------------------------------------------------------------

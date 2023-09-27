@@ -25,7 +25,7 @@ const float DOOR_CLOSED = 1.0f;
 
 //------------------------------------------------------------------------
 CVehicleActionAutomaticDoor::CVehicleActionAutomaticDoor()
-	: m_pVehicle(NULL),
+: m_pVehicle(NULL),
 	m_pDoorAnim(NULL),
 	m_doorOpenedStateId(InvalidVehicleAnimStateId),
 	m_doorClosedStateId(InvalidVehicleAnimStateId),
@@ -49,7 +49,7 @@ CVehicleActionAutomaticDoor::~CVehicleActionAutomaticDoor()
 }
 
 //------------------------------------------------------------------------
-bool CVehicleActionAutomaticDoor::Init(IVehicle* pVehicle, const SmartScriptTable& table)
+bool CVehicleActionAutomaticDoor::Init(IVehicle* pVehicle, const SmartScriptTable &table)
 {
 	m_pVehicle = pVehicle;
 
@@ -79,7 +79,7 @@ bool CVehicleActionAutomaticDoor::Init(IVehicle* pVehicle, const SmartScriptTabl
 	m_pDoorAnim->StartAnimation();
 	m_pDoorAnim->ToggleManualUpdate(true);
 
-	if (!m_isDisabled)
+	if(!m_isDisabled)
 		m_pDoorAnim->SetTime(DOOR_OPENED);
 	else
 	{
@@ -95,7 +95,7 @@ bool CVehicleActionAutomaticDoor::Init(IVehicle* pVehicle, const SmartScriptTabl
 void CVehicleActionAutomaticDoor::Reset()
 {
 	m_isTouchingGround = false;
-	m_isTouchingGroundBase = false;
+	m_isTouchingGroundBase= false;
 	m_timeInTheAir = 0.0f;
 	m_timeOnTheGround = 0.0f;
 	m_isOpenRequested = false;
@@ -103,12 +103,12 @@ void CVehicleActionAutomaticDoor::Reset()
 
 	m_animGoal = 0.0f;
 	m_animTime = 0.0f;
-	m_eventSamplingTime = 0.0f;
+	m_eventSamplingTime =0.0f;
 
 	m_pDoorAnim->StopAnimation();
 	m_pDoorAnim->StartAnimation();
 	m_pDoorAnim->ToggleManualUpdate(true);
-	if (!m_isDisabled)
+	if(!m_isDisabled)
 		m_pDoorAnim->SetTime(DOOR_OPENED);
 	else
 	{
@@ -145,7 +145,7 @@ void CVehicleActionAutomaticDoor::Serialize(TSerialize ser, unsigned aspects)
 	ser.Value("timeOnTheGround", m_timeOnTheGround);
 	ser.Value("isTouchingGround", m_isTouchingGround);
 	ser.Value("isTouchingGroundBase", m_isTouchingGroundBase);
-	ser.Value("eventSamplingTime", m_eventSamplingTime);
+	ser.Value("eventSamplingTime",m_eventSamplingTime);
 
 	ser.Value("animTime", m_animTime);
 
@@ -160,18 +160,18 @@ void CVehicleActionAutomaticDoor::Serialize(TSerialize ser, unsigned aspects)
 //------------------------------------------------------------------------
 void CVehicleActionAutomaticDoor::Update(const float deltaTime)
 {
-	if (m_isDisabled)
+	if(m_isDisabled)
 		return;
 
 	bool isSlowEnough = true;
 	bool isEnginePowered = false;
 	const float inTheAirMaxTime = 0.5f;
 
-	m_eventSamplingTime += deltaTime;
-	if (m_eventSamplingTime > 0.25f)
+	m_eventSamplingTime +=deltaTime;
+	if ( m_eventSamplingTime > 0.25f )
 	{
 		//incase Update rate > event update rate
-		m_eventSamplingTime = 0.0f;
+		m_eventSamplingTime =0.0f;
 		m_isTouchingGround = m_isTouchingGroundBase;
 		m_isTouchingGroundBase = false;
 	}
@@ -188,7 +188,7 @@ void CVehicleActionAutomaticDoor::Update(const float deltaTime)
 	if (IVehicleMovement* pMovement = m_pVehicle->GetMovement())
 		isEnginePowered = pMovement->IsPowered();
 
-	isSlowEnough = (curSpeed <= 2.0f);
+	isSlowEnough = ( curSpeed <= 2.0f );
 	if (m_isTouchingGround && isSlowEnough)
 	{
 		m_timeInTheAir = 0.0f;
@@ -212,7 +212,7 @@ void CVehicleActionAutomaticDoor::Update(const float deltaTime)
 	//if (m_animGoal != m_animTime)
 	{
 		float speed = 0.5f;
-		speed += min(curSpeed * 0.1f, 1.0f);
+		speed += min( curSpeed*0.1f, 1.0f );
 		Interpolate(m_animTime, m_animGoal, speed, deltaTime);
 		m_pDoorAnim->SetTime(m_animTime);
 	}
@@ -236,7 +236,7 @@ void CVehicleActionAutomaticDoor::OpenDoor(bool value)
 void CVehicleActionAutomaticDoor::BlockDoor(bool value)
 {
 	m_isBlocked = value;
-	if (m_isBlocked == false)
+	if ( m_isBlocked == false )
 		m_isOpenRequested = false;
 }
 

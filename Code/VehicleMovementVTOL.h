@@ -17,6 +17,7 @@ History:
 #include "VehicleMovementBase.h"
 #include "VehicleMovementHelicopter.h"
 
+
 class CVehicleMovementVTOL
 	: public CVehicleMovementHelicopter
 {
@@ -26,7 +27,7 @@ public:
 	virtual ~CVehicleMovementVTOL() {}
 
 	// IVehicleMovement
-	virtual bool Init(IVehicle* pVehicle, const SmartScriptTable& table);
+	virtual bool Init(IVehicle* pVehicle, const SmartScriptTable &table);
 	virtual void PostInit();
 	virtual void Reset();
 
@@ -44,7 +45,7 @@ public:
 	virtual void StopEngine();
 	virtual void PreProcessMovement(const float deltaTime);
 	virtual void UpdateEngine(float deltaTime);
-	virtual void GetMemoryStatistics(ICrySizer* s);
+	virtual void GetMemoryStatistics(ICrySizer * s);
 	// ~CVehicleMovementHelicopter
 
 protected:
@@ -92,7 +93,7 @@ protected:
 	float m_relaxTimer;
 	float m_soundParamTurn;
 	float m_liftPitchAngle;
-
+	
 	// variables updated in ProcessMovement/Update
 	float m_wingsTimer;
 	bool m_isVTOLMovement; // used sometime by ai to force the vtol to behave like an helicopter

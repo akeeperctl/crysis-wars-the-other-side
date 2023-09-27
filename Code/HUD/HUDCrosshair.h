@@ -17,6 +17,7 @@ History:
 
 # pragma once
 
+
 #include "HUDObject.h"
 #include "IFlashPlayer.h"
 #include "IVehicleSystem.h"
@@ -26,6 +27,7 @@ class CHUD;
 
 class CHUDCrosshair : public CHUDObject
 {
+
 public:
 	CHUDCrosshair(CHUD* pHUD);
 	~CHUDCrosshair();
@@ -34,23 +36,19 @@ public:
 	virtual void Update(float fDeltaTime);
 	// ~CHUDObject
 
-	//TheOtherSide
-	void ShowFriendCross(bool show);
-	//~TheOtherSide
-
 	//use-icon
 	void SetUsability(int usable, const char* actionLabel = NULL, const char* paramA = NULL, const char* paramB = NULL);
 	int GetUsability() const;
 	//show enemy hit in crosshair
 	void CrosshairHit();
-	//choose and set crosshair design
-	void SelectCrosshair(IItem* pItem = NULL);
+	//choose and set crosshair design 
+	void SelectCrosshair(IItem *pItem = NULL);
 	// set opacity of crosshair (0 is invisible, 1 is fully visible)
 	void SetOpacity(float opacity);
 	void SetCrosshair(int iCrosshair);
 	//get crosshair flash movie
-	CGameFlashAnimation* GetFlashAnim() { return &m_animCrossHair; }
-	bool IsFriendlyEntity(IEntity* pEntity);
+	CGameFlashAnimation *GetFlashAnim() {return &m_animCrossHair;}
+	bool IsFriendlyEntity(IEntity *pEntity);
 
 	void Break(bool state);
 	ILINE int GetCrosshairType() const { return m_iCrosshair; }
@@ -63,7 +61,7 @@ private:
 	void UpdateCrosshair();
 
 	//the main HUD
-	CHUD* g_pHUD;
+	CHUD	*g_pHUD;
 	//the crosshair flash asset
 	CGameFlashAnimation	m_animCrossHair;
 	//the friend-cross flash asset

@@ -36,8 +36,8 @@ const static int NUM_ARRAY_FILL_HELPER_SIZE = 100;
 
 class CHUDRadar : public CHUDObject
 {
+
 	friend class CHUD;
-	friend class CConquerorSystem;
 
 	struct RadarSound
 	{
@@ -60,17 +60,13 @@ public:
 	{
 		EntityId	m_id;
 		RadarEntity(EntityId id)
-		{
-			m_id = id;
-		}
+		{ m_id = id; }
 		RadarEntity()
-		{
-			m_id = 0;
-		}
+		{ m_id = 0; }
 
 		bool operator<(RadarEntity ent)
 		{
-			if (ent.m_id > m_id)
+			if(ent.m_id > m_id)
 				return true;
 			return false;
 		}
@@ -91,46 +87,27 @@ public:
 		}
 	};
 
-	//TheOtherSide
-	struct TempRadarEntityExtended : public RadarEntity
-	{
-		FlashRadarType m_type;
-		float			m_spawnTime;
-		float			m_timeLimit;
-		string		m_text;
-		FlashRadarFaction m_faction;
-		TempRadarEntityExtended() : RadarEntity()
-		{}
-		TempRadarEntityExtended(EntityId id, FlashRadarType type, float timeLimit = 0.0f, const char* text = NULL,FlashRadarFaction faction = ENeutral) : 
-			RadarEntity(id), m_type(type), m_timeLimit(timeLimit), m_faction(faction)
-		{
-			m_spawnTime = gEnv->pTimer->GetFrameStartTime().GetSeconds();
-			m_text = text;
-		}
-	};
-	//~TheOtherSide
-
 	struct RadarObjective
 	{
 		string text;
 		bool secondaryObjective;
 		RadarObjective() : secondaryObjective(false)
 		{}
-		RadarObjective(const char* text, bool secondary) : text(text), secondaryObjective(secondary)
+		RadarObjective(const char *text, bool secondary) : text(text), secondaryObjective(secondary)
 		{}
 	};
 
 	void AddTaggedEntity(EntityId iEntityId);
 
-	CHUDRadar();
-	virtual	~CHUDRadar();
+						CHUDRadar();
+	virtual	~	CHUDRadar();
 
 	//Update Loop is private
 
-	void GetMemoryStatistics(ICrySizer* s);
+	void GetMemoryStatistics(ICrySizer * s);
 
 	//~ILevelSystemListener - handled by FlashMenuObject through HUD.cpp
-	virtual void OnLoadingComplete(ILevel* pLevel);
+	virtual void OnLoadingComplete(ILevel *pLevel);
 	//~ILevelSystemListener
 
 	//permanently add an entity to the radar
@@ -149,33 +126,33 @@ public:
 	//this can be used to get the minimap description for a entity id
 	const char* GetObjectiveDescription(EntityId id);
 	//sets the flash pda
-	void SetFlashPDA(CGameFlashAnimation* flashPDA) { m_flashPDA = flashPDA; }
+	void SetFlashPDA(CGameFlashAnimation *flashPDA) {m_flashPDA = flashPDA;}
 	//sets the flash Radar
-	void SetFlashRadar(CGameFlashAnimation* flashRadar) { m_flashRadar = flashRadar; }
+	void SetFlashRadar(CGameFlashAnimation *flashRadar) {m_flashRadar = flashRadar;}
 	//return nearby entities (non-item)
-	ILINE const std::vector<EntityId>* GetNearbyEntities() const { return &m_entitiesInProximity; }
+	ILINE const std::vector<EntityId>*  GetNearbyEntities() const { return &m_entitiesInProximity; }
 	//return nearby items (which have entity_flaf_on_radar)
-	ILINE const std::vector<EntityId>* GetNearbyItems() const { return &m_itemsInProximity; }
+	ILINE const std::vector<EntityId>*	GetNearbyItems() const { return &m_itemsInProximity; }
 	//buildings on radar
-	ILINE std::vector<RadarEntity>* GetBuildings() { return &m_buildingsOnRadar; }
+	ILINE std::vector<RadarEntity> *GetBuildings() {return &m_buildingsOnRadar;}
 	//get a list of possible on screen objectives
-	ILINE std::vector<EntityId>* GetObjectives() { return &m_possibleOnScreenObjectives; }
+	ILINE std::vector<EntityId> *GetObjectives() {return &m_possibleOnScreenObjectives;}
 	//get a list of all the entities that were scanned by the binoculars
 	ILINE const std::deque<RadarEntity>* GetEntitiesList() const { return &m_entitiesOnRadar; }
 	//get a list of the tagged entities
 	ILINE const EntityId* GetTaggedEntitiesList() const { return m_taggedEntities; }
 	//is specified entity tagged ?
-	bool IsEntityTagged(const EntityId& id) const;
+	bool IsEntityTagged(const EntityId &id) const;
 	//reset all scanned entities ...
 	void Reset();
 	//reset the tagged entities
-	ILINE void ResetTaggedEntities() { for (int i = 0; i < NUM_TAGGED_ENTITIES; ++i) m_taggedEntities[i] = 0; }
+	ILINE void ResetTaggedEntities() { for(int i = 0; i < NUM_TAGGED_ENTITIES; ++i) m_taggedEntities[i] = 0; }
 	//add all entities in proximity for 10 seconds or forever to the radar
-	void StartBroadScan(bool useParameters = false, bool keepEntities = false, Vec3 pos = Vec3(0, 0, 0), float radius = 0.0f);
+	void StartBroadScan(bool useParameters = false, bool keepEntities = false, Vec3 pos = Vec3(0,0,0), float radius = 0.0f);
 	//stop a broadScan (if scan wasn't finished yet, nothing happens)
 	void StopBroadScan() { m_startBroadScanTime = 0.0f; }
 	//get map grid coordinate of entity
-	Vec2i GetMapGridPosition(IEntity* pEntity);
+	Vec2i GetMapGridPosition(IEntity *pEntity);
 	//get map grid coordinate of world coord
 	Vec2i GetMapGridPosition(float x, float y);
 	//add/remove team mate from Radar/PDA (teammates show always up)
@@ -197,11 +174,11 @@ public:
 	//translates the minimap
 	virtual bool DragMap(Vec2 p_vDir);
 	//get dragging status
-	virtual bool GetDrag() { return m_bDragMap; }
+	virtual bool GetDrag() {return m_bDragMap;}
 	//reload the minimap to the flash animation
 	void ReloadMiniMap();
 	//returns the selected teammates vector
-	std::vector<EntityId>* GetSelectedTeamMates() { return &m_selectedTeamMates; }
+	std::vector<EntityId> * GetSelectedTeamMates() { return &m_selectedTeamMates; }
 	//sets the optional minimap background (1-3)
 	void SetMiniMapTexture(int mapId, bool forceUpdate = false);
 	//returns the AI exposure (stealth level)
@@ -213,19 +190,10 @@ public:
 	void Serialize(TSerialize ser);
 
 	//entity classes for comparison
-	IEntityClass* m_pVTOL, * m_pHeli, * m_pHunter, * m_pWarrior, * m_pAlien, * m_pTrooper, * m_pGrunt, * m_pPlayerClass,
-		* m_pScout, * m_pTankUS, * m_pTankA, * m_pLTVUS, * m_pLTVA, * m_pAAA, * m_pTruck, * m_pAPCUS, * m_pAPCA, * m_pBoatCiv,
-		* m_pHover, * m_pBoatUS, * m_pBoatA, * m_pCarCiv, * m_pParachute, * m_pUSASV;
-	//TheOtherSide
+	IEntityClass *m_pVTOL, *m_pHeli, *m_pHunter, *m_pWarrior, *m_pAlien, *m_pTrooper, *m_pGrunt, *m_pPlayerClass,
+		*m_pScout, *m_pTankUS, *m_pTankA, *m_pLTVUS, *m_pLTVA, *m_pAAA, *m_pTruck, *m_pAPCUS, *m_pAPCA, *m_pBoatCiv,
+		*m_pHover, *m_pBoatUS, *m_pBoatA, *m_pCarCiv, *m_pParachute, *m_pUSASV;
 
-	//add extended story entity to the minimap
-	void AddExtendedStoryEntity(EntityId id, FlashRadarType type = EWayPoint, const char* text = NULL, FlashRadarFaction faction = ENeutral);
-	void RemoveExtendedStoryEntity(EntityId id);
-
-	/*IEntityClass* m_pAddonVehicle1, * m_pAddonVehicle2, * m_pAddonVehicle3, * m_pAddonVehicle4, * m_pAddonVehicle5,
-		* m_pAddonVehicle6, * m_pAddonVehicle7, * m_pAddonVehicle8, * m_pAddonVehicle9, * m_pAddonVehicle10;*/
-	std::map<int, IEntityClass*> m_AddonVehiclesMap;
-	//~TheOtherSide
 private:
 
 	// CHUDObject
@@ -233,12 +201,12 @@ private:
 	// ~CHUDObject
 
 	//main radar entities update loop
-	void UpdateMinimapEntities(CActor* pActor, float& fRadius, Matrix34& playerViewMtxInverted,
-		int& numOfValues, ArrayFillHelper<double, FVAT_Double, NUM_ARRAY_FILL_HELPER_SIZE>* entityValues);
+	void UpdateRadarEntities(CActor *pActor, float &fRadius, Matrix34 &playerViewMtxInverted,
+							int &numOfValues, ArrayFillHelper<double, FVAT_Double, NUM_ARRAY_FILL_HELPER_SIZE> *entityValues);
 	//radar awareness update
-	void UpdateCompassStealth(CActor* pActor, float fDeltaTime);
+	void UpdateCompassStealth(CActor *pActor, float fDeltaTime);
 	//jammer update
-	void UpdateRadarJammer(CActor* pActor);
+	void UpdateRadarJammer(CActor *pActor);
 
 	float					GetRadarSize(IEntity* entity, class CActor* actor);
 	bool					IsOnRadar(EntityId id, int first, int last);
@@ -246,24 +214,22 @@ private:
 	bool					ScanObject(EntityId id);
 	bool					IsObjectInQueue(EntityId id);
 	bool					IsNextObject(EntityId id);
-	bool					CheckObject(IEntity* pEntity, bool checkVelocity = false, bool checkVisibility = false);
+	bool					CheckObject(IEntity *pEntity, bool checkVelocity=false, bool checkVisibility=false);
 	void					UpdateScanner(float frameTime);
 	void					ResetScanner();
 	void					GatherScannableObjects();
-	EntityId			RayCastBinoculars(CPlayer* pPlayer, ray_hit* pRayHit);
-	void					UpdateBinoculars(CActor* pActor, float fDeltaTime);
+	EntityId			RayCastBinoculars(CPlayer *pPlayer,ray_hit *pRayHit);
+	void					UpdateBinoculars(CActor *pActor, float fDeltaTime);
 	bool					CheckObjectMultiplayer(EntityId id);	// additional checks to see if this object is worth looking at in MP.
 
 	//activate minimap rendering
-	ILINE void SetRenderMapOverlay(bool bActive) { m_renderBigMap = bActive; }
+	ILINE void SetRenderMapOverlay(bool bActive) {	m_renderMiniMap = bActive;}
 	//renders player position, AI positions and structures on the overview map (should be replaced in flash)
-	void RenderBigMap();
-
-	bool GetPosOnMap(float inX, float inY, float& outX, float& outY, bool flashCoordinates = true);
-	bool GetPosOnMap(IEntity* pEntity, float& outX, float& outY, bool flashCoordinates = true);
-
+	void RenderMapOverlay();
 	//get an entity's position on the minimap
-	float GetRadarRotation(CActor* actor);
+	bool GetPosOnMap(float inX, float inY, float &outX, float &outY, bool flashCoordinates = true);
+	bool GetPosOnMap(IEntity *pEntity, float &outX, float &outY, bool flashCoordinates = true);
+	float GetRadarRotation(CActor *actor);
 	//load map info from file ...
 	void LoadMiniMap(const char* mapPath);
 	//computes the dimension of the minimap according to the current screen resolution
@@ -273,21 +239,21 @@ private:
 	//chooses the right icon for a given synched entity type (ammo trucks, tac tanks ... special mp units)
 	FlashRadarType GetSynchedEntityType(int type);
 	//return whether the entity is friend or foe to the player
-	FlashRadarFaction	FriendOrFoe(bool multiplayer, int playerTeam, IEntity* entity, CGameRules* pGameRules);
+	FlashRadarFaction	FriendOrFoe(bool multiplayer, int playerTeam, IEntity *entity, CGameRules *pGameRules);
 	//helper function to write (flash-) icon data to a double stream (implicitly casting for readability)
-	int FillUpDoubleArray(std::vector<double>* doubleArray, double entityId, double iconID, double posX, double posY,
-		double rotation, double faction, double scaleX = 100.0, double scaleY = 100.0, double isOnScreenObjective = false, double isCurrentSpawnPoint = false, double isUnderAttack = false);
+	int FillUpDoubleArray(std::vector<double> *doubleArray, double entityId, double iconID, double posX, double posY,
+												double rotation, double faction, double scaleX = 100.0, double scaleY = 100.0, double isOnScreenObjective = false, double isCurrentSpawnPoint = false, double isUnderAttack = false);
 	//helper function to scan an area for entities - currently the results are saved in m_entitiesInProximity
-	void ScanProximity(Vec3& pos, float& radius);
+	void ScanProximity(Vec3 &pos, float &radius);
 	//calculates minimap zoom and translation
-	void ComputePositioning(Vec2 playerpos, std::vector<double>* doubleArray);
+	void ComputePositioning(Vec2 playerpos, std::vector<double> *doubleArray);
 	//checks a transformed radar position for being inside the asset boudaries, if not returns the intersection point
-	bool RadarBounds_Inside(const Vec2& pos, Vec2& intersectionPoint);
+	bool RadarBounds_Inside(const Vec2 &pos, Vec2 &intersectionPoint);
 	//this is a 2d line intersection test (AB - PM)
-	bool RadarBounds_IntersectsLineFromOutside(const Vec2& A, const Vec2& B, const Vec2& P, const Vec2& M, Vec2& resultingIntersection);
+	bool RadarBounds_IntersectsLineFromOutside(const Vec2 &A, const Vec2 &B, const Vec2 &P, const Vec2 &M, Vec2 &resultingIntersection);
 
-	IActorSystem* m_pActorSystem;
-	IVehicleSystem* m_pVehicleSystem;
+	IActorSystem		*m_pActorSystem;
+	IVehicleSystem	*m_pVehicleSystem;
 
 	//helpers for Radar scanning
 	EntityId	m_lookAtObjectID;
@@ -307,7 +273,7 @@ private:
 	float			m_radarDotSizes[4];
 
 	//pda mini map data
-	bool		m_renderBigMap;
+	bool		m_renderMiniMap;
 	float		m_mapDivX, m_mapDivY;
 	int			m_miniMapStartX[NUM_MAP_TEXTURES], m_miniMapStartY[NUM_MAP_TEXTURES], m_miniMapEndX[NUM_MAP_TEXTURES], m_miniMapEndY[NUM_MAP_TEXTURES], m_mapDimX, m_mapDimY;
 	int			m_startOnScreenX, m_startOnScreenY, m_endOnScreenX, m_endOnScreenY;
@@ -326,8 +292,8 @@ private:
 	unsigned int			 m_soundIdCounter;
 
 	//flash pda
-	CGameFlashAnimation* m_flashPDA;
-	CGameFlashAnimation* m_flashRadar;
+	CGameFlashAnimation *m_flashPDA;
+	CGameFlashAnimation *m_flashRadar;
 
 	//radar jammer
 	EntityId	m_jammerID;
@@ -369,26 +335,13 @@ private:
 	//collection of all objectives to show them on screen
 	std::vector<EntityId> m_possibleOnScreenObjectives;
 	//level / minimap data
-	ILevel* m_pLevelData;
+	ILevel		*m_pLevelData;
 	//map textures
 	string m_mapFile[NUM_MAP_TEXTURES];
 	//radius of the radar per map
 	int m_mapRadarRadius[NUM_MAP_TEXTURES];
 	//player coords helper for MP
 	string m_lastPlayerCoords;
-
-	//TheOtherSide
-public:
-	//Get world position from flash map coords
-	void ConvertFromMapToWorld(const Vec2& mapIn, Vec3& worldOut);
-	void ConvertFromFlashToMap(const Vec2& flashIn, Vec2& mapOut, const Vec2& playerPos);
-private:
-	//Vec2 m_flashMouseCoords;
-	//CGameFlashAnimation* m_animFlashMouseLayer;
-		//special story (SP only) entities
-	std::vector<TempRadarEntityExtended> m_extendedStoryEntitiesOnRadar;
-	std::vector<EntityId> m_conquerorTeamMates;
-	//~TheOtherSide
 };
 
 //-----------------------------------------------------------------------------------------------------

@@ -4,7 +4,7 @@ Copyright (C), Crytek Studios, 2001-2008.
 -------------------------------------------------------------------------
 $Id:$
 $DateTime$
-Description:  Class for specific tac launcher functionality.
+Description:  Class for specific tac launcher functionality. 
 							Based on CRocketLauncher
 -------------------------------------------------------------------------
 History:
@@ -18,6 +18,7 @@ History:
 #if _MSC_VER > 1000
 # pragma once
 #endif
+	
 
 #include "Weapon.h"
 
@@ -32,7 +33,7 @@ public:
 
 	virtual bool CanPickUp(EntityId userId) const;
 
-	virtual void FullSerialize(TSerialize ser);
+	virtual void FullSerialize( TSerialize ser );
 	virtual void PostSerialize();
 
 	virtual void AutoDrop();
@@ -40,5 +41,6 @@ public:
 private:
 	int   m_smokeEffectSlot;
 };
+
 
 #endif // __TACLAUNCHER_H__

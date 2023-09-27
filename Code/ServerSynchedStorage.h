@@ -4,7 +4,7 @@ Copyright (C), Crytek Studios, 2001-2006.
 -------------------------------------------------------------------------
 $Id$
 $DateTime$
-Description:
+Description: 
 
 -------------------------------------------------------------------------
 History:
@@ -24,25 +24,26 @@ History:
 
 #include <deque>
 
-class CServerSynchedStorage :
+
+class CServerSynchedStorage:
 	public CNetMessageSinkHelper<CServerSynchedStorage, CSynchedStorage>
 {
 public:
-	CServerSynchedStorage(IGameFramework* pGameFramework) { m_pGameFramework = pGameFramework; };
+	CServerSynchedStorage(IGameFramework *pGameFramework) { m_pGameFramework=pGameFramework; };
 	virtual ~CServerSynchedStorage() {};
 
-	void GetMemoryStatistics(ICrySizer*);
+	void GetMemoryStatistics( ICrySizer * );
 
 	// INetMessageSink
-	virtual void DefineProtocol(IProtocolBuilder* pBuilder);
+	virtual void DefineProtocol(IProtocolBuilder *pBuilder);
 	// ~INetMessageSink
 
 	virtual void Reset();
 	virtual void ResetChannel(int channelId);
 
-	virtual bool OnSetGlobalMsgComplete(CClientSynchedStorage::CSetGlobalMsg* pMsg, int channelId, uint32 fromSeq, bool ack);
-	virtual bool OnSetChannelMsgComplete(CClientSynchedStorage::CSetChannelMsg* pMsg, int channelId, uint32 fromSeq, bool ack);
-	virtual bool OnSetEntityMsgComplete(CClientSynchedStorage::CSetEntityMsg* pMsg, int channelId, uint32 fromSeq, bool ack);
+	virtual bool OnSetGlobalMsgComplete(CClientSynchedStorage::CSetGlobalMsg *pMsg, int channelId, uint32 fromSeq, bool ack);
+	virtual bool OnSetChannelMsgComplete(CClientSynchedStorage::CSetChannelMsg *pMsg, int channelId, uint32 fromSeq, bool ack);
+	virtual bool OnSetEntityMsgComplete(CClientSynchedStorage::CSetEntityMsg *pMsg, int channelId, uint32 fromSeq, bool ack);
 
 	// these should only be called from the main thread
 	virtual void AddToGlobalQueue(TSynchedKey key);
@@ -51,32 +52,32 @@ public:
 
 	virtual void AddToGlobalQueueFor(int channelId, TSynchedKey key);
 	virtual void AddToEntityQueueFor(int channelId, EntityId entityId, TSynchedKey key);
-
+	
 	virtual void FullSynch(int channelId, bool reset);
 
 	virtual void OnClientConnect(int channelId);
 	virtual void OnClientDisconnect(int channelId, bool onhold);
 	virtual void OnClientEnteredGame(int channelId);
 
-	virtual void OnGlobalChanged(TSynchedKey key, const TSynchedValue& value);
-	virtual void OnChannelChanged(int channelId, TSynchedKey key, const TSynchedValue& value);
-	virtual void OnEntityChanged(EntityId entityId, TSynchedKey key, const TSynchedValue& value);
+	virtual void OnGlobalChanged(TSynchedKey key, const TSynchedValue &value);
+	virtual void OnChannelChanged(int channelId, TSynchedKey key, const TSynchedValue &value);
+	virtual void OnEntityChanged(EntityId entityId, TSynchedKey key, const TSynchedValue &value);
 
 	struct SChannel
 	{
 		SChannel()
-			: local(false), pNetChannel(0), onhold(false) {};
-		SChannel(INetChannel* _pNetChannel, bool isLocal)
-			: local(isLocal), pNetChannel(_pNetChannel), onhold(false) {};
-		INetChannel* pNetChannel;
+		: local(false), pNetChannel(0), onhold(false) {};
+		SChannel(INetChannel *_pNetChannel, bool isLocal)
+		: local(isLocal), pNetChannel(_pNetChannel), onhold(false) {};
+		INetChannel *pNetChannel;
 		SSendableHandle     lastOrderedMessage;
-		bool				local : 1;
-		bool				onhold : 1;
+		bool				local:1;
+		bool				onhold:1;
 	};
 
-	SChannel* GetChannel(int channelId);
-	SChannel* GetChannel(INetChannel* pNetChannel);
-	int GetChannelId(INetChannel* pNetChannel) const;
+	SChannel *GetChannel(int channelId);
+	SChannel *GetChannel(INetChannel *pNetChannel);
+	int GetChannelId(INetChannel *pNetChannel) const;
 
 protected:
 	struct SChannelQueueEnt
@@ -86,7 +87,7 @@ protected:
 		int channel;
 		TSynchedKey key;
 
-		bool operator<(const SChannelQueueEnt& rhs) const
+		bool operator<( const SChannelQueueEnt& rhs ) const
 		{
 			return rhs.channel < channel || (rhs.channel == channel && rhs.key < key);
 		}
@@ -100,7 +101,7 @@ protected:
 		EntityId entity;
 		TSynchedKey key;
 
-		bool operator<(const SChannelEntityQueueEnt& rhs) const
+		bool operator<( const SChannelEntityQueueEnt& rhs ) const
 		{
 			if (channel < rhs.channel)
 				return true;

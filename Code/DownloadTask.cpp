@@ -42,10 +42,10 @@ CDownloadTask::~CDownloadTask()
 
 bool CDownloadTask::StartMapDownload(SFileDownloadParameters& dl, int attempts, IDownloadTaskListener* pListener/*=NULL*/)
 {
-	if (IsDownloadTaskInProgress())
+	if(IsDownloadTaskInProgress())
 		return false;
 
-	if (s_enableDLLogging)
+	if(s_enableDLLogging)
 		CryLog("Starting map download from %s", dl.sourceFilename.c_str());
 
 	// download to %USER%/levels/<download>.zip
@@ -65,10 +65,10 @@ bool CDownloadTask::StartMapDownload(SFileDownloadParameters& dl, int attempts, 
 
 bool CDownloadTask::StartPatchDownload(SFileDownloadParameters& dl)
 {
-	if (IsDownloadTaskInProgress())
+	if(IsDownloadTaskInProgress())
 		return false;
 
-	if (s_enableDLLogging)
+	if(s_enableDLLogging)
 		CryLog("Downloading patch");
 
 	GetUserDataFolder(m_downloadFolderPath);
@@ -81,10 +81,10 @@ bool CDownloadTask::StartPatchDownload(SFileDownloadParameters& dl)
 
 	// store the filename in the patch system so it can be run later if required.
 	INetworkService* pserv = g_pGame->GetIGameFramework()->GetISystem()->GetINetwork()->GetService("GameSpy");
-	if (pserv)
+	if(pserv)
 	{
 		IPatchCheck* pPC = pserv->GetPatchCheck();
-		if (pPC && pPC->IsAvailable())
+		if(pPC && pPC->IsAvailable())
 		{
 			string filename;
 			filename = m_downloadFolderPath;
@@ -98,42 +98,42 @@ bool CDownloadTask::StartPatchDownload(SFileDownloadParameters& dl)
 
 void CDownloadTask::Update()
 {
-	if (m_downloadState == eDS_None && m_downloadList.empty())
+	if(m_downloadState == eDS_None && m_downloadList.empty())
 		return;
 
 	INetworkService* pserv = g_pGame->GetIGameFramework()->GetISystem()->GetINetwork()->GetService("GameSpy");
-	if (pserv)
+	if(pserv)
 	{
 		IFileDownloader* pfd = pserv->GetFileDownloader();
-		if (pfd && pfd->IsAvailable())
+		if(pfd && pfd->IsAvailable())
 		{
-			switch (m_downloadState)
+			switch(m_downloadState)
 			{
-			default:
-			case eDS_None:
-				// no file downloading. Start one now.
-				DownloadNextFile();
-				break;
+				default:
+				case eDS_None:
+					// no file downloading. Start one now.
+					DownloadNextFile();
+					break;
 
-			case eDS_Downloading:
-				// update listener
-				if (m_pListener)
-					m_pListener->OnDownloadProgress(pfd->GetDownloadProgress());
+				case eDS_Downloading:
+					// update listener
+					if(m_pListener)
+						m_pListener->OnDownloadProgress(pfd->GetDownloadProgress());
 
-				// wait for download to finish
-				if (!pfd->IsDownloading())
+					// wait for download to finish
+					if(!pfd->IsDownloading())
+					{
+						m_downloadState = eDS_Done;
+					}
+					break;
+
+				case eDS_Done:
 				{
-					m_downloadState = eDS_Done;
+					// validate will restart the download if it failed, and call the listeners OnDownloadFinished()
+					ValidateDownload();
+					m_downloadState = eDS_None;
+					break;
 				}
-				break;
-
-			case eDS_Done:
-			{
-				// validate will restart the download if it failed, and call the listeners OnDownloadFinished()
-				ValidateDownload();
-				m_downloadState = eDS_None;
-				break;
-			}
 			}
 		}
 	}
@@ -141,20 +141,20 @@ void CDownloadTask::Update()
 
 void CDownloadTask::StopDownloadTask()
 {
-	if (s_enableDLLogging)
+	if(s_enableDLLogging)
 		CryLog("Stopping all downloads");
 
 	// update listener then forget about it.
-	if (m_pListener)
+	if(m_pListener)
 		m_pListener->OnDownloadFinished(eFDE_RequestCancelled, NULL);
 	m_pListener = NULL;
 
 	// cancel pending downloads
 	INetworkService* pserv = g_pGame->GetIGameFramework()->GetISystem()->GetINetwork()->GetService("GameSpy");
-	if (pserv)
+	if(pserv)
 	{
 		IFileDownloader* pfd = pserv->GetFileDownloader();
-		if (pfd && pfd->IsAvailable())
+		if(pfd && pfd->IsAvailable())
 		{
 			pfd->Stop();
 			m_downloadState = eDS_None;
@@ -177,15 +177,15 @@ int CDownloadTask::GetNumberOfFilesRemaining() const
 
 float CDownloadTask::GetCurrentFileProgress() const
 {
-	INetworkService* pserv = g_pGame->GetIGameFramework()->GetISystem()->GetINetwork()->GetService("GameSpy");
-	if (pserv)
-	{
-		IFileDownloader* pfd = pserv->GetFileDownloader();
-		if (pfd && pfd->IsAvailable())
-		{
-			return pfd->GetDownloadProgress();
-		}
-	}
+ 	INetworkService* pserv = g_pGame->GetIGameFramework()->GetISystem()->GetINetwork()->GetService("GameSpy");
+ 	if(pserv)
+ 	{
+ 		IFileDownloader* pfd = pserv->GetFileDownloader();
+ 		if(pfd && pfd->IsAvailable())
+ 		{
+ 			return pfd->GetDownloadProgress();
+ 		}
+ 	}
 
 	return 0.0f;
 }
@@ -193,20 +193,20 @@ float CDownloadTask::GetCurrentFileProgress() const
 void CDownloadTask::DownloadNextFile()
 {
 	INetworkService* pserv = g_pGame->GetIGameFramework()->GetISystem()->GetINetwork()->GetService("GameSpy");
-	if (pserv)
+	if(pserv)
 	{
 		IFileDownloader* pfd = pserv->GetFileDownloader();
-		if (pfd && pfd->IsAvailable())
+		if(pfd && pfd->IsAvailable())
 		{
-			if (!m_downloadList.empty())
+			if(!m_downloadList.empty())
 			{
 				// first check to see if the file exists already (except the index file - always DL this)
 				m_currentDownload = m_downloadList.front();
 				m_downloadList.pop_front();
 				m_currentDownload.destPath = m_downloadFolderPath;
-				if (!FileExists(m_currentDownload.destPath + "/" + m_currentDownload.destFilename, m_currentDownload.fileSize))
+				if(!FileExists(m_currentDownload.destPath + "/" + m_currentDownload.destFilename, m_currentDownload.fileSize))
 				{
-					if (s_enableDLLogging)
+					if(s_enableDLLogging)
 						CryLog("Downloading file: %s", m_currentDownload.destFilename.c_str());
 					m_downloadAttempt = 0;
 					pfd->DownloadFile(m_currentDownload);
@@ -214,14 +214,14 @@ void CDownloadTask::DownloadNextFile()
 				}
 				else
 				{
-					if (s_enableDLLogging)
+					if(s_enableDLLogging)
 						CryLog("File exists (skipping): %s", m_currentDownload.destFilename.c_str());
-					m_downloadState = eDS_Done;
+					m_downloadState = eDS_Done;	
 				}
 			}
 			else
 			{
-				// no more files.
+				// no more files. 
 				m_downloadState = eDS_None;
 				m_downloadList.clear();
 				m_currentDownload.sourceFilename.clear();
@@ -233,12 +233,12 @@ void CDownloadTask::DownloadNextFile()
 
 uint64 CDownloadTask::GetMD5FromString(const unsigned char* md5str)
 {
-	if (!md5str)
+	if(!md5str)
 		return 0;
 
 	uint64 md5Out = 0;
 
-	for (int i = 0; i < 16; ++i)
+	for(int i=0; i<16; ++i)
 	{
 		char thisbyte[3];
 		thisbyte[0] = md5str[2 * i];
@@ -247,7 +247,7 @@ uint64 CDownloadTask::GetMD5FromString(const unsigned char* md5str)
 
 		int result = 0;
 		sscanf(thisbyte, "%x", &result);
-		md5Out += (uint64(result) << (56 - 8 * i));
+		md5Out += (uint64(result) << (56 - 8*i));
 	}
 
 	return md5Out;
@@ -258,13 +258,13 @@ int CDownloadTask::ValidateDownload()
 	int state = eDS_Done;
 
 	INetworkService* pserv = g_pGame->GetIGameFramework()->GetISystem()->GetINetwork()->GetService("GameSpy");
-	if (pserv)
+	if(pserv)
 	{
 		IFileDownloader* pfd = pserv->GetFileDownloader();
-		if (pfd && pfd->IsAvailable())
+		if(pfd && pfd->IsAvailable())
 		{
 			int error = pfd->GetDownloadError();
-			if (error != eFDE_NoError)
+			if(error != eFDE_NoError)
 			{
 				state = error;
 			}
@@ -272,61 +272,61 @@ int CDownloadTask::ValidateDownload()
 	}
 
 	// first check we have a filename to validate...
-	if (state == eDS_Done && m_currentDownload.destFilename.empty())
+	if(state == eDS_Done && m_currentDownload.destFilename.empty())
 		state = eDS_Error_FileNotFound;
-
+	
 	// check the file exists and is of the expected size
 	string fileName = m_downloadFolderPath + "/" + m_currentDownload.destFilename;
 	int expectedSize = m_currentDownload.fileSize;
-	if (expectedSize == 0)
+	if(expectedSize == 0)
 		expectedSize = -1;
-	if (state == eDS_Done && !FileExists(fileName, expectedSize))
+	if(state == eDS_Done && !FileExists(fileName, expectedSize))
 		state = eDS_Error_FileNotFound;
 
 	// get the checksum from the downloader
 	const unsigned char* md5Checksum = NULL;
-	if (state == eDS_Done && pserv)
+	if(state == eDS_Done && pserv)
 	{
 		IFileDownloader* pfd = pserv->GetFileDownloader();
-		if (pfd && pfd->IsAvailable())
+		if(pfd && pfd->IsAvailable())
 		{
 			md5Checksum = pfd->GetFileMD5();
 		}
 	}
 	// NB if file already existed locally, it wasn't downloaded. Probably need to md5 at load-time.
-	if (state == eDS_Done && md5Checksum != 0 && m_currentDownload.md5 != 0)
+	if(state == eDS_Done && md5Checksum != 0 && m_currentDownload.md5 != 0)
 	{
-		if (m_currentDownload.md5 != GetMD5FromString(md5Checksum))
+		if(m_currentDownload.md5 != GetMD5FromString(md5Checksum))
 			state = eDS_Error_Checksum;
 	}
 
-	if (state != eDS_Done)
+	if(state != eDS_Done)
 	{
 		++m_downloadAttempt;
-		if (m_downloadAttempt < m_maxDownloadAttempts)
+		if(m_downloadAttempt < m_maxDownloadAttempts)
 		{
-			if (s_enableDLLogging)
+			if(s_enableDLLogging)
 				CryLog("Download failed, retrying: %s", m_currentDownload.destFilename.c_str());
 			m_downloadList.push_front(m_currentDownload);
 			m_downloadState = eDS_Downloading;
 		}
 		else
 		{
-			if (s_enableDLLogging)
+			if(s_enableDLLogging)
 				CryLog("Download failed, giving up: %s", m_currentDownload.destFilename.c_str());
 
 			// update listener
-			if (m_pListener)
+			if(m_pListener)
 				m_pListener->OnDownloadFinished(state, NULL);
 		}
 	}
 
-	if (state == eDS_Done)
+	if(state == eDS_Done)
 	{
-		if (s_enableDLLogging)
+		if(s_enableDLLogging)
 			CryLog("File downloaded ok");
 
-		if (m_pListener)
+		if(m_pListener)
 			m_pListener->OnDownloadFinished(state, fileName);
 	}
 
@@ -336,19 +336,19 @@ int CDownloadTask::ValidateDownload()
 bool CDownloadTask::FileExists(string file, int expectedSize)
 {
 	// if we don't know how big a file to expect, we should always redownload it.
-	if (expectedSize == 0)
+	if(expectedSize == 0)
 		return false;
 
 	bool ok = true;
 	ICryPak* pPak = gEnv->pCryPak;
-	if (pPak)
+	if(pPak)
 	{
 		FILE* pFile = pPak->FOpen(file, "r", ICryPak::FLAGS_NO_FULL_PATH);
-		if (!pFile)
+		if(!pFile)
 			ok = false;
-		else if (expectedSize != -1)	// -1 means 'don't care'
+		else if(expectedSize != -1)	// -1 means 'don't care'
 		{
-			if (pPak->FGetSize(pFile) != expectedSize)
+			if(pPak->FGetSize(pFile) != expectedSize)
 				ok = false;
 		}
 		pPak->FClose(pFile);
@@ -368,7 +368,7 @@ bool CDownloadTask::GetUserDataFolder(string& path)
 bool CDownloadTask::CreateDestinationFolder(string& folder)
 {
 	ICryPak* pPak = gEnv->pCryPak;
-	if (pPak)
+	if(pPak)
 		pPak->MakeDir(folder.c_str());
 
 	return true;

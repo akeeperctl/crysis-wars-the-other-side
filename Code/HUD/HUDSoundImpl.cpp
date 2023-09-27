@@ -6,12 +6,12 @@
 
 void CHUD::PlaySound(ESound eSound, bool play)
 {
-	if (!gEnv->pSoundSystem)
+	if(!gEnv->pSoundSystem)
 		return;
 
-	const char* szSound = NULL;
+	const char *szSound = NULL;
 
-	switch (eSound)
+	switch(eSound)
 	{
 	case ESound_GenericBeep:
 		szSound = "Sounds/interface:suit:generic_beep";
@@ -138,16 +138,16 @@ void CHUD::PlaySound(ESound eSound, bool play)
 		return;
 	}
 
-	if (play)
+	if(play)
 	{
-		_smart_ptr<ISound> pSound = gEnv->pSoundSystem->CreateSound(szSound, 0);
-		if (pSound)
+		_smart_ptr<ISound> pSound = gEnv->pSoundSystem->CreateSound(szSound,0);
+		if(pSound)
 		{
-			if (m_soundIDs[eSound])
+			if(m_soundIDs[eSound])
 			{
-				ISound* pOldSound = gEnv->pSoundSystem->GetSound(m_soundIDs[eSound]);
+				ISound *pOldSound = gEnv->pSoundSystem->GetSound(m_soundIDs[eSound]);
 
-				if (pOldSound)
+				if(pOldSound)
 					pOldSound->Stop(ESoundStopMode_AtOnce);
 
 				m_soundIDs[eSound] = 0;
@@ -158,10 +158,10 @@ void CHUD::PlaySound(ESound eSound, bool play)
 			m_soundIDs[eSound] = pSound->GetId();
 		}
 	}
-	else if (m_soundIDs[eSound] != INVALID_SOUNDID)
+	else if(m_soundIDs[eSound] != INVALID_SOUNDID)
 	{
-		ISound* pSound = gEnv->pSoundSystem->GetSound(m_soundIDs[eSound]);
-		if (pSound)
+		ISound *pSound = gEnv->pSoundSystem->GetSound(m_soundIDs[eSound]);
+		if(pSound)
 		{
 			pSound->Stop();
 			m_soundIDs[eSound] = INVALID_SOUNDID;
@@ -173,15 +173,15 @@ void CHUD::PlaySound(ESound eSound, bool play)
 
 void CHUD::PlayStatusSound(const char* name, bool forceSuitSound)
 {
-	if (!gEnv->pSoundSystem)
+	if(!gEnv->pSoundSystem)
 		return;
 
 	//string strSound("languages/dialog/suit/");
 	string strSound;
 
 	//we don't want to play the suit sounds at once (because of quick mode change key)
-	if (!forceSuitSound &&
-		(!stricmp(name, "normal_cloak_on") ||
+	if(!forceSuitSound &&
+			(!stricmp(name, "normal_cloak_on") ||
 			!stricmp(name, "maximum_speed") ||
 			!stricmp(name, "maximum_strength") ||
 			!stricmp(name, "maximum_armor")))
@@ -190,7 +190,7 @@ void CHUD::PlayStatusSound(const char* name, bool forceSuitSound)
 		return;
 	}
 
-	switch (m_iVoiceMode)
+	switch(m_iVoiceMode)
 	{
 	case 1: //male
 		strSound.append("suit/male/suit_");
@@ -207,15 +207,15 @@ void CHUD::PlayStatusSound(const char* name, bool forceSuitSound)
 	}
 
 	//VS2 workaround ...
-	if (!strcmp(name, "normal_cloak_on"))
+	if(!strcmp(name, "normal_cloak_on"))
 		strSound.append("modification_engaged");
-	else if (!strcmp(name, "normal_cloak_off"))
+	else if(!strcmp(name, "normal_cloak_off"))
 		return;
 	else
 		strSound.append(name);
 
-	_smart_ptr<ISound> pSound = gEnv->pSoundSystem->CreateSound(strSound, FLAG_SOUND_3D | FLAG_SOUND_VOICE);
-	if (pSound)
+	_smart_ptr<ISound> pSound = gEnv->pSoundSystem->CreateSound(strSound,FLAG_SOUND_3D|FLAG_SOUND_VOICE);
+	if ( pSound )
 	{
 		pSound->SetSemantic(eSoundSemantic_NanoSuit);
 		pSound->SetPosition(g_pGame->GetIGameFramework()->GetClientActor()->GetEntity()->GetWorldPos());

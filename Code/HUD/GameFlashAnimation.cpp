@@ -31,7 +31,7 @@ CGameFlashAnimation::~CGameFlashAnimation()
 	// deregister us from the HUD Updates and Rendering
 	SAFE_HUD_FUNC(Remove(this));
 
-	for (TGameFlashLogicsList::iterator iter = m_gameFlashLogicsList.begin(); iter != m_gameFlashLogicsList.end(); ++iter)
+	for(TGameFlashLogicsList::iterator iter=m_gameFlashLogicsList.begin(); iter!=m_gameFlashLogicsList.end(); ++iter)
 	{
 		SAFE_DELETE(*iter);
 	}
@@ -44,7 +44,7 @@ uint32 CGameFlashAnimation::GetFlags() const
 }
 //-----------------------------------------------------------------------------------------------------
 
-void CGameFlashAnimation::Init(const char* strFileName, EFlashDock docking, uint32 flags)
+void CGameFlashAnimation::Init(const char *strFileName, EFlashDock docking, uint32 flags)
 {
 	Unload();
 	m_fileName = strFileName;
@@ -62,14 +62,14 @@ bool CGameFlashAnimation::Reload(bool forceUnload)
 	{
 		if (LoadAnimation(m_fileName.c_str()))
 		{
-			IRenderer* pRenderer = gEnv->pRenderer;
-			GetFlashPlayer()->SetViewport(0, 0, pRenderer->GetWidth(), pRenderer->GetHeight());
+			IRenderer *pRenderer = gEnv->pRenderer;
+			GetFlashPlayer()->SetViewport(0,0,pRenderer->GetWidth(),pRenderer->GetHeight());
 			GetFlashPlayer()->SetBackgroundAlpha(0.0f);
 
 			SAFE_HUD_FUNC(Register(this));
 
 			if (m_flags & eFAF_ThisHandler)
-				GetFlashPlayer()->SetFSCommandHandler(g_pGame ? g_pGame->GetHUD() : NULL);
+				GetFlashPlayer()->SetFSCommandHandler(g_pGame?g_pGame->GetHUD():NULL);
 
 			SAFE_HUD_FUNC(RepositionFlashAnimation(this));
 			SAFE_HUD_FUNC(SetFlashColor(this));
@@ -86,7 +86,7 @@ bool CGameFlashAnimation::Reload(bool forceUnload)
 
 //-----------------------------------------------------------------------------------------------------
 
-bool CGameFlashAnimation::Load(const char* strFileName, EFlashDock docking, uint32 flags)
+bool CGameFlashAnimation::Load(const char *strFileName, EFlashDock docking, uint32 flags)
 {
 	Init(strFileName, docking, flags);
 	return Reload();
@@ -106,7 +106,7 @@ void CGameFlashAnimation::Unload()
 
 //-----------------------------------------------------------------------------------------------------
 
-void CGameFlashAnimation::AddVariable(const char* strControl, const char* strVariable, const char* strToken, float fScale, float fOffset)
+void CGameFlashAnimation::AddVariable(const char *strControl,const char *strVariable,const char *strToken,float fScale,float fOffset)
 {
 	string token(strToken);
 	// make sure we don't already have this variable
@@ -118,7 +118,7 @@ void CGameFlashAnimation::AddVariable(const char* strControl, const char* strVar
 	}
 
 	// it's unique ... so we create and add it
-	CGameFlashLogic* pGFVariable = new CGameFlashLogic(this);
+	CGameFlashLogic *pGFVariable = new CGameFlashLogic(this);
 	pGFVariable->Init(strControl, strVariable, strToken, fScale, fOffset);
 	m_gameFlashLogicsList.push_back(pGFVariable);
 }
@@ -136,7 +136,7 @@ void CGameFlashAnimation::ReInitVariables()
 
 //-----------------------------------------------------------------------------------------------------
 
-void CGameFlashAnimation::GetMemoryStatistics(ICrySizer* s)
+void CGameFlashAnimation::GetMemoryStatistics(ICrySizer * s)
 {
 	s->AddContainer(m_gameFlashLogicsList);
 	for (TGameFlashLogicsList::iterator iter = m_gameFlashLogicsList.begin(); iter != m_gameFlashLogicsList.end(); ++iter)

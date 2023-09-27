@@ -11,7 +11,7 @@ namespace
 {
 	IWeapon* GetWeapon(IActor* pActor)
 	{
-		IInventory* pInventory = pActor->GetInventory();
+		IInventory *pInventory = pActor->GetInventory();
 		if (!pInventory)
 			return 0;
 		EntityId itemId = pInventory->GetCurrentItem();
@@ -26,7 +26,7 @@ namespace
 
 	IWeapon* GetWeapon(IActor* pActor, const char* className)
 	{
-		IInventory* pInventory = pActor->GetInventory();
+		IInventory *pInventory = pActor->GetInventory();
 		if (!pInventory)
 			return 0;
 		IEntityClass* pEntityClass = gEnv->pEntitySystem->GetClassRegistry()->FindClass(className);
@@ -88,13 +88,13 @@ return new CFlowNode_WeaponTracker(pActInfo);
 
 void GetConfiguration( SFlowNodeConfig& config )
 {
-static const SInputPortConfig in_ports[] =
+static const SInputPortConfig in_ports[] = 
 {
 InputPortConfig_Void( "Activate",    _HELP("Activate") ),
 InputPortConfig_Void( "Deactivate",  _HELP("Deactivate") ),
 {0}
 };
-static const SOutputPortConfig out_ports[] =
+static const SOutputPortConfig out_ports[] = 
 {
 OutputPortConfig<string>( "AccessoryAdded",   _HELP("Accessory was added")),
 OutputPortConfig<string>( "AccessoryRemoved", _HELP("Accessory was removed")),
@@ -192,10 +192,11 @@ EntityId m_weaponId;
 };
 */
 
+
 class CFlowNode_WeaponAccessoryChanged : public CFlowBaseNode, public CHUD::IHUDListener
 {
 public:
-	CFlowNode_WeaponAccessoryChanged(SActivationInfo* pActInfo)
+	CFlowNode_WeaponAccessoryChanged( SActivationInfo * pActInfo )
 	{
 	}
 
@@ -209,19 +210,19 @@ public:
 		return new CFlowNode_WeaponAccessoryChanged(pActInfo);
 	}
 
-	void GetConfiguration(SFlowNodeConfig& config)
+	void GetConfiguration( SFlowNodeConfig& config )
 	{
-		static const SInputPortConfig in_ports[] =
+		static const SInputPortConfig in_ports[] = 
 		{
-			InputPortConfig<string>("Weapon",  _HELP("Restrict listening on this weapon. Empty=Listen for all"), 0, _UICONFIG("enum_global:weapon")),
-			InputPortConfig<string>("Item",  _HELP("Restrict listening for this accessory. Empty=Listen for all"), 0, _UICONFIG("enum_global:item_givable")),
+			InputPortConfig<string>( "Weapon",  _HELP("Restrict listening on this weapon. Empty=Listen for all"), 0, _UICONFIG("enum_global:weapon") ),
+			InputPortConfig<string>( "Item",  _HELP("Restrict listening for this accessory. Empty=Listen for all"), 0, _UICONFIG("enum_global:item_givable") ),
 			{0}
 		};
-		static const SOutputPortConfig out_ports[] =
+		static const SOutputPortConfig out_ports[] = 
 		{
-			OutputPortConfig<string>("Weapon", _HELP("Weapon name on Accessory change")),
-			OutputPortConfig<string>("AccessoryAdded",   _HELP("Accessory was added. Accessory Name will be outputted.")),
-			OutputPortConfig<string>("AccessoryRemoved", _HELP("Accessory was removed. Accessory Name will be outputted.")),
+			OutputPortConfig<string>( "Weapon", _HELP("Weapon name on Accessory change")),
+			OutputPortConfig<string>( "AccessoryAdded",   _HELP("Accessory was added. Accessory Name will be outputted.")),
+			OutputPortConfig<string>( "AccessoryRemoved", _HELP("Accessory was removed. Accessory Name will be outputted.")),
 			{0}
 		};
 		config.pInputPorts = in_ports;
@@ -230,7 +231,7 @@ public:
 		config.SetCategory(EFLN_APPROVED);
 	}
 
-	void ProcessEvent(EFlowEvent event, SActivationInfo* pActInfo)
+	void ProcessEvent( EFlowEvent event, SActivationInfo *pActInfo )
 	{
 		switch (event)
 		{
@@ -239,13 +240,13 @@ public:
 			SAFE_HUD_FUNC(RegisterListener(this));
 			break;
 		case eFE_Activate:
-		{
-		}
-		break;
+			{
+			}
+			break;
 		}
 	}
 
-	virtual void GetMemoryStatistics(ICrySizer* s)
+	virtual void GetMemoryStatistics(ICrySizer * s)
 	{
 		s->Add(*this);
 	}
@@ -264,8 +265,8 @@ protected:
 		if (itemName.empty() == false && stricmp(accessory, itemName.c_str()) != 0)
 			return;
 
-		string name(actWeaponName);
-		string accName(accessory);
+		string name (actWeaponName);
+		string accName (accessory);
 		ActivateOutput(&m_actInfo, 0, name);
 		ActivateOutput(&m_actInfo, bAdd ? 1 : 2, accName);
 	}
@@ -273,23 +274,23 @@ protected:
 	SActivationInfo m_actInfo;
 };
 
-class CFlowNode_WeaponCheckAccessory : public CFlowBaseNode
+class CFlowNode_WeaponCheckAccessory : public CFlowBaseNode 
 {
 public:
-	CFlowNode_WeaponCheckAccessory(SActivationInfo* pActInfo) { }
+	CFlowNode_WeaponCheckAccessory( SActivationInfo * pActInfo ) { }
 
-	void GetConfiguration(SFlowNodeConfig& config)
+	void GetConfiguration( SFlowNodeConfig& config )
 	{
-		static const SInputPortConfig in_ports[] =
+		static const SInputPortConfig in_ports[] = 
 		{
-			InputPortConfig_Void("Check", _HELP("Trigger this port to check for accessory on the Actor's current weapon")),
-			InputPortConfig<string>("Accessory", _HELP("Name of accessory to check for."), 0, _UICONFIG("enum_global:item")),
+			InputPortConfig_Void( "Check", _HELP("Trigger this port to check for accessory on the Actor's current weapon" )),
+			InputPortConfig<string>( "Accessory", _HELP("Name of accessory to check for."), 0, _UICONFIG("enum_global:item")),
 			{0}
 		};
-		static const SOutputPortConfig out_ports[] =
+		static const SOutputPortConfig out_ports[] = 
 		{
-			OutputPortConfig_Void("False", _HELP("Triggered if accessory is not attached.")),
-			OutputPortConfig_Void("True",  _HELP("Triggered if accessory is attached.")),
+			OutputPortConfig_Void( "False", _HELP("Triggered if accessory is not attached.")),
+			OutputPortConfig_Void( "True",  _HELP("Triggered if accessory is attached.")),
 			{0}
 		};
 		config.nFlags |= EFLN_TARGET_ENTITY;
@@ -299,9 +300,9 @@ public:
 		config.SetCategory(EFLN_APPROVED);
 	}
 
-	void ProcessEvent(EFlowEvent event, SActivationInfo* pActInfo)
+	void ProcessEvent( EFlowEvent event, SActivationInfo *pActInfo )
 	{
-		if (eFE_Activate == event && IsPortActive(pActInfo, 0))
+		if(eFE_Activate == event && IsPortActive(pActInfo,0))
 		{
 			IActor* pActor = GetActor(pActInfo);
 			if (pActor == 0)
@@ -319,29 +320,29 @@ public:
 		}
 	}
 
-	virtual void GetMemoryStatistics(ICrySizer* s)
+	virtual void GetMemoryStatistics(ICrySizer * s)
 	{
 		s->Add(*this);
 	}
 };
 
-class CFlowNode_WeaponCheckZoom : public CFlowBaseNode
+class CFlowNode_WeaponCheckZoom : public CFlowBaseNode 
 {
 public:
-	CFlowNode_WeaponCheckZoom(SActivationInfo* pActInfo) { }
+	CFlowNode_WeaponCheckZoom( SActivationInfo * pActInfo ) { }
 
-	void GetConfiguration(SFlowNodeConfig& config)
+	void GetConfiguration( SFlowNodeConfig& config )
 	{
-		static const SInputPortConfig in_ports[] =
+		static const SInputPortConfig in_ports[] = 
 		{
-			InputPortConfig_Void("Check", _HELP("Trigger this port to check if Actor's current weapon is zoomed")),
-			InputPortConfig<string>("Weapon", _HELP("Name of Weapon to check. Empty=All."), 0, _UICONFIG("enum_global:weapon")),
+			InputPortConfig_Void( "Check", _HELP("Trigger this port to check if Actor's current weapon is zoomed" )),
+			InputPortConfig<string>( "Weapon", _HELP("Name of Weapon to check. Empty=All."), 0, _UICONFIG("enum_global:weapon")),
 			{0}
 		};
-		static const SOutputPortConfig out_ports[] =
+		static const SOutputPortConfig out_ports[] = 
 		{
-			OutputPortConfig_Void("False", _HELP("Triggered if weapon is not zoomed.")),
-			OutputPortConfig_Void("True",  _HELP("Triggered if weapon is zoomed.")),
+			OutputPortConfig_Void( "False", _HELP("Triggered if weapon is not zoomed.")),
+			OutputPortConfig_Void( "True",  _HELP("Triggered if weapon is zoomed.")),
 			{0}
 		};
 		config.nFlags |= EFLN_TARGET_ENTITY;
@@ -351,9 +352,9 @@ public:
 		config.SetCategory(EFLN_APPROVED);
 	}
 
-	void ProcessEvent(EFlowEvent event, SActivationInfo* pActInfo)
+	void ProcessEvent( EFlowEvent event, SActivationInfo *pActInfo )
 	{
-		if (eFE_Activate == event && IsPortActive(pActInfo, 0))
+		if(eFE_Activate == event && IsPortActive(pActInfo,0))
 		{
 			IActor* pActor = GetActor(pActInfo);
 			if (pActor == 0)
@@ -369,20 +370,20 @@ public:
 					bZoomed = pWeapon->IsZoomed();
 				}
 			}
-			ActivateOutput(pActInfo, bZoomed ? 1 : 0, true);
+			ActivateOutput(pActInfo, bZoomed ? 1 : 0, true);			
 		}
 	}
 
-	virtual void GetMemoryStatistics(ICrySizer* s)
+	virtual void GetMemoryStatistics(ICrySizer * s)
 	{
 		s->Add(*this);
 	}
 };
 
-class CFlowNode_WeaponAccessory : public CFlowBaseNode
+class CFlowNode_WeaponAccessory : public CFlowBaseNode 
 {
 public:
-	CFlowNode_WeaponAccessory(SActivationInfo* pActInfo) { }
+	CFlowNode_WeaponAccessory( SActivationInfo * pActInfo ) { }
 
 	enum INPUTS
 	{
@@ -398,20 +399,20 @@ public:
 		EOP_DETACHED,
 	};
 
-	void GetConfiguration(SFlowNodeConfig& config)
+	void GetConfiguration( SFlowNodeConfig& config )
 	{
-		static const SInputPortConfig in_ports[] =
+		static const SInputPortConfig in_ports[] = 
 		{
-			InputPortConfig_Void("Attach", _HELP("Trigger to attach accessory on the Actor's weapon")),
-			InputPortConfig_Void("Detach", _HELP("Trigger to detach accessory from the Actor's weapon")),
-			InputPortConfig<string>("Weapon", _HELP("Name of weapon the accessory should be attached/detached"), 0, _UICONFIG("enum_global:weapon")),
-			InputPortConfig<string>("Accessory", _HELP("Name of accessory"), 0, _UICONFIG("enum_global:item")),
+			InputPortConfig_Void( "Attach", _HELP("Trigger to attach accessory on the Actor's weapon" )),
+			InputPortConfig_Void( "Detach", _HELP("Trigger to detach accessory from the Actor's weapon" )),
+			InputPortConfig<string>( "Weapon", _HELP("Name of weapon the accessory should be attached/detached"), 0, _UICONFIG("enum_global:weapon")),
+			InputPortConfig<string>( "Accessory", _HELP("Name of accessory"), 0, _UICONFIG("enum_global:item")),
 			{0}
 		};
-		static const SOutputPortConfig out_ports[] =
+		static const SOutputPortConfig out_ports[] = 
 		{
-			OutputPortConfig_Void("Attached", _HELP("Triggered if accessory was attached.")),
-			OutputPortConfig_Void("Detached",  _HELP("Triggered if accessory was detached.")),
+			OutputPortConfig_Void( "Attached", _HELP("Triggered if accessory was attached.")),
+			OutputPortConfig_Void( "Detached",  _HELP("Triggered if accessory was detached.")),
 			{0}
 		};
 		config.nFlags |= EFLN_TARGET_ENTITY;
@@ -421,9 +422,9 @@ public:
 		config.SetCategory(EFLN_APPROVED);
 	}
 
-	void ProcessEvent(EFlowEvent event, SActivationInfo* pActInfo)
+	void ProcessEvent( EFlowEvent event, SActivationInfo *pActInfo )
 	{
-		if (eFE_Activate == event)
+		if(eFE_Activate == event)
 		{
 			const bool bAttach = IsPortActive(pActInfo, EIP_ATTACH);
 			const bool bDetach = IsPortActive(pActInfo, EIP_DETACH);
@@ -436,7 +437,7 @@ public:
 
 			const string& className = GetPortString(pActInfo, EIP_WEAPON);
 
-			CWeapon* pWeapon = static_cast<CWeapon*> (className.empty() ? GetWeapon(pActor) : GetWeapon(pActor, className.c_str()));
+			CWeapon* pWeapon = static_cast<CWeapon*> ( className.empty() ? GetWeapon(pActor) : GetWeapon(pActor, className.c_str()) );
 			if (pWeapon != 0)
 			{
 				ItemString acc = ItemString(GetPortString(pActInfo, EIP_ACCESSORY));
@@ -454,13 +455,13 @@ public:
 		}
 	}
 
-	virtual void GetMemoryStatistics(ICrySizer* s)
+	virtual void GetMemoryStatistics(ICrySizer * s)
 	{
 		s->Add(*this);
 	}
 };
 
-REGISTER_FLOW_NODE("Weapon:AccessoryChanged", CFlowNode_WeaponAccessoryChanged);
-REGISTER_FLOW_NODE_SINGLETON("Weapon:CheckAccessory", CFlowNode_WeaponCheckAccessory);
-REGISTER_FLOW_NODE_SINGLETON("Weapon:CheckZoom", CFlowNode_WeaponCheckZoom);
-REGISTER_FLOW_NODE_SINGLETON("Weapon:Accessory", CFlowNode_WeaponAccessory);
+REGISTER_FLOW_NODE("Weapon:AccessoryChanged",	CFlowNode_WeaponAccessoryChanged);
+REGISTER_FLOW_NODE_SINGLETON("Weapon:CheckAccessory",		CFlowNode_WeaponCheckAccessory);
+REGISTER_FLOW_NODE_SINGLETON("Weapon:CheckZoom",		CFlowNode_WeaponCheckZoom);
+REGISTER_FLOW_NODE_SINGLETON("Weapon:Accessory",		CFlowNode_WeaponAccessory);

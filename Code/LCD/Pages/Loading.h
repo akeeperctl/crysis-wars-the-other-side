@@ -21,7 +21,7 @@ History:
 class CLoading : public CLCDPage, public ILevelSystemListener
 {
 public:
-	CLoading()
+	CLoading() 
 	{
 		g_pGame->GetIGameFramework()->GetILevelSystem()->AddListener(this);
 	}
@@ -32,8 +32,8 @@ public:
 	}
 
 	//ILevelSystemListener
-	virtual void OnLevelNotFound(const char* levelName) {}
-	virtual void OnLoadingStart(ILevelInfo* pLevel)
+	virtual void OnLevelNotFound(const char *levelName){}
+	virtual void OnLoadingStart(ILevelInfo *pLevel)
 	{
 		if (pLevel)
 		{
@@ -41,7 +41,7 @@ public:
 			UpdateGameMode();
 			const char* mappedName = g_pGame->GetMappedLevelName(pLevel->GetName());
 
-			if (gEnv->bMultiplayer)
+			if(gEnv->bMultiplayer)
 			{
 				mappedName = pLevel->GetDisplayName();
 			}
@@ -54,17 +54,17 @@ public:
 			GetEzLcd()->Update();
 		}
 	}
-	virtual void OnLoadingComplete(ILevel* pLevel)
+	virtual void OnLoadingComplete(ILevel *pLevel)
 	{
 		GetG15LCD()->SetCurrentPage(GetG15LCD()->PlayerStatusPage);
 	}
-	virtual void OnLoadingError(ILevelInfo* pLevel, const char* error) {}
-	virtual void OnLoadingProgress(ILevelInfo* pLevel, int progressAmount)
+	virtual void OnLoadingError(ILevelInfo *pLevel, const char *error){}
+	virtual void OnLoadingProgress(ILevelInfo *pLevel, int progressAmount)
 	{
 		if (pLevel)
 		{
 			MakeModifyTarget();
-			GetEzLcd()->SetProgressBarPosition(m_progressBar, progressAmount / float(pLevel->GetDefaultGameType()->cgfCount) * 100.0f);
+			GetEzLcd()->SetProgressBarPosition(m_progressBar, progressAmount/float(pLevel->GetDefaultGameType()->cgfCount)*100.0f);
 			GetEzLcd()->Update();
 		}
 	}
@@ -107,7 +107,7 @@ private:
 	void UpdateGameMode()
 	{
 		CGameRules* pGameRules = g_pGame->GetGameRules();
-		if (!pGameRules)
+		if(!pGameRules)
 			return;
 
 		GetEzLcd()->SetVisible(m_serverNameLabel, gEnv->bMultiplayer);

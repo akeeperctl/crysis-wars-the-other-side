@@ -11,5 +11,5 @@ public:
 	CReferenceWeapon(void);
 	~CReferenceWeapon(void);
 	virtual void OnAction(EntityId actorId, const ActionId& actionId, int activationMode, float value);
-	virtual void GetMemoryStatistics(ICrySizer* s) { s->Add(*this); CWeapon::GetMemoryStatistics(s); }
+	virtual void GetMemoryStatistics(ICrySizer * s) { s->Add(*this); CWeapon::GetMemoryStatistics(s); }
 };

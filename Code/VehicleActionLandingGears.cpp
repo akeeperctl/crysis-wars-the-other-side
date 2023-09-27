@@ -22,7 +22,7 @@ const float GEARS_RETRACTED_TIME = 1.0f;
 
 //------------------------------------------------------------------------
 CVehicleActionLandingGears::CVehicleActionLandingGears()
-	: m_pVehicle(NULL),
+: m_pVehicle(NULL),
 	m_pLandingGearsAnim(NULL),
 	m_landingGearOpenedId(InvalidVehicleAnimStateId),
 	m_landingGearClosedId(InvalidVehicleAnimStateId),
@@ -37,6 +37,7 @@ CVehicleActionLandingGears::CVehicleActionLandingGears()
 	m_timer(0.0f),
 	m_minTimeForChange(0.5f)
 {
+
 }
 
 //------------------------------------------------------------------------
@@ -46,7 +47,7 @@ CVehicleActionLandingGears::~CVehicleActionLandingGears()
 }
 
 //------------------------------------------------------------------------
-bool CVehicleActionLandingGears::Init(IVehicle* pVehicle, const SmartScriptTable& table)
+bool CVehicleActionLandingGears::Init(IVehicle* pVehicle, const SmartScriptTable &table)
 {
 	m_pVehicle = pVehicle;
 	m_pLandingGearsAnim = m_pVehicle->GetAnimation("landingGears");
@@ -60,7 +61,7 @@ bool CVehicleActionLandingGears::Init(IVehicle* pVehicle, const SmartScriptTable
 		landingGearsTable->GetValue("altitudeToRetractGears", m_altitudeToRetractGears);
 		landingGearsTable->GetValue("landingDamages", m_landingDamages);
 		landingGearsTable->GetValue("velocityMax", m_velocityMax);
-
+		
 		char* pPartName = NULL;
 		if (landingGearsTable->GetValue("blockPartRotation", pPartName))
 		{
@@ -163,6 +164,7 @@ int CVehicleActionLandingGears::OnEvent(int eventType, SVehicleEventParams& even
 
 	if (eventType == eVAE_OnGroundCollision || eventType == eVAE_OnEntityCollision)
 	{
+
 		if (!m_isDriverPlayer)
 			return 0;	// no collision damage for ai
 
@@ -182,7 +184,7 @@ int CVehicleActionLandingGears::OnEvent(int eventType, SVehicleEventParams& even
 		if (animStateId != InvalidVehicleAnimStateId)
 		{
 			float gearStatus = 0.0f; // 0 = in, 1 = out
-			if (m_isDestroyed)
+			if (m_isDestroyed)	
 				gearStatus = 0.0f;
 			else if (animStateId == m_landingGearClosedId)
 				gearStatus = 0.0f;
@@ -239,7 +241,7 @@ void CVehicleActionLandingGears::Serialize(TSerialize ser, unsigned aspects)
 	ser.Value("damageReceived", m_damageReceived);
 	ser.Value("isDestroyed", m_isDestroyed);
 	ser.Value("animTime", m_animTime);
-
+	
 	if (ser.IsReading())
 	{
 		m_pLandingGearsAnim->StartAnimation();

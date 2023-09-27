@@ -3,7 +3,7 @@ Crytek Source File.
 Copyright (C), Crytek Studios, 2006.
 -------------------------------------------------------------------------
 
-Description:
+Description: 
 	Header for CTweakMetadata
 
 -------------------------------------------------------------------------
@@ -11,6 +11,7 @@ History:
 - 28:02:2006  : Created by Matthew Jack
 
 *************************************************************************/
+
 
 #ifndef __CTWEAKMETADATACVAR_H__
 #define __CTWEAKMETADATACVAR_H__
@@ -30,9 +31,9 @@ struct IScriptTable;
 
 class CTweakMetadataCVAR : public CTweakMetadata {
 public:
-
-	CTweakMetadataCVAR(IScriptTable* pTable);
-
+	
+	CTweakMetadataCVAR(IScriptTable *pTable);
+	
 	~CTweakMetadataCVAR() {};
 
 	string GetValue(void);
@@ -41,7 +42,7 @@ public:
 
 	bool IncreaseValue(void) { return ChangeValue(true); }
 
-	void UpdateChanges(IScriptTable* pTable) { /* CVARs save themselves */ }
+	void UpdateChanges( IScriptTable *pTable )  { /* CVARs save themselves */ }
 
 protected:
 
@@ -49,7 +50,7 @@ protected:
 	bool ChangeValue(bool bIncrement);
 
 	// Wraps fetching the CVAR
-	ICVar* GetCVar(void) const;
+	ICVar * GetCVar(void) const;
 
 	// Type of the CVAR
 	int m_CVarType;

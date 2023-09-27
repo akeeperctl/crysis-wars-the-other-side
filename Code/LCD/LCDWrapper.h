@@ -33,13 +33,13 @@ public:
 
 	bool	IsConnected();
 
-	CLCDImage* CreateImage(const char* name = 0, bool visible = true);
-
-	CEzLcd* GetEzLcd() const { return m_pImpl; };
+	CLCDImage* CreateImage(const char* name=0, bool visible=true);
+	
+	CEzLcd*	GetEzLcd() const	{	return m_pImpl;	};
 	int			AddPage(CLCDPage* pPage, int pageId = -1);
 
 	void		SetCurrentPage(int pageId = -1);
-	int			GetCurrentPage() const { return m_currentPage; }
+	int			GetCurrentPage() const	{	return m_currentPage;	}
 	void		ShowCurrentPage();
 
 	// state machine states
@@ -51,7 +51,7 @@ public:
 private:
 	typedef std::vector<CLCDPage*>	TLCDPages;
 
-	CEzLcd* m_pImpl;
+	CEzLcd*				m_pImpl;
 	int						m_currentPage;
 	TLCDPages			m_pages;
 	float					m_tick;

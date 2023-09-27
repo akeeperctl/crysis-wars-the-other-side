@@ -18,7 +18,9 @@ History:
 # pragma once
 #endif
 
+
 #include "Projectile.h"
+
 
 class CAVMine : public CProjectile
 {
@@ -26,11 +28,11 @@ public:
 	CAVMine();
 	virtual ~CAVMine();
 
-	virtual bool Init(IGameObject* pGameObject);
+	virtual bool Init(IGameObject *pGameObject);
 
-	virtual void ProcessEvent(SEntityEvent& event);
-	virtual void HandleEvent(const SGameObjectEvent& event);
-	virtual void Launch(const Vec3& pos, const Vec3& dir, const Vec3& velocity, float speedScale);
+	virtual void ProcessEvent(SEntityEvent &event);
+	virtual void HandleEvent(const SGameObjectEvent &event);
+	virtual void Launch(const Vec3 &pos, const Vec3 &dir, const Vec3 &velocity, float speedScale);
 	virtual void SetParams(EntityId ownerId, EntityId hostId, EntityId weaponId, int fmId, int damage, int hitTypeId);
 
 protected:
@@ -39,5 +41,6 @@ protected:
 	float m_currentWeight;
 	bool m_frozen;
 };
+
 
 #endif // __AVMINE_H__

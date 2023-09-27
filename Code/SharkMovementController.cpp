@@ -2,7 +2,7 @@
 #include "SharkMovementController.h"
 #include "Shark.h"
 
-CSharkMovementController::CSharkMovementController(CShark* pShark) : m_pShark(pShark), m_atTarget(false)
+CSharkMovementController::CSharkMovementController( CShark * pShark ) : m_pShark(pShark), m_atTarget(false)
 {
 }
 
@@ -10,9 +10,9 @@ void CSharkMovementController::Reset()
 {
 }
 
-bool CSharkMovementController::Update(float frameTime, SActorFrameMovementParams& params)
+bool CSharkMovementController::Update( float frameTime, SActorFrameMovementParams& params )
 {
-	UpdateCurMovementState(params);
+	UpdateCurMovementState( params );
 	return false;
 }
 
@@ -21,7 +21,7 @@ void CSharkMovementController::Release()
 	delete this;
 }
 
-bool CSharkMovementController::RequestMovement(CMovementRequest& request)
+bool CSharkMovementController::RequestMovement( CMovementRequest& request )
 {
 	SMovementState state;
 	GetMovementState(state);
@@ -30,10 +30,11 @@ bool CSharkMovementController::RequestMovement(CMovementRequest& request)
 	Vec3 currentPos = m_pShark->GetEntity()->GetWorldPos();
 	Vec3 currentForw = m_pShark->GetEntity()->GetWorldRotation() * FORWARD_DIRECTION;
 
-	CShark::SMovementRequestParams os(request);
+	CShark::SMovementRequestParams os (request);
 
 	if (request.HasMoveTarget())
 		os.vMoveDir = (request.GetMoveTarget() - currentPos).GetNormalizedSafe(FORWARD_DIRECTION);
+
 
 	if (request.HasForcedNavigation())
 	{
@@ -42,15 +43,17 @@ bool CSharkMovementController::RequestMovement(CMovementRequest& request)
 		os.vMoveDir.NormalizeSafe();
 	}
 
+
+
 	m_pShark->SetActorMovement(os);
 
 	if (request.HasFireTarget())
-		m_currentMovementRequest.SetFireTarget(request.GetFireTarget());
+		m_currentMovementRequest.SetFireTarget( request.GetFireTarget() );
 	else if (request.RemoveFireTarget())
 		m_currentMovementRequest.ClearFireTarget();
 
 	if (request.HasAimTarget())
-		m_currentMovementRequest.SetAimTarget(request.GetAimTarget());
+		m_currentMovementRequest.SetAimTarget( request.GetAimTarget() );
 	else if (request.RemoveAimTarget())
 		m_currentMovementRequest.ClearAimTarget();
 
@@ -61,13 +64,13 @@ void CSharkMovementController::UpdateCurMovementState(const SActorFrameMovementP
 {
 	SMovementState& state(m_currentMovementState);
 	CShark::SBodyInfo bodyInfo;
-	m_pShark->GetActorInfo(bodyInfo);
+	m_pShark->GetActorInfo( bodyInfo );
 	//state.maxSpeed = bodyInfo.maxSpeed;
 	//state.minSpeed = bodyInfo.minSpeed;
 	//state.normalSpeed = bodyInfo.normalSpeed;
 	state.stance = bodyInfo.stance;
-	state.m_StanceSize = bodyInfo.m_stanceSizeAABB;
-	state.m_ColliderSize = bodyInfo.m_colliderSizeAABB;
+	state.m_StanceSize		= bodyInfo.m_stanceSizeAABB;
+	state.m_ColliderSize	= bodyInfo.m_colliderSizeAABB;
 	state.eyeDirection = bodyInfo.vEyeDir;
 	state.animationEyeDirection = bodyInfo.vEyeDirAnim;
 	state.eyePosition = bodyInfo.vEyePos;
@@ -84,25 +87,27 @@ void CSharkMovementController::UpdateCurMovementState(const SActorFrameMovementP
 
 	state.fireDirection = state.aimDirection;
 
-	state.isAlive = (m_pShark->GetHealth() > 0);
+	state.isAlive = (m_pShark->GetHealth()>0);
+
 
 	//---------------------------------------------
 	state.isAiming = false;
 
 	state.isFiring = false;
+
 }
 
 bool CSharkMovementController::GetStanceState(EStance stance, float lean, bool defaultPose, SStanceState& state)
 {
-	const SStanceInfo* pStance = m_pShark->GetStanceInfo(stance);
-	if (!pStance)
+	const SStanceInfo*	pStance = m_pShark->GetStanceInfo(stance);
+	if(!pStance)
 		return false;
 
-	if (defaultPose)
+	if(defaultPose)
 	{
-		state.pos.Set(0, 0, 0);
+		state.pos.Set(0,0,0);
 		state.bodyDirection = FORWARD_DIRECTION;
-		state.upDirection(0, 0, 1);
+		state.upDirection(0,0,1);
 		state.weaponPosition = m_pShark->GetWeaponOffsetWithLean(stance, lean, m_pShark->GetEyeOffset());
 		state.aimDirection = FORWARD_DIRECTION;
 		state.fireDirection = FORWARD_DIRECTION;
@@ -115,7 +120,7 @@ bool CSharkMovementController::GetStanceState(EStance stance, float lean, bool d
 	{
 		// TODO: the directions are like not to match. Is the AI even using them?
 		CShark::SBodyInfo bodyInfo;
-		m_pShark->GetActorInfo(bodyInfo);
+		m_pShark->GetActorInfo( bodyInfo );
 
 		Matrix34	tm = m_pShark->GetEntity()->GetWorldTM();
 

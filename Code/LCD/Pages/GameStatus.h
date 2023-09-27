@@ -72,7 +72,7 @@ private:
 	HANDLE	m_scoreScores[MAX_SCORES];
 
 	// used for convenience during update
-	mutable IActor* m_pClientActor;
+	mutable IActor*	m_pClientActor;
 	mutable ILocalizationManager* m_pLocalizationMan;
 	mutable CGameRules* m_pGameRules;
 	mutable IScriptTable* m_pGameRulesScript;
@@ -84,7 +84,7 @@ private:
 		int kills;
 		int deaths;
 
-		SScore(IActor* _pActor, int _kills, int _deaths) : pActor(_pActor), kills(_kills), deaths(_deaths) {}
+		SScore(IActor* _pActor, int _kills, int _deaths) : pActor(_pActor), kills(_kills), deaths(_deaths){}
 
 		bool operator<(const SScore& entry) const;
 	};

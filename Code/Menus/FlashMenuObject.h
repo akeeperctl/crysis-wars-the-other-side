@@ -36,6 +36,7 @@ struct IVideoPlayer;
 
 class CFlashMenuObject : public IGameFrameworkListener, IHardwareMouseEventListener, IInputEventListener, IFSCommandHandler, ILevelSystemListener, IFlashLoadMovieHandler
 {
+
 	friend class CMovieManager;
 
 public:
@@ -73,23 +74,23 @@ public:
 
 	static const int VIDEOPLAYER_LOCALIZED_AUDIOCHANNEL = -1;
 
-	void GetMemoryStatistics(ICrySizer*);
+	void GetMemoryStatistics( ICrySizer * );
 
 	// IGameFrameworkListener
 	virtual void OnPostUpdate(float fDeltaTime);
 	virtual void OnSaveGame(ISaveGame* pSaveGame);
 	virtual void OnLoadGame(ILoadGame* pLoadGame);
 	virtual void OnLevelEnd(const char* pNextLevel);
-	virtual void OnActionEvent(const SActionEvent& event);
+  virtual void OnActionEvent(const SActionEvent& event);
 	// ~IGameFrameworkListener
 
 	// IInputEventListener
-	virtual bool OnInputEvent(const SInputEvent& rInputEvent);
-	virtual bool OnInputEventUI(const SInputEvent& rInputEvent);
+	virtual bool OnInputEvent(const SInputEvent &rInputEvent);
+	virtual bool OnInputEventUI(const SInputEvent &rInputEvent);
 	// ~IInputEventListener
 
 	// IFSCommandHandler
-	void HandleFSCommand(const char* strCommand, const char* strArgs);
+	void HandleFSCommand(const char *strCommand,const char *strArgs);
 	// ~IFSCommandHandler
 
 	// IFlashLoadMovieImage
@@ -97,17 +98,17 @@ public:
 	// ~IFlashLoadMovieImage
 
 	// ILevelSystemListener
-	virtual void OnLevelNotFound(const char* levelName) {}
-	virtual void OnLoadingStart(ILevelInfo* pLevel);
-	virtual void OnLoadingComplete(ILevel* pLevel);
-	virtual void OnLoadingError(ILevelInfo* pLevel, const char* error);
-	virtual void OnLoadingProgress(ILevelInfo* pLevel, int progressAmount);
-	//~ILevelSystemListener
+	virtual void OnLevelNotFound(const char *levelName) {}
+	virtual void OnLoadingStart(ILevelInfo *pLevel);
+	virtual void OnLoadingComplete(ILevel *pLevel);
+	virtual void OnLoadingError(ILevelInfo *pLevel, const char *error);
+	virtual void OnLoadingProgress(ILevelInfo *pLevel, int progressAmount);
+		//~ILevelSystemListener
 
-	static SFlashKeyEvent MapToFlashKeyEvent(const SInputEvent& inputEvent);
+	static SFlashKeyEvent MapToFlashKeyEvent(const SInputEvent &inputEvent);
 
 	// IHardwareMouseEventListener
-	virtual void OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eHardwareMouseEvent);
+	virtual void OnHardwareMouseEvent(int iX,int iY,EHARDWAREMOUSEEVENT eHardwareMouseEvent);
 	// ~IHardwareMouseEventListener
 
 	//Profiles screen
@@ -115,16 +116,16 @@ public:
 	virtual void UpdateMenuColor();
 	virtual bool ColorChanged();
 	virtual void SetColorChanged();
-	static CFlashMenuObject* GetFlashMenuObject();
+	static CFlashMenuObject *GetFlashMenuObject();
 
 	ILINE bool IsActive() { return m_bUpdate; }
 
 	void ShowMainMenu();
-	void ShowInGameMenu(bool bShow = true);
-	void HideInGameMenuNextFrame(bool bRestoreGameMusic);
-	void UnloadHUDMovies();
-	void ReloadHUDMovies();
-	bool PlayFlashAnim(const char* pFlashFile);
+	void ShowInGameMenu(bool bShow=true);
+  void HideInGameMenuNextFrame(bool bRestoreGameMusic);
+  void UnloadHUDMovies();
+  void ReloadHUDMovies();
+  bool PlayFlashAnim(const char* pFlashFile);
 	// if audioCh is VIDEOPLAYER_LOCALIZED_AUDIOCHANNEL, we'll use the audio channel for the current language according to g_languageMapping
 	bool PlayVideo(const char* pVideoFile, bool origUpscaleMode = true, unsigned int videoOptions = 0, int audioCh = 0, int voiceCh = -1, bool useSubtitles = false, bool exclusiveVideo = false);
 	void StopVideo();
@@ -136,8 +137,8 @@ public:
 	void StartSplashScreenCountDown();
 	void StartResolutionCountDown();
 	void HardwareEvaluation();
-	void ShowMenuMessage(const char* message);
-	bool IsOnScreen(EMENUSCREEN screen);
+	void ShowMenuMessage(const char *message);
+  bool IsOnScreen(EMENUSCREEN screen);
 	bool IsControllerConnected() const { return m_bControllerConnected; }
 	void InitStartMenu();
 	void InitIngameMenu();
@@ -147,9 +148,9 @@ public:
 
 	string* GetLastInGameSave() { return &m_sLastSaveGame; }
 
-	CMPHub* GetMPHub()const;
+  CMPHub* GetMPHub()const;
 
-	CFlashMenuScreen* GetMenuScreen(EMENUSCREEN screen) const;
+	CFlashMenuScreen *GetMenuScreen(EMENUSCREEN screen) const;
 
 	bool Load();
 
@@ -181,20 +182,20 @@ public:
 		eEMS_GameDone
 	};
 
-	CFlashMenuObject();
-	virtual ~CFlashMenuObject();
+						CFlashMenuObject();
+	virtual ~	CFlashMenuObject();
 
 private:
 
 	struct SaveGameMetaData
 	{
-		const char* name;
-		const char* description;
-		const char* humanName;
-		const char* levelName;
-		const char* gameRules;
+		const char *name;
+		const char *description;
+		const char *humanName;
+		const char *levelName;
+		const char *gameRules;
 		int fileVersion;
-		const char* buildVersion;
+		const char * buildVersion;
 		float levelPlayTimeSec;
 		float gamePlayTimeSec;
 		time_t saveTime;
@@ -207,25 +208,25 @@ private:
 
 		SaveGameDataCompare(CFlashMenuObject::ESaveCompare mode) : m_mode(mode) {}
 
-		bool operator()(const SaveGameMetaData& a, const SaveGameMetaData& b) const
+		bool operator()( const SaveGameMetaData& a, const SaveGameMetaData& b ) const
 		{
-			if (m_mode == eSAVE_COMPARE_NAME)
+			if(m_mode == eSAVE_COMPARE_NAME)
 			{
 				return strcmp(a.humanName, b.humanName) < 0;
 			}
-			else if (m_mode == eSAVE_COMPARE_DATE)
+			else if(m_mode == eSAVE_COMPARE_DATE)
 			{
 				return a.saveTime > b.saveTime;
 			}
-			else if (m_mode == eSAVE_COMPARE_LEVEL)
+			else if(m_mode == eSAVE_COMPARE_LEVEL)
 			{
 				return strcmp(a.levelName, b.levelName) < 0;
 			}
-			else if (m_mode == eSAVE_COMPARE_TIME_PLAYED)
+			else if(m_mode == eSAVE_COMPARE_TIME_PLAYED)
 			{
 				return a.gamePlayTimeSec > b.gamePlayTimeSec;
 			}
-			else if (m_mode == eSAVE_COMPARE_TIME_LEVEL_PLAYED)
+			else if(m_mode == eSAVE_COMPARE_TIME_LEVEL_PLAYED)
 			{
 				return a.levelPlayTimeSec > b.levelPlayTimeSec;
 			}
@@ -233,34 +234,30 @@ private:
 		}
 	};
 
-	void UpdateLevels(const char* gamemode);
+	void UpdateLevels(const char *gamemode);
 
 	//Profiles screen
 	void UpdateProfiles();
-	void AddProfile(const char* profileName);
-	void SelectProfile(const char* profileName, bool silent = false, bool keepOldSettings = false);
-	void DeleteProfile(const char* profileName);
-	void SwitchProfiles(const char* oldProfile, const char* newProfile);
+	void AddProfile(const char *profileName);
+	void SelectProfile(const char *profileName, bool silent = false, bool keepOldSettings = false);
+	void DeleteProfile(const char *profileName);
+	void SwitchProfiles(const char *oldProfile, const char *newProfile);
 	void SelectActiveProfile();
 
 	//Singleplayer screen
 	void UpdateSingleplayerDifficulties();
-	void StartSingleplayerGame(const char* strDifficulty);
+	void StartSingleplayerGame(const char *strDifficulty);
 	void UpdateSaveGames();
-	void LoadGame(const char* FileName);
-	bool SaveGame(const char* FileName);
-	void DeleteSaveGame(const char* FileName);
-	const char* ValidateName(const char* fileName);
+	void LoadGame(const char *FileName);
+	bool SaveGame(const char *FileName);
+	void DeleteSaveGame(const char *FileName);
+	const char* ValidateName(const char *fileName);
 	void UpdateMods();
-	//TheOtherSide
-	void UpdateConquerorLevels();
-	bool GetLevelXmlInfo(const char* levelName, XmlNodeRef& info);
-	//~TheOtherSide
 
 	//Options screen
-	void SaveActionToMap(const char* actionmap, const char* action, const char* key);
-	void SetCVar(const char* command, const string& value);
-	void UpdateCVar(const char* command);
+	void SaveActionToMap(const char* actionmap, const char* action, const char *key);
+	void SetCVar(const char *command, const string& value);
+	void UpdateCVar(const char *command);
 	void UpdateKeyMenu();
 	void RestoreDefaults();
 
@@ -270,9 +267,9 @@ private:
 	void SetDisplayFormats();
 	void SetAntiAliasingModes();
 
-	void MP_ResetBegin();
-	void MP_ResetEnd();
-	void MP_ResetProgress(int iProgress);
+	void MP_ResetBegin		();
+	void MP_ResetEnd			();
+	void MP_ResetProgress	(int iProgress);
 
 	void CloseWaitingScreen();
 	void UpdateLaptop(float fDeltaTime);
@@ -306,23 +303,23 @@ private:
 	//this is a list of sound ids to be able to stop them
 	tSoundID m_soundIDs[ESound_Last];
 
-	void PlaySound(ESound eSound, bool bPlay = true);
+	void PlaySound(ESound eSound,bool bPlay=true);
 
 	void LockPlayerInputs(bool bLock);
 
 	// helper function to map the "default" profile name to a localized version
 	const wchar_t* GetMappedProfileName(const char* profileName);
 
-	static CFlashMenuObject* s_pFlashMenuObject;
+	static CFlashMenuObject *s_pFlashMenuObject;
 
-	CFlashMenuScreen* m_apFlashMenuScreens[MENUSCREEN_COUNT];
-	CFlashMenuScreen* m_pCurrentFlashMenuScreen;
-	CFlashMenuScreen* m_pSubtitleScreen;
-	CFlashMenuScreen* m_pAnimLaptopScreen;
+	CFlashMenuScreen *m_apFlashMenuScreens[MENUSCREEN_COUNT];
+	CFlashMenuScreen *m_pCurrentFlashMenuScreen;
+	CFlashMenuScreen *m_pSubtitleScreen;
+	CFlashMenuScreen *m_pAnimLaptopScreen;
 
 	IPlayerProfileManager* m_pPlayerProfileManager;
 
-	IMusicSystem* m_pMusicSystem;
+	IMusicSystem *m_pMusicSystem;
 
 	struct SLoadSave
 	{
@@ -330,19 +327,19 @@ private:
 		bool save;
 	} m_sLoadSave;
 
-	typedef std::map<string, Vec2> ButtonPosMap;
+	typedef std::map<string,Vec2> ButtonPosMap;
 	ButtonPosMap m_currentButtons;
 	std::vector<ButtonPosMap> m_buttonPositions;
 	string m_sCurrentButton;
 
 	void UpdateButtonSnap(const Vec2 mouse);
 	void SnapToNextButton(const Vec2 dir);
-	void HWMouse2Flash(Vec2& vec);
-	void Flash2HWMouse(Vec2& vec);
-	void GetButtonClientPos(ButtonPosMap::iterator button, Vec2& pos);
+	void HWMouse2Flash(Vec2 &vec);
+	void Flash2HWMouse(Vec2 &vec);
+	void GetButtonClientPos(ButtonPosMap::iterator button, Vec2 &pos);
 	void HighlightButton(ButtonPosMap::iterator button);
 	void PushButton(ButtonPosMap::iterator button, bool press, bool force);
-	ButtonPosMap::iterator FindButton(const TKeyName& shortcut);
+	ButtonPosMap::iterator FindButton(const TKeyName &shortcut);
 
 	bool ShouldIgnoreInGameEvent();
 
@@ -390,12 +387,12 @@ private:
 	IAVI_Reader* m_pAVIReader;
 	ESaveCompare m_eSaveGameCompareMode;
 	bool				 m_bSaveGameSortUp;
-
+	
 	string m_currentSubtitleLabel;
 	//last known savegame
 	string	m_sLastSaveGame;
 
-	CMPHub* m_multiplayerMenu;
+	CMPHub*      m_multiplayerMenu;
 
 	// key repeat
 	float					m_repeatTimer;
@@ -414,6 +411,12 @@ private:
 	wstring m_tempMappedProfileName;
 
 	std::map<string, FSAAMode> m_fsaaModes;
+
+
+
+
+
+
 };
 
 //-----------------------------------------------------------------------------------------------------

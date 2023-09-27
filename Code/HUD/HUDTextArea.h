@@ -14,6 +14,7 @@ History:
 #ifndef __HUDTEXTAREA_H__
 #define __HUDTEXTAREA_H__
 
+
 #include "HUDObject.h"
 #include <list>
 
@@ -36,20 +37,20 @@ public:
 	virtual void Update(float deltaTime);
 	virtual void AddMessage(const char* msg);
 
-	void GetMemoryStatistics(ICrySizer* s);
+	void GetMemoryStatistics(ICrySizer * s);
 
 	// Description:
 	//  Set position of top-left corner of text area
 	void SetPos(const Vec2& pos);
-
+	
 	// Description:
 	//	Set fadeout time (in seconds ... default is 4 secs).
 	void SetFadeTime(float fadetime);
 
 private:
-	IFFont* m_pDefaultFont;
+	IFFont*						m_pDefaultFont;
 	THUDTextEntries		m_entries;	// the entries which are currently being displayed
-	ITimer* m_pTimer;
+	ITimer*						m_pTimer;
 	Vec2							m_pos;			// position of top-left corner
 	float							m_fadetime;	// time in seconds for one entry to fade away
 };

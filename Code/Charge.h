@@ -18,7 +18,9 @@ History:
 # pragma once
 #endif
 
+
 #include "Automatic.h"
+
 
 class CCharge :
 	public CAutomatic
@@ -26,13 +28,13 @@ class CCharge :
 	typedef struct SChargeParams
 	{
 		SChargeParams() { Reset(); };
-		void Reset(const IItemParamsNode* params = 0, bool defaultInit = true)
+		void Reset(const IItemParamsNode *params=0, bool defaultInit=true)
 		{
 			CItemParamReader reader(params);
-			ResetValue(time, 0.5f);
-			ResetValue(max_charges, 1);
-			ResetValue(shoot_on_stop, false);
-			ResetValue(reset_spinup, false);
+			ResetValue(time,						0.5f);
+			ResetValue(max_charges,			1);
+			ResetValue(shoot_on_stop,		false);
+			ResetValue(reset_spinup,		false);
 		};
 
 		float		time;
@@ -44,15 +46,16 @@ class CCharge :
 	typedef struct SChargeActions
 	{
 		SChargeActions() { Reset(); };
-		void Reset(const IItemParamsNode* params = 0, bool defaultInit = true)
+		void Reset(const IItemParamsNode *params=0, bool defaultInit=true)
 		{
 			CItemParamReader reader(params);
-			ResetValue(charge, "charge");
-			ResetValue(uncharge, "uncharge");
+			ResetValue(charge,	"charge");
+			ResetValue(uncharge,"uncharge");
 		};
 
 		ItemString charge;
 		ItemString uncharge;
+
 	} SChargeActions;
 
 public:
@@ -60,10 +63,10 @@ public:
 	virtual ~CCharge();
 
 	virtual void Update(float frameTime, uint frameId);
-	virtual void GetMemoryStatistics(ICrySizer* s) { s->Add(*this); CSingle::GetMemoryStatistics(s); }
+	virtual void GetMemoryStatistics(ICrySizer * s) { s->Add(*this); CSingle::GetMemoryStatistics(s); }
 
-	virtual void ResetParams(const struct IItemParamsNode* params);
-	virtual void PatchParams(const struct IItemParamsNode* patch);
+	virtual void ResetParams(const struct IItemParamsNode *params);
+	virtual void PatchParams(const struct IItemParamsNode *patch);
 
 	virtual void Activate(bool activate);
 
@@ -89,5 +92,6 @@ protected:
 	uint					m_chlightId;
 	float					m_chTimer;
 };
+
 
 #endif //__CHARGE_H__

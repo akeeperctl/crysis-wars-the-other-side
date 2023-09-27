@@ -22,6 +22,7 @@ History:
 #include "Weapon.h"
 #include "ItemParamReader.h"
 
+
 #define ResetValue(name, defaultValue) if (defaultInit) name=defaultValue; reader.Read(#name, name)
 #define ResetValueEx(name, var, defaultValue) if (defaultInit) var=defaultValue; reader.Read(name, var)
 
@@ -29,20 +30,21 @@ History:
 typedef struct SSpreadModParams
 {
 	SSpreadModParams() { Reset(); };
-	void Reset(const IItemParamsNode* params = 0, bool defaultInit = true)
+	void Reset(const IItemParamsNode *params=0, bool defaultInit=true)
 	{
 		CItemParamReader reader(params);
-		ResetValue(min_mod, 1.0f);
-		ResetValue(max_mod, 1.0f);
-		ResetValue(attack_mod, 1.0f);
-		ResetValue(decay_mod, 1.0f);
-		ResetValue(speed_m_mod, 1.0f);
-		ResetValue(rotation_m_mod, 1.0f);
+		ResetValue(min_mod,						1.0f);
+		ResetValue(max_mod,						1.0f);
+		ResetValue(attack_mod,				1.0f);
+		ResetValue(decay_mod,					1.0f);
+		ResetValue(speed_m_mod,				1.0f);
+		ResetValue(rotation_m_mod,			1.0f);
 
 		ResetValue(spread_crouch_m_mod, 1.0f);
-		ResetValue(spread_prone_m_mod, 1.0f);
-		ResetValue(spread_jump_m_mod, 1.0f);
+		ResetValue(spread_prone_m_mod,  1.0f);
+		ResetValue(spread_jump_m_mod,  1.0f);
 		ResetValue(spread_zeroG_m_mod, 1.0f);
+
 	}
 
 	float	min_mod;
@@ -58,23 +60,24 @@ typedef struct SSpreadModParams
 	float								spread_jump_m_mod;
 	float								spread_zeroG_m_mod;
 
-	void GetMemoryStatistics(ICrySizer* s)
+	void GetMemoryStatistics(ICrySizer * s)
 	{
 	}
+
 } SSpreadModParams;
 
 //Recoil Modifiers (let modify recoil per value when zoomed)
 typedef struct SRecoilModParams
 {
 	SRecoilModParams() { Reset(); };
-	void Reset(const IItemParamsNode* params = 0, bool defaultInit = true)
+	void Reset(const IItemParamsNode *params=0, bool defaultInit=true)
 	{
 		CItemParamReader reader(params);
-		ResetValue(max_recoil_mod, 1.0f);
-		ResetValue(attack_mod, 1.0f);
-		ResetValue(decay_mod, 1.0f);
-		ResetValueEx("maxx_mod", max_mod.x, 1.0f);
-		ResetValueEx("maxy_mod", max_mod.y, 1.0f);
+		ResetValue(max_recoil_mod,	1.0f);
+		ResetValue(attack_mod,			1.0f);
+		ResetValue(decay_mod,				1.0f);
+		ResetValueEx("maxx_mod", max_mod.x,1.0f);
+		ResetValueEx("maxy_mod", max_mod.y,1.0f);
 		ResetValue(impulse_mod, 1.0f);
 		ResetValue(angular_impulse_mod, 1.0f);
 		ResetValue(back_impulse_mod, 1.0f);
@@ -85,6 +88,7 @@ typedef struct SRecoilModParams
 
 		ResetValue(recoil_strMode_m_mod, 1.0f);
 		ResetValue(recoil_zeroG_m_mod, 1.0f);
+
 	}
 
 	float								max_recoil_mod;
@@ -104,9 +108,10 @@ typedef struct SRecoilModParams
 	//Nano suit modifiers
 	float								recoil_strMode_m_mod;
 
-	void GetMemoryStatistics(ICrySizer* s)
+	void GetMemoryStatistics(ICrySizer * s)
 	{
 	}
+
 } SRecoilModParams;
 
 class CIronSight : public IZoomMode
@@ -119,15 +124,15 @@ public:
 
 	typedef struct SZoomParams
 	{
-		SZoomParams() { Reset(); };
-		void Reset(const IItemParamsNode* params = 0, bool defaultInit = true)
+		SZoomParams(){ Reset(); };
+		void Reset(const IItemParamsNode *params=0, bool defaultInit=true)
 		{
 			CItemParamReader reader(params);
 
 			ResetValue(layer, "zoom_layer");
 			ResetValue(suffix, "ironsight");
 			ResetValue(suffix_FC, "fc");
-			ResetValue(support_FC_IronSight, false);
+			ResetValue(support_FC_IronSight,false);
 			ResetValue(alternate_dof_mask, "");
 			ResetValue(dof_mask, "");
 			ResetValue(blur_amount, 0.0f);
@@ -141,8 +146,8 @@ public:
 			ResetValue(stage_time, 0.055f);
 			ResetValue(scope_mode, false);
 			ResetValue(scope_nearFov, 60.0f);
-			ResetValue(scope_offset, Vec3(0, 0, 0));
-
+			ResetValue(scope_offset,Vec3(0,0,0));
+			
 			dof = true;
 			if (dof_mask.empty() && alternate_dof_mask.empty())
 				dof = false;
@@ -158,22 +163,22 @@ public:
 
 			if (params)
 			{
-				const IItemParamsNode* pstages = params->GetChild("stages");
+				const IItemParamsNode *pstages=params->GetChild("stages");
 				if (pstages)
 				{
-					stages.resize(0);
-					int n = pstages->GetChildCount();
+					stages.resize(0); 
+					int n=pstages->GetChildCount();
 
-					for (int i = 0; i < n; i++)
+					for (int i=0; i<n; i++)
 					{
-						const IItemParamsNode* stage = pstages->GetChild(i);
+						const IItemParamsNode *stage = pstages->GetChild(i);
 						float v = 1.0f; stage->GetAttribute("value", v);
 						stages.push_back(v);
 					}
 				}
 			}
 		}
-		void GetMemoryStatistics(ICrySizer* s)
+		void GetMemoryStatistics(ICrySizer * s)
 		{
 			s->AddContainer(stages);
 			s->Add(layer);
@@ -208,20 +213,21 @@ public:
 
 	typedef struct SZoomActions
 	{
+
 		SZoomActions() { Reset(); };
-		void Reset(const IItemParamsNode* params = 0, bool defaultInit = true)
+		void Reset(const IItemParamsNode *params=0, bool defaultInit=true)
 		{
 			CItemParamReader reader(params);
-			ResetValue(zoom_in, "zoom_in");
-			ResetValue(zoom_out, "zoom_out");
-			ResetValue(idle, "idle");
+			ResetValue(zoom_in,			"zoom_in");
+			ResetValue(zoom_out,		"zoom_out");
+			ResetValue(idle,				"idle");
 		}
 
 		ItemString	zoom_in;
 		ItemString	zoom_out;
 		ItemString	idle;
 
-		void GetMemoryStatistics(ICrySizer* s)
+		void GetMemoryStatistics(ICrySizer * s)
 		{
 			s->Add(zoom_in);
 			s->Add(zoom_out);
@@ -231,16 +237,17 @@ public:
 
 	typedef struct SZoomSway
 	{
+
 		SZoomSway() { Reset(); };
-		void Reset(const IItemParamsNode* params = 0, bool defaultInit = true)
+		void Reset(const IItemParamsNode *params=0, bool defaultInit=true)
 		{
 			CItemParamReader reader(params);
-			ResetValue(maxX, 0.0f);
-			ResetValue(maxY, 0.0f);
-			ResetValue(stabilizeTime, 3.0f);
+			ResetValue(maxX,			0.0f);
+			ResetValue(maxY,		  0.0f);
+			ResetValue(stabilizeTime,				3.0f);
 			ResetValue(strengthScale, 0.6f);
 			ResetValue(strengthScaleTime, 0.75f);
-			ResetValue(minScale, 0.15f);
+			ResetValue(minScale , 0.15f);
 			ResetValue(scaleAfterFiring, 0.5f);
 			ResetValue(crouchScale, 0.8f);
 			ResetValue(proneScale, 0.6f);
@@ -258,22 +265,22 @@ public:
 		float								crouchScale;
 		float								proneScale;
 
-		void GetMemoryStatistics(ICrySizer* s)
+		void GetMemoryStatistics(ICrySizer * s)
 		{
 		}
 	} SZoomSway;
 
 	CIronSight();
 	virtual ~CIronSight();
-	virtual void GetMemoryStatistics(ICrySizer* s);
+	virtual void GetMemoryStatistics(ICrySizer * s);
 
 	// IZoomMode
-	virtual void Init(IWeapon* pWeapon, const struct IItemParamsNode* params);
+	virtual void Init(IWeapon *pWeapon, const struct IItemParamsNode *params);
 	virtual void Update(float frameTime, uint frameId);
 	virtual void Release();
 
-	virtual void ResetParams(const struct IItemParamsNode* params);
-	virtual void PatchParams(const struct IItemParamsNode* patch);
+	virtual void ResetParams(const struct IItemParamsNode *params);
+	virtual void PatchParams(const struct IItemParamsNode *patch);
 
 	virtual void Activate(bool activate);
 
@@ -282,7 +289,7 @@ public:
 	virtual void StopZoom();
 	virtual void ExitZoom();
 
-	virtual int GetCurrentStep() const { return m_currentStep; }
+	virtual int GetCurrentStep() const {return m_currentStep;}
 	virtual float GetZoomFoVScale(int step) const;
 
 	virtual void ZoomIn();
@@ -296,7 +303,7 @@ public:
 
 	virtual void Serialize(TSerialize ser);
 
-	virtual void UpdateFPView(float frameTime) {}
+	virtual void UpdateFPView(float frameTime){}
 
 	virtual int  GetMaxZoomSteps() { return m_zoomparams.stages.size(); };
 
@@ -304,18 +311,18 @@ public:
 
 	virtual bool IsToggle();
 
-	virtual void FilterView(SViewParams& viewparams);
-	virtual void PostFilterView(SViewParams& viewparams);
+	virtual void FilterView(SViewParams &viewparams);
+	virtual void PostFilterView(SViewParams & viewparams);
 	// ~IZoomMode
 
 	virtual void ResetTurnOff();
-	virtual void TurnOff(bool enable, bool smooth = true, bool anim = true);
+	virtual void TurnOff(bool enable, bool smooth=true, bool anim=true);
 
 	virtual bool IsScope() const { return false; }
 
 protected:
-	virtual void EnterZoom(float time, const char* zoom_layer = 0, bool smooth = true, int zoomStep = 1);
-	virtual void LeaveZoom(float time, bool smooth = true);
+	virtual void EnterZoom(float time, const char *zoom_layer=0, bool smooth=true, int zoomStep = 1);
+	virtual void LeaveZoom(float time, bool smooth=true);
 
 	virtual void ZoomIn(float time, float from, float to, bool smooth);
 	virtual void ZoomOut(float time, float from, float to, bool smooth);
@@ -330,19 +337,19 @@ protected:
 
 	virtual void UpdateDepthOfField(CActor* pActor, float frameTime, float t);
 
-	virtual void SetActorFoVScale(float fov, bool sens, bool recoil, bool hbob);
+	virtual void SetActorFoVScale(float fov, bool sens,bool recoil, bool hbob);
 	virtual float GetActorFoVScale() const;
 
 	virtual void SetActorSpeedScale(float scale);
 	virtual float GetActorSpeedScale() const;
 
-	virtual void SetRecoilScale(float scale) { m_recoilScale = scale; };
+	virtual void SetRecoilScale(float scale) { m_recoilScale=scale; };
 	virtual float GetRecoilScale() const { return m_recoilScale; };
 
 	virtual float GetSensitivityFromFoVScale(float scale) const;
 	virtual float GetHBobFromFoVScale(float scale) const;
 	virtual float GetRecoilFromFoVScale(float scale) const;
-
+  
 	virtual float GetMagFromFoVScale(float scale) const;
 	virtual float GetFoVScaleFromMag(float mag) const;
 
@@ -355,12 +362,12 @@ protected:
 	void AdjustNearFov(float time, bool zoomIn);
 	void ResetFovAndPosition();
 
-	void ZoomSway(float time, float& x, float& y);
+	void ZoomSway(float time, float &x, float&y);
 
-	CWeapon* m_pWeapon;
+	CWeapon				*m_pWeapon;
 
-	float					m_savedFoVScale;
-
+  float					m_savedFoVScale;
+	
 	bool					m_zoomed;
 	bool					m_zoomingIn;
 	float					m_zoomTimer;
@@ -392,6 +399,8 @@ protected:
 	float         m_swayCycle;
 
 	float         m_lastRecoil;
+
 };
+
 
 #endif // __IRONSIGHT_H__

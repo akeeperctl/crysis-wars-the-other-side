@@ -3,7 +3,7 @@ Crytek Source File.
 Copyright (C), Crytek Studios, 2006.
 -------------------------------------------------------------------------
 
-Description:
+Description: 
 	Header for CTweakMenu
 
 -------------------------------------------------------------------------
@@ -33,46 +33,48 @@ class CTweakTraverser;
 
 //-------------------------------------------------------------------------
 
-class CTweakMenu : public CTweakCommon {
+
+class CTweakMenu : public CTweakCommon{
 public:
 
 	friend class CTweakTraverser;
 
 	// Used for recursively creating the entire menu from the root
-	CTweakMenu(IScriptSystem* pScriptSystem);
-
+	CTweakMenu(IScriptSystem *pScriptSystem);
+	
 	// Recursively creates a submenu tree from a Tweak menu table
-	CTweakMenu(IScriptTable* pTable);
+	CTweakMenu(IScriptTable *pTable);
 
 	// Destructor
 	~CTweakMenu();
 
-	// Get a traverser
+	// Get a traverser 
 	CTweakTraverser GetTraverser(void);
 
 	// Register a Traverser with this menu
-	void RegisterTraverser(CTweakTraverser* traverser);
+	void RegisterTraverser( CTweakTraverser * traverser );
 
 	// Deregister a Traverser with this menu
-	bool DeregisterTraverser(CTweakTraverser* traverser);
+	bool DeregisterTraverser( CTweakTraverser * traverser );
 
 	// Get the type of the instance
 	ETweakType GetType(void) { return eTT_Menu; }
 
-	void StoreChanges(IScriptTable* pTable);
+	void StoreChanges( IScriptTable *pTable );
 
 	void Init(void);
 
 protected:
 
 	// (Re)initialisation
-	bool init(IScriptTable* pTable);
+	bool init(IScriptTable *pTable);
 
 	// Items in this menu
 	std::vector<CTweakCommon*> m_items;
 
 	// Traversers associated with this menu
 	std::set<CTweakTraverser*> m_traversers;
+
 };
 
 #endif  // __CTWEAKMENU_H__

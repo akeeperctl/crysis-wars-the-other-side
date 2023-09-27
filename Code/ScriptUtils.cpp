@@ -14,23 +14,24 @@ Notes:
 
 *************************************************************************/
 
+
 #include "StdAfx.h"
 #include "ScriptUtils.h"
 #include "ScriptHelpers.h"
 
 //-------------------------------------------------------------------------
 
-bool IsEqual(ScriptAnyValue& a, ScriptAnyValue& b) {
+bool IsEqual(ScriptAnyValue &a, ScriptAnyValue &b) {
 	// Could have a more efficient pre-test
 	// Could also compare references for strings....
 	string s1 = ToString(a);
 	string s2 = ToString(b);
-	return (s1 == s2);
+	return (s1==s2);
 }
 
 //-------------------------------------------------------------------------
 
-string ToString(ScriptAnyValue& value) {
+string ToString(ScriptAnyValue &value) {
 	string result;
 	ScriptAnyType type = value.type;
 	switch (type)
@@ -51,7 +52,7 @@ string ToString(ScriptAnyValue& value) {
 		result = string("Nil");
 		break;
 	case ANY_TNUMBER:
-		result.Format("%f", value.number);
+		result.Format("%f",value.number );
 		break;
 	case ANY_TSTRING:
 		result = string(value.str);
@@ -65,7 +66,7 @@ string ToString(ScriptAnyValue& value) {
 	case ANY_TVECTOR:
 		result.Format("(%f, %f, %f)");
 		break;
-	default:
+	default: 
 		return "Unrecognised type";
 	}
 
@@ -74,7 +75,7 @@ string ToString(ScriptAnyValue& value) {
 
 //-------------------------------------------------------------------------
 
-bool GetLuaVarRecursive(const char* sKey, ScriptAnyValue& result) {
+bool GetLuaVarRecursive(const char *sKey, ScriptAnyValue &result) {
 	// Copy the string
 	string tokenStream(sKey);
 	string token;
@@ -85,7 +86,7 @@ bool GetLuaVarRecursive(const char* sKey, ScriptAnyValue& result) {
 	// Deal with first token specially
 	token = tokenStream.Tokenize(".", curPos);
 	if (token.empty()) return false; // Catching, say, an empty string
-	if (!gEnv->pScriptSystem->GetGlobalAny(token, value)) return false;
+	if (! gEnv->pScriptSystem->GetGlobalAny(token,value) ) return false;
 
 	// Tokenize remainder
 	token = tokenStream.Tokenize(".", curPos);
@@ -93,10 +94,10 @@ bool GetLuaVarRecursive(const char* sKey, ScriptAnyValue& result) {
 		// Make sure the last step was a table
 		if (value.type != ANY_TTABLE) return false;
 
-		// Must use temporary
+		// Must use temporary 
 		ScriptAnyValue getter;
 		value.table->GetValueAny(token, getter);
-		value = getter;
+		value = getter;	
 		token = tokenStream.Tokenize(".", curPos);
 	}
 
@@ -107,7 +108,8 @@ bool GetLuaVarRecursive(const char* sKey, ScriptAnyValue& result) {
 //-------------------------------------------------------------------------
 
 // This could perhaps be done better by preparsing into STL string array, but it's ok as is
-bool SetLuaVarRecursive(const char* sKey, const ScriptAnyValue& newValue) {
+bool SetLuaVarRecursive(const char *sKey, const ScriptAnyValue &newValue) {
+
 	string tokenStream(sKey);
 
 	// It might be a global - i.e. only one token
@@ -124,7 +126,7 @@ bool SetLuaVarRecursive(const char* sKey, const ScriptAnyValue& newValue) {
 
 	// Deal with first token specially
 	token = tokenStream.Tokenize(".", curPos);
-	gEnv->pScriptSystem->GetGlobalAny(token, value);
+	gEnv->pScriptSystem->GetGlobalAny(token,value);
 
 	token = tokenStream.Tokenize(".", curPos);
 	if (token.empty()) return false; // Must be malformed path, ending with "."
@@ -138,7 +140,7 @@ bool SetLuaVarRecursive(const char* sKey, const ScriptAnyValue& newValue) {
 		// Must use temporary
 		ScriptAnyValue getter;
 		value.table->GetValueAny(token, getter);
-		value = getter;
+		value = getter;	
 
 		// Advance to the token ahead
 		token = nextToken;
@@ -155,14 +157,15 @@ bool SetLuaVarRecursive(const char* sKey, const ScriptAnyValue& newValue) {
 //-------------------------------------------------------------------------
 
 // Dump a Lua table as a string
-bool DumpLuaTable(IScriptTable* table, FILE* file, string& result) {
-	IScriptSystem* pScript = gEnv->pScriptSystem;
-	char* str = NULL;
+bool DumpLuaTable( IScriptTable * table, FILE * file, string &result ) {
+	
+	IScriptSystem *pScript = gEnv->pScriptSystem;
+	char *str = NULL; 		
 	HSCRIPTFUNCTION f = pScript->GetFunctionPtr("DumpTableAsLuaString");
 	//ScriptAnyValue val;
 	//gEnv->pScriptSystem->GetGlobalAny("DumpTableAsLuaString",val);
 	//SmartScriptFunction fun( pScript, pScript->GetFunctionPtr("DumpTableAsLuaString") );
-	bool success = Script::CallReturn(pScript, f, table, "Tweaks.TweaksSave", str);
+	bool success = Script::CallReturn( pScript, f, table, "Tweaks.TweaksSave", str );
 	result = str;
 	return success;
 }

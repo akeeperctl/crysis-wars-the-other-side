@@ -8,7 +8,7 @@
 #include "ScreenEffects.h"
 
 //---------------------------------
-CScreenEffects::CScreenEffects(IActor* owner) : m_ownerActor(owner), m_curUniqueID(0), m_enableBlends(true), m_updatecoords(false)
+CScreenEffects::CScreenEffects(IActor *owner) : m_ownerActor(owner), m_curUniqueID(0), m_enableBlends(true), m_updatecoords(false)
 {
 }
 
@@ -26,7 +26,7 @@ void CScreenEffects::Update(float frameTime)
 	std::map<int, SBlendGroup* >::iterator it = m_blends.begin();
 	while (it != m_blends.end())
 	{
-		SBlendGroup* curGroup = (SBlendGroup*)it->second;
+		SBlendGroup *curGroup = (SBlendGroup *)it->second;
 		bool found = m_enabledGroups.find(it->first) != m_enabledGroups.end();
 		if (curGroup && (!found || (found && m_enabledGroups[it->first])))
 		{
@@ -37,6 +37,7 @@ void CScreenEffects::Update(float frameTime)
 		}
 		it++;
 	}
+
 }
 
 void CScreenEffects::PostUpdate(float frameTime)
@@ -45,8 +46,8 @@ void CScreenEffects::PostUpdate(float frameTime)
 	{
 		Vec3 screenspace;
 		gEnv->pRenderer->ProjectToScreen(m_coords3d.x, m_coords3d.y, m_coords3d.z, &screenspace.x, &screenspace.y, &screenspace.z);
-		gEnv->p3DEngine->SetPostEffectParam(m_coordsXname, screenspace.x / 100.0f);
-		gEnv->p3DEngine->SetPostEffectParam(m_coordsYname, screenspace.y / 100.0f);
+		gEnv->p3DEngine->SetPostEffectParam(m_coordsXname, screenspace.x/100.0f);
+		gEnv->p3DEngine->SetPostEffectParam(m_coordsYname, screenspace.y/100.0f);
 	}
 }
 
@@ -57,7 +58,7 @@ int CScreenEffects::GetUniqueID()
 }
 
 //---------------------------------
-void CScreenEffects::StartBlend(IBlendedEffect* effect, IBlendType* blendType, float speed, int blendGroup)
+void CScreenEffects::StartBlend(IBlendedEffect *effect, IBlendType *blendType, float speed, int blendGroup)
 {
 	bool found = m_enabledGroups.find(blendGroup) != m_enabledGroups.end();
 	if (!m_enableBlends || (found && !m_enabledGroups[blendGroup]))
@@ -69,12 +70,12 @@ void CScreenEffects::StartBlend(IBlendedEffect* effect, IBlendType* blendType, f
 		return;
 	}
 
-	SBlendJobNode* newNode = new SBlendJobNode();
+	SBlendJobNode *newNode = new SBlendJobNode();
 	newNode->blendGroup = blendGroup;
 	newNode->blendType = blendType;
 	newNode->myEffect = effect;
 	newNode->speed = speed;
-	SBlendGroup* group = 0;
+	SBlendGroup *group = 0;
 	if (m_blends.count(blendGroup) == 0)
 	{
 		group = new SBlendGroup();
@@ -91,10 +92,11 @@ void CScreenEffects::StartBlend(IBlendedEffect* effect, IBlendType* blendType, f
 //---------------------------------
 float CScreenEffects::GetCurrentFOV()
 {
-	//if (m_ownerActor->IsPlayer())
+	
+	if (m_ownerActor->IsPlayer())
 	{
-		auto player = (CActor*)m_ownerActor;
-		SActorParams* params = player->GetActorParams();
+		CPlayer *player = (CPlayer *)m_ownerActor;
+		SActorParams *params = player->GetActorParams();
 		return params->viewFoVScale;
 	}
 	return 1.0f;
@@ -105,7 +107,7 @@ void CScreenEffects::CamShake(Vec3 shiftShake, Vec3 rotateShake, float freq, flo
 {
 	if (m_ownerActor->IsClient())
 	{
-		IView* view = gEnv->pGame->GetIGameFramework()->GetIViewSystem()->GetActiveView();
+		IView *view = gEnv->pGame->GetIGameFramework()->GetIViewSystem()->GetActiveView();
 		if (view)
 		{
 			view->SetViewShake(Ang3(shiftShake), rotateShake, shakeTime, shakeTime, randomness, shakeID, false);
@@ -122,11 +124,12 @@ bool CScreenEffects::HasJobs(int blendGroup)
 	}
 	else
 	{
-		SBlendGroup* group = m_blends[blendGroup];
+		SBlendGroup *group = m_blends[blendGroup];
 		if (group)
 			return (!group->Empty());
 	}
 	return false;
+	
 }
 
 //---------------------------------
@@ -134,7 +137,7 @@ void CScreenEffects::ClearBlendGroup(int blendGroup, bool resetScreen)
 {
 	if (m_blends.count(blendGroup) != 0)
 	{
-		SBlendGroup* group = m_blends[blendGroup];
+		SBlendGroup *group = m_blends[blendGroup];
 		if (group)
 		{
 			delete group;
@@ -151,7 +154,7 @@ void CScreenEffects::ClearAllBlendGroups(bool resetScreen)
 	std::map<int, SBlendGroup* >::iterator it = m_blends.begin();
 	while (it != m_blends.end())
 	{
-		SBlendGroup* cur = (SBlendGroup*)it->second;
+		SBlendGroup *cur = (SBlendGroup *)it->second;
 		if (cur)
 		{
 			delete cur;
@@ -180,16 +183,16 @@ void CScreenEffects::ResetScreen()
 		gEnv->p3DEngine->SetPostEffectParam("BloodSplats_Type", false);
 		gEnv->p3DEngine->SetPostEffectParam("BloodSplats_Amount", 0.0f);
 
-		//if (m_ownerActor->IsPlayer()) //TheOtherSide
+		if (m_ownerActor->IsPlayer())
 		{
-			auto player = (CActor*)m_ownerActor; //TheOtherSide
-			SActorParams* params = player->GetActorParams();
+			CPlayer *player = (CPlayer *)m_ownerActor;
+			SActorParams *params = player->GetActorParams();
 			params->viewFoVScale = 1.0f;
 		}
 	}
 }
 
-void CScreenEffects::SetUpdateCoords(const char* coordsXname, const char* coordsYname, Vec3 pos)
+void CScreenEffects::SetUpdateCoords(const char *coordsXname, const char *coordsYname, Vec3 pos)
 {
 	m_coordsXname = coordsXname;
 	m_coordsYname = coordsYname;
@@ -212,11 +215,11 @@ CFOVEffect::CFOVEffect(EntityId ownerID, float goalFOV)
 //---------------------------------
 void CFOVEffect::Init()
 {
-	IActor* client = gEnv->pGame->GetIGameFramework()->GetIActorSystem()->GetActor(m_ownerID);
-	if (client /*&& client->IsPlayer()*/) //TheOtherSide
+	IActor *client = gEnv->pGame->GetIGameFramework()->GetIActorSystem()->GetActor(m_ownerID);
+	if (client && client->IsPlayer())
 	{
-		auto player = (CActor*)client; //TheOtherSide
-		SActorParams* params = player->GetActorParams();
+		CPlayer *player = (CPlayer *)client;
+		SActorParams *params = player->GetActorParams();
 		m_startFOV = params->viewFoVScale;
 		m_currentFOV = m_startFOV;
 	}
@@ -226,11 +229,11 @@ void CFOVEffect::Init()
 void CFOVEffect::Update(float point)
 {
 	m_currentFOV = (point * (m_goalFOV - m_startFOV)) + m_startFOV;
-	IActor* client = gEnv->pGame->GetIGameFramework()->GetIActorSystem()->GetActor(m_ownerID);
-	if (client/* && client->IsPlayer()*/)//TheOtherSide
+	IActor *client = gEnv->pGame->GetIGameFramework()->GetIActorSystem()->GetActor(m_ownerID);
+	if (client && client->IsPlayer())
 	{
-		auto player = (CActor*)client; //TheOtherSide
-		SActorParams* params = player->GetActorParams();
+		CPlayer *player = (CPlayer *)client;
+		SActorParams *params = player->GetActorParams();
 		params->viewFoVScale = m_currentFOV;
 	}
 }
@@ -246,7 +249,7 @@ CPostProcessEffect::CPostProcessEffect(EntityId ownerID, string paramName, float
 //---------------------------------
 void CPostProcessEffect::Init()
 {
-	IActor* client = gEnv->pGame->GetIGameFramework()->GetIActorSystem()->GetActor(m_ownerID);
+	IActor *client = gEnv->pGame->GetIGameFramework()->GetIActorSystem()->GetActor(m_ownerID);
 	if (client && client->IsClient())
 	{
 		gEnv->p3DEngine->GetPostEffectParam(m_paramName, m_currentVal);
@@ -257,7 +260,7 @@ void CPostProcessEffect::Init()
 //---------------------------------
 void CPostProcessEffect::Update(float point)
 {
-	IActor* client = gEnv->pGame->GetIGameFramework()->GetIActorSystem()->GetActor(m_ownerID);
+	IActor *client = gEnv->pGame->GetIGameFramework()->GetIActorSystem()->GetActor(m_ownerID);
 	if (client && client->IsClient())
 	{
 		m_currentVal = (point * (m_goalVal - m_startVal)) + m_startVal;

@@ -4,11 +4,11 @@
 	-------------------------------------------------------------------------
 	$Id$
 	$DateTime$
-	Description:
+	Description: 
 
 	-------------------------------------------------------------------------
 	History:
-	- 7:2:2006   15:38 : Created by MÐ±rcio Martins
+	- 7:2:2006   15:38 : Created by Márcio Martins
 
 *************************************************************************/
 #ifndef __GAMERULES_H__
@@ -18,6 +18,7 @@
 # pragma once
 #endif
 
+
 #include <IGameObject.h>
 #include <IGameRulesSystem.h>
 #include <IViewSystem.h>
@@ -26,6 +27,7 @@
 #include <queue>
 #include "Voting.h"
 #include "ShotValidator.h"
+
 
 class CActor;
 class CPlayer;
@@ -52,18 +54,18 @@ public:
 		eT_Enemy,
 		eT_Type1,
 	};
-	DbgPlotter() :m_Counter(0), m_pImgBuffer(NULL), m_imgSizeX(512), m_imgSizeY(512) {}
+	DbgPlotter():m_Counter(0),m_pImgBuffer(NULL),m_imgSizeX(512),m_imgSizeY(512){}
 	void	Reset();
 	void	WriteImg(EntityId ownerId);
 
 	void	PlotSpawnPoints();
 	void	PlotAllPlayers(const EntityId skipId);
-	void  PlotTeam(const EntityId entID, bool enemy);
-	void	PlotBox(float x, float y, float halfSz, EDbgPlotTypes entType);
+	void  PlotTeam( const EntityId entID, bool enemy );
+	void	PlotBox( float x, float y, float halfSz, EDbgPlotTypes entType );
 	void  PlotCircle(float x, float y, float r, EDbgPlotTypes entType);
 
-	void	Plot(float x, float y, EDbgPlotTypes entType, bool bigPixel = true);
-	void	Plot(const EntityId entID, EDbgPlotTypes entType);
+	void	Plot( float x, float y, EDbgPlotTypes entType, bool bigPixel=true );
+	void	Plot( const EntityId entID, EDbgPlotTypes entType );
 
 protected:
 	bool	m_isEnabled;
@@ -100,6 +102,7 @@ extern DbgPlotter	g_dbgPlotter;
 	} \
 } \
 
+
 #define ACTOR_INVOKE_ON_TEAM(team, rmi, params)	\
 { \
 	TPlayerTeamIdMap::const_iterator _team=m_playerteams.find(team); \
@@ -114,6 +117,7 @@ extern DbgPlotter	g_dbgPlotter;
 		} \
 	} \
 } \
+
 
 #define ACTOR_INVOKE_ON_TEAM_NOLOCAL(team, rmi, params)	\
 { \
@@ -130,9 +134,10 @@ extern DbgPlotter	g_dbgPlotter;
 	} \
 } \
 
-class CGameRules : public CGameObjectExtensionHelper<CGameRules, IGameRules, 64>,
-	public IActionListener,
-	public IViewSystemListener
+
+class CGameRules :	public CGameObjectExtensionHelper<CGameRules, IGameRules, 64>, 
+										public IActionListener,
+										public IViewSystemListener
 {
 public:
 
@@ -153,9 +158,9 @@ public:
 		{
 		}
 
-		bool operator==(const SMinimapEntity& rhs)
+		bool operator==(const SMinimapEntity &rhs)
 		{
-			return (entityId == rhs.entityId);
+			return (entityId==rhs.entityId);
 		}
 
 		EntityId		entityId;
@@ -166,8 +171,8 @@ public:
 
 	typedef struct TObjective
 	{
-		TObjective() : status(0), entityId(0) {};
-		TObjective(int sts, EntityId eid) : status(sts), entityId(eid) {};
+		TObjective(): status(0), entityId(0) {};
+		TObjective(int sts, EntityId eid): status(sts), entityId(eid) {};
 
 		int				status;
 		EntityId	entityId;
@@ -184,61 +189,61 @@ public:
 	};
 	typedef std::vector<SGameRulesListener*> TGameRulesListenerVec;
 
-	typedef std::map<IEntity*, float> TExplosionAffectedEntities;
+	typedef std::map<IEntity *, float> TExplosionAffectedEntities;
 
 	CGameRules();
 	virtual ~CGameRules();
 	//IGameObjectExtension
-	virtual bool Init(IGameObject* pGameObject);
-	virtual void PostInit(IGameObject* pGameObject);
+	virtual bool Init( IGameObject * pGameObject );
+	virtual void PostInit( IGameObject * pGameObject );
 	virtual void InitClient(int channelId);
 	virtual void PostInitClient(int channelId);
 	virtual void Release();
-	virtual void FullSerialize(TSerialize ser);
-	virtual bool NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int flags);
+	virtual void FullSerialize( TSerialize ser );
+	virtual bool NetSerialize( TSerialize ser, EEntityAspects aspect, uint8 profile, int flags );
 	virtual void PostSerialize();
-	virtual void SerializeSpawnInfo(TSerialize ser) {}
-	virtual ISerializableInfoPtr GetSpawnInfo() { return 0; }
-	virtual void Update(SEntityUpdateContext& ctx, int updateSlot);
-	virtual void HandleEvent(const SGameObjectEvent&);
-	virtual void ProcessEvent(SEntityEvent&);
+	virtual void SerializeSpawnInfo( TSerialize ser ) {}
+	virtual ISerializableInfoPtr GetSpawnInfo() {return 0;}
+	virtual void Update( SEntityUpdateContext& ctx, int updateSlot );
+	virtual void HandleEvent( const SGameObjectEvent& );
+	virtual void ProcessEvent( SEntityEvent& );
 	virtual void SetChannelId(uint16 id) {};
-	virtual void SetAuthority(bool auth);
-	virtual void PostUpdate(float frameTime);
+	virtual void SetAuthority( bool auth );
+	virtual void PostUpdate( float frameTime );
 	virtual void PostRemoteSpawn() {};
-	virtual void GetMemoryStatistics(ICrySizer* s);
+	virtual void GetMemoryStatistics(ICrySizer * s);
 	//~IGameObjectExtension
 
 	// IViewSystemListener
 	virtual bool OnBeginCutScene(IAnimSequence* pSeq, bool bResetFX);
 	virtual bool OnEndCutScene(IAnimSequence* pSeq);
 	virtual void OnPlayCutSceneSound(IAnimSequence* pSeq, ISound* pSound) {};
-	virtual bool OnCameraChange(const SCameraParams& cameraParams) { return true; };
+	virtual bool OnCameraChange(const SCameraParams& cameraParams){ return true; };
 	// ~IViewSystemListener
 
 	//IGameRules
-	virtual bool ShouldKeepClient(int channelId, EDisconnectionCause cause, const char* desc) const;
+	virtual bool ShouldKeepClient(int channelId, EDisconnectionCause cause, const char *desc) const;
 	virtual void PrecacheLevel();
-	virtual void OnConnect(struct INetChannel* pNetChannel);
-	virtual void OnDisconnect(EDisconnectionCause cause, const char* desc); // notification to the client that he has been disconnected
+	virtual void OnConnect(struct INetChannel *pNetChannel);
+	virtual void OnDisconnect(EDisconnectionCause cause, const char *desc); // notification to the client that he has been disconnected
 	virtual void OnResetMap();
 
 	virtual bool OnClientConnect(int channelId, bool isReset);
-	virtual void OnClientDisconnect(int channelId, EDisconnectionCause cause, const char* desc, bool keepClient);
+	virtual void OnClientDisconnect(int channelId, EDisconnectionCause cause, const char *desc, bool keepClient);
 	virtual bool OnClientEnteredGame(int channelId, bool isReset);
-
+	
 	virtual void OnItemDropped(EntityId itemId, EntityId actorId);
 	virtual void OnItemPickedUp(EntityId itemId, EntityId actorId);
 
-	virtual void SendTextMessage(ETextMessageType type, const char* msg, uint to = eRMI_ToAllClients, int channelId = -1,
-		const char* p0 = 0, const char* p1 = 0, const char* p2 = 0, const char* p3 = 0);
-	virtual void SendChatMessage(EChatMessageType type, EntityId sourceId, EntityId targetId, const char* msg);
+	virtual void SendTextMessage(ETextMessageType type, const char *msg, uint to=eRMI_ToAllClients, int channelId=-1,
+		const char *p0=0, const char *p1=0, const char *p2=0, const char *p3=0);
+	virtual void SendChatMessage(EChatMessageType type, EntityId sourceId, EntityId targetId, const char *msg);
 	virtual bool CanReceiveChatMessage(EChatMessageType type, EntityId sourceId, EntityId targetId) const;
 
 	virtual void ForbiddenAreaWarning(bool active, int timer, EntityId targetId);
 
 	virtual void ResetGameTime();
-	void AddOvertime(float overTime);
+	void AddOvertime( float overTime );
 	virtual float GetRemainingGameTime() const;
 	virtual bool IsTimeLimited() const;
 
@@ -252,36 +257,36 @@ public:
 	virtual void ResetReviveCycleTime();
 	virtual float GetRemainingReviveCycleTime() const;
 
-	virtual void ResetGameStartTimer(float time = -1);
+	virtual void ResetGameStartTimer(float time=-1);
 	virtual float GetRemainingStartTimer() const;
 
 	virtual bool OnCollision(const SGameCollision& event);
 	//~IGameRules
 
-	virtual void RegisterConsoleCommands(IConsole* pConsole);
-	virtual void UnregisterConsoleCommands(IConsole* pConsole);
-	virtual void RegisterConsoleVars(IConsole* pConsole);
+	virtual void RegisterConsoleCommands(IConsole *pConsole);
+	virtual void UnregisterConsoleCommands(IConsole *pConsole);
+	virtual void RegisterConsoleVars(IConsole *pConsole);
 
-	virtual void OnRevive(CActor* pActor, const Vec3& pos, const Quat& rot, int teamId);
-	virtual void OnReviveInVehicle(CActor* pActor, EntityId vehicleId, int seatId, int teamId);
-	virtual void OnKill(CActor* pActor, EntityId shooterId, const char* weaponClassName, int damage, int material, int hit_type);
+	virtual void OnRevive(CActor *pActor, const Vec3 &pos, const Quat &rot, int teamId);
+	virtual void OnReviveInVehicle(CActor *pActor, EntityId vehicleId, int seatId, int teamId);
+	virtual void OnKill(CActor *pActor, EntityId shooterId, const char *weaponClassName, int damage, int material, int hit_type);
 	virtual void OnVehicleDestroyed(EntityId id, EntityId shooterId);
 	virtual void OnVehicleSubmerged(EntityId id, float ratio);
-	virtual void OnTextMessage(ETextMessageType type, const char* msg,
-		const char* p0 = 0, const char* p1 = 0, const char* p2 = 0, const char* p3 = 0);
-	virtual void OnChatMessage(EChatMessageType type, EntityId sourceId, EntityId targetId, const char* msg, bool teamChatOnly);
-	virtual void OnKillMessage(EntityId targetId, EntityId shooterId, const char* weaponClassName, float damage, int material, int hit_type);
+	virtual void OnTextMessage(ETextMessageType type, const char *msg,
+		const char *p0=0, const char *p1=0, const char *p2=0, const char *p3=0);
+	virtual void OnChatMessage(EChatMessageType type, EntityId sourceId, EntityId targetId, const char *msg, bool teamChatOnly);
+	virtual void OnKillMessage(EntityId targetId, EntityId shooterId, const char *weaponClassName, float damage, int material, int hit_type);
 
-	CActor* GetActorByChannelId(int channelId) const;
-	CActor* GetActorByEntityId(EntityId entityId) const;
-	ILINE const char* GetActorNameByEntityId(EntityId entityId) const
+	CActor *GetActorByChannelId(int channelId) const;
+	CActor *GetActorByEntityId(EntityId entityId) const;
+	ILINE const char *GetActorNameByEntityId(EntityId entityId) const
 	{
-		CActor* pActor = GetActorByEntityId(entityId);
+		CActor *pActor=GetActorByEntityId(entityId);
 		if (pActor)
 			return pActor->GetEntity()->GetName();
 		return 0;
 	}
-	ILINE const char* GetActorName(CActor* pActor) const { return pActor->GetEntity()->GetName(); };
+	ILINE const char *GetActorName(CActor *pActor) const { return pActor->GetEntity()->GetName(); };
 	ILINE CVotingSystem* GetVotingSystem() const { return m_pVotingSystem; };
 	int GetChannelId(EntityId entityId) const;
 	bool IsDead(EntityId entityId) const;
@@ -290,82 +295,82 @@ public:
 
 	//------------------------------------------------------------------------
 	// player
-	virtual CActor* SpawnPlayer(int channelId, const char* name, const char* className, const Vec3& pos, const Ang3& angles);
-	virtual CActor* ChangePlayerClass(int channelId, const char* className);
-	virtual void RevivePlayer(CActor* pActor, const Vec3& pos, const Ang3& angles, int teamId = 0, bool clearInventory = true);
-	virtual void RevivePlayerInVehicle(CActor* pActor, EntityId vehicleId, int seatId, int teamId = 0, bool clearInventory = true);
-	virtual void RenamePlayer(CActor* pActor, const char* name);
-	virtual string VerifyName(const char* name, IEntity* pEntity = 0);
-	virtual bool IsNameTaken(const char* name, IEntity* pEntity = 0);
-	virtual void KillPlayer(CActor* pActor, bool dropItem, bool ragdoll, EntityId shooterId, EntityId weaponId, float damage, int material, int hit_type, const Vec3& impulse);
-	virtual void MovePlayer(CActor* pActor, const Vec3& pos, const Ang3& angles);
-	virtual void ChangeSpectatorMode(CActor* pActor, uint8 mode, EntityId target, bool resetAll);
+	virtual CActor *SpawnPlayer(int channelId, const char *name, const char *className, const Vec3 &pos, const Ang3 &angles);
+	virtual CActor *ChangePlayerClass(int channelId, const char *className);
+	virtual void RevivePlayer(CActor *pActor, const Vec3 &pos, const Ang3 &angles, int teamId=0, bool clearInventory=true);
+	virtual void RevivePlayerInVehicle(CActor *pActor, EntityId vehicleId, int seatId, int teamId=0, bool clearInventory=true);
+	virtual void RenamePlayer(CActor *pActor, const char *name);
+	virtual string VerifyName(const char *name, IEntity *pEntity=0);
+	virtual bool IsNameTaken(const char *name, IEntity *pEntity=0);
+	virtual void KillPlayer(CActor *pActor, bool dropItem, bool ragdoll, EntityId shooterId, EntityId weaponId, float damage, int material, int hit_type, const Vec3 &impulse);
+	virtual void MovePlayer(CActor *pActor, const Vec3 &pos, const Ang3 &angles);
+	virtual void ChangeSpectatorMode(CActor *pActor, uint8 mode, EntityId target, bool resetAll);
 	virtual void RequestNextSpectatorTarget(CActor* pActor, int change);
-	virtual void ChangeTeam(CActor* pActor, int teamId);
-	virtual void ChangeTeam(CActor* pActor, const char* teamName);
+	virtual void ChangeTeam(CActor *pActor, int teamId);
+	virtual void ChangeTeam(CActor *pActor, const char *teamName);
 	virtual void AddTaggedEntity(EntityId shooter, EntityId targetId, bool temporary = false);
-	virtual int GetPlayerCount(bool inGame = false) const;
-	virtual int GetSpectatorCount(bool inGame = false) const;
+	virtual int GetPlayerCount(bool inGame=false) const;
+	virtual int GetSpectatorCount(bool inGame=false) const;
 	virtual EntityId GetPlayer(int idx);
-	virtual void GetPlayers(TPlayers& players) const;
+	virtual void GetPlayers(TPlayers &players) const;
 	virtual bool IsPlayerInGame(EntityId playerId) const;
-	virtual bool IsPlayerActivelyPlaying(EntityId playerId, bool mustBeAlive = false) const;	// [playing / dead / waiting to respawn (inc spectating while dead): true] [not yet joined game / selected Spectate: false]
+	virtual bool IsPlayerActivelyPlaying(EntityId playerId, bool mustBeAlive=false) const;	// [playing / dead / waiting to respawn (inc spectating while dead): true] [not yet joined game / selected Spectate: false]
 	virtual bool IsChannelInGame(int channelId) const;
-	virtual void StartVoting(CActor* pActor, EVotingState t, EntityId id, const char* param);
-	virtual void Vote(CActor* pActor, bool yes);
-	virtual void EndVoting(bool success);
-	int GetTotalAlivePlayerCount(const EntityId skipPlayerId) const;
+  virtual void StartVoting(CActor *pActor, EVotingState t, EntityId id, const char* param);
+  virtual void Vote(CActor *pActor, bool yes);
+  virtual void EndVoting(bool success);
+	int GetTotalAlivePlayerCount( const EntityId skipPlayerId ) const;
 
 	//------------------------------------------------------------------------
 	// teams
-	virtual int CreateTeam(const char* name);
+	virtual int CreateTeam(const char *name);
 	virtual void RemoveTeam(int teamId);
-	virtual const char* GetTeamName(int teamId) const;
-	virtual int GetTeamId(const char* name) const;
+	virtual const char *GetTeamName(int teamId) const;
+	virtual int GetTeamId(const char *name) const;
 	virtual int GetTeamCount() const;
-	virtual int GetTeamPlayerCount(int teamId, bool inGame = false, bool isActive = false, EntityId skip = 0) const;
-	virtual int GetTeamChannelCount(int teamId, bool inGame = false) const;
+	virtual int GetTeamPlayerCount(int teamId, bool inGame=false, bool isActive=false, EntityId skip=0) const;
+	virtual int GetTeamChannelCount(int teamId, bool inGame=false) const;
 	virtual EntityId GetTeamPlayer(int teamId, int idx) const;
 	EntityId GetTeamActivePlayer(int teamId, int idx) const;
 
-	virtual void GetTeamPlayers(int teamId, TPlayers& players);
-
+	virtual void GetTeamPlayers(int teamId, TPlayers &players);
+	
 	virtual void SetTeam(int teamId, EntityId entityId);
 	virtual int GetTeam(EntityId entityId) const;
 	virtual int GetChannelTeam(int channelId) const;
 
 	//------------------------------------------------------------------------
 	// objectives
-	virtual void AddObjective(int teamId, const char* objective, int status, EntityId entityId);
-	virtual void SetObjectiveStatus(int teamId, const char* objective, int status);
-	virtual void SetObjectiveEntity(int teamId, const char* objective, EntityId entityId);
-	virtual void RemoveObjective(int teamId, const char* objective);
+	virtual void AddObjective(int teamId, const char *objective, int status, EntityId entityId);
+	virtual void SetObjectiveStatus(int teamId, const char *objective, int status);
+	virtual void SetObjectiveEntity(int teamId, const char *objective, EntityId entityId);
+	virtual void RemoveObjective(int teamId, const char *objective);
 	virtual void ResetObjectives();
-	virtual TObjectiveMap* GetTeamObjectives(int teamId);
-	virtual TObjective* GetObjective(int teamId, const char* objective);
+	virtual TObjectiveMap *GetTeamObjectives(int teamId);
+	virtual TObjective *GetObjective(int teamId, const char *objective);
 	virtual void UpdateObjectivesForPlayer(int channelId, int teamId);
 
 	//------------------------------------------------------------------------
 	// materials
-	virtual int RegisterHitMaterial(const char* materialName);
-	virtual int GetHitMaterialId(const char* materialName) const;
-	virtual ISurfaceType* GetHitMaterial(int id) const;
+	virtual int RegisterHitMaterial(const char *materialName);
+	virtual int GetHitMaterialId(const char *materialName) const;
+	virtual ISurfaceType *GetHitMaterial(int id) const;
 	virtual int GetHitMaterialIdFromSurfaceId(int surfaceId) const;
 	virtual void ResetHitMaterials();
 
 	//------------------------------------------------------------------------
 	// hit type
-	virtual int RegisterHitType(const char* type);
-	virtual int GetHitTypeId(const char* type) const;
-	virtual const char* GetHitType(int id) const;
+	virtual int RegisterHitType(const char *type);
+	virtual int GetHitTypeId(const char *type) const;
+	virtual const char *GetHitType(int id) const;
 	virtual void ResetHitTypes();
 
 	//------------------------------------------------------------------------
 	// freezing
 	virtual bool IsFrozen(EntityId entityId) const;
 	virtual void ResetFrozen();
-	virtual void FreezeEntity(EntityId entityId, bool freeze, bool vapor, bool force = false);
-	virtual void ShatterEntity(EntityId entityId, const Vec3& pos, const Vec3& impulse);
+	virtual void FreezeEntity(EntityId entityId, bool freeze, bool vapor, bool force=false);
+	virtual void ShatterEntity(EntityId entityId, const Vec3 &pos, const Vec3 &impulse);
 
 	//------------------------------------------------------------------------
 	// spawn
@@ -373,16 +378,16 @@ public:
 	virtual void RemoveSpawnLocation(EntityId id);
 	virtual int GetSpawnLocationCount() const;
 	virtual EntityId GetSpawnLocation(int idx) const;
-	virtual void GetSpawnLocations(TSpawnLocations& locations) const;
+	virtual void GetSpawnLocations(TSpawnLocations &locations) const;
 	virtual bool IsSpawnLocationSafe(EntityId playerId, EntityId spawnLocationId, float safeDistance, float zoffset) const;
-	virtual bool IsSpawnLocationFarEnough(EntityId spawnLocationId, float minDistance, const Vec3& testPosition) const;
-	virtual bool TestSpawnLocationWithEnvironment(EntityId spawnLocationId, EntityId playerId, float offset = 0.0f, float height = 0.0f) const;
-	virtual EntityId GetSpawnLocation(EntityId playerId, bool ignoreTeam, bool includeNeutral, EntityId groupId = 0, float minDistToDeath = 0.0f, const Vec3& deathPos = Vec3(0, 0, 0), float* pZOffset = 0, EntityId skipId = 0) const;
-	virtual EntityId GetFirstSpawnLocation(int teamId = 0, EntityId groupId = 0) const;
-	EntityId GetSpawnLocationTeam(EntityId playerId, const Vec3& deathPos) const;
+	virtual bool IsSpawnLocationFarEnough(EntityId spawnLocationId, float minDistance, const Vec3 &testPosition) const;
+	virtual bool TestSpawnLocationWithEnvironment(EntityId spawnLocationId, EntityId playerId, float offset=0.0f, float height=0.0f) const;
+	virtual EntityId GetSpawnLocation(EntityId playerId, bool ignoreTeam, bool includeNeutral, EntityId groupId=0, float minDistToDeath=0.0f, const Vec3 &deathPos=Vec3(0,0,0), float *pZOffset=0, EntityId skipId=0) const;
+	virtual EntityId GetFirstSpawnLocation(int teamId=0, EntityId groupId=0) const;
+	EntityId GetSpawnLocationTeam(EntityId playerId, const Vec3 &deathPos) const;
 	EntityId GetSpawnLocationTeamFirst() const;
 	float GetMinEnemyDist() const;
-	float GetClosestTeamMateDistSqr(int teamId, const Vec3& pos, EntityId skipId = -1) const;
+	float GetClosestTeamMateDistSqr(int teamId, const Vec3& pos, EntityId skipId=-1) const;
 	float GetClosestPlayerDistSqr(const EntityId spawnLocationId, const EntityId skipId) const;
 	int GetEnemyTeamId(int myTeamId) const;
 
@@ -395,12 +400,12 @@ public:
 	virtual EntityId GetSpawnLocationGroup(EntityId spawnId) const;
 	virtual int GetSpawnGroupCount() const;
 	virtual EntityId GetSpawnGroup(int idx) const;
-	virtual void GetSpawnGroups(TSpawnLocations& groups) const;
+	virtual void GetSpawnGroups(TSpawnLocations &groups) const;
 	virtual bool IsSpawnGroup(EntityId id) const;
 
 	virtual void RequestSpawnGroup(EntityId spawnGroupId);
 	virtual void SetPlayerSpawnGroup(EntityId playerId, EntityId spawnGroupId);
-	virtual EntityId GetPlayerSpawnGroup(CActor* pActor);
+	virtual EntityId GetPlayerSpawnGroup(CActor *pActor);
 
 	virtual void SetTeamDefaultSpawnGroup(int teamId, EntityId spawnGroupId);
 	virtual EntityId GetTeamDefaultSpawnGroup(int teamId);
@@ -414,7 +419,7 @@ public:
 	virtual void RemoveSpectatorLocation(EntityId id);
 	virtual int GetSpectatorLocationCount() const;
 	virtual EntityId GetSpectatorLocation(int idx) const;
-	virtual void GetSpectatorLocations(TSpawnLocations& locations) const;
+	virtual void GetSpectatorLocations(TSpawnLocations &locations) const;
 	virtual EntityId GetRandomSpectatorLocation() const;
 	virtual EntityId GetInterestingSpectatorLocation() const;
 
@@ -422,12 +427,12 @@ public:
 	// map
 	virtual void ResetMinimap();
 	virtual void UpdateMinimap(float frameTime);
-	virtual void AddMinimapEntity(EntityId entityId, int type, float lifetime = 0.0f);
+	virtual void AddMinimapEntity(EntityId entityId, int type, float lifetime=0.0f);
 	virtual void RemoveMinimapEntity(EntityId entityId);
-	virtual const TMinimap& GetMinimapEntities() const;
+	virtual const TMinimap &GetMinimapEntities() const;
 
 	//------------------------------------------------------------------------
-	// game
+	// game	
 	virtual void Restart();
 	virtual void NextLevel();
 	virtual void ResetEntities();
@@ -437,30 +442,30 @@ public:
 	virtual void EndGameNear(EntityId id);
 
 	virtual void ValidateShot(EntityId playerId, EntityId weaponId, uint16 seq, uint8 seqr);
-	virtual void ClientSimpleHit(const SimpleHitInfo& simpleHitInfo);
-	virtual void ServerSimpleHit(const SimpleHitInfo& simpleHitInfo);
+	virtual void ClientSimpleHit(const SimpleHitInfo &simpleHitInfo);
+	virtual void ServerSimpleHit(const SimpleHitInfo &simpleHitInfo);
 
-	virtual void ClientHit(const HitInfo& hitInfo);
-	virtual void ServerHit(const HitInfo& hitInfo);
-	virtual void ProcessServerHit(HitInfo& hitInfo);
+  virtual void ClientHit(const HitInfo &hitInfo);
+	virtual void ServerHit(const HitInfo &hitInfo);
+	virtual void ProcessServerHit(HitInfo &hitInfo);
 
-	void CullEntitiesInExplosion(const ExplosionInfo& explosionInfo);
-	virtual void ServerExplosion(const ExplosionInfo& explosionInfo);
-	virtual void ClientExplosion(const ExplosionInfo& explosionInfo);
-
+	void CullEntitiesInExplosion(const ExplosionInfo &explosionInfo);
+	virtual void ServerExplosion(const ExplosionInfo &explosionInfo);
+	virtual void ClientExplosion(const ExplosionInfo &explosionInfo);
+	
 	virtual void CreateEntityRespawnData(EntityId entityId);
 	virtual bool HasEntityRespawnData(EntityId entityId) const;
 	virtual void ScheduleEntityRespawn(EntityId entityId, bool unique, bool spatialcheck, float timer);
 	virtual void AbortEntityRespawn(EntityId entityId, bool destroyData);
-	virtual bool TestEntitySpawnPosition(EntityId entityId, const Vec3& position, primitives::box& obb);
+	virtual bool TestEntitySpawnPosition(EntityId entityId, const Vec3 &position, primitives::box &obb);
 
 	virtual void ScheduleEntityRemoval(EntityId entityId, float timer, bool visibility);
 	virtual void AbortEntityRemoval(EntityId entityId);
 
 	virtual void UpdateEntitySchedules(float frameTime);
-	virtual void ProcessQueuedExplosions();
-	virtual void ProcessServerExplosion(const ExplosionInfo& explosionInfo);
-
+  virtual void ProcessQueuedExplosions();
+	virtual void ProcessServerExplosion(const ExplosionInfo &explosionInfo);
+	
 	virtual void ForceScoreboard(bool force);
 	virtual void FreezeInput(bool freeze);
 
@@ -468,33 +473,33 @@ public:
 
 	virtual void ShowStatus();
 
-	void SendRadioMessage(const EntityId sourceId, const int);
-	void OnRadioMessage(const EntityId sourceId, const int);
-	ILINE CRadio* GetRadio() const { return m_pRadio; }
+	void SendRadioMessage(const EntityId sourceId,const int);
+	void OnRadioMessage(const EntityId sourceId,const int);
+	ILINE CRadio *GetRadio() const { return m_pRadio; }
 
 	virtual void OnAction(const ActionId& actionId, int activationMode, float value);
 
-	void ReconfigureVoiceGroups(EntityId id, int old_team, int new_team);
+	void ReconfigureVoiceGroups(EntityId id,int old_team,int new_team);
 
 	CBattleDust* GetBattleDust() const;
 	CMPTutorial* GetMPTutorial() const;
 
 	int GetCurrentStateId() const { return m_currentStateId; }
 
-	//misc
+	//misc 
 	// Next time CGameRules::OnCollision is called, it will skip this entity and return false
 	// This will prevent squad mates to be hit by the player
-	void SetEntityToIgnore(EntityId id) { m_ignoreEntityNextCollision = id; }
+	void SetEntityToIgnore(EntityId id) { m_ignoreEntityNextCollision = id;}
 
 	template<typename T>
-	void SetSynchedGlobalValue(TSynchedKey key, const T& value)
+	void SetSynchedGlobalValue(TSynchedKey key, const T &value)
 	{
 		assert(gEnv->bServer);
 		g_pGame->GetSynchedStorage()->SetGlobalValue(key, value);
 	};
 
 	template<typename T>
-	bool GetSynchedGlobalValue(TSynchedKey key, T& value)
+	bool GetSynchedGlobalValue(TSynchedKey key, T &value)
 	{
 		if (!g_pGame->GetSynchedStorage())
 			return false;
@@ -509,17 +514,17 @@ public:
 	}
 
 	template<typename T>
-	void SetSynchedEntityValue(EntityId id, TSynchedKey key, const T& value)
+	void SetSynchedEntityValue(EntityId id, TSynchedKey key, const T &value)
 	{
 		assert(gEnv->bServer);
 		g_pGame->GetSynchedStorage()->SetEntityValue(id, key, value);
 	}
 	template<typename T>
-	bool GetSynchedEntityValue(EntityId id, TSynchedKey key, T& value)
+	bool GetSynchedEntityValue(EntityId id, TSynchedKey key, T &value)
 	{
 		return g_pGame->GetSynchedStorage()->GetEntityValue(id, key, value);
 	}
-
+	
 	int GetSynchedEntityValueType(EntityId id, TSynchedKey key) const
 	{
 		return g_pGame->GetSynchedStorage()->GetEntityValueType(id, key);
@@ -531,6 +536,7 @@ public:
 	}
 
 	void ForceSynchedStorageSynch(int channel);
+
 
 	void PlayerPosForRespawn(CPlayer* pPlayer, bool save);
 	void SPNotifyPlayerKill(EntityId targetId, EntityId weaponId, bool bHeadShot);
@@ -547,8 +553,8 @@ public:
 		bool onlyTeam;
 
 		ChatMessageParams() {};
-		ChatMessageParams(EChatMessageType _type, EntityId src, EntityId trg, const char* _msg, bool _onlyTeam)
-			: type(_type),
+		ChatMessageParams(EChatMessageType _type, EntityId src, EntityId trg, const char *_msg, bool _onlyTeam)
+		: type(_type),
 			sourceId(src),
 			targetId(trg),
 			msg(_msg),
@@ -598,12 +604,12 @@ public:
 		EntityId			sourceId;
 		uint8					msg;
 
-		RadioMessageParams() {};
-		RadioMessageParams(EntityId src, int _msg) :
+		RadioMessageParams(){};
+		RadioMessageParams(EntityId src,int _msg):
 			sourceId(src),
 			msg(_msg)
-		{
-		};
+			{
+			};
 		void SerializeWith(TSerialize ser);
 	};
 	struct TextMessageParams
@@ -615,15 +621,15 @@ public:
 		string params[4];
 
 		TextMessageParams() {};
-		TextMessageParams(ETextMessageType _type, const char* _msg)
-			: type(_type),
+		TextMessageParams(ETextMessageType _type, const char *_msg)
+		: type(_type),
 			msg(_msg),
 			nparams(0)
 		{
 		};
-		TextMessageParams(ETextMessageType _type, const char* _msg,
-			const char* p0 = 0, const char* p1 = 0, const char* p2 = 0, const char* p3 = 0)
-			: type(_type),
+		TextMessageParams(ETextMessageType _type, const char *_msg, 
+			const char *p0=0, const char *p1=0, const char *p2=0, const char *p3=0)
+		: type(_type),
 			msg(_msg),
 			nparams(0)
 		{
@@ -639,15 +645,15 @@ public:
 			ser.Value("message", msg);
 			ser.Value("nparams", nparams, 'ui3');
 
-			for (int i = 0; i < nparams; ++i)
+			for (int i=0;i<nparams; ++i)
 				ser.Value("param", params[i]);
 		}
 
-		bool AddParam(const char* param)
+		bool AddParam(const char *param)
 		{
-			if (!param || nparams > 3)
+			if (!param || nparams>3)
 				return false;
-			params[nparams++] = param;
+			params[nparams++]=param;
 			return true;
 		}
 	};
@@ -659,7 +665,7 @@ public:
 
 		SetTeamParams() {};
 		SetTeamParams(EntityId _entityId, int _teamId)
-			: entityId(_entityId),
+		: entityId(_entityId),
 			teamId(_teamId)
 		{
 		}
@@ -679,7 +685,7 @@ public:
 		ChangeTeamParams() {};
 		ChangeTeamParams(EntityId _entityId, int _teamId)
 			: entityId(_entityId),
-			teamId(_teamId)
+				teamId(_teamId)
 		{
 		}
 
@@ -700,9 +706,9 @@ public:
 		SpectatorModeParams() {};
 		SpectatorModeParams(EntityId _entityId, uint8 _mode, EntityId _target, bool _reset)
 			: entityId(_entityId),
-			mode(_mode),
-			targetId(_target),
-			resetAll(_reset)
+				mode(_mode),
+				targetId(_target),
+				resetAll(_reset)
 		{
 		}
 
@@ -721,9 +727,9 @@ public:
 		string		name;
 
 		RenameEntityParams() {};
-		RenameEntityParams(EntityId _entityId, const char* name)
+		RenameEntityParams(EntityId _entityId, const char *name)
 			: entityId(_entityId),
-			name(name)
+				name(name)
 		{
 		}
 
@@ -740,7 +746,7 @@ public:
 
 		SetGameTimeParams() {};
 		SetGameTimeParams(CTimeValue _endTime)
-			: endTime(_endTime)
+		: endTime(_endTime)
 		{
 		}
 
@@ -750,37 +756,37 @@ public:
 		}
 	};
 
-	struct StartVotingParams
-	{
-		string        param;
-		EntityId      entityId;
-		EVotingState  vote_type;
-		StartVotingParams() {}
-		StartVotingParams(EVotingState st, EntityId id, const char* cmd) :vote_type(st), entityId(id), param(cmd) {}
-		void SerializeWith(TSerialize ser)
-		{
-			ser.EnumValue("type", vote_type, eVS_none, eVS_last);
-			ser.Value("entityId", entityId, 'eid');
-			ser.Value("param", param);
-		}
-	};
+  struct StartVotingParams
+  {
+    string        param;
+    EntityId      entityId;
+    EVotingState  vote_type;
+    StartVotingParams(){}
+    StartVotingParams(EVotingState st, EntityId id, const char* cmd):vote_type(st),entityId(id),param(cmd){}
+    void SerializeWith(TSerialize ser)
+    {
+      ser.EnumValue("type",vote_type,eVS_none,eVS_last);
+      ser.Value("entityId",entityId,'eid');
+      ser.Value("param",param);
+    }
+  };
 
-	struct VotingStatusParams
-	{
-		EVotingState  state;
-		int           timeout;
-		EntityId      entityId;
-		string        description;
-		VotingStatusParams() {}
-		VotingStatusParams(EVotingState s, int t, EntityId e, const char* d) :state(s), timeout(t), entityId(e), description(d) {}
-		void SerializeWith(TSerialize ser)
-		{
-			ser.EnumValue("state", state, eVS_none, eVS_last);
-			ser.Value("timeout", timeout, 'ui8');
-			ser.Value("entityId", entityId, 'eid');
-			ser.Value("description", description);
-		}
-	};
+  struct VotingStatusParams
+  {
+    EVotingState  state;
+    int           timeout;
+    EntityId      entityId;
+    string        description;
+    VotingStatusParams(){}
+    VotingStatusParams(EVotingState s, int t, EntityId e, const char* d):state(s),timeout(t),entityId(e),description(d){}
+    void SerializeWith(TSerialize ser)
+    {
+      ser.EnumValue("state", state, eVS_none, eVS_last);
+      ser.Value("timeout", timeout, 'ui8');
+      ser.Value("entityId", entityId,'eid');
+      ser.Value("description", description);
+    }
+  };
 
 	struct AddMinimapEntityParams
 	{
@@ -789,7 +795,7 @@ public:
 		int	type;
 		AddMinimapEntityParams() {};
 		AddMinimapEntityParams(EntityId entId, float ltime, int typ)
-			: entityId(entId),
+		: entityId(entId),
 			lifetime(ltime),
 			type(typ)
 		{
@@ -808,7 +814,7 @@ public:
 		EntityId entityId;
 		EntityParams() {};
 		EntityParams(EntityId entId)
-			: entityId(entId)
+		: entityId(entId)
 		{
 		}
 
@@ -841,8 +847,8 @@ public:
 
 	struct SetObjectiveParams
 	{
-		SetObjectiveParams() : status(0), entityId(0) {};
-		SetObjectiveParams(const char* nm, int st, EntityId id) : name(nm), status(st), entityId(id) {};
+		SetObjectiveParams(): status(0), entityId(0) {};
+		SetObjectiveParams(const char *nm, int st, EntityId id): name(nm), status(st), entityId(id) {};
 
 		EntityId entityId;
 		int status;
@@ -857,8 +863,8 @@ public:
 
 	struct SetObjectiveStatusParams
 	{
-		SetObjectiveStatusParams() : status(0) {};
-		SetObjectiveStatusParams(const char* nm, int st) : name(nm), status(st) {};
+		SetObjectiveStatusParams(): status(0) {};
+		SetObjectiveStatusParams(const char *nm, int st): name(nm), status(st) {};
 		int status;
 		string name;
 		void SerializeWith(TSerialize ser)
@@ -870,8 +876,8 @@ public:
 
 	struct SetObjectiveEntityParams
 	{
-		SetObjectiveEntityParams() : entityId(0) {};
-		SetObjectiveEntityParams(const char* nm, EntityId id) : name(nm), entityId(id) {};
+		SetObjectiveEntityParams(): entityId(0) {};
+		SetObjectiveEntityParams(const char *nm, EntityId id): name(nm), entityId(id) {};
 
 		EntityId entityId;
 		string name;
@@ -885,7 +891,7 @@ public:
 	struct RemoveObjectiveParams
 	{
 		RemoveObjectiveParams() {};
-		RemoveObjectiveParams(const char* nm) : name(nm) {};
+		RemoveObjectiveParams(const char *nm): name(nm) {};
 
 		string name;
 		void SerializeWith(TSerialize ser)
@@ -897,7 +903,7 @@ public:
 	struct FreezeEntityParams
 	{
 		FreezeEntityParams() {};
-		FreezeEntityParams(EntityId id, bool doit, bool smoke) : entityId(id), freeze(doit), vapor(smoke) {};
+		FreezeEntityParams(EntityId id, bool doit, bool smoke): entityId(id), freeze(doit), vapor(smoke) {};
 		EntityId entityId;
 		bool freeze;
 		bool vapor;
@@ -913,7 +919,7 @@ public:
 	struct ShatterEntityParams
 	{
 		ShatterEntityParams() {};
-		ShatterEntityParams(EntityId id, const Vec3& p, const Vec3& imp) : entityId(id), pos(p), impulse(imp) {};
+		ShatterEntityParams(EntityId id, const Vec3 &p, const Vec3 &imp): entityId(id), pos(p), impulse(imp) {};
 		EntityId entityId;
 		Vec3 pos;
 		Vec3 impulse;
@@ -929,7 +935,7 @@ public:
 	struct DamageIndicatorParams
 	{
 		DamageIndicatorParams() {};
-		DamageIndicatorParams(EntityId shtId, EntityId wpnId) : shooterId(shtId), weaponId(wpnId) {};
+		DamageIndicatorParams(EntityId shtId, EntityId wpnId): shooterId(shtId), weaponId(wpnId) {};
 
 		EntityId shooterId;
 		EntityId weaponId;
@@ -990,8 +996,8 @@ public:
 
 	DECLARE_SERVER_RMI_NOATTACH(SvVote, NoParams, eNRT_ReliableUnordered);
 	DECLARE_SERVER_RMI_NOATTACH(SvVoteNo, NoParams, eNRT_ReliableUnordered);
-	DECLARE_SERVER_RMI_NOATTACH(SvStartVoting, StartVotingParams, eNRT_ReliableUnordered);
-	DECLARE_CLIENT_RMI_NOATTACH(ClVotingStatus, VotingStatusParams, eNRT_ReliableUnordered);
+  DECLARE_SERVER_RMI_NOATTACH(SvStartVoting, StartVotingParams, eNRT_ReliableUnordered);
+  DECLARE_CLIENT_RMI_NOATTACH(ClVotingStatus, VotingStatusParams, eNRT_ReliableUnordered);
 
 	DECLARE_CLIENT_RMI_NOATTACH(ClEnteredGame, NoParams, eNRT_ReliableUnordered);
 
@@ -1019,8 +1025,9 @@ public:
 		Quat							rotation;
 		Vec3							scale;
 		int								flags;
-		IEntityClass* pClass;
+		IEntityClass			*pClass;
 		primitives::box		obb;
+
 
 #ifdef _DEBUG
 		string						name;
@@ -1048,98 +1055,30 @@ public:
 
 	typedef std::vector<IHitListener*> THitListenerVec;
 
-	bool IsSpawnUsed(EntityId spawnId) const;
-	bool IsSpawnUsedTouch(EntityId spawnId);
-
-	//TheOtherSide
-	struct OwnerParams
-	{
-		EntityId ownerId;
-		EntityId slaveId;
-
-		OwnerParams() {};
-		OwnerParams(EntityId _ownerId, EntityId _slaveId)
-			: ownerId(_ownerId),
-			slaveId(_slaveId)
-		{
-		}
-
-		void SerializeWith(TSerialize ser)
-		{
-			ser.Value("m_ownerId", ownerId, 'eid');
-			ser.Value("m_slaveId", slaveId, 'eid');
-		}
-	};
-
-	struct ControlParams
-	{
-		EntityId ownerId;
-		EntityId slaveId;
-		bool hidePlayer;
-		bool beamPlayer;
-		bool isReset;
-
-		ControlParams() {};
-		ControlParams(EntityId _ownerId, EntityId _slaveId, bool _hidePlayer, bool _beamPlayer, bool _reset)
-			: ownerId(_ownerId),
-			slaveId(_slaveId),
-			hidePlayer(_hidePlayer),
-			beamPlayer(_beamPlayer),
-			isReset(_reset)
-		{
-		}
-
-		void SerializeWith(TSerialize ser)
-		{
-			ser.Value("ownerId", ownerId, 'eid');
-			ser.Value("slaveId", slaveId, 'eid');
-			ser.Value("hidePlayer", hidePlayer, 'bool');
-			ser.Value("beamPlayer", beamPlayer, 'bool');
-			ser.Value("reset", isReset, 'bool');
-		}
-	};
-
-
-	DECLARE_CLIENT_RMI_NOATTACH(ClSetOwner, OwnerParams, eNRT_ReliableOrdered);
-	DECLARE_SERVER_RMI_NOATTACH(SvRequestSetOwner, OwnerParams, eNRT_ReliableOrdered);
-
-	DECLARE_SERVER_RMI_NOATTACH(SvRequestTakeControl, ControlParams, eNRT_ReliableOrdered);
-	DECLARE_CLIENT_RMI_NOATTACH(ClTakeControl, ControlParams, eNRT_ReliableOrdered);
-
-	void ChangeDesiredActor(EntityId ownerId, EntityId desiredActorId, bool reset);
-	void StartControl(EntityId slaveId, EntityId ownerId, bool isReset);
-	void StopControl(EntityId ownerId);
-	virtual CActor* SpawnCustomActor(int channelId, const char* name, const char* className, const Vec3& pos, const Ang3& angles);
-	const char* GetCurrentStateName();
-
-	virtual void CreateEntityResetData(EntityId entityId);
-	virtual bool HasEntityResetData(EntityId entityId) const;
-	virtual float GetEntityResetTimer(EntityId entityId) const;
-	virtual void ScheduleEntityReset(EntityId entityId, bool unique, bool spatialcheck, float timer);
-	virtual bool TestEntitySpawnPosition2(primitives::box& obb);
-	//~TheOtherSide
+	bool IsSpawnUsed( EntityId spawnId ) const;
+	bool IsSpawnUsedTouch( EntityId spawnId );
 
 protected:
-	static void CmdDebugSpawns(IConsoleCmdArgs* pArgs);
-	static void CmdDebugMinimap(IConsoleCmdArgs* pArgs);
-	static void CmdDebugTeams(IConsoleCmdArgs* pArgs);
-	static void CmdDebugObjectives(IConsoleCmdArgs* pArgs);
+	static void CmdDebugSpawns(IConsoleCmdArgs *pArgs);
+	static void CmdDebugMinimap(IConsoleCmdArgs *pArgs);
+	static void CmdDebugTeams(IConsoleCmdArgs *pArgs);
+	static void CmdDebugObjectives(IConsoleCmdArgs *pArgs);
 
-	void CreateScriptHitInfo(SmartScriptTable& scriptHitInfo, const HitInfo& hitInfo);
-	void CreateScriptExplosionInfo(SmartScriptTable& scriptExplosionInfo, const ExplosionInfo& explosionInfo);
-	void UpdateAffectedEntitiesSet(TExplosionAffectedEntities& affectedEnts, const pe_explosion* pExplosion);
-	void AddOrUpdateAffectedEntity(TExplosionAffectedEntities& affectedEnts, IEntity* pEntity, float affected);
-	void CommitAffectedEntitiesSet(SmartScriptTable& scriptExplosionInfo, TExplosionAffectedEntities& affectedEnts);
-	void ChatLog(EChatMessageType type, EntityId sourceId, EntityId targetId, const char* msg);
+	void CreateScriptHitInfo(SmartScriptTable &scriptHitInfo, const HitInfo &hitInfo);
+	void CreateScriptExplosionInfo(SmartScriptTable &scriptExplosionInfo, const ExplosionInfo &explosionInfo);
+	void UpdateAffectedEntitiesSet(TExplosionAffectedEntities &affectedEnts, const pe_explosion *pExplosion);
+	void AddOrUpdateAffectedEntity(TExplosionAffectedEntities &affectedEnts, IEntity* pEntity, float affected);
+	void CommitAffectedEntitiesSet(SmartScriptTable &scriptExplosionInfo, TExplosionAffectedEntities &affectedEnts);
+	void ChatLog(EChatMessageType type, EntityId sourceId, EntityId targetId, const char *msg);
 
 	// Some explosion processing
-	void ProcessClientExplosionScreenFX(const ExplosionInfo& explosionInfo);
-	void ProcessExplosionMaterialFX(const ExplosionInfo& explosionInfo);
+	void ProcessClientExplosionScreenFX(const ExplosionInfo &explosionInfo);
+	void ProcessExplosionMaterialFX(const ExplosionInfo &explosionInfo);
 
 	// fill source/target dependent params in m_collisionTable
 	void PrepCollision(int src, int trg, const SGameCollision& event, IEntity* pTarget);
 
-	void CallScript(IScriptTable* pScript, const char* name)
+	void CallScript(IScriptTable *pScript, const char *name)
 	{
 		if (!pScript || pScript->GetValueType(name) != svtFunction)
 			return;
@@ -1147,7 +1086,7 @@ protected:
 		m_pScriptSystem->EndCall();
 	};
 	template<typename P1>
-	void CallScript(IScriptTable* pScript, const char* name, const P1& p1)
+	void CallScript(IScriptTable *pScript, const char *name, const P1 &p1)
 	{
 		if (!pScript || pScript->GetValueType(name) != svtFunction)
 			return;
@@ -1156,7 +1095,7 @@ protected:
 		m_pScriptSystem->EndCall();
 	};
 	template<typename P1, typename P2>
-	void CallScript(IScriptTable* pScript, const char* name, const P1& p1, const P2& p2)
+	void CallScript(IScriptTable *pScript, const char *name, const P1 &p1, const P2 &p2)
 	{
 		if (!pScript || pScript->GetValueType(name) != svtFunction)
 			return;
@@ -1165,7 +1104,7 @@ protected:
 		m_pScriptSystem->EndCall();
 	};
 	template<typename P1, typename P2, typename P3>
-	void CallScript(IScriptTable* pScript, const char* name, const P1& p1, const P2& p2, const P3& p3)
+	void CallScript(IScriptTable *pScript, const char *name, const P1 &p1, const P2 &p2, const P3 &p3)
 	{
 		if (!pScript || pScript->GetValueType(name) != svtFunction)
 			return;
@@ -1174,7 +1113,7 @@ protected:
 		m_pScriptSystem->EndCall();
 	};
 	template<typename P1, typename P2, typename P3, typename P4>
-	void CallScript(IScriptTable* pScript, const char* name, const P1& p1, const P2& p2, const P3& p3, const P4& p4)
+	void CallScript(IScriptTable *pScript, const char *name, const P1 &p1, const P2 &p2, const P3 &p3, const P4 &p4)
 	{
 		if (!pScript || pScript->GetValueType(name) != svtFunction)
 			return;
@@ -1183,7 +1122,7 @@ protected:
 		m_pScriptSystem->EndCall();
 	};
 	template<typename P1, typename P2, typename P3, typename P4, typename P5>
-	void CallScript(IScriptTable* pScript, const char* name, const P1& p1, const P2& p2, const P3& p3, const P4& p4, const P5& p5)
+	void CallScript(IScriptTable *pScript, const char *name, const P1 &p1, const P2 &p2, const P3 &p3, const P4 &p4, const P5 &p5)
 	{
 		if (!pScript || pScript->GetValueType(name) != svtFunction)
 			return;
@@ -1192,7 +1131,7 @@ protected:
 		m_pScriptSystem->EndCall();
 	};
 	template<typename P1, typename P2, typename P3, typename P4, typename P5, typename P6>
-	void CallScript(IScriptTable* pScript, const char* name, P1& p1, P2& p2, P3& p3, P4& p4, P5& p5, P6& p6)
+	void CallScript(IScriptTable *pScript, const char *name, P1 &p1, P2 &p2, P3 &p3, P4 &p4, P5 &p5, P6 &p6)
 	{
 		if (!pScript || pScript->GetValueType(name) != svtFunction)
 			return;
@@ -1201,13 +1140,13 @@ protected:
 		m_pScriptSystem->EndCall();
 	};
 
-	IGameFramework* m_pGameFramework;
-	IGameplayRecorder* m_pGameplayRecorder;
-	ISystem* m_pSystem;
-	IActorSystem* m_pActorSystem;
-	IEntitySystem* m_pEntitySystem;
-	IScriptSystem* m_pScriptSystem;
-	IMaterialManager* m_pMaterialManager;
+	IGameFramework			*m_pGameFramework;
+	IGameplayRecorder		*m_pGameplayRecorder;
+	ISystem							*m_pSystem;
+	IActorSystem				*m_pActorSystem;
+	IEntitySystem				*m_pEntitySystem;
+	IScriptSystem				*m_pScriptSystem;
+	IMaterialManager		*m_pMaterialManager;
 	SmartScriptTable		m_script;
 	SmartScriptTable		m_clientScript;
 	SmartScriptTable		m_serverScript;
@@ -1218,11 +1157,11 @@ protected:
 	SmartScriptTable		m_collisionTableSource;
 	SmartScriptTable		m_collisionTableTarget;
 
-	INetChannel* m_pClientNetChannel;
+	INetChannel					*m_pClientNetChannel;
 
 	std::vector<int>		m_channelIds;
 	TFrozenEntities			m_frozen;
-
+	
 	TTeamIdMap					m_teams;
 	TEntityTeamIdMap		m_entityteams;
 	TTeamIdEntityIdMap	m_teamdefaultspawns;
@@ -1238,17 +1177,16 @@ protected:
 
 	SmartScriptTable		m_scriptHitInfo;
 	SmartScriptTable		m_scriptExplosionInfo;
-
-	typedef std::queue<ExplosionInfo> TExplosionQueue;
-	TExplosionQueue     m_queuedExplosions;
+  
+  typedef std::queue<ExplosionInfo> TExplosionQueue;
+  TExplosionQueue     m_queuedExplosions;
 
 	typedef std::queue<HitInfo> THitQueue;
 	THitQueue						m_queuedHits;
-	int									m_processingHit;
+	int									m_processingHit;	
 
 	TEntityRespawnDataMap	m_respawndata;
 	TEntityRespawnMap			m_respawns;
-	TEntityRespawnMap			m_resets;
 	TEntityRemovalMap			m_removals;
 
 	TMinimap						m_minimap;
@@ -1269,13 +1207,13 @@ protected:
 	CTimeValue					m_reviveCycleEndTime; // time for reinforcements.
 	CTimeValue					m_gameStartTime; // time for game start, <= 0 means game started already
 
-	CRadio* m_pRadio;
+	CRadio							*m_pRadio;
 
 	TTeamIdVoiceGroupMap	m_teamVoiceGroups;
 
-	CBattleDust* m_pBattleDust;
-	CMPTutorial* m_pMPTutorial;
-	CVotingSystem* m_pVotingSystem;
+	CBattleDust					*m_pBattleDust;
+	CMPTutorial					*m_pMPTutorial;
+  CVotingSystem       *m_pVotingSystem;
 
 	TGameRulesListenerVec	m_rulesListeners;
 	static int					s_invulnID;
@@ -1286,7 +1224,7 @@ protected:
 	bool                m_timeOfDayInitialized;
 	bool                m_explosionScreenFX;
 
-	CShotValidator* m_pShotValidator;
+	CShotValidator			*m_pShotValidator;
 
 	std::vector<string> m_restrictedItemList;
 

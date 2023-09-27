@@ -8,7 +8,7 @@
 class CFlowPlayerStagingNode : public CFlowBaseNode
 {
 public:
-	CFlowPlayerStagingNode(SActivationInfo* pActInfo)
+	CFlowPlayerStagingNode( SActivationInfo * pActInfo )
 	{
 	}
 
@@ -42,17 +42,17 @@ public:
 	virtual void GetConfiguration(SFlowNodeConfig& config)
 	{
 		static const SInputPortConfig inputs[] = {
-			InputPortConfig_Void("Trigger", _HELP("Trigger")),
-			InputPortConfig<Vec3>("ViewLimitDir", _HELP("ViewLimitDir")),
-			InputPortConfig<bool>("InLocalSpace", true, _HELP("ViewLimit Vector is in Local Space or World Space")),
+			InputPortConfig_Void  ("Trigger", _HELP("Trigger")),
+			InputPortConfig<Vec3> ("ViewLimitDir", _HELP("ViewLimitDir")),
+			InputPortConfig<bool> ("InLocalSpace", true, _HELP("ViewLimit Vector is in Local Space or World Space")),
 			InputPortConfig<float>("ViewLimitYaw", _HELP("ViewLimitYaw (0.0=FreeLook, 0.001=Lock)")),
 			InputPortConfig<float>("ViewLimitPitch", _HELP("ViewLimitPitch (0.0=Freelook, 0.001=Lock)")),
-			InputPortConfig<bool>("LockPlayer", false, _HELP("Lock the player's position")),
-			InputPortConfig<int>("TryStance", -1, _HELP("Try to set Stance on Locking [works only if Player was linked beforehand]"), 0, _UICONFIG("enum_int:<ignore>=-1,Stand=0,Crouch=1,Prone=2,Relaxed=3,Stealth=4,Swim=5,ZeroG=6")),
+			InputPortConfig<bool> ("LockPlayer", false, _HELP("Lock the player's position")),
+			InputPortConfig<int>( "TryStance", -1, _HELP("Try to set Stance on Locking [works only if Player was linked beforehand]"), 0, _UICONFIG("enum_int:<ignore>=-1,Stand=0,Crouch=1,Prone=2,Relaxed=3,Stealth=4,Swim=5,ZeroG=6")),
 			{0}
 		};
 		static const SOutputPortConfig outputs[] = {
-			OutputPortConfig_Void("Done", _HELP("Trigger for Chaining")),
+			OutputPortConfig_Void ("Done", _HELP("Trigger for Chaining")),
 			{0}
 		};
 		config.pInputPorts = inputs;
@@ -61,7 +61,7 @@ public:
 		config.SetCategory(EFLN_APPROVED);
 	}
 
-	virtual void ProcessEvent(EFlowEvent event, SActivationInfo* pActInfo)
+	virtual void ProcessEvent( EFlowEvent event, SActivationInfo *pActInfo )
 	{
 		switch (event)
 		{
@@ -74,12 +74,12 @@ public:
 				const bool localSpace = GetPortBool(pActInfo, EIP_LocalSpace);
 				const float rangeH = GetPortFloat(pActInfo, EIP_LimitYaw);
 				const float rangeV = GetPortFloat(pActInfo, EIP_LimitPitch);
-				CActor* pPlayerActor = static_cast<CActor*>(gEnv->pGame->GetIGameFramework()->GetClientActor());
+				CActor *pPlayerActor = static_cast<CActor *>(gEnv->pGame->GetIGameFramework()->GetClientActor());
 				if (pPlayerActor)
 				{
 					CPlayer::SStagingParams stagingParams;
 					CPlayer* pPlayer = static_cast<CPlayer*> (pPlayerActor);
-					if (dir.len2() > 0.01f)
+					if (dir.len2()>0.01f)
 					{
 						if (localSpace)
 						{
@@ -100,12 +100,12 @@ public:
 						stance = STANCE_NULL;
 						GameWarning("[flow] PlayerStaging: stance=%d invalid", stance);
 					}
-					stagingParams.stance = (EStance)stance;
+					stagingParams.stance = (EStance) stance;
 
 					bool bActive = (stagingParams.bLocked ||
-						(!stagingParams.vLimitDir.IsZero() &&
-							!iszero(stagingParams.vLimitRangeH) &&
-							!iszero(stagingParams.vLimitRangeV)));
+						(!stagingParams.vLimitDir.IsZero() && 
+						!iszero(stagingParams.vLimitRangeH) && 
+						!iszero(stagingParams.vLimitRangeV)) );
 					pPlayer->StagePlayer(bActive, &stagingParams);
 
 					/*
@@ -124,7 +124,7 @@ public:
 							else
 								pActorParams->vLimitDir = dir.GetNormalizedSafe(ZERO);
 						}
-						else
+						else 
 							pActorParams->vLimitDir.zero();
 
 						pActorParams->vLimitRangeH = DEG2RAD(rangeH);
@@ -155,7 +155,7 @@ public:
 		}
 	}
 
-	virtual void GetMemoryStatistics(ICrySizer* s)
+	virtual void GetMemoryStatistics(ICrySizer * s)
 	{
 		s->Add(*this);
 	}
@@ -164,7 +164,7 @@ public:
 class CFlowPlayerLinkNode : public CFlowBaseNode
 {
 public:
-	CFlowPlayerLinkNode(SActivationInfo* pActInfo)
+	CFlowPlayerLinkNode( SActivationInfo * pActInfo )
 	{
 	}
 
@@ -190,16 +190,16 @@ public:
 	virtual void GetConfiguration(SFlowNodeConfig& config)
 	{
 		static const SInputPortConfig inputs[] = {
-			InputPortConfig_Void("Link", _HELP("Link the Player to Target Entity")),
-			InputPortConfig_Void("Unlink", _HELP("Unlink the Player (from any Entity)")),
-			InputPortConfig<EntityId>("Target", _HELP("Target Entity Id")),
-			InputPortConfig<int>("DrawPlayer", 0, _HELP("Draw the Player"), 0, _UICONFIG("enum_int:NoChange=0,Hide=-1,Show=1")),
-			InputPortConfig<bool>("KeepTransfromDetach", true, _HELP("Keep Transformation on Detach")),
+			InputPortConfig_Void  ("Link", _HELP("Link the Player to Target Entity")),
+			InputPortConfig_Void  ("Unlink", _HELP("Unlink the Player (from any Entity)")),
+			InputPortConfig<EntityId> ("Target", _HELP("Target Entity Id") ),
+			InputPortConfig<int>  ("DrawPlayer", 0, _HELP("Draw the Player"), 0, _UICONFIG("enum_int:NoChange=0,Hide=-1,Show=1") ),
+			InputPortConfig<bool> ("KeepTransfromDetach", true, _HELP("Keep Transformation on Detach")),
 			{0}
 		};
 		static const SOutputPortConfig outputs[] = {
-			OutputPortConfig_Void("Linked", _HELP("Trigger if Linked")),
-			OutputPortConfig_Void("Unlinked", _HELP("Trigger if Unlinked")),
+			OutputPortConfig_Void ("Linked", _HELP("Trigger if Linked")),
+			OutputPortConfig_Void ("Unlinked", _HELP("Trigger if Unlinked")),
 			{0}
 		};
 		config.pInputPorts = inputs;
@@ -208,7 +208,7 @@ public:
 		config.SetCategory(EFLN_APPROVED);
 	}
 
-	virtual void ProcessEvent(EFlowEvent event, SActivationInfo* pActInfo)
+	virtual void ProcessEvent( EFlowEvent event, SActivationInfo *pActInfo )
 	{
 		switch (event)
 		{
@@ -219,7 +219,7 @@ public:
 				IEntity* pEntity = gEnv->pEntitySystem->GetEntity(GetPortEntityId(pActInfo, EIP_Target));
 				if (pEntity)
 				{
-					CActor* pPlayerActor = static_cast<CActor*>(gEnv->pGame->GetIGameFramework()->GetClientActor());
+					CActor *pPlayerActor = static_cast<CActor*>(gEnv->pGame->GetIGameFramework()->GetClientActor());
 					if (pPlayerActor)
 					{
 						SActorStats* pActorStats = pPlayerActor->GetActorStats();
@@ -237,7 +237,7 @@ public:
 			}
 			if (IsPortActive(pActInfo, EIP_Unlink))
 			{
-				CActor* pPlayerActor = static_cast<CActor*>(gEnv->pGame->GetIGameFramework()->GetClientActor());
+				CActor *pPlayerActor = static_cast<CActor*>(gEnv->pGame->GetIGameFramework()->GetClientActor());
 				if (pPlayerActor)
 				{
 					SActorStats* pActorStats = pPlayerActor->GetActorStats();
@@ -256,7 +256,7 @@ public:
 		}
 	}
 
-	virtual void GetMemoryStatistics(ICrySizer* s)
+	virtual void GetMemoryStatistics(ICrySizer * s)
 	{
 		s->Add(*this);
 	}
@@ -264,3 +264,4 @@ public:
 
 REGISTER_FLOW_NODE_SINGLETON("Game:PlayerStaging", CFlowPlayerStagingNode);
 REGISTER_FLOW_NODE_SINGLETON("Game:PlayerLink", CFlowPlayerLinkNode);
+

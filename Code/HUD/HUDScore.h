@@ -36,7 +36,7 @@ class CHUDScore : public CHUDObject
 		bool				m_prioritizeTeamKills;
 		bool				m_alive, m_spectating; //updating during sorting
 
-		ScoreEntry(EntityId id, int kills, int deaths, int ping, int teamKills = 0, int score = 0, bool prioTeamKills = false);
+		ScoreEntry(EntityId id, int kills, int deaths, int ping, int teamKills=0, int score=0, bool prioTeamKills=false);
 		bool operator<(const ScoreEntry& entry) const;
 		void UpdateLiveStats();
 	};
@@ -76,7 +76,7 @@ public:
 
 	virtual void Update(float fDeltaTime);
 
-	virtual bool OnInputEvent(const SInputEvent& event)
+	virtual bool OnInputEvent(const SInputEvent &event )
 	{
 		return false;
 	}
@@ -86,9 +86,9 @@ public:
 	void Reset();
 	void AddEntry(EntityId player, int kills, int deaths, int ping, int teamkills);
 
-	void GetMemoryStatistics(ICrySizer* s);
+	void GetMemoryStatistics(ICrySizer * s);
 
-	ILINE void SetVisible(bool visible, CGameFlashAnimation* board = NULL)
+	ILINE void SetVisible(bool visible, CGameFlashAnimation *board = NULL)
 	{
 		m_bShow = visible;
 		m_pFlashBoard = board;
@@ -101,8 +101,8 @@ private:
 	bool			m_bShow;
 	float			m_lastShowSwitch;
 	string		m_currentServer;
-	string    m_currentServerIp;
-	CGameFlashAnimation* m_pFlashBoard;
+	string    m_currentServerIp;	
+	CGameFlashAnimation *m_pFlashBoard;
 
 	void Render();
 };

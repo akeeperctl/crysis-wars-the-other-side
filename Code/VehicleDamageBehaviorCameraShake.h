@@ -4,7 +4,7 @@ Copyright (C), Crytek Studios, 2001-2007.
 -------------------------------------------------------------------------
 $Id$
 $DateTime$
-Description: Implements a damage behavior which gives camera shake to the
+Description: Implements a damage behavior which gives camera shake to the 
 player
 
 -------------------------------------------------------------------------
@@ -26,7 +26,7 @@ public:
 	CVehicleDamageBehaviorCameraShake();
 	virtual ~CVehicleDamageBehaviorCameraShake();
 
-	virtual bool Init(IVehicle* pVehicle, const SmartScriptTable& table);
+	virtual bool Init(IVehicle* pVehicle, const SmartScriptTable &table);
 	virtual void Reset();
 	virtual void Release() { delete this; }
 
@@ -36,7 +36,7 @@ public:
 	virtual void Update(const float deltaTime) {}
 	virtual void OnVehicleEvent(EVehicleEvent event, const SVehicleEventParams& params);
 
-	virtual void GetMemoryStatistics(ICrySizer* s) { s->Add(*this); }
+	virtual void GetMemoryStatistics(ICrySizer * s) { s->Add(*this); }
 
 protected:
 

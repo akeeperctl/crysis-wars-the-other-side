@@ -4,7 +4,7 @@ Copyright (C), Crytek Studios, 2001-2006.
 -------------------------------------------------------------------------
 $Id$
 $DateTime$
-Description: Implements a class which handle case (group) specific
+Description: Implements a class which handle case (group) specific 
 tweaking of values of a vehicle movement
 
 -------------------------------------------------------------------------
@@ -17,9 +17,9 @@ History:
 #include "VehicleMovementTweaks.h"
 
 //------------------------------------------------------------------------
-bool CVehicleMovementTweaks::Init(const SmartScriptTable& table)
+bool CVehicleMovementTweaks::Init(const SmartScriptTable &table)
 {
-	m_groups.clear();
+  m_groups.clear();
 
 	SmartScriptTable tweakGroupsTable;
 	if (table->GetValue("TweakGroups", tweakGroupsTable))
@@ -43,7 +43,7 @@ bool CVehicleMovementTweaks::Init(const SmartScriptTable& table)
 }
 
 //------------------------------------------------------------------------
-bool CVehicleMovementTweaks::AddGroup(const SmartScriptTable& table)
+bool CVehicleMovementTweaks::AddGroup(const SmartScriptTable &table)
 {
 	char* pGroupName;
 	if (!table->GetValue("name", pGroupName))
@@ -110,7 +110,7 @@ void CVehicleMovementTweaks::AddValue(const char* valueName, float* pValue, bool
 	newValue.pValue = pValue;
 	newValue.defaultValue = *pValue;
 	newValue.isRestrictedToMult = isRestrictedToMult;
-	newValue.blocked = false;
+  newValue.blocked = false;
 }
 
 //------------------------------------------------------------------------
@@ -138,10 +138,10 @@ bool CVehicleMovementTweaks::RevertGroup(TTweakGroupId groupId)
 	if (!group.isEnabled)
 		return false;
 
-	group.isEnabled = false;
+  group.isEnabled = false;
 
 	ComputeGroups();
-
+	
 	return true;
 }
 
@@ -160,17 +160,17 @@ bool CVehicleMovementTweaks::RevertValues()
 	TGroupVector::iterator groupIte = m_groups.begin();
 	TGroupVector::iterator groupEnd = m_groups.end();
 
-	bool reverted = false;
+  bool reverted = false;
 
 	for (; groupIte != groupEnd; ++groupIte)
 	{
 		SGroup& groupInfo = *groupIte;
-
-		if (groupInfo.isEnabled)
-		{
-			groupInfo.isEnabled = false;
-			reverted = true;
-		}
+		
+    if (groupInfo.isEnabled)
+    {
+      groupInfo.isEnabled = false;
+      reverted = true;
+    }    
 	}
 
 	return reverted;
@@ -212,8 +212,8 @@ void CVehicleMovementTweaks::ComputeGroup(const SGroup& group)
 
 		SValue& valueInfo = m_values[v.valueId];
 
-		if (valueInfo.blocked)
-			continue;
+    if (valueInfo.blocked)
+      continue;
 
 		if (v.op == eTVO_Replace)
 			(*valueInfo.pValue) = v.value;
@@ -224,10 +224,10 @@ void CVehicleMovementTweaks::ComputeGroup(const SGroup& group)
 
 //------------------------------------------------------------------------
 void CVehicleMovementTweaks::BlockValue(TValueId valueId, bool block)
-{
-	assert(valueId >= 0 && valueId < m_values.size());
-
-	m_values[valueId].blocked = block;
+{ 
+  assert(valueId >= 0 && valueId < m_values.size());
+    
+  m_values[valueId].blocked = block;  
 }
 
 //------------------------------------------------------------------------

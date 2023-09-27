@@ -27,27 +27,27 @@ public:
 	virtual ~CTornado();
 
 	// IGameObjectExtension
-	virtual bool Init(IGameObject* pGameObject);
+	virtual bool Init(IGameObject *pGameObject);
 	virtual void InitClient(int channelId) {};
-	virtual void PostInit(IGameObject* pGameObject);
+	virtual void PostInit(IGameObject *pGameObject);
 	virtual void PostInitClient(int channelId) {};
 	virtual void Release();
-	virtual void FullSerialize(TSerialize ser);
-	virtual bool NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int flags);
+	virtual void FullSerialize( TSerialize ser );
+	virtual bool NetSerialize( TSerialize ser, EEntityAspects aspect, uint8 profile, int flags );
 	virtual void PostSerialize() {}
-	virtual void SerializeSpawnInfo(TSerialize ser) {}
-	virtual ISerializableInfoPtr GetSpawnInfo() { return 0; }
-	virtual void Update(SEntityUpdateContext& ctx, int updateSlot);
-	virtual void PostUpdate(float frameTime) {};
+	virtual void SerializeSpawnInfo( TSerialize ser ) {}
+	virtual ISerializableInfoPtr GetSpawnInfo() {return 0;}
+	virtual void Update( SEntityUpdateContext &ctx, int updateSlot);
+	virtual void PostUpdate(float frameTime ) {};
 	virtual void PostRemoteSpawn() {};
-	virtual void HandleEvent(const SGameObjectEvent&);
-	virtual void ProcessEvent(SEntityEvent&);
+	virtual void HandleEvent( const SGameObjectEvent &);
+	virtual void ProcessEvent(SEntityEvent &);
 	virtual void SetChannelId(uint16 id) {}
 	virtual void SetAuthority(bool auth);
-	virtual void GetMemoryStatistics(ICrySizer* s);
+	virtual void GetMemoryStatistics(ICrySizer * s);
 	//~IGameObjectExtension
 
-	void	SetTarget(IEntity* pTargetEntity, CFlowTornadoWander* pCallback);
+	void	SetTarget(IEntity *pTargetEntity, CFlowTornadoWander *pCallback);
 
 	bool Reset();
 
@@ -62,13 +62,13 @@ protected:
 protected:
 	static const int POSITION_ASPECT = eEA_GameServerStatic;
 
-	IPhysicalEntity* m_pPhysicalEntity;
+	IPhysicalEntity*	m_pPhysicalEntity;
 
 	// appearance of tornado
-	IParticleEffect* m_pFunnelEffect;
-	IParticleEffect* m_pCloudConnectEffect;
-	IParticleEffect* m_pTopEffect;
-	IGroundEffect* m_pGroundEffect;
+	IParticleEffect*	m_pFunnelEffect;
+	IParticleEffect*	m_pCloudConnectEffect;
+	IParticleEffect*	m_pTopEffect;
+	IGroundEffect*		m_pGroundEffect;
 	float							m_cloudHeight;
 	bool							m_isOnWater;
 	bool							m_isInAir;
@@ -85,8 +85,8 @@ protected:
 	Vec3							m_currentPos;
 
 	// target
-	IEntity* m_pTargetEntity;	// the tornado will try to reach this entity
-	CFlowTornadoWander* m_pTargetCallback;
+	IEntity*						m_pTargetEntity;	// the tornado will try to reach this entity
+	CFlowTornadoWander*	m_pTargetCallback;
 
 	//
 	float m_nextEntitiesCheck;

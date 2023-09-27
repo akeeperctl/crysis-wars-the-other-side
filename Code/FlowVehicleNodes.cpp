@@ -23,7 +23,7 @@ class CVehicleActionEntityAttachment;
 
 //------------------------------------------------------------------------
 class CFlowVehicleEntityAttachment
-	: public CFlowBaseNode
+: public CFlowBaseNode
 {
 public:
 
@@ -36,7 +36,7 @@ public:
 	virtual void ProcessEvent(EFlowEvent flowEvent, SActivationInfo* pActivationInfo);
 	virtual void Serialize(SActivationInfo* pActivationInfo, TSerialize ser);
 
-	virtual void GetMemoryStatistics(ICrySizer* s)
+	virtual void GetMemoryStatistics(ICrySizer * s)
 	{
 		s->Add(*this);
 	}
@@ -47,7 +47,7 @@ protected:
 	IVehicle* GetVehicle();
 	CVehicleActionEntityAttachment* GetVehicleAction();
 
-	IFlowGraph* m_pGraph;
+	IFlowGraph *m_pGraph;
 	TFlowNodeId m_nodeID;
 
 	EntityId m_vehicleId;
@@ -96,13 +96,13 @@ void CFlowVehicleEntityAttachment::Serialize(SActivationInfo* pActivationInfo, T
 //------------------------------------------------------------------------
 void CFlowVehicleEntityAttachment::GetConfiguration(SFlowNodeConfig& nodeConfig)
 {
-	static const SInputPortConfig pInConfig[] =
+	static const SInputPortConfig pInConfig[] = 
 	{
 		InputPortConfig_Void("DropAttachmentTrigger", _HELP("Trigger to drop the attachment")),
 		{0}
 	};
 
-	static const SOutputPortConfig pOutConfig[] =
+	static const SOutputPortConfig pOutConfig[] = 
 	{
 		OutputPortConfig<int>("EntityId", _HELP("Entity Id of the attachment")),
 		OutputPortConfig<bool>("IsAttached", _HELP("If the attachment is still attached")),
@@ -183,7 +183,7 @@ CVehicleActionEntityAttachment* CFlowVehicleEntityAttachment::GetVehicleAction()
 			IVehicleAction* pAction = pVehicle->GetAction(i);
 			assert(pAction);
 
-			if (CVehicleActionEntityAttachment* pAttachment =
+			if (CVehicleActionEntityAttachment* pAttachment = 
 				CAST_VEHICLEOBJECT(CVehicleActionEntityAttachment, pAction))
 			{
 				return pAttachment;
@@ -203,7 +203,7 @@ public:
 	CFlowVehicleSetAltitudeLimit(SActivationInfo* pActivationInfo) {};
 	~CFlowVehicleSetAltitudeLimit() {}
 
-	virtual void GetMemoryStatistics(ICrySizer* s)
+	virtual void GetMemoryStatistics(ICrySizer * s)
 	{
 		s->Add(*this);
 	}
@@ -216,9 +216,9 @@ public:
 
 	virtual void GetConfiguration(SFlowNodeConfig& nodeConfig)
 	{
-		static const SInputPortConfig pInConfig[] =
+		static const SInputPortConfig pInConfig[] = 
 		{
-			InputPortConfig_Void("SetLimit", _HELP("Trigger to set limit")),
+			InputPortConfig_Void  ("SetLimit", _HELP("Trigger to set limit")),
 			InputPortConfig<float>("Limit", _HELP("Altitude limit in meters")),
 			{0}
 		};
@@ -240,6 +240,7 @@ public:
 		}
 	}
 };
+
 
 REGISTER_FLOW_NODE("Vehicle:EntityAttachment", CFlowVehicleEntityAttachment);
 REGISTER_FLOW_NODE("Game:SetVehicleAltitudeLimit", CFlowVehicleSetAltitudeLimit);

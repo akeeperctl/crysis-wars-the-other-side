@@ -18,6 +18,7 @@ History:
 # pragma once
 #endif
 
+
 #include "Single.h"
 
 #define SINGLETG_MAX_TARGETS 4
@@ -29,7 +30,7 @@ public:
 	virtual ~CSingleTG();
 
 	// CSingle
-	virtual void GetMemoryStatistics(ICrySizer* s) { s->Add(*this); CSingle::GetMemoryStatistics(s); }
+	virtual void GetMemoryStatistics(ICrySizer * s) { s->Add(*this); CSingle::GetMemoryStatistics(s); }
 
 	virtual bool CanFire(bool considerAmmo /* = true */) const;
 	virtual void UpdateFPView(float frameTime);
@@ -54,5 +55,6 @@ private:
 	float				m_fSerializeProgress;
 	int					m_iSerializeIgnoreUpdate;
 };
+
 
 #endif

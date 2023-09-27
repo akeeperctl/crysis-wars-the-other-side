@@ -4,7 +4,7 @@ Copyright (C), Crytek Studios, 2001-2005.
 -------------------------------------------------------------------------
 $Id$
 $DateTime$
-Description:
+Description: 
 	Header for HUD object base class
 	Defines base class for HUD elements that are drawn using C++ rather than Flash
 	Shared by G02 and G04
@@ -36,7 +36,7 @@ CHUDObject::~CHUDObject()
 
 //-----------------------------------------------------------------------------------------------------
 
-void CHUDObject::GetHUDObjectMemoryStatistics(ICrySizer* s)
+void CHUDObject::GetHUDObjectMemoryStatistics(ICrySizer * s)
 {
 }
 

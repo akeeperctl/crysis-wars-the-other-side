@@ -5,7 +5,7 @@
 #include "Nodes/G2FlowBaseNode.h"
 
 #if defined(WHOLE_PROJECT)
-#define GetPlayer GetPlayerNodes
+	#define GetPlayer GetPlayerNodes
 #endif
 
 namespace
@@ -15,25 +15,25 @@ namespace
 		static IActorSystem* pActorSys = 0;
 		if (pActorSys == 0)
 			pActorSys = g_pGame->GetIGameFramework()->GetIActorSystem();
-
+		
 		if (pActorSys != 0)
 		{
 			IActor* pIActor = pActorSys->GetActor(entityId);
 			if (pIActor)
 			{
-				CActor* pActor = (CActor*)pIActor;
+				CActor* pActor = (CActor*) pIActor;
 				if (pActor && CPlayer::GetActorClassType() == pActor->GetActorClass())
 					return static_cast<CPlayer*> (pActor);
 			}
 		}
 		return 0;
 	}
-};
+};	
 
 class CFlowNanoSuitNode : public CFlowBaseNode, public CNanoSuit::INanoSuitListener
 {
 public:
-	CFlowNanoSuitNode(SActivationInfo* pActInfo) : m_entityId(0)
+	CFlowNanoSuitNode( SActivationInfo * pActInfo ) : m_entityId (0)
 	{
 	}
 
@@ -42,7 +42,7 @@ public:
 		RemoveAsNanoSuitListener();
 	}
 
-	IFlowNodePtr Clone(SActivationInfo* pActInfo)
+	IFlowNodePtr Clone( SActivationInfo * pActInfo )
 	{
 		return new CFlowNanoSuitNode(pActInfo);
 	}
@@ -70,23 +70,23 @@ public:
 	virtual void GetConfiguration(SFlowNodeConfig& config)
 	{
 		static const SInputPortConfig inputs[] = {
-			InputPortConfig_Void("Cloak", _HELP("Trigger to select Cloak Mode")),
-			InputPortConfig_Void("Strength", _HELP("Trigger to select Strength Mode")),
-			InputPortConfig_Void("Defense", _HELP("Trigger to select Defense Mode")),
-			InputPortConfig_Void("Speed", _HELP("Trigger to select Speed Mode")),
+			InputPortConfig_Void  ("Cloak", _HELP("Trigger to select Cloak Mode")),
+			InputPortConfig_Void  ("Strength", _HELP("Trigger to select Strength Mode")),
+			InputPortConfig_Void  ("Defense", _HELP("Trigger to select Defense Mode")),
+			InputPortConfig_Void  ("Speed", _HELP("Trigger to select Speed Mode")),
 			InputPortConfig<float>("Energy", 0.0f, _HELP("Set Energy")),
-			InputPortConfig<int>("CloakLevel", 1, _HELP("Set cloak level [1-3]")),
-			InputPortConfig_Void("BreakHUD", _HELP("Trigger to break the HUD, causing it to disappear")),
-			InputPortConfig_Void("RebootHUD", _HELP("Trigger to reboot the HUD, causing it to appear")),
+			InputPortConfig<int>  ("CloakLevel", 1, _HELP("Set cloak level [1-3]")),
+			InputPortConfig_Void  ("BreakHUD", _HELP("Trigger to break the HUD, causing it to disappear")),
+			InputPortConfig_Void  ("RebootHUD", _HELP("Trigger to reboot the HUD, causing it to appear")),
 			{0}
 		};
 		static const SOutputPortConfig outputs[] = {
-			OutputPortConfig_Void("Cloak", _HELP("Triggered on Default Mode")),
-			OutputPortConfig_Void("Strength", _HELP("Triggered on Strength Mode")),
-			OutputPortConfig_Void("Defense", _HELP("Triggered on Defense Mode")),
-			OutputPortConfig_Void("Speed", _HELP("Triggered on Speed Mode")),
+			OutputPortConfig_Void  ("Cloak", _HELP("Triggered on Default Mode")),
+			OutputPortConfig_Void  ("Strength", _HELP("Triggered on Strength Mode")),
+			OutputPortConfig_Void  ("Defense", _HELP("Triggered on Defense Mode")),
+			OutputPortConfig_Void  ("Speed", _HELP("Triggered on Speed Mode")),
 			OutputPortConfig<float>("Energy", _HELP("Current Energy")),
-			OutputPortConfig<int>("CloakLevel", _HELP("Current cloak level [set when Cloak mode is active]")),
+			OutputPortConfig<int>  ("CloakLevel", _HELP("Current cloak level [set when Cloak mode is active]")),
 			// OutputPortConfig_Void  ("BreakHUD", "Triggered on breaking the HUD"),
 			// OutputPortConfig_Void  ("RebootHUD", "Triggered on rebooting the HUD"),
 			{0}
@@ -106,7 +106,7 @@ public:
 			if (pPlayer != 0)
 			{
 				CNanoSuit* pSuit = pPlayer->GetNanoSuit();
-				if (pSuit)
+				if(pSuit)
 					pSuit->RemoveListener(this);
 			}
 			m_entityId = 0;
@@ -121,63 +121,63 @@ public:
 			if (pPlayer != 0)
 			{
 				CNanoSuit* pSuit = pPlayer->GetNanoSuit();
-				if (pSuit)
+				if(pSuit)
 					pSuit->AddListener(this);
 			}
 		}
 	}
 
-	virtual void ProcessEvent(EFlowEvent event, SActivationInfo* pActInfo)
+	virtual void ProcessEvent( EFlowEvent event, SActivationInfo *pActInfo )
 	{
 		switch (event)
 		{
 		case eFE_Initialize:
-		{
-			m_actInfo = *pActInfo;
-			CPlayer* pPlayer = GetPlayer(m_entityId);
-			if (pPlayer)
 			{
-				CNanoSuit* pSuit = pPlayer->GetNanoSuit();
-				if (pSuit)
+				m_actInfo = *pActInfo;
+				CPlayer* pPlayer = GetPlayer(m_entityId);
+				if (pPlayer)
 				{
-					ModeChanged(pSuit->GetMode());
-					EnergyChanged(pSuit->GetSuitEnergy());
+					CNanoSuit* pSuit = pPlayer->GetNanoSuit();
+					if(pSuit)
+					{
+						ModeChanged(pSuit->GetMode());
+						EnergyChanged(pSuit->GetSuitEnergy());
+					}
 				}
 			}
-		}
-		break;
+			break;
 		case eFE_SetEntityId:
-		{
-			RemoveAsNanoSuitListener();
-			m_entityId = pActInfo->pEntity ? pActInfo->pEntity->GetId() : 0;
-			AddAsNanoSuitListener();
-		}
-		break;
+			{
+				RemoveAsNanoSuitListener();
+				m_entityId = pActInfo->pEntity ? pActInfo->pEntity->GetId() : 0;
+				AddAsNanoSuitListener();
+			}
+			break;
 
 		case eFE_Activate:
-		{
-			CPlayer* pPlayer = GetPlayer(m_entityId);
-			if (pPlayer == 0)
-				return;
-			CNanoSuit* pSuit = pPlayer->GetNanoSuit();
-			if (!pSuit)
-				return;
+			{
+				CPlayer* pPlayer = GetPlayer(m_entityId);
+				if (pPlayer == 0)
+					return;
+				CNanoSuit* pSuit = pPlayer->GetNanoSuit();
+				if(!pSuit)
+					return;
 
-			if (IsPortActive(pActInfo, EIP_Cloak))
-				pSuit->SetMode(NANOMODE_CLOAK);
-			else if (IsPortActive(pActInfo, EIP_Speed))
-				pSuit->SetMode(NANOMODE_SPEED);
-			else if (IsPortActive(pActInfo, EIP_Strength))
-				pSuit->SetMode(NANOMODE_STRENGTH);
-			else if (IsPortActive(pActInfo, EIP_Defense))
-				pSuit->SetMode(NANOMODE_DEFENSE);
-
-			if (IsPortActive(pActInfo, EIP_Energy))
-				pSuit->SetSuitEnergy(GetPortFloat(pActInfo, EIP_Energy));
-			if (IsPortActive(pActInfo, EIP_CloakLevel))
-				pSuit->SetCloakLevel((ENanoCloakMode)GetPortInt(pActInfo, EIP_CloakLevel));
-		}
-		break;
+				if (IsPortActive(pActInfo, EIP_Cloak))
+					pSuit->SetMode(NANOMODE_CLOAK);
+				else if (IsPortActive(pActInfo, EIP_Speed))
+					pSuit->SetMode(NANOMODE_SPEED);
+				else if (IsPortActive(pActInfo, EIP_Strength))
+					pSuit->SetMode(NANOMODE_STRENGTH);
+				else if (IsPortActive(pActInfo, EIP_Defense))
+					pSuit->SetMode(NANOMODE_DEFENSE);
+	
+				if (IsPortActive(pActInfo, EIP_Energy))
+					pSuit->SetSuitEnergy(GetPortFloat(pActInfo, EIP_Energy));
+				if (IsPortActive(pActInfo, EIP_CloakLevel))
+					pSuit->SetCloakLevel( (ENanoCloakMode) GetPortInt(pActInfo, EIP_CloakLevel));
+			}
+			break;
 		}
 	}
 
@@ -196,8 +196,8 @@ public:
 		CPlayer* pPlayer = GetPlayer(m_entityId);
 		if (pPlayer)
 		{
-			if (pPlayer->GetNanoSuit())
-				ActivateOutput(&m_actInfo, EOP_CloakLevel, (int)pPlayer->GetNanoSuit()->GetCloak()->GetState());
+			if(pPlayer->GetNanoSuit())
+				ActivateOutput(&m_actInfo, EOP_CloakLevel, (int) pPlayer->GetNanoSuit()->GetCloak()->GetState());
 		}
 	}
 
@@ -206,7 +206,8 @@ public:
 		ActivateOutput(&m_actInfo, EOP_Energy, energy);
 	}
 
-	virtual void GetMemoryStatistics(ICrySizer* s)
+
+	virtual void GetMemoryStatistics(ICrySizer * s)
 	{
 		s->Add(*this);
 	}
@@ -216,10 +217,11 @@ public:
 	//~INanoSuitListener
 };
 
+
 class CFlowNanoSuitGetNode : public CFlowBaseNode
 {
 public:
-	CFlowNanoSuitGetNode(SActivationInfo* pActInfo)
+	CFlowNanoSuitGetNode( SActivationInfo * pActInfo )
 	{
 	}
 
@@ -252,16 +254,16 @@ public:
 	virtual void GetConfiguration(SFlowNodeConfig& config)
 	{
 		static const SInputPortConfig inputs[] = {
-			InputPortConfig_Void("Trigger", _HELP("Trigger to get current NanoSuit values")),
+			InputPortConfig_Void  ("Trigger", _HELP("Trigger to get current NanoSuit values")),
 			{0}
 		};
 		static const SOutputPortConfig outputs[] = {
-			OutputPortConfig_Void("Cloak", _HELP("Triggered on Cloak Mode")),
-			OutputPortConfig_Void("Strength", _HELP("Triggered on Strength Mode")),
-			OutputPortConfig_Void("Defense", _HELP("Triggered on Defense Mode")),
-			OutputPortConfig_Void("Speed", _HELP("Triggered on Speed Mode")),
+			OutputPortConfig_Void  ("Cloak", _HELP("Triggered on Cloak Mode")),
+			OutputPortConfig_Void  ("Strength", _HELP("Triggered on Strength Mode")),
+			OutputPortConfig_Void  ("Defense", _HELP("Triggered on Defense Mode")),
+			OutputPortConfig_Void  ("Speed", _HELP("Triggered on Speed Mode")),
 			OutputPortConfig<float>("Energy", _HELP("Current Energy")),
-			OutputPortConfig<int>("CloakLevel", _HELP("Current cloak level [1-3]")),
+			OutputPortConfig<int>  ("CloakLevel", _HELP("Current cloak level [1-3]")),
 			{0}
 		};
 		config.nFlags |= EFLN_TARGET_ENTITY;
@@ -271,7 +273,7 @@ public:
 		config.SetCategory(EFLN_APPROVED);
 	}
 
-	virtual void ProcessEvent(EFlowEvent event, SActivationInfo* pActInfo)
+	virtual void ProcessEvent( EFlowEvent event, SActivationInfo *pActInfo )
 	{
 		switch (event)
 		{
@@ -279,46 +281,47 @@ public:
 			break;
 
 		case eFE_Activate:
-		{
-			if (!IsPortActive(pActInfo, EIP_Trigger))
-				return;
+			{
+				if (!IsPortActive(pActInfo, EIP_Trigger))
+					return;
 
-			if (pActInfo->pEntity == 0)
-				return;
-			CPlayer* pPlayer = GetPlayer(pActInfo->pEntity->GetId());
-			if (pPlayer == 0)
-				return;
-			CNanoSuit* pSuit = pPlayer->GetNanoSuit();
-			if (!pSuit)
-				return;
-			const int mode = pSuit->GetMode();
-			if (mode == NANOMODE_CLOAK)
-				ActivateOutput(pActInfo, EOP_Cloak, true);
-			else if (mode == NANOMODE_SPEED)
-				ActivateOutput(pActInfo, EOP_Speed, true);
-			else if (mode == NANOMODE_STRENGTH)
-				ActivateOutput(pActInfo, EOP_Strength, true);
-			else if (mode == NANOMODE_DEFENSE)
-				ActivateOutput(pActInfo, EOP_Defense, true);
+				if (pActInfo->pEntity == 0)
+					return;
+				CPlayer* pPlayer = GetPlayer(pActInfo->pEntity->GetId());
+				if (pPlayer == 0)
+					return;
+				CNanoSuit* pSuit = pPlayer->GetNanoSuit();
+				if(!pSuit)
+					return;
+				const int mode = pSuit->GetMode();
+				if (mode == NANOMODE_CLOAK)
+					ActivateOutput(pActInfo, EOP_Cloak, true);
+				else if (mode == NANOMODE_SPEED)
+					ActivateOutput(pActInfo, EOP_Speed, true);
+				else if (mode == NANOMODE_STRENGTH)
+					ActivateOutput(pActInfo, EOP_Strength, true);
+				else if (mode == NANOMODE_DEFENSE)
+					ActivateOutput(pActInfo, EOP_Defense, true);
 
-			ActivateOutput(pActInfo, EOP_Energy, pSuit->GetSuitEnergy());
-			ActivateOutput(pActInfo, EOP_CloakLevel, (int)pSuit->GetCloak()->GetState());
-		}
-		break;
+				ActivateOutput(pActInfo, EOP_Energy, pSuit->GetSuitEnergy());
+				ActivateOutput(pActInfo, EOP_CloakLevel, (int) pSuit->GetCloak()->GetState());
+			}
+			break;
 		}
 	}
 
-	virtual void GetMemoryStatistics(ICrySizer* s)
+	virtual void GetMemoryStatistics(ICrySizer * s)
 	{
 		s->Add(*this);
 	}
 };
 
+
 class CFlowNanoSuitControlNode : public CFlowBaseNode
 {
 public:
 
-	CFlowNanoSuitControlNode(SActivationInfo* pActInfo)
+	CFlowNanoSuitControlNode( SActivationInfo * pActInfo )
 	{
 	}
 
@@ -345,11 +348,11 @@ public:
 	virtual void GetConfiguration(SFlowNodeConfig& config)
 	{
 		static const SInputPortConfig inputs[] = {
-			InputPortConfig_Void("Add", _HELP("Trigger to add mode")),
-			InputPortConfig_Void("Remove", _HELP("Trigger to remove mode")),
-			InputPortConfig_Void("SetDefect", _HELP("Trigger to set mode defect")),
-			InputPortConfig_Void("Repair", _HELP("Trigger to repair mode")),
-			InputPortConfig<int>("Mode", 0, _HELP("Mode to add/remove"), 0, _UICONFIG("enum_int:Speed=0,Armor=1,Strength=2,Cloak=3")),
+			InputPortConfig_Void  ("Add", _HELP("Trigger to add mode")),
+			InputPortConfig_Void  ("Remove", _HELP("Trigger to remove mode")),
+			InputPortConfig_Void  ("SetDefect", _HELP("Trigger to set mode defect")),
+			InputPortConfig_Void  ("Repair", _HELP("Trigger to repair mode")),
+			InputPortConfig<int>  ("Mode", 0, _HELP("Mode to add/remove"), 0, _UICONFIG("enum_int:Speed=0,Armor=1,Strength=2,Cloak=3")),
 			{0}
 		};
 		static const SOutputPortConfig outputs[] = {
@@ -362,7 +365,8 @@ public:
 		config.SetCategory(EFLN_APPROVED);
 	}
 
-	virtual void ProcessEvent(EFlowEvent event, SActivationInfo* pActInfo)
+
+	virtual void ProcessEvent( EFlowEvent event, SActivationInfo *pActInfo )
 	{
 		switch (event)
 		{
@@ -370,44 +374,44 @@ public:
 			break;
 
 		case eFE_Activate:
-		{
-			if (pActInfo->pEntity == 0)
-				return;
-			const bool bAdd = IsPortActive(pActInfo, EIP_Add);
-			const bool bRemove = IsPortActive(pActInfo, EIP_Remove);
-			const bool bDefect = IsPortActive(pActInfo, EIP_Defect);
-			const bool bRepair = IsPortActive(pActInfo, EIP_Repair);
-			if (bAdd || bRemove || bDefect || bRepair)
 			{
-				static const int PortInt2ModeMapping[] = { NANOMODE_SPEED, NANOMODE_DEFENSE, NANOMODE_STRENGTH, NANOMODE_CLOAK };
-
-				CPlayer* pPlayer = GetPlayer(pActInfo->pEntity->GetId());
-				if (pPlayer == 0)
+				if (pActInfo->pEntity == 0)
 					return;
-				CNanoSuit* pSuit = pPlayer->GetNanoSuit();
-				if (!pSuit)
-					return;
-				int mode = GetPortInt(pActInfo, EIP_Mode);
-				if (mode < 0 || mode >= sizeof(PortInt2ModeMapping) / sizeof(PortInt2ModeMapping[0]))
+				const bool bAdd = IsPortActive(pActInfo, EIP_Add);
+				const bool bRemove = IsPortActive(pActInfo, EIP_Remove);
+				const bool bDefect = IsPortActive(pActInfo, EIP_Defect);
+				const bool bRepair = IsPortActive(pActInfo, EIP_Repair);
+				if (bAdd || bRemove || bDefect || bRepair)
 				{
-					GameWarning("[flow] CFlowNanoSuitControlNode: Illegal mode %d", mode);
-					return;
+					static const int PortInt2ModeMapping[]= { NANOMODE_SPEED, NANOMODE_DEFENSE, NANOMODE_STRENGTH, NANOMODE_CLOAK };
+
+					CPlayer* pPlayer = GetPlayer(pActInfo->pEntity->GetId());
+					if (pPlayer == 0)
+						return;
+					CNanoSuit *pSuit = pPlayer->GetNanoSuit();
+					if(!pSuit)
+						return;
+					int mode = GetPortInt(pActInfo, EIP_Mode);
+					if (mode < 0 || mode >= sizeof(PortInt2ModeMapping)/sizeof(PortInt2ModeMapping[0]))
+					{
+						GameWarning("[flow] CFlowNanoSuitControlNode: Illegal mode %d", mode);
+						return;
+					}
+					if (bAdd)
+						pSuit->ActivateMode((ENanoMode)PortInt2ModeMapping[mode], true);
+					else if (bRemove)
+						pSuit->ActivateMode((ENanoMode)PortInt2ModeMapping[mode], false);
+					if (bDefect)
+						pSuit->SetModeDefect((ENanoMode)PortInt2ModeMapping[mode], true);
+					else if (bRepair)
+						pSuit->SetModeDefect((ENanoMode)PortInt2ModeMapping[mode], false);
 				}
-				if (bAdd)
-					pSuit->ActivateMode((ENanoMode)PortInt2ModeMapping[mode], true);
-				else if (bRemove)
-					pSuit->ActivateMode((ENanoMode)PortInt2ModeMapping[mode], false);
-				if (bDefect)
-					pSuit->SetModeDefect((ENanoMode)PortInt2ModeMapping[mode], true);
-				else if (bRepair)
-					pSuit->SetModeDefect((ENanoMode)PortInt2ModeMapping[mode], false);
 			}
-		}
-		break;
+			break;
 		}
 	}
 
-	virtual void GetMemoryStatistics(ICrySizer* s)
+	virtual void GetMemoryStatistics(ICrySizer * s)
 	{
 		s->Add(*this);
 	}
@@ -417,7 +421,7 @@ class CFlowParachuteControlNode : public CFlowBaseNode
 {
 public:
 
-	CFlowParachuteControlNode(SActivationInfo* pActInfo)
+	CFlowParachuteControlNode( SActivationInfo * pActInfo )
 	{
 	}
 
@@ -443,10 +447,10 @@ public:
 	virtual void GetConfiguration(SFlowNodeConfig& config)
 	{
 		static const SInputPortConfig inputs[] = {
-			InputPortConfig_Void("Open", _HELP("Trigger to open")),
-			InputPortConfig_Void("Close", _HELP("Trigger to close")),
-			InputPortConfig_Void("Remove", _HELP("Trigger to remove")),
-			InputPortConfig_Void("FreeFall", _HELP("Trigger to force Player into FreeFall state")),
+			InputPortConfig_Void  ("Open", _HELP("Trigger to open")),
+			InputPortConfig_Void  ("Close", _HELP("Trigger to close")),
+			InputPortConfig_Void  ("Remove", _HELP("Trigger to remove")),
+			InputPortConfig_Void  ("FreeFall", _HELP("Trigger to force Player into FreeFall state")),
 			{0}
 		};
 		static const SOutputPortConfig outputs[] = {
@@ -459,39 +463,41 @@ public:
 		config.SetCategory(EFLN_APPROVED);
 	}
 
-	virtual void ProcessEvent(EFlowEvent event, SActivationInfo* pActInfo)
+
+	virtual void ProcessEvent( EFlowEvent event, SActivationInfo *pActInfo )
 	{
 		switch (event)
 		{
 		case eFE_Activate:
-		{
-			if (pActInfo->pEntity == 0)
-				return;
-			CPlayer* pPlayer = GetPlayer(pActInfo->pEntity->GetId());
-			if (pPlayer == 0)
-				return;
-			int8 newState = -1;
-			if (IsPortActive(pActInfo, EIP_Open))
-				newState = 2;
-			else if (IsPortActive(pActInfo, EIP_Close))
-				newState = 1;
-			else if (IsPortActive(pActInfo, EIP_Remove))
 			{
-				newState = 0;
-				pPlayer->EnableParachute(false);
+				if (pActInfo->pEntity == 0)
+					return;
+				CPlayer* pPlayer = GetPlayer(pActInfo->pEntity->GetId());
+				if (pPlayer == 0)
+					return;
+				int8 newState = -1;
+				if(IsPortActive(pActInfo, EIP_Open))
+					newState = 2;
+				else if(IsPortActive(pActInfo, EIP_Close))
+					newState = 1;
+				else if(IsPortActive(pActInfo, EIP_Remove))
+				{
+					newState = 0;
+					pPlayer->EnableParachute(false);
+				}
+	
+				if (newState != -1)
+					pPlayer->ChangeParachuteState(newState);
+
+				if (IsPortActive(pActInfo, EIP_FreeFall))
+					pPlayer->ForceFreeFall();
+
 			}
-
-			if (newState != -1)
-				pPlayer->ChangeParachuteState(newState);
-
-			if (IsPortActive(pActInfo, EIP_FreeFall))
-				pPlayer->ForceFreeFall();
-		}
-		break;
+			break;
 		}
 	}
 
-	virtual void GetMemoryStatistics(ICrySizer* s)
+	virtual void GetMemoryStatistics(ICrySizer * s)
 	{
 		s->Add(*this);
 	}
@@ -500,7 +506,7 @@ public:
 class CFlowNanoSuitFakeMaterial : public CFlowBaseNode
 {
 public:
-	CFlowNanoSuitFakeMaterial(SActivationInfo* pActInfo)
+	CFlowNanoSuitFakeMaterial( SActivationInfo * pActInfo )
 	{
 	}
 
@@ -525,11 +531,11 @@ public:
 	virtual void GetConfiguration(SFlowNodeConfig& config)
 	{
 		static const SInputPortConfig inputs[] = {
-			InputPortConfig<bool>("Asian", false, _HELP("If true, use Asian material, otherwise US")),
-			InputPortConfig_Void("Cloak", _HELP("Trigger to select Cloak Mode")),
-			InputPortConfig_Void("Strength", _HELP("Trigger to select Strength Mode")),
-			InputPortConfig_Void("Defense", _HELP("Trigger to select Defense Mode")),
-			InputPortConfig_Void("Speed", _HELP("Trigger to select Speed Mode")),
+			InputPortConfig<bool> ("Asian", false, _HELP("If true, use Asian material, otherwise US")),
+			InputPortConfig_Void  ("Cloak", _HELP("Trigger to select Cloak Mode")),
+			InputPortConfig_Void  ("Strength", _HELP("Trigger to select Strength Mode")),
+			InputPortConfig_Void  ("Defense", _HELP("Trigger to select Defense Mode")),
+			InputPortConfig_Void  ("Speed", _HELP("Trigger to select Speed Mode")),
 			{0}
 		};
 		static const SOutputPortConfig outputs[] = {
@@ -543,45 +549,47 @@ public:
 		config.SetCategory(EFLN_APPROVED);
 	}
 
-	virtual void ProcessEvent(EFlowEvent event, SActivationInfo* pActInfo)
+
+	virtual void ProcessEvent( EFlowEvent event, SActivationInfo *pActInfo )
 	{
 		switch (event)
 		{
 		case eFE_Activate:
-		{
-			IEntity* pEntity = pActInfo->pEntity;
-			if (pEntity != 0)
 			{
-				ENanoMode nanoMode = NANOMODE_LAST;
-				if (IsPortActive(pActInfo, EIP_Cloak))
-					nanoMode = NANOMODE_CLOAK;
-				else if (IsPortActive(pActInfo, EIP_Speed))
-					nanoMode = NANOMODE_SPEED;
-				else if (IsPortActive(pActInfo, EIP_Strength))
-					nanoMode = NANOMODE_STRENGTH;
-				else if (IsPortActive(pActInfo, EIP_Defense))
-					nanoMode = NANOMODE_DEFENSE;
-				if (nanoMode != NANOMODE_LAST)
+				IEntity* pEntity = pActInfo->pEntity;
+				if (pEntity != 0)
 				{
-					const bool bAsian = GetPortBool(pActInfo, EIP_Asian);
-					CNanoSuit::SNanoMaterial* pNanoMat = CNanoSuit::GetNanoMaterialFG(nanoMode, bAsian);
-					if (pNanoMat)
+					ENanoMode nanoMode = NANOMODE_LAST;
+					if (IsPortActive(pActInfo, EIP_Cloak))
+						nanoMode = NANOMODE_CLOAK;
+					else if (IsPortActive(pActInfo, EIP_Speed))
+						nanoMode = NANOMODE_SPEED;
+					else if (IsPortActive(pActInfo, EIP_Strength))
+						nanoMode = NANOMODE_STRENGTH;
+					else if (IsPortActive(pActInfo, EIP_Defense))
+						nanoMode = NANOMODE_DEFENSE;
+					if (nanoMode != NANOMODE_LAST)
 					{
-						CNanoSuit::AssignNanoMaterialToEntity(pEntity, pNanoMat);
-						ActivateOutput(pActInfo, EOP_Done, true);
+						const bool bAsian = GetPortBool(pActInfo, EIP_Asian);
+						CNanoSuit::SNanoMaterial* pNanoMat = CNanoSuit::GetNanoMaterial(nanoMode, bAsian);
+						if (pNanoMat)
+						{
+							CNanoSuit::AssignNanoMaterialToEntity(pEntity, pNanoMat);
+							ActivateOutput(pActInfo, EOP_Done, true);
+						}
 					}
 				}
 			}
-		}
-		break;
+			break;
 		}
 	}
 
-	virtual void GetMemoryStatistics(ICrySizer* s)
+	virtual void GetMemoryStatistics(ICrySizer * s)
 	{
 		s->Add(*this);
 	}
 };
+
 
 REGISTER_FLOW_NODE("NanoSuit:NanoSuit", CFlowNanoSuitNode);
 REGISTER_FLOW_NODE_SINGLETON("NanoSuit:NanoSuitGet", CFlowNanoSuitGetNode);
@@ -591,5 +599,6 @@ REGISTER_FLOW_NODE_SINGLETON("NanoSuit:FakeMaterial", CFlowNanoSuitFakeMaterial)
 REGISTER_FLOW_NODE_SINGLETON("Inventory:ParachuteControl", CFlowParachuteControlNode);
 
 #if defined(WHOLE_PROJECT)
-#undef GetPlayer
+	#undef GetPlayer
 #endif
+

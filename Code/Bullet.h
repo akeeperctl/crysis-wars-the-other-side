@@ -18,6 +18,7 @@ History:
 # pragma once
 #endif
 
+
 #include "Projectile.h"
 
 class CBullet : public CProjectile
@@ -27,18 +28,20 @@ public:
 	virtual ~CBullet();
 
 	// CProjectile
-	virtual void HandleEvent(const SGameObjectEvent&);
+	virtual void HandleEvent(const SGameObjectEvent &);
 	// ~CProjectile
 
 	//For underwater trails (Called only from WeaponSystem.cpp)
 	static void SetWaterMaterialId();
 	static int  GetWaterMaterialId() { return m_waterMaterialId; }
 
-	static IEntityClass* EntityClass;
+	static IEntityClass*	EntityClass;
 
 private:
-
+	
 	static int  m_waterMaterialId;
+
 };
+
 
 #endif // __BULLET_H__

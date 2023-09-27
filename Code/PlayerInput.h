@@ -16,18 +16,16 @@ struct SPlayerStats;
 class CPlayerInput : public IPlayerInput, public IActionListener, public IPlayerEventListener
 {
 public:
-	//TheOtherSide
-	Ang3 deltaRotation;
-	//~TheOtherSide
+
 	enum EMoveButtonMask
 	{
-		eMBM_Forward = (1 << 0),
-		eMBM_Back = (1 << 1),
-		eMBM_Left = (1 << 2),
-		eMBM_Right = (1 << 3)
+		eMBM_Forward	= (1 << 0),
+		eMBM_Back			= (1 << 1),
+		eMBM_Left			= (1 << 2),
+		eMBM_Right		= (1 << 3)
 	};
 
-	CPlayerInput(CPlayer* pPlayer);
+	CPlayerInput( CPlayer * pPlayer );
 	~CPlayerInput();
 
 	// IPlayerInput
@@ -37,20 +35,20 @@ public:
 	// ~IPlayerInput
 
 	// IActionListener
-	virtual void OnAction(const ActionId& action, int activationMode, float value);
+	virtual void OnAction( const ActionId& action, int activationMode, float value );
 	// ~IActionListener
-
+	
 	// IPlayerEventListener
 	virtual void OnObjectGrabbed(IActor* pActor, bool bIsGrab, EntityId objectId, bool bIsNPC, bool bIsTwoHanded);
 	// ~IPlayerEventListener
 
-	virtual void SetState(const SSerializedPlayerInput& input);
-	virtual void GetState(SSerializedPlayerInput& input);
+	virtual void SetState( const SSerializedPlayerInput& input );
+	virtual void GetState( SSerializedPlayerInput& input );
 
 	virtual void Reset();
 	virtual void DisableXI(bool disabled);
 
-	virtual void GetMemoryStatistics(ICrySizer* s) { s->Add(*this); }
+	virtual void GetMemoryStatistics(ICrySizer * s) {s->Add(*this);}
 
 	virtual EInputType GetType() const
 	{
@@ -62,17 +60,17 @@ public:
 
 	// ~IPlayerInput
 
-	void SerializeSaveGame(TSerialize ser);
+	void SerializeSaveGame( TSerialize ser );
 
 private:
 
 	EStance FigureOutStance();
-	void AdjustMoveButtonState(EMoveButtonMask buttonMask, int activationMode);
-	bool CheckMoveButtonStateChanged(EMoveButtonMask buttonMask, int activationMode);
+	void AdjustMoveButtonState( EMoveButtonMask buttonMask, int activationMode );
+	bool CheckMoveButtonStateChanged( EMoveButtonMask buttonMask, int activationMode );
 	float MapControllerValue(float value, float scale, float curve, bool inverse);
 
 	void ApplyMovement(Vec3 delta);
-	const Vec3& FilterMovement(const Vec3& desired);
+	const Vec3 &FilterMovement(const Vec3 &desired);
 
 	bool CanMove() const;
 
@@ -125,7 +123,7 @@ private:
 	uint32 m_lastActions;
 	Vec3 m_deltaMovement;
 	Vec3 m_xi_deltaMovement;
-	Vec3 m_deltaMovementPrev;
+  Vec3 m_deltaMovementPrev;
 	Ang3 m_deltaRotation;
 	Ang3 m_xi_deltaRotation;
 	float m_speedLean;
@@ -144,7 +142,7 @@ private:
 
 	bool m_doubleJumped;
 
-	IEntity* m_pLastGroundCollider;
+	IEntity *m_pLastGroundCollider;
 	Quat		 m_lastGroundColliderRot;
 
 	static TActionHandler<CPlayerInput>	s_actionHandler;

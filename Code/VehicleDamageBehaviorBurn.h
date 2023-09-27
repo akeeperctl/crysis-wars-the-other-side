@@ -25,7 +25,7 @@ public:
 	CVehicleDamageBehaviorBurn() {}
 	virtual ~CVehicleDamageBehaviorBurn();
 
-	virtual bool Init(IVehicle* pVehicle, const SmartScriptTable& table);
+	virtual bool Init(IVehicle* pVehicle, const SmartScriptTable &table);
 	virtual void Reset();
 	virtual void Release() { delete this; }
 
@@ -33,20 +33,20 @@ public:
 
 	virtual void Serialize(TSerialize ser, unsigned aspects);
 	virtual void Update(const float deltaTime);
-	virtual void OnVehicleEvent(EVehicleEvent event, const SVehicleEventParams& params);
+  virtual void OnVehicleEvent(EVehicleEvent event, const SVehicleEventParams& params);
 
-	virtual void GetMemoryStatistics(ICrySizer* s) { s->Add(*this); }
+	virtual void GetMemoryStatistics(ICrySizer * s) { s->Add(*this); }
 
 protected:
 
-	void Activate(bool activate);
+  void Activate(bool activate);
 
 	IVehicle* m_pVehicle;
 	IVehicleHelper* m_pHelper;
 
-	float m_damageRatioMin;
+  float m_damageRatioMin;
 	float m_damage;
-	float m_selfDamage;
+  float m_selfDamage;
 	float m_interval;
 	float m_radius;
 
@@ -54,7 +54,7 @@ protected:
 	float m_timeCounter;
 
 	EntityId m_shooterId;
-	int m_timerId;
+  int m_timerId;
 };
 
 #endif

@@ -19,7 +19,9 @@ History:
 # pragma once
 #endif
 
+
 #include "Item.h"
+
 
 class CItemSharedParams
 {
@@ -27,20 +29,20 @@ protected:
 	mutable uint	m_refs;
 	bool					m_valid;
 public:
-	CItemSharedParams() : m_refs(0), m_valid(false) {};
+	CItemSharedParams(): m_refs(0), m_valid(false) {};
 	virtual ~CItemSharedParams() {};
 
 	virtual void AddRef() const { ++m_refs; };
 	virtual uint GetRefCount() const { return m_refs; };
-	virtual void Release() const {
+	virtual void Release() const { 
 		if (--m_refs <= 0)
 			delete this;
 	};
 
 	virtual bool Valid() const { return m_valid; };
-	virtual void SetValid(bool valid) { m_valid = valid; };
+	virtual void SetValid(bool valid) { m_valid=valid; };
 
-	void GetMemoryStatistics(ICrySizer* s);
+	void GetMemoryStatistics(ICrySizer *s);
 
 	CItem::TActionMap						actions;
 	CItem::TAccessoryParamsMap	accessoryparams;
@@ -48,6 +50,7 @@ public:
 	CItem::TLayerMap						layers;
 	CItem::TDualWieldSupportMap	dualWieldSupport;
 };
+
 
 class CItemSharedParamsList
 {
@@ -57,9 +60,9 @@ public:
 	virtual ~CItemSharedParamsList() {};
 
 	void Reset() { m_params.clear(); };
-	CItemSharedParams* GetSharedParams(const char* className, bool create);
+	CItemSharedParams *GetSharedParams(const char *className, bool create);
 
-	void GetMemoryStatistics(ICrySizer* s);
+	void GetMemoryStatistics(ICrySizer *s);
 
 	TSharedParamsMap m_params;
 };

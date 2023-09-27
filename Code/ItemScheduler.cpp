@@ -16,9 +16,10 @@ History:
 #include "Game.h"
 #include "IGameObject.h"
 
+
 //------------------------------------------------------------------------
-CItemScheduler::CItemScheduler(CItem* item)
-	: m_busy(false),
+CItemScheduler::CItemScheduler(CItem *item)
+: m_busy(false),
 	m_pTimer(0),
 	m_pItem(item),
 	m_locked(false)
@@ -60,7 +61,7 @@ void CItemScheduler::Reset(bool keepPersistent)
 	if (m_timers.empty() && m_schedule.empty())
 		m_pItem->EnableUpdate(false, eIUS_Scheduler);
 
-	SetBusy(false);
+  SetBusy(false);
 }
 
 //------------------------------------------------------------------------
@@ -71,10 +72,10 @@ void CItemScheduler::Update(float frameTime)
 
 	if (!m_schedule.empty())
 	{
-		while (!m_schedule.empty() && !m_busy)
+		while(!m_schedule.empty() && !m_busy)
 		{
-			SScheduledAction& action = *m_schedule.begin();
-			ISchedulerAction* pAction = action.action;
+			SScheduledAction &action = *m_schedule.begin();
+			ISchedulerAction *pAction= action.action;
 			m_schedule.erase(m_schedule.begin());
 
 			pAction->execute(m_pItem);
@@ -84,12 +85,12 @@ void CItemScheduler::Update(float frameTime)
 
 	if (!m_timers.empty())
 	{
-		uint count = 0;
+		uint count=0;
 		m_actives.swap(m_timers);
 
 		for (TTimerActionVector::iterator it = m_actives.begin(); it != m_actives.end(); it++)
 		{
-			STimerAction& action = *it;
+			STimerAction &action = *it;
 			action.time -= frameTime;
 			if (action.time <= 0.0f)
 			{
@@ -100,11 +101,11 @@ void CItemScheduler::Update(float frameTime)
 		}
 
 		if (count)
-			m_actives.erase(m_actives.begin(), m_actives.begin() + count);
+			m_actives.erase(m_actives.begin(), m_actives.begin()+count);
 
 		if (!m_timers.empty())
 		{
-			for (TTimerActionVector::iterator it = m_timers.begin(); it != m_timers.end(); ++it)
+			for (TTimerActionVector::iterator it=m_timers.begin(); it!=m_timers.end(); ++it)
 				m_actives.push_back(*it);
 
 			std::sort(m_actives.begin(), m_actives.end(), compare_timers());
@@ -119,7 +120,7 @@ void CItemScheduler::Update(float frameTime)
 }
 
 //------------------------------------------------------------------------
-void CItemScheduler::ScheduleAction(ISchedulerAction* action, bool persistent)
+void CItemScheduler::ScheduleAction(ISchedulerAction *action, bool persistent)
 {
 	if (m_locked)
 		return;
@@ -140,14 +141,14 @@ void CItemScheduler::ScheduleAction(ISchedulerAction* action, bool persistent)
 }
 
 //------------------------------------------------------------------------
-void CItemScheduler::TimerAction(uint time, ISchedulerAction* action, bool persistent)
+void CItemScheduler::TimerAction(uint time, ISchedulerAction *action, bool persistent)
 {
 	if (m_locked)
 		return;
 
 	STimerAction timerAction;
 	timerAction.action = action;
-	timerAction.time = (float)time / 1000.0f;
+	timerAction.time = (float)time/1000.0f;
 	timerAction.persist = persistent;
 
 	m_timers.push_back(timerAction);
@@ -168,7 +169,7 @@ void CItemScheduler::SetBusy(bool busy)
 //------------------------------------------------------------------------
 void CItemScheduler::Lock(bool lock)
 {
-	m_locked = lock;
+	m_locked=lock;
 }
 
 //------------------------------------------------------------------------
@@ -177,15 +178,15 @@ bool CItemScheduler::IsLocked()
 	return m_locked;
 }
 
-void CItemScheduler::GetMemoryStatistics(ICrySizer* s)
+void CItemScheduler::GetMemoryStatistics(ICrySizer * s)
 {
 	s->AddContainer(m_timers);
 	s->AddContainer(m_actives);
 	s->AddContainer(m_schedule);
-	for (size_t i = 0; i < m_timers.size(); i++)
+	for (size_t i=0; i<m_timers.size(); i++)
 		m_timers[i].action->GetMemoryStatistics(s);
-	for (size_t i = 0; i < m_actives.size(); i++)
+	for (size_t i=0; i<m_actives.size(); i++)
 		m_actives[i].action->GetMemoryStatistics(s);
-	for (size_t i = 0; i < m_schedule.size(); i++)
+	for (size_t i=0; i<m_schedule.size(); i++)
 		m_schedule[i].action->GetMemoryStatistics(s);
 }

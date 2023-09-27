@@ -4,8 +4,8 @@ Copyright (C), Crytek Studios, 2001-2007.
 -------------------------------------------------------------------------
 $Id$
 $DateTime$
-Description: Intel Laptop Gaming TDK support.
-			 Battery and wireless signal status.
+Description: Intel Laptop Gaming TDK support. 
+             Battery and wireless signal status.
 
 -------------------------------------------------------------------------
 History:
@@ -27,20 +27,20 @@ public:
 	// Call before getting params. You can call not in each frames
 	void Update();
 
-	bool IsLaptop() { return m_isLaptop; }
+	bool IsLaptop() {return m_isLaptop;}
 
 	// Is Battery like power source
-	bool IsBattteryPowerSrc() { return m_isBattery; }
+	bool IsBattteryPowerSrc() {return m_isBattery;}
 	// Get Battery Life in percent
-	int GetBatteryLife() { return m_percentBatLife; }
+	int GetBatteryLife() {return m_percentBatLife;}
 	// Get Battery Life in second
-	unsigned long GetBattteryLifeTime() { return m_secBatLife; }
+	unsigned long GetBattteryLifeTime() {return m_secBatLife;}
 
-	bool IsWLan() { return m_isWLan; }
+	bool IsWLan() {return m_isWLan;}
 	// Get WLan Signal Strength in percent
-	int GetWLanSignalStrength() { return m_signalStrength; }
+	int GetWLanSignalStrength() {return m_signalStrength;}
 
-	/*
+	/* 
 	// IGameFrameworkListener
 	virtual void OnPostUpdate(float fDeltaTime);
 	virtual void OnSaveGame(ISaveGame* pSaveGame) {};
@@ -63,5 +63,7 @@ private:
 	int m_signalStrength;
 	bool m_isBattery;
 };
+
+
 
 #endif // __LAPTOPUTIL_H__

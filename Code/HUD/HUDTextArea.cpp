@@ -3,7 +3,8 @@
 #include "IUIDraw.h"
 #include "Game.h"
 
-CHUDTextArea::CHUDTextArea() : m_pos(0, 0), m_fadetime(4.0f)
+
+CHUDTextArea::CHUDTextArea() : m_pos(0, 0), m_fadetime (4.0f)
 {
 	m_pDefaultFont = GetISystem()->GetICryFont()->GetFont("default");
 	CRY_ASSERT(m_pDefaultFont);
@@ -13,6 +14,7 @@ CHUDTextArea::CHUDTextArea() : m_pos(0, 0), m_fadetime(4.0f)
 
 CHUDTextArea::~CHUDTextArea()
 {
+
 }
 
 void CHUDTextArea::Update(float deltaTime)
@@ -20,7 +22,7 @@ void CHUDTextArea::Update(float deltaTime)
 	float now = m_pTimer->GetAsyncTime().GetMilliSeconds();
 	float fadetime = m_fadetime * 1000.0f;
 
-	if (!m_entries.empty())
+	if(!m_entries.empty())
 	{
 		int y = 0;
 		for (THUDTextEntries::iterator i = m_entries.begin(); i != m_entries.end();)
@@ -29,10 +31,10 @@ void CHUDTextArea::Update(float deltaTime)
 			if (age < fadetime)
 			{
 				float alpha = 1.0f;
-				if (age > fadetime / 2.0f)
-					alpha = 1.0f - ((age - fadetime / 2.0f) / (fadetime / 2.0f));
+				if (age > fadetime/2.0f)
+					alpha = 1.0f - ((age - fadetime/2.0f) / (fadetime/2.0f));
 
-				gEnv->pGame->GetIGameFramework()->GetIUIDraw()->DrawText(m_pDefaultFont, 10 + m_pos.x, 8.0f + m_pos.y + y * 20.0f, 18.0f, 18.0f, (*i).message.c_str(), alpha, 0.76f, 0.97f, 0.74f, UIDRAWHORIZONTAL_LEFT, UIDRAWVERTICAL_TOP, UIDRAWHORIZONTAL_LEFT, UIDRAWVERTICAL_TOP);
+				gEnv->pGame->GetIGameFramework()->GetIUIDraw()->DrawText(m_pDefaultFont, 10 + m_pos.x, 8.0f+ m_pos.y +y*20.0f, 18.0f, 18.0f, (*i).message.c_str(), alpha, 0.76f, 0.97f, 0.74f, UIDRAWHORIZONTAL_LEFT, UIDRAWVERTICAL_TOP, UIDRAWHORIZONTAL_LEFT, UIDRAWVERTICAL_TOP);
 				++i;
 				++y;
 			}
@@ -44,7 +46,7 @@ void CHUDTextArea::Update(float deltaTime)
 				i = next;
 			}
 		}
-	}
+	}	
 }
 
 void CHUDTextArea::AddMessage(const char* msg)
@@ -67,7 +69,7 @@ void CHUDTextArea::SetFadeTime(float fadetime)
 	m_fadetime = fadetime;
 }
 
-void CHUDTextArea::GetMemoryStatistics(ICrySizer* s)
+void CHUDTextArea::GetMemoryStatistics(ICrySizer * s)
 {
 	s->Add(*this);
 	s->AddContainer(m_entries);

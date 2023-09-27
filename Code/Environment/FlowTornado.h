@@ -8,16 +8,16 @@
 class CFlowTornadoWander : public CFlowBaseNode
 {
 public:
-	CFlowTornadoWander(SActivationInfo* pActInfo)
+	CFlowTornadoWander( SActivationInfo * pActInfo )
 	{
 	}
 
-	IFlowNodePtr Clone(SActivationInfo* pActInfo)
+	IFlowNodePtr Clone( SActivationInfo * pActInfo )
 	{
 		return new CFlowTornadoWander(pActInfo);
 	}
 
-	virtual void GetMemoryStatistics(ICrySizer* s)
+	virtual void GetMemoryStatistics(ICrySizer * s)
 	{
 		s->Add(*this);
 	}
@@ -40,7 +40,7 @@ public:
 		config.SetCategory(EFLN_APPROVED);
 	}
 
-	virtual void ProcessEvent(EFlowEvent event, SActivationInfo* pActInfo)
+	virtual void ProcessEvent( EFlowEvent event, SActivationInfo *pActInfo )
 	{
 		switch (event)
 		{
@@ -53,13 +53,13 @@ public:
 				CTornado* pTornado = (CTornado*)g_pGame->GetIGameFramework()->QueryGameObjectExtension(pActInfo->pEntity->GetId(), "Tornado");
 
 				if (pTornado)
-				{
-					IEntity* pTarget = gEnv->pEntitySystem->GetEntity(GetPortEntityId(pActInfo, 1));
+				{ 
+					IEntity* pTarget = gEnv->pEntitySystem->GetEntity( GetPortEntityId(pActInfo, 1) );
 					if (pTarget)
 					{
 						pTornado->SetTarget(pTarget, this);
 					}
-				}
+				}        
 			}
 			break;
 		}
@@ -68,7 +68,7 @@ public:
 	void Done()
 	{
 		if (m_actInfo.pGraph)
-			ActivateOutput(&m_actInfo, 0, true);
+			ActivateOutput( &m_actInfo, 0, true);
 	}
 private:
 	SActivationInfo m_actInfo;

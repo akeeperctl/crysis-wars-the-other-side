@@ -20,6 +20,7 @@ History:
 #include "GameRules.h"
 #include <IEntitySystem.h>
 
+
 //------------------------------------------------------------------------
 CWorkOnTarget::CWorkOnTarget() :
 	m_working(false),
@@ -33,9 +34,9 @@ CWorkOnTarget::~CWorkOnTarget()
 }
 
 //------------------------------------------------------------------------
-void CWorkOnTarget::Init(IWeapon* pWeapon, const struct IItemParamsNode* params)
+void CWorkOnTarget::Init(IWeapon *pWeapon, const struct IItemParamsNode *params)
 {
-	m_pWeapon = static_cast<CWeapon*>(pWeapon);
+	m_pWeapon = static_cast<CWeapon *>(pWeapon);
 
 	if (params)
 		ResetParams(params);
@@ -50,32 +51,32 @@ void CWorkOnTarget::Init(IWeapon* pWeapon, const struct IItemParamsNode* params)
 //------------------------------------------------------------------------
 void CWorkOnTarget::Update(float frameTime, uint frameId)
 {
-	FUNCTION_PROFILER(GetISystem(), PROFILE_GAME);
+	FUNCTION_PROFILER( GetISystem(), PROFILE_GAME );
 
 	if (!m_firing)
 		return;
 
-	bool requireUpdate = false;
+	bool requireUpdate=false;
 
-	CActor* pActor = m_pWeapon->GetOwnerActor();
+	CActor *pActor=m_pWeapon->GetOwnerActor();
 
-	if (m_delayTimer > 0.0f)
+	if (m_delayTimer>0.0f)
 	{
 		m_working = false;
 		m_lastTargetId = 0;
 		m_delayTimer -= frameTime;
 
-		if (m_delayTimer <= 0.0f)
+		if (m_delayTimer<=0.0f)
 		{
-			m_delayTimer = 0.0f;
+			m_delayTimer=0.0f;
 
 			if (m_pWeapon->IsClient())
 			{
 				m_pWeapon->PlayAction(m_workactions.prefire.c_str());
 
-				if (m_soundId != INVALID_SOUNDID)
+				if (m_soundId!=INVALID_SOUNDID)
 				{
-					if (ISound* pSound = m_pWeapon->GetISound(m_soundId))
+					if (ISound *pSound=m_pWeapon->GetISound(m_soundId))
 					{
 						pSound->SetLoopMode(true);
 						pSound->SetPaused(false);
@@ -85,31 +86,31 @@ void CWorkOnTarget::Update(float frameTime, uint frameId)
 		}
 	}
 
-	if (!m_effectId && m_delayTimer <= 0.0f && m_pWeapon->IsClient())
+	if (!m_effectId && m_delayTimer<=0.0f && m_pWeapon->IsClient())
 	{
 		int slot = m_pWeapon->GetStats().fp ? CItem::eIGS_FirstPerson : CItem::eIGS_ThirdPerson;
 		int id = m_pWeapon->GetStats().fp ? 0 : 1;
 
-		CSingle::SEffectParams& effect = m_workparams.working_effect;
+		CSingle::SEffectParams &effect=m_workparams.working_effect;
 		if (!effect.effect[id].empty())
 			m_effectId = m_pWeapon->AttachEffect(slot, 0, true, effect.effect[id].c_str(), effect.helper[id].c_str());
 	}
 
-	if (m_delayTimer <= 0.0f && m_pWeapon->IsServer())
+	if (m_delayTimer<=0.0f && m_pWeapon->IsServer())
 	{
-		bool keepWorking = false;
+		bool keepWorking=false;
 
-		if (IEntity* pEntity = CanWork())
+		if (IEntity	*pEntity=CanWork())
 		{
 			if (pEntity->GetId() == m_lastTargetId)
-				keepWorking = WorkOnTarget(pEntity, frameTime);
+				keepWorking=WorkOnTarget(pEntity, frameTime);
 			else
 			{
-				if (IEntity* pLast = gEnv->pEntitySystem->GetEntity(m_lastTargetId))
+				if (IEntity *pLast=gEnv->pEntitySystem->GetEntity(m_lastTargetId))
 					StopWork();
 
 				StartWork(pEntity);
-				keepWorking = true;
+				keepWorking=true;
 			}
 		}
 
@@ -133,20 +134,20 @@ void CWorkOnTarget::Release()
 }
 
 //------------------------------------------------------------------------
-void CWorkOnTarget::ResetParams(const struct IItemParamsNode* params)
+void CWorkOnTarget::ResetParams(const struct IItemParamsNode *params)
 {
-	const IItemParamsNode* work = params ? params->GetChild("work") : 0;
-	const IItemParamsNode* actions = params ? params->GetChild("actions") : 0;
+	const IItemParamsNode *work = params?params->GetChild("work"):0;
+	const IItemParamsNode *actions = params?params->GetChild("actions"):0;
 
 	m_workparams.Reset(work);
 	m_workactions.Reset(actions);
 }
 
 //------------------------------------------------------------------------
-void CWorkOnTarget::PatchParams(const struct IItemParamsNode* patch)
+void CWorkOnTarget::PatchParams(const struct IItemParamsNode *patch)
 {
-	const IItemParamsNode* work = patch->GetChild("work");
-	const IItemParamsNode* actions = patch->GetChild("actions");
+	const IItemParamsNode *work = patch->GetChild("work");
+	const IItemParamsNode *actions = patch->GetChild("actions");
 
 	m_workparams.Reset(work, false);
 	m_workactions.Reset(actions, false);
@@ -159,16 +160,16 @@ void CWorkOnTarget::Activate(bool activate)
 	m_delayTimer = 0.0f;
 	m_lastTargetId = 0;
 
-	if (m_soundId != INVALID_SOUNDID)
+	if (m_soundId!=INVALID_SOUNDID)
 		m_pWeapon->StopSound(m_soundId);
 
-	m_soundId = INVALID_SOUNDID;
+	m_soundId=INVALID_SOUNDID;
 }
 
 //------------------------------------------------------------------------
 bool CWorkOnTarget::CanFire(bool considerAmmo) const
 {
-	return !m_working && m_delayTimer <= 0.0f;
+	return !m_working && m_delayTimer<=0.0f;
 }
 
 //------------------------------------------------------------------------
@@ -177,14 +178,14 @@ void CWorkOnTarget::StartFire()
 	if (m_pWeapon->IsBusy() || !CanFire(false) || !CanWork())
 		return;
 
-	m_firing = true;
+	m_firing=true;
 	m_pWeapon->SetBusy(true);
 
-	m_soundId = m_pWeapon->PlayAction(m_workactions.work.c_str(), 0, true, CItem::eIPAF_Default | CItem::eIPAF_CleanBlending | CItem::eIPAF_SoundStartPaused);
+	m_soundId=m_pWeapon->PlayAction(m_workactions.work.c_str(), 0, true, CItem::eIPAF_Default|CItem::eIPAF_CleanBlending|CItem::eIPAF_SoundStartPaused);
 	m_pWeapon->SetDefaultIdleAnimation(CItem::eIGS_FirstPerson, m_workactions.work.c_str());
 
-	m_pWeapon->EnableUpdate(true, eIUS_FireMode);
-	m_delayTimer = m_workparams.delay;
+	m_pWeapon->EnableUpdate(true, eIUS_FireMode);	
+	m_delayTimer=m_workparams.delay;
 
 	if (!m_pWeapon->IsServer())
 		m_pWeapon->RequestStartFire();
@@ -196,8 +197,8 @@ void CWorkOnTarget::StopFire()
 	if (m_firing)
 	{
 		m_pWeapon->EnableUpdate(false, eIUS_FireMode);
-		m_firing = false;
-		m_delayTimer = 0.0f;
+		m_firing=false;
+		m_delayTimer=0.0f;
 
 		StopWork();
 
@@ -207,17 +208,17 @@ void CWorkOnTarget::StopFire()
 }
 
 //------------------------------------------------------------------------
-void CWorkOnTarget::NetShoot(const Vec3& hit, int ph)
+void CWorkOnTarget::NetShoot(const Vec3 &hit, int ph)
 {
 }
 
 //------------------------------------------------------------------------
-void CWorkOnTarget::NetShootEx(const Vec3& pos, const Vec3& dir, const Vec3& vel, const Vec3& hit, float extra, int ph)
+void CWorkOnTarget::NetShootEx(const Vec3 &pos, const Vec3 &dir, const Vec3 &vel, const Vec3 &hit, float extra, int ph)
 {
 }
 
 //------------------------------------------------------------------------
-void CWorkOnTarget::Shoot(const Vec3& pos, const Vec3& dir, const Vec3& vel)
+void CWorkOnTarget::Shoot(const Vec3 &pos, const Vec3 &dir, const Vec3 &vel)
 {
 }
 
@@ -226,31 +227,31 @@ void CWorkOnTarget::NetStartFire()
 {
 	m_pWeapon->EnableUpdate(true, eIUS_FireMode);
 
-	m_soundId = m_pWeapon->PlayAction(m_workactions.work.c_str(), 0, true, CItem::eIPAF_Default | CItem::eIPAF_CleanBlending | CItem::eIPAF_SoundStartPaused);
+	m_soundId=m_pWeapon->PlayAction(m_workactions.work.c_str(), 0, true, CItem::eIPAF_Default|CItem::eIPAF_CleanBlending|CItem::eIPAF_SoundStartPaused);
 	m_pWeapon->SetDefaultIdleAnimation(CItem::eIGS_FirstPerson, m_workactions.work.c_str());
 
-	m_delayTimer = m_workparams.delay;
-	m_firing = true;
+	m_delayTimer=m_workparams.delay;
+	m_firing=true;
 }
 
 //------------------------------------------------------------------------
 void CWorkOnTarget::NetStopFire()
 {
 	m_pWeapon->EnableUpdate(false, eIUS_FireMode);
-	m_firing = false;
-	m_delayTimer = 0.0f;
+	m_firing=false;
+	m_delayTimer=0.0f;
 
 	StopWork();
 }
 
 //------------------------------------------------------------------------
-const char* CWorkOnTarget::GetType() const
+const char *CWorkOnTarget::GetType() const
 {
 	return "WorkOnTarget";
 }
 
 //------------------------------------------------------------------------
-void CWorkOnTarget::GetMemoryStatistics(ICrySizer* s)
+void CWorkOnTarget::GetMemoryStatistics(ICrySizer * s)
 {
 	s->Add(*this);
 	s->Add(m_name);
@@ -259,21 +260,21 @@ void CWorkOnTarget::GetMemoryStatistics(ICrySizer* s)
 }
 
 //------------------------------------------------------------------------
-IEntity* CWorkOnTarget::CanWork()
+IEntity *CWorkOnTarget::CanWork()
 {
-	static Vec3 pos, dir;
-
-	CActor* pActor = m_pWeapon->GetOwnerActor();
-
+	static Vec3 pos,dir; 
+	
+	CActor *pActor=m_pWeapon->GetOwnerActor();
+	
 	static IPhysicalEntity* pSkipEntities[10];
 	int nSkip = CSingle::GetSkipEntities(m_pWeapon, pSkipEntities, 10);
 
-	IEntity* pEntity = 0;
-	float range = m_workparams.range;
-
-	IMovementController* pMC = pActor ? pActor->GetMovementController() : 0;
+	IEntity *pEntity=0;
+	float range=m_workparams.range;
+	
+	IMovementController * pMC = pActor ? pActor->GetMovementController() : 0;
 	if (pMC)
-	{
+	{ 
 		SMovementState info;
 		pMC->GetMovementState(info);
 
@@ -281,54 +282,50 @@ IEntity* CWorkOnTarget::CanWork()
 
 		if (!pActor->IsPlayer())
 		{
-			dir = range * (info.fireTarget - pos).normalized();
+			dir = range * (info.fireTarget-pos).normalized();
 		}
 		else
 		{
-			dir = range * info.fireDirection;
+			dir = range * info.fireDirection;    
 
 			// marcok: leave this alone
 			if (g_pGameCVars->goc_enable && pActor->IsClient())
 			{
-				CPlayer* pPlayer = (CPlayer*)pActor;
+				CPlayer *pPlayer = (CPlayer*)pActor;
 				pos = pPlayer->GetViewMatrix().GetTranslation();
 			}
 		}
 	}
 	else
-	{
+	{ 
 		assert(0);
 	}
 
 	primitives::sphere sphere;
 	sphere.center = pos;
 	sphere.r = m_workparams.radius;
+	
+	geom_contact *pContact=0;
+	float dst=gEnv->pPhysicalWorld->PrimitiveWorldIntersection(sphere.type, &sphere, dir, ent_all,
+		&pContact, 0, (geom_colltype_player<<rwi_colltype_bit)|rwi_stop_at_pierceable, 0, 0, 0, pSkipEntities, nSkip);
 
-	geom_contact* pContact = 0;
-	float dst = gEnv->pPhysicalWorld->PrimitiveWorldIntersection(sphere.type, &sphere, dir, ent_all,
-		&pContact, 0, (geom_colltype_player << rwi_colltype_bit) | rwi_stop_at_pierceable, 0, 0, 0, pSkipEntities, nSkip);
-
-	if (pContact && dst >= 0.0f && pContact->t < 1e8)
+	if (pContact && dst>=0.0f && pContact->t<1e8)
 	{
-		IPhysicalEntity* pCollider = gEnv->pPhysicalWorld->GetPhysicalEntityById(pContact->iPrim[0]);
+		IPhysicalEntity *pCollider = gEnv->pPhysicalWorld->GetPhysicalEntityById(pContact->iPrim[0]);
 
-		if (pCollider && pCollider->GetiForeignData() == PHYS_FOREIGN_ID_ENTITY)
+		if(pCollider && pCollider->GetiForeignData() == PHYS_FOREIGN_ID_ENTITY)
 		{
-			if (pEntity = static_cast<IEntity*>(pCollider->GetForeignData(PHYS_FOREIGN_ID_ENTITY)))
+			if (pEntity = static_cast<IEntity *>(pCollider->GetForeignData(PHYS_FOREIGN_ID_ENTITY)))
 			{
-				if (CGameRules* pGameRules = g_pGame->GetGameRules())
+				if (CGameRules *pGameRules=g_pGame->GetGameRules())
 				{
-					if (IScriptTable* pScriptTable = pGameRules->GetEntity()->GetScriptTable())
+					if (IScriptTable *pScriptTable=pGameRules->GetEntity()->GetScriptTable())
 					{
-						HSCRIPTFUNCTION pfnCanWork = 0;
-						if (pScriptTable->GetValueType("CanWork") == svtFunction && pScriptTable->GetValue("CanWork", pfnCanWork))
+						HSCRIPTFUNCTION pfnCanWork=0;
+						if (pScriptTable->GetValueType("CanWork")==svtFunction && pScriptTable->GetValue("CanWork", pfnCanWork))
 						{
-							bool result = false;
-							bool call = Script::CallReturn(gEnv->pScriptSystem, pfnCanWork, pScriptTable, ScriptHandle(pEntity->GetId()), ScriptHandle(m_pWeapon->GetOwnerId()), m_workparams.work_type.c_str(), result);
-							
-							//if (call)
-								//CryLogAlways("[C++][Can Work (%i) at target id %is name %s]", result, pEntity->GetId(), pEntity->GetName());
-
+							bool result=false;
+							Script::CallReturn(gEnv->pScriptSystem, pfnCanWork, pScriptTable, ScriptHandle(pEntity->GetId()), ScriptHandle(m_pWeapon->GetOwnerId()), m_workparams.work_type.c_str(), result);
 							gEnv->pScriptSystem->ReleaseFunc(pfnCanWork);
 
 							if (result)
@@ -344,22 +341,18 @@ IEntity* CWorkOnTarget::CanWork()
 }
 
 //------------------------------------------------------------------------
-void CWorkOnTarget::StartWork(IEntity* pEntity)
+void CWorkOnTarget::StartWork(IEntity *pEntity)
 {
 	m_pWeapon->SetBusy(true);
-	m_working = true;
-	m_lastTargetId = pEntity->GetId();
+	m_working=true;
+	m_lastTargetId=pEntity->GetId();
 
-	if (CGameRules* pGameRules = g_pGame->GetGameRules())
+	if (CGameRules *pGameRules=g_pGame->GetGameRules())
 	{
 		if (m_pWeapon->IsServer())
 		{
-			if (IScriptTable* pScriptTable = pGameRules->GetEntity()->GetScriptTable())
-			{
-				 bool call = Script::CallMethod(pScriptTable, "StartWork", ScriptHandle(m_lastTargetId), ScriptHandle(m_pWeapon->GetOwnerId()), m_workparams.work_type.c_str());
-				 //if (call)
-				//	 CryLogAlways("[C++][Start Work at target id %i name %s]", m_lastTargetId, pEntity->GetName());
-			}
+			if (IScriptTable *pScriptTable=pGameRules->GetEntity()->GetScriptTable())
+				Script::CallMethod(pScriptTable, "StartWork", ScriptHandle(m_lastTargetId), ScriptHandle(m_pWeapon->GetOwnerId()), m_workparams.work_type.c_str());
 		}
 	}
 }
@@ -369,60 +362,52 @@ void CWorkOnTarget::StopWork()
 {
 	if (m_working)
 		m_pWeapon->PlayAction(m_workactions.postfire.c_str());
-	m_pWeapon->PlayAction(m_workactions.idle.c_str(), 0, true, CItem::eIPAF_Default | CItem::eIPAF_CleanBlending);
+	m_pWeapon->PlayAction(m_workactions.idle.c_str(), 0, true, CItem::eIPAF_Default|CItem::eIPAF_CleanBlending);
 	m_pWeapon->SetDefaultIdleAnimation(CItem::eIGS_FirstPerson, m_workactions.idle.c_str());
 
 	if (m_effectId)
 	{
-		int slot = m_pWeapon->GetStats().fp ? CItem::eIGS_FirstPerson : CItem::eIGS_ThirdPerson;
+		int slot = m_pWeapon->GetStats().fp?CItem::eIGS_FirstPerson:CItem::eIGS_ThirdPerson;
 		m_pWeapon->AttachEffect(slot, m_effectId, false);
-		m_effectId = 0;
+		m_effectId=0;
 	}
 
 	if (m_soundId != INVALID_SOUNDID)
 	{
 		m_pWeapon->StopSound(m_soundId);
-		m_soundId = INVALID_SOUNDID;
+		m_soundId=INVALID_SOUNDID;
 	}
 
-	if (CGameRules* pGameRules = g_pGame->GetGameRules())
+	if (CGameRules *pGameRules=g_pGame->GetGameRules())
 	{
 		if (m_pWeapon->IsServer())
 		{
-			if (IScriptTable* pScriptTable = pGameRules->GetEntity()->GetScriptTable())
-			{
-				bool call = Script::CallMethod(pScriptTable, "StopWork", ScriptHandle(m_pWeapon->GetOwnerId()));
-				//if (call)
-				//	CryLogAlways("[C++][Stop Work at target id %i]", m_lastTargetId);
-			}
+			if (IScriptTable *pScriptTable=pGameRules->GetEntity()->GetScriptTable())
+				Script::CallMethod(pScriptTable, "StopWork", ScriptHandle(m_pWeapon->GetOwnerId()));
 		}
 	}
 
 	m_pWeapon->SetBusy(false);
-	m_working = false;
-	m_firing = false;
-	m_lastTargetId = 0;
+	m_working=false;
+	m_firing=false;
+	m_lastTargetId=0;
 }
 
 //------------------------------------------------------------------------
-bool CWorkOnTarget::WorkOnTarget(IEntity* pEntity, float frameTime)
+bool CWorkOnTarget::WorkOnTarget(IEntity *pEntity, float frameTime)
 {
 	if (!m_pWeapon->IsServer())
 		return false;
 
-	if (CGameRules* pGameRules = g_pGame->GetGameRules())
+	if (CGameRules *pGameRules=g_pGame->GetGameRules())
 	{
-		if (IScriptTable* pScriptTable = pGameRules->GetEntity()->GetScriptTable())
+		if (IScriptTable *pScriptTable=pGameRules->GetEntity()->GetScriptTable())
 		{
-			HSCRIPTFUNCTION pfnWork = 0;
-			if (pScriptTable->GetValueType("Work") == svtFunction && pScriptTable->GetValue("Work", pfnWork))
+			HSCRIPTFUNCTION pfnWork=0;
+			if (pScriptTable->GetValueType("Work")==svtFunction && pScriptTable->GetValue("Work", pfnWork))
 			{
-				bool result = false;
-
-				bool call = Script::CallReturn(gEnv->pScriptSystem, pfnWork, pScriptTable, ScriptHandle(m_pWeapon->GetOwnerId()), m_workparams.amount, frameTime, result);
-				//if (call)
-				//	CryLogAlways("[C++][Working (%i) at target id %i name %s]", result, pEntity->GetId(), pEntity->GetName());
-
+				bool result=false;
+				Script::CallReturn(gEnv->pScriptSystem, pfnWork, pScriptTable, ScriptHandle(m_pWeapon->GetOwnerId()), m_workparams.amount, frameTime, result);
 				gEnv->pScriptSystem->ReleaseFunc(pfnWork);
 
 				return result;

@@ -20,9 +20,11 @@ History:
 # pragma once
 #endif
 
+
 #include "IGameObject.h"
 
-class CScriptControlledPhysics : public CGameObjectExtensionHelper<CScriptControlledPhysics, IGameObjectExtension>,
+
+class CScriptControlledPhysics: public CGameObjectExtensionHelper<CScriptControlledPhysics, IGameObjectExtension>,
 	CScriptableBase
 {
 public:
@@ -30,39 +32,39 @@ public:
 	virtual ~CScriptControlledPhysics();
 
 	// IGameObjectExtension
-	virtual bool Init(IGameObject* pGameObject);
+	virtual bool Init( IGameObject * pGameObject );
 	using CScriptableBase::Init;
 
 	virtual void InitClient(int channelId) {};
-	virtual void PostInit(IGameObject* pGameObject);
+	virtual void PostInit( IGameObject * pGameObject );
 	virtual void PostInitClient(int channelId) {};
 	virtual void Release();
-	virtual void FullSerialize(TSerialize ser) {};
-	virtual bool NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int flags) { return true; }
+	virtual void FullSerialize( TSerialize ser ) {};
+	virtual bool NetSerialize( TSerialize ser, EEntityAspects aspect, uint8 profile, int flags ) { return true; }
 	virtual void PostSerialize() {}
-	virtual void SerializeSpawnInfo(TSerialize ser) {}
-	virtual ISerializableInfoPtr GetSpawnInfo() { return 0; }
-	virtual void Update(SEntityUpdateContext& ctx, int slot) {};
-	virtual void HandleEvent(const SGameObjectEvent&);
-	virtual void ProcessEvent(SEntityEvent&) {}
+	virtual void SerializeSpawnInfo( TSerialize ser ) {}
+	virtual ISerializableInfoPtr GetSpawnInfo() {return 0;}
+	virtual void Update( SEntityUpdateContext& ctx, int slot ) {};
+	virtual void HandleEvent( const SGameObjectEvent& );
+	virtual void ProcessEvent(SEntityEvent& ) {}
 	virtual void SetChannelId(uint16 id) {};
 	virtual void SetAuthority(bool auth) {}
 	virtual void PostUpdate(float frameTime) { assert(false); }
 	virtual void PostRemoteSpawn() {};
-	virtual void GetMemoryStatistics(ICrySizer* s);
+	virtual void GetMemoryStatistics(ICrySizer * s);
 	//~IGameObjectExtension
 
-	int GetSpeed(IFunctionHandler* pH);
-	int GetAcceleration(IFunctionHandler* pH);
+	int GetSpeed(IFunctionHandler *pH);
+	int GetAcceleration(IFunctionHandler *pH);
 
-	int GetAngularSpeed(IFunctionHandler* pH);
-	int GetAngularAcceleration(IFunctionHandler* pH);
+	int GetAngularSpeed(IFunctionHandler *pH);
+	int GetAngularAcceleration(IFunctionHandler *pH);
 
-	int MoveTo(IFunctionHandler* pH, Vec3 point, float initialSpeed, float speed, float acceleration, float stopTime);
-	int RotateTo(IFunctionHandler* pH, Vec3 dir, float roll, float initialSpeed, float speed, float acceleration, float stopSpeed);
-	int RotateToAngles(IFunctionHandler* pH, Vec3 angles, float initialSpeed, float speed, float acceleration, float stopSpeed);
+	int MoveTo(IFunctionHandler *pH, Vec3 point, float initialSpeed, float speed, float acceleration, float stopTime);
+	int RotateTo(IFunctionHandler *pH, Vec3 dir, float roll, float initialSpeed, float speed, float acceleration, float stopSpeed);
+	int RotateToAngles(IFunctionHandler *pH, Vec3 angles, float initialSpeed, float speed, float acceleration, float stopSpeed);
 
-	void OnPostStep(EventPhysPostStep* pPostStep);
+	void OnPostStep(EventPhysPostStep *pPostStep);
 private:
 	void RegisterGlobals();
 	void RegisterMethods();
@@ -81,5 +83,6 @@ private:
 	float m_rotationAcceleration;
 	float m_rotationStopTime;
 };
+
 
 #endif //__SCRIPTCONTROLLEDPHYSICS_H__

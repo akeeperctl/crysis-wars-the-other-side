@@ -3,7 +3,7 @@ Crytek Source File.
 Copyright (C), Crytek Studios, 2006.
 -------------------------------------------------------------------------
 
-Description:
+Description: 
 	Header for CHUDTweakMenu
 
 -------------------------------------------------------------------------
@@ -27,29 +27,31 @@ History:
 
 //-----------------------------------------------------------------------------------------------------
 
-class CHUDTweakMenu : public CHUDObject
+
+
+class CHUDTweakMenu :	public CHUDObject
 {
 public:
-	CHUDTweakMenu(IScriptSystem* pScriptSystem);
-
+	CHUDTweakMenu(IScriptSystem *pScriptSystem);
+	
 	virtual ~CHUDTweakMenu(void);
 
-	void Init(IScriptSystem* pScriptSystem);
+	void Init( IScriptSystem *pScriptSystem );
 
 	virtual void Update(float fDeltaTime);
 
-	void OnActionTweak(const char* actionName, int activationMode, float value);
+	void OnActionTweak(const char *actionName, int activationMode, float value);
 
 	// Save all changed state in the Tweak menu
-	void WriteChanges(void);
+	void WriteChanges( void );
 
 	// Load any state that has previously been saved
-	void LoadChanges(void);
+	void LoadChanges( void );
 
-	void GetMemoryStatistics(ICrySizer* s);
+	void GetMemoryStatistics(ICrySizer * s);
 
 protected:
-	// Colors to use
+	// Colors to use 
 	enum ETextColor {
 		eTC_Red,
 		eTC_Green,
@@ -67,22 +69,22 @@ protected:
 	void ResetMenuPane(void);
 
 	// Print line to menu pane
-	void PrintToMenuPane(const char* line, ETextColor colour);
+	void PrintToMenuPane( const char * line,  ETextColor colour );
 
 	// Return a string representing the current path through the menu
 	string GetMenuPath(void) const;
 
 	// Fetch the table of saved changes
-	SmartScriptTable FetchSaveTable(void);
+	SmartScriptTable FetchSaveTable( void );
 
 	// The root Tweak menu
-	CTweakMenu* m_menu;
+	CTweakMenu *m_menu;
 
 	// Vector of strings type
 	typedef std::vector<string> TStringVec;
 
 	// Traverser to keep place in the menu
-	CTweakTraverser m_traverser;
+	CTweakTraverser m_traverser;	
 
 	// Dimensions of menu pane
 	float m_fWidth, m_fHeight;
@@ -96,7 +98,8 @@ protected:
 	// black texture
 	uint	m_nBlackTexID;
 
-	IFFont* m_pDefaultFont;
+	IFFont *m_pDefaultFont;
 };
+
 
 #endif  // __HUDTWEAKMENU_H__

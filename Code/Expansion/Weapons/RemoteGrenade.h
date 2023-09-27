@@ -19,6 +19,7 @@ History:
 # pragma once
 #endif
 
+
 #include "Projectile.h"
 
 class CRemoteGrenade : public CProjectile
@@ -27,9 +28,10 @@ public:
 	CRemoteGrenade();
 	virtual ~CRemoteGrenade();
 
-	virtual bool Init(IGameObject* pGameObject);
+	virtual bool Init(IGameObject *pGameObject);
 
-	virtual void Launch(const Vec3& pos, const Vec3& dir, const Vec3& velocity, float speedScale);
+	virtual void Launch(const Vec3 &pos, const Vec3 &dir, const Vec3 &velocity, float speedScale);
 };
+
 
 #endif // __REMOTEGRENADE_H__

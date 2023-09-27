@@ -16,25 +16,25 @@ Copyright (C), Crytek Studios, 2001-2007.
 
 bool CGameStatus::SScore::operator<(const SScore& entry) const
 {
-	if (entry.kills > kills)
+	if(entry.kills > kills)
 		return false;
-	else if (kills > entry.kills)
+	else if(kills > entry.kills)
 		return true;
 	else
 	{
-		if (deaths < entry.deaths)
+		if(deaths < entry.deaths)
 			return true;
 		else if (deaths > entry.deaths)
 			return false;
 		else
 		{
-			IEntity* pEntity0 = pActor->GetEntity();
-			IEntity* pEntity1 = entry.pActor->GetEntity();
+			IEntity *pEntity0=pActor->GetEntity();
+			IEntity *pEntity1=entry.pActor->GetEntity();
 
-			const char* name0 = pEntity0 ? pEntity0->GetName() : "";
-			const char* name1 = pEntity1 ? pEntity1->GetName() : "";
+			const char *name0=pEntity0?pEntity0->GetName():"";
+			const char *name1=pEntity1?pEntity1->GetName():"";
 
-			if (strcmp(name0, name1) < 0)
+			if (strcmp(name0, name1)<0)
 				return true;
 			else
 				return false;
@@ -79,22 +79,22 @@ void CGameStatus::OnAttach()
 	GetEzLcd()->SetOrigin(m_objectiveText, 0, 0);
 	GetEzLcd()->SetText(m_objectiveText, "Objectives");
 
-	for (int i = 0; i < MAX_OBJECTIVE; ++i)
+	for(int i = 0; i < MAX_OBJECTIVE; ++i)
 	{
 		m_objectives[i] = GetEzLcd()->AddText(LG_SCROLLING_TEXT, LG_SMALL, DT_LEFT, 150);
-		GetEzLcd()->SetOrigin(m_objectives[i], 10, (i + 1) * 9);
+		GetEzLcd()->SetOrigin(m_objectives[i], 10, (i+1) * 9);
 		m_objectiveIcons[i] = GetG15LCD()->CreateImage(MAKEINTRESOURCE(IDB_OBJECTIVE), false);
-		m_objectiveIcons[i]->SetOrigin(2, (i + 1) * 9);
+		m_objectiveIcons[i]->SetOrigin(2, (i+1) * 9);
 	}
 
-	for (int i = 0; i < MAX_SCORES; ++i)
+	for(int i = 0; i < MAX_SCORES; ++i)
 	{
 		m_scoreRanks[i] = GetEzLcd()->AddText(LG_STATIC_TEXT, LG_SMALL, DT_RIGHT, 10);
-		GetEzLcd()->SetOrigin(m_scoreRanks[i], 0, (i + 3) * 9 - 1);
+		GetEzLcd()->SetOrigin(m_scoreRanks[i], 0, (i+3)*9 - 1);
 		m_scoreNames[i] = GetEzLcd()->AddText(LG_SCROLLING_TEXT, LG_SMALL, DT_CENTER, 95);
-		GetEzLcd()->SetOrigin(m_scoreNames[i], 15, (i + 3) * 9 - 1);
+		GetEzLcd()->SetOrigin(m_scoreNames[i], 15, (i+3)*9 - 1);
 		m_scoreScores[i] = GetEzLcd()->AddText(LG_STATIC_TEXT, LG_SMALL, DT_CENTER, 45);
-		GetEzLcd()->SetOrigin(m_scoreScores[i], 115, (i + 3) * 9 - 1);
+		GetEzLcd()->SetOrigin(m_scoreScores[i], 115, (i+3)*9 - 1);
 	}
 
 	m_ppPrestige = GetEzLcd()->AddText(LG_STATIC_TEXT, LG_SMALL, DT_LEFT, 80);
@@ -124,6 +124,7 @@ void CGameStatus::OnAttach()
 	m_TIATeamKills = GetEzLcd()->AddText(LG_STATIC_TEXT, LG_SMALL, DT_LEFT, 40);
 	GetEzLcd()->SetOrigin(m_TIATeamKills, 115, 14);
 
+
 	m_teamUSScore = GetEzLcd()->AddProgressBar(LG_FILLED);
 	GetEzLcd()->SetProgressBarSize(m_teamUSScore, 110, 7);
 	GetEzLcd()->SetOrigin(m_teamUSScore, 40, 26);
@@ -144,15 +145,15 @@ void CGameStatus::UpdateGameMode()
 		return;
 
 	m_pLocalizationMan = gEnv->pSystem->GetLocalizationManager();
-	if (!m_pLocalizationMan)
+	if(!m_pLocalizationMan)
 		return;
 
-	m_pGameRules = g_pGame->GetGameRules();
-	if (!m_pGameRules)
+	m_pGameRules=g_pGame->GetGameRules();
+	if(!m_pGameRules)
 		return;
 
 	m_pGameRulesScript = m_pGameRules->GetEntity()->GetScriptTable();
-	if (!m_pGameRulesScript)
+	if(!m_pGameRulesScript)
 		return;
 
 	EHUDGAMERULES hudGameRules = g_pGame->GetHUD()->GetCurrentGameRules();
@@ -174,20 +175,22 @@ void CGameStatus::UpdateGameMode()
 	GetEzLcd()->SetVisible(m_TIADeaths, false);
 	GetEzLcd()->SetVisible(m_TIATeamKills, false);
 
+
+
 	// always hide all objectives (they will get unhidden in UpdateSingleplayer
-	for (int i = 0; i < MAX_OBJECTIVE; ++i)
+	for(int i = 0; i < MAX_OBJECTIVE; ++i)
 	{
 		GetEzLcd()->SetVisible(m_objectives[i], false);
 		m_objectiveIcons[i]->SetVisible(false);
 	}
-	for (int i = 0; i < MAX_SCORES; ++i)
+	for(int i = 0; i < MAX_SCORES; ++i)
 	{
 		GetEzLcd()->SetVisible(m_scoreRanks[i], false);
 		GetEzLcd()->SetVisible(m_scoreNames[i], false);
 		GetEzLcd()->SetVisible(m_scoreScores[i], false);
 	}
 
-	switch (hudGameRules)
+	switch(hudGameRules)
 	{
 	case EHUD_SINGLEPLAYER:
 		UpdateSingleplayer();
@@ -222,7 +225,7 @@ void CGameStatus::UpdateSingleplayer()
 	int currentObjective = 0;
 
 	char buffer[128];
-	for (; (currentObjective < MAX_OBJECTIVE) && (it != end); ++it)
+	for(; (currentObjective < MAX_OBJECTIVE) && (it != end); ++it)
 	{
 		CHUD::SHudObjective objective = it->second;
 		if (objective.status == 1 || objective.status == 2)
@@ -252,7 +255,7 @@ void CGameStatus::UpdateServerAndIP()
 
 void CGameStatus::UpdateTime()
 {
-	IEntityScriptProxy* pScriptProxy = static_cast<IEntityScriptProxy*>(m_pGameRules->GetEntity()->GetProxy(ENTITY_PROXY_SCRIPT));
+	IEntityScriptProxy *pScriptProxy = static_cast<IEntityScriptProxy*>(m_pGameRules->GetEntity()->GetProxy(ENTITY_PROXY_SCRIPT));
 	if (pScriptProxy)
 	{
 		char buffer[128];
@@ -260,8 +263,8 @@ void CGameStatus::UpdateTime()
 		{
 			int time = (int)(m_pGameRules->GetRemainingGameTime());
 
-			int minutes = time / 60;
-			int seconds = time - (minutes * 60);
+			int minutes=time/60;
+			int seconds=time-(minutes*60);
 			CryFixedStringT<64> msg;
 			_snprintf(buffer, 128, "Remaining: %02d:%02d", minutes, seconds);
 		}
@@ -283,12 +286,13 @@ void CGameStatus::UpdateInstantAction()
 	if (!SCORE_DEATHS_KEY)
 		m_pGameRulesScript->GetValue("SCORE_DEATHS_KEY", SCORE_DEATHS_KEY);
 
-	for (int i = 0; i < MAX_SCORES; ++i)
+	for(int i = 0; i < MAX_SCORES; ++i)
 	{
 		GetEzLcd()->SetVisible(m_scoreRanks[i], true);
 		GetEzLcd()->SetVisible(m_scoreNames[i], true);
 		GetEzLcd()->SetVisible(m_scoreScores[i], true);
 	}
+
 
 	m_scores.clear();
 
@@ -298,7 +302,7 @@ void CGameStatus::UpdateInstantAction()
 		if (!pActor->IsPlayer())
 			continue;
 
-		if (pActor->GetSpectatorMode() && !g_pGame->GetGameRules()->IsPlayerActivelyPlaying(pActor->GetEntityId()))
+		if(pActor->GetSpectatorMode() && !g_pGame->GetGameRules()->IsPlayerActivelyPlaying(pActor->GetEntityId()))
 			continue;
 
 		int kills = 0;
@@ -354,8 +358,8 @@ void CGameStatus::UpdateInstantAction()
 			}
 			else
 			{
-				SetScore(0, clientRank - 1, m_scores[clientRank - 2].pActor->GetEntity()->GetName(), m_scores[clientRank - 2].kills);
-				SetScore(1, clientRank, m_scores[clientRank - 1].pActor->GetEntity()->GetName(), m_scores[clientRank - 1].kills);
+				SetScore(0, clientRank-1, m_scores[clientRank-2].pActor->GetEntity()->GetName(), m_scores[clientRank-2].kills);
+				SetScore(1, clientRank, m_scores[clientRank-1].pActor->GetEntity()->GetName(), m_scores[clientRank-1].kills);
 			}
 		}
 	}
@@ -381,12 +385,13 @@ void CGameStatus::UpdateTeamInstantAction()
 
 	if (m_pGameRules->IsPlayerActivelyPlaying(m_pClientActor->GetEntityId()))
 	{
+
 		int score;
 		int kills;
 		int deaths;
 		int teamkills;
 
-		HSCRIPTFUNCTION pfnGetScoreFlags = 0;
+		HSCRIPTFUNCTION pfnGetScoreFlags=0;
 		if (m_pGameRulesScript->GetValue("GetPlayerScore", pfnGetScoreFlags))
 		{
 			ScriptHandle actorId(m_pClientActor->GetEntityId());
@@ -427,16 +432,16 @@ void CGameStatus::UpdateTeamInstantAction()
 	}
 
 	int scorelimit = g_pGameCVars->g_scorelimit;
-	if (scorelimit == 0)
+	if(scorelimit==0)
 	{
-		if (scoreUS > 100 || scoreNK > 100)
+		if(scoreUS>100 || scoreNK>100)
 		{
 			scorelimit = max(scoreUS, scoreNK);
 		}
 		else
 			scorelimit = 100;
 	}
-	if (clientteam == 2)
+	if(clientteam==2)
 	{
 		GetEzLcd()->SetVisible(m_teamUS, true);
 		GetEzLcd()->SetVisible(m_teamNK, true);
@@ -445,9 +450,9 @@ void CGameStatus::UpdateTeamInstantAction()
 		_snprintf(buffer, 128, "NK: %d", scoreNK);
 		GetEzLcd()->SetText(m_teamNK, buffer);
 		GetEzLcd()->SetVisible(m_teamUSScore, true);
-		GetEzLcd()->SetProgressBarPosition(m_teamUSScore, (100 * scoreUS) / scorelimit);
+		GetEzLcd()->SetProgressBarPosition(m_teamUSScore, (100 * scoreUS)/scorelimit);
 		GetEzLcd()->SetVisible(m_teamNKScore, true);
-		GetEzLcd()->SetProgressBarPosition(m_teamNKScore, (100 * scoreNK) / scorelimit);
+		GetEzLcd()->SetProgressBarPosition(m_teamNKScore, (100 * scoreNK)/scorelimit);
 	}
 	else
 	{
@@ -458,10 +463,11 @@ void CGameStatus::UpdateTeamInstantAction()
 		_snprintf(buffer, 128, "US: %d", scoreUS);
 		GetEzLcd()->SetText(m_teamNK, buffer);
 		GetEzLcd()->SetVisible(m_teamUSScore, true);
-		GetEzLcd()->SetProgressBarPosition(m_teamUSScore, (100 * scoreNK) / scorelimit);
+		GetEzLcd()->SetProgressBarPosition(m_teamUSScore, (100 * scoreNK)/scorelimit);
 		GetEzLcd()->SetVisible(m_teamNKScore, true);
-		GetEzLcd()->SetProgressBarPosition(m_teamNKScore, (100 * scoreUS) / scorelimit);
+		GetEzLcd()->SetProgressBarPosition(m_teamNKScore, (100 * scoreUS)/scorelimit);
 	}
+
 }
 
 void CGameStatus::UpdatePowerStruggle()
@@ -470,7 +476,7 @@ void CGameStatus::UpdatePowerStruggle()
 	if (!PP_AMOUNT_KEY)
 		m_pGameRulesScript->GetValue("PP_AMOUNT_KEY", PP_AMOUNT_KEY);
 
-	int playerPP = 0;
+	int playerPP=0;
 	m_pGameRules->GetSynchedEntityValue(m_pClientActor->GetEntity()->GetId(), TSynchedKey(PP_AMOUNT_KEY), playerPP);
 
 	int teamCount = m_pGameRules->GetTeamCount();
@@ -483,7 +489,7 @@ void CGameStatus::UpdatePowerStruggle()
 			// have prestige point stuff
 			CHUDScore::SRankStats rankStats;
 			rankStats.Update(m_pGameRulesScript, m_pClientActor);
-			bool drawTeamScores = (rankStats.currentRank != 0); // if we got here it means we don't want to show the number of kills
+			bool drawTeamScores=(rankStats.currentRank!=0); // if we got here it means we don't want to show the number of kills
 
 			GetEzLcd()->SetVisible(m_ppPrestige, true);
 			_snprintf(buffer, 128, "Prestige: %d", playerPP);

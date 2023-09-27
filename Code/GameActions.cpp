@@ -4,21 +4,20 @@
 
 #define DECL_ACTION(name) name = #name;
 CGameActions::CGameActions()
-	: m_pFilterNoMove(0)
-	, m_pFilterNoMouse(0)
-	, m_pFilterNoGrenades(0)
-	, m_pFilterInVehicleSuitMenu(0)
-	, m_pFilterSuitMenu(0)
-	, m_pFilterFreezeTime(0)
-	, m_pFilterNoVehicleExit(0)
-	, m_pFilterMPRadio(0)
-	, m_pFilterCutscene(0)
-	, m_pFilterCutsceneNoPlayer(0)
-	, m_pFilterNoMapOpen(0)
-	, m_pFilterNoObjectivesOpen(0)
-	, m_pFilterVehicleNoSeatChangeAndExit(0)
-	, m_pFilterNoConnectivity(0)
-	//, m_pFilterCommandMode(0)
+: m_pFilterNoMove(0)
+, m_pFilterNoMouse(0)
+, m_pFilterNoGrenades(0)
+, m_pFilterInVehicleSuitMenu(0)
+, m_pFilterSuitMenu(0)
+, m_pFilterFreezeTime(0)
+, m_pFilterNoVehicleExit(0)
+, m_pFilterMPRadio(0)
+, m_pFilterCutscene(0)
+, m_pFilterCutsceneNoPlayer(0)
+, m_pFilterNoMapOpen(0)
+, m_pFilterNoObjectivesOpen(0)
+, m_pFilterVehicleNoSeatChangeAndExit(0)
+, m_pFilterNoConnectivity(0)
 {
 #include "GameActions.actions"
 }
@@ -40,31 +39,7 @@ void CGameActions::Init()
 	CreateFilterNoObjectivesOpen();
 	CreateFilterVehicleNoSeatChangeAndExit();
 	CreateFilterNoConnectivity();
-	//CreateFilterCommandMode();
 }
-
-//void CGameActions::CreateFilterCommandMode()
-//{
-//	IActionMapManager* pActionMapMan = g_pGame->GetIGameFramework()->GetIActionMapManager();
-//
-//	m_pFilterCommandMode = pActionMapMan->CreateActionFilter("command_mode", eAFT_ActionFail);
-//	m_pFilterCommandMode->Filter(reload);
-//	m_pFilterCommandMode->Filter(small);
-//	m_pFilterCommandMode->Filter(medium);
-//	m_pFilterCommandMode->Filter(heavy);
-//
-//	m_pFilterCommandMode->Filter(explosive);
-//	m_pFilterCommandMode->Filter(utility);
-//	m_pFilterCommandMode->Filter(handgrenade);
-//
-//	m_pFilterCommandMode->Filter(prone);
-//
-//	m_pFilterCommandMode->Filter(v_changeseat1);
-//	m_pFilterCommandMode->Filter(v_changeseat2);
-//	m_pFilterCommandMode->Filter(v_changeseat3);
-//	m_pFilterCommandMode->Filter(v_changeseat4);
-//	m_pFilterCommandMode->Filter(v_changeseat5);
-//}
 
 void CGameActions::CreateFilterNoMove()
 {
@@ -125,6 +100,7 @@ void CGameActions::CreateFilterNoMouse()
 	m_pFilterNoMouse->Filter(jump);
 	m_pFilterNoMouse->Filter(zoom_in);
 	m_pFilterNoMouse->Filter(zoom_out);
+	
 }
 
 void CGameActions::CreateFilterInVehicleSuitMenu()
@@ -189,8 +165,6 @@ void CGameActions::CreateFilterFreezeTime()
 	m_pFilterFreezeTime->Filter(togglestance);
 	m_pFilterFreezeTime->Filter(leanleft);
 	m_pFilterFreezeTime->Filter(leanright);
-
-	//m_pFilterFreezeTime->Filter(squad_executeorder);
 
 	m_pFilterFreezeTime->Filter(rotateyaw);
 	m_pFilterFreezeTime->Filter(rotatepitch);
@@ -306,7 +280,7 @@ void CGameActions::CreateFilterCutscene()
 {
 	IActionMapManager* pActionMapMan = g_pGame->GetIGameFramework()->GetIActionMapManager();
 
-	m_pFilterCutscene = pActionMapMan->CreateActionFilter("cutscene", eAFT_ActionFail);
+	m_pFilterCutscene = pActionMapMan->CreateActionFilter("cutscene", eAFT_ActionFail);	
 	m_pFilterCutscene->Filter(binoculars);
 	m_pFilterCutscene->Filter(hud_night_vision);
 	m_pFilterCutscene->Filter(hud_show_multiplayer_scoreboard);

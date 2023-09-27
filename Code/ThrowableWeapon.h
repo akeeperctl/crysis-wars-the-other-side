@@ -18,6 +18,7 @@ History:
 # pragma once
 #endif
 
+
 #include "Weapon.h"
 
 class CThrowableWeapon : public CWeapon
@@ -28,5 +29,6 @@ public:
 
 	virtual bool CanSelect() const;
 };
+
 
 #endif // __THROWABLEWEAPON_H__

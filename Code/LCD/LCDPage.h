@@ -24,21 +24,21 @@ public:
 	virtual ~CLCDPage();
 
 	void	Attach(CG15LCD* pLCD, int pageId);
-
-	virtual bool	PreUpdate() { return true; }
+	
+	virtual bool	PreUpdate() {	return true;	}
 	virtual void	Update(float frameTime) {}
 
 	void	MakeModifyTarget();
-	int		GetPageId() const { return m_pageId; }
+	int		GetPageId() const {	return m_pageId;	}
 
 protected:
-	virtual void OnAttach() {}
+	virtual void OnAttach(){}
 
-	CEzLcd* GetEzLcd() const { return m_pLCD ? m_pLCD->GetEzLcd() : 0; };
-	CG15LCD* GetG15LCD() const { return m_pLCD; };
+	CEzLcd*		GetEzLcd() const	{	return m_pLCD ? m_pLCD->GetEzLcd() : 0;	};
+	CG15LCD*	GetG15LCD() const	{	return m_pLCD ;	};
 
 private:
-	CG15LCD* m_pLCD;
+	CG15LCD*	m_pLCD;
 	int				m_pageId;
 };
 

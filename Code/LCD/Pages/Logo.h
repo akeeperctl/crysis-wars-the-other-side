@@ -18,7 +18,7 @@ History:
 class CLogo : public CLCDPage
 {
 public:
-	CLogo()
+	CLogo() 
 	{
 	}
 

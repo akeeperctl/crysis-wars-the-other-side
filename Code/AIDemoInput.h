@@ -14,14 +14,14 @@ class CDedicatedInput : public IPlayerInput
 public:
 	CDedicatedInput(CPlayer* pPlayer) :
 		m_pPlayer(pPlayer),
-		m_deltaMovement(0.0f, 1.0f, 0.0f),
-		m_deltaRotation(0.0f, 0.0f, THETA),
-		m_rand((uint32)gEnv->pTimer->GetAsyncCurTime()),
+		m_deltaMovement(0.0f,1.0f,0.0f),
+		m_deltaRotation(0.0f,0.0f,THETA),
+		m_rand( (uint32)gEnv->pTimer->GetAsyncCurTime() ),
 		m_movingTime(5.0f)
 	{
 	}
 
-	virtual void PreUpdate()
+	virtual void PreUpdate()	
 	{
 		if (m_movingTime >= 5.0f)
 		{
@@ -32,7 +32,7 @@ public:
 
 		m_movingTime += gEnv->pTimer->GetFrameTime();
 
-		m_pPlayer->GetGameObject()->ChangedNetworkState(INPUT_ASPECT);
+		m_pPlayer->GetGameObject()->ChangedNetworkState( INPUT_ASPECT );
 	}
 
 	virtual void Update()
@@ -40,7 +40,7 @@ public:
 		CMovementRequest request;
 		request.AddDeltaMovement(m_deltaMovement);
 		request.AddDeltaRotation(m_deltaRotation);
-		const float pseudoSpeed = m_pPlayer->CalculatePseudoSpeed(false);
+		float pseudoSpeed = m_pPlayer->CalculatePseudoSpeed(false);
 		request.SetPseudoSpeed(pseudoSpeed);
 		m_pPlayer->GetMovementController()->RequestMovement(request);
 
@@ -50,8 +50,8 @@ public:
 			IWeapon* pWeapon = pItem->GetIWeapon();
 			if (pWeapon)
 			{
-				if (pWeapon->OutOfAmmo(false))
-					pWeapon->SetAmmoCount(pWeapon->GetFireMode(pWeapon->GetCurrentFireMode())->GetAmmoType(), 100);
+				if ( pWeapon->OutOfAmmo(false) )
+					pWeapon->SetAmmoCount( pWeapon->GetFireMode(pWeapon->GetCurrentFireMode())->GetAmmoType(), 100 );
 				pWeapon->StartFire();
 			}
 		}
@@ -67,16 +67,16 @@ public:
 		m_serializedInput.stance = movementState.stance;
 	}
 
-	virtual void OnAction(const ActionId& action, int activationMode, float value)
+	virtual void OnAction( const ActionId& action, int activationMode, float value )
 	{
 	}
 
-	virtual void SetState(const SSerializedPlayerInput& input)
+	virtual void SetState( const SSerializedPlayerInput& input )
 	{
 		GameWarning("CDedicatedInput::SetState called - should not happen");
 	}
 
-	virtual void GetState(SSerializedPlayerInput& input)
+	virtual void GetState( SSerializedPlayerInput& input )
 	{
 		input = m_serializedInput;
 	}
@@ -96,7 +96,7 @@ public:
 		return DEDICATED_INPUT;
 	}
 
-	virtual void GetMemoryStatistics(ICrySizer* pSizer)
+	virtual void GetMemoryStatistics(ICrySizer * pSizer)
 	{
 		pSizer->Add(*this);
 	}
@@ -117,3 +117,4 @@ private:
 };
 
 #endif
+

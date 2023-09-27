@@ -20,7 +20,8 @@ History:
 
 class CMovieManager
 {
-public:
+
+public :
 
 	struct SMovieInfo
 	{
@@ -30,7 +31,7 @@ public:
 	};
 
 	CMovieManager();
-	~CMovieManager();
+	~	CMovieManager();
 
 	bool Update(float fDeltaTime);
 	void PlayVideo(int index);
@@ -38,11 +39,12 @@ public:
 	void NextVideo();
 	bool IsPlaying();
 
-private:
+private :
 
 	int		m_current;
 
 	std::vector<SMovieInfo> m_movieList;
+
 };
 #endif
 

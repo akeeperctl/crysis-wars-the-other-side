@@ -50,7 +50,7 @@ public:
 	}
 
 	CHUDMissionObjective(CHUDMissionObjectiveSystem* pMOS, const char* id, const char* shortMsg, const char* msg = 0, const char* mapLabel = 0, bool secondaryObjective = false)
-		: m_pMOS(pMOS), m_shortMessage(shortMsg), m_screenMessage(msg), m_id(id), m_silent(false), m_mapLabel(mapLabel)
+											: m_pMOS(pMOS), m_shortMessage(shortMsg), m_screenMessage(msg), m_id(id), m_silent(false), m_mapLabel(mapLabel)
 	{
 		m_eStatus = DEACTIVATED;
 		m_trackedEntity = 0;
@@ -88,7 +88,7 @@ public:
 	}
 
 	void SetTrackedEntity(EntityId entityID);
-
+	
 	ILINE bool GetRadar() const
 	{
 		return m_trackedEntity != 0;
@@ -116,7 +116,7 @@ public:
 
 	ILINE const char* GetMapLabel() const
 	{
-		if (m_mapLabel.size() == 0)
+		if(m_mapLabel.size() == 0)
 			return m_shortMessage.c_str();
 		return m_mapLabel.c_str();
 	}
@@ -133,7 +133,7 @@ public:
 		ser.EnumValue("m_eStatus", m_eStatus, FIRST, LAST);
 	}
 
-	void GetMemoryStatistics(ICrySizer* s)
+	void GetMemoryStatistics(ICrySizer * s)
 	{
 		s->Add(m_shortMessage);
 		s->Add(m_screenMessage);
@@ -181,7 +181,8 @@ public:
 		return m_currentMissionObjectives;
 	}
 
-	void GetMemoryStatistics(ICrySizer* s);
+
+	void GetMemoryStatistics(ICrySizer * s);
 	//get the description of the objective
 	const char* GetMissionObjectiveLongDescription(const char* objectiveShort);
 
@@ -201,7 +202,7 @@ public:
 	void Serialize(TSerialize ser);	//not tested!!
 
 private:
-	void LoadLevelObjectives(const char* filename);
+	void LoadLevelObjectives(const char *filename);
 };
 
 #endif

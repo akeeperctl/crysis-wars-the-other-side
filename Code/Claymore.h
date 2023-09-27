@@ -18,9 +18,11 @@ History:
 # pragma once
 #endif
 
-#include "Projectile.h"
 
-static const int EXPLOSIVE_REMOVAL_TIME = 30000;	// remove claymores 30s after player dies
+#include "Projectile.h"
+		
+static const int EXPLOSIVE_REMOVAL_TIME	= 30000;	// remove claymores 30s after player dies
+
 
 class CClaymore : public CProjectile
 {
@@ -28,15 +30,15 @@ public:
 	CClaymore();
 	virtual ~CClaymore();
 
-	virtual bool Init(IGameObject* pGameObject);
+	virtual bool Init(IGameObject *pGameObject);
 
-	virtual void ProcessEvent(SEntityEvent& event);
-	virtual void HandleEvent(const SGameObjectEvent& event);
-	virtual void Launch(const Vec3& pos, const Vec3& dir, const Vec3& velocity, float speedScale);
-	virtual void Update(SEntityUpdateContext& ctx, int updateSlot);
-	virtual void Explode(bool destroy, bool impact = false, const Vec3& pos = ZERO, const Vec3& normal = FORWARD_DIRECTION, const Vec3& vel = ZERO, EntityId targetId = 0);
+	virtual void ProcessEvent(SEntityEvent &event);
+	virtual void HandleEvent(const SGameObjectEvent &event);
+	virtual void Launch(const Vec3 &pos, const Vec3 &dir, const Vec3 &velocity, float speedScale);
+	virtual void Update(SEntityUpdateContext &ctx, int updateSlot);
+	virtual void Explode(bool destroy, bool impact=false, const Vec3 &pos=ZERO, const Vec3 &normal=FORWARD_DIRECTION , const Vec3 &vel=ZERO, EntityId targetId=0);
 
-	Vec3 GetTriggerDirection() { return m_triggerDirection; }
+	Vec3 GetTriggerDirection() {return m_triggerDirection; }
 
 	virtual void SetParams(EntityId ownerId, EntityId hostId, EntityId weaponId, int fmId, int damage, int hitTypeId);
 
@@ -51,5 +53,6 @@ protected:
 																		// a record and check their angle etc while inside our trigger).
 	bool m_frozen;
 };
+
 
 #endif // __CLAYMORE_H__

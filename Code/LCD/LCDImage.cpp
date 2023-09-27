@@ -8,10 +8,10 @@ Copyright (C), Crytek Studios, 2001-2007.
 #ifdef USE_G15_LCD
 
 CLCDImage::CLCDImage(CG15LCD* pLCD)
-	: m_pLCD(pLCD)
-	, m_hBitmap(0)
-	, m_hHandle(0)
-	, m_bVisible(false)
+: m_pLCD(pLCD)
+, m_hBitmap(0)
+, m_hHandle(0)
+, m_bVisible(false)
 {
 }
 

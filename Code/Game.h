@@ -4,8 +4,8 @@
  -------------------------------------------------------------------------
   $Id$
   $DateTime$
-  Description:
-
+  Description: 
+  
  -------------------------------------------------------------------------
   History:
   - 3:8:2004   11:23 : Created by Márcio Martins
@@ -30,6 +30,7 @@
 
 #define GAME_NAME				"Crysis Wars"
 #define GAME_LONGNAME		"Crysis Wars"
+
 
 struct ISystem;
 struct IConsole;
@@ -71,7 +72,7 @@ enum ECryGameEvent
 	eCGE_PostFreeze = 256,
 	eCGE_PostShatter,
 	eCGE_OnShoot,
-	eCGE_Recoil,
+	eCGE_Recoil, 
 	eCGE_BeginReloadLoop,
 	eCGE_EndReloadLoop,
 	eCGE_ActorRevive,
@@ -97,78 +98,78 @@ enum ECryGameEvent
 	eCGE_DisablePhysicalCollider,
 	eCGE_RebindAnimGraphInputs,
 	eCGE_OpenParachute,
-	eCGE_Turret_LockedTarget,
-	eCGE_Turret_LostTarget,
+  eCGE_Turret_LockedTarget,
+  eCGE_Turret_LostTarget,
 };
 
-static const int GLOBAL_SERVER_IP_KEY = 1000;
-static const int GLOBAL_SERVER_PUBLIC_PORT_KEY = 1001;
-static const int GLOBAL_SERVER_NAME_KEY = 1002;
+static const int GLOBAL_SERVER_IP_KEY						=	1000;
+static const int GLOBAL_SERVER_PUBLIC_PORT_KEY	= 1001;
+static const int GLOBAL_SERVER_NAME_KEY					=	1002;
 
 class CGame :
-	public IGame, public IGameFrameworkListener
+  public IGame, public IGameFrameworkListener
 {
 public:
-	typedef bool (*BlockingConditionFunction)();
+  typedef bool (*BlockingConditionFunction)();
 public:
 	CGame();
 	virtual ~CGame();
 
 	// IGame
-	virtual bool  Init(IGameFramework* pFramework);
+	virtual bool  Init(IGameFramework *pFramework);
 	virtual bool  CompleteInit();
 	virtual void  Shutdown();
 	virtual int   Update(bool haveFocus, unsigned int updateFlags);
-	virtual void  ConfigureGameChannel(bool isServer, IProtocolBuilder* pBuilder);
+	virtual void  ConfigureGameChannel(bool isServer, IProtocolBuilder *pBuilder);
 	virtual void  EditorResetGame(bool bStart);
 	virtual void  PlayerIdSet(EntityId playerId);
 	virtual string  InitMapReloading();
 	virtual bool IsReloading() { return m_bReload; }
-	virtual IGameFramework* GetIGameFramework() { return m_pFramework; }
+	virtual IGameFramework *GetIGameFramework() { return m_pFramework; }
 
-	virtual const char* GetLongName();
-	virtual const char* GetName();
+	virtual const char *GetLongName();
+	virtual const char *GetName();
 
-	virtual void GetMemoryStatistics(ICrySizer* s);
+	virtual void GetMemoryStatistics(ICrySizer * s);
 
 	virtual void OnClearPlayerIds();
 	//auto-generated save game file name
 	virtual const char* CreateSaveGameName();
 	//level names were renamed without changing the file/directory
-	virtual const char* GetMappedLevelName(const char* levelName) const;
+	virtual const char* GetMappedLevelName(const char *levelName) const;
 	// ~IGame
 
   // IGameFrameworkListener
-	virtual void OnPostUpdate(float fDeltaTime);
-	virtual void OnSaveGame(ISaveGame* pSaveGame);
-	virtual void OnLoadGame(ILoadGame* pLoadGame);
+  virtual void OnPostUpdate(float fDeltaTime);
+  virtual void OnSaveGame(ISaveGame* pSaveGame);
+  virtual void OnLoadGame(ILoadGame* pLoadGame);
 	virtual void OnLevelEnd(const char* nextLevel) {};
-	virtual void OnActionEvent(const SActionEvent& event);
-	// ~IGameFrameworkListener
+  virtual void OnActionEvent(const SActionEvent& event);
+  // ~IGameFrameworkListener
 
-	void BlockingProcess(BlockingConditionFunction f);
-	void GameChannelDestroyed(bool isServer);
-	void DestroyHUD();
+  void BlockingProcess(BlockingConditionFunction f);
+  void GameChannelDestroyed(bool isServer);
+  void DestroyHUD();
 
-	virtual CScriptBind_Actor* GetActorScriptBind() { return m_pScriptBindActor; }
-	virtual CScriptBind_Item* GetItemScriptBind() { return m_pScriptBindItem; }
-	virtual CScriptBind_Weapon* GetWeaponScriptBind() { return m_pScriptBindWeapon; }
-	virtual CScriptBind_GameRules* GetGameRulesScriptBind() { return m_pScriptBindGameRules; }
-	virtual CScriptBind_HUD* GetHUDScriptBind() { return m_pScriptBindHUD; }
-	virtual CWeaponSystem* GetWeaponSystem() { return m_pWeaponSystem; };
-	virtual CItemSharedParamsList* GetItemSharedParamsList() { return m_pItemSharedParamsList; };
+	virtual CScriptBind_Actor *GetActorScriptBind() { return m_pScriptBindActor; }
+	virtual CScriptBind_Item *GetItemScriptBind() { return m_pScriptBindItem; }
+	virtual CScriptBind_Weapon *GetWeaponScriptBind() { return m_pScriptBindWeapon; }
+	virtual CScriptBind_GameRules *GetGameRulesScriptBind() { return m_pScriptBindGameRules; }
+	virtual CScriptBind_HUD *GetHUDScriptBind() { return m_pScriptBindHUD; }
+	virtual CWeaponSystem *GetWeaponSystem() { return m_pWeaponSystem; };
+	virtual CItemSharedParamsList *GetItemSharedParamsList() { return m_pItemSharedParamsList; };
 
-	CGameActions& Actions() const { return *m_pGameActions; };
+	CGameActions&	Actions() const {	return *m_pGameActions;	};
 
-	CGameRules* GetGameRules() const;
-	CBulletTime* GetBulletTime() const;
-	CSoundMoods* GetSoundMoods() const;
-	CLaptopUtil* GetLaptopUtil() const;
-	CHUD* GetHUD() const;
-	CFlashMenuObject* GetMenu() const;
-	COptionsManager* GetOptions() const;
+	CGameRules *GetGameRules() const;
+	CBulletTime *GetBulletTime() const;
+	CSoundMoods *GetSoundMoods() const;
+	CLaptopUtil *GetLaptopUtil() const;
+	CHUD *GetHUD() const;
+	CFlashMenuObject *GetMenu() const;
+	COptionsManager *GetOptions() const;
 
-	ILINE CSynchedStorage* GetSynchedStorage() const
+	ILINE CSynchedStorage *GetSynchedStorage() const
 	{
 		if (m_pServerSynchedStorage && gEnv->bServer)
 			return m_pServerSynchedStorage;
@@ -176,17 +177,17 @@ public:
 		return m_pClientSynchedStorage;
 	}
 
-	ILINE CServerSynchedStorage* GetServerSynchedStorage() const
+	ILINE CServerSynchedStorage *GetServerSynchedStorage() const
 	{
 		return m_pServerSynchedStorage;
 	}
 
 	CSPAnalyst* GetSPAnalyst() const { return m_pSPAnalyst; }
 
-	const string& GetLastSaveGame(string& levelName);
+	const string& GetLastSaveGame(string &levelName);
 	const string& GetLastSaveGame() { string tmp; return GetLastSaveGame(tmp); }
 
-	ILINE SCVars* GetCVars() { return m_pCVars; }
+  ILINE SCVars *GetCVars() {return m_pCVars;}
 	static void DumpMemInfo(const char* format, ...) PRINTF_PARAMS(1, 2);
 
 	CDownloadTask* GetDownloadTask() const { return m_pDownloadTask; }
@@ -209,92 +210,88 @@ protected:
 	virtual void RegisterGameObjectEvents();
 
 	// marcok: this is bad and evil ... should be removed soon
-	static void CmdRestartGame(IConsoleCmdArgs* pArgs);
+	static void CmdRestartGame(IConsoleCmdArgs *pArgs);
 
-	static void CmdDumpSS(IConsoleCmdArgs* pArgs);
+	static void CmdDumpSS(IConsoleCmdArgs *pArgs);
 
-	static void CmdLastInv(IConsoleCmdArgs* pArgs);
-	static void CmdName(IConsoleCmdArgs* pArgs);
-	static void CmdTeam(IConsoleCmdArgs* pArgs);
-	static void CmdLoadLastSave(IConsoleCmdArgs* pArgs);
-	static void CmdSpectator(IConsoleCmdArgs* pArgs);
-	static void CmdJoinGame(IConsoleCmdArgs* pArgs);
-	static void CmdKill(IConsoleCmdArgs* pArgs);
-	static void CmdVehicleKill(IConsoleCmdArgs* pArgs);
-	static void CmdRestart(IConsoleCmdArgs* pArgs);
-	static void CmdSay(IConsoleCmdArgs* pArgs);
-	static void CmdReloadItems(IConsoleCmdArgs* pArgs);
-	static void CmdLoadActionmap(IConsoleCmdArgs* pArgs);
-	static void CmdReloadGameRules(IConsoleCmdArgs* pArgs);
-	static void CmdNextLevel(IConsoleCmdArgs* pArgs);
-	static void CmdStartKickVoting(IConsoleCmdArgs* pArgs);
-	static void CmdStartNextMapVoting(IConsoleCmdArgs* pArgs);
-	static void CmdVote(IConsoleCmdArgs* pArgs);
+	static void CmdLastInv(IConsoleCmdArgs *pArgs);
+	static void CmdName(IConsoleCmdArgs *pArgs);
+	static void CmdTeam(IConsoleCmdArgs *pArgs);
+	static void CmdLoadLastSave(IConsoleCmdArgs *pArgs);
+	static void CmdSpectator(IConsoleCmdArgs *pArgs);
+	static void CmdJoinGame(IConsoleCmdArgs *pArgs);
+	static void CmdKill(IConsoleCmdArgs *pArgs);
+  static void CmdVehicleKill(IConsoleCmdArgs *pArgs);
+	static void CmdRestart(IConsoleCmdArgs *pArgs);
+	static void CmdSay(IConsoleCmdArgs *pArgs);
+	static void CmdReloadItems(IConsoleCmdArgs *pArgs);
+	static void CmdLoadActionmap(IConsoleCmdArgs *pArgs);
+  static void CmdReloadGameRules(IConsoleCmdArgs *pArgs);
+  static void CmdNextLevel(IConsoleCmdArgs* pArgs);
+  static void CmdStartKickVoting(IConsoleCmdArgs* pArgs);
+  static void CmdStartNextMapVoting(IConsoleCmdArgs* pArgs);
+  static void CmdVote(IConsoleCmdArgs* pArgs);
 	static void CmdListPlayers(IConsoleCmdArgs* pArgs);
 
-	static void CmdQuickGame(IConsoleCmdArgs* pArgs);
-	static void CmdQuickGameStop(IConsoleCmdArgs* pArgs);
-	static void CmdBattleDustReload(IConsoleCmdArgs* pArgs);
-	static void CmdLogin(IConsoleCmdArgs* pArgs);
+  static void CmdQuickGame(IConsoleCmdArgs* pArgs);
+  static void CmdQuickGameStop(IConsoleCmdArgs* pArgs);
+  static void CmdBattleDustReload(IConsoleCmdArgs* pArgs);
+  static void CmdLogin(IConsoleCmdArgs* pArgs);
 	static void CmdLoginProfile(IConsoleCmdArgs* pArgs);
 	static void CmdRegisterNick(IConsoleCmdArgs* pArgs);
-	static void CmdCryNetConnect(IConsoleCmdArgs* pArgs);
+  static void CmdCryNetConnect(IConsoleCmdArgs* pArgs);
 
-	//TheOtherSide
-	static void CmdKillSpecies(IConsoleCmdArgs* pArgs);
-	//~TheOtherSide
+	IGameFramework			*m_pFramework;
+	IConsole						*m_pConsole;
 
-	IGameFramework* m_pFramework;
-	IConsole* m_pConsole;
-
-	CWeaponSystem* m_pWeaponSystem;
+	CWeaponSystem				*m_pWeaponSystem;
 
 	bool								m_bReload;
 
 	// script binds
-	CScriptBind_Actor* m_pScriptBindActor;
-	CScriptBind_Item* m_pScriptBindItem;
-	CScriptBind_Weapon* m_pScriptBindWeapon;
-	CScriptBind_GameRules* m_pScriptBindGameRules;
-	CScriptBind_Game* m_pScriptBindGame;
-	CScriptBind_HUD* m_pScriptBindHUD;
+	CScriptBind_Actor		*m_pScriptBindActor;
+	CScriptBind_Item		*m_pScriptBindItem;
+	CScriptBind_Weapon	*m_pScriptBindWeapon;
+	CScriptBind_GameRules*m_pScriptBindGameRules;
+	CScriptBind_Game    *m_pScriptBindGame;
+	CScriptBind_HUD     *m_pScriptBindHUD;
 
 	//menus
-	CFlashMenuObject* m_pFlashMenuObject;
-	COptionsManager* m_pOptionsManager;
+	CFlashMenuObject		*m_pFlashMenuObject;
+	COptionsManager			*m_pOptionsManager;
 
-	IActionMap* m_pDebugAM;
-	IActionMap* m_pDefaultAM;
-	IActionMap* m_pMultiplayerAM;
-	CGameActions* m_pGameActions;
+	IActionMap					*m_pDebugAM;
+	IActionMap					*m_pDefaultAM;
+	IActionMap					*m_pMultiplayerAM;
+	CGameActions				*m_pGameActions;	
 	IPlayerProfileManager* m_pPlayerProfileManager;
-	CHUD* m_pHUD;
+	CHUD								*m_pHUD;
 
-	CServerSynchedStorage* m_pServerSynchedStorage;
-	CClientSynchedStorage* m_pClientSynchedStorage;
-	CSPAnalyst* m_pSPAnalyst;
+	CServerSynchedStorage	*m_pServerSynchedStorage;
+	CClientSynchedStorage	*m_pClientSynchedStorage;
+	CSPAnalyst          *m_pSPAnalyst;
 	bool								m_inDevMode;
 
 	EntityId m_uiPlayerID;
 
-	SCVars* m_pCVars;
-	SItemStrings* m_pItemStrings;
-	CItemSharedParamsList* m_pItemSharedParamsList;
+	SCVars*	m_pCVars;
+	SItemStrings					*m_pItemStrings;
+	CItemSharedParamsList *m_pItemSharedParamsList;
 	string                 m_lastSaveGame;
 	string								 m_newSaveGame;
 
-	CBulletTime* m_pBulletTime;
-	CSoundMoods* m_pSoundMoods;
-	CLaptopUtil* m_pLaptopUtil;
-	ILCD* m_pLCD;
+	CBulletTime						*m_pBulletTime;
+	CSoundMoods						*m_pSoundMoods;
+	CLaptopUtil						*m_pLaptopUtil;
+	ILCD									*m_pLCD;
 
 	typedef std::map<string, string, stl::less_stricmp<string> > TLevelMapMap;
 	TLevelMapMap m_mapNames;
 
-	CDownloadTask* m_pDownloadTask;
+	CDownloadTask					*m_pDownloadTask;
 };
 
-extern CGame* g_pGame;
+extern CGame *g_pGame;
 
 #define SAFE_HARDWARE_MOUSE_FUNC(func)\
 	if(gEnv->pHardwareMouse)\

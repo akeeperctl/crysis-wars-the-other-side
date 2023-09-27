@@ -5,7 +5,7 @@
   $Id$
   $DateTime$
   Description: Implements the Hunter alien.
-
+  
  -------------------------------------------------------------------------
   History:
   - 25:4:2005: Created by Filippo De Luca
@@ -27,70 +27,62 @@ class CHunter :
 {
 public:
 
-	CHunter();
+	CHunter ();
 
-	virtual IGrabHandler* CreateGrabHanlder();
+	virtual IGrabHandler *CreateGrabHanlder();
 
 	virtual void Revive(bool fromInit);
-	bool	NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int flags);
-	virtual bool CreateCodeEvent(SmartScriptTable& rTable);
+	virtual bool CreateCodeEvent(SmartScriptTable &rTable);
 
 	virtual void ProcessRotation(float frameTime);
 	virtual void ProcessMovement(float frameTime);
 
-	virtual void ProcessAnimation(ICharacterInstance* pCharacter, float frameTime);
+	virtual void ProcessAnimation(ICharacterInstance *pCharacter,float frameTime);
 	virtual void PostPhysicalize();
-	virtual void RagDollize(bool fallAndPlay);
+	virtual void RagDollize( bool fallAndPlay );
 	virtual void ProcessEvent(SEntityEvent& event);
 
 	virtual void UpdateFiringDir(float frameTime);
 
-	virtual void	SetActorStance(SMovementRequestParams& control, int& actions)
+	virtual void	SetActorStance(SMovementRequestParams &control, int& actions)
 	{
 		// Empty
 	}
 
-	virtual void GetActorInfo(SBodyInfo& bodyInfo);
-	virtual void AnimationEvent(ICharacterInstance* pCharacter, const AnimEventInstance& event);
+	virtual void GetActorInfo( SBodyInfo& bodyInfo );
+	virtual void AnimationEvent(ICharacterInstance *pCharacter, const AnimEventInstance &event);
 
 	virtual void SetFiring(bool fire);
 
-	virtual int GetBoneID(int ID, int slot = 0) const;
+	virtual int GetBoneID(int ID,int slot = 0) const;
 
-	virtual bool IsFlying() { return false; }
+	virtual bool IsFlying(){return false;}
 
-	virtual bool SetAnimationInput(const char* inputID, const char* value);
+	virtual bool SetAnimationInput( const char * inputID, const char * value );
 
-	virtual void FullSerialize(TSerialize ser);
-
-	void GetMemoryStatistics(ICrySizer* s);
+	virtual void FullSerialize( TSerialize ser );
+	
+	void GetMemoryStatistics(ICrySizer * s);
 
 	//Player can't grab hunters
 	virtual int	 GetActorSpecies() { return eGCT_UNKNOWN; }
 
-	virtual void PlayAction(const char* action, const char* extension, bool looping);
-
-	//TheOtherSide
-	bool IsShieldEnabled() { return m_energyParams.isHunterShieldEnabled; }
-	void ToggleShield();
-	virtual void UpdateEnergyRecharge(float frametime) override;
-	tSoundID m_shieldSoundId;
-	//~TheOtherSide
+	virtual void PlayAction( const char* action, const char* extension, bool looping );
 
 protected:
+	
+	virtual void UpdateAnimGraph( IAnimationGraphState * pState );
 
-	virtual void UpdateAnimGraph(IAnimationGraphState* pState);
+	void PlayFootstepEffects (int tentacle) const;
+	void PlayFootliftEffects (int tentacle) const;
 
-	void PlayFootstepEffects(int tentacle) const;
-	void PlayFootliftEffects(int tentacle) const;
-
-	bool TentacleInTheAir(int tentacle) const;
+	bool TentacleInTheAir (int tentacle) const;
 	/// These functions work from the animation point of view, unaltered by IK.
 	/// See also m_footTouchesGround.
-	bool TentacleGoingUp(int tentacle) const;
-	bool TentacleGoingDown(int tentacle) const;
+	bool TentacleGoingUp (int tentacle) const;
+	bool TentacleGoingDown (int tentacle) const;
 
-	bool Airborne() const;
+	bool Airborne () const;
 
 	Vec3 m_smoothMovementVec;
 	Vec3 m_balancePoint;
@@ -108,12 +100,12 @@ protected:
 	int m_IKLimbIndex[4];
 	Vec3 m_footGroundPos[4];
 	Vec3 m_footGroundPosLast[4];
-	int  m_footGroundSurface[4];
+  int  m_footGroundSurface[4];
 	/// True if tentacle's final world position, after all adjustments, is on the ground.
 	bool m_footTouchesGround[4];
 	f32 m_footTouchesGroundSmooth[4];
 	f32 m_footTouchesGroundSmoothRate[4];
-	IAttachment* m_footAttachments[4];
+  IAttachment* m_footAttachments[4];
 
 	bool m_IKLook;
 
@@ -139,22 +131,22 @@ protected:
 	std::bitset<NUM_WALK_EVENTS> m_walkEventFlags;
 };
 
-inline bool CHunter::TentacleInTheAir(int tentacle) const
+inline bool CHunter::TentacleInTheAir (int tentacle) const
 {
-	return m_footGroundPos[tentacle] == Vec3(0.0f, 0.0f, 0.0f);
+	return m_footGroundPos[tentacle] == Vec3 (0.0f, 0.0f, 0.0f);
 }
 
-inline bool CHunter::TentacleGoingUp(int tentacle) const
+inline bool CHunter::TentacleGoingUp (int tentacle) const
 {
-	return m_walkEventFlags.test(2 * tentacle);
+	return m_walkEventFlags.test (2*tentacle);
 }
 
-inline bool CHunter::TentacleGoingDown(int tentacle) const
+inline bool CHunter::TentacleGoingDown (int tentacle) const
 {
-	return m_walkEventFlags.test(2 * tentacle + 1);
+	return m_walkEventFlags.test (2*tentacle + 1);
 }
 
-inline bool CHunter::Airborne() const
+inline bool CHunter::Airborne () const
 {
 	return false; //pretend the hunter is always on ground
 

@@ -4,7 +4,7 @@ Copyright (C), Crytek Studios, 2001-2007.
 -------------------------------------------------------------------------
 $Id$
 $DateTime$
-Description: Implements a damage behavior which improves collision damages
+Description: Implements a damage behavior which improves collision damages 
 
 -------------------------------------------------------------------------
 History:
@@ -25,7 +25,7 @@ public:
 	CVehicleDamageBehaviorCollisionEx() {}
 	virtual ~CVehicleDamageBehaviorCollisionEx();
 
-	virtual bool Init(IVehicle* pVehicle, const SmartScriptTable& table);
+	virtual bool Init(IVehicle* pVehicle, const SmartScriptTable &table);
 	virtual void Reset() {}
 	virtual void Release() { delete this; }
 
@@ -35,7 +35,7 @@ public:
 	virtual void Update(const float deltaTime) {}
 	virtual void OnVehicleEvent(EVehicleEvent event, const SVehicleEventParams& params);
 
-	virtual void GetMemoryStatistics(ICrySizer* s) { s->Add(*this); }
+	virtual void GetMemoryStatistics(ICrySizer * s) { s->Add(*this); }
 
 protected:
 

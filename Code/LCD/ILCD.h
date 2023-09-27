@@ -14,7 +14,7 @@ History:
 
 struct ILCD
 {
-	virtual ~ILCD() {}
+	virtual ~ILCD(){}
 
 	virtual bool	Init() = 0;
 	virtual void	Update(float frameTime) = 0;
@@ -23,8 +23,8 @@ struct ILCD
 class CNullLCD : public ILCD
 {
 public:
-	virtual bool	Init() { return true; }
-	virtual void	Update(float frameTime) {}
+	virtual bool	Init()	{	return true;	}
+	virtual void	Update(float frameTime){}
 };
 
 #endif

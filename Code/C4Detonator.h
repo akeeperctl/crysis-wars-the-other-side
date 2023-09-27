@@ -18,18 +18,21 @@ History:
 # pragma once
 #endif
 
+
 #include <IItemSystem.h>
 #include "Weapon.h"
+
 
 class CC4Detonator :
 	public CWeapon
 {
+
 public:
 	CC4Detonator();
 
 	virtual void OnAction(EntityId actorId, const ActionId& actionId, int activationMode, float value);
 
-	virtual void GetMemoryStatistics(ICrySizer* s) { s->Add(*this); CWeapon::GetMemoryStatistics(s); }
+	virtual void GetMemoryStatistics(ICrySizer * s) { s->Add(*this); CWeapon::GetMemoryStatistics(s); }
 
 private:
 
@@ -37,6 +40,7 @@ private:
 
 	bool OnActionSelectC4(EntityId actorId, const ActionId& actionId, int activationMode, float value);
 	void SelectC4();
+
 };
 
 #endif // __C4DETONATOR_H__

@@ -17,6 +17,7 @@ History:
 
 # pragma once
 
+
 #include "HUDObject.h"
 
 #include "HUD.h"
@@ -28,7 +29,7 @@ class CHUDPowerStruggle : public CHUDObject
 	friend class CHUD;
 public:
 
-	CHUDPowerStruggle(CHUD* pHUD, CGameFlashAnimation* pBuyMenu, CGameFlashAnimation* pHexIcon);
+	CHUDPowerStruggle(CHUD *pHUD, CGameFlashAnimation *pBuyMenu, CGameFlashAnimation *pHexIcon);
 	~CHUDPowerStruggle();
 
 	void Update(float fDeltaTime);
@@ -37,12 +38,12 @@ public:
 	//buyable item types
 	enum EBuyMenuPage
 	{
-		E_WEAPONS = 1 << 0,
-		E_VEHICLES = 1 << 1,
-		E_EQUIPMENT = 1 << 2,
-		E_AMMO = 1 << 3,
-		E_PROTOTYPES = 1 << 4,
-		E_LOADOUT = 1 << 5
+		E_WEAPONS				= 1 << 0,
+		E_VEHICLES			= 1 << 1,
+		E_EQUIPMENT			= 1 << 2,
+		E_AMMO					= 1 << 3,
+		E_PROTOTYPES		= 1 << 4,
+		E_LOADOUT				= 1 << 5
 	};
 
 	enum EHexIconState
@@ -84,8 +85,8 @@ public:
 	};
 
 	virtual bool IsFactoryType(EntityId entity, EBuyMenuPage type);
-	virtual bool CanBuild(IEntity* pEntity, const char* vehicle);
-	virtual bool CanBuy(IEntity* pEntity, const char* classname);
+	virtual bool CanBuild(IEntity *pEntity, const char *vehicle);
+	virtual bool CanBuy(IEntity *pEntity, const char *classname);
 
 	bool IsPlayerSpecial();
 
@@ -95,7 +96,7 @@ public:
 	void ResetBuyZones();
 	void UpdateBuyZone(bool trespassing, EntityId zone);
 	void UpdateServiceZone(bool trespassing, EntityId zone);
-	void UpdateBuyList(const char* page = NULL);
+	void UpdateBuyList(const char *page = NULL);
 	void Scroll(int direction);
 
 	//	Swing-O-Meter interface
@@ -111,16 +112,16 @@ public:
 	void SetCaptureProgress(float progress);
 	void SetCaptureContested(bool contested);
 
-	bool IsVehicle(const char* name);
+	bool IsVehicle(const char *name);
 
 	void ShowConstructionProgress(bool show, bool queued, float time);
 
-	ILINE EHexIconState GetCurrentIconState() { return m_currentHexIconState; };
-
+	ILINE EHexIconState GetCurrentIconState() {return m_currentHexIconState; };
+	
 	ILINE void SetLastPurchase(const char* itemName)
 	{
 		SItem itemdef;
-		if (GetItemFromName(itemName, itemdef))
+		if(GetItemFromName(itemName, itemdef))
 		{
 			itemdef.iInventoryID = 0;
 			m_thisPurchase.itemArray.push_back(itemdef);
@@ -128,8 +129,6 @@ public:
 			g_pHUD->m_listBoughtItems.push_back(itemdef.strClass);
 		}
 	}
-
-	bool GetItemFromName(const char* name, SItem& item);
 private:
 
 	int GetPlayerPP();
@@ -143,27 +142,28 @@ private:
 	void InitEquipmentPacks();
 	void SaveEquipmentPacks();
 	SEquipmentPack LoadEquipmentPack(int index);
-	void SavePackage(const char* name, int index = -1);
-	void RequestNewLoadoutName(string& name, const char* bluePrint, int index = -1);
-	bool CheckDoubleLoadoutName(const char* name, int index);
-	void CreateItemFromTableEntry(IScriptTable* pItemScriptTable, SItem& item);
+	void SavePackage(const char *name, int index = -1);
+	void RequestNewLoadoutName(string &name, const char *bluePrint, int index = -1);
+	bool CheckDoubleLoadoutName(const char *name, int index);
+	void CreateItemFromTableEntry(IScriptTable *pItemScriptTable, SItem &item);
+	bool GetItemFromName(const char *name, SItem &item);
 
-	bool WeaponUseAmmo(CWeapon* pWeapon, IEntityClass* pAmmoType);
+	bool WeaponUseAmmo(CWeapon *pWeapon, IEntityClass* pAmmoType);
 	bool CanUseAmmo(IEntityClass* pAmmoType);
-	void GetItemList(EBuyMenuPage itemType, std::vector<SItem>& itemList, bool buyMenu = true);
+	void GetItemList(EBuyMenuPage itemType, std::vector<SItem> &itemList, bool buyMenu = true );
 	void PopulateBuyList();
 	void UpdateEnergyBuyList(int energy_before, int energy_after);
-	void UpdatePackageItemList(const char* page);
-	EBuyMenuPage ConvertToBuyList(const char* page);
+	void UpdatePackageItemList(const char *page);
+	EBuyMenuPage ConvertToBuyList(const char *page);
 	void ActivateBuyMenuTabs();
 	void UpdatePackageList();
 	void UpdateCurrentPackage();
 	void OnSelectPackage(int index);
 	void UpdateModifyPackage(int index);
 	void SetObjectiveMessage(const char* msg, const char* param = NULL, bool enemy = true);
-	int IsCapturing(IEntity* site);
-	bool IsUncapturing(IEntity* site);
-	bool IsContested(IEntity* site);
+	int IsCapturing(IEntity *site);
+	bool IsUncapturing(IEntity *site);
+	bool IsContested(IEntity *site);
 
 	//****************************************** MEMBER VARIABLES ***********************************
 
@@ -171,12 +171,12 @@ private:
 	std::vector<EntityId> m_currentBuyZones;
 	//current active buy zones
 	std::vector<EntityId> m_currentServiceZones;
-
+	
 	//standing in buy zone ? Or service zone ?
 	bool m_bInBuyZone;
 	bool m_bInServiceZone;
 	//-2=inactive, -1=catch page, 1-0=catch item on page
-	int m_iCatchBuyMenuPage;
+	int m_iCatchBuyMenuPage;	
 	//available equipment packs
 	std::vector<SEquipmentPack> m_EquipmentPacks;
 	//items bought between the last buy menu open and buy menu close
@@ -186,24 +186,24 @@ private:
 	//current buy menu page
 	EBuyMenuPage	m_eCurBuyMenuPage;
 	//buy menu flash movie - managed by HUD
-	CGameFlashAnimation* g_pBuyMenu;
-	CGameFlashAnimation* g_pHexIcon;
+	CGameFlashAnimation *g_pBuyMenu;
+	CGameFlashAnimation *g_pHexIcon;
 	//swing-o-meter - managed here
 	CGameFlashAnimation m_animSwingOMeter;
 	//the main hud
-	CHUD* g_pHUD;
+	CHUD *g_pHUD;
 	//currently available buy menu pages
 	std::vector<bool> m_factoryTypes;
 	std::vector<bool> m_serviceZoneTypes;
-
+	
 	//swing-o-meter setup
 	bool	m_nkLeft;
 
-	//new powerstruggle rules
+	//new powerstruggle rules 
 	std::vector<EntityId> m_powerpoints;
 	std::vector<EntityId> m_hqs;
 	std::vector<EntityId> m_endgameWeaponOwners;
-
+	
 	bool m_gotpowerpoints;
 	EntityId m_protofactory;
 

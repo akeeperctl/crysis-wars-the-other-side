@@ -12,7 +12,7 @@ public:
 
 	void Update();
 	void Activate(bool activate);
-	bool IsActive() const { return m_active; }
+	bool IsActive() const	{	return m_active;	}
 
 private:
 	void TimeScaleTarget(float target);
@@ -26,3 +26,4 @@ private:
 	float m_energy;
 };
 #endif //__BULLET_TIME_H__
+

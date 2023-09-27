@@ -4,7 +4,7 @@ Copyright (C), Crytek Studios, 2001-2006.
 -------------------------------------------------------------------------
 $Id$
 $DateTime$
-Description:
+Description: 
 
 -------------------------------------------------------------------------
 History:
@@ -37,6 +37,7 @@ class classname: public CSetChannelMsg \
 	EMessageSendResult WritePayload(TSerialize ser, uint32 currentSeq, uint32 basisSeq); \
 	}; \
 
+
 #define DECLARE_ENTITY_MESSAGE(classname) \
 	class classname: public CSetEntityMsg \
 	{ \
@@ -45,28 +46,29 @@ class classname: public CSetChannelMsg \
 		EMessageSendResult WritePayload(TSerialize ser, uint32 currentSeq, uint32 basisSeq); \
 	}; \
 
+
 class CServerSynchedStorage;
-class CClientSynchedStorage :
+class CClientSynchedStorage:
 	public CNetMessageSinkHelper<CClientSynchedStorage, CSynchedStorage>
 {
 public:
-	CClientSynchedStorage(IGameFramework* pGameFramework) { m_pGameFramework = pGameFramework; };
+	CClientSynchedStorage(IGameFramework *pGameFramework) { m_pGameFramework=pGameFramework; };
 	virtual ~CClientSynchedStorage() {};
 
-	void GetMemoryStatistics(ICrySizer*);
+	void GetMemoryStatistics( ICrySizer * );
 
 	// INetMessageSink
-	virtual void DefineProtocol(IProtocolBuilder* pBuilder);
+	virtual void DefineProtocol(IProtocolBuilder *pBuilder);
 	// ~INetMessageSink
 
 	//------------------------------------------------------------------------
-	class CResetMsg : public INetMessage
+	class CResetMsg: public INetMessage
 	{
 	public:
-		CResetMsg(int _channelId, CServerSynchedStorage* pStorage);
-
+		CResetMsg(int _channelId, CServerSynchedStorage *pStorage);
+		
 		int											channelId;
-		CServerSynchedStorage* m_pStorage;
+		CServerSynchedStorage		*m_pStorage;
 
 		EMessageSendResult WritePayload(TSerialize ser, uint32 currentSeq, uint32 basisSeq);
 		void UpdateState(uint32 fromSeq, ENetSendableStateUpdate update);
@@ -74,13 +76,13 @@ public:
 	};
 
 	//------------------------------------------------------------------------
-	class CSetGlobalMsg : public INetMessage
+	class CSetGlobalMsg: public INetMessage
 	{
 	public:
-		CSetGlobalMsg(const SNetMessageDef* pDef, int _channelId, CServerSynchedStorage* pStorage, TSynchedKey _key, TSynchedValue& _value);
+		CSetGlobalMsg(const SNetMessageDef *pDef, int _channelId, CServerSynchedStorage *pStorage, TSynchedKey _key, TSynchedValue &_value);
 
 		int											channelId;
-		CServerSynchedStorage* m_pStorage;
+		CServerSynchedStorage		*m_pStorage;
 
 		TSynchedKey							key;
 		TSynchedValue						value;
@@ -97,13 +99,13 @@ public:
 	DECLARE_GLOBAL_MESSAGE(CSetGlobalStringMsg);
 
 	//------------------------------------------------------------------------
-	class CSetChannelMsg : public INetMessage
+	class CSetChannelMsg: public INetMessage
 	{
 	public:
-		CSetChannelMsg(const SNetMessageDef* pDef, int _channelId, CServerSynchedStorage* pStorage, TSynchedKey _key, TSynchedValue& _value);
+		CSetChannelMsg(const SNetMessageDef *pDef, int _channelId, CServerSynchedStorage *pStorage, TSynchedKey _key, TSynchedValue &_value);
 
 		int											channelId;
-		CServerSynchedStorage* m_pStorage;
+		CServerSynchedStorage		*m_pStorage;
 
 		TSynchedKey							key;
 		TSynchedValue						value;
@@ -119,14 +121,15 @@ public:
 	DECLARE_CHANNEL_MESSAGE(CSetChannelEntityIdMsg);
 	DECLARE_CHANNEL_MESSAGE(CSetChannelStringMsg);
 
+
 	//------------------------------------------------------------------------
-	class CSetEntityMsg : public INetMessage
+	class CSetEntityMsg: public INetMessage
 	{
 	public:
-		CSetEntityMsg(const SNetMessageDef* pDef, int _channelId, CServerSynchedStorage* pStorage, EntityId id, TSynchedKey _key, TSynchedValue& _value);
+		CSetEntityMsg(const SNetMessageDef *pDef, int _channelId, CServerSynchedStorage *pStorage, EntityId id, TSynchedKey _key, TSynchedValue &_value);
 
 		int											channelId;
-		CServerSynchedStorage* m_pStorage;
+		CServerSynchedStorage		*m_pStorage;
 
 		EntityId								entityId;
 		TSynchedKey							key;

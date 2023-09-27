@@ -134,7 +134,7 @@ struct STutorialTextChunk
 	float m_startPercent;	// when during the audio to show this text
 
 	int m_startPos;				// necessary to work out changeover time
-	int m_length;					// " "
+	int m_length;					// " " 
 };
 
 // details of the currently playing event
@@ -161,7 +161,7 @@ struct SCurrentlyPlayingEvent
 		m_soundLength = 0.0f;
 		m_soundStartTime = 0.0f;
 		m_currentChunk = 0;
-		for (int i = 0; i < eMAX_TEXT_CHUNKS; ++i)
+		for(int i=0; i<eMAX_TEXT_CHUNKS; ++i)
 		{
 			m_chunks[i].m_text = L"";
 			m_chunks[i].m_length = 0;
@@ -188,12 +188,12 @@ public:
 	// ~IHUDListener
 
 	// ISoundEventListener
-	virtual void OnSoundEvent(ESoundCallbackEvent event, ISound* pSound);
+	virtual void OnSoundEvent( ESoundCallbackEvent event,ISound *pSound );
 	// ~ISoundEventListener
 
 	bool TriggerEvent(ETutorialEvent event);
 	void EnableTutorialMode(bool enable);
-	bool IsEnabled() const { return m_enabled; }
+	bool IsEnabled() const			{ return m_enabled; }
 
 	void Update();
 
@@ -242,5 +242,6 @@ private:
 	std::list<EntityId> m_alienEnergyPointList;
 	std::list<EntityId> m_factoryList;
 };
+
 
 #endif // __MPTUTORIAL_H__

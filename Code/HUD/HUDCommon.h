@@ -4,9 +4,10 @@ Copyright (C), Crytek Studios, 2001-2005.
 -------------------------------------------------------------------------
 $Id$
 $DateTime$
-Description:
+Description: 
 	Header for CHUDCommon base class
 	Shared by G02 and G04
+
 
 -------------------------------------------------------------------------
 History:
@@ -39,20 +40,21 @@ class CHUDCommon : public IFSCommandHandler, public IHardwareMouseEventListener
 public:
 
 	// IFSCommandHandler
-	virtual void HandleFSCommand(const char* strCommand, const char* strArgs) = 0;
+	virtual void HandleFSCommand(const char *strCommand,const char *strArgs) = 0;
 	// ~IFSCommandHandler
 
 	// IHardwareMouseEventListener
-	virtual void OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eHardwareMouseEvent) = 0;
+	virtual void OnHardwareMouseEvent(int iX,int iY,EHARDWAREMOUSEEVENT eHardwareMouseEvent) = 0;
 	// ~IHardwareMouseEventListener
 
 	// IConsole callback
-	static void HUD(ICVar* pVar);
-	static void ShowGODMode(IConsoleCmdArgs* pConsoleCmdArgs);
+	static void HUD					(ICVar *pVar);
+	static void ShowGODMode	(IConsoleCmdArgs *pConsoleCmdArgs);
 	// ~IConsole callback
 
-	CHUDCommon();
-	virtual	~CHUDCommon();
+						CHUDCommon();
+	virtual	~	CHUDCommon();
+
 
 	virtual void UpdateRatio();
 	virtual void Serialize(TSerialize ser);
@@ -70,16 +72,12 @@ public:
 	bool IsVisible() { return m_bShow; }
 
 	// Positioning and scaling animations
-	void	RepositionFlashAnimation(CGameFlashAnimation* pAnimation) const;
-
-	//TheOtherSide
-	void	HUDApplyInterference(CGameFlashAnimation* pAnimation) const;
-	//~TheOtherSide
+	void	RepositionFlashAnimation(CGameFlashAnimation *pAnimation) const;
 
 	// Start Interference Effect
 	void StartInterference(float distortion, float displacement, float alpha, float decay);
 
-	// Add a flash animation to the update/render processing (the anims will do
+	// Add a flash animation to the update/render processing (the anims will do 
 	// this automatically when they are loaded, except if manual update is specified)
 	void Register(CGameFlashAnimation* pAnim);
 
@@ -126,7 +124,7 @@ protected:
 	virtual void UpdateCrosshairVisibility() = 0;
 
 	// List of Flash animations loaded
-	typedef std::list<CGameFlashAnimation*> TGameFlashAnimationsList;
+	typedef std::list<CGameFlashAnimation *> TGameFlashAnimationsList;
 	TGameFlashAnimationsList m_gameFlashAnimationsList;
 };
 

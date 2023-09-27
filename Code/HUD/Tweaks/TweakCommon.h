@@ -3,7 +3,7 @@ Crytek Source File.
 Copyright (C), Crytek Studios, 2006.
 -------------------------------------------------------------------------
 
-Description:
+Description: 
 	Header for CTweakCommon, a base class for Tweak menu components
 
 -------------------------------------------------------------------------
@@ -11,6 +11,7 @@ History:
 - 28:02:2006  : Created by Matthew Jack
 
 *************************************************************************/
+
 
 #ifndef __CTWEAKCOMMON_H__
 #define __CTWEAKCOMMON_H__
@@ -23,6 +24,7 @@ History:
 struct IScriptTable;
 
 //-------------------------------------------------------------------------
+
 
 class CTweakCommon {
 public:
@@ -43,25 +45,25 @@ public:
 	CTweakCommon(string sErrorMessage) : m_bIsInit(false) { m_sName = sErrorMessage; }
 
 	// Get the type of this tweak
-	virtual ETweakType GetType() { return eTT_Broken; }
+	virtual ETweakType GetType() { return eTT_Broken; } 
 
 	// Get the name of this tweak component
-	const string& GetName(void) const { return m_sName; }
+	const string &GetName(void) const { return m_sName; }
 
 	// Identify the type of tweak a table represents, return an instance
-	static CTweakCommon* GetNewTweak(IScriptTable* pTable);
+	static CTweakCommon *GetNewTweak( IScriptTable *pTable );
 
 	// Cause a recursive save of changed values - for now, only LUA values
-	virtual void StoreChanges(IScriptTable* pTable) {};
+	virtual void StoreChanges( IScriptTable *pTable ) {} ;
 
-	virtual void Init(void) {};
+	virtual void Init(void) {}; 
 
 	virtual bool IsInitialized(void) { return m_bIsInit; }
 
 protected:
 
 	// Wraps fetching a Lua table entry
-	string FetchStringValue(IScriptTable* pTable, const char* sKey);
+	string FetchStringValue(IScriptTable *pTable, const char *sKey);
 
 	// The name of this tweak component
 	string m_sName;

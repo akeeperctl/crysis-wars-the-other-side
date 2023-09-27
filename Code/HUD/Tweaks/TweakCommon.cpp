@@ -3,7 +3,7 @@ Crytek Source File.
 Copyright (C), Crytek Studios, 2006.
 -------------------------------------------------------------------------
 
-Description:
+Description: 
 	Base class for Tweak menu components
 
 -------------------------------------------------------------------------
@@ -22,11 +22,11 @@ Notes:	m_bIsInit is a bad idea - only need one in HUDTweak
 
 //-------------------------------------------------------------------------
 
-string CTweakCommon::FetchStringValue(IScriptTable* pTable, const char* sKey)
+string CTweakCommon::FetchStringValue(IScriptTable *pTable, const char *sKey) 
 {
 	string result;
-	const char* sString;
-	if (pTable->GetValue(sKey, sString)) {
+	const char * sString;
+	if (pTable->GetValue(sKey,sString)) {
 		result = sString;
 	}
 	return result;
@@ -34,12 +34,12 @@ string CTweakCommon::FetchStringValue(IScriptTable* pTable, const char* sKey)
 
 //-------------------------------------------------------------------------
 
-CTweakCommon* CTweakCommon::GetNewTweak(IScriptTable* pTable) {
+CTweakCommon * CTweakCommon::GetNewTweak( IScriptTable *pTable ) {
 	// Identify what kind of Tweak this is
-	CTweakCommon* p_tweak = NULL;
+	CTweakCommon *p_tweak = NULL;
 
 	// A menu?
-	if (pTable->HaveValue("MENU"))
+	if (pTable->HaveValue("MENU")) 
 		p_tweak = new CTweakMenu(pTable);
 
 	// A Tweak metadata item?

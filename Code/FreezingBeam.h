@@ -18,43 +18,46 @@ History:
 # pragma once
 #endif
 
+
 #include "Beam.h"
+
 
 class CFreezingBeam :
 	public CBeam
 {
 public:
 
-	typedef struct SFreezingBeamParams
-	{
-		SFreezingBeamParams() { Reset(); };
-		void Reset(const IItemParamsNode* params = 0, bool defaultInit = true)
-		{
-			CItemParamReader reader(params);
-			ResetValue(freeze_speed, 0.f);
-		};
+  typedef struct SFreezingBeamParams
+  {
+    SFreezingBeamParams() { Reset(); };
+    void Reset(const IItemParamsNode *params=0, bool defaultInit=true)
+    {
+      CItemParamReader reader(params);      
+      ResetValue(freeze_speed, 0.f);
+    };
 
-		void GetMemoryStatistics(ICrySizer* s)
-		{
-			s->Add(freeze_speed);
-		}
-
-		float		freeze_speed;
-	} SFreezingBeamParams;
+    void GetMemoryStatistics(ICrySizer * s)
+    {
+      s->Add(freeze_speed);      
+    }
+    
+    float		freeze_speed;    
+  } SFreezingBeamParams;
 
 	CFreezingBeam();
 	virtual ~CFreezingBeam();
 
-	virtual void ResetParams(const struct IItemParamsNode* params);
-	virtual void PatchParams(const struct IItemParamsNode* patch);
+  virtual void ResetParams(const struct IItemParamsNode *params);
+  virtual void PatchParams(const struct IItemParamsNode *patch);
 
-	virtual void Hit(ray_hit& hit, const Vec3& dir);
-	virtual void Tick(ray_hit& hit, const Vec3& dir);
+	virtual void Hit(ray_hit &hit, const Vec3 &dir);
+	virtual void Tick(ray_hit &hit, const Vec3 &dir);
 
-	virtual void GetMemoryStatistics(ICrySizer* s);
+	virtual void GetMemoryStatistics(ICrySizer * s);
 
 protected:
-	SFreezingBeamParams m_freezeparams;
+  SFreezingBeamParams m_freezeparams;
 };
+
 
 #endif //__FREEZINGBEAM_H__

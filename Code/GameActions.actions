@@ -1,32 +1,3 @@
-//Other
-DECL_ACTION(view_lock)
-
-//Squad
-//Update 28.07.2022: implemented with IInputEventListener
-//DECL_ACTION(squad_selectone)
-//DECL_ACTION(squad_selecttwo)
-//DECL_ACTION(squad_selectthree)
-//DECL_ACTION(squad_selectall)
-//DECL_ACTION(squad_selectnone) 
-//DECL_ACTION(squad_switchorder)
-//DECL_ACTION(squad_executeorder)
-//DECL_ACTION(squad_followplayer)
-//DECL_ACTION(squad_test)
-//DECL_ACTION(squad_commandmode)
-
-//TheOtherSide
-//DECL_ACTION(ctrl_useability)
-DECL_ACTION(ctrl_useleftability)
-DECL_ACTION(ctrl_usecenterability)
-DECL_ACTION(ctrl_userightability)
-
-//Scout
-//DECL_ACTION(scout_gyro)
-
-//Trooper
-DECL_ACTION(trooper_hangceiling)
-
-//Default
 DECL_ACTION(moveleft)
 DECL_ACTION(moveright)
 DECL_ACTION(moveforward)
@@ -58,7 +29,7 @@ DECL_ACTION(giveitems)
 DECL_ACTION(attack1)
 DECL_ACTION(attack2)
 DECL_ACTION(reload)
-//DECL_ACTION(drop)
+DECL_ACTION(drop)
 DECL_ACTION(modify)
 DECL_ACTION(additem)
 DECL_ACTION(nextitem)
@@ -222,5 +193,3 @@ DECL_ACTION(loadLastSave)
 DECL_ACTION(debug_ag_step)
 
 DECL_ACTION(screenshot)
-
-DECL_ACTION(drop)

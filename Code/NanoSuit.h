@@ -5,7 +5,7 @@
   $Id$
   $DateTime$
   Description: Implements the Nanosuit.
-
+  
  -------------------------------------------------------------------------
   History:
   - 22:11:2005: Created by Filippo De Luca
@@ -19,20 +19,9 @@
 # pragma once
 #endif
 
-static const float NANOSUIT_ENERGY = 200.0f;
-static const float NANOSUIT_HEALTH_REGEN_INTERVAL = 1.0f;
-static const float NANOSUIT_MAXIMUM_HEALTH_REGEN = 40.0f;
-
-//TheOtherSide
-enum ENanoPrecacheFlags
-{
-	eNPF_PrecacheUS = (1 << 0),
-	eNPF_PrecacheNK = (1 << 1),
-	eNPF_PrecacheCELL = (1 << 2),
-	eNPF_PrecacheMarines = (1 << 3),
-	eNPF_PrecacheV2 = (1 << 4),
-};
-//~TheOtherSide
+static const float NANOSUIT_ENERGY								= 200.0f;
+static const float NANOSUIT_HEALTH_REGEN_INTERVAL	= 1.0f;
+static const float NANOSUIT_MAXIMUM_HEALTH_REGEN	= 40.0f;
 
 enum ENanoSlot
 {
@@ -121,11 +110,11 @@ struct SNanoSlot
 {
 	float desiredVal;
 	float realVal;
-
+	
 	SNanoSlot()
 	{
-		desiredVal = 0.0f;
-		realVal = 0.0f;
+		desiredVal=0.0f;
+		realVal=0.0f;
 	};
 };
 
@@ -160,21 +149,21 @@ struct SNanoCloak
 
 	//
 	//0 == cloak off, 1/2/3 == cloak mode 1, 2 or 3 (normal,alien tech,temperature camo)
-	ILINE uint8 GetState() const { return m_mode * m_active; }
-	ILINE float GetVisualDamp() const { return m_active ? m_visualDamp : 1.0f; }
-	ILINE float GetSoundDamp() const { return m_active ? m_soundDamp : 1.0f; }
-	ILINE float GetHeatDamp() const { return m_active ? m_heatDamp : 1.0f; }
+	ILINE uint8 GetState() const  {return m_mode*m_active;}
+	ILINE float GetVisualDamp() const {return m_active?m_visualDamp:1.0f;}
+	ILINE float GetSoundDamp() const {return m_active?m_soundDamp:1.0f;}
+	ILINE float GetHeatDamp() const {return m_active?m_heatDamp:1.0f;}
 	ILINE bool IsActive() const { return m_active; }
 	ILINE void SetType(ENanoCloakMode mode) { m_mode = mode; }
 	ILINE ENanoCloakMode GetType() const { return m_mode; }
-	void GetMemoryStatistics(ICrySizer* s)
+	void GetMemoryStatistics(ICrySizer * s)
 	{
 		s->Add(m_HUDMessage);
 	}
 
 private:
 
-	void Update(CNanoSuit* pNano);
+	void Update(CNanoSuit *pNano);
 
 private:
 
@@ -206,14 +195,14 @@ public:
 	// nanosuit material to apply to player models when the mode changes
 	struct SNanoMaterial
 	{
-		IMaterial* body;
-		IMaterial* helmet;
-		IMaterial* arms;
+		IMaterial*	body;
+		IMaterial*	helmet;
+		IMaterial*	arms;
 
-		SNanoMaterial() : body(0), helmet(0), arms(0) {}
+		SNanoMaterial() : body(0), helmet(0), arms(0){}
 	};
 
-	static SNanoMaterial* GetNanoMaterialFG(ENanoMode mode, bool bAsian = false);
+	static SNanoMaterial* GetNanoMaterial(ENanoMode mode, bool bAsian=false);
 	static bool AssignNanoMaterialToEntity(IEntity* pEntity, SNanoMaterial* pNanoMaterial);
 
 	CNanoSuit();
@@ -223,17 +212,17 @@ public:
 	void ActivateMode(ENanoMode mode, bool active);
 	void SetModeDefect(ENanoMode mode, bool defect);
 	bool IsActive() const;
-	bool IsModeActive(ENanoMode mode) const { return (m_featureMask & (1 << mode)) ? true : false; }
-	void Init(CPlayer* owner) { Reset(owner); }
-	void Reset(CPlayer* owner);
+	bool IsModeActive(ENanoMode mode) const { return (m_featureMask & (1<<mode))?true:false; }
+	void Init(CPlayer *owner) { Reset(owner); }
+	void Reset(CPlayer *owner);
 	void Update(float frameTime);
-	void Serialize(TSerialize ser, unsigned aspects);
-	void GetMemoryStatistics(ICrySizer* s);
+	void Serialize( TSerialize ser, unsigned aspects );
+	void GetMemoryStatistics(ICrySizer * s);
 
 	bool Tap(ENanoAction nanoAction);
 	bool AttemptAction(ENanoAction nanoAction);
 	void ConsumeAction();
-	ENanoAction PendingAction() const { return m_pendingAction; }
+	ENanoAction PendingAction() const {	return m_pendingAction;	}
 
 	void Death();
 	void PlayerKilled();
@@ -241,9 +230,9 @@ public:
 
 	//setting
 	void SetSuitEnergy(float value, bool playerInitiated = false);
-	bool SetMode(ENanoMode mode, bool forceUpdate = false, bool keepInvul = false);
+	bool SetMode(ENanoMode mode, bool forceUpdate=false, bool keepInvul=false);
 	void SetCloakLevel(ENanoCloakMode mode); // currently 0 - 3
-	void SetParams(SmartScriptTable& rTable, bool resetFirst);
+	void SetParams(SmartScriptTable &rTable,bool resetFirst);
 
 	void SetInvulnerability(bool invulnerable);
 	void SetInvulnerabilityTimeout(float timeout);
@@ -251,20 +240,20 @@ public:
 
 	//getting
 	ENanoMode GetMode() const { return m_currentMode; };
-	float GetSlotValue(ENanoSlot slot, bool desired = false) const;
+	float GetSlotValue(ENanoSlot slot,bool desired=false) const;
 	bool	GetSoundIsPlaying(ENanoSound sound) const;
-	bool	OnComboSpot() { return (m_energy > 0.1f * NANOSUIT_ENERGY && m_energy < 0.3f * NANOSUIT_ENERGY) ? true : false; }
+	bool	OnComboSpot() { return (m_energy > 0.1f * NANOSUIT_ENERGY && m_energy < 0.3f * NANOSUIT_ENERGY)?true:false; }
 	void DeactivateSuit(float time);
 	ILINE float GetSuitEnergy() { return m_energy; }
-	ILINE float GetEnergyRechargeRate() { return m_energyRechargeRate; }
+  ILINE float GetEnergyRechargeRate() { return m_energyRechargeRate; }
 	ILINE float GetHealthRegenRate() { return m_healthRegenRate; }
 	ILINE const CPlayer* GetOwner() const { return m_pOwner; }
-	ILINE const SNanoCloak* GetCloak() { return &m_cloak; }
+	ILINE const SNanoCloak *GetCloak() { return &m_cloak; }
 	ILINE bool IsNightVisionEnabled() const { return (m_bNightVisionEnabled && m_active); };
-	ILINE void EnableNightVision(bool enable) { m_bNightVisionEnabled = enable; };
+	ILINE void EnableNightVision(bool enable) { m_bNightVisionEnabled=enable; };
 	//get sprinting multiplier for ground movement
 	float GetSprintMultiplier(bool strafing);
-	void SetCloak(bool on, bool force = false);
+	void SetCloak(bool on, bool force=false);
 	float GetHealthRegenDelay() { return m_healthRegenDelay; }
 
 	//set energy back to max
@@ -274,33 +263,21 @@ public:
 
 	void SelectSuitMaterial();
 
-	// listener
+	// listener 
 	void AddListener(INanoSuitListener* pListener);
 	void RemoveListener(INanoSuitListener* pListener);
-
-	//TheOtherSide
-	int GetVersion() { return m_nanosuitVersion; };
-	int SetVersion(int version) { m_nanosuitVersion = version; OnSetVersion(version); }
-	void OnSetVersion(int version);
-	ENanoDisableFlag GetDisabledFlag();
-	//~TheOtherSide
 
 private:
 	void Precache();
 	void Balance(float energy);
 	bool SetAllSlots(float armor, float strength, float speed);
 	int  GetButtonFromMode(ENanoMode mode);
-	void UpdateSprinting(float& recharge, const SPlayerStats& stats, float frametime);
+	void UpdateSprinting(float &recharge, const SPlayerStats &stats, float frametime);
 
-	//TheOtherSide
-	int m_nanosuitVersion;
-	int m_empEffectSlot;
-	//~TheOtherSide
-
-	IGameFramework* m_pGameFramework;
-
-	CPlayer* m_pOwner;
-	SNanoMaterial* m_pNanoMaterial;
+	IGameFramework *m_pGameFramework;
+	
+	CPlayer*			m_pOwner;
+	SNanoMaterial*m_pNanoMaterial;
 
 	SNanoCloak	m_cloak;
 	ENanoAction	m_lastTap;

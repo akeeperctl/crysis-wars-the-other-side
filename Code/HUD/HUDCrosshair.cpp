@@ -24,11 +24,6 @@ History:
 #include "Weapon.h"
 #include "OffHand.h"
 
-#include "TheOtherSide/Control/ControlSystem.h"
-#include "TheOtherSide/Conqueror/ConquerorSystem.h"
-
-//#define GET_CONTROLLED_ACTOR g_pControlSystem->GetControlClient()->GetControlledActor()
-
 //-----------------------------------------------------------------------------------------------------
 
 CHUDCrosshair::CHUDCrosshair(CHUD* pHUD) : g_pHUD(pHUD), m_iUsable(0)
@@ -76,54 +71,49 @@ void CHUDCrosshair::Reset()
 
 void CHUDCrosshair::Update(float fDeltaTime)
 {
-	if (m_bBroken)
-		return;
-	//TheOtherSide
-	CActor* pClientActor;
-	if (!g_pControlSystem->GetLocalEnabled())
-		pClientActor = static_cast<CActor*>(g_pGame->GetIGameFramework()->GetClientActor());
-	else
-		pClientActor = g_pControlSystem->GetLocalControlClient()->GetControlledActor();
-
-	IItemSystem* pItemSystem = g_pGame->GetIGameFramework()->GetIItemSystem();
-
-	if (!pClientActor || !pItemSystem)
+	if(m_bBroken)
 		return;
 
-	IInventory* pInventory = pClientActor->GetInventory();
-	if (!pInventory)
+	IActor *pClientActor = g_pGame->GetIGameFramework()->GetClientActor();
+	IItemSystem *pItemSystem = g_pGame->GetIGameFramework()->GetIItemSystem();
+	
+	if(!pClientActor || !pItemSystem)
 		return;
 
-	IItem* pItem = pItemSystem->GetItem(pInventory->GetCurrentItem());
-	IWeapon* pWeapon = NULL;
-	IWeapon* pSlaveWeapon = NULL;
+	IInventory *pInventory = pClientActor->GetInventory();
+	if(!pInventory)
+		return;
+
+  IItem *pItem = pItemSystem->GetItem(pInventory->GetCurrentItem());      
+  IWeapon *pWeapon = NULL;
+	IWeapon *pSlaveWeapon = NULL;
 	const float fAlternateIronSight = 0.03f;
-
-	if (pItem)
+  
+  if(pItem)
 	{
-		pWeapon = pItem->GetIWeapon();
+		pWeapon = pItem->GetIWeapon();        
 
-		if (pItem->IsDualWieldMaster())
+		if(pItem->IsDualWieldMaster())
 		{
-			if (IItem* pSlave = pItem->GetDualWieldSlave())
+			if(IItem *pSlave=pItem->GetDualWieldSlave())
 				pSlaveWeapon = pSlave->GetIWeapon();
 		}
-	}
-	else if (IVehicle* pVehicle = pClientActor->GetLinkedVehicle())
-	{
-		pItem = pItemSystem->GetItem(pVehicle->GetCurrentWeaponId(pClientActor->GetEntityId()));
-		if (pItem)
-			pWeapon = pItem->GetIWeapon();
-	}
+  }
+  else if(IVehicle *pVehicle=pClientActor->GetLinkedVehicle())
+  {
+    pItem = pItemSystem->GetItem(pVehicle->GetCurrentWeaponId(pClientActor->GetEntityId()));
+    if(pItem)
+      pWeapon = pItem->GetIWeapon();
+  }
 
-	if (pWeapon)
+	if(pWeapon)
 	{
 		float fMinSpread = 0.0f;
 		float fMaxSpread = 0.0f;
 
 		m_spread = 0.0f;
 
-		if (IFireMode* pFireMode = pWeapon->GetFireMode(pWeapon->GetCurrentFireMode()))
+		if(IFireMode *pFireMode=pWeapon->GetFireMode(pWeapon->GetCurrentFireMode()))
 		{
 			fMinSpread = pFireMode->GetMinSpread();
 			fMaxSpread = pFireMode->GetMaxSpread();
@@ -131,9 +121,9 @@ void CHUDCrosshair::Update(float fDeltaTime)
 			m_spread = pFireMode->GetSpread();
 		}
 
-		if (pSlaveWeapon)
+		if(pSlaveWeapon)
 		{
-			if (IFireMode* pSlaveFireMode = pSlaveWeapon->GetFireMode(pSlaveWeapon->GetCurrentFireMode()))
+			if(IFireMode *pSlaveFireMode=pSlaveWeapon->GetFireMode(pSlaveWeapon->GetCurrentFireMode()))
 			{
 				fMinSpread += pSlaveFireMode->GetMinSpread();
 				fMaxSpread += pSlaveFireMode->GetMaxSpread();
@@ -141,66 +131,47 @@ void CHUDCrosshair::Update(float fDeltaTime)
 				m_spread += pSlaveFireMode->GetSpread();
 			}
 		}
-		//TheOtherSide
-		CPlayer* pPlayer = static_cast<CPlayer*>(pClientActor);
-		if (pPlayer && !g_pControlSystem->GetLocalEnabled())
-		{
-			if (pPlayer->GetNanoSuit())
-			{
-				if (pPlayer->GetNanoSuit()->GetMode() == NANOMODE_STRENGTH)
-				{
-					m_spread *= 0.5;
-				}
-			}
-		}
 
-		if (g_pControlSystem->GetLocalEnabled())
+		CPlayer *pPlayer = static_cast<CPlayer*>(pClientActor);
+		if(pPlayer && pPlayer->GetNanoSuit() && pPlayer->GetNanoSuit()->GetMode() == NANOMODE_STRENGTH)
+			m_spread *=0.5;
+
+		if(g_pGameCVars->hud_iAlternateCrosshairSpread)
 		{
-			if (g_pControlSystem->GetLocalControlClient()->GetActorClassName() == "Scout")
-			{
-				//m_spread = 0;
-				//CryLogAlways("Spread %f", m_spread);
-			}
-		}
-		//~TheOtherSide
-		if (g_pGameCVars->hud_iAlternateCrosshairSpread)
-		{
-			if (m_spread < fMinSpread)
-				m_spread = min(m_spread, g_pGameCVars->hud_fAlternateCrosshairSpreadCrouch) / g_pGameCVars->hud_fAlternateCrosshairSpreadCrouch;
+			if(m_spread < fMinSpread)
+				m_spread = min(m_spread,g_pGameCVars->hud_fAlternateCrosshairSpreadCrouch) / g_pGameCVars->hud_fAlternateCrosshairSpreadCrouch;
 			else
-				m_spread = min(m_spread, g_pGameCVars->hud_fAlternateCrosshairSpreadNeutral) / g_pGameCVars->hud_fAlternateCrosshairSpreadNeutral;
+				m_spread = min(m_spread,g_pGameCVars->hud_fAlternateCrosshairSpreadNeutral) / g_pGameCVars->hud_fAlternateCrosshairSpreadNeutral;
 		}
 		else
 		{
-			m_spread = min((m_spread - fMinSpread), 15.0f) / 15.0f;
+			m_spread = min((m_spread-fMinSpread),15.0f) / 15.0f;
 
-			IZoomMode* pZoomMode = pWeapon->GetZoomMode(pWeapon->GetCurrentZoomMode());
-			if (pZoomMode && !pZoomMode->IsToggle() && (pZoomMode->IsZoomed() || pZoomMode->IsZooming()))
+			IZoomMode *pZoomMode = pWeapon->GetZoomMode(pWeapon->GetCurrentZoomMode());
+			if(pZoomMode && !pZoomMode->IsToggle() && (pZoomMode->IsZoomed() || pZoomMode->IsZooming()))
 			{
 				m_spread -= fAlternateIronSight;
 			}
 			else
 			{
-				m_spread = min(m_spread, 1.0f);
-				m_spread = max(m_spread, 0.0f);
+				m_spread = min(m_spread,1.0f);
+				m_spread = max(m_spread,0.0f);
 			}
 		}
 	}
 
-	if (m_animCrossHair.GetVisible() && !g_pHUD->InSpectatorMode())
+	if(m_animCrossHair.GetVisible() && !g_pHUD->InSpectatorMode())
 	{
-		auto isConquest = g_pControlSystem->GetConquerorSystem()->IsGamemode();
-
 		//also disables the damage indicator
-		if (g_pGameCVars->g_difficultyLevel < 4 || gEnv->bMultiplayer || isConquest)
+		if(/*g_pGameCVars->hud_crosshair>0 && m_iCrosshair > 0 &&*/ (g_pGameCVars->g_difficultyLevel<4 || gEnv->bMultiplayer))
 		{
 			m_animCrossHair.GetFlashPlayer()->Advance(fDeltaTime);
 			m_animCrossHair.GetFlashPlayer()->Render();
 		}
 
-		if (m_animInterActiveIcons.GetVisible()) //if the crosshair is invisible, the use icon should be too
+		if(m_animInterActiveIcons.GetVisible()) //if the crosshair is invisible, the use icon should be too
 		{
-			if (!m_bHideUseIconTemp)	//hides the icon, when something is already grabbed/being used
+			if(!m_bHideUseIconTemp)	//hides the icon, when something is already grabbed/being used
 			{
 				m_animInterActiveIcons.GetFlashPlayer()->Advance(fDeltaTime);
 				m_animInterActiveIcons.GetFlashPlayer()->Render();
@@ -208,16 +179,16 @@ void CHUDCrosshair::Update(float fDeltaTime)
 		}
 	}
 
-	if (m_animFriendCross.GetVisible())
+	if(m_animFriendCross.GetVisible())
 	{
 		m_animFriendCross.GetFlashPlayer()->Advance(fDeltaTime);
 		m_animFriendCross.GetFlashPlayer()->Render();
 	}
 
-	if (!g_pGameCVars->hud_iAlternateCrosshairSpread)
+	if(!g_pGameCVars->hud_iAlternateCrosshairSpread)
 	{
-		m_spread = max(m_spread, -fAlternateIronSight);
-		m_spread = min(m_spread, 1.0f);
+		m_spread = max(m_spread,-fAlternateIronSight);
+		m_spread = min(m_spread,1.0f);
 	}
 
 	if (m_smoothSpread != m_spread)
@@ -235,13 +206,13 @@ void CHUDCrosshair::SetUsability(int usable, const char* actionLabel, const char
 {
 	m_iUsable = usable;
 	m_animCrossHair.Invoke("setUsable", usable);
-	if (actionLabel)
+	if(actionLabel)
 	{
-		if (paramA)
+		if(paramA)
 		{
 			CryFixedStringT<64> paramLocA;
 			CryFixedStringT<64> paramLocB;
-			if (paramA[0] != '@')
+			if(paramA[0] != '@')
 			{
 				paramLocA = "@";
 				paramLocA.append(paramA);
@@ -249,9 +220,9 @@ void CHUDCrosshair::SetUsability(int usable, const char* actionLabel, const char
 			else
 				paramLocA = paramA;
 
-			if (paramB)
+			if(paramB)
 			{
-				if (paramB[0] != '@')
+				if(paramB[0] != '@')
 				{
 					paramLocB = "@";
 					paramLocB.append(paramB);
@@ -260,24 +231,24 @@ void CHUDCrosshair::SetUsability(int usable, const char* actionLabel, const char
 					paramLocB = paramB;
 			}
 
-			m_animInterActiveIcons.Invoke("setText", g_pHUD->LocalizeWithParams(actionLabel, true, paramLocA.c_str(), paramLocB.c_str()));
+			m_animInterActiveIcons.Invoke("setText",g_pHUD->LocalizeWithParams(actionLabel, true, paramLocA.c_str(), paramLocB.c_str()));
 		}
 		else
 			m_animInterActiveIcons.Invoke("setText", actionLabel);
 
 		//set icon
 		int icon = stl::find_in_map(m_useIcons, actionLabel, 0);
-		if (!icon && usable)
+		if(!icon && usable)
 			icon = 1;
-		if (icon)
+		if(icon)
 		{
 			m_animInterActiveIcons.SetVisible(true);
 			m_animInterActiveIcons.Invoke("setUseIcon", icon);
 		}
-		else if (m_animInterActiveIcons.GetVisible())
+		else if(m_animInterActiveIcons.GetVisible())
 			m_animInterActiveIcons.SetVisible(false);
 	}
-	else if (m_animInterActiveIcons.GetVisible())
+	else if(m_animInterActiveIcons.GetVisible())
 		m_animInterActiveIcons.SetVisible(false);
 }
 
@@ -299,15 +270,13 @@ void CHUDCrosshair::CrosshairHit()
 
 void CHUDCrosshair::SetCrosshair(int iCrosshair)
 {
-	const auto isConquest = g_pControlSystem->GetConquerorSystem()->IsGamemode();
-
-	if (g_pGameCVars->g_difficultyLevel > 3 && !gEnv->bMultiplayer && !isConquest)
+	if(g_pGameCVars->g_difficultyLevel>3 && !gEnv->bMultiplayer)
 		iCrosshair = 0;
 
-	iCrosshair = MAX(0, iCrosshair);
-	iCrosshair = MIN(15, iCrosshair);
+	iCrosshair = MAX(0,iCrosshair);
+	iCrosshair = MIN(15,iCrosshair);
 
-	if (m_iCrosshair != iCrosshair)
+	if(m_iCrosshair != iCrosshair)
 	{
 		m_iCrosshair = iCrosshair;
 		m_animCrossHair.Invoke("setCrossHair", iCrosshair);
@@ -317,23 +286,16 @@ void CHUDCrosshair::SetCrosshair(int iCrosshair)
 
 //-----------------------------------------------------------------------------------------------------
 
-bool CHUDCrosshair::IsFriendlyEntity(IEntity* pEntity)
+bool CHUDCrosshair::IsFriendlyEntity(IEntity *pEntity)
 {
-	//TheOtherSide
-	IActor* pClientActor;
-	if (g_pControlSystem->GetLocalEnabled() && g_pControlSystem->GetLocalControlClient()->GetControlledActor())
-		pClientActor = g_pControlSystem->GetLocalControlClient()->GetControlledActor();
-	else
-		pClientActor = g_pGame->GetIGameFramework()->GetClientActor();
-	//~TheOtherSide
+	IActor *pClientActor = g_pGame->GetIGameFramework()->GetClientActor();
+	CGameRules *pGameRules = g_pGame->GetGameRules();
 
-	CGameRules* pGameRules = g_pGame->GetGameRules();
-
-	if (!pEntity || !pClientActor || !pGameRules)
+	if(!pEntity || !pClientActor || !pGameRules)
 		return false;
 
 	// Less than 2 teams means we are in a FFA based game.
-	if (pGameRules->GetTeamCount() < 2)
+	if(pGameRules->GetTeamCount() < 2)
 		return false;
 
 	bool bFriendly = false;
@@ -341,10 +303,10 @@ bool CHUDCrosshair::IsFriendlyEntity(IEntity* pEntity)
 	int iClientTeam = pGameRules->GetTeam(pClientActor->GetEntityId());
 
 	// First, check if entity is a player
-	IActor* pActor = g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pEntity->GetId());
-	if (pActor && pActor->IsPlayer())
+	IActor *pActor = g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pEntity->GetId());
+	if(pActor && pActor->IsPlayer())
 	{
-		if (iClientTeam && (pGameRules->GetTeam(pActor->GetEntityId()) == iClientTeam))
+		if(iClientTeam && (pGameRules->GetTeam(pActor->GetEntityId()) == iClientTeam))
 		{
 			bFriendly = true;
 		}
@@ -352,10 +314,10 @@ bool CHUDCrosshair::IsFriendlyEntity(IEntity* pEntity)
 	else
 	{
 		// Then, check if entity is a vehicle
-		IVehicle* pVehicle = gEnv->pGame->GetIGameFramework()->GetIVehicleSystem()->GetVehicle(pEntity->GetId());
-		if (pVehicle && pGameRules->GetTeam(pVehicle->GetEntityId()) == iClientTeam && pVehicle->GetStatus().passengerCount)
+		IVehicle *pVehicle = gEnv->pGame->GetIGameFramework()->GetIVehicleSystem()->GetVehicle(pEntity->GetId());
+		if(pVehicle && pGameRules->GetTeam(pVehicle->GetEntityId()) == iClientTeam && pVehicle->GetStatus().passengerCount)
 		{
-			IActor* pDriver = pVehicle->GetDriver();
+			IActor *pDriver = pVehicle->GetDriver();
 			/*if(pDriver && pGameRules->GetTeam(pDriver->GetEntityId()) == iClientTeam)
 				bFriendly = true;
 			else
@@ -364,130 +326,114 @@ bool CHUDCrosshair::IsFriendlyEntity(IEntity* pEntity)
 			bFriendly = true;
 
 			//fix for bad raycast
-			if (pDriver && pDriver == pClientActor)
+			if(pDriver && pDriver == pClientActor)
 				bFriendly = false;
 		}
 	}
 
-	return bFriendly;
+  return bFriendly;
 }
 
-//-----------------------------------------------------------------------------------------------------
-//TheOtherSide
-void CHUDCrosshair::ShowFriendCross(bool show)
-{
-	if (g_pHUD && show)
-		m_animFriendCross.SetVisible(true);
-	else
-		m_animFriendCross.SetVisible(false);
-}
-//~TheOtherSide
 //-----------------------------------------------------------------------------------------------------
 
 void CHUDCrosshair::UpdateCrosshair()
 {
-	//TheOtherSide
-	CActor* pClientActor;
-	if (!g_pControlSystem->GetLocalEnabled())
-		pClientActor = static_cast<CActor*>(g_pGame->GetIGameFramework()->GetClientActor());
-	else
-		pClientActor = g_pControlSystem->GetLocalControlClient()->GetControlledActor();
-
-	if (!pClientActor)
+  IActor *pClientActor = g_pGame->GetIGameFramework()->GetClientActor();
+	if(!pClientActor)
 		return;
 
-	int iNewFriendly = 0;
+  int iNewFriendly = 0;
 
-	if (pClientActor->GetLinkedVehicle())
-	{
-		// JanM/MichaelR:
-		// Get status from the VehicleWeapon, which raycasts considering the necessary SkipEntities (in contrast to WorldQuery)
-		// Julien: this is now done in MP as well
-		iNewFriendly = g_pHUD->GetVehicleInterface()->GetFriendlyFire();
-	}
-	else
-	{
-		if (!gEnv->bMultiplayer)
-		{
-			CWeapon* pWeapon = g_pHUD->GetCurrentWeapon();
-			if (pWeapon)
+  if(pClientActor->GetLinkedVehicle())
+  { 
+    // JanM/MichaelR: 
+    // Get status from the VehicleWeapon, which raycasts considering the necessary SkipEntities (in contrast to WorldQuery)
+    // Julien: this is now done in MP as well
+    iNewFriendly = g_pHUD->GetVehicleInterface()->GetFriendlyFire();
+  }
+  else
+  {
+    if(!gEnv->bMultiplayer)
+    {
+			CWeapon *pWeapon = g_pHUD->GetCurrentWeapon();
+			if(pWeapon)
 			{
 				iNewFriendly = pWeapon->IsWeaponLowered() && pWeapon->IsPendingFireRequest();
-				if (iNewFriendly && pWeapon->GetEntity()->GetClass() == CItem::sTACGunFleetClass)
+				if(iNewFriendly && pWeapon->GetEntity()->GetClass() == CItem::sTACGunFleetClass)
 					iNewFriendly = 0;
 			}
-			else {
+			else{
 				//Two handed pickups need the red X as well
-				CPlayer* pPlayer = static_cast<CPlayer*>(pClientActor);
-				if (CWeapon* pOffHand = static_cast<CWeapon*>(pPlayer->GetItemByClass(CItem::sOffHandClass)))
+				CPlayer *pPlayer= static_cast<CPlayer*>(pClientActor);
+				if(CWeapon *pOffHand = static_cast<CWeapon*>(pPlayer->GetItemByClass(CItem::sOffHandClass)))
 					iNewFriendly = pOffHand->IsWeaponLowered();
 			}
-		}
-		else
-		{
-			EntityId uiCenterId = pClientActor->GetGameObject()->GetWorldQuery()->GetLookAtEntityId();
-			if (uiCenterId)
+    }
+    else
+    {
+	    EntityId uiCenterId = pClientActor->GetGameObject()->GetWorldQuery()->GetLookAtEntityId();
+			if(uiCenterId)
 			{
 				iNewFriendly = IsFriendlyEntity(gEnv->pEntitySystem->GetEntity(uiCenterId));
 			}
-		}
-	}
+    }
+  }	
 
 	// SNH: if player is carrying a claymore or mine, ask the weapon whether it is possible to place it currently
 	//	(takes into account player speed / stance / aim direction).
 	// So 'friendly' is a bit of a misnomer here, but we want the "don't/can't fire" crosshair...
-	if (iNewFriendly != 1 && g_pHUD)
+	if(iNewFriendly != 1 && g_pHUD)
 	{
-		CWeapon* pWeapon = g_pHUD->GetCurrentWeapon();
-		if (pWeapon)
+		CWeapon *pWeapon = g_pHUD->GetCurrentWeapon();
+		if(pWeapon)
 		{
 			static IEntityClass* pClaymoreClass = gEnv->pEntitySystem->GetClassRegistry()->FindClass("Claymore");
 			static IEntityClass* pAVMineClass = gEnv->pEntitySystem->GetClassRegistry()->FindClass("AVMine");
 			IEntityClass* pClass = pWeapon->GetEntity()->GetClass();
-			if (pClass == pClaymoreClass || pClass == pAVMineClass)
+			if(pClass == pClaymoreClass || pClass == pAVMineClass)
 			{
-				if (IFireMode* pfm = pWeapon->GetFireMode(pWeapon->GetCurrentFireMode()))
+				if(IFireMode* pfm = pWeapon->GetFireMode(pWeapon->GetCurrentFireMode()))
 				{
-					if (!pfm->IsFiring())
+					if(!pfm->IsFiring())
 						iNewFriendly = pWeapon->CanFire() ? 0 : 1;
 				}
 			}
 		}
 	}
 
-	if (iNewFriendly != m_iFriendlyTarget)
+	if(iNewFriendly != m_iFriendlyTarget)
 	{
 		m_iFriendlyTarget = iNewFriendly;
 		//m_animCrossHair.Invoke("setFriendly", m_iFriendlyTarget);
-		if (iNewFriendly)
+		if(iNewFriendly)
 			m_animFriendCross.SetVisible(true);
 		else
 			m_animFriendCross.SetVisible(false);
 	}
 
-	if (m_animInterActiveIcons.GetVisible())
+	if(m_animInterActiveIcons.GetVisible())
 	{
 		m_bHideUseIconTemp = false;
-		CItem* pItem = static_cast<CItem*>(pClientActor->GetCurrentItem());
-		if (pItem)
+		CItem *pItem = static_cast<CItem*>(pClientActor->GetCurrentItem());
+		if(pItem)
 		{
-			IWeapon* pWeapon = pItem->GetIWeapon();
-			if (pWeapon)
+			IWeapon *pWeapon = pItem->GetIWeapon();
+			if(pWeapon)
 			{
 				CItem::SStats stats = pItem->GetStats();
-				if (stats.mounted && stats.used)
+				if(stats.mounted && stats.used)
 					m_bHideUseIconTemp = true;
 			}
 		}
-		if (!m_bHideUseIconTemp)
+		if(!m_bHideUseIconTemp)
 		{
 			EntityId offHandId = pClientActor->GetInventory()->GetItemByClass(CItem::sOffHandClass);
-			IItem* pOffHandItem = g_pGame->GetIGameFramework()->GetIItemSystem()->GetItem(offHandId);
-			if (pOffHandItem)
+			IItem *pOffHandItem = g_pGame->GetIGameFramework()->GetIItemSystem()->GetItem(offHandId);
+			if(pOffHandItem)
 			{
-				COffHand* pOffHand = static_cast<COffHand*>(pOffHandItem);
+				COffHand *pOffHand = static_cast<COffHand*>(pOffHandItem);
 				uint32 offHandState = pOffHand->GetOffHandState();
-				if (offHandState == eOHS_HOLDING_OBJECT || offHandState == eOHS_THROWING_OBJECT ||
+				if(offHandState == eOHS_HOLDING_OBJECT || offHandState == eOHS_THROWING_OBJECT ||
 					offHandState == eOHS_HOLDING_NPC || offHandState == eOHS_THROWING_NPC)
 					m_bHideUseIconTemp = true;
 			}
@@ -499,7 +445,7 @@ void CHUDCrosshair::UpdateCrosshair()
 
 void CHUDCrosshair::SetOpacity(float opacity)
 {
-	if (opacity != m_opacity)
+	if(opacity != m_opacity)
 	{
 		m_animCrossHair.Invoke("setOpacity", opacity);
 		m_opacity = opacity;
@@ -508,27 +454,27 @@ void CHUDCrosshair::SetOpacity(float opacity)
 
 //-----------------------------------------------------------------------------------------------------
 
-void CHUDCrosshair::SelectCrosshair(IItem* pItem)
+void CHUDCrosshair::SelectCrosshair(IItem *pItem)
 {
 	//set special crosshairs design comes up with ...
 	bool bSpecialCrosshairSet = false;
-	if (IActor* pActor = g_pGame->GetIGameFramework()->GetClientActor())
+	if(IActor *pActor = g_pGame->GetIGameFramework()->GetClientActor())
 	{
-		if (g_pGameCVars->hud_crosshair != 0)
+		if(g_pGameCVars->hud_crosshair != 0)
 		{
-			if (!pItem)
+			if(!pItem) 
 				pItem = pActor->GetCurrentItem();
 
-			if (!pItem ||
-				pItem->GetEntity()->GetClass() == CItem::sFistsClass ||
-				pItem->GetEntity()->GetClass() == CItem::sAlienCloak)
+			if(!pItem ||
+					pItem->GetEntity()->GetClass() == CItem::sFistsClass ||
+					pItem->GetEntity()->GetClass() == CItem::sAlienCloak)
 			{
-				SetCrosshair(0); //was 10
+				SetCrosshair(0); //was 10 
 				bSpecialCrosshairSet = true;
 			}
-			else if (IWeapon* pWeapon = pItem->GetIWeapon())		//Laser attached
+			else if(IWeapon *pWeapon = pItem->GetIWeapon())		//Laser attached
 			{
-				if ((static_cast<CWeapon*>(pWeapon))->IsLamAttached())
+				if((static_cast<CWeapon*>(pWeapon))->IsLamAttached())
 				{
 					SetCrosshair(0);
 					bSpecialCrosshairSet = true;
@@ -536,31 +482,31 @@ void CHUDCrosshair::SelectCrosshair(IItem* pItem)
 			}
 
 			// No current item or current item are fists or AlienCloak or LAW
-			if (!bSpecialCrosshairSet)
+			if(!bSpecialCrosshairSet)
 			{
-				if (pItem->GetEntity()->GetClass() == CItem::sRocketLauncherClass ||
+				if(pItem->GetEntity()->GetClass() == CItem::sRocketLauncherClass ||
 					pItem->GetEntity()->GetClass() == CItem::sTACGunFleetClass)
 				{
 					SetCrosshair(0);
 					bSpecialCrosshairSet = true;
 				}
-				else if (pItem->GetEntity()->GetClass() == CItem::sTACGunClass)
+				else if(pItem->GetEntity()->GetClass() == CItem::sTACGunClass)
 				{
 					SetCrosshair(11);
 					bSpecialCrosshairSet = true;
 				}
-				else if (g_pHUD->GetSelectedFiremode() == 6) //sleep bullet
+				else if(g_pHUD->GetSelectedFiremode() == 6) //sleep bullet
 				{
 					SetCrosshair(12);
 					bSpecialCrosshairSet = true;
 				}
-				else if (g_pHUD->GetSelectedFiremode() == 4) //grenade launcher
+				else if(g_pHUD->GetSelectedFiremode() == 4) //grenade launcher
 				{
 					SetCrosshair(13);
 					bSpecialCrosshairSet = true;
 				}
-				else if (g_pHUD->GetSelectedFiremode() == 31 || g_pHUD->GetSelectedFiremode() == 26 || g_pHUD->GetSelectedFiremode() == 29 ||
-					g_pHUD->GetSelectedFiremode() == 28 || g_pHUD->GetSelectedFiremode() == 27 || g_pHUD->GetSelectedFiremode() == 30) //auto grenade launcher: needs fire mode because of pickup
+				else if(g_pHUD->GetSelectedFiremode() == 31 || g_pHUD->GetSelectedFiremode() == 26 || g_pHUD->GetSelectedFiremode() == 29 ||
+								g_pHUD->GetSelectedFiremode() == 28 || g_pHUD->GetSelectedFiremode() == 27 || g_pHUD->GetSelectedFiremode() == 30) //auto grenade launcher: needs fire mode because of pickup
 				{
 					SetCrosshair(15);
 					bSpecialCrosshairSet = true;
@@ -570,7 +516,7 @@ void CHUDCrosshair::SelectCrosshair(IItem* pItem)
 	}
 
 	//now set normal crosshair
-	if (!bSpecialCrosshairSet)
+	if(!bSpecialCrosshairSet)
 		SetCrosshair(g_pGameCVars->hud_crosshair);
 }
 
@@ -578,7 +524,7 @@ void CHUDCrosshair::Break(bool state)
 {
 	m_bBroken = state;
 
-	if (CGameFlashAnimation* pAnim = &m_animCrossHair)
+	if(CGameFlashAnimation *pAnim = &m_animCrossHair)
 	{
 		pAnim->Invoke("clearDamageDirection");
 		pAnim->GetFlashPlayer()->Advance(0.1f);

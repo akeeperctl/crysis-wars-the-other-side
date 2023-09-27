@@ -10,49 +10,49 @@
 class CPlayerMovementController : public IActorMovementController
 {
 public:
-	CPlayerMovementController(CPlayer* pPlayer);
+	CPlayerMovementController( CPlayer * pPlayer );
 	inline virtual ~CPlayerMovementController() {}
 
 	virtual void Reset();
 	void IdleUpdate(float frameTime);
-	virtual bool Update(float frameTime, SActorFrameMovementParams& params);
-	ILINE virtual void PostUpdate(float frameTime)
+	virtual bool Update( float frameTime, SActorFrameMovementParams& params );
+	ILINE virtual void PostUpdate( float frameTime )
 	{
 		// GetMovementState is called 4-5 times per entity per frame, and calculating this is expensive
 		// => it's better to cache it and just copy when we need it... it's constant after the update
-		UpdateMovementState(m_currentMovementState);
+		UpdateMovementState( m_currentMovementState );
 		m_idleChecker.Update(frameTime);
 	}
 
 	virtual void Release();
 
-	virtual bool RequestMovement(CMovementRequest& request);
-	ILINE virtual void GetMovementState(SMovementState& state)
+	virtual bool RequestMovement( CMovementRequest& request );
+	ILINE virtual void GetMovementState( SMovementState& state )
 	{
 		state = m_currentMovementState;
 	};
 
-	virtual bool GetStanceState(EStance stance, float lean, bool defaultPose, SStanceState& state);
+	virtual bool GetStanceState( EStance stance, float lean, bool defaultPose, SStanceState& state );
 
-	virtual void BindInputs(IAnimationGraphState* pAGState);
+	virtual void BindInputs( IAnimationGraphState * pAGState );
 	virtual bool GetStats(SStats& stats);
 
-	virtual void Serialize(TSerialize& ser);
+	virtual void Serialize(TSerialize &ser);
 
-	ILINE void StrengthJump(bool strengthJump) { m_strengthJump = strengthJump; };
+	ILINE void StrengthJump(bool strengthJump) { m_strengthJump=strengthJump; };
 	ILINE bool ShouldStrengthJump() const { return m_strengthJump; };
-	ILINE void ClearStrengthJump() { m_strengthJump = false; };
+	ILINE void ClearStrengthJump() { m_strengthJump=false; };
 
 protected:
-	bool UpdateNormal(float frameTime, SActorFrameMovementParams& params);
-	virtual void UpdateMovementState(SMovementState& state);
+	bool UpdateNormal( float frameTime, SActorFrameMovementParams& params );
+	virtual void UpdateMovementState( SMovementState& state );
 
-	Vec3 ProcessAimTarget(const Vec3& newTarget, float frameTime);
+	Vec3 ProcessAimTarget(const Vec3 &newTarget,float frameTime);
 
 protected:
-	CPlayer* m_pPlayer;
+	CPlayer * m_pPlayer;
 
-	typedef bool (CPlayerMovementController::* UpdateFunc)(float frameTime, SActorFrameMovementParams& params);
+	typedef bool (CPlayerMovementController::*UpdateFunc)( float frameTime, SActorFrameMovementParams& params );
 	UpdateFunc m_updateFunc;
 
 	CMovementRequest m_state;
@@ -75,7 +75,7 @@ protected:
 	int m_aimTargetsCount;
 	int m_aimTargetsIterator;
 	float m_aimNextTarget;
-
+	
 protected:
 	class CIdleChecker
 	{
@@ -85,7 +85,7 @@ protected:
 		void Update(float frameTime);
 		bool Process(SMovementState& movementState, CMovementRequest& currentReq, CMovementRequest& newReq);
 		ILINE bool IsIdle() const { return m_bInIdle; }
-		void Serialize(TSerialize& ser);
+		void Serialize(TSerialize &ser);
 	protected:
 		CPlayerMovementController* m_pMC;
 		float m_timeToIdle;
@@ -100,47 +100,47 @@ protected:
 	{
 	public:
 		CTargetInterpolator() { Reset(); }
-		void Reset()
-		{
-			m_lastValue = 0.0f;
-			m_painDelta = 0.0f;
-			m_pain = 0.0f;
-			m_rotate = false;
-			m_target = Vec3(ZERO);
+		void Reset() 
+		{ 
+			m_lastValue = 0.0f; 
+			m_painDelta = 0.0f; 
+			m_pain = 0.0f; 
+			m_rotate = false; 
+			m_target=Vec3(ZERO);
 		}
 
-		bool HasTarget(CTimeValue now, CTimeValue timeout) const
-		{
-			return m_lastValue > 0.0f && now - m_lastValue < timeout;
+		bool HasTarget( CTimeValue now, CTimeValue timeout ) const 
+		{ 
+			return m_lastValue > 0.0f && now - m_lastValue < timeout; 
 		}
 		Vec3 GetTarget() const { return m_target; }
-		bool GetTarget(
-			Vec3& target,
-			Vec3& rotateTarget,
-			const Vec3& playerPos,
-			const Vec3& moveDirection,
-			const Vec3& bodyDirection,
+		bool GetTarget( 
+			Vec3& target, 
+			Vec3& rotateTarget, 
+			const Vec3& playerPos, 
+			const Vec3& moveDirection, 
+			const Vec3& bodyDirection, 
 			const Vec3& entityDirection,
-			float maxAngle,
-			float distToEnd,
-			float viewFollowMovement,
-			ColorB* clr,
-			const char** bodyTargetType);
+			float maxAngle, 
+			float distToEnd, 
+			float viewFollowMovement, 
+			ColorB * clr,
+			const char ** bodyTargetType );
 
 		void Update(float frameTime);
 
-		void TargetValue(
-			const Vec3& value,
-			CTimeValue now,
-			CTimeValue timeout,
-			float frameTime,
-			bool updateLastValue,
-			const Vec3& playerPos,
-			float maxAngularVelocity);
+		void TargetValue( 
+			const Vec3& value, 
+			CTimeValue now, 
+			CTimeValue timeout, 
+			float frameTime, 
+			bool updateLastValue, 
+			const Vec3& playerPos, 
+			float maxAngularVelocity );
 
-		void Serialize(TSerialize& ser)
+		void Serialize(TSerialize &ser)
 		{
-			if (ser.GetSerializationTarget() != eST_Network)
+			if(ser.GetSerializationTarget() != eST_Network)
 			{
 				ser.Value("lastTime", m_lastValue);
 				ser.Value("target", m_target);

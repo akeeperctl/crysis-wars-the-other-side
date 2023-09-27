@@ -3,7 +3,7 @@ Crytek Source File.
 Copyright (C), Crytek Studios, 2006.
 -------------------------------------------------------------------------
 
-Description:
+Description: 
 	Wraps a unit of Tweak metadata
 
 -------------------------------------------------------------------------
@@ -23,9 +23,10 @@ Notes:
 #include "IScriptSystem.h"
 #include "ScriptUtils.h"
 
+
 //-------------------------------------------------------------------------
 
-CTweakMetadataLUA::CTweakMetadataLUA(IScriptTable* pTable) : CTweakMetadata(pTable)
+CTweakMetadataLUA::CTweakMetadataLUA(IScriptTable *pTable) : CTweakMetadata(pTable)
 {
 	// Already fetched by base classes: DELTA, NAME
 
@@ -41,7 +42,9 @@ CTweakMetadataLUA::CTweakMetadataLUA(IScriptTable* pTable) : CTweakMetadata(pTab
 	// Look for an decrementer function
 	m_decrementer = FetchFunctionValue(pTable, "DECREMENTER");
 
+
 	// There's probably other checks that should be done, including looking for unrecognised elements
+
 }
 
 //-------------------------------------------------------------------------
@@ -54,23 +57,23 @@ string CTweakMetadataLUA::GetValue(void) {
 	ScriptAnyValue value = GetLuaValue();
 	ScriptAnyType type = value.type;
 	switch (type) {
-	case ANY_TSTRING:
-		result = value.str;
-		break;
-	case ANY_TNUMBER:
-		//result = itoa(value.number, buffer, 10);
-		_snprintf(buffer, sizeof buffer, "%g", value.number);
-		buffer[sizeof buffer - 1] = 0;
-		result = buffer;
-		break;
-	case ANY_TBOOLEAN:
-		result = (value.b ? "True" : "False");
-		break;
-	case ANY_TFUNCTION:
-		result = "A function";
-		break;
-	default:
-		result = "Type not handled";
+		case ANY_TSTRING:
+			result = value.str; 
+			break;
+		case ANY_TNUMBER:
+			//result = itoa(value.number, buffer, 10);
+			_snprintf(buffer, sizeof buffer, "%g", value.number);
+			buffer[sizeof buffer - 1] = 0;
+			result = buffer;
+			break;
+		case ANY_TBOOLEAN:
+			result = (value.b ? "True" : "False");
+			break;
+		case ANY_TFUNCTION:
+			result = "A function";
+			break;
+		default:
+			result = "Type not handled";
 	}
 
 	return result;
@@ -78,42 +81,47 @@ string CTweakMetadataLUA::GetValue(void) {
 
 //-------------------------------------------------------------------------
 
+
 ScriptAnyValue CTweakMetadataLUA::GetLuaValue(void) const {
-	IScriptSystem* scripts = gEnv->pScriptSystem;
+	IScriptSystem *scripts = gEnv->pScriptSystem;
 	//ScriptAnyValue failed("Value unrecognised");
 	ScriptAnyValue result;
 
 	// Fetch as a variable
 	if (GetLuaVarRecursive(m_sVariable.c_str(), result)) {
+		
 		// Is this actually a function? If so call it
 		if (result.type == ANY_TFUNCTION) {
-			scripts->BeginCall(result.function);
-			scripts->EndCallAny(result);
-		}
+				scripts->BeginCall(result.function);
+				scripts->EndCallAny(result);
+		} 
 	}
 	return result;
 }
 
+
+
 //-------------------------------------------------------------------------
 
 bool CTweakMetadataLUA::ChangeValue(bool bIncrement) const {
-	IScriptSystem* scripts = gEnv->pScriptSystem;
+	IScriptSystem *scripts = gEnv->pScriptSystem;
 
 	if (!bIncrement && m_decrementer) {
-		// A decrement function has been provided
+		// A decrement function has been provided 
 
 		scripts->BeginCall(m_decrementer);
 		//m_pSystem->GetIScriptSystem()->PushFuncParam(maxAlertness); // Give it state
 		scripts->EndCall();
-	}
-	else if (bIncrement && m_incrementer) {
-		// An increment function has been provided
+
+	} else if (bIncrement && m_incrementer) {
+		// An increment function has been provided 
 
 		scripts->BeginCall(m_incrementer);
 		//m_pSystem->GetIScriptSystem()->PushFuncParam(maxAlertness); // Give it state
 		scripts->EndCall();
-	}
-	else {
+
+	}	else {
+
 		// Simple variable - get, (in|de)crement and set
 
 		// Decide delta
@@ -124,15 +132,15 @@ bool CTweakMetadataLUA::ChangeValue(bool bIncrement) const {
 		ScriptAnyValue value = GetLuaValue();
 		ScriptAnyType type = value.type;
 		switch (type) {
-		case ANY_TNUMBER:
-			value.number += fDelta;
-			break;
-		case ANY_TBOOLEAN:
-			value.b ^= true;
-			break;
-		default:
-			// Type not handled
-			return false;
+			case ANY_TNUMBER:
+				value.number += fDelta;
+				break;
+			case ANY_TBOOLEAN:
+				value.b ^= true;
+				break;
+			default:
+				// Type not handled
+				return false;
 		}
 
 		// Set the variable
@@ -144,27 +152,30 @@ bool CTweakMetadataLUA::ChangeValue(bool bIncrement) const {
 
 //-------------------------------------------------------------------------
 
-HSCRIPTFUNCTION CTweakMetadataLUA::FetchFunctionValue(IScriptTable* pTable, const char* sKey) const {
-	// Can't this be done using the templating?
+HSCRIPTFUNCTION CTweakMetadataLUA::FetchFunctionValue(IScriptTable *pTable, const char *sKey) const {
 
+	// Can't this be done using the templating?
+	
 	ScriptAnyValue fun;
 	if (pTable->GetValueAny(sKey, fun)) {
+
 		if (fun.type == ANY_TFUNCTION) {
 			return fun.function;
 		}
-	}
-
+	} 
+	
 	return NULL;
 }
 
 //-------------------------------------------------------------------------
 
-void CTweakMetadataLUA::StoreChanges(IScriptTable* pTable) {
+void CTweakMetadataLUA::StoreChanges( IScriptTable *pTable )  {
 	ScriptAnyValue value = GetLuaValue();
-	if (!IsEqual(m_originalValue, value)) {
-		pTable->SetValue(m_sVariable, value);
+	if (! IsEqual(m_originalValue, value) ) {
+		pTable->SetValue( m_sVariable, value);
 	}
 }
+
 
 //-------------------------------------------------------------------------
 
@@ -174,11 +185,14 @@ void CTweakMetadataLUA::Init(void) {
 
 //-------------------------------------------------------------------------
 
+
 /*
 // Now check what actually provides the value
 if (result.type == ANY_TSTRING) {
-// If this looks like a path to a function, try to convert
+
+// If this looks like a path to a function, try to convert 
 if (strpbrk(result.str,".")) {
+
 // Divide into path and possible contents of brackets
 char * tokenStream = strdup(result.str);
 char * token = strtok(tokenStream,"()");
@@ -186,9 +200,11 @@ ScriptAnyValue fun;
 
 // Try to fetch the first part
 if (GetLuaVarRecursive(token, fun) && fun.type == ANY_TFUNCTION) {
+
 // Try to recognise the second part
 token = strtok(NULL,"()");
-if (token && strcmp(token,"self"))
+if (token && strcmp(token,"self")) 
+
 }
 free(tokenStream);
 }

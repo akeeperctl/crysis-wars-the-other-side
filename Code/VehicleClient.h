@@ -36,7 +36,7 @@ public:
 	virtual void PreUpdate(IVehicle* pVehicle, EntityId actorId);
 	virtual void OnEnterVehicleSeat(IVehicleSeat* pSeat);
 	virtual void OnExitVehicleSeat(IVehicleSeat* pSeat);
-
+  
 protected:
 
 	typedef std::map<ActionId, int> TActionNameIdMap;
@@ -64,14 +64,15 @@ protected:
 private:
 	Ang3 m_xiRotation;
 	Ang3 m_xiMovement;
-	float m_fLeftRight;
-	float m_fForwardBackward;
+  float m_fLeftRight;
+  float m_fForwardBackward;
 	bool m_bMovementFlagForward;
 	bool m_bMovementFlagBack;
 	bool m_bMovementFlagRight;
 	bool m_bMovementFlagLeft;
 
-	bool m_tp;
+  bool m_tp;
+
 };
 
 #endif

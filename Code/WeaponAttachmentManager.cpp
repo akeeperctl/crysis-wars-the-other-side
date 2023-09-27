@@ -17,7 +17,8 @@ History:
 #include "Actor.h"
 #include "Item.h"
 
-#define MAX_WEAPON_ATTACHMENTS 3
+
+#define MAX_WEAPON_ATTACHMENTS 3 
 
 //Bone & Attachment table (This should be in a nice file!!)
 namespace
@@ -30,7 +31,7 @@ namespace
 		//"weaponPos_pistol_R_leg",
 		//"weaponPos_pistol_L_leg"
 	};
-	const char gAttachmentTable[MAX_WEAPON_ATTACHMENTS][32] =
+	const char gAttachmentTable[MAX_WEAPON_ATTACHMENTS][32] = 
 	{
 		"back_item_attachment_01",
 		"back_item_attachment_02",
@@ -38,7 +39,7 @@ namespace
 		//"pistol_attachment_right",
 		//"pistol_attachment_left"
 	};
-	const Vec3 gOffsetTable[MAX_WEAPON_ATTACHMENTS] =
+	const Vec3 gOffsetTable[MAX_WEAPON_ATTACHMENTS] = 
 	{
 		Vec3(0.21944635f,-0.14831634f,1.3135500f),
 		Vec3(-0.18169385f,-0.15057199f,1.4539498f),
@@ -54,12 +55,13 @@ namespace
 		//Quat(Quat::CreateIdentity()),
 		//Quat(Quat::CreateIdentity())
 	};
+	
 }
 
-CWeaponAttachmentManager::CWeaponAttachmentManager(CActor* _pOwner) :
-	m_pOwner(_pOwner),
-	m_itemToBack(0),
-	m_itemToHand(0)
+CWeaponAttachmentManager::CWeaponAttachmentManager(CActor* _pOwner):
+m_pOwner(_pOwner),
+m_itemToBack(0),
+m_itemToHand(0)
 {
 	m_boneAttachmentMap.clear();
 	m_attachedWeaponList.clear();
@@ -73,15 +75,13 @@ CWeaponAttachmentManager::~CWeaponAttachmentManager()
 
 bool CWeaponAttachmentManager::Init()
 {
-	//TheOtherSide
-	//if (gEnv->bMultiplayer)
-	//{
-	//	CreatePlayerBoneAttachments(); //Only create the attachment, some are needed
-	//	return false;
-	//}
-	//else if (m_pOwner->GetActorSpecies() != eGCT_HUMAN)
-	//	return false;
-	//~TheOtherSide
+	if(gEnv->bMultiplayer)
+	{
+		CreatePlayerBoneAttachments(); //Only create the attachment, some are needed
+		return false;
+	}
+	else if(m_pOwner->GetActorSpecies()!=eGCT_HUMAN)
+		return false;
 
 	m_pItemSystem = g_pGame->GetIGameFramework()->GetIItemSystem();
 
@@ -94,62 +94,66 @@ bool CWeaponAttachmentManager::Init()
 //======================================================================
 void CWeaponAttachmentManager::CreatePlayerBoneAttachments()
 {
+		
 	if (ICharacterInstance* pCharInstance = m_pOwner->GetEntity()->GetCharacter(0))
 	{
-		IAttachmentManager* pAttachmentManager = pCharInstance->GetIAttachmentManager();
-		IAttachment* pAttachment = NULL;
-
-		for (int i = 0; i < MAX_WEAPON_ATTACHMENTS; i++)
+		IAttachmentManager* pAttachmentManager = pCharInstance->GetIAttachmentManager(); 
+		IAttachment *pAttachment = NULL;
+		
+		for(int i=0; i<MAX_WEAPON_ATTACHMENTS; i++)
 		{
 			pAttachment = pAttachmentManager->GetInterfaceByName(gAttachmentTable[i]);
-			if (!pAttachment)
+			if(!pAttachment)
 			{
 				//Attachment doesn't exist, create it
-				pAttachment = pAttachmentManager->CreateAttachment(gAttachmentTable[i], CA_BONE, gBoneTable[i]);
-				if (pAttachment)
+				pAttachment = pAttachmentManager->CreateAttachment(gAttachmentTable[i],CA_BONE,gBoneTable[i]);
+				if(pAttachment)
 				{
-					m_boneAttachmentMap.insert(TBoneAttachmentMap::value_type(gAttachmentTable[i], 0));
-					if (pAttachment && !gOffsetTable[i].IsZero())
+					m_boneAttachmentMap.insert(TBoneAttachmentMap::value_type(gAttachmentTable[i],0));
+					if(pAttachment && !gOffsetTable[i].IsZero())
 					{
-						pAttachment->SetAttAbsoluteDefault(QuatT(gRotationTable[i], gOffsetTable[i]));
+						pAttachment->SetAttAbsoluteDefault( QuatT(gRotationTable[i],gOffsetTable[i]) );
 						pAttachment->ProjectAttachment();
 					}
 				}
 			}
 		}
+
 	}
+
 }
 
 //=======================================================================
 void CWeaponAttachmentManager::CreatePlayerProjectedAttachments()
 {
-	Vec3 c4FrontPos(-0.0105f, 0.2233f, 1.297f), c4BackPos(0.00281f, -0.2493f, 1.325f);
-	Quat c4FrontRot(-0.0368f, -0.0278f, 0.0783f, -0.9958f), c4BackRot(1, 0, 0, 0);
+
+	Vec3 c4FrontPos(-0.0105f,0.2233f,1.297f),c4BackPos(0.00281f,-0.2493f,1.325f);
+	Quat c4FrontRot(-0.0368f,-0.0278f,0.0783f,-0.9958f),c4BackRot(1,0,0,0);
 	//Creates on init c4 face attachments
 	if (ICharacterInstance* pCharInstance = m_pOwner->GetEntity()->GetCharacter(0))
 	{
-		IAttachmentManager* pAttachmentManager = pCharInstance->GetIAttachmentManager();
-		IAttachment* pAttachment = NULL;
+		IAttachmentManager* pAttachmentManager = pCharInstance->GetIAttachmentManager(); 
+		IAttachment *pAttachment = NULL;
 		pAttachment = pAttachmentManager->GetInterfaceByName("c4_front");
-		if (!pAttachment)
+		if(!pAttachment)
 		{
 			//Attachment doesn't exist, create it
-			pAttachment = pAttachmentManager->CreateAttachment("c4_front", CA_FACE, 0);
-			if (pAttachment)
+			pAttachment= pAttachmentManager->CreateAttachment("c4_front",CA_FACE,0);
+			if(pAttachment)
 			{
-				pAttachment->SetAttAbsoluteDefault(QuatT(c4FrontRot, c4FrontPos));
+				pAttachment->SetAttAbsoluteDefault( QuatT(c4FrontRot,c4FrontPos) );
 				pAttachment->ProjectAttachment();
 			}
 		}
 		pAttachment = NULL;
 		pAttachment = pAttachmentManager->GetInterfaceByName("c4_back");
-		if (!pAttachment)
+		if(!pAttachment)
 		{
 			//Attachment doesn't exist, create it
-			pAttachment = pAttachmentManager->CreateAttachment("c4_back", CA_FACE, 0);
-			if (pAttachment)
+			pAttachment= pAttachmentManager->CreateAttachment("c4_back",CA_FACE,0);
+			if(pAttachment)
 			{
-				pAttachment->SetAttAbsoluteDefault(QuatT(c4BackRot, c4BackPos));
+				pAttachment->SetAttAbsoluteDefault( QuatT(c4BackRot,c4BackPos) );
 				pAttachment->ProjectAttachment();
 			}
 		}
@@ -160,7 +164,7 @@ void CWeaponAttachmentManager::CreatePlayerProjectedAttachments()
 void CWeaponAttachmentManager::DoHandToBackSwitch()
 {
 	CItem* pItem = static_cast<CItem*>(m_pItemSystem->GetItem(m_itemToBack));
-	if (pItem)
+	if(pItem)
 	{
 		pItem->AttachToHand(false);
 		pItem->AttachToBack(true);
@@ -172,7 +176,7 @@ void CWeaponAttachmentManager::DoHandToBackSwitch()
 void CWeaponAttachmentManager::DoBackToHandSwitch()
 {
 	CItem* pItem = static_cast<CItem*>(m_pItemSystem->GetItem(m_itemToHand));
-	if (pItem)
+	if(pItem)
 	{
 		pItem->AttachToBack(false);
 		pItem->AttachToHand(true);
@@ -184,12 +188,12 @@ void CWeaponAttachmentManager::DoBackToHandSwitch()
 void CWeaponAttachmentManager::SetWeaponAttachment(bool attach, const char* attachmentName, EntityId weaponId)
 {
 	TBoneAttachmentMap::iterator it = m_boneAttachmentMap.find(CONST_TEMPITEM_STRING(attachmentName));
-	if (it != m_boneAttachmentMap.end())
+	if(it!=m_boneAttachmentMap.end())
 	{
-		if (attach)
+		if(attach)
 		{
 			it->second = weaponId;
-			stl::push_back_unique(m_attachedWeaponList, weaponId);
+			stl::push_back_unique(m_attachedWeaponList,weaponId);
 		}
 		else
 		{
@@ -203,9 +207,9 @@ void CWeaponAttachmentManager::SetWeaponAttachment(bool attach, const char* atta
 bool CWeaponAttachmentManager::IsAttachmentFree(const char* attachmentName)
 {
 	TBoneAttachmentMap::iterator it = m_boneAttachmentMap.find(CONST_TEMPITEM_STRING(attachmentName));
-	if (it != m_boneAttachmentMap.end())
+	if(it!=m_boneAttachmentMap.end())
 	{
-		if (it->second == 0)
+		if(it->second==0)
 			return true;
 		else
 			return false;
@@ -218,10 +222,10 @@ bool CWeaponAttachmentManager::IsAttachmentFree(const char* attachmentName)
 void CWeaponAttachmentManager::HideAllAttachments(bool hide)
 {
 	TAttachedWeaponsList::const_iterator it = m_attachedWeaponList.begin();
-	while (it != m_attachedWeaponList.end())
+	while(it!=m_attachedWeaponList.end())
 	{
-		CItem* pItem = static_cast<CItem*>(m_pItemSystem->GetItem(*it));
-		if (pItem)
+		CItem *pItem = static_cast<CItem*>(m_pItemSystem->GetItem(*it));
+		if(pItem)
 			pItem->Hide(hide);
 		it++;
 	}

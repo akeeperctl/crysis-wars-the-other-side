@@ -4,7 +4,7 @@ Copyright (C), Crytek Studios, 2001-2005.
 -------------------------------------------------------------------------
 $Id$
 $DateTime$
-Description:
+Description: 	
 	Header for HUD object base class
 	Shared by G02 and G04
 
@@ -27,8 +27,8 @@ class CHUDObject
 {
 public:
 
-	CHUDObject();
-	virtual ~CHUDObject();
+						CHUDObject();
+	virtual ~	CHUDObject();
 
 	virtual void Update(float fDeltaTime) = 0;
 
@@ -36,7 +36,7 @@ public:
 	virtual void OnHUDToBeDestroyed() {};
 	virtual void Serialize(TSerialize ser) {};
 
-	void GetHUDObjectMemoryStatistics(ICrySizer* s);
+	void GetHUDObjectMemoryStatistics(ICrySizer * s);
 
 protected:
 

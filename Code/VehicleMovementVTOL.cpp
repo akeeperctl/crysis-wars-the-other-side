@@ -28,7 +28,7 @@ History:
 
 //------------------------------------------------------------------------
 CVehicleMovementVTOL::CVehicleMovementVTOL()
-	: m_horizontal(0.0f),
+: m_horizontal(0.0f),
 	m_isVTOLMovement(true),
 	m_forwardInverseMult(0.2f),
 	m_wingsAnimTime(1.0f),
@@ -45,7 +45,7 @@ CVehicleMovementVTOL::CVehicleMovementVTOL()
 }
 
 //------------------------------------------------------------------------
-bool CVehicleMovementVTOL::Init(IVehicle* pVehicle, const SmartScriptTable& table)
+bool CVehicleMovementVTOL::Init(IVehicle* pVehicle, const SmartScriptTable &table)
 {
 	if (!CVehicleMovementHelicopter::Init(pVehicle, table))
 		return false;
@@ -71,8 +71,8 @@ bool CVehicleMovementVTOL::Init(IVehicle* pVehicle, const SmartScriptTable& tabl
 	m_wingHorizontalStateId = InvalidVehicleAnimStateId;
 	m_wingVerticalStateId = InvalidVehicleAnimStateId;
 
-	if (!table->GetValue("timeUntilWingsRotate", m_timeUntilWingsRotate))//��������� �����
-		m_timeUntilWingsRotate = 0.65f;//������� ������
+	if (!table->GetValue("timeUntilWingsRotate", m_timeUntilWingsRotate))
+		m_timeUntilWingsRotate = 0.65f;
 
 	m_engineUpDir.Set(0.0f, 0.0f, 1.0f);
 
@@ -200,7 +200,7 @@ void CVehicleMovementVTOL::PreProcessMovement(const float deltaTime)
 
 	if (!m_isVTOLMovement)
 		return;
-
+	
 	IPhysicalEntity* pPhysics = GetPhysics();
 	assert(pPhysics);
 
@@ -218,11 +218,11 @@ void CVehicleMovementVTOL::PreProcessMovement(const float deltaTime)
 	m_engineForce += gravity * vertical * m_enginePower;
 	m_engineForce += m_horizontal * m_enginePower;
 
-	Matrix33 tm(m_PhysPos.q);
+	Matrix33 tm( m_PhysPos.q);
 	Ang3 angles = Ang3::GetAnglesXYZ(tm);
 
-	m_workingUpDir = m_engineUpDir; //Vec3(0.0f, 0.0f, 1.0f);
-
+ 	m_workingUpDir = m_engineUpDir; //Vec3(0.0f, 0.0f, 1.0f);
+	
 	m_workingUpDir += (vertical * m_rotorDiskTiltScale * Vec3(angles.y, -angles.x, 0.0f));
 	m_workingUpDir += (m_horizontal * m_rotorDiskTiltScale * Vec3(0.0f, 0.0f, angles.z));
 
@@ -249,15 +249,15 @@ void CVehicleMovementVTOL::PreProcessMovement(const float deltaTime)
 		fakeLeftDir.z = 0.0f;
 		forwardImpulse += fakeLeftDir * -strafe * m_enginePower * m_horizLeftForce * turbulenceMult;
 
-		float horizDamp = 0.25f;
+ 		float horizDamp = 0.25f;
 		static float vertDamp = 0.0f;
 
-		if (m_movementAction.isAI)
+		if ( m_movementAction.isAI )
 			horizDamp *= abs(m_turnAction * 4.0f) + 1.0f;
 		else
 			horizDamp = m_velDamp;
 
-		m_control.impulse += forwardImpulse;
+ 		m_control.impulse += forwardImpulse;
 		m_control.impulse.x -= m_PhysDyn.v.x * horizDamp * turbulenceMult;
 		m_control.impulse.y -= m_PhysDyn.v.y * horizDamp * turbulenceMult;
 		m_control.impulse.z -= m_PhysDyn.v.z * vertDamp * turbulenceMult;
@@ -265,6 +265,7 @@ void CVehicleMovementVTOL::PreProcessMovement(const float deltaTime)
 
 	m_workingUpDir.z += 0.45f * m_liftAction;
 	m_workingUpDir.NormalizeSafe();
+
 
 	return;
 }
@@ -287,7 +288,7 @@ bool CVehicleMovementVTOL::StartEngine(EntityId driverId)
 
 	if (IActor* pActor = m_pActorSystem->GetActor(m_actorId))
 	{
-		if (pActor->IsPlayer())
+		if ( pActor->IsPlayer() )
 		{
 			m_isVTOLMovement = true;
 		}
@@ -320,7 +321,7 @@ void CVehicleMovementVTOL::StopEngine()
 //------------------------------------------------------------------------
 void CVehicleMovementVTOL::ProcessActions(const float deltaTime)
 {
-	FUNCTION_PROFILER(GetISystem(), PROFILE_GAME);
+	FUNCTION_PROFILER( GetISystem(), PROFILE_GAME );
 
 	UpdateDamages(deltaTime);
 	UpdateEngine(deltaTime);
@@ -362,12 +363,12 @@ void CVehicleMovementVTOL::ProcessActions(const float deltaTime)
 	float currentDir = angles.z;
 
 	const float maxPitchAngle = 60.0f;
-
+	
 	float pitchDeg = RAD2DEG(currentPitch);
 	if (pitchDeg >= (maxPitchAngle * 0.75f))
 	{
 		float mult = pitchDeg / (maxPitchAngle);
-
+		
 		if (mult > 1.0f && m_desiredPitch < 0.0f)
 		{
 			m_desiredPitch *= 0.0f;
@@ -434,8 +435,8 @@ void CVehicleMovementVTOL::ProcessActions(const float deltaTime)
 	// desired things
 	float turnDecreaseScale = m_yawDecreaseWithSpeed / (m_yawDecreaseWithSpeed + fabs(currentFwdSpeed));
 
-	Vec3 desired_vel2D =
-		currentFwdDir2D * m_forwardAction * m_maxFwdSpeed * inputMult +
+	Vec3 desired_vel2D = 
+		currentFwdDir2D * m_forwardAction * m_maxFwdSpeed * inputMult + 
 		currentLeftDir2D * m_strafeAction * m_maxLeftSpeed * inputMult;
 
 	// calculate the angle changes
@@ -647,10 +648,11 @@ void CVehicleMovementVTOL::ProcessActions(const float deltaTime)
 
 				m_actionRoll += -r * m_relaxForce * (m_relaxTimer / 6.0f);
 			}
+
 		}
 	}
 
-	if (m_netActionSync.PublishActions(CNetworkMovementHelicopter(this)))
+	if (m_netActionSync.PublishActions( CNetworkMovementHelicopter(this) ))
 		m_pVehicle->GetGameObject()->ChangedNetworkState(eEA_GameClientDynamic);
 }
 
@@ -658,8 +660,8 @@ void CVehicleMovementVTOL::ProcessActions(const float deltaTime)
 // NOTE: This function must be thread-safe. Before adding stuff contact MarcoC.
 void CVehicleMovementVTOL::ProcessAI(const float deltaTime)
 {
-	FUNCTION_PROFILER(GetISystem(), PROFILE_GAME);
-
+	FUNCTION_PROFILER( GetISystem(), PROFILE_GAME );
+	
 	if (!m_isVTOLMovement)
 	{
 		CVehicleMovementHelicopter::ProcessAI(deltaTime);
@@ -679,8 +681,8 @@ void CVehicleMovementVTOL::ProcessAI(const float deltaTime)
 	ResetActions();
 
 	// Our current state
-	const Vec3 worldPos = m_PhysPos.pos;
-	const Matrix33 worldMat(m_PhysPos.q);
+	const Vec3 worldPos =  m_PhysPos.pos;
+	const Matrix33 worldMat( m_PhysPos.q);
 	Ang3 worldAngles = Ang3::GetAnglesXYZ(worldMat);
 
 	const Vec3 currentVel = m_PhysDyn.v;
@@ -690,13 +692,13 @@ void CVehicleMovementVTOL::ProcessAI(const float deltaTime)
 
 	// to avoid singularity
 	const Vec3 vWorldDir = worldMat * FORWARD_DIRECTION;
-	const Vec3 vWorldDir2D = Vec3(vWorldDir.x, vWorldDir.y, 0.0f).GetNormalizedSafe();
+	const Vec3 vWorldDir2D =  Vec3( vWorldDir.x,  vWorldDir.y, 0.0f ).GetNormalizedSafe();
 
 	// Our inputs
 	const float desiredSpeed = m_aiRequest.HasDesiredSpeed() ? m_aiRequest.GetDesiredSpeed() : 0.0f;
 	const Vec3 desiredMoveDir = m_aiRequest.HasMoveTarget() ? (m_aiRequest.GetMoveTarget() - worldPos).GetNormalizedSafe() : vWorldDir;
 	const Vec3 desiredMoveDir2D = Vec3(desiredMoveDir.x, desiredMoveDir.y, 0.0f).GetNormalizedSafe(vWorldDir2D);
-	const Vec3 desiredVel = desiredMoveDir * desiredSpeed;
+	const Vec3 desiredVel = desiredMoveDir * desiredSpeed; 
 	const Vec3 desiredVel2D(desiredVel.x, desiredVel.y, 0.0f);
 	const Vec3 desiredLookDir = m_aiRequest.HasLookTarget() ? (m_aiRequest.GetLookTarget() - worldPos).GetNormalizedSafe() : desiredMoveDir;
 	const Vec3 desiredLookDir2D = Vec3(desiredLookDir.x, desiredLookDir.y, 0.0f).GetNormalizedSafe(vWorldDir2D);
@@ -738,23 +740,24 @@ void CVehicleMovementVTOL::ProcessAI(const float deltaTime)
 
 			m_forwardAction = m_fwdPID.Update(currentVel.y, desiredLocalTiltAxis.GetLength(), -1.0f, 1.0f);
 
-			float desiredTiltAngle = m_tiltPerVelDifference * desiredVelChange2D.GetLength();
-			Limit(desiredTiltAngle, -m_maxTiltAngle, m_maxTiltAngle);
+		float desiredTiltAngle = m_tiltPerVelDifference * desiredVelChange2D.GetLength();
+		Limit(desiredTiltAngle, -m_maxTiltAngle, m_maxTiltAngle);
 
-			if (desiredTiltAngle > 0.0001f)
-			{
-				const Vec3 desiredWorldTiltAxis = Vec3(-desiredVelChange2D.y, desiredVelChange2D.x, 0.0f).GetNormalizedSafe();
-				const Vec3 desiredLocalTiltAxis = worldMat.GetTransposed() * desiredWorldTiltAxis;
+		if (desiredTiltAngle > 0.0001f)
+		{
+			const Vec3 desiredWorldTiltAxis = Vec3(-desiredVelChange2D.y, desiredVelChange2D.x, 0.0f).GetNormalizedSafe();
+			const Vec3 desiredLocalTiltAxis = worldMat.GetTransposed() * desiredWorldTiltAxis;
 
-				Vec3 vVelLocal = worldMat.GetTransposed() * desiredVel;
-				vVelLocal.NormalizeSafe();
+			Vec3 vVelLocal = worldMat.GetTransposed() * desiredVel;
+			vVelLocal.NormalizeSafe();
 
-				float dotup = vVelLocal.Dot(Vec3(0.0f, 0.0f, 1.0f));
-				float currentSpeed = currentVel.GetLength();
+			float dotup = vVelLocal.Dot(Vec3( 0.0f,0.0f,1.0f ) );
+			float currentSpeed = currentVel.GetLength();
 
-				desiredPitch = dotup * currentSpeed / 100.0f;
-				desiredRoll = desiredTiltAngle * desiredLocalTiltAxis.y * currentSpeed / 30.0f;
-			}
+			desiredPitch = dotup *currentSpeed / 100.0f;
+			desiredRoll = desiredTiltAngle * desiredLocalTiltAxis.y *currentSpeed/30.0f;
+		}
+
 		}
 	}
 	else
@@ -773,10 +776,10 @@ void CVehicleMovementVTOL::ProcessAI(const float deltaTime)
 	}
 
 	float currentHeight = m_PhysPos.pos.z;
-	if (m_aiRequest.HasMoveTarget())
+	if ( m_aiRequest.HasMoveTarget() )
 	{
 		m_hoveringPower = m_powerPID.Update(currentVel.z, desiredVel.z, -1.0f, 4.0f);
-
+		
 		//m_hoveringPower = (m_desiredHeight - currentHeight) * m_powerInputConst;
 		//m_hoveringPower += m_powerInputDamping * (currentHeight - m_lastHeight) / deltaTime;
 
@@ -814,7 +817,7 @@ void CVehicleMovementVTOL::ProcessAI(const float deltaTime)
 
 	if (m_horizontal > 0.0001f)
 		m_desiredHeight = m_PhysPos.pos.z;
-
+	
 	Limit(m_forwardAction, -1.0f, 1.0f);
 }
 
@@ -825,20 +828,15 @@ void CVehicleMovementVTOL::OnEvent(EVehicleMovementEvent event, const SVehicleMo
 
 	if (event == eVME_SetMode)
 	{
+
 		bool requestedMovement = (params.iValue == 1);
-		if (requestedMovement != m_isVTOLMovement)
+		if ( requestedMovement != m_isVTOLMovement)
 		{
 			m_isVTOLMovement = requestedMovement;
-			if (m_isVTOLMovement == true)
-			{
-				//CryLogAlways("m_pWingsAnimation->ChangeState() to m_wingHorizontalStateId");
+			if ( m_isVTOLMovement == true )
 				m_pWingsAnimation->ChangeState(m_wingHorizontalStateId);
-			}
 			else
-			{
-				//CryLogAlways("m_pWingsAnimation->ChangeState() to m_wingVerticalStateId");
 				m_pWingsAnimation->ChangeState(m_wingVerticalStateId);
-			}
 		}
 	}
 }
@@ -846,7 +844,7 @@ void CVehicleMovementVTOL::OnEvent(EVehicleMovementEvent event, const SVehicleMo
 //------------------------------------------------------------------------
 void CVehicleMovementVTOL::Update(const float deltaTime)
 {
-	FUNCTION_PROFILER(GetISystem(), PROFILE_GAME);
+	FUNCTION_PROFILER( GetISystem(), PROFILE_GAME );
 
 	CVehicleMovementHelicopter::Update(deltaTime);
 	CryAutoLock<CryFastLock> lk(m_lock);
@@ -857,7 +855,7 @@ void CVehicleMovementVTOL::Update(const float deltaTime)
 
 	if (m_pWingsAnimation)
 	{
-		if (pActor && pActor->IsClient())
+		if(pActor && pActor->IsClient())
 			m_wingsAnimTimeInterp = m_wingsAnimTime;
 		else
 			Interpolate(m_wingsAnimTimeInterp, m_wingsAnimTime, 2.0f, deltaTime);
@@ -918,20 +916,12 @@ void CVehicleMovementVTOL::Update(const float deltaTime)
 		Interpolate(m_soundParamTurn, turnParamGoal, 0.5f, deltaTime);
 		SetSoundParam(eSID_Run, "turn", m_soundParamTurn);
 
-		//float damage = GetSoundDamage();
-		//if (damage > 0.1f)
-		//{
+		float damage = GetSoundDamage();
+		if (damage > 0.1f)
+		{ 
 			//if (ISound* pSound = GetOrPlaySound(eSID_Damage, 5.f, m_enginePos))
-				//SetSoundParam(pSound, "damage", damage);
-		//}
-
-		//IRenderer* pRenderer = gEnv->pRenderer;
-		//float color[4] = { 1,1,1,1 };
-		//pRenderer->Draw2dLabel(5.0f, 320.0f, 1.5f, color, false, "m_wingsAnimTime:  %f", m_wingsAnimTime);
-		//pRenderer->Draw2dLabel(5.0f, 340.0f, 1.5f, color, false, "m_wingsSpeed:  %f", m_wingsSpeed);
-		//pRenderer->Draw2dLabel(5.0f, 360.0f, 1.5f, color, false, "m_wingsTimer:  %f", m_wingsTimer);
-		//pRenderer->Draw2dLabel(5.0f, 380.0f, 1.5f, color, false, "m_wingsAnimTimeInterp:  %f", m_wingsAnimTimeInterp);
-		//pRenderer->Draw2dLabel(5.0f, 400.0f, 1.5f, color, false, "m_pWingsAnimation->GetState():  %f", (int)m_pWingsAnimation->GetState());
+				//SetSoundParam(pSound, "damage", damage);        
+		}
 	}
 }
 
@@ -942,7 +932,7 @@ void CVehicleMovementVTOL::UpdateEngine(float deltaTime)
 
 	float damageMult = GetDamageMult();
 
-	float enginePowerMax = m_enginePowerMax * damageMult;
+	float enginePowerMax = m_enginePowerMax * damageMult; 
 
 	if (m_isEnginePowered && !m_isEngineGoingOff)
 	{
@@ -980,7 +970,7 @@ float CVehicleMovementVTOL::GetDamageMult()
 }
 
 //------------------------------------------------------------------------
-void CVehicleMovementVTOL::GetMemoryStatistics(ICrySizer* s)
+void CVehicleMovementVTOL::GetMemoryStatistics(ICrySizer * s)
 {
 	s->Add(*this);
 	CVehicleMovementHelicopter::GetMemoryStatistics(s);
@@ -991,7 +981,7 @@ void CVehicleMovementVTOL::Serialize(TSerialize ser, unsigned aspects)
 {
 	CVehicleMovementHelicopter::Serialize(ser, aspects);
 
-	if ((ser.GetSerializationTarget() == eST_Network) && (aspects & eEA_GameClientDynamic))
+	if ((ser.GetSerializationTarget() == eST_Network) &&(aspects & eEA_GameClientDynamic))
 	{
 		ser.Value("wings", m_wingsAnimTime, 'unit');
 	}

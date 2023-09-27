@@ -7,5 +7,5 @@ class CTagBullet :
 public:
 	CTagBullet(void);
 	~CTagBullet(void);
-	virtual void HandleEvent(const SGameObjectEvent&);
+	virtual void HandleEvent(const SGameObjectEvent &);
 };

@@ -18,7 +18,7 @@ History:
 
 //------------------------------------------------------------------------
 CVehicleActionEntityAttachment::CVehicleActionEntityAttachment()
-	: m_pHelper(NULL),
+: m_pHelper(NULL),
 	m_entityId(0),
 	m_isAttached(false),
 	m_timer(0.0f)
@@ -38,7 +38,7 @@ CVehicleActionEntityAttachment::~CVehicleActionEntityAttachment()
 }
 
 //------------------------------------------------------------------------
-bool CVehicleActionEntityAttachment::Init(IVehicle* pVehicle, const SmartScriptTable& table)
+bool CVehicleActionEntityAttachment::Init(IVehicle* pVehicle, const SmartScriptTable &table)
 {
 	m_pVehicle = pVehicle;
 
@@ -121,7 +121,7 @@ void CVehicleActionEntityAttachment::Update(const float deltaTime)
 
 	pe_simulation_params paramsSim;
 	float gravity;
-
+	
 	if (pPhysEntity->GetParams(&paramsSim))
 		gravity = abs(paramsSim.gravity.z);
 	else
@@ -131,7 +131,7 @@ void CVehicleActionEntityAttachment::Update(const float deltaTime)
 	if (pPhysEntity->GetStatus(&dyn))
 	{
 		pe_action_impulse impulse;
-		impulse.impulse = Matrix33(pEntity->GetWorldTM()) * Vec3(0.0f, 0.0f, 1.0f) * g_parachuteForce * gravity;
+		impulse.impulse  = Matrix33(pEntity->GetWorldTM()) * Vec3(0.0f, 0.0f, 1.0f) * g_parachuteForce * gravity;
 		impulse.impulse = impulse.impulse - dyn.v;
 		impulse.impulse *= dyn.mass * deltaTime;
 		impulse.iSource = 3;
@@ -159,7 +159,7 @@ void CVehicleActionEntityAttachment::SpawnEntity()
 
 	char pEntityName[256];
 	_snprintf(pEntityName, 256, "%s_%s", m_pVehicle->GetEntity()->GetName(), m_entityClassName.c_str());
-	pEntityName[sizeof(pEntityName) - 1] = '\0';
+	pEntityName[sizeof(pEntityName)-1] = '\0';
 
 	SEntitySpawnParams params;
 	params.sName = pEntityName;
@@ -192,7 +192,7 @@ bool CVehicleActionEntityAttachment::DetachEntity()
 		IVehicleSystem* pVehicleSystem = gEnv->pGame->GetIGameFramework()->GetIVehicleSystem();
 		assert(pVehicleSystem);
 
-		// FIXME: remove this workaround, replace by e.g. buddy constraint
+    // FIXME: remove this workaround, replace by e.g. buddy constraint 
 		if (IVehicle* pVehicle = pVehicleSystem->GetVehicle(m_entityId))
 			pVehicle->OnHit(m_pVehicle->GetEntityId(), m_pVehicle->GetEntityId(), 10.0f, Vec3(0.0f, 0.0f, 0.0f), 0.0f, "disableCollisions", false);
 

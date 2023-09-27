@@ -8,8 +8,8 @@ Copyright (C), Crytek Studios, 2001-2007.
 #ifdef USE_G15_LCD
 
 CLCDPage::CLCDPage()
-	: m_pLCD(0)
-	, m_pageId(-1)
+:	m_pLCD(0)
+, m_pageId(-1)
 {
 }
 

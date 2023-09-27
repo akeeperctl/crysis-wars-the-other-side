@@ -4,7 +4,7 @@ Copyright (C), Crytek Studios, 2001-2005.
 -------------------------------------------------------------------------
 $Id$
 $DateTime$
-Description:
+Description: 	
 	Sound moods (from game side)
 
 -------------------------------------------------------------------------
@@ -42,19 +42,19 @@ class CSoundMoods
 {
 public:
 
-	CSoundMoods();
-	~CSoundMoods();
+		CSoundMoods();
+	~	CSoundMoods();
 
-	void AddSoundMood(ESOUNDMOOD eSoundMood, float fPercent = 0.0f);
+	void AddSoundMood(ESOUNDMOOD eSoundMood,float fPercent=0.0f);
 	void Serialize(TSerialize ser);
 	void Update();
 
 private:
 
-	void AddSoundMood(const char* szSoundMood, uint32 uiFadeIn, float fDuration, uint32 fFadeOut, float fFade);
-	void RemoveSoundMood(const char* szSoundMood, float fFade, uint32 uiFadeOut);
+	void AddSoundMood(const char *szSoundMood,uint32 uiFadeIn,float fDuration,uint32 fFadeOut,float fFade);
+	void RemoveSoundMood(const char *szSoundMood,float fFade,uint32 uiFadeOut);
 
-	ISoundMoodManager* m_pSoundMoodManager;
+	ISoundMoodManager *m_pSoundMoodManager;
 
 	struct SSoundMood
 	{

@@ -10,22 +10,22 @@ class CPlayer;
 class CNetPlayerInput : public IPlayerInput
 {
 public:
-	CNetPlayerInput(CPlayer* pPlayer);
+	CNetPlayerInput( CPlayer * pPlayer );
 
 	// IPlayerInput
 	virtual void PreUpdate();
 	virtual void Update();
 	virtual void PostUpdate();
 
-	virtual void SetState(const SSerializedPlayerInput& input);
-	virtual void GetState(SSerializedPlayerInput& input);
+	virtual void SetState( const SSerializedPlayerInput& input );
+	virtual void GetState( SSerializedPlayerInput& input );
 
-	virtual void OnAction(const ActionId& action, int activationMode, float value) {};
+	virtual void OnAction(  const ActionId& action, int activationMode, float value  ) {};
 
 	virtual void Reset();
 	virtual void DisableXI(bool disabled);
 
-	virtual void GetMemoryStatistics(ICrySizer* s) { s->Add(*this); }
+	virtual void GetMemoryStatistics(ICrySizer * s) {s->Add(*this);}
 
 	virtual EInputType GetType() const
 	{
@@ -37,10 +37,10 @@ public:
 	// ~IPlayerInput
 
 private:
-	CPlayer* m_pPlayer;
+	CPlayer * m_pPlayer;
 	SSerializedPlayerInput m_curInput;
 
-	void DoSetState(const SSerializedPlayerInput& input);
+	void DoSetState( const SSerializedPlayerInput& input );
 
 	CTimeValue m_lastUpdate;
 

@@ -21,8 +21,8 @@ struct SScaledEffectParams
 
 struct SCollisionParams
 {
-	IParticleEffect* pParticleEffect;
-	const char* sound;
+	IParticleEffect*	pParticleEffect;
+	const char*				sound;
 	float							scale;
 
 	SCollisionParams(const IItemParamsNode* collision);
@@ -39,7 +39,7 @@ struct SExplosionParams
 	float holeSize;
 	float terrainHoleSize;
 	IParticleEffect* pParticleEffect;
-	const char* effectName;
+	const char *effectName;
 	float effectScale;
 	string type;
 	int		hitTypeId;
@@ -61,7 +61,7 @@ struct SFlashbangParams
 struct STrailParams
 {
 	const char* sound;
-	const char* effect;
+	const char*	effect;
 	const char* effect_fp;
 	float				scale;
 	bool				prime;
@@ -76,6 +76,7 @@ struct SWhizParams
 
 	SWhizParams(const IItemParamsNode* whiz);
 };
+
 
 // this structure holds cached XML attributes for fast acccess
 struct SAmmoParams
@@ -104,26 +105,26 @@ struct SAmmoParams
 	Vec3	spin;
 	Vec3	spinRandom;
 
-	ISurfaceType* pSurfaceType;
-	pe_params_particle* pParticleParams;
+	ISurfaceType*							pSurfaceType;
+	pe_params_particle*				pParticleParams;
 
 	// firstperson geometry
-	IStatObj* fpGeometry;
+	IStatObj*	fpGeometry;
 	Matrix34	fpLocalTM;
 
-	SScaledEffectParams* pScaledEffect;
-	SCollisionParams* pCollision;
-	SExplosionParams* pExplosion;
-	SFlashbangParams* pFlashbang;
-	SWhizParams* pWhiz;
-	SWhizParams* pRicochet;
-	STrailParams* pTrail;
-	STrailParams* pTrailUnderWater;
+	SScaledEffectParams*	pScaledEffect;
+	SCollisionParams*			pCollision;
+	SExplosionParams*			pExplosion;
+	SFlashbangParams*			pFlashbang;
+	SWhizParams*					pWhiz;
+	SWhizParams*					pRicochet;
+	STrailParams*					pTrail;
+	STrailParams*					pTrailUnderWater;
 
-	const IEntityClass* pEntityClass;
-	const IItemParamsNode* pItemParams;
+	const IEntityClass*			pEntityClass;
+	const IItemParamsNode*	pItemParams;
 
-	SAmmoParams(const IItemParamsNode* pItemParams_ = 0, const IEntityClass* pEntityClass_ = 0);
+	SAmmoParams(const IItemParamsNode* pItemParams_ = 0, const IEntityClass* pEntityClass_=0);
 	~SAmmoParams();
 
 	void Init(const IItemParamsNode* pItemParams_, const IEntityClass* pEntityClass_);

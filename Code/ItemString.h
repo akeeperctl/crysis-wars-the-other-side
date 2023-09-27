@@ -30,27 +30,27 @@ namespace SharedString
 	public:
 		enum {	// parameters for hash table
 			bucket_size = 4,	// 0 < bucket_size
-			min_buckets = 8
-		};// min_buckets = 2 ^^ N, 0 < N
+			min_buckets = 8	};// min_buckets = 2 ^^ N, 0 < N
 
-		size_t operator()(const Key& key) const
-		{
-			unsigned int h = 0;
-			const char* s = stl::constchar_cast(key);
-			assert(s);
-			for (; *s; ++s) h = 5 * h + tolower(*(unsigned char*)s);
-			return size_t(h);
-		};
+			size_t operator()( const Key& key ) const
+			{
+				unsigned int h = 0; 
+				const char *s = stl::constchar_cast(key);
+				assert (s);
+				for (; *s; ++s) h = 5*h + tolower(*(unsigned char*)s);
+				return size_t(h);
+			};
 
-		bool LessThan(const Key& key1, const Key& key2) const
-		{
-			return strcmp(stl::constchar_cast(key1), stl::constchar_cast(key2)) < 0;
-		}
-		bool Equals(const Key& key1, const Key& key2) const
-		{
-			return strcmp(stl::constchar_cast(key1), stl::constchar_cast(key2)) == 0;
-		}
+			bool LessThan( const Key& key1,const Key& key2 ) const
+			{
+				return strcmp(stl::constchar_cast(key1),stl::constchar_cast(key2)) < 0;
+			}
+			bool Equals( const Key& key1,const Key& key2 ) const
+			{
+				return strcmp(stl::constchar_cast(key1),stl::constchar_cast(key2)) == 0;
+			}
 	};
+
 
 	static const int HashTableSize = 1024;
 
@@ -64,8 +64,8 @@ namespace SharedString
 		// Here in memory starts character buffer of size nAllocSize.
 		//char data[nAllocSize]
 
-		char* GetStr() { return (char*)(this + 1); }
-		void  AddRef() { ++nRefCount; };
+		char* GetStr()  { return (char*)(this+1); }
+		void  AddRef()  { ++nRefCount; };
 		int   Release() { return --nRefCount; };
 	};
 
@@ -82,42 +82,42 @@ namespace SharedString
 		}
 
 		// Only finds an existing name table entry, return 0 if not found.
-		SNameEntry* FindEntry(const char* str)
+		SNameEntry* FindEntry( const char *str )
 		{
-			SNameEntry* pEntry = stl::find_in_map(m_nameMap, str, 0);
+			SNameEntry *pEntry = stl::find_in_map( m_nameMap,str,0 );
 			return pEntry;
 		}
 
 		// Finds an existing name table entry, or creates a new one if not found.
-		SNameEntry* GetEntry(const char* str)
+		SNameEntry* GetEntry( const char *str )
 		{
-			SNameEntry* pEntry = stl::find_in_map(m_nameMap, str, 0);
+			SNameEntry *pEntry = stl::find_in_map( m_nameMap,str,0 );
 			if (!pEntry)
 			{
 				// Create a new entry.
 				unsigned int nLen = strlen(str);
-				unsigned int allocLen = sizeof(SNameEntry) + (nLen + 1) * sizeof(char);
-				pEntry = (SNameEntry*)malloc(allocLen);
+				unsigned int allocLen = sizeof(SNameEntry) + (nLen+1)*sizeof(char);
+				pEntry = (SNameEntry*)malloc( allocLen );
 				pEntry->nRefCount = 0;
 				pEntry->nLength = nLen;
 				pEntry->nAllocSize = allocLen;
 				// Copy string to the end of name entry.
-				memcpy(pEntry->GetStr(), str, nLen + 1);
+				memcpy( pEntry->GetStr(),str,nLen+1 );
 
 				// put in map.
-				m_nameMap.insert(NameMap::value_type(pEntry->GetStr(), pEntry));
+				m_nameMap.insert( NameMap::value_type(pEntry->GetStr(),pEntry) );
 			}
 			return pEntry;
 		}
 
 		// Release existing name table entry.
-		void Release(SNameEntry* pEntry)
+		void Release( SNameEntry *pEntry )
 		{
-			/*
-						assert(pEntry);
-						m_nameMap.erase( pEntry->GetStr() );
-						free(pEntry);
-			*/
+/*
+			assert(pEntry);
+			m_nameMap.erase( pEntry->GetStr() );
+			free(pEntry);
+*/
 		}
 
 		void Dump()
@@ -132,7 +132,7 @@ namespace SharedString
 			}
 		}
 	private:
-		typedef stl::hash_map<const char*, SNameEntry*, hash_strcmp<const char*> > NameMap;
+		typedef stl::hash_map<const char*,SNameEntry*,hash_strcmp<const char*> > NameMap;
 		NameMap m_nameMap;
 	};
 
@@ -143,36 +143,36 @@ namespace SharedString
 	{
 	public:
 		CSharedString();
-		CSharedString(const CSharedString& n);
-		CSharedString(const char* s);
-		CSharedString(const char* s, bool bOnlyFind);
+		CSharedString( const CSharedString& n );
+		CSharedString( const char *s );
+		CSharedString( const char *s,bool bOnlyFind );
 		~CSharedString();
 
-		CSharedString& operator=(const CSharedString& n);
-		CSharedString& operator=(const char* s);
+		CSharedString& operator=( const CSharedString& n );
+		CSharedString& operator=( const char *s );
 
 		//! cast to C string operator.
-		operator const char* () const { return (m_str) ? m_str : ""; }
+		operator const char*() const { return (m_str) ? m_str: ""; }
 		operator bool() const { return m_str != 0; }
 		bool operator!() const { return m_str == 0; }
 
-		bool	operator==(const CSharedString& n) const;
-		bool	operator!=(const CSharedString& n) const;
+		bool	operator==( const CSharedString &n ) const;
+		bool	operator!=( const CSharedString &n ) const;
 
-		bool	operator==(const char* s) const;
-		bool	operator!=(const char* s) const;
+		bool	operator==( const char *s ) const;
+		bool	operator!=( const char *s ) const;
 
-		bool	operator<(const CSharedString& n) const;
-		bool	operator>(const CSharedString& n) const;
+		bool	operator<( const CSharedString &n ) const;
+		bool	operator>( const CSharedString &n ) const;
 
 		bool	empty() const { return length() == 0; }
-		void	reset() { _release(m_str);	m_str = 0; }
+		void	reset()	{	_release(m_str);	m_str = 0; }
 		void  clear() { reset(); }
-		const	char* c_str() const { return (m_str) ? m_str : ""; }
+		const	char*	c_str() const { return (m_str) ? m_str: ""; }
 		int	length() const { return _length(); };
 
-		static bool find(const char* str) { return GetNameTable()->FindEntry(str) != 0; }
-		static const char* create(const char* str)
+		static bool find( const char *str ) { return GetNameTable()->FindEntry(str) != 0; }
+		static const char *create( const char *str )
 		{
 			CSharedString name = CSharedString(str);
 			name._addref(name.c_str());
@@ -191,10 +191,11 @@ namespace SharedString
 			return &table;
 		}
 
-		SNameEntry* _entry(const char* pBuffer) const { assert(pBuffer); return ((SNameEntry*)pBuffer) - 1; }
+
+		SNameEntry* _entry( const char *pBuffer ) const { assert(pBuffer); return ((SNameEntry*)pBuffer)-1; }
 		int  _length() const { return (m_str) ? _entry(m_str)->nLength : 0; };
-		void _addref(const char* pBuffer) { if (pBuffer) _entry(pBuffer)->AddRef(); }
-		void _release(const char* pBuffer)
+		void _addref( const char *pBuffer ) { if (pBuffer) _entry(pBuffer)->AddRef(); }
+		void _release( const char *pBuffer )
 		{
 			if (pBuffer && _entry(pBuffer)->Release() <= 0)
 			{
@@ -203,7 +204,7 @@ namespace SharedString
 			}
 		}
 
-		const char* m_str;
+		const char *m_str;
 	};
 
 	//////////////////////////////////////////////////////////////////////////
@@ -213,28 +214,28 @@ namespace SharedString
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	inline CSharedString::CSharedString(const CSharedString& n)
+	inline CSharedString::CSharedString( const CSharedString& n )
 	{
-		_addref(n.m_str);
+		_addref( n.m_str );
 		m_str = n.m_str;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	inline CSharedString::CSharedString(const char* s)
+	inline CSharedString::CSharedString( const char *s )
 	{
 		m_str = 0;
 		*this = s;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	inline CSharedString::CSharedString(const char* s, bool bOnlyFind)
+	inline CSharedString::CSharedString( const char *s,bool bOnlyFind )
 	{
 		assert(s);
 		m_str = 0;
-		const char* pBuf = 0;
+		const char *pBuf = 0;
 		if (*s) // if not empty
 		{
-			SNameEntry* pNameEntry = GetNameTable()->FindEntry(s);
+			SNameEntry *pNameEntry = GetNameTable()->FindEntry(s);
 			if (pNameEntry)
 			{
 				m_str = pNameEntry->GetStr();
@@ -249,7 +250,7 @@ namespace SharedString
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	inline CSharedString& CSharedString::operator=(const CSharedString& n)
+	inline CSharedString&	CSharedString::operator=( const CSharedString &n )
 	{
 		if (m_str != n.m_str)
 		{
@@ -261,10 +262,10 @@ namespace SharedString
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	inline CSharedString& CSharedString::operator=(const char* s)
+	inline CSharedString&	CSharedString::operator=( const char *s )
 	{
 		//assert(s); // AlexL: we currenly allow 0 assignment because Items currently do this a lot
-		const char* pBuf = 0;
+		const char *pBuf = 0;
 		if (s && *s) // if not empty
 		{
 			pBuf = GetNameTable()->GetEntry(s)->GetStr();
@@ -282,33 +283,36 @@ namespace SharedString
 		return *this;
 	}
 
+
 	//////////////////////////////////////////////////////////////////////////
-	inline bool	CSharedString::operator==(const CSharedString& n) const {
+	inline bool	CSharedString::operator==( const CSharedString &n ) const {
 		return m_str == n.m_str;
 	}
 
-	inline bool	CSharedString::operator!=(const CSharedString& n) const {
+	inline bool	CSharedString::operator!=( const CSharedString &n ) const {
 		return !(*this == n);
 	}
 
-	inline bool	CSharedString::operator==(const char* str) const {
-		return m_str && strcmp(m_str, str) == 0;
+	inline bool	CSharedString::operator==( const char* str ) const {
+		return m_str && strcmp(m_str,str) == 0;
 	}
 
-	inline bool	CSharedString::operator!=(const char* str) const {
+	inline bool	CSharedString::operator!=( const char* str ) const {
 		if (!m_str)
 			return true;
-		return strcmp(m_str, str) != 0;
+		return strcmp(m_str,str) != 0;
 	}
 
-	inline bool	CSharedString::operator<(const CSharedString& n) const {
+	inline bool	CSharedString::operator<( const CSharedString &n ) const {
 		return m_str < n.m_str;
 	}
 
-	inline bool	CSharedString::operator>(const CSharedString& n) const {
+	inline bool	CSharedString::operator>( const CSharedString &n ) const {
 		return m_str > n.m_str;
 	}
+
 }; // _ItemString
+
 
 #define ITEM_USE_SHAREDSTRING
 

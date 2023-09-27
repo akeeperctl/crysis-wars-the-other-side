@@ -17,13 +17,13 @@ Copyright (C), Crytek Studios, 2001-2007.
 #include <GameCVars.h>
 
 CG15LCD::CG15LCD()
-	: m_pImpl(new CEzLcd())
-	, m_currentPage(0)
-	, m_tick(0.0f)
-	, LogoPage(-1)
-	, LoadingPage(-1)
-	, GameStatusPage(-1)
-	, PlayerStatusPage(-1)
+: m_pImpl(new CEzLcd())
+, m_currentPage(0)
+, m_tick(0.0f)
+, LogoPage(-1)
+, LoadingPage(-1)
+, GameStatusPage(-1)
+, PlayerStatusPage(-1)
 {
 }
 
@@ -54,7 +54,7 @@ bool CG15LCD::Init()
 
 void CG15LCD::Update(float frameTime)
 {
-	FUNCTION_PROFILER(GetISystem(), PROFILE_GAME);
+	FUNCTION_PROFILER(GetISystem(),PROFILE_GAME);
 	if (g_pGameCVars->cl_g15lcdEnable == 0)
 		return;
 
@@ -62,15 +62,15 @@ void CG15LCD::Update(float frameTime)
 	if (m_tick < 0)
 	{
 		if (g_pGameCVars->cl_g15lcdTick > 0)
-			m_tick = g_pGameCVars->cl_g15lcdTick / 1000.0f;
+			m_tick = g_pGameCVars->cl_g15lcdTick/1000.0f;
 		else
 			m_tick = 0;
 
 		if (IsConnected() && m_currentPage != -1)
 		{
-			if (m_currentPage > 1 && !g_pGame->GetIGameFramework()->IsGameStarted())
+			if(m_currentPage > 1 && !g_pGame->GetIGameFramework()->IsGameStarted())
 				m_currentPage = 0;
-			else if (m_currentPage == 0 && g_pGame->GetIGameFramework()->IsGameStarted())
+			else if(m_currentPage == 0 && g_pGame->GetIGameFramework()->IsGameStarted())
 				m_currentPage = 2;
 
 			if (m_pages[m_currentPage]->PreUpdate())
@@ -85,7 +85,7 @@ void CG15LCD::Update(float frameTime)
 
 bool CG15LCD::IsConnected()
 {
-	return m_pImpl->IsConnected() != FALSE;
+	return m_pImpl->IsConnected()!=FALSE;
 }
 
 CLCDImage* CG15LCD::CreateImage(const char* name, bool visible)
@@ -108,7 +108,7 @@ int CG15LCD::AddPage(CLCDPage* pPage, int pageId)
 	if (pageId == -1)
 	{
 		// generate a new number
-		pageId = m_pImpl->AddNewPage() - 1;
+		pageId = m_pImpl->AddNewPage()-1;
 	}
 
 	pPage->Attach(this, pageId);

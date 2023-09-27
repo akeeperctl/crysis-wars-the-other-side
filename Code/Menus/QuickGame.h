@@ -22,21 +22,21 @@ class  CQuickGameDlg;
 
 class CQuickGame
 {
-	struct SQGServerList;
+  struct SQGServerList;
 public:
-	CQuickGame();
-	~CQuickGame();
-	void StartSearch(CMPHub* hub);
-	void Cancel();
-	void NextStage();
-	int  GetStage()const;
-	bool IsSearching()const;
+  CQuickGame();
+  ~CQuickGame();
+  void StartSearch(CMPHub* hub);
+  void Cancel();
+  void NextStage();
+  int  GetStage()const;
+  bool IsSearching()const;
 private:
-	IServerBrowser* m_browser;
-	int             m_stage;
-	bool            m_searching;
-	std::auto_ptr<SQGServerList>  m_list;
-	std::auto_ptr<CQuickGameDlg>  m_ui;
+  IServerBrowser* m_browser;
+  int             m_stage;
+  bool            m_searching;
+  std::auto_ptr<SQGServerList>  m_list;
+  std::auto_ptr<CQuickGameDlg>  m_ui;
 };
 
 #endif //__QUICKGAME_H__

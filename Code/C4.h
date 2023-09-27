@@ -18,8 +18,10 @@ History:
 # pragma once
 #endif
 
+
 #include <IItemSystem.h>
 #include "Weapon.h"
+
 
 class CC4 :
 	public CWeapon
@@ -33,13 +35,14 @@ public:
 	virtual void PickUp(EntityId pickerId, bool sound, bool select, bool keepHistory);
 	virtual bool CanSelect() const;
 	virtual void Select(bool select);
-	virtual void GetMemoryStatistics(ICrySizer* s) { s->Add(*this); CWeapon::GetMemoryStatistics(s); }
+	virtual void GetMemoryStatistics(ICrySizer * s) { s->Add(*this); CWeapon::GetMemoryStatistics(s); }
 	virtual void Drop(float impulseScale, bool selectNext/* =true */, bool byDeath/* =false */);
+
 
 	struct SetProjectileIdParams
 	{
-		SetProjectileIdParams() : id(0), fmId(0) {};
-		SetProjectileIdParams(EntityId _id, int _fmId) : id(_id), fmId(_fmId) {};
+		SetProjectileIdParams(): id(0), fmId(0) {};
+		SetProjectileIdParams(EntityId _id, int _fmId): id(_id), fmId(_fmId) {};
 
 		EntityId	id;
 		int				fmId;
@@ -53,8 +56,8 @@ public:
 
 	struct RequestTimeParams
 	{
-		RequestTimeParams() : time(0.0f), fmId(0) {};
-		RequestTimeParams(float _time, int _fmId) : time(_time), fmId(_fmId) {};
+		RequestTimeParams(): time(0.0f),  fmId(0) {};
+		RequestTimeParams(float _time, int _fmId): time(_time), fmId(_fmId) {};
 
 		float time;
 		int		fmId;

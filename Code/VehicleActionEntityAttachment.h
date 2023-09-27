@@ -25,18 +25,18 @@ public:
 	virtual ~CVehicleActionEntityAttachment();
 
 	// IVehicleAction
-	virtual bool Init(IVehicle* pVehicle, const SmartScriptTable& table);
+	virtual bool Init(IVehicle* pVehicle, const SmartScriptTable &table);
 	virtual void Reset();
 	virtual void Release() { delete this; }
 
 	virtual int OnEvent(int eventType, SVehicleEventParams& eventParams);
-	void GetMemoryStatistics(ICrySizer* s) { s->Add(*this); }
+	void GetMemoryStatistics(ICrySizer * s) { s->Add(*this); }
 	// ~IVehicleAction
 
 	// IVehicleObject
 	virtual void Serialize(TSerialize ser, unsigned aspects) {}
 	virtual void Update(const float deltaTime);
-	virtual void OnVehicleEvent(EVehicleEvent event, const SVehicleEventParams& params) {}
+	virtual void OnVehicleEvent(EVehicleEvent event, const SVehicleEventParams& params){}
 	// ~IVehicleObject
 
 	bool DetachEntity();

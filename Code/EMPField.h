@@ -19,6 +19,7 @@ History:
 # pragma once
 #endif
 
+
 #include "Projectile.h"
 
 class CPlayer;
@@ -29,9 +30,9 @@ public:
 	CEMPField();
 	virtual ~CEMPField();
 
-	virtual bool Init(IGameObject* pGameObject);
-	virtual void ProcessEvent(SEntityEvent& event);
-	virtual void Launch(const Vec3& pos, const Vec3& dir, const Vec3& velocity, float speedScale);
+	virtual bool Init(IGameObject *pGameObject);
+	virtual void ProcessEvent(SEntityEvent &event);
+	virtual void Launch(const Vec3 &pos, const Vec3 &dir, const Vec3 &velocity, float speedScale);
 
 protected:
 	void OnEMPActivate();
@@ -48,5 +49,6 @@ protected:
 	bool	m_charging;
 	int		m_empEffectId;
 };
+
 
 #endif // __EMPFIELD_H__

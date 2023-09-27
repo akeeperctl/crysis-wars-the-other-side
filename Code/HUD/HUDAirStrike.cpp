@@ -34,14 +34,14 @@ bool CHUD::IsAirStrikeAvailable()
 
 void CHUD::SetAirStrikeEnabled(bool bEnabled)
 {
-	if (bEnabled)
+	if(bEnabled)
 	{
-		if (!m_animAirStrike.IsLoaded())
+		if(!m_animAirStrike.IsLoaded())
 		{
-			m_animAirStrike.Load("Libs/UI/HUD_AirStrikeLocking_Text.gfx", eFD_Center, eFAF_Visible | eFAF_ManualRender);
+			m_animAirStrike.Load("Libs/UI/HUD_AirStrikeLocking_Text.gfx",eFD_Center,eFAF_Visible|eFAF_ManualRender);
 			SetFlashColor(&m_animAirStrike);
 		}
-		m_animAirStrike.Invoke("enableAirStrike", true);
+		m_animAirStrike.Invoke("enableAirStrike",true);
 	}
 	else
 	{
@@ -57,7 +57,7 @@ void CHUD::SetAirStrikeEnabled(bool bEnabled)
 
 void CHUD::AddAirstrikeEntity(EntityId uiEntityId)
 {
-	if (!stl::find(m_possibleAirStrikeTargets, uiEntityId))
+	if(!stl::find(m_possibleAirStrikeTargets, uiEntityId))
 		m_possibleAirStrikeTargets.push_back(uiEntityId);
 }
 
@@ -66,10 +66,10 @@ void CHUD::AddAirstrikeEntity(EntityId uiEntityId)
 void CHUD::ClearAirstrikeEntities()
 {
 	std::vector<EntityId>::const_iterator it = m_possibleAirStrikeTargets.begin();
-	for (; it != m_possibleAirStrikeTargets.end(); ++it)
+	for(; it != m_possibleAirStrikeTargets.end(); ++it)
 	{
 		IEntity* pEntity = gEnv->pEntitySystem->GetEntity(*it);
-		if (pEntity)
+		if(pEntity)
 			UnlockTarget(*it);
 	}
 	m_possibleAirStrikeTargets.clear();
@@ -79,7 +79,7 @@ void CHUD::ClearAirstrikeEntities()
 
 void CHUD::NotifyAirstrikeSucceeded(bool bSucceeded)
 {
-	if (!bSucceeded)
+	if(!bSucceeded)
 	{
 		m_animAirStrike.Invoke("stopCountdown");
 		m_fAirStrikeStarted = 0.0f;
@@ -99,27 +99,27 @@ void CHUD::NotifyAirstrikeSucceeded(bool bSucceeded)
 
 void CHUD::SetAirStrikeBinoculars(bool bEnabled)
 {
-	if (!m_animAirStrike.IsLoaded())
+	if(!m_animAirStrike.IsLoaded())
 		return;
-	m_animAirStrike.Invoke("setBinoculars", bEnabled);
+	m_animAirStrike.Invoke("setBinoculars",bEnabled);
 
-	if (bEnabled)
+	if(bEnabled)
 	{
 		std::vector<EntityId>::const_iterator it = m_possibleAirStrikeTargets.begin();
-		for (; it != m_possibleAirStrikeTargets.end(); ++it)
+		for(; it != m_possibleAirStrikeTargets.end(); ++it)
 		{
 			IEntity* pEntity = gEnv->pEntitySystem->GetEntity(*it);
-			if (pEntity)
+			if(pEntity)
 				LockTarget(*it, eLT_Locked, false, true);
 		}
 	}
 	else
 	{
 		std::vector<EntityId>::const_iterator it = m_possibleAirStrikeTargets.begin();
-		for (; it != m_possibleAirStrikeTargets.end(); ++it)
+		for(; it != m_possibleAirStrikeTargets.end(); ++it)
 		{
 			IEntity* pEntity = gEnv->pEntitySystem->GetEntity(*it);
-			if (pEntity)
+			if(pEntity)
 				UnlockTarget(*it);
 		}
 		EntityId id = 0;
@@ -131,38 +131,38 @@ void CHUD::SetAirStrikeBinoculars(bool bEnabled)
 
 bool CHUD::StartAirStrike()
 {
-	if (!m_animAirStrike.IsLoaded())
+	if(!m_animAirStrike.IsLoaded())
 		return false;
 
-	CCamera camera = GetISystem()->GetViewCamera();
+	CCamera camera=GetISystem()->GetViewCamera();
 
-	IActor* pActor = gEnv->pGame->GetIGameFramework()->GetClientActor();
-	IPhysicalEntity* pSkipEnt = pActor ? pActor->GetEntity()->GetPhysics() : 0;
+	IActor *pActor=gEnv->pGame->GetIGameFramework()->GetClientActor();
+	IPhysicalEntity *pSkipEnt=pActor?pActor->GetEntity()->GetPhysics():0;
 
-	Vec3 dir = (camera.GetViewdir()) * 500.0f;
+	Vec3 dir=(camera.GetViewdir())*500.0f;
 
 	std::vector<EntityId>::const_iterator it = m_possibleAirStrikeTargets.begin();
-	for (; it != m_possibleAirStrikeTargets.end(); ++it)
+	for(; it != m_possibleAirStrikeTargets.end(); ++it)
 	{
 		IEntity* pEntity = gEnv->pEntitySystem->GetEntity(*it);
-		if (pEntity)
+		if(pEntity)
 		{
-			IPhysicalEntity* pPE = pEntity->GetPhysics();
-			if (pPE)
+			IPhysicalEntity *pPE=pEntity->GetPhysics();
+			if(pPE)
 			{
 				ray_hit hit;
 
-				if (gEnv->pPhysicalWorld->RayWorldIntersection(camera.GetPosition(), dir, ent_all, (13 & rwi_pierceability_mask), &hit, 1, &pSkipEnt, pSkipEnt ? 1 : 0))
+				if (gEnv->pPhysicalWorld->RayWorldIntersection(camera.GetPosition(), dir, ent_all, (13&rwi_pierceability_mask), &hit, 1, &pSkipEnt, pSkipEnt?1:0))
 				{
-					if (!hit.bTerrain && hit.pCollider == pPE)
+					if (!hit.bTerrain && hit.pCollider==pPE)
 					{
-						IEntity* pHitEntity = gEnv->pEntitySystem->GetEntityFromPhysics(hit.pCollider);
+						IEntity *pHitEntity = gEnv->pEntitySystem->GetEntityFromPhysics(hit.pCollider);
 						if (pHitEntity == pEntity)
 						{
 							UpdateAirStrikeTarget(pHitEntity->GetId());
-							LockTarget(pHitEntity->GetId(), eLT_Locking, false);
+							LockTarget(pHitEntity->GetId(),eLT_Locking, false);
 							m_animAirStrike.Invoke("startCountdown");
-							HUD_CALL_LISTENERS(OnAirstrike(1, pHitEntity->GetId()));
+							HUD_CALL_LISTENERS(OnAirstrike(1,pHitEntity->GetId()));
 							return true;
 						}
 					}
@@ -177,17 +177,17 @@ bool CHUD::StartAirStrike()
 
 void CHUD::UpdateAirStrikeTarget(EntityId uiTargetEntityId)
 {
-	if (!m_animAirStrike.IsLoaded())
+	if(!m_animAirStrike.IsLoaded())
 		return;
-	if (stl::find(m_possibleAirStrikeTargets, uiTargetEntityId))
+	if(stl::find(m_possibleAirStrikeTargets, uiTargetEntityId))
 	{
-		if (m_iAirStrikeTarget)
+		if(m_iAirStrikeTarget)
 		{
-			LockTarget(m_iAirStrikeTarget, eLT_Locked, false);
-			LockTarget(uiTargetEntityId, eLT_Locking, false);
+			LockTarget(m_iAirStrikeTarget,eLT_Locked, false);
+			LockTarget(uiTargetEntityId,eLT_Locking, false);
 		}
 		m_iAirStrikeTarget = uiTargetEntityId;
-		m_animAirStrike.Invoke("setTarget", (uiTargetEntityId != 0));
+		m_animAirStrike.Invoke("setTarget", (uiTargetEntityId!=0));
 	}
 	else
 	{
@@ -199,9 +199,9 @@ void CHUD::UpdateAirStrikeTarget(EntityId uiTargetEntityId)
 
 void CHUD::LockTarget(EntityId uiTargetEntityId, ELockingType eType, bool bShowText, bool bMultiple)
 {
-	if (!bMultiple)
+	if(!bMultiple)
 	{
-		if (m_entityTargetAutoaimId && uiTargetEntityId != m_entityTargetAutoaimId)
+		if(m_entityTargetAutoaimId && uiTargetEntityId!=m_entityTargetAutoaimId)
 		{
 			UnlockTarget(m_entityTargetAutoaimId);
 		}
@@ -209,13 +209,13 @@ void CHUD::LockTarget(EntityId uiTargetEntityId, ELockingType eType, bool bShowT
 		m_entityTargetAutoaimId = uiTargetEntityId;
 	}
 
-	if (eType == eLT_Locked)
+	if(eType == eLT_Locked)
 	{
-		m_pHUDScopes->m_animSniperScope.Invoke("setLocking", 2);
+		m_pHUDScopes->m_animSniperScope.Invoke("setLocking",2);
 	}
-	else if (eType == eLT_Locking)
+	else if(eType == eLT_Locking)
 	{
-		m_pHUDScopes->m_animSniperScope.Invoke("setLocking", 1);
+		m_pHUDScopes->m_animSniperScope.Invoke("setLocking",1);
 	}
 }
 
@@ -226,8 +226,8 @@ void CHUD::UnlockTarget(EntityId uiTargetEntityId)
 	m_pHUDSilhouettes->ResetSilhouette(uiTargetEntityId);
 	m_pHUDSilhouettes->ResetSilhouette(m_entityTargetAutoaimId);
 
-	m_pHUDScopes->m_animSniperScope.Invoke("setLocking", 3);
-
+	m_pHUDScopes->m_animSniperScope.Invoke("setLocking",3);
+	
 	m_entityTargetAutoaimId = 0;
 }
 
@@ -235,17 +235,17 @@ void CHUD::UnlockTarget(EntityId uiTargetEntityId)
 
 void CHUD::DrawAirstrikeTargetMarkers()
 {
-	if (!m_pHUDScopes->IsBinocularsShown() || !IsAirStrikeAvailable())
+	if(!m_pHUDScopes->IsBinocularsShown() || !IsAirStrikeAvailable())
 		return;
 
 	float fCos = cosf(gEnv->pTimer->GetAsyncCurTime());
 	fCos = fabsf(fCos);
 
 	int amount = m_possibleAirStrikeTargets.size();
-	for (int i = 0; i < amount; ++i)
+	for(int i = 0; i < amount; ++i)
 	{
-		IEntity* pEntity = gEnv->pEntitySystem->GetEntity(m_possibleAirStrikeTargets[i]);
-		m_pHUDSilhouettes->SetSilhouette(pEntity, 1.0f - 0.6f * fCos, 1.0f - 0.4f * fCos, 1.0f - 0.20f * fCos, 0.5f, 1.5f);
+		IEntity *pEntity = gEnv->pEntitySystem->GetEntity(m_possibleAirStrikeTargets[i]);
+		m_pHUDSilhouettes->SetSilhouette(pEntity, 1.0f-0.6f*fCos, 1.0f-0.4f*fCos, 1.0f-0.20f*fCos, 0.5f, 1.5f);
 	}
 }
 

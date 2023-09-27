@@ -21,10 +21,10 @@ History:
 #include "../GameCVars.h"
 #include "../GameRules.h"
 
-CHUDInstantAction::CHUDInstantAction(CHUD* pHUD) :
-	g_pHUD(pHUD)
+CHUDInstantAction::CHUDInstantAction(CHUD *pHUD) : 
+g_pHUD(pHUD)
 {
-	m_animIAScore.Load("Libs/UI/HUD_IAScore.gfx", eFD_Center, eFAF_ManualRender | eFAF_Visible);
+	m_animIAScore.Load("Libs/UI/HUD_IAScore.gfx", eFD_Center, eFAF_ManualRender|eFAF_Visible);
 	m_animIAScore.SetVisible(false);
 }
 
@@ -46,22 +46,23 @@ void CHUDInstantAction::SetHUDColor()
 
 void CHUDInstantAction::UpdateStats()
 {
-	CGameRules* pGameRules = g_pGame->GetGameRules();
-	if (!pGameRules)
+
+	CGameRules *pGameRules=g_pGame->GetGameRules();
+	if(!pGameRules)
 		return;
 
-	IActor* pClientActor = g_pGame->GetIGameFramework()->GetClientActor();
-	if (!pClientActor)
+	IActor *pClientActor=g_pGame->GetIGameFramework()->GetClientActor();
+	if(!pClientActor)
 		return;
 
-	IScriptTable* pGameRulesScript = pGameRules->GetEntity()->GetScriptTable();
-	if (!pGameRulesScript)
+	IScriptTable *pGameRulesScript=pGameRules->GetEntity()->GetScriptTable();
+	if(!pGameRulesScript)
 		return;
 
 	int ownScore = 0;
 	int roundTime = 0;
 
-	HSCRIPTFUNCTION pfnGetScoreFlags = 0;
+	HSCRIPTFUNCTION pfnGetScoreFlags=0;
 	if (pGameRulesScript->GetValue("GetPlayerScore", pfnGetScoreFlags))
 	{
 		ScriptHandle actorId(pClientActor->GetEntityId());
@@ -71,13 +72,14 @@ void CHUDInstantAction::UpdateStats()
 
 	roundTime = floor(pGameRules->GetRemainingGameTime());
 
-	if (ownScore != m_ownScore ||
-		roundTime != m_roundTime)
+	if(	ownScore!=m_ownScore ||
+			roundTime!=m_roundTime)
 	{
 		m_ownScore = ownScore;
 		m_roundTime = roundTime;
 		PushToFlash();
 	}
+
 }
 
 void CHUDInstantAction::Show(bool show)
@@ -87,13 +89,13 @@ void CHUDInstantAction::Show(bool show)
 
 void CHUDInstantAction::PushToFlash()
 {
-	SFlashVarValue args[1] = { m_roundTime };
+	SFlashVarValue args[1] = {m_roundTime};
 	m_animIAScore.Invoke("setValues", args, 1);
 }
 
 void CHUDInstantAction::Update(float fDeltaTime)
 {
-	if (!m_animIAScore.IsLoaded() || !m_animIAScore.GetVisible())
+	if(!m_animIAScore.IsLoaded() || !m_animIAScore.GetVisible())
 		return;
 
 	UpdateStats();

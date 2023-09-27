@@ -13,7 +13,8 @@ History:
 #include "StdAfx.h"
 #include "ItemSharedParams.h"
 
-void CItemSharedParams::GetMemoryStatistics(ICrySizer* s)
+
+void CItemSharedParams::GetMemoryStatistics(ICrySizer *s)
 {
 	s->AddContainer(actions);
 	s->AddContainer(accessoryparams);
@@ -39,15 +40,15 @@ void CItemSharedParams::GetMemoryStatistics(ICrySizer* s)
 		s->Add(iter->first);
 }
 
-CItemSharedParams* CItemSharedParamsList::GetSharedParams(const char* className, bool create)
+CItemSharedParams *CItemSharedParamsList::GetSharedParams(const char *className, bool create)
 {
-	TSharedParamsMap::iterator it = m_params.find(CONST_TEMP_STRING(className));
-	if (it != m_params.end())
+	TSharedParamsMap::iterator it=m_params.find(CONST_TEMP_STRING(className));
+	if (it!=m_params.end())
 		return it->second;
 
 	if (create)
 	{
-		CItemSharedParams* params = new CItemSharedParams();
+		CItemSharedParams *params=new CItemSharedParams();
 		m_params.insert(TSharedParamsMap::value_type(className, params));
 
 		return params;
@@ -56,7 +57,7 @@ CItemSharedParams* CItemSharedParamsList::GetSharedParams(const char* className,
 	return 0;
 }
 
-void CItemSharedParamsList::GetMemoryStatistics(ICrySizer* s)
+void CItemSharedParamsList::GetMemoryStatistics(ICrySizer *s)
 {
 	s->AddContainer(m_params);
 	for (TSharedParamsMap::iterator iter = m_params.begin(); iter != m_params.end(); ++iter)

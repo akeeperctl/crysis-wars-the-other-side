@@ -50,11 +50,11 @@ const float ENTITY_CHECK_TIME = 0.5f;
 extern const char* GetSoundKey(const char* soundName);
 
 CMPTutorial::CMPTutorial()
-	: m_initialised(false)
-	, m_currentBriefingEvent(eTE_StartGame)
-	, m_entityCheckTimer(0.0f)
-	, m_baseCheckTimer(ENTITY_CHECK_TIME / 2.0f)
-	, m_wasInVehicle(false)
+: m_initialised(false)
+, m_currentBriefingEvent(eTE_StartGame)
+, m_entityCheckTimer(0.0f)
+, m_baseCheckTimer(ENTITY_CHECK_TIME / 2.0f)
+, m_wasInVehicle(false)
 {
 	// initialise everything even if disabled - we might be enabled later?
 	int enabled = g_pGameCVars->g_PSTutorial_Enabled;
@@ -75,13 +75,13 @@ CMPTutorial::CMPTutorial()
 
 CMPTutorial::~CMPTutorial()
 {
-	if (m_initialised && g_pGame->GetHUD())
+	if(m_initialised && g_pGame->GetHUD())
 		g_pGame->GetHUD()->UnRegisterListener(this);
 }
 
 void CMPTutorial::InitEvents()
 {
-	SET_TUTORIAL_EVENT_BLANK_KEY(StartGame, mp_american_bridge_officer_1_brief01, hud_mptutorial_disable);
+	SET_TUTORIAL_EVENT_BLANK_KEY(StartGame, mp_american_bridge_officer_1_brief01,hud_mptutorial_disable);
 	SET_TUTORIAL_EVENT_BLANK(ContinueTutorial, mp_american_bridge_officer_1_brief02);
 	SET_TUTORIAL_EVENT_BLANK_KEY(Barracks, mp_american_bridge_officer_1_brief03, hud_buy_weapons);
 	SET_TUTORIAL_EVENT_BLANK_KEY(BarracksTwo, mp_american_bridge_officer_1_brief03_split, hud_mouseclick);
@@ -90,7 +90,7 @@ void CMPTutorial::InitEvents()
 	SET_TUTORIAL_EVENT_BLANK(CloseMap, mp_american_bridge_officer_1_brief06);
 	SET_TUTORIAL_EVENT_BLANK(Swingometer, mp_american_bridge_officer_1_brief07);
 
-	SET_TUTORIAL_EVENT_BLANK(TutorialDisabled, None);
+	SET_TUTORIAL_EVENT_BLANK(TutorialDisabled,None);
 
 	// capturing a factory
 	SET_TUTORIAL_EVENT_BLANK(NeutralFactory, mp_american_bridge_officer_1_factory01);
@@ -126,7 +126,7 @@ void CMPTutorial::InitEvents()
 	SET_TUTORIAL_EVENT_BLANK(TACTankStarted, mp_american_bridge_officer_1_ingame06);
 	SET_TUTORIAL_EVENT_BLANK(TACTankCompleted, mp_american_bridge_officer_1_ingame07);
 	SET_TUTORIAL_EVENT_BLANK(TACTankBase, mp_american_bridge_officer_1_ingame08);
-	SET_TUTORIAL_EVENT_BLANK(TACLauncherCompleted, mp_american_bridge_officer_1_ingame10a);
+	SET_TUTORIAL_EVENT_BLANK(TACLauncherCompleted, mp_american_bridge_officer_1_ingame10a);	
 	SET_TUTORIAL_EVENT_BLANK(SingularityStarted, mp_american_bridge_officer_1_ingame09);
 	SET_TUTORIAL_EVENT_BLANK(SingularityCompleted, mp_american_bridge_officer_1_ingame10);
 	SET_TUTORIAL_EVENT_BLANK(SingularityBase, mp_american_bridge_officer_1_ingame11);
@@ -136,7 +136,7 @@ void CMPTutorial::InitEvents()
 	SET_TUTORIAL_EVENT_BLANK(HqCritical, mp_american_bridge_officer_1_ingame17);
 	SET_TUTORIAL_EVENT_BLANK(ApproachEnemyBase, mp_american_bridge_officer_1_ingame18);
 	SET_TUTORIAL_EVENT_BLANK(ApproachEnemyHq, mp_american_bridge_officer_1_ingame19);
-	SET_TUTORIAL_EVENT_BLANK(ApproachEnemySub, mp_american_bridge_officer_1_ingame19_sub);
+	SET_TUTORIAL_EVENT_BLANK(ApproachEnemySub, mp_american_bridge_officer_1_ingame19_sub);	
 	SET_TUTORIAL_EVENT_BLANK(ApproachEnemyCarrier, mp_american_bridge_officer_1_ingame19_carrier);
 	SET_TUTORIAL_EVENT_BLANK(GameOverWin, mp_american_bridge_officer_1_win01);
 	SET_TUTORIAL_EVENT_BLANK(GameOverLose, mp_american_bridge_officer_1_lose01);
@@ -147,13 +147,13 @@ void CMPTutorial::InitEvents()
 	//m_events[eTE_BarracksTwo].m_removal = eMRC_CloseBuyMenu;
 	m_events[eTE_CloseBarracksBuyMenu].m_removal = eMRC_OpenMap;
 	m_events[eTE_CaptureFactory].m_removal = eMRC_OpenBuyMenu;
-	//	m_events[eTE_VehicleBuyMenu].m_removal = eMRC_CloseBuyMenu;
-	//	m_events[eTE_WarBuyMenu].m_removal = eMRC_CloseBuyMenu;
-	//	m_events[eTE_PrototypeBuyMenu].m_removal = eMRC_CloseBuyMenu;
-	//	m_events[eTE_PrototypeTab].m_removal = eMRC_CloseBuyMenu;
-	//	m_events[eTE_NavalBuyMenu].m_removal = eMRC_CloseBuyMenu;
-	//	m_events[eTE_AirBuyMenu].m_removal = eMRC_CloseBuyMenu;
-	//	m_events[eTE_BuyAmmo].m_removal = eMRC_CloseBuyMenu;
+//	m_events[eTE_VehicleBuyMenu].m_removal = eMRC_CloseBuyMenu;
+//	m_events[eTE_WarBuyMenu].m_removal = eMRC_CloseBuyMenu;
+//	m_events[eTE_PrototypeBuyMenu].m_removal = eMRC_CloseBuyMenu;
+//	m_events[eTE_PrototypeTab].m_removal = eMRC_CloseBuyMenu;
+//	m_events[eTE_NavalBuyMenu].m_removal = eMRC_CloseBuyMenu;
+//	m_events[eTE_AirBuyMenu].m_removal = eMRC_CloseBuyMenu;
+//	m_events[eTE_BuyAmmo].m_removal = eMRC_CloseBuyMenu;
 }
 
 void CMPTutorial::InitEntityClasses()
@@ -171,61 +171,61 @@ void CMPTutorial::InitEntityClasses()
 
 void CMPTutorial::OnBuyMenuOpen(bool open, FlashRadarType buyZoneType)
 {
-	if (!m_enabled)
+	if(!m_enabled)
 		return;
 
 	// hide any previous messages which are waiting for this event.
-	if (open && m_currentEvent.m_msgRemovalCondition == eMRC_OpenBuyMenu)
+	if(open && m_currentEvent.m_msgRemovalCondition == eMRC_OpenBuyMenu)
 	{
-		if (!m_currentEvent.m_pCurrentSound.get())
+		if(!m_currentEvent.m_pCurrentSound.get())
 			HideMessage();
-		else
+		else 
 			m_currentEvent.m_msgRemovalCondition = eMRC_SoundFinished;
 	}
-	else if (!open && m_currentEvent.m_msgRemovalCondition == eMRC_CloseBuyMenu)
+	else if(!open && m_currentEvent.m_msgRemovalCondition == eMRC_CloseBuyMenu)
 	{
-		if (!m_currentEvent.m_pCurrentSound.get())
-			HideMessage();
+		if(!m_currentEvent.m_pCurrentSound.get())
+			HideMessage();	
 		else
 			m_currentEvent.m_msgRemovalCondition = eMRC_SoundFinished;
 	}
 
-	if (open)
+	if(open)
 	{
 		// depends on type of factory
 		bool showPrompt = false;
-		switch (buyZoneType)
+		switch(buyZoneType)
 		{
-		case ELTV:				// this seems to be the default value, and occurs when players are at spawn points.
-		case EHeadquarter:
-		case EHeadquarter2:
-		case EBarracks:
-			TriggerEvent(eTE_BarracksTwo);
-			break;
+			case ELTV:				// this seems to be the default value, and occurs when players are at spawn points.
+			case EHeadquarter:
+			case EHeadquarter2:
+			case EBarracks:
+				TriggerEvent(eTE_BarracksTwo);
+				break;
 
-		case EFactoryVehicle:
-			showPrompt = TriggerEvent(eTE_VehicleBuyMenu);
-			break;
+			case EFactoryVehicle:
+				showPrompt = TriggerEvent(eTE_VehicleBuyMenu);
+				break;
 
-		case EFactoryAir:
-			showPrompt = TriggerEvent(eTE_AirBuyMenu);
-			break;
+			case EFactoryAir:
+				showPrompt = TriggerEvent(eTE_AirBuyMenu);
+				break;
 
-		case EFactoryPrototype:
-			showPrompt = TriggerEvent(eTE_PrototypeBuyMenu);
-			break;
+			case EFactoryPrototype:
+				showPrompt = TriggerEvent(eTE_PrototypeBuyMenu);
+				break;
 
-		case EFactorySea:
-			showPrompt = TriggerEvent(eTE_NavalBuyMenu);
-			break;
+			case EFactorySea:
+				showPrompt = TriggerEvent(eTE_NavalBuyMenu);
+				break;
 
-		case EFactoryTank:
-			showPrompt = TriggerEvent(eTE_WarBuyMenu);
-			break;
+			case EFactoryTank:
+				showPrompt = TriggerEvent(eTE_WarBuyMenu);
+				break;
 
-		default:
-			// other types don't show help
-			break;
+			default:
+				// other types don't show help
+				break;
 		}
 
 		/*if(!showPrompt)
@@ -237,7 +237,7 @@ void CMPTutorial::OnBuyMenuOpen(bool open, FlashRadarType buyZoneType)
 	}
 	else
 	{
-		if (buyZoneType == EBarracks
+		if(buyZoneType == EBarracks
 			|| buyZoneType == EHeadquarter
 			|| buyZoneType == EHeadquarter2
 			|| buyZoneType == ELTV)
@@ -249,19 +249,19 @@ void CMPTutorial::OnBuyMenuOpen(bool open, FlashRadarType buyZoneType)
 
 void CMPTutorial::OnMapOpen(bool open)
 {
-	if (!m_enabled)
+	if(!m_enabled)
 		return;
 
 	// hide any previous messages which are waiting for this event.
-	if (open && m_currentEvent.m_msgRemovalCondition == eMRC_OpenMap)
+	if(open && m_currentEvent.m_msgRemovalCondition == eMRC_OpenMap)
 	{
-		if (!m_currentEvent.m_pCurrentSound.get())
+		if(!m_currentEvent.m_pCurrentSound.get())
 			HideMessage();
 		else
 			m_currentEvent.m_msgRemovalCondition = eMRC_SoundFinished;
 	}
 
-	if (open)
+	if(open)
 	{
 		TriggerEvent(eTE_OpenMap);
 	}
@@ -274,13 +274,13 @@ void CMPTutorial::OnMapOpen(bool open)
 void CMPTutorial::OnEntityAddedToRadar(EntityId id)
 {
 	// if the entity is an enemy player, show the prompt.
-	if (m_events[eTE_EnemySpotted].m_status != eMS_Checking)
+	if(m_events[eTE_EnemySpotted].m_status != eMS_Checking)
 		return;
 
 	IEntity* pEntity = gEnv->pEntitySystem->GetEntity(id);
-	if (pEntity && pEntity->GetClass() == m_pPlayerClass)
+	if(pEntity && pEntity->GetClass() == m_pPlayerClass)
 	{
-		if (g_pGame->GetGameRules()->GetTeam(id) != g_pGame->GetGameRules()->GetTeam(g_pGame->GetIGameFramework()->GetClientActor()->GetEntityId()))
+		if(g_pGame->GetGameRules()->GetTeam(id) != g_pGame->GetGameRules()->GetTeam(g_pGame->GetIGameFramework()->GetClientActor()->GetEntityId()))
 		{
 			TriggerEvent(eTE_EnemySpotted);
 		}
@@ -289,9 +289,9 @@ void CMPTutorial::OnEntityAddedToRadar(EntityId id)
 
 void CMPTutorial::OnShowBuyMenuPage(int page)
 {
-	if (page == CHUDPowerStruggle::E_AMMO)
+	if(page == CHUDPowerStruggle::E_AMMO)
 		TriggerEvent(eTE_BuyAmmo);
-	else if (page == CHUDPowerStruggle::E_PROTOTYPES)
+	else if(page == CHUDPowerStruggle::E_PROTOTYPES)
 		TriggerEvent(eTE_PrototypeBuyMenu);
 }
 
@@ -302,30 +302,30 @@ void CMPTutorial::OnShowScoreBoard()
 
 void CMPTutorial::OnBuyItem(const char* itemname)
 {
-	if (m_events[eTE_ClaymoreOrMineBought].m_status == eMS_Checking)
+	if(m_events[eTE_ClaymoreOrMineBought].m_status == eMS_Checking)
 	{
-		if (!strcmp(itemname, "claymore") || !strcmp(itemname, "avmine"))
+		if(!strcmp(itemname, "claymore") || !strcmp(itemname, "avmine"))
 		{
 			TriggerEvent(eTE_ClaymoreOrMineBought);
 		}
 	}
 }
 
-void CMPTutorial::OnSoundEvent(ESoundCallbackEvent event, ISound* pSound)
+void CMPTutorial::OnSoundEvent( ESoundCallbackEvent event,ISound *pSound )
 {
-	if (event == SOUND_EVENT_ON_PLAYBACK_STOPPED)
+	if(event == SOUND_EVENT_ON_PLAYBACK_STOPPED)
 	{
 		assert(m_currentEvent.m_pCurrentSound == pSound);
-		if (pSound)
+		if(pSound)
 			pSound->RemoveEventListener(this);
 
 		m_currentEvent.m_pCurrentSound = NULL;
 
 		// only remove text if there's no additional condition on it.
-		if (m_currentEvent.m_msgRemovalCondition == eMRC_SoundFinished)
+		if(m_currentEvent.m_msgRemovalCondition == eMRC_SoundFinished)
 		{
 			m_currentEvent.m_msgRemovalCondition = eMRC_Time;
-			m_currentEvent.m_msgDisplayTime = 0.0f;
+			m_currentEvent.m_msgDisplayTime = 0.0f;		
 		}
 	}
 }
@@ -334,47 +334,47 @@ void CMPTutorial::Update()
 {
 	FUNCTION_PROFILER(GetISystem(), PROFILE_GAME);
 
-	if (!m_enabled && g_pGameCVars->g_PSTutorial_Enabled)
+	if(!m_enabled && g_pGameCVars->g_PSTutorial_Enabled)
 		EnableTutorialMode(true);
-	else if (m_enabled && !g_pGameCVars->g_PSTutorial_Enabled)
+	else if(m_enabled && !g_pGameCVars->g_PSTutorial_Enabled)
 		EnableTutorialMode(false);
 
 	m_currentEvent.m_msgDisplayTime -= gEnv->pTimer->GetFrameTime();
-	if (!m_enabled)
-	{
-		if (m_currentEvent.m_msgDisplayTime < 0.0f && m_currentEvent.m_msgRemovalCondition != eMRC_None)
+	if(!m_enabled)
+	{	
+		if(m_currentEvent.m_msgDisplayTime < 0.0f && m_currentEvent.m_msgRemovalCondition != eMRC_None)
 		{
 			m_currentEvent.m_msgRemovalCondition = eMRC_None;
-			SAFE_HUD_FUNC(ShowTutorialText(NULL, 1));
+			SAFE_HUD_FUNC(ShowTutorialText(NULL,1));
 		}
 	}
 
-	// update the text... must be done even if not enabled, to ensure the 'you may reenable...'
+	// update the text... must be done even if not enabled, to ensure the 'you may reenable...' 
 	//	message is shown correctly.
-	if (m_currentEvent.m_numChunks > 0)
+	if(m_currentEvent.m_numChunks > 0)
 	{
 		// calculate how far through the current sound we are
 		CTimeValue now = gEnv->pTimer->GetFrameStartTime();
 		float soundTimer = now.GetMilliSeconds() - m_currentEvent.m_soundStartTime;
 		assert(soundTimer >= 0);
 		float soundPercent = 1.0f;
-		if (m_currentEvent.m_soundLength == 0.0f && m_currentEvent.m_pCurrentSound.get())
+		if(m_currentEvent.m_soundLength == 0.0f && m_currentEvent.m_pCurrentSound.get())
 		{
 			m_currentEvent.m_soundLength = m_currentEvent.m_pCurrentSound->GetLengthMs();
 		}
-		if (m_currentEvent.m_soundLength > 0.0f)
+		if(m_currentEvent.m_soundLength > 0.0f)
 		{
 			soundPercent = soundTimer / m_currentEvent.m_soundLength;
 		}
-		for (int i = m_currentEvent.m_numChunks - 1; i > m_currentEvent.m_currentChunk; --i)
+		for(int i=m_currentEvent.m_numChunks-1; i > m_currentEvent.m_currentChunk; --i)
 		{
-			if (m_currentEvent.m_chunks[i].m_startPercent <= soundPercent)
+			if(m_currentEvent.m_chunks[i].m_startPercent <= soundPercent)
 			{
 				m_currentEvent.m_currentChunk = i;
 
 				int pos = 2; // 2=bottom, 1=middle
-				IActor* pClientActor = g_pGame->GetIGameFramework()->GetClientActor();
-				if (pClientActor && pClientActor->GetLinkedVehicle())
+				IActor *pClientActor = g_pGame->GetIGameFramework()->GetClientActor();	
+				if(pClientActor && pClientActor->GetLinkedVehicle())
 				{
 					pos = 1;
 				}
@@ -385,22 +385,22 @@ void CMPTutorial::Update()
 		}
 	}
 
-	if (!m_enabled)
+	if(!m_enabled)
 		return;
 
 	CPlayer* pPlayer = static_cast<CPlayer*>(g_pGame->GetIGameFramework()->GetClientActor());
-	if (!pPlayer)
+	if(!pPlayer)
 		return;
 
 	// don't start until game begins
-	if (pPlayer->GetSpectatorMode() != 0 || g_pGame->GetGameRules()->GetCurrentStateId() != 3)
+	if(pPlayer->GetSpectatorMode() != 0 || g_pGame->GetGameRules()->GetCurrentStateId() != 3)
 		return;
 
-	if (!m_initialised)
+	if(!m_initialised)
 	{
 		m_initialised = true;
 
-		if (g_pGame->GetHUD())
+		if(g_pGame->GetHUD())
 		{
 			// register as a HUD listener
 			g_pGame->GetHUD()->RegisterListener(this);
@@ -410,24 +410,24 @@ void CMPTutorial::Update()
 		IEntityItPtr pIt = gEnv->pEntitySystem->GetEntityIterator();
 		while (!pIt->IsEnd())
 		{
-			if (IEntity* pEnt = pIt->Next())
+			if (IEntity * pEnt = pIt->Next())
 			{
-				if (pEnt->GetClass() == m_pHQClass)
+				if(pEnt->GetClass() == m_pHQClass)
 				{
 					m_baseList.push_back(pEnt->GetId());
 					//CryLog("Adding HQ %d to list: %d", pEnt->GetId(), m_baseList.size());
 				}
-				else if (pEnt->GetClass() == m_pAlienEnergyPointClass)
+				else if(pEnt->GetClass() == m_pAlienEnergyPointClass)
 				{
 					m_alienEnergyPointList.push_back(pEnt->GetId());
 					//CryLog("Adding AEP %d to list: %d", pEnt->GetId(), m_alienEnergyPointList.size());
 				}
-				else if (pEnt->GetClass() == m_pSpawnGroupClass)
+				else if(pEnt->GetClass() == m_pSpawnGroupClass)
 				{
 					m_spawnGroupList.push_back(pEnt->GetId());
 					//CryLog("Adding spawngroup %d to list: %d", pEnt->GetId(), m_spawnGroupList.size());
 				}
-				else if (pEnt->GetClass() == m_pFactoryClass)
+				else if(pEnt->GetClass() == m_pFactoryClass)
 				{
 					m_factoryList.push_back(pEnt->GetId());
 					//CryLog("Adding Factory %d to list: %d", pEnt->GetId(), m_factoryList.size());
@@ -440,11 +440,11 @@ void CMPTutorial::Update()
 	bool showPrompt = CheckBriefingEvents(pPlayer);
 
 	// player has been killed
-	if (pPlayer->GetHealth() <= 0)
+	if(pPlayer->GetHealth() <= 0)
 	{
 		showPrompt = TriggerEvent(eTE_Killed);
 	}
-	else if (!showPrompt)
+	else if(!showPrompt)
 	{
 		// check each event type here. Which might take a while.
 
@@ -453,7 +453,7 @@ void CMPTutorial::Update()
 		// enter hostile factory
 		// find alien crash
 		m_entityCheckTimer -= gEnv->pTimer->GetFrameTime();
-		if (m_entityCheckTimer < 0.0f)
+		if(m_entityCheckTimer < 0.0f)
 		{
 			CheckNearbyEntities(pPlayer);
 			m_entityCheckTimer = ENTITY_CHECK_TIME;
@@ -463,12 +463,12 @@ void CMPTutorial::Update()
 		CheckVehicles(pPlayer);
 
 		// player has been wounded
-		if (pPlayer->GetHealth() < pPlayer->GetMaxHealth())
+		if(pPlayer->GetHealth() < pPlayer->GetMaxHealth())
 			TriggerEvent(eTE_Wounded);
 
 		// bases
 		m_baseCheckTimer -= gEnv->pTimer->GetFrameTime();
-		if (m_baseCheckTimer < 0.0f)
+		if(m_baseCheckTimer < 0.0f)
 		{
 			CheckBases(pPlayer);
 			m_baseCheckTimer = ENTITY_CHECK_TIME;
@@ -476,11 +476,11 @@ void CMPTutorial::Update()
 	}
 
 	bool promptShown = false;
-	for (int i = 0; i < eTE_NumEvents; ++i)
+	for(int i=0; i<eTE_NumEvents; ++i)
 	{
-		if (m_events[i].m_status == eMS_Waiting)
+		if(m_events[i].m_status == eMS_Waiting)
 		{
-			if (m_currentEvent.m_msgDisplayTime < -MESSAGE_GAP_TIME)
+			if(m_currentEvent.m_msgDisplayTime < -MESSAGE_GAP_TIME)
 			{
 				ShowMessage(m_events[i]);
 			}
@@ -489,7 +489,7 @@ void CMPTutorial::Update()
 		}
 	}
 
-	if (!promptShown && (m_currentEvent.m_msgRemovalCondition == eMRC_Time) && (m_currentEvent.m_msgDisplayTime < 0.0f))
+	if(!promptShown	&& (m_currentEvent.m_msgRemovalCondition == eMRC_Time) && (m_currentEvent.m_msgDisplayTime < 0.0f))
 	{
 		HideMessage();
 	}
@@ -500,17 +500,17 @@ void CMPTutorial::ShowMessage(STutorialEvent& event)
 	assert(event.m_status == eMS_Waiting);
 
 	// cancel previous sound if necessary
-	if (m_currentEvent.m_pCurrentSound.get())
+	if(m_currentEvent.m_pCurrentSound.get())
 	{
 		m_currentEvent.m_pCurrentSound->Stop(ESoundStopMode_AtOnce);
 		m_currentEvent.m_pCurrentSound = NULL;
 	}
 
 	// also play the sound here
-	if (gEnv->pSoundSystem && event.m_soundName.compare("None"))
+	if(gEnv->pSoundSystem && event.m_soundName.compare("None"))
 	{
 		string soundName = "mp_american/" + event.m_soundName;
-		m_currentEvent.m_pCurrentSound = gEnv->pSoundSystem->CreateSound(soundName.c_str(), FLAG_SOUND_VOICE);
+		m_currentEvent.m_pCurrentSound = gEnv->pSoundSystem->CreateSound(soundName.c_str(),FLAG_SOUND_VOICE);
 		if (m_currentEvent.m_pCurrentSound.get())
 		{
 			m_currentEvent.m_pCurrentSound->AddEventListener(this, "mptutorial");
@@ -524,17 +524,18 @@ void CMPTutorial::ShowMessage(STutorialEvent& event)
 	else
 	{
 		m_currentEvent.m_msgDisplayTime = MESSAGE_DISPLAY_TIME;
+
 	}
 
 	// create the localised text string from enum
 	string msg;
 	wstring localizedString;
 	wstring finalString;
-	ILocalizationManager* pLocalizationMan = gEnv->pSystem->GetLocalizationManager();
-	if (!pLocalizationMan)
+	ILocalizationManager *pLocalizationMan = gEnv->pSystem->GetLocalizationManager();
+	if(!pLocalizationMan) 
 		return;
 
-	if (m_currentEvent.m_pCurrentSound)
+	if(m_currentEvent.m_pCurrentSound)
 	{
 		msg = GetSoundKey(m_currentEvent.m_pCurrentSound->GetName());
 		pLocalizationMan->GetSubtitle(msg.c_str(), localizedString, true);
@@ -545,11 +546,11 @@ void CMPTutorial::ShowMessage(STutorialEvent& event)
 		pLocalizationMan->LocalizeString(msg, localizedString);
 	}
 
-	if (localizedString.empty())
+	if(localizedString.empty())
 		return;
 
 	// fill out keynames if necessary
-	if (!strcmp(event.m_name, "BoardVehicle"))
+	if(!strcmp(event.m_name, "BoardVehicle"))
 	{
 		// special case for this event - has 5 actions associated...
 		string action1 = "@cc_";
@@ -571,10 +572,10 @@ void CMPTutorial::ShowMessage(STutorialEvent& event)
 		pLocalizationMan->LocalizeString(action4, wActions[3]);
 		pLocalizationMan->LocalizeString(action5, wActions[4]);
 
-		const wchar_t* params[] = { wActions[0].c_str(), wActions[1].c_str(), wActions[2].c_str(), wActions[3].c_str(), wActions[4].c_str() };
+		const wchar_t* params[] = {wActions[0].c_str(), wActions[1].c_str(), wActions[2].c_str(), wActions[3].c_str(), wActions[4].c_str()};
 		pLocalizationMan->FormatStringMessage(finalString, localizedString, params, 5);
 	}
-	else if (!event.m_action.empty())
+	else if(!event.m_action.empty())
 	{
 		// first get the key name (eg 'mouse1') and make it into a format the localization system understands
 
@@ -599,7 +600,7 @@ void CMPTutorial::ShowMessage(STutorialEvent& event)
 
 	// set message removal condition
 	m_currentEvent.m_msgRemovalCondition = event.m_removal;
-	if (!event.m_soundName.compare("None") && m_currentEvent.m_msgRemovalCondition == eMRC_SoundFinished)
+	if(!event.m_soundName.compare("None") && m_currentEvent.m_msgRemovalCondition == eMRC_SoundFinished)
 		m_currentEvent.m_msgRemovalCondition = eMRC_Time;	// since for now there're some that don't have audio.
 }
 
@@ -618,17 +619,17 @@ void CMPTutorial::CreateTextChunks(const wstring& localizedString)
 	while (pos != wstring::npos)
 	{
 		STutorialTextChunk& chunk = m_currentEvent.m_chunks[m_currentEvent.m_numChunks];
-		chunk.m_text.assign(localizedString.c_str() + startPos, pos - startPos);		// for simplicity just copy the text to event buffer
+		chunk.m_text.assign(localizedString.c_str() + startPos, pos-startPos);		// for simplicity just copy the text to event buffer
 		chunk.m_startPos = startPos;
-		chunk.m_length = pos - startPos;
+		chunk.m_length = pos-startPos;
 		++m_currentEvent.m_numChunks;
 
-		if (m_currentEvent.m_numChunks == MAX_CHUNKS - 1)
+		if (m_currentEvent.m_numChunks == MAX_CHUNKS-1)
 		{
 			GameWarning("CMPTutorial::CreateTextChunks: tutorial event '%S' exceeds max. number of chunks [%d]", localizedString.c_str(), MAX_CHUNKS);
 			break;
 		}
-		startPos = pos + tokenLen;
+		startPos = pos+tokenLen;
 		pos = localizedString.find(token, startPos);
 	}
 
@@ -638,18 +639,18 @@ void CMPTutorial::CreateTextChunks(const wstring& localizedString)
 	{
 		STutorialTextChunk& chunk = m_currentEvent.m_chunks[m_currentEvent.m_numChunks];
 		chunk.m_startPos = startPos;
-		chunk.m_length = len - startPos;
-		chunk.m_text.assign(localizedString.c_str() + startPos, len - startPos);		// for simplicity just copy the text to event buffer
-		++m_currentEvent.m_numChunks;
+		chunk.m_length = len-startPos;
+		chunk.m_text.assign(localizedString.c_str() + startPos, len-startPos);		// for simplicity just copy the text to event buffer
+ 		++m_currentEvent.m_numChunks;
 
 		// now we have the total number of chunks, calc the string length without tokens
-		size_t realCharLength = len - (m_currentEvent.m_numChunks - 1) * tokenLen;
-		for (size_t i = 0; i < m_currentEvent.m_numChunks; ++i)
+		size_t realCharLength = len - (m_currentEvent.m_numChunks-1) * tokenLen;
+		for (size_t i=0; i<m_currentEvent.m_numChunks; ++i)
 		{
 			STutorialTextChunk& chunk = m_currentEvent.m_chunks[i];
 
 			size_t realPos = chunk.m_startPos - i * tokenLen; // calculated with respect to realCharLength
-			float pos = (float)realPos / (float)realCharLength; // pos = [0,1]
+			float pos = (float) realPos / (float) realCharLength; // pos = [0,1]
 			chunk.m_startPercent = pos;
 		}
 	}
@@ -669,10 +670,10 @@ void CMPTutorial::CreateTextChunks(const wstring& localizedString)
 
 void CMPTutorial::HideMessage()
 {
-	if (g_pGame && g_pGame->GetHUD())
-		g_pGame->GetHUD()->ShowTutorialText(NULL, 1);
+	if(g_pGame && g_pGame->GetHUD())
+		g_pGame->GetHUD()->ShowTutorialText(NULL,1);
 
-	if (m_currentEvent.m_pCurrentSound.get())
+	if(m_currentEvent.m_pCurrentSound.get())
 	{
 		m_currentEvent.m_pCurrentSound->Stop(ESoundStopMode_AtOnce);
 		m_currentEvent.m_pCurrentSound = NULL;
@@ -691,7 +692,7 @@ const char* CMPTutorial::GetKeyName(const char* action)
 		IActionMapBindInfoIteratorPtr pIter = pMap->CreateBindInfoIterator();
 		while (const SActionMapBindInfo* pInfo = pIter->Next())
 		{
-			if (!strcmp(pInfo->action, action))
+			if(!strcmp(pInfo->action, action))
 				return pInfo->keys[0];
 		}
 	}
@@ -701,7 +702,7 @@ const char* CMPTutorial::GetKeyName(const char* action)
 
 bool CMPTutorial::TriggerEvent(ETutorialEvent event)
 {
-	if (m_events[event].m_status != eMS_Checking)
+	if(m_events[event].m_status != eMS_Checking)
 		return false;
 
 	m_events[event].m_status = eMS_Waiting;
@@ -712,16 +713,16 @@ bool CMPTutorial::TriggerEvent(ETutorialEvent event)
 void CMPTutorial::ForceTriggerEvent(IConsoleCmdArgs* pArgs)
 {
 	CMPTutorial* pTutorial = g_pGame->GetGameRules()->GetMPTutorial();
-	if (!pTutorial)
+	if(!pTutorial)
 		return;
 
-	if (pArgs && pArgs->GetArgCount() > 1)
+	if(pArgs && pArgs->GetArgCount() > 1)
 	{
 		// parse arg1 to find which event to trigger
 		const char* testname = pArgs->GetArg(1);
-		for (int i = 0; i < eTE_NumEvents; ++i)
+		for(int i=0; i<eTE_NumEvents; ++i)
 		{
-			if (!strcmp(testname, pTutorial->m_events[i].m_name.c_str()))
+			if(!strcmp(testname, pTutorial->m_events[i].m_name.c_str()))
 			{
 				pTutorial->m_events[i].m_status = eMS_Waiting;
 				return;
@@ -733,9 +734,9 @@ void CMPTutorial::ForceTriggerEvent(IConsoleCmdArgs* pArgs)
 void CMPTutorial::ResetAllEvents(IConsoleCmdArgs* args)
 {
 	CMPTutorial* pTutorial = g_pGame->GetGameRules()->GetMPTutorial();
-	if (pTutorial)
+	if(pTutorial)
 	{
-		for (int i = 0; i < eTE_NumEvents; ++i)
+		for(int i=0; i<eTE_NumEvents; ++i)
 		{
 			pTutorial->m_events[i].m_status = eMS_Checking;
 		}
@@ -745,7 +746,7 @@ void CMPTutorial::ResetAllEvents(IConsoleCmdArgs* args)
 
 void CMPTutorial::EnableTutorialMode(bool enable)
 {
-	if (enable == false && m_enabled)
+	if(enable == false && m_enabled)
 	{
 		// don't trigger this as normal, just fire off the message
 		m_events[eTE_TutorialDisabled].m_status = eMS_Waiting;
@@ -760,16 +761,16 @@ bool CMPTutorial::CheckBriefingEvents(const CPlayer* pPlayer)
 {
 	bool showPrompt = false;
 
-	if (m_currentBriefingEvent < eTE_FIRST_BRIEFING
+	if(m_currentBriefingEvent < eTE_FIRST_BRIEFING 
 		|| m_currentBriefingEvent > eTE_LAST_BRIEFING
 		|| m_events[m_currentBriefingEvent].m_status != eMS_Checking)
 		return showPrompt;
 
-	switch (m_currentBriefingEvent)
+	switch(m_currentBriefingEvent)
 	{
 	case eTE_StartGame:
 		// trigger as soon as player spawns for the first time. Must be a better way than the state id?
-		if (pPlayer->GetSpectatorMode() == 0 && g_pGame->GetGameRules()->GetCurrentStateId() == 3)
+		if(pPlayer->GetSpectatorMode() == 0 && g_pGame->GetGameRules()->GetCurrentStateId() == 3)
 		{
 			showPrompt = TriggerEvent(m_currentBriefingEvent);
 			m_currentBriefingEvent = eTE_ContinueTutorial;
@@ -778,7 +779,7 @@ bool CMPTutorial::CheckBriefingEvents(const CPlayer* pPlayer)
 
 	case eTE_ContinueTutorial:
 		// trigger right after previous, so long as 'end tutorial' hasn't been pressed. (if it has, tutorial will be disabled)
-		if (m_events[eTE_StartGame].m_status != eMS_Checking)
+		if(m_events[eTE_StartGame].m_status != eMS_Checking)
 		{
 			showPrompt = TriggerEvent(m_currentBriefingEvent);
 			m_currentBriefingEvent = eTE_Barracks;
@@ -787,7 +788,7 @@ bool CMPTutorial::CheckBriefingEvents(const CPlayer* pPlayer)
 
 	case eTE_Barracks:
 		// trigger 3s after previous ones dismissed
-		if (m_events[eTE_ContinueTutorial].m_status != eMS_Checking)
+		if(m_events[eTE_ContinueTutorial].m_status != eMS_Checking)
 		{
 			showPrompt = TriggerEvent(m_currentBriefingEvent);
 			m_currentBriefingEvent = eTE_CloseBarracksBuyMenu;
@@ -811,7 +812,7 @@ bool CMPTutorial::CheckBriefingEvents(const CPlayer* pPlayer)
 
 	case eTE_Swingometer:
 		// triggered after close map message
-		if (m_events[eTE_CloseMap].m_status != eMS_Checking)
+		if(m_events[eTE_CloseMap].m_status != eMS_Checking)
 		{
 			showPrompt = TriggerEvent(m_currentBriefingEvent);
 			m_currentBriefingEvent = eTE_NullEvent;
@@ -822,7 +823,7 @@ bool CMPTutorial::CheckBriefingEvents(const CPlayer* pPlayer)
 	return showPrompt;
 }
 
-bool CMPTutorial::CheckNearbyEntities(const CPlayer* pPlayer)
+bool CMPTutorial::CheckNearbyEntities(const CPlayer *pPlayer)
 {
 	FUNCTION_PROFILER(GetISystem(), PROFILE_GAME);
 
@@ -836,21 +837,21 @@ bool CMPTutorial::CheckNearbyEntities(const CPlayer* pPlayer)
 	//	eTE_DestroyEnemyHQ
 	//	eTE_CaptureAlienSite
 	//	If none of these need checking, don't bother.
-	if (!(m_events[eTE_NeutralFactory].m_status == eMS_Checking
-		|| m_events[eTE_CaptureFactory].m_status == eMS_Checking
-		|| m_events[eTE_EnterHostileFactory].m_status == eMS_Checking
-		|| m_events[eTE_EnterPrototypeFactory].m_status == eMS_Checking
-		|| m_events[eTE_ApproachEnemyBase].m_status == eMS_Checking
-		|| m_events[eTE_ApproachEnemyHq].m_status == eMS_Checking
-		|| m_events[eTE_CaptureAlienSite].m_status == eMS_Checking
-		|| m_events[eTE_AllAliensNoPrototype].m_status == eMS_Checking
-		|| m_events[eTE_AlienNoPrototype].m_status == eMS_Checking))
+	if(! ( m_events[eTE_NeutralFactory].m_status == eMS_Checking
+			|| m_events[eTE_CaptureFactory].m_status == eMS_Checking
+		  || m_events[eTE_EnterHostileFactory].m_status == eMS_Checking
+			|| m_events[eTE_EnterPrototypeFactory].m_status == eMS_Checking
+			|| m_events[eTE_ApproachEnemyBase].m_status == eMS_Checking
+			|| m_events[eTE_ApproachEnemyHq].m_status == eMS_Checking
+			|| m_events[eTE_CaptureAlienSite].m_status == eMS_Checking
+			|| m_events[eTE_AllAliensNoPrototype].m_status == eMS_Checking
+			|| m_events[eTE_AlienNoPrototype].m_status == eMS_Checking ))
 	{
 		return false;
 	}
 
 	bool showPrompt = false;
-	if (!pPlayer)
+	if(!pPlayer)
 		return showPrompt;
 
 	Vec3 playerPos = pPlayer->GetEntity()->GetWorldPos();
@@ -860,20 +861,20 @@ bool CMPTutorial::CheckNearbyEntities(const CPlayer* pPlayer)
 	bool allCrashSites = true;	// does the player's team own all crash sites
 	bool PTFactory = false;			// does the player's team own the PT factory
 	bool nearCrashSite = false;	// is the player near a crash site
-	for (std::list<EntityId>::iterator it = m_alienEnergyPointList.begin(); it != m_alienEnergyPointList.end(); ++it)
+	for(std::list<EntityId>::iterator it = m_alienEnergyPointList.begin(); it != m_alienEnergyPointList.end(); ++it)
 	{
 		EntityId eid = *it;
 
-		// check team
-		if (playerTeam != g_pGame->GetGameRules()->GetTeam(eid))
+		// check team 
+		if(playerTeam != g_pGame->GetGameRules()->GetTeam(eid))
 			allCrashSites = false;
 
 		IEntity* pEnt = gEnv->pEntitySystem->GetEntity(eid);
-		if (pEnt)
+		if(pEnt)
 		{
 			Vec3 vec = pEnt->GetWorldPos() - playerPos;
 			float distanceSq = vec.GetLengthSquared();
-			if (distanceSq < 500.0f && g_pGame->GetGameRules()->GetTeam(pEnt->GetId()) == playerTeam)
+			if(distanceSq < 500.0f && g_pGame->GetGameRules()->GetTeam(pEnt->GetId()) == playerTeam)
 			{
 				showPrompt = TriggerEvent(eTE_CaptureAlienSite);
 				nearCrashSite = true;
@@ -881,18 +882,18 @@ bool CMPTutorial::CheckNearbyEntities(const CPlayer* pPlayer)
 		}
 	}
 
-	if (m_events[eTE_AllAliensNoPrototype].m_status == eMS_Checking
+	if(m_events[eTE_AllAliensNoPrototype].m_status == eMS_Checking
 		|| m_events[eTE_AlienNoPrototype].m_status == eMS_Checking)
 	{
 		// if player's team doesn't own the PT factory, they get an additional message...
-		for (std::list<EntityId>::iterator factIt = m_factoryList.begin(); factIt != m_factoryList.end(); ++factIt)
+		for(std::list<EntityId>::iterator factIt = m_factoryList.begin(); factIt != m_factoryList.end(); ++factIt)
 		{
 			EntityId factoryId = *factIt;
-			if (g_pGame->GetHUD())
+			if(g_pGame->GetHUD())
 			{
-				if (g_pGame->GetHUD()->GetPowerStruggleHUD()->IsFactoryType(factoryId, CHUDPowerStruggle::E_PROTOTYPES))
+				if(g_pGame->GetHUD()->GetPowerStruggleHUD()->IsFactoryType(factoryId, CHUDPowerStruggle::E_PROTOTYPES))
 				{
-					if (g_pGame->GetGameRules()->GetTeam(factoryId) == playerTeam)
+					if(g_pGame->GetGameRules()->GetTeam(factoryId) == playerTeam)
 					{
 						PTFactory = true;
 					}
@@ -900,14 +901,14 @@ bool CMPTutorial::CheckNearbyEntities(const CPlayer* pPlayer)
 			}
 		}
 
-		if (!PTFactory)
+		if(!PTFactory)
 		{
-			if (allCrashSites)
+			if(allCrashSites)
 			{
 				// player's team owns all aliens but not the factory
 				TriggerEvent(eTE_AllAliensNoPrototype);
 			}
-			else if (nearCrashSite)
+			else if(nearCrashSite)
 			{
 				// player has captured an alien but not yet the prototype factory.
 				TriggerEvent(eTE_AlienNoPrototype);
@@ -915,65 +916,65 @@ bool CMPTutorial::CheckNearbyEntities(const CPlayer* pPlayer)
 		}
 	}
 
-	if (!showPrompt && m_events[eTE_ApproachEnemyBase].m_status == eMS_Checking)
+	if(!showPrompt && m_events[eTE_ApproachEnemyBase].m_status == eMS_Checking)
 	{
 		std::list<EntityId>::iterator it = m_baseList.begin();
-		for (; it != m_baseList.end(); ++it)
+		for(; it != m_baseList.end(); ++it)
 		{
 			IEntity* pEnt = gEnv->pEntitySystem->GetEntity(*it);
-			if (pEnt)
+			if(pEnt)
 			{
 				Vec3 vec = pEnt->GetWorldPos() - playerPos;
 				float distanceSq = vec.GetLengthSquared();
 				int team = g_pGame->GetGameRules()->GetTeam(pEnt->GetId());
-				if (team != playerTeam)
+				if(team != playerTeam)
 				{
-					if (distanceSq < 48400.0f)	// 220m distance
+					if(distanceSq < 48400.0f)	// 220m distance
 						showPrompt = TriggerEvent(eTE_ApproachEnemyBase);
 				}
 			}
 		}
 	}
 
-	if (!showPrompt && m_events[eTE_SpawnBunker].m_status == eMS_Checking)
+	if(!showPrompt && m_events[eTE_SpawnBunker].m_status == eMS_Checking)
 	{
 		std::list<EntityId>::iterator it = m_spawnGroupList.begin();
-		for (; it != m_spawnGroupList.end(); ++it)
+		for(; it != m_spawnGroupList.end(); ++it)
 		{
 			IEntity* pEnt = gEnv->pEntitySystem->GetEntity(*it);
-			if (pEnt)
+			if(pEnt)
 			{
 				Vec3 vec = pEnt->GetWorldPos() - playerPos;
 				float distanceSq = vec.GetLengthSquared();
-				if (distanceSq <= 80.0f)
+				if(distanceSq <= 80.0f)
 				{
-					if (g_pGame->GetGameRules()->GetTeam(pEnt->GetId()) == 0)
+					if(g_pGame->GetGameRules()->GetTeam(pEnt->GetId()) == 0)
 						showPrompt = TriggerEvent(eTE_SpawnBunker);
 				}
 			}
 		}
 	}
 
-	if (!showPrompt)
+	if(!showPrompt)
 	{
 		std::list<EntityId>::iterator it = m_factoryList.begin();
-		for (; it != m_factoryList.end(); ++it)
+		for(; it != m_factoryList.end(); ++it)
 		{
 			IEntity* pEnt = gEnv->pEntitySystem->GetEntity(*it);
-			if (pEnt)
+			if(pEnt)
 			{
 				Vec3 vec = pEnt->GetWorldPos() - playerPos;
 				float distanceSq = vec.GetLengthSquared();
-				if (distanceSq < 500.0f)
+				if(distanceSq < 500.0f)
 				{
 					// prompt depends on team and factory type
 					bool inPrototypeFactory = g_pGame->GetHUD()->GetPowerStruggleHUD()->IsFactoryType(pEnt->GetId(), CHUDPowerStruggle::E_PROTOTYPES);
 					int team = g_pGame->GetGameRules()->GetTeam(pEnt->GetId());
-					if (team == 0)
+					if(team == 0)
 					{
 						showPrompt = TriggerEvent(eTE_NeutralFactory);
 					}
-					else if (team != playerTeam)
+					else if(team != playerTeam)
 					{
 						showPrompt = TriggerEvent(eTE_EnterHostileFactory);
 					}
@@ -981,10 +982,10 @@ bool CMPTutorial::CheckNearbyEntities(const CPlayer* pPlayer)
 					{
 						// don't show the capture event until neutral message has been shown -
 						//	prevents displaying it for factories you already own
-						if (m_events[eTE_NeutralFactory].m_status != eMS_Checking)
+						if(m_events[eTE_NeutralFactory].m_status != eMS_Checking)
 							showPrompt = TriggerEvent(eTE_CaptureFactory);
 
-						if (inPrototypeFactory)
+						if(inPrototypeFactory)
 						{
 							showPrompt |= TriggerEvent(eTE_EnterPrototypeFactory);
 						}
@@ -1002,21 +1003,21 @@ bool CMPTutorial::CheckVehicles(const CPlayer* pPlayer)
 	FUNCTION_PROFILER(GetISystem(), PROFILE_GAME);
 
 	bool showPrompt = false;
-	if (!pPlayer)
+	if(!pPlayer)
 		return showPrompt;
 
 	IVehicle* pVehicle = pPlayer->GetLinkedVehicle();
 
-	if (m_wasInVehicle && !pVehicle)
+	if(m_wasInVehicle && !pVehicle)
 	{
 		// got out of vehicle. Move HUD box back to normal place.
 		SAFE_HUD_FUNC(SetTutorialTextPosition(2));
 		m_wasInVehicle = false;
 		return showPrompt;
 	}
-
-	if (pVehicle && !m_wasInVehicle)
-	{
+ 
+ 	if(pVehicle && !m_wasInVehicle)
+ 	{
 		// just got in. Move HUD box up so it doesn't overlap vehicle hud.
 		SAFE_HUD_FUNC(SetTutorialTextPosition(1));
 
@@ -1029,7 +1030,7 @@ bool CMPTutorial::CheckVehicles(const CPlayer* pPlayer)
 	return showPrompt;
 }
 
-bool CMPTutorial::CheckBases(const CPlayer* pPlayer)
+bool CMPTutorial::CheckBases(const CPlayer *pPlayer)
 {
 	FUNCTION_PROFILER(GetISystem(), PROFILE_GAME);
 
@@ -1039,10 +1040,10 @@ bool CMPTutorial::CheckBases(const CPlayer* pPlayer)
 	//	eTE_TACTankBase
 	//	eTE_SingularityBase
 	//	If none need checking, don't bother
-	if (!(m_events[eTE_HqCritical].m_status == eMS_Checking
-		|| m_events[eTE_HqUnderAttack].m_status == eMS_Checking
-		|| m_events[eTE_TACTankBase].m_status == eMS_Checking
-		|| m_events[eTE_SingularityBase].m_status == eMS_Checking))
+	if(! ( m_events[eTE_HqCritical].m_status == eMS_Checking
+			|| m_events[eTE_HqUnderAttack].m_status == eMS_Checking
+			|| m_events[eTE_TACTankBase].m_status == eMS_Checking
+			|| m_events[eTE_SingularityBase].m_status == eMS_Checking ))
 	{
 		return false;
 	}
@@ -1053,22 +1054,22 @@ bool CMPTutorial::CheckBases(const CPlayer* pPlayer)
 	int localPlayerTeam = g_pGame->GetGameRules()->GetTeam(pPlayer->GetEntityId());
 
 	std::list<EntityId>::iterator it = m_baseList.begin();
-	for (; it != m_baseList.end(); ++it)
+	for(; it != m_baseList.end(); ++it)
 	{
 		EntityId id = *it;
 
 		IEntity* pBaseEntity = gEnv->pEntitySystem->GetEntity(id);
-		if (!pBaseEntity)
+		if(!pBaseEntity)
 			continue;
 
 		int baseTeam = g_pGame->GetGameRules()->GetTeam(pBaseEntity->GetId());
 
 		// first check if the player's HQ is under attack
-		if (baseTeam == localPlayerTeam)
+		if(baseTeam == localPlayerTeam)
 		{
-			if (IScriptTable* pScriptTable = pBaseEntity->GetScriptTable())
+			if(IScriptTable* pScriptTable = pBaseEntity->GetScriptTable())
 			{
-				HSCRIPTFUNCTION getHealth = 0;
+				HSCRIPTFUNCTION getHealth=0;
 				if (!pScriptTable->GetValue("GetHealth", getHealth))
 					continue;
 
@@ -1077,11 +1078,11 @@ bool CMPTutorial::CheckBases(const CPlayer* pPlayer)
 				gEnv->pScriptSystem->ReleaseFunc(getHealth);
 
 				// hmm, magic number. Can't see any way of finding the initial health....?
-				if (health < 300)
+				if(health < 300)
 				{
 					TriggerEvent(eTE_HqCritical);
 				}
-				else if (health < 800)
+				else if(health < 800)	
 				{
 					TriggerEvent(eTE_HqUnderAttack);
 				}
@@ -1092,23 +1093,23 @@ bool CMPTutorial::CheckBases(const CPlayer* pPlayer)
 			query.nEntityFlags = -1;
 			query.pEntityClass = m_pTankClass;
 			float dim = 50.0f;
-			query.box = AABB(Vec3(pos.x - dim, pos.y - dim, pos.z - dim), Vec3(pos.x + dim, pos.y + dim, pos.z + dim));
+			query.box = AABB(Vec3(pos.x-dim,pos.y-dim,pos.z-dim), Vec3(pos.x+dim,pos.y+dim,pos.z+dim));
 			gEnv->pEntitySystem->QueryProximity(query);
-			for (int i = 0; i < query.nCount; ++i)
+			for(int i=0; i<query.nCount; ++i)
 			{
 				IEntity* pEntity = query.pEntities[i];
-				if (pEntity)
+				if(pEntity)
 				{
 					int tankTeam = g_pGame->GetGameRules()->GetTeam(pEntity->GetId());
 
-					if (tankTeam != localPlayerTeam && tankTeam != baseTeam)
+					if(tankTeam != localPlayerTeam && tankTeam != baseTeam)
 					{
 						// cmp names here.
-						if (!strncmp(pEntity->GetName(), "ustactank", 9))
+						if(!strncmp(pEntity->GetName(), "ustactank", 9))
 						{
 							TriggerEvent(eTE_TACTankBase);
 						}
-						else if (!strncmp(pEntity->GetName(), "ussingtank", 10))
+						else if(!strncmp(pEntity->GetName(), "ussingtank", 10))
 						{
 							TriggerEvent(eTE_SingularityBase);
 						}

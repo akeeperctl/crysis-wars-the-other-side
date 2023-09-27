@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -20,16 +20,11 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{2EB52047-0A81-4343-B703-DF221CA5CC2A}</ProjectGuid>
-    <RootNamespace>TheOtherSideGame</RootNamespace>
-    <SccProjectName>
-    </SccProjectName>
-    <SccLocalPath>
-    </SccLocalPath>
-    <SccProvider>
-    </SccProvider>
+    <RootNamespace>GameDll</RootNamespace>
+    <SccProjectName>Perforce Project</SccProjectName>
+    <SccLocalPath>.</SccLocalPath>
+    <SccProvider>MSSCCI:Perforce SCM</SccProvider>
     <Keyword>Win32Proj</Keyword>
-    <WindowsTargetPlatformVersion>10.0.22621.0</WindowsTargetPlatformVersion>
-    <ProjectName>CrysisTheOtherSide</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'" Label="Configuration">
@@ -73,33 +68,27 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
-    <_ProjectFileVersion>16.0.30028.132</_ProjectFileVersion>
+    <_ProjectFileVersion>16.0.32629.160</_ProjectFileVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>$(SolutionDir)..\Bin32\</OutDir>
     <IntDir>$(SolutionDir)..\..\..\BinTemp\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
     <LinkIncremental>true</LinkIncremental>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)..\Bin64\</OutDir>
     <IntDir>$(SolutionDir)..\..\..\BinTemp\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
     <LinkIncremental>true</LinkIncremental>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <TargetName>TheOtherSide</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">
     <OutDir>$(SolutionDir)..\Bin32\</OutDir>
     <IntDir>$(SolutionDir)..\..\..\BinTemp\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
     <LinkIncremental>false</LinkIncremental>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">
     <OutDir>$(SolutionDir)..\Bin64\</OutDir>
     <IntDir>$(SolutionDir)..\..\..\BinTemp\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
-    <LinkIncremental>true</LinkIncremental>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <TargetName>TheOtherSide</TargetName>
+    <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -116,10 +105,9 @@
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>StdAfx.h</PrecompiledHeaderFile>
-      <WarningLevel>TurnOffAllWarnings</WarningLevel>
-      <TreatWarningAsError>false</TreatWarningAsError>
+      <WarningLevel>Level3</WarningLevel>
+      <TreatWarningAsError>true</TreatWarningAsError>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <LanguageStandard>stdcpp14</LanguageStandard>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)CrysisWarsMod.dll</OutputFile>
@@ -131,9 +119,6 @@
       <ImportLibrary>$(OutDir)GameDll.lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
-    <PostBuildEvent>
-      <Command>"D:\Games\Crysis Wars\Mods\TheOtherSide\Code\version_increment.bat"</Command>
-    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Midl>
@@ -151,26 +136,19 @@
       <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>StdAfx.h</PrecompiledHeaderFile>
-      <WarningLevel>TurnOffAllWarnings</WarningLevel>
-      <TreatWarningAsError>false</TreatWarningAsError>
+      <WarningLevel>Level3</WarningLevel>
+      <TreatWarningAsError>true</TreatWarningAsError>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <LanguageStandard>stdcpp14</LanguageStandard>
-      <AdditionalOptions>/MP %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
-      <OutputFile>$(OutDir)TheOtherSide$(TargetExt)</OutputFile>
+      <OutputFile>$(OutDir)CrysisWarsMod.dll</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)CryGame.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
       <ImportLibrary>$(OutDir)GameDll.lib</ImportLibrary>
       <TargetMachine>MachineX64</TargetMachine>
-      <AdditionalDependencies>version.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
-    <PostBuildEvent>
-      <Command>"$(ProjectDir)version_increment.bat"</Command>
-      <Message>VERSION INCREMENTATION STARTED.. EXECUTING .BAT FILE</Message>
-    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">
     <ClCompile>
@@ -191,15 +169,12 @@
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>StdAfx.h</PrecompiledHeaderFile>
-      <WarningLevel>TurnOffAllWarnings</WarningLevel>
-      <TreatWarningAsError>false</TreatWarningAsError>
+      <WarningLevel>Level3</WarningLevel>
+      <TreatWarningAsError>true</TreatWarningAsError>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <DisableSpecificWarnings>4091;4311;4302;4312;4305;</DisableSpecificWarnings>
-      <LanguageStandard>stdcpp14</LanguageStandard>
-      <DisableLanguageExtensions>false</DisableLanguageExtensions>
     </ClCompile>
     <Link>
-      <OutputFile>$(OutDir)$(ProjectName)$(TargetExt)</OutputFile>
+      <OutputFile>$(OutDir)CrysisWarsMod.dll</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)CryGame.pdb</ProgramDatabaseFile>
@@ -209,16 +184,13 @@
       <BaseAddress>0x39000000</BaseAddress>
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
-    <PostBuildEvent>
-      <Command>"D:\Games\Crysis Wars\Mods\TheOtherSide\Code\version_increment.bat"</Command>
-    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">
     <Midl>
       <TargetEnvironment>X64</TargetEnvironment>
     </Midl>
     <ClCompile>
-      <Optimization>Disabled</Optimization>
+      <Optimization>MaxSpeed</Optimization>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <OmitFramePointers>true</OmitFramePointers>
@@ -232,30 +204,20 @@
       <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>StdAfx.h</PrecompiledHeaderFile>
-      <WarningLevel>TurnOffAllWarnings</WarningLevel>
-      <TreatWarningAsError>false</TreatWarningAsError>
+      <WarningLevel>Level3</WarningLevel>
+      <TreatWarningAsError>true</TreatWarningAsError>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <DisableSpecificWarnings>4091;4311;4302;4312;4305;</DisableSpecificWarnings>
-      <LanguageStandard>stdcpp14</LanguageStandard>
-      <DisableLanguageExtensions>false</DisableLanguageExtensions>
     </ClCompile>
     <Link>
-      <OutputFile>$(OutDir)TheOtherSide$(TargetExt)</OutputFile>
+      <OutputFile>$(OutDir)CrysisWarsMod.dll</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)CryGame.pdb</ProgramDatabaseFile>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <BaseAddress>
-      </BaseAddress>
+      <BaseAddress>0x39000000</BaseAddress>
       <TargetMachine>MachineX64</TargetMachine>
-      <ShowProgress>NotSet</ShowProgress>
-      <AdditionalDependencies>version.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
-    <PostBuildEvent>
-      <Command>"$(ProjectDir)version_increment.bat"</Command>
-      <Message>VERSION INCREMENTATION STARTED.. EXECUTING .BAT FILE</Message>
-    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Actor.cpp" />
@@ -373,14 +335,6 @@
     <ClCompile Include="NanoSuit.cpp" />
     <ClCompile Include="NetInputChainDebug.cpp" />
     <ClCompile Include="NetPlayerInput.cpp" />
-    <ClCompile Include="Nodes\FGPS\FlowEntityScreenPos.cpp" />
-    <ClCompile Include="Nodes\FGPS\FlowFlashHUD.cpp" />
-    <ClCompile Include="Nodes\FGPS\FlowIterator1.cpp" />
-    <ClCompile Include="Nodes\FGPS\FlowLookAtNode.cpp" />
-    <ClCompile Include="Nodes\FGPS\FlowMouseInfo.cpp" />
-    <ClCompile Include="Nodes\FGPS\FlowSequin.cpp" />
-    <ClCompile Include="Nodes\FGPS\FlowSpawnEntity.cpp" />
-    <ClCompile Include="Nodes\FGPS\FlowStringCombine.cpp" />
     <ClCompile Include="Nodes\FlowActorSensor.cpp" />
     <ClCompile Include="Nodes\FlowFadeNode.cpp" />
     <ClCompile Include="Nodes\FlowHitInfoNode.cpp" />
@@ -437,38 +391,6 @@
     <ClCompile Include="TacBullet.cpp" />
     <ClCompile Include="TacLauncher.cpp" />
     <ClCompile Include="TagBullet.cpp" />
-    <ClCompile Include="TheOtherSide\Abilities\AbilitiesSystem.cpp" />
-    <ClCompile Include="TheOtherSide\Abilities\Ability.cpp" />
-    <ClCompile Include="TheOtherSide\Abilities\AbilityOwner.cpp" />
-    <ClCompile Include="TheOtherSide\Actor Files\Drone.cpp" />
-    <ClCompile Include="TheOtherSide\Actor Files\Pinger.cpp" />
-    <ClCompile Include="TheOtherSide\AI Files\AIActionTracker.cpp" />
-    <ClCompile Include="TheOtherSide\Conqueror\AreaVehicleSpawnPoint.cpp" />
-    <ClCompile Include="TheOtherSide\Conqueror\ConquerorShop.cpp" />
-    <ClCompile Include="TheOtherSide\Conqueror\ConquerorSystem.cpp" />
-    <ClCompile Include="TheOtherSide\Conqueror\RequestsAndResponses\Executor.cpp" />
-    <ClCompile Include="TheOtherSide\Conqueror\RequestsAndResponses\RARSystem.cpp" />
-    <ClCompile Include="TheOtherSide\Conqueror\StrategicArea.cpp" />
-    <ClCompile Include="TheOtherSide\Conqueror\CommanderOrder.cpp" />
-    <ClCompile Include="TheOtherSide\Conqueror\ConquerorChannel.cpp" />
-    <ClCompile Include="TheOtherSide\Conqueror\ConquerorCommander.cpp" />
-    <ClCompile Include="TheOtherSide\Conqueror\SpawnPoint.cpp" />
-    <ClCompile Include="TheOtherSide\Control\ControlAction.cpp" />
-    <ClCompile Include="TheOtherSide\Control\ControlClient.cpp" />
-    <ClCompile Include="TheOtherSide\Control\ControlSystem.cpp" />
-    <ClCompile Include="TheOtherSide\Control\NetControlClient.cpp" />
-    <ClCompile Include="TheOtherSide\Item Files\Fire Modes\LaserBeam.cpp" />
-    <ClCompile Include="TheOtherSide\Item Files\Weapon Files\Projectiles\KvoltBullet.cpp" />
-    <ClCompile Include="TheOtherSide\Nodes\TOSConquerorNodes.cpp" />
-    <ClCompile Include="TheOtherSide\Nodes\TOSKayriatNodes.cpp" />
-    <ClCompile Include="TheOtherSide\Nodes\TOSAbilityNodes.cpp" />
-    <ClCompile Include="TheOtherSide\Nodes\TOSControlNodes.cpp" />
-    <ClCompile Include="TheOtherSide\Nodes\TOSSquadNodes.cpp" />
-    <ClCompile Include="TheOtherSide\Squad\Member.cpp" />
-    <ClCompile Include="TheOtherSide\Squad\Order.cpp" />
-    <ClCompile Include="TheOtherSide\Squad\Squad.cpp" />
-    <ClCompile Include="TheOtherSide\Squad\SquadInput.cpp" />
-    <ClCompile Include="TheOtherSide\Squad\SquadSystem.cpp" />
     <ClCompile Include="Throw.cpp" />
     <ClCompile Include="ThrowableWeapon.cpp" />
     <ClCompile Include="TracerManager.cpp" />
@@ -483,7 +405,6 @@
     <ClCompile Include="VehicleDamageBehaviorCollisionEx.cpp" />
     <ClCompile Include="VehicleDamageBehaviorExplosion.cpp" />
     <ClCompile Include="VehicleDamageBehaviorTire.cpp" />
-    <ClCompile Include="VehicleMovementAlienGunship.cpp" />
     <ClCompile Include="VehicleMovementAmphibious.cpp" />
     <ClCompile Include="VehicleMovementBase.cpp" />
     <ClCompile Include="VehicleMovementHelicopter.cpp" />
@@ -608,7 +529,6 @@
     <ClInclude Include="NanoSuit.h" />
     <ClInclude Include="NetInputChainDebug.h" />
     <ClInclude Include="NetPlayerInput.h" />
-    <ClInclude Include="Nodes\FGPS\FlowSystemCvarsC3.h" />
     <ClInclude Include="Nodes\G2FlowBaseNode.h" />
     <ClInclude Include="Observer.h" />
     <ClInclude Include="OffHand.h" />
@@ -653,41 +573,6 @@
     <ClInclude Include="TacBullet.h" />
     <ClInclude Include="TacLauncher.h" />
     <ClInclude Include="TagBullet.h" />
-    <ClInclude Include="TheOtherSide\Abilities\AbilitiesSystem.h" />
-    <ClInclude Include="TheOtherSide\Abilities\Ability.h" />
-    <ClInclude Include="TheOtherSide\Abilities\AbilityOwner.h" />
-    <ClInclude Include="TheOtherSide\Actor Files\Drone.h" />
-    <ClInclude Include="TheOtherSide\Actor Files\Pinger.h" />
-    <ClInclude Include="TheOtherSide\AI Files\AIActionTracker.h" />
-    <ClInclude Include="TheOtherSide\AI Files\IAIActionTrackerListener.h" />
-    <ClInclude Include="TheOtherSide\Conqueror\AreaVehicleSpawnPoint.h" />
-    <ClInclude Include="TheOtherSide\Conqueror\CommanderOrder.h" />
-    <ClInclude Include="TheOtherSide\Conqueror\ConquerorChannel.h" />
-    <ClInclude Include="TheOtherSide\Conqueror\ConquerorShop.h" />
-    <ClInclude Include="TheOtherSide\Conqueror\RequestsAndResponses\Executor.h" />
-    <ClInclude Include="TheOtherSide\Conqueror\RequestsAndResponses\RARSystem.h" />
-    <ClInclude Include="TheOtherSide\Conqueror\RequestsAndResponses\Request.h" />
-    <ClInclude Include="TheOtherSide\Conqueror\StrategicArea.h" />
-    <ClInclude Include="TheOtherSide\Conqueror\ConquerorCommander.h" />
-    <ClInclude Include="TheOtherSide\Conqueror\ConquerorSpeciesClass.h" />
-    <ClInclude Include="TheOtherSide\Conqueror\ConquerorStrategy.h" />
-    <ClInclude Include="TheOtherSide\Conqueror\ConquerorSystem.h" />
-    <ClInclude Include="TheOtherSide\Conqueror\SpawnPoint.h" />
-    <ClInclude Include="TheOtherSide\Control\ControlSystem.h" />
-    <ClInclude Include="TheOtherSide\Control\IControlSystemChild.h" />
-    <ClInclude Include="TheOtherSide\Helpers\TOS_AI.h" />
-    <ClInclude Include="TheOtherSide\Helpers\TOS_Debug.h" />
-    <ClInclude Include="TheOtherSide\Helpers\TOS_Enums.h" />
-    <ClInclude Include="TheOtherSide\Helpers\TOS_Inventory.h" />
-    <ClInclude Include="TheOtherSide\Helpers\TOS_Script.h" />
-    <ClInclude Include="TheOtherSide\Helpers\TOS_Sounds.h" />
-    <ClInclude Include="TheOtherSide\Helpers\TOS_STL.h" />
-    <ClInclude Include="TheOtherSide\Helpers\TOS_Vehicle.h" />
-    <ClInclude Include="TheOtherSide\Item Files\Fire Modes\LaserBeam.h" />
-    <ClInclude Include="TheOtherSide\Item Files\Weapon Files\Projectiles\KvoltBullet.h" />
-    <ClInclude Include="TheOtherSide\Nodes\TOSKayriatNodes.h" />
-    <ClInclude Include="TheOtherSide\Nodes\TOSNodesIncludes.h" />
-    <ClInclude Include="TheOtherSide\Squad\SquadSystem.h" />
     <ClInclude Include="Throw.h" />
     <ClInclude Include="ThrowableWeapon.h" />
     <ClInclude Include="TracerManager.h" />
@@ -702,7 +587,6 @@
     <ClInclude Include="VehicleDamageBehaviorCollisionEx.h" />
     <ClInclude Include="VehicleDamageBehaviorExplosion.h" />
     <ClInclude Include="VehicleDamageBehaviorTire.h" />
-    <ClInclude Include="VehicleMovementAlienGunship.h" />
     <ClInclude Include="VehicleMovementAmphibious.h" />
     <ClInclude Include="VehicleMovementBase.h" />
     <ClInclude Include="VehicleMovementHelicopter.h" />
@@ -722,8 +606,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Launcher\Cursor_White.cur" />
-    <None Include="cpp.hint" />
-    <None Include="Cursor_White.cur" />
     <None Include="GameActions.actions" />
   </ItemGroup>
   <ItemGroup>
@@ -773,17 +655,11 @@
     <Image Include="G15\Vehicles\nktruck.bmp" />
     <Image Include="G15\Vehicles\usboat.bmp" />
     <Image Include="G15\Vehicles\ustank.bmp" />
-    <Image Include="Wars.ico" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="CrysisTheOtherSide.rc" />
+    <ResourceCompile Include="GameDll.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
-  <ProjectExtensions>
-    <VisualStudio>
-      <UserProperties BuildVersion_BuildVersioningStyle="" BuildVersion_ConfigurationName="Profile" BuildVersion_DetectChanges="" BuildVersion_StartDate="2022/8/11" BuildVersion_UseGlobalSettings="" />
-    </VisualStudio>
-  </ProjectExtensions>
 </Project>

@@ -17,6 +17,7 @@ History:
 
 # pragma once
 
+
 #include "HUDObject.h"
 #include "IActorSystem.h"
 #include "IFlashPlayer.h"
@@ -30,7 +31,7 @@ class CHUDScopes
 	friend class CHUD;
 public:
 
-	enum EScopeMode
+	enum EScopeMode 
 	{
 		ESCOPE_NONE,
 		ESCOPE_ASSAULT,
@@ -38,34 +39,32 @@ public:
 		ESCOPE_LAST
 	};
 
-	CHUDScopes(CHUD* pHUD);
+	CHUDScopes(CHUD *pHUD);
 	~CHUDScopes();
 
 	void Update(float fDeltaTime);
-	void LoadFlashFiles(bool force = false);
-	void ShowBinoculars(bool bVisible, bool bShowIfNoHUD = false, bool bNoFadeOutOnHide = false);
+	void LoadFlashFiles(bool force=false);
+	void ShowBinoculars(bool bVisible, bool bShowIfNoHUD=false, bool bNoFadeOutOnHide=false);
 	void SetBinocularsDistance(float fDistance);
 	void SetBinocularsZoomMode(int iZoomMode);
 	void ShowScope(int iVisible);
-	void SetScopeZoomMode(int iZoomMode, string& scopeType);
+	void SetScopeZoomMode(int iZoomMode, string &scopeType);
 	void OnToggleThirdPerson(bool thirdPerson);
 	ILINE bool IsBinocularsShown() const { return m_bShowBinoculars; }
 	ILINE EScopeMode GetCurrentScope() const { return m_eShowScope; }
-	void Serialize(TSerialize& ser);
+	void Serialize(TSerialize &ser);
 	void DestroyBinocularsAtNextFrame() { m_bDestroyBinocularsAtNextFrame = true; }
-
-	CGameFlashAnimation m_animBinoculars;
 
 private:
 
-	void DisplayBinoculars(IActor* pPlayerActor);
-	void DisplayScope(IActor* pPlayerActor);
-	void SetSilhouette(IActor* pActor, IAIObject* pAIObject);
+	void DisplayBinoculars(CPlayer* pPlayerActor);
+	void DisplayScope(CPlayer* pPlayerActor);
+	void SetSilhouette(IActor *pActor,IAIObject *pAIObject);
 
 	//the main HUD
-	CHUD* g_pHUD;
+	CHUD			*g_pHUD;
 	//the scope flash movies
-
+	CGameFlashAnimation m_animBinoculars;
 	CGameFlashAnimation m_animSniperScope;
 	//binoculars visible
 	bool m_bShowBinoculars;
@@ -74,7 +73,7 @@ private:
 	//scope visible
 	EScopeMode m_eShowScope;
 	// show binoculars without HUD being visible, e.g. cutscenes
-	bool m_bShowBinocularsNoHUD;
+	bool m_bShowBinocularsNoHUD; 
 	// distance of binocs view
 	float m_fBinocularDistance;
 	// currently in third person ?

@@ -19,7 +19,7 @@
 
 extern "C"
 {
-	GAME_API IGame* CreateGame(IGameFramework* pGameFramework)
+	GAME_API IGame *CreateGame(IGameFramework* pGameFramework)
 	{
 		ModuleInitISystem(pGameFramework->GetISystem());
 

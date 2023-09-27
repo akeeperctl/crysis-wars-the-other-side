@@ -18,7 +18,9 @@ History:
 # pragma once
 #endif
 
+
 #include "Single.h"
+
 
 class CBurst : public CSingle
 {
@@ -26,19 +28,20 @@ protected:
 	typedef struct SBurstParams
 	{
 		SBurstParams() { Reset(); };
-		void Reset(const IItemParamsNode* params = 0, bool defaultInit = true)
+		void Reset(const IItemParamsNode *params=0, bool defaultInit=true)
 		{
 			CItemParamReader reader(params);
-			ResetValue(nshots, 3);
-			ResetValue(rate, 32);
-			ResetValue(noSound, false);
-			ResetValue(oneSound, false);
+			ResetValue(nshots,			3);
+			ResetValue(rate,				32);
+			ResetValue(noSound,		false);
+			ResetValue(oneSound,	false);
 		}
 
 		short nshots;
 		short	rate;
 		bool  noSound;
 		bool  oneSound;
+
 	} SBurstParams;
 public:
 	CBurst();
@@ -46,17 +49,17 @@ public:
 
 	// CSingle
 	virtual void Update(float frameTime, uint frameId);
-	virtual void GetMemoryStatistics(ICrySizer* s) { s->Add(*this); CSingle::GetMemoryStatistics(s); }
+	virtual void GetMemoryStatistics(ICrySizer * s) { s->Add(*this); CSingle::GetMemoryStatistics(s); }
 
-	virtual void ResetParams(const struct IItemParamsNode* params);
-	virtual void PatchParams(const struct IItemParamsNode* patch);
+	virtual void ResetParams(const struct IItemParamsNode *params);
+	virtual void PatchParams(const struct IItemParamsNode *patch);
 
 	virtual void Activate(bool activate);
 	virtual bool CanFire(bool considerAmmo /* = true */) const;
 
 	virtual void StartFire();
 	virtual void StopFire();
-	virtual const char* GetType() const;
+	virtual const char *GetType() const;
 	// ~CSingle
 
 protected:
@@ -70,5 +73,6 @@ protected:
 
 	SBurstParams m_burstparams;
 };
+
 
 #endif

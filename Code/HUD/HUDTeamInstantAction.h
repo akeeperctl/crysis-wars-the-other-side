@@ -17,6 +17,7 @@ History:
 
 # pragma once
 
+
 #include "HUDObject.h"
 
 #include "HUD.h"
@@ -28,7 +29,7 @@ class CHUDTeamInstantAction : public CHUDObject
 	friend class CHUD;
 public:
 
-	CHUDTeamInstantAction(CHUD* pHUD);
+	CHUDTeamInstantAction(CHUD *pHUD);
 	~CHUDTeamInstantAction();
 
 	void Update(float fDeltaTime);
@@ -37,9 +38,9 @@ public:
 	void SetHUDColor();
 	void UpdateStats();
 
-	//	virtual bool IsFactoryType(EntityId entity, EBuyMenuPage type);
+//	virtual bool IsFactoryType(EntityId entity, EBuyMenuPage type);
 
-	//	bool IsPlayerSpecial();
+//	bool IsPlayerSpecial();
 
 	int m_ownTeamScore;
 	int m_enemyTeamScore;
@@ -50,7 +51,7 @@ private:
 
 	void PushToFlash();
 	CGameFlashAnimation m_animTIAScore;
-	CHUD* g_pHUD;
+	CHUD *g_pHUD;
 
 	int m_roundTime;
 	int m_scoreLimit;

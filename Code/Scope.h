@@ -18,14 +18,16 @@ History:
 # pragma once
 #endif
 
+
 #include "IronSight.h"
+
 
 class CScope : public CIronSight
 {
 	typedef struct SScopeParams
 	{
 		SScopeParams() { Reset(); };
-		void Reset(const IItemParamsNode* params = 0, bool defaultInit = true)
+		void Reset(const IItemParamsNode *params=0, bool defaultInit=true)
 		{
 			CItemParamReader reader(params);
 
@@ -34,7 +36,7 @@ class CScope : public CIronSight
 			ResetValue(dark_in_time, 0.15f);
 		};
 
-		void GetMemoryStatistics(ICrySizer* s)
+		void GetMemoryStatistics(ICrySizer * s)
 		{
 			s->Add(scope);
 		}
@@ -51,15 +53,16 @@ public:
 	// IZoomMode
 	virtual void Update(float frameTime, uint frameId);
 
-	virtual void ResetParams(const struct IItemParamsNode* params);
-	virtual void PatchParams(const struct IItemParamsNode* patch);
+	virtual void ResetParams(const struct IItemParamsNode *params);
+	virtual void PatchParams(const struct IItemParamsNode *patch);
 
 	virtual void Activate(bool activate);
 
-	virtual void GetMemoryStatistics(ICrySizer* s);
+	virtual void GetMemoryStatistics(ICrySizer * s);
 
 	virtual void UpdateFPView(float frameTime) {};
 	// ~IZoomMode
+
 
 	// CIronSight
 	virtual void OnEnterZoom();
@@ -73,5 +76,6 @@ protected:
 	float					m_hideTimer;
 	SScopeParams	m_scopeparams;
 };
+
 
 #endif // __SCOPE_H__

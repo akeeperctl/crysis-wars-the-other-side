@@ -18,6 +18,7 @@ History:
 # pragma once
 #endif
 
+
 #include "Single.h"
 
 class CDetonate :
@@ -31,10 +32,10 @@ public:
 
 	//IFireMode
 	virtual void Update(float frameTime, uint frameId);
-	virtual void GetMemoryStatistics(ICrySizer* s) { s->Add(*this); CSingle::GetMemoryStatistics(s); }
+	virtual void GetMemoryStatistics(ICrySizer * s) { s->Add(*this); CSingle::GetMemoryStatistics(s); }
 
-	virtual void ResetParams(const struct IItemParamsNode* params);
-	virtual void PatchParams(const struct IItemParamsNode* patch);
+	virtual void ResetParams(const struct IItemParamsNode *params);
+	virtual void PatchParams(const struct IItemParamsNode *patch);
 
 	virtual void Activate(bool activate);
 
@@ -43,16 +44,17 @@ public:
 	virtual bool CanFire(bool considerAmmo = true) const;
 	virtual void StartFire();
 
-	virtual void NetShoot(const Vec3& hit, int ph);
+	virtual void NetShoot(const Vec3 &hit, int ph);
 	//~IFireMode
 
-	virtual const char* GetCrosshair() const;
+	virtual const char *GetCrosshair() const;
 protected:
-	bool Detonate(bool net = false);
+	bool Detonate(bool net=false);
 	void SelectLast();
 
 	EntityId	m_projectileId;
 	float			m_detonationTimer;
 };
+
 
 #endif //__DETONATE_H__

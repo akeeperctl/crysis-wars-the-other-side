@@ -15,15 +15,15 @@ CReferenceWeapon::~CReferenceWeapon(void)
 
 void CReferenceWeapon::OnAction(EntityId actorId, const ActionId& actionId, int activationMode, float value)
 {
-	if (actionId == "attack1")
-	{
+	if (actionId == "attack1")  
+	{     
 		if (activationMode == eAAM_OnPress)
 		{
 			PlayAction(g_pItemStrings->fire, 0, true);
 		}
-		else if (activationMode == eAAM_OnRelease)
+		else if(activationMode == eAAM_OnRelease)
 		{
-			GetEntity()->GetCharacter(eIGS_FirstPerson)->GetISkeletonAnim()->StopAnimationInLayer(0, 0.0f);
+			GetEntity()->GetCharacter(eIGS_FirstPerson)->GetISkeletonAnim()->StopAnimationInLayer(0,0.0f);
 			PlayAction(g_pItemStrings->idle, 0, true);
 		}
 	}

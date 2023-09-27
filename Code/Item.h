@@ -5,7 +5,7 @@
   $Id$
   $DateTime$
   Description: C++ Item Implementation
-
+  
  -------------------------------------------------------------------------
   History:
   - 27:10:2004   11:25 : Created by Márcio Martins
@@ -18,6 +18,7 @@
 # pragma once
 #endif
 
+
 #include <IScriptSystem.h>
 #include <IGameFramework.h>
 #include <IItemSystem.h>
@@ -26,6 +27,7 @@
 #include <ISound.h>
 #include <map>
 #include <list>
+
 
 #include "ItemScheduler.h"
 #include "ItemString.h"
@@ -43,10 +45,10 @@ struct IAttachmentObject;
 
 enum EItemUpdateSlots
 {
-	eIUS_General = 0,
+  eIUS_General = 0,
 	eIUS_Zooming = 1,
-	eIUS_FireMode = 2,
-	eIUS_Scheduler = 3,
+	eIUS_FireMode = 2,  
+	eIUS_Scheduler = 3,  
 };
 
 struct SItemStrings
@@ -102,9 +104,9 @@ struct SItemStrings
 	ItemString swim_backward;			// "swim_backward";
 	ItemString speed_swim;					// "speed_swim";
 	ItemString turret;							// "turret";
-	ItemString enable_light;
-	ItemString disable_light;
-	ItemString use_light;
+  ItemString enable_light;        
+  ItemString disable_light;
+  ItemString use_light;
 	ItemString LAM;
 	ItemString LAMRifle;
 	ItemString LAMFlashLight;
@@ -114,6 +116,7 @@ struct SItemStrings
 
 	ItemString lever_layer_1;
 	ItemString lever_layer_2;
+
 };
 
 extern struct SItemStrings* g_pItemStrings;
@@ -141,8 +144,8 @@ public:
 		eIGS_Owner,
 		eIGS_OwnerLooped,
 		eIGS_OffHand,
-		eIGS_Destroyed,
-		eIGS_Aux1,
+    eIGS_Destroyed,
+    eIGS_Aux1,
 		eIGS_ThirdPersonAux,
 		eIGS_Last,
 	};
@@ -163,25 +166,25 @@ public:
 
 	enum ePlayActionFlags
 	{
-		eIPAF_FirstPerson = 1 << eIGS_FirstPerson,
-		eIPAF_ThirdPerson = 1 << eIGS_ThirdPerson,
-		eIPAF_Arms = 1 << eIGS_Arms,
-		eIPAF_Aux0 = 1 << eIGS_Aux0,
-		eIPAF_Owner = 1 << eIGS_Owner,
-		eIPAF_OwnerLooped = 1 << eIGS_OwnerLooped,
-		eIPAF_Destroyed = 1 << eIGS_Destroyed,
-		eIPAF_ForceFirstPerson = 1 << 15,
-		eIPAF_ForceThirdPerson = 1 << 16,
-		eIPAF_NoBlend = 1 << 17,
-		eIPAF_CleanBlending = 1 << 18,
-		eIPAF_Animation = 1 << 19,
-		eIPAF_Sound = 1 << 20,
-		eIPAF_SoundLooped = 1 << 21,
-		eIPAF_SoundStartPaused = 1 << 22,
-		eIPAF_RestartAnimation = 1 << 23,
-		eIPAF_RepeatLastFrame = 1 << 24,
-		eIPAF_Effect = 1 << 25,
-		eIPAF_Default = eIPAF_FirstPerson | eIPAF_ThirdPerson | eIPAF_Owner | eIPAF_OwnerLooped | eIPAF_Sound | eIPAF_Animation | eIPAF_Effect,
+		eIPAF_FirstPerson				= 1 << eIGS_FirstPerson,
+		eIPAF_ThirdPerson				= 1 << eIGS_ThirdPerson,
+		eIPAF_Arms							= 1 << eIGS_Arms,
+		eIPAF_Aux0							= 1 << eIGS_Aux0,
+		eIPAF_Owner							= 1 << eIGS_Owner,
+		eIPAF_OwnerLooped					= 1 << eIGS_OwnerLooped,
+    eIPAF_Destroyed         = 1 << eIGS_Destroyed,
+		eIPAF_ForceFirstPerson	= 1 << 15,
+		eIPAF_ForceThirdPerson	= 1 << 16,
+		eIPAF_NoBlend						= 1 << 17,
+		eIPAF_CleanBlending			= 1 << 18,
+		eIPAF_Animation					= 1 << 19,
+		eIPAF_Sound							= 1 << 20,
+	  eIPAF_SoundLooped				= 1 << 21,
+		eIPAF_SoundStartPaused	= 1 << 22,
+		eIPAF_RestartAnimation	= 1 << 23,
+		eIPAF_RepeatLastFrame	  = 1 << 24,
+    eIPAF_Effect            = 1 << 25,
+		eIPAF_Default						= eIPAF_FirstPerson|eIPAF_ThirdPerson|eIPAF_Owner|eIPAF_OwnerLooped|eIPAF_Sound|eIPAF_Animation|eIPAF_Effect,
 	};
 
 	enum eViewMode
@@ -192,11 +195,11 @@ public:
 
 	enum eScriptEventTable
 	{
-		eISET_Server = 1 << 1,
-		eISET_Client = 1 << 2,
-		eISET_Root = 1 << 3,
-		eISET_All = eISET_Client | eISET_Server | eISET_Root,
-		eISET_ClientServer = eISET_Client | eISET_Server
+		eISET_Server				= 1<<1,
+		eISET_Client				= 1<<2,
+		eISET_Root					= 1<<3,
+		eISET_All						= eISET_Client|eISET_Server|eISET_Root,
+		eISET_ClientServer	= eISET_Client|eISET_Server
 	};
 
 	enum eItemBackAttachment
@@ -209,27 +212,27 @@ public:
 	struct SStats
 	{
 		SStats()
-			: fp(false),
+		:	fp(false),
 			mounted(false),
-			mount_last_aimdir(Vec3(0.0f, 0.0f, 0.0f)),
-			mount_dir(Vec3(0.0f, 0.0f, 0.0f)),
+			mount_last_aimdir(Vec3(0.0f,0.0f,0.0f)),
+			mount_dir(Vec3(0.0f,0.0f,0.0f)),      
 			pickable(true),
 			selectable(true),
 			selected(false),
 			dropped(false),
-			brandnew(true),
-			flying(false),
+			brandnew(true),      
+			flying(false),      
 			viewmode(0),
-			used(false),
+      used(false),
 			sound_enabled(true),
 			hand(eIH_Right),
-			health(0.f),
+      health(0.f),
 			first_selection(true),
 			backAttachment(eIBA_Unknown)
 		{
 		};
 
-		void Serialize(TSerialize& ser)
+		void Serialize(TSerialize &ser)
 		{
 			ser.BeginGroup("ItemStats");
 			//int vmode = viewmode;
@@ -249,9 +252,9 @@ public:
 			//bool firstPerson = fp;
 			//ser.Value("firstPerson", firstPerson);
 			bool bnew = brandnew;
-			ser.Value("brandnew", bnew);
-			float fHealth = health;
-			ser.Value("health", fHealth);
+			ser.Value("brandnew", bnew);      
+      float fHealth = health;
+      ser.Value("health", fHealth);   
 			bool bfirstSelection = first_selection;
 			ser.Value("first_selection", bfirstSelection);
 			int aback = (int)backAttachment;
@@ -260,7 +263,7 @@ public:
 			ser.Value("pickable", pick);
 			ser.EndGroup();
 
-			if (ser.IsReading())
+			if(ser.IsReading())
 			{
 				//viewmode = vmode;
 				flying = fly;
@@ -269,9 +272,9 @@ public:
 				used = use;
 				hand = han;
 				dropped = drop;
-				brandnew = bnew;
+				brandnew = bnew;        
 				//fp = firstPerson;
-				health = fHealth;
+        health = fHealth;
 				first_selection = bfirstSelection;
 				backAttachment = (eItemBackAttachment)aback;
 				pickable = pick;
@@ -280,34 +283,35 @@ public:
 
 		Vec3	mount_dir;
 		Vec3	mount_last_aimdir;
-		int		hand : 3;
-		int		viewmode : 3;
+		int		hand:3;
+		int		viewmode:3;
 		float health;
-		bool	fp : 1;
-		bool	mounted : 1;
-		bool	pickable : 1;
-		bool	selectable : 1;
-		bool	selected : 1;
-		bool	dropped : 1;
-		bool	brandnew : 1;
-		bool	flying : 1;
-		bool	used : 1;
-		bool	sound_enabled : 1;
-		bool  first_selection : 1;
+		bool	fp:1;
+		bool	mounted:1;
+		bool	pickable:1;
+		bool	selectable:1;
+		bool	selected:1;
+		bool	dropped:1;
+		bool	brandnew:1;    
+		bool	flying:1;
+		bool	used:1;
+		bool	sound_enabled:1;
+		bool  first_selection:1;
 		eItemBackAttachment   backAttachment;
 	};
 
 	struct SEditorStats
 	{
 		SEditorStats()
-			: ownerId(0),
+		:	ownerId(0),
 			current(false)
 		{};
 
 		SEditorStats(EntityId _ownerId, bool _current)
-			: ownerId(_ownerId),
+		:	ownerId(_ownerId),
 			current(_current)
 		{};
+
 
 		EntityId	ownerId;
 		bool			current;
@@ -316,7 +320,7 @@ public:
 	struct SParams
 	{
 		SParams()
-			: selectable(true),
+		: selectable(true),
 			droppable(true),
 			pickable(true),
 			mountable(true),
@@ -324,12 +328,12 @@ public:
 			giveable(true),
 			unique(true),
 			arms(true),
-			two_hand(0),
+			two_hand(0),      
 			mass(3.5f),
 			fly_timer(750),
 			drop_impulse(12.5f),
-			drop_impulse_pos(0.0075f, 0, 0.0075f),
-			drop_angles(0, 0, 0),
+			drop_impulse_pos(0.0075f,0,0.0075f),
+			drop_angles(0,0,0),
 			select_override(0.0f),
 			prone_not_usable(false),
 			raiseable(false),
@@ -343,32 +347,32 @@ public:
 			select_on_pickup(false)
 		{
 			pose = g_pItemStrings->nw;
-			attachment[eIH_Right] = g_pItemStrings->right_item_attachment;
-			attachment[eIH_Left] = g_pItemStrings->left_item_attachment;
+			attachment[eIH_Right]=g_pItemStrings->right_item_attachment;
+			attachment[eIH_Left]=g_pItemStrings->left_item_attachment;
 			bone_attachment_01.clear();
 			bone_attachment_02.clear();
 		};
 
-		void GetMemoryStatistics(ICrySizer* s)
+		void GetMemoryStatistics(ICrySizer * s)
 		{
 			s->Add(pose);
-			for (int i = 0; i < eIH_Last; i++)
+			for (int i=0; i<eIH_Last; i++)
 				s->Add(attachment[i]);
 			s->Add(dual_wield_suffix);
 			s->Add(dual_wield_pose);
 			s->Add(display_name);
 		}
 
-		bool    prone_not_usable;
-		bool		raiseable;
-		bool		selectable;
-		bool		droppable;
-		bool		pickable;
-		bool		mountable;
-		bool		usable;
-		bool		giveable;
-		bool		unique;
-		bool		arms;
+		bool    prone_not_usable ;
+		bool		raiseable        ;
+		bool		selectable       ;
+		bool		droppable        ;
+		bool		pickable         ;
+		bool		mountable        ;
+		bool		usable           ;
+		bool		giveable         ;
+		bool		unique           ;
+		bool		arms             ;
 		short		two_hand; // 0 = one-hand, 1 = two-hand no grenades, 2 = two-hand w/ grenades
 
 		int			fly_timer;
@@ -398,10 +402,11 @@ public:
 		bool				select_on_pickup;
 	};
 
+
 	struct SMountParams
 	{
 		SMountParams()
-			: min_pitch(0.0f),
+		:	min_pitch(0.0f),
 			max_pitch(80.0f),
 			yaw_range(0.0f),
 			eye_distance(0.85f),
@@ -409,7 +414,7 @@ public:
 			body_distance(0.55f)
 		{};
 
-		void GetMemoryStatistics(ICrySizer* s)
+		void GetMemoryStatistics(ICrySizer * s)
 		{
 			s->Add(pivot);
 			s->Add(left_hand_helper);
@@ -429,7 +434,7 @@ public:
 
 	struct SDamageLevel
 	{
-		SDamageLevel() : max_health(100), min_health(0), effectId(-1) {};
+		SDamageLevel(): max_health(100), min_health(0), effectId(-1) {};
 
 		int max_health;
 		int min_health;
@@ -438,7 +443,7 @@ public:
 		ItemString effect;
 		ItemString helper;
 
-		void GetMemoryStatistics(ICrySizer* s)
+		void GetMemoryStatistics(ICrySizer * s)
 		{
 			s->Add(effect);
 			s->Add(helper);
@@ -447,7 +452,7 @@ public:
 
 	struct SEntityProperties
 	{
-		SEntityProperties() : hitpoints(0), pickable(true), mounted(false), physics(false), usable(false) { initialSetup.resize(0); };
+		SEntityProperties(): hitpoints(0), pickable(true), mounted(false), physics(false), usable(false) { initialSetup.resize(0);};
 
 		int hitpoints;
 		bool pickable;
@@ -455,8 +460,8 @@ public:
 		bool physics;
 		bool usable;
 		string initialSetup;
-
-		void GetMemoryStatistics(ICrySizer* s)
+		
+		void GetMemoryStatistics(ICrySizer * s)
 		{
 			s->Add(initialSetup);
 		}
@@ -464,7 +469,7 @@ public:
 
 	struct SRespawnProperties
 	{
-		SRespawnProperties() : timer(0.0f), unique(false), respawn(false) {};
+		SRespawnProperties(): timer(0.0f), unique(false), respawn(false) {};
 		float timer;
 		bool	unique;
 		bool	respawn;
@@ -474,16 +479,16 @@ public:
 	{
 		SCameraAnimationStats()
 		{
-			animating = false;
-			position = true;
-			rotation = true;
-			follow = false;
-			reorient = false;
+			animating=false;
+			position=true;
+			rotation=true;
+			follow=false;
+			reorient=false;
 			pos.zero();
 			rot.SetIdentity();
 		};
 
-		void GetMemoryStatistics(ICrySizer* s)
+		void GetMemoryStatistics(ICrySizer * s)
 		{
 			s->Add(helper);
 		}
@@ -491,16 +496,16 @@ public:
 		ItemString	helper;
 		Vec3		pos;
 		Quat		rot;
-		bool		animating;
-		bool		position;
-		bool		rotation;
-		bool		follow;
-		bool		reorient;
+		bool		animating ;
+		bool		position  ;
+		bool		rotation  ;
+		bool		follow    ;
+		bool		reorient  ;
 	};
 
 	struct SAccessoryParams
 	{
-		void GetMemoryStatistics(ICrySizer* s)
+		void GetMemoryStatistics(ICrySizer * s)
 		{
 			s->Add(attach_helper);
 			s->Add(attach_action);
@@ -520,16 +525,16 @@ public:
 		ItemString		switchToFireMode;
 		ItemString		zoommode;
 		std::vector< ItemString >   firemodes;
-		const IItemParamsNode* params;
+		const IItemParamsNode *params;
 		bool      exclusive;
 		bool			client_only;
 	};
 
 	struct SAudio
 	{
-		SAudio() : isstatic(false), sphere(0.0f), airadius(0.0f), issynched(false) {};
+		SAudio():	isstatic(false), sphere(0.0f), airadius(0.0f),issynched(false) {};
 
-		void GetMemoryStatistics(ICrySizer* s)
+		void GetMemoryStatistics(ICrySizer * s)
 		{
 			s->Add(name);
 		}
@@ -543,12 +548,12 @@ public:
 
 	struct SInstanceAudio
 	{
-		SInstanceAudio() : id(INVALID_SOUNDID), synch(false) {};
+		SInstanceAudio(): id(INVALID_SOUNDID),synch(false) {};
 		ItemString		static_name;
 		tSoundID	    id;
 		bool          synch;
 
-		void GetMemoryStatistics(ICrySizer* s)
+		void GetMemoryStatistics(ICrySizer * s)
 		{
 			s->Add(static_name);
 		}
@@ -556,12 +561,12 @@ public:
 
 	struct SLayer
 	{
-		void GetMemoryStatistics(ICrySizer* s)
+		void GetMemoryStatistics(ICrySizer * s)
 		{
 			s->AddContainer(bones);
-			for (int i = 0; i < bones.size(); i++)
+			for (int i=0; i<bones.size(); i++)
 				s->Add(bones[i]);
-			for (int i = 0; i < eIGS_Last; i++)
+			for (int i=0; i<eIGS_Last; i++)
 				s->Add(name[i]);
 		}
 
@@ -573,9 +578,9 @@ public:
 
 	struct SAnimation
 	{
-		SAnimation() : camera_pos(true), camera_rot(true), camera_follow(false), camera_reorient(false) {};
+		SAnimation(): camera_pos(true), camera_rot(true), camera_follow(false), camera_reorient(false) {};
 
-		void GetMemoryStatistics(ICrySizer* s)
+		void GetMemoryStatistics(ICrySizer * s)
 		{
 			s->Add(name);
 			s->Add(camera_helper);
@@ -591,35 +596,35 @@ public:
 		bool				camera_reorient;
 	};
 
-	struct SEffect
-	{
-		SEffect() {};
+  struct SEffect
+  {
+    SEffect() {};
 
-		void GetMemoryStatistics(ICrySizer* s)
-		{
-			s->Add(name);
-			s->Add(helper);
-		}
+    void GetMemoryStatistics(ICrySizer *s)
+    {
+      s->Add(name);
+      s->Add(helper);
+    }
 
-		ItemString name;
-		ItemString helper;
-	};
+    ItemString name;
+    ItemString helper;
+  };
 
 	struct SAction
 	{
-		void GetMemoryStatistics(ICrySizer* s)
+		void GetMemoryStatistics(ICrySizer * s)
 		{
-			for (int i = 0; i < eIGS_Last; i++)
+			for (int i=0; i<eIGS_Last; i++)
 			{
 				s->AddContainer(animation[i]);
-				for (int j = 0; j < animation[i].size(); j++)
+				for (int j=0; j<animation[i].size(); j++)
 					animation[i][j].GetMemoryStatistics(s);
 			}
 		}
 
 		std::vector<SAnimation>	animation[eIGS_Last];
 		SAudio			sound[2];
-		SEffect     effect[2];
+    SEffect     effect[2];
 		bool				children;
 	};
 
@@ -627,9 +632,9 @@ public:
 	{
 		SInstanceAudio sound[2];
 
-		void GetMemoryStatistics(ICrySizer* s)
+		void GetMemoryStatistics(ICrySizer * s)
 		{
-			for (int i = 0; i < 2; i++)
+			for (int i=0; i<2; i++)
 				sound[i].GetMemoryStatistics(s);
 		}
 	};
@@ -639,7 +644,7 @@ public:
 		ItemString	name;
 		ItemString	bone;
 		int			slot;
-		void GetMemoryStatistics(ICrySizer* s) const
+		void GetMemoryStatistics(ICrySizer * s) const
 		{
 			s->Add(*this);
 			s->Add(name);
@@ -653,8 +658,8 @@ public:
 		int			slot;
 		ItemString	helper;
 
-		SEffectInfo() : characterSlot(-1), slot(-1) {}
-		void GetMemoryStatistics(ICrySizer* s)
+    SEffectInfo() : characterSlot(-1), slot(-1) {}
+		void GetMemoryStatistics(ICrySizer * s)
 		{
 			s->Add(helper);
 		}
@@ -662,9 +667,9 @@ public:
 
 	struct SGeometry
 	{
-		SGeometry() : position(ZERO), angles(ZERO), scale(1.0f) {};
+		SGeometry(): position(ZERO), angles(ZERO), scale(1.0f) {};
 
-		void GetMemoryStatistics(ICrySizer* s)
+		void GetMemoryStatistics(ICrySizer * s)
 		{
 			s->Add(name);
 		}
@@ -673,6 +678,7 @@ public:
 		Ang3		angles;
 		float		scale;
 	};
+
 
 	typedef std::map<ItemString, SAction>					TActionMap;
 	typedef std::map<ItemString, SInstanceAction>	TInstanceActionMap;
@@ -687,40 +693,40 @@ public:
 	typedef std::vector<SDamageLevel>							TDamageLevelVector;
 	typedef std::map<IEntityClass*, int>					TAccessoryAmmoMap;
 
-	static const int ASPECT_OWNER_ID = eEA_GameServerStatic;
+	static const int ASPECT_OWNER_ID	= eEA_GameServerStatic;
 
 public:
 	CItem();
 	virtual ~CItem();
 
 	// IItem, IGameObjectExtension
-	virtual bool Init(IGameObject* pGameObject);
+	virtual bool Init( IGameObject * pGameObject );
 	virtual void InitClient(int channelId);
 	virtual void PostInitClient(int channelId);
-	virtual void PostInit(IGameObject* pGameObject);
+	virtual void PostInit( IGameObject * pGameObject );
 	virtual void Release();
-	virtual void FullSerialize(TSerialize ser);
-	virtual bool NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int flags);
+	virtual void FullSerialize( TSerialize ser );
+	virtual bool NetSerialize( TSerialize ser, EEntityAspects aspect, uint8 profile, int flags );
 	virtual void PostSerialize();
 	virtual void PostPostSerialize();
-	virtual void SerializeLTL(TSerialize ser);
-	virtual void SerializeSpawnInfo(TSerialize ser) {};
-	virtual ISerializableInfoPtr GetSpawnInfo() { return 0; };
-	virtual void Update(SEntityUpdateContext& ctx, int);
-	virtual void PostUpdate(float frameTime) {};
+	virtual void SerializeLTL( TSerialize ser );
+	virtual void SerializeSpawnInfo( TSerialize ser ) {};
+	virtual ISerializableInfoPtr GetSpawnInfo() { return 0;};
+	virtual void Update( SEntityUpdateContext& ctx, int );
+	virtual void PostUpdate( float frameTime ) {};
 	virtual void PostRemoteSpawn() {};
-	virtual void HandleEvent(const SGameObjectEvent&);
-	virtual void ProcessEvent(SEntityEvent&);
+	virtual void HandleEvent( const SGameObjectEvent& );
+	virtual void ProcessEvent(SEntityEvent& );
 	virtual void SetChannelId(uint16 id) {};
 	virtual void SetAuthority(bool auth) {}
-	virtual void GetMemoryStatistics(ICrySizer* s);
+	virtual void GetMemoryStatistics(ICrySizer * s);
 
 	virtual void OnAction(EntityId actorId, const ActionId& actionId, int activationMode, float value);
 	virtual void UpdateFPView(float frameTime);
 	virtual void UpdateFPPosition(float frameTime);
 	virtual void UpdateFPCharacter(float frameTime);
-	virtual bool FilterView(struct SViewParams& viewParams);
-	virtual void PostFilterView(struct SViewParams& viewParams);
+	virtual bool FilterView(struct SViewParams &viewParams);
+	virtual void PostFilterView(struct SViewParams &viewParams);
 
 	void UpdateTPCharacter();
 
@@ -728,13 +734,13 @@ public:
 
 	virtual void EnableAnimations(bool enable) { m_enableAnimations = enable; };
 
-	virtual IWeapon* GetIWeapon() { return 0; };
+	virtual IWeapon *GetIWeapon() { return 0; };
 
 	virtual void SetOwnerId(EntityId ownerId);
 	virtual EntityId GetOwnerId() const;
 
 	virtual void Reset();
-	virtual void ResetOwner();
+  virtual void ResetOwner();
 
 	virtual void RemoveEntity(bool force = false);
 
@@ -744,14 +750,14 @@ public:
 	virtual void SetHand(int hand);
 	virtual void Use(EntityId userId);
 	virtual void Select(bool select);
-	virtual void Drop(float impulseScale = 1.0f, bool selectNext = true, bool byDeath = false);
-	virtual void PickUp(EntityId pickerId, bool sound, bool select = true, bool keepHistory = true);
+	virtual void Drop(float impulseScale=1.0f, bool selectNext=true, bool byDeath=false);
+	virtual void PickUp(EntityId pickerId, bool sound, bool select=true, bool keepHistory=true);
 	virtual void Physicalize(bool enable, bool rigid);
 	virtual void Pickalize(bool enable, bool dropped);
 	virtual void IgnoreCollision(bool ignore);
-	virtual void ForceArms(ICharacterInstance* pCharacter) { m_pForcedArms = pCharacter; };
+	virtual void ForceArms(ICharacterInstance *pCharacter) { m_pForcedArms = pCharacter; };
 	virtual void AttachArms(bool attach, bool shadow);
-	virtual void Impulse(const Vec3& position, const Vec3& direction, float impulse);
+	virtual void Impulse(const Vec3 &position, const Vec3 &direction, float impulse);
 
 	virtual bool CanPickUp(EntityId userId) const;
 	virtual bool CanDrop() const;
@@ -764,8 +770,8 @@ public:
 	virtual void TriggerRespawn();
 	virtual void TakeAccessories(EntityId receiver);
 
-	virtual void Cloak(bool cloak, IMaterial* cloakMat = 0);
-	virtual void SetMaterialRecursive(ICharacterInstance* charInst, bool undo, IMaterial* newMat);
+	virtual void Cloak(bool cloak, IMaterial *cloakMat = 0);
+	virtual void SetMaterialRecursive(ICharacterInstance *charInst, bool undo, IMaterial *newMat);
 
 	void CloakEnable(bool enable, bool fade);
 	void CloakSync(bool fade);
@@ -775,13 +781,14 @@ public:
 	void WetSync(bool fade);
 	void ApplyMaterialLayerSettings(uint8 mask, uint32 blend);
 
+
 	virtual bool IsTwoHand() const;
 	virtual int TwoHandMode() const;
-	virtual bool SupportsDualWield(const char* itemName) const;
+	virtual bool SupportsDualWield(const char *itemName) const;
 	virtual void ResetDualWield();
-	virtual IItem* GetDualWieldSlave() const;
+	virtual IItem *GetDualWieldSlave() const;
 	virtual EntityId GetDualWieldSlaveId() const;
-	virtual IItem* GetDualWieldMaster() const;
+	virtual IItem *GetDualWieldMaster() const;
 	virtual EntityId GetDualWieldMasterId() const;
 	virtual void SetDualWieldMaster(EntityId masterId);
 	virtual void SetDualWieldSlave(EntityId slaveId);
@@ -790,16 +797,16 @@ public:
 	virtual bool IsDualWieldSlave() const;
 
 	virtual Vec3 GetMountedAngleLimits() const;
-	virtual Vec3 GetMountedDir() const { return GetStats().mount_dir; }
+	virtual Vec3 GetMountedDir() const {return GetStats().mount_dir;}
 	virtual void SetMountedAngleLimits(float min_pitch, float max_pitch, float yaw_range);
 
-	virtual void EnableSelect(bool enable);
+	virtual void EnableSelect(bool enable);	
 	virtual bool CanSelect() const;
 	virtual bool IsSelected() const;
 	virtual void OnParentSelect(bool select) {};
 
-	virtual void MountAt(const Vec3& pos);
-	virtual void MountAtEntity(EntityId entityId, const Vec3& pos, const Ang3& angles);
+	virtual void MountAt(const Vec3 &pos);
+	virtual void MountAtEntity(EntityId entityId, const Vec3 &pos, const Ang3 &angles);
 	virtual void StartUse(EntityId userId);
 	virtual void StopUse(EntityId  userId);
 	virtual void ApplyViewLimit(EntityId userId, bool apply);
@@ -807,16 +814,16 @@ public:
 	virtual void EnableSound(bool enable);
 	virtual bool IsSoundEnabled() const;
 	virtual bool IsModifying() { return m_modifying || m_transitioning; }
-	virtual bool IsDestroyed() { return m_properties.hitpoints > 0 && m_stats.health <= 0.f; }
+  virtual bool IsDestroyed() { return m_properties.hitpoints > 0 && m_stats.health <= 0.f; }
 
 	virtual void EnterWater(bool enter) {};
 	// ~IItem
 
 	// IGameObjectProfileManager
-	virtual bool SetAspectProfile(EEntityAspects aspect, uint8 profile);
-	virtual uint8 GetDefaultProfile(EEntityAspects aspect);
+	virtual bool SetAspectProfile( EEntityAspects aspect, uint8 profile );
+	virtual uint8 GetDefaultProfile( EEntityAspects aspect );
 	// ~IGameObjectProfileManager
-
+  
 	// Events
 	virtual void OnStartUsing();
 	virtual void OnStopUsing();
@@ -824,52 +831,52 @@ public:
 	virtual void OnSelected(bool selected);
 	virtual void OnEnterFirstPerson();
 	virtual void OnEnterThirdPerson();
-	virtual void OnReset();
+  virtual void OnReset();
 	virtual void OnPickedUp(EntityId actorId, bool destroyed);
 	virtual void OnDropped(EntityId actorId);
-
-	virtual const SStats& GetStats() const { return m_stats; };
-	virtual const SParams& GetParams() const { return m_params; };
-	virtual const SEntityProperties& GetProperties() const { return m_properties; };
+  
+	virtual const SStats &GetStats() const { return m_stats; };
+	virtual const SParams &GetParams() const { return m_params; };
+	virtual const SEntityProperties &GetProperties() const { return m_properties; };
 
 	// Silhouette purpose: we need to get all the currently attached accessories to highlight them
-	const TAccessoryMap* GetAttachedAccessories() const { return &m_accessories; }
+	const TAccessoryMap *GetAttachedAccessories() const { return &m_accessories; }
 
 public:
 
 	// params
-	virtual bool ReadItemParams(const IItemParamsNode* root);
-	virtual bool ReadParams(const IItemParamsNode* params);
-	virtual bool ReadGeometry(const IItemParamsNode* geometry);
-	virtual bool ReadActions(const IItemParamsNode* actions);
-	virtual bool ReadAction(const IItemParamsNode* action, SAction* pAction);
-	virtual bool ReadDamageLevels(const IItemParamsNode* damagelevels);
-	virtual bool ReadLayers(const IItemParamsNode* layers);
-	virtual bool ReadLayer(const IItemParamsNode* layer, SLayer* pLayer);
-	virtual bool ReadAccessories(const IItemParamsNode* accessories);
-	virtual bool ReadAccessoryParams(const IItemParamsNode* accessory, SAccessoryParams* params);
-	virtual bool ReadAccessoryAmmo(const IItemParamsNode* ammo);
-	virtual bool SetGeometryFromParams(int slot, const IItemParamsNode* geometry);
-	virtual int TargetToSlot(const char* name);
-	virtual void ReadProperties(IScriptTable* pScriptTable);
+	virtual bool ReadItemParams(const IItemParamsNode *root);
+	virtual bool ReadParams(const IItemParamsNode *params);
+	virtual bool ReadGeometry(const IItemParamsNode *geometry);
+	virtual bool ReadActions(const IItemParamsNode *actions);
+	virtual bool ReadAction(const IItemParamsNode *action, SAction *pAction);
+	virtual bool ReadDamageLevels(const IItemParamsNode *damagelevels);
+	virtual bool ReadLayers(const IItemParamsNode *layers);
+	virtual bool ReadLayer(const IItemParamsNode *layer, SLayer *pLayer);
+	virtual bool ReadAccessories(const IItemParamsNode *accessories);
+	virtual bool ReadAccessoryParams(const IItemParamsNode *accessory, SAccessoryParams *params);
+	virtual bool ReadAccessoryAmmo(const IItemParamsNode *ammo);
+	virtual bool SetGeometryFromParams(int slot, const IItemParamsNode *geometry);
+	virtual int TargetToSlot(const char *name);
+	virtual void ReadProperties(IScriptTable *pScriptTable);
 
 	// accessories
-	virtual CItem* AddAccessory(const ItemString& name);
+	virtual CItem *AddAccessory(const ItemString& name);
 	virtual void RemoveAccessory(const ItemString& name);
 	virtual void RemoveAllAccessories();
 	virtual void AttachAccessory(const ItemString& name, bool attach, bool noanim, bool force = false, bool initialSetup = false);
 	virtual void AttachAccessoryPlaceHolder(const ItemString& name, bool attach);
-	virtual CItem* GetAccessoryPlaceHolder(const ItemString& name);
-	virtual CItem* GetAccessory(const ItemString& name);
-	virtual SAccessoryParams* GetAccessoryParams(const ItemString& name);
+	virtual CItem *GetAccessoryPlaceHolder(const ItemString& name);
+	virtual CItem *GetAccessory(const ItemString& name);
+	virtual SAccessoryParams *GetAccessoryParams(const ItemString& name);
 	virtual bool IsAccessoryHelperFree(const ItemString& helper);
 	virtual void InitialSetup();
-	virtual void PatchInitialSetup();
+	virtual void PatchInitialSetup(); 
 	virtual void ReAttachAccessories();
 	virtual void ReAttachAccessory(const ItemString& name);
 	virtual void ReAttachAccessory(EntityId id);
 	virtual void AccessoriesChanged();
-	virtual void FixAccessories(SAccessoryParams* newParams, bool attach) {};
+	virtual void FixAccessories(SAccessoryParams *newParams, bool attach) {};
 	virtual void ResetAccessoriesScreen(CActor* pOwner);
 
 	virtual void SwitchAccessory(const ItemString& accessory);
@@ -879,53 +886,53 @@ public:
 
 	virtual void AddAccessoryAmmoToInventory(IEntityClass* pAmmoType, int count, CActor* pOwner = NULL);
 	virtual int  GetAccessoryAmmoCount(IEntityClass* pAmmoType);
-	virtual bool GivesAmmo() { return (!m_bonusAccessoryAmmo.empty() || m_params.attachment_gives_ammo); }
+	virtual bool GivesAmmo() { return (!m_bonusAccessoryAmmo.empty() || m_params.attachment_gives_ammo);}
 
-	virtual bool IsAmmoPickup() const { return false; }
+	virtual bool IsAmmoPickup() const {return false;}
 
 	// effects
-	uint AttachEffect(int slot, uint id, bool attach, const char* effectName = 0, const char* helper = 0,
-		const Vec3& offset = Vec3Constants<float>::fVec3_Zero, const Vec3& dir = Vec3Constants<float>::fVec3_OneY, float scale = 1.0f, bool prime = true);
-	uint AttachLight(int slot, uint id, bool attach, float radius = 5.0f, const Vec3& color = Vec3Constants<float>::fVec3_One,
-		const float fSpecularMult = 1.0f, const char* projectTexture = 0, float projectFov = 0, const char* helper = 0,
-		const Vec3& offset = Vec3Constants<float>::fVec3_Zero, const Vec3& dir = Vec3Constants<float>::fVec3_OneY,
-		const char* material = 0, float fHDRDynamic = 0.f);
-	uint AttachLightEx(int slot, uint id, bool attach, bool fakeLight = false, bool castShadows = false, IRenderNode* pCasterException = NULL, float radius = 5.0f, const Vec3& color = Vec3Constants<float>::fVec3_One,
-		const float fSpecularMult = 1.0f, const char* projectTexture = 0, float projectFov = 0, const char* helper = 0,
-		const Vec3& offset = Vec3Constants<float>::fVec3_Zero, const Vec3& dir = Vec3Constants<float>::fVec3_OneY,
-		const char* material = 0, float fHDRDynamic = 0.f);
-	void SpawnEffect(int slot, const char* effectName, const char* helper, const Vec3& offset = Vec3Constants<float>::fVec3_Zero,
-		const Vec3& dir = Vec3Constants<float>::fVec3_OneY, float scale = 1.0f);
-	IParticleEmitter* GetEffectEmitter(uint id) const;
-	void SetEffectWorldTM(uint id, const Matrix34& tm);
+	uint AttachEffect(int slot, uint id, bool attach, const char *effectName=0, const char *helper=0,
+		const Vec3 &offset=Vec3Constants<float>::fVec3_Zero, const Vec3 &dir=Vec3Constants<float>::fVec3_OneY, float scale=1.0f, bool prime=true);
+  uint AttachLight(int slot, uint id, bool attach, float radius=5.0f, const Vec3 &color=Vec3Constants<float>::fVec3_One,
+		const float fSpecularMult=1.0f, const char *projectTexture=0, float projectFov=0, const char *helper=0,
+		const Vec3 &offset=Vec3Constants<float>::fVec3_Zero, const Vec3 &dir=Vec3Constants<float>::fVec3_OneY, 
+    const char* material=0, float fHDRDynamic=0.f );
+	uint AttachLightEx(int slot, uint id, bool attach, bool fakeLight = false , bool castShadows = false, IRenderNode* pCasterException = NULL, float radius=5.0f, const Vec3 &color=Vec3Constants<float>::fVec3_One,
+		const float fSpecularMult=1.0f, const char *projectTexture=0, float projectFov=0, const char *helper=0,
+		const Vec3 &offset=Vec3Constants<float>::fVec3_Zero, const Vec3 &dir=Vec3Constants<float>::fVec3_OneY, 
+		const char* material=0, float fHDRDynamic=0.f );
+	void SpawnEffect(int slot, const char *effectName, const char *helper, const Vec3 &offset=Vec3Constants<float>::fVec3_Zero,
+		const Vec3 &dir=Vec3Constants<float>::fVec3_OneY, float scale=1.0f);
+	IParticleEmitter *GetEffectEmitter(uint id) const;
+	void SetEffectWorldTM(uint id, const Matrix34 &tm);
 	Matrix34 GetEffectWorldTM(uint it);
-	void EnableLight(bool enable, uint id);
+  void EnableLight(bool enable, uint id);
 	void SetLightRadius(float radius, uint id);
 
 	// misc
 	bool AttachToHand(bool attach, bool checkAttachment = false);
 	bool AttachToBack(bool attach);
-	void EnableUpdate(bool enable, int slot = -1);
-	void RequireUpdate(int slot = -1);
+	void EnableUpdate(bool enable, int slot=-1);
+	void RequireUpdate(int slot=-1);
 	void Hide(bool hide);
 	void HideArms(bool hide);
 	void HideItem(bool hide);
 	virtual void SetBusy(bool busy) { m_scheduler.SetBusy(busy); };
 	virtual bool IsBusy() const { return m_scheduler.IsBusy(); };
-	CItemScheduler* GetScheduler() { return &m_scheduler; };
-	IItemSystem* GetIItemSystem() { return m_pItemSystem; };
+	CItemScheduler *GetScheduler() { return &m_scheduler; };
+	IItemSystem *GetIItemSystem() { return m_pItemSystem; };
 	virtual void SetDualSlaveAccessory(bool noNetwork = false);
 
-	IEntity* GetOwner() const;
-	CActor* GetOwnerActor() const;
-	CActor* GetActor(EntityId actorId) const;
-	IInventory* GetActorInventory(IActor* pActor) const;
-	CItem* GetActorItem(IActor* pActor) const;
-	EntityId GetActorItemId(IActor* pActor) const;
-	EntityId GetHostId() const { return m_hostId; }
-	CActor* GetActorByNetChannel(INetChannel* pNetChannel) const;
+	IEntity *GetOwner() const;
+	CActor *GetOwnerActor() const;
+	CActor *GetActor(EntityId actorId) const;
+  IInventory *GetActorInventory(IActor *pActor) const;
+	CItem *GetActorItem(IActor *pActor) const;
+	EntityId GetActorItemId(IActor *pActor) const;
+  EntityId GetHostId() const { return m_hostId; }
+	CActor *GetActorByNetChannel(INetChannel *pNetChannel) const;
 
-	const char* GetDisplayName() const;
+	const char *GetDisplayName() const;
 
 	virtual void ForcePendingActions() {}
 
@@ -935,33 +942,33 @@ public:
 	// view
 	bool IsOwnerFP();
 	bool IsCurrentItem();
-	void UpdateMounted(float frameTime);
+	void UpdateMounted(float frameTime);  
 	void CheckViewChange();
 	void SetViewMode(int mode);
-	void CopyRenderFlags(IEntity* pOwner);
+	void CopyRenderFlags(IEntity *pOwner);
 	void ResetRenderFlags();
-	virtual void UseManualBlending(bool enable);
-	virtual bool GetAimBlending(OldBlendSpace& params);
-	virtual void UpdateIKMounted(IActor* pActor, const Vec3& vGunXAxis);
+  virtual void UseManualBlending(bool enable);
+  virtual bool GetAimBlending(OldBlendSpace& params);
+  virtual void UpdateIKMounted(IActor* pActor, const Vec3& vGunXAxis);
 
 	// character attachments
-	bool CreateCharacterAttachment(int slot, const char* name, int type, const char* bone);
-	void DestroyCharacterAttachment(int slot, const char* name);
-	void ResetCharacterAttachment(int slot, const char* name);
-	const char* GetCharacterAttachmentBone(int slot, const char* name);
-	void SetCharacterAttachment(int slot, const char* name, IEntity* pEntity, int flags);
-	void SetCharacterAttachment(int slot, const char* name, IStatObj* pObj, int flags);
-	void SetCharacterAttachment(int slot, const char* name, ICharacterInstance* pCharacter, int flags);
-	void SetCharacterAttachment(int slot, const char* name, CDLight& light, int flags);
-	void SetCharacterAttachment(int slot, const char* name, IEntity* pEntity, int objSlot, int flags);
-	virtual void SetCharacterAttachmentLocalTM(int slot, const char* name, const Matrix34& tm);
-	void SetCharacterAttachmentWorldTM(int slot, const char* name, const Matrix34& tm);
-	Matrix34 GetCharacterAttachmentLocalTM(int slot, const char* name);
-	Matrix34 GetCharacterAttachmentWorldTM(int slot, const char* name);
-	void HideCharacterAttachment(int slot, const char* name, bool hide);
-	void HideCharacterAttachmentMaster(int slot, const char* name, bool hide);
+	bool CreateCharacterAttachment(int slot, const char *name, int type, const char *bone);
+	void DestroyCharacterAttachment(int slot, const char *name);
+	void ResetCharacterAttachment(int slot, const char *name);
+	const char *GetCharacterAttachmentBone(int slot, const char *name);
+	void SetCharacterAttachment(int slot, const char *name, IEntity *pEntity, int flags);
+	void SetCharacterAttachment(int slot, const char *name, IStatObj *pObj, int flags);
+	void SetCharacterAttachment(int slot, const char *name, ICharacterInstance *pCharacter, int flags);
+	void SetCharacterAttachment(int slot, const char *name, CDLight &light, int flags);
+	void SetCharacterAttachment(int slot, const char *name, IEntity *pEntity, int objSlot, int flags);
+	virtual void SetCharacterAttachmentLocalTM(int slot, const char *name, const Matrix34 &tm);
+	void SetCharacterAttachmentWorldTM(int slot, const char *name, const Matrix34 &tm);
+	Matrix34 GetCharacterAttachmentLocalTM(int slot, const char *name);
+	Matrix34 GetCharacterAttachmentWorldTM(int slot, const char *name);
+	void HideCharacterAttachment(int slot, const char *name, bool hide);
+	void HideCharacterAttachmentMaster(int slot, const char *name, bool hide);
 
-	virtual float GetRecoilAmount() const { return 0.0f; }
+	virtual float GetRecoilAmount() const {return 0.0f;}
 
 	void CreateAttachmentHelpers(int slot);
 	void DestroyAttachmentHelpers(int slot);
@@ -970,60 +977,60 @@ public:
 	// freeze
 	virtual void Freeze(bool freeze);
 
-	// damage
-	virtual void OnHit(float damage, const char* damageType);
-	virtual void OnDestroyed();
-	virtual void OnRepaired();
+  // damage
+  virtual void OnHit(float damage, const char* damageType);
+  virtual void OnDestroyed();
+  virtual void OnRepaired();
 	virtual void DestroyedGeometry(bool use);
 	virtual void UpdateDamageLevel();
 
 	// resource
-	virtual bool SetGeometry(int slot, const ItemString& name, const Vec3& poffset = Vec3(0, 0, 0), const Ang3& aoffset = Ang3(0, 0, 0), float scale = 1.0f, bool forceReload = false);
+	virtual bool SetGeometry(int slot, const ItemString& name, const Vec3& poffset=Vec3(0,0,0), const Ang3& aoffset=Ang3(0,0,0), float scale=1.0f, bool forceReload=false);
 	void SetDefaultIdleAnimation(int slot, const ItemString& actionName);
-	const char* GetDefaultIdleAnimation(int slot) { return m_idleAnimation[slot]; };
+	const char *GetDefaultIdleAnimation(int slot) { return m_idleAnimation[slot]; };
 	void ForceSkinning(bool always);
 	void EnableHiddenSkinning(bool force);
 
 	typedef CryFixedStringT<256> TempResourceName;
-	void FixResourceName(const ItemString& name, TempResourceName& fixedName, int flags, const char* hand = 0, const char* suffix = 0, const char* pose = 0, const char* pov = 0, const char* env = 0);
-	virtual tSoundID PlayAction(const ItemString& action, int layer = 0, bool loop = false, uint flags = eIPAF_Default, float speedOverride = -1.0f);
-	void PlayAnimation(const char* animationName, int layer = 0, bool loop = false, uint flags = eIPAF_Default);
-	void PlayAnimationEx(const char* animationName, int slot = eIGS_FirstPerson, int layer = 0, bool loop = false, float blend = 0.175f, float speed = 1.0f, uint flags = eIPAF_Default);
-	void PlayLayer(const ItemString& name, int flags = eIPAF_Default, bool record = true);
-	void StopLayer(const ItemString& name, int flags = eIPAF_Default, bool record = true);
+	void FixResourceName(const ItemString& name, TempResourceName& fixedName, int flags, const char *hand=0, const char *suffix=0, const char *pose=0, const char *pov=0, const char *env=0);
+	virtual tSoundID PlayAction(const ItemString& action, int layer=0, bool loop=false, uint flags = eIPAF_Default, float speedOverride = -1.0f);
+	void PlayAnimation(const char* animationName, int layer=0, bool loop=false, uint flags = eIPAF_Default);
+	void PlayAnimationEx(const char* animationName, int slot=eIGS_FirstPerson, int layer=0, bool loop=false, float blend=0.175f, float speed=1.0f, uint flags = eIPAF_Default);
+	void PlayLayer(const ItemString& name, int flags = eIPAF_Default, bool record=true);
+	void StopLayer(const ItemString& name, int flags = eIPAF_Default, bool record=true);
 	void RestoreLayers();
-	void ResetAnimation(int layer = 0, uint flags = eIPAF_Default);
+	void ResetAnimation(int layer=0, uint flags = eIPAF_Default);
 	uint GetCurrentAnimationTime(int slot);
 	uint GetCurrentAnimationEnd(int slot);
 	uint GetCurrentAnimationStart(int slot);
-	void DrawSlot(int slot, bool draw, bool near = false);
-	Vec3 GetSlotHelperPos(int slot, const char* helper, bool worldSpace, bool relative = false);
-	const Matrix33& GetSlotHelperRotation(int slot, const char* helper, bool worldSpace, bool relative = false);
+	void DrawSlot(int slot, bool draw, bool near=false);
+	Vec3 GetSlotHelperPos(int slot, const char *helper, bool worldSpace, bool relative=false);
+	const Matrix33 &GetSlotHelperRotation(int slot, const char *helper, bool worldSpace, bool relative=false);
 	void StopSound(tSoundID id);
 	void Quiet();
-	ISound* GetISound(tSoundID id);
-	void ReleaseStaticSound(SInstanceAudio* sound);
+	ISound *GetISound(tSoundID id);
+	void ReleaseStaticSound(SInstanceAudio *sound);
 	void ReleaseStaticSounds();
 
-	void SetActionSuffix(const char* suffix) { m_actionSuffix = string(suffix); };
-	const char* GetActionSuffix(const char* suffix) const { return m_actionSuffix.c_str(); };
+	void SetActionSuffix(const char *suffix) { m_actionSuffix = string(suffix); };
+	const char *GetActionSuffix(const char *suffix) const { return m_actionSuffix.c_str(); };
 
 	virtual void OnAttach(bool attach);
 
-	IEntitySoundProxy* GetSoundProxy(bool create = false);
-	IEntityRenderProxy* GetRenderProxy(bool create = false);
-	IEntityPhysicalProxy* GetPhysicalProxy(bool create = false);
-
+	IEntitySoundProxy *GetSoundProxy(bool create=false);
+	IEntityRenderProxy *GetRenderProxy(bool create=false);
+	IEntityPhysicalProxy *GetPhysicalProxy(bool create=false);
+		
 	EntityId NetGetOwnerId() const;
 	void NetSetOwnerId(EntityId id);
 
 	//LAW special stuff
-	bool IsAutoDroppable() { return m_params.auto_droppable; }
+	bool IsAutoDroppable() { return m_params.auto_droppable;}
 
 	struct RequestAttachAccessoryParams
 	{
 		RequestAttachAccessoryParams() {};
-		RequestAttachAccessoryParams(const char* name) : accessory(name) {};
+		RequestAttachAccessoryParams(const char *name): accessory(name) {};
 		void SerializeWith(TSerialize ser)
 		{
 			ser.Value("accessory", accessory);
@@ -1039,62 +1046,62 @@ public:
 
 	DECLARE_SERVER_RMI_NOATTACH_FAST(SvRequestAttachAccessory, RequestAttachAccessoryParams, eNRT_ReliableUnordered);
 	DECLARE_CLIENT_RMI_NOATTACH_FAST(ClAttachAccessory, RequestAttachAccessoryParams, eNRT_ReliableUnordered);
-
+	
 	DECLARE_SERVER_RMI_NOATTACH_FAST(SvRequestEnterModify, EmptyParams, eNRT_ReliableUnordered);
 	DECLARE_SERVER_RMI_NOATTACH_FAST(SvRequestLeaveModify, EmptyParams, eNRT_ReliableUnordered);
 	DECLARE_CLIENT_RMI_NOATTACH_FAST(ClEnterModify, EmptyParams, eNRT_ReliableUnordered);
 	DECLARE_CLIENT_RMI_NOATTACH_FAST(ClLeaveModify, EmptyParams, eNRT_ReliableUnordered);
 
 	// properties
-	template<typename T>bool GetEntityProperty(const char* name, T& value) const
+	template<typename T>bool GetEntityProperty(const char *name, T &value) const
 	{
 		return GetEntityProperty(GetEntity(), name, value);
 	}
 
-	template<typename T>bool GetEntityProperty(IEntity* pEntity, const char* name, T& value) const
+  template<typename T>bool GetEntityProperty(IEntity* pEntity, const char *name, T &value) const
+  {
+    SmartScriptTable props;
+    IScriptTable* pScriptTable = pEntity->GetScriptTable();
+    if (pScriptTable && pScriptTable->GetValue("Properties", props))
+      return props->GetValue(name, value);
+    return false;
+  }
+  
+	template<typename T>bool GetEntityProperty(const char *table, const char *name, T &value) const
 	{
-		SmartScriptTable props;
-		IScriptTable* pScriptTable = pEntity->GetScriptTable();
-		if (pScriptTable && pScriptTable->GetValue("Properties", props))
-			return props->GetValue(name, value);
-		return false;
+    return GetEntityProperty(GetEntity(), table, name, value);
 	}
 
-	template<typename T>bool GetEntityProperty(const char* table, const char* name, T& value) const
-	{
-		return GetEntityProperty(GetEntity(), table, name, value);
-	}
+  template<typename T>bool GetEntityProperty(IEntity* pEntity, const char *table, const char *name, T &value) const
+  {
+    SmartScriptTable props;
+    IScriptTable* pScriptTable = pEntity->GetScriptTable();
+    if (pScriptTable && pScriptTable->GetValue("Properties", props))
+    {
+      SmartScriptTable subprop;
+      if (props->GetValue(table, subprop))
+        return subprop->GetValue(name, value);
+    }
+    return false;
+  }
 
-	template<typename T>bool GetEntityProperty(IEntity* pEntity, const char* table, const char* name, T& value) const
-	{
-		SmartScriptTable props;
-		IScriptTable* pScriptTable = pEntity->GetScriptTable();
-		if (pScriptTable && pScriptTable->GetValue("Properties", props))
-		{
-			SmartScriptTable subprop;
-			if (props->GetValue(table, subprop))
-				return subprop->GetValue(name, value);
-		}
-		return false;
-	}
+  template<typename T>void SetEntityProperty(const char *name, const T &value)
+  {
+    return SetEntityProperty(GetEntity(), name, value);
+  }
 
-	template<typename T>void SetEntityProperty(const char* name, const T& value)
-	{
-		return SetEntityProperty(GetEntity(), name, value);
-	}
-
-	template<typename T>void SetEntityProperty(IEntity* pEntity, const char* name, const T& value)
-	{
-		SmartScriptTable props;
-		IScriptTable* pScriptTable = pEntity->GetScriptTable();
-		if (pScriptTable && pScriptTable->GetValue("Properties", props))
-			props->SetValue(name, value);
-	}
+  template<typename T>void SetEntityProperty(IEntity* pEntity, const char *name, const T &value)
+  {
+    SmartScriptTable props;
+    IScriptTable* pScriptTable = pEntity->GetScriptTable();
+    if (pScriptTable && pScriptTable->GetValue("Properties", props))
+      props->SetValue(name, value);    
+  }
 
 	// script
-	bool CallScriptEvent(IScriptTable* pScriptTable, const char* name)
+	bool CallScriptEvent(IScriptTable *pScriptTable, const char *name)
 	{
-		IScriptSystem* pSS = pScriptTable->GetScriptSystem();
+		IScriptSystem *pSS = pScriptTable->GetScriptSystem();
 		if (pScriptTable->GetValueType(name) != svtFunction)
 			return false;
 		pSS->BeginCall(pScriptTable, name); pSS->PushFuncParam(GetEntity()->GetScriptTable());
@@ -1103,9 +1110,9 @@ public:
 		return result;
 	}
 	template<typename P1>
-	bool CallScriptEvent(IScriptTable* pScriptTable, const char* name, P1& p1)
+		bool CallScriptEvent(IScriptTable *pScriptTable, const char *name, P1 &p1)
 	{
-		IScriptSystem* pSS = pScriptTable->GetScriptSystem();
+		IScriptSystem *pSS = pScriptTable->GetScriptSystem();
 		if (pScriptTable->GetValueType(name) != svtFunction)
 			return false;
 		pSS->BeginCall(pScriptTable, name); pSS->PushFuncParam(GetEntity()->GetScriptTable());
@@ -1115,9 +1122,9 @@ public:
 		return result;
 	}
 	template<typename P1, typename P2>
-	bool CallScriptEvent(IScriptTable* pScriptTable, const char* name, P1& p1, P2& p2)
+		bool CallScriptEvent(IScriptTable *pScriptTable, const char *name, P1 &p1, P2 &p2)
 	{
-		IScriptSystem* pSS = pScriptTable->GetScriptSystem();
+		IScriptSystem *pSS = pScriptTable->GetScriptSystem();
 		if (pScriptTable->GetValueType(name) != svtFunction)
 			return false;
 		pSS->BeginCall(pScriptTable, name); pSS->PushFuncParam(GetEntity()->GetScriptTable());
@@ -1127,9 +1134,9 @@ public:
 		return result;
 	}
 	template<typename P1, typename P2, typename P3, typename P4>
-	bool CallScriptEvent(IScriptTable* pScriptTable, const char* name, P1& p1, P2& p2, P3& p3)
+		bool CallScriptEvent(IScriptTable *pScriptTable, const char *name, P1 &p1, P2 &p2, P3 &p3)
 	{
-		IScriptSystem* pSS = pScriptTable->GetScriptSystem();
+		IScriptSystem *pSS = pScriptTable->GetScriptSystem();
 		if (pScriptTable->GetValueType(name) != svtFunction)
 			return false;
 		pSS->BeginCall(pScriptTable, name); pSS->PushFuncParam(GetEntity()->GetScriptTable());
@@ -1139,9 +1146,9 @@ public:
 		return result;
 	}
 	template<typename P1, typename P2, typename P3, typename P4>
-	bool CallScriptEvent(IScriptTable* pScriptTable, const char* name, P1& p1, P2& p2, P3& p3, P4& p4)
+		bool CallScriptEvent(IScriptTable *pScriptTable, const char *name, P1 &p1, P2 &p2, P3 &p3, P4 &p4)
 	{
-		IScriptSystem* pSS = pScriptTable->GetScriptSystem();
+		IScriptSystem *pSS = pScriptTable->GetScriptSystem();
 		if (pScriptTable->GetValueType(name) != svtFunction)
 			return false;
 		pSS->BeginCall(pScriptTable, name); pSS->PushFuncParam(GetEntity()->GetScriptTable());
@@ -1150,104 +1157,104 @@ public:
 		pSS->EndCall(result);
 		return result;
 	}
-	void CallScriptEvent(int tables, const char* name, bool* rserver, bool* rclient, bool* rroot)
+	void CallScriptEvent(int tables, const char *name, bool *rserver, bool *rclient, bool *rroot)
 	{
-		if ((tables & eISET_Root) && !!m_stateTable[0])
+		if ((tables&eISET_Root) && !!m_stateTable[0])
 		{
 			bool r = CallScriptEvent(m_stateTable[0], name);
-			if (rroot) *rroot = r;
+			if(rroot) *rroot = r;
 		}
-		if ((tables & eISET_Server) && !!m_stateTable[1] && gEnv->bServer)
+		if ((tables&eISET_Server) && !!m_stateTable[1] && gEnv->bServer)
 		{
 			bool s = CallScriptEvent(m_stateTable[1], name);
-			if (rserver) *rserver = s;
+			if(rserver) *rserver = s;
 		}
-		if ((tables & eISET_Client) && !!m_stateTable[2] && gEnv->bClient)
+		if ((tables&eISET_Client) && !!m_stateTable[2] && gEnv->bClient)
 		{
 			bool c = CallScriptEvent(m_stateTable[2], name);
-			if (rclient) *rclient = c;
+			if(rclient) *rclient = c;
 		}
 	}
 
 	template<typename P1>
-	void CallScriptEvent(int tables, const char* name, P1& p1, bool* rserver, bool* rclient, bool* rroot)
+		void CallScriptEvent(int tables, const char *name, P1 &p1, bool *rserver, bool *rclient, bool *rroot)
 	{
-		if ((tables & eISET_Root) && !!m_stateTable[0])
+		if ((tables&eISET_Root) && !!m_stateTable[0])
 		{
 			bool r = CallScriptEvent(m_stateTable[0], name, p1);
-			if (rroot) *rroot = r;
+			if(rroot) *rroot = r;
 		}
-		if ((tables & eISET_Server) && !!m_stateTable[1] && IsServer())
+		if ((tables&eISET_Server) && !!m_stateTable[1] && IsServer())
 		{
 			bool s = CallScriptEvent(m_stateTable[1], name, p1);
-			if (rserver) *rserver = s;
+			if(rserver) *rserver = s;
 		}
-		if ((tables & eISET_Client) && !!m_stateTable[2] && IsClient())
+		if ((tables&eISET_Client) && !!m_stateTable[2] && IsClient())
 		{
 			bool c = CallScriptEvent(m_stateTable[2], name, p1);
-			if (rclient) *rclient = c;
+			if(rclient) *rclient = c;
 		}
 	}
 	template<typename P1, typename P2>
-	void CallScriptEvent(int tables, const char* name, P1& p1, P2& p2, bool* rserver, bool* rclient, bool* rroot)
+		void CallScriptEvent(int tables, const char *name, P1 &p1, P2 &p2, bool *rserver, bool *rclient, bool *rroot)
 	{
-		if ((tables & eISET_Root) && !!m_stateTable[0])
+		if ((tables&eISET_Root) && !!m_stateTable[0])
 		{
 			bool r = CallScriptEvent(m_stateTable[0], name, p1, p2);
-			if (rroot) *rroot = r;
+			if(rroot) *rroot = r;
 		}
-		if ((tables & eISET_Server) && !!m_stateTable[1] && IsServer())
+		if ((tables&eISET_Server) && !!m_stateTable[1] && IsServer())
 		{
 			bool s = CallScriptEvent(m_stateTable[1], name, p1, p2);
-			if (rserver) *rserver = s;
+			if(rserver) *rserver = s;
 		}
-		if ((tables & eISET_Client) && !!m_stateTable[2] && IsClient())
+		if ((tables&eISET_Client) && !!m_stateTable[2] && IsClient())
 		{
 			bool c = CallScriptEvent(m_stateTable[2], name, p1, p2);
-			if (rclient) *rclient = c;
+			if(rclient) *rclient = c;
 		}
 	}
 	template<typename P1, typename P2, typename P3>
-	void CallScriptEvent(int tables, const char* name, P1& p1, P2& p2, P3& p3, bool* rserver, bool* rclient, bool* rroot)
+		void CallScriptEvent(int tables, const char *name, P1 &p1, P2 &p2, P3 &p3, bool *rserver, bool *rclient, bool *rroot)
 	{
-		if ((tables & eISET_Root) && !!m_stateTable[0])
+		if ((tables&eISET_Root) && !!m_stateTable[0])
 		{
 			bool r = CallScriptEvent(m_stateTable[0], name, p1, p2, p3);
-			if (rroot) *rroot = r;
+			if(rroot) *rroot = r;
 		}
-		if ((tables & eISET_Server) && !!m_stateTable[1] && IsServer())
+		if ((tables&eISET_Server) && !!m_stateTable[1] && IsServer())
 		{
 			bool s = CallScriptEvent(m_stateTable[1], name, p1, p2, p3);
-			if (rserver) *rserver = s;
+			if(rserver) *rserver = s;
 		}
-		if ((tables & eISET_Client) && !!m_stateTable[2] && IsClient())
+		if ((tables&eISET_Client) && !!m_stateTable[2] && IsClient())
 		{
 			bool c = CallScriptEvent(m_stateTable[2], name, p1, p2, p3);
-			if (rclient) *rclient = c;
+			if(rclient) *rclient = c;
 		}
 	}
 	template<typename P1, typename P2, typename P3, typename P4>
-	void CallScriptEvent(int tables, const char* name, P1& p1, P2& p2, P3& p3, P4& p4, bool* rserver, bool* rclient, bool* rroot)
+		void CallScriptEvent(int tables, const char *name, P1 &p1, P2 &p2, P3 &p3, P4 &p4, bool *rserver, bool *rclient, bool *rroot)
 	{
-		if ((tables & eISET_Root) && !!m_stateTable[0])
+		if ((tables&eISET_Root) && !!m_stateTable[0])
 		{
 			bool r = CallScriptEvent(m_stateTable[0], name, p1, p2, p3, p4);
-			if (rroot) *rroot = r;
+			if(rroot) *rroot = r;
 		}
-		if ((tables & eISET_Server) && !!m_stateTable[1] && IsServer())
+		if ((tables&eISET_Server) && !!m_stateTable[1] && IsServer())
 		{
 			bool s = CallScriptEvent(m_stateTable[1], name, p1, p2, p3, p4);
-			if (rserver) *rserver = s;
+			if(rserver) *rserver = s;
 		}
-		if ((tables & eISET_Client) && !!m_stateTable[2] && IsClient())
+		if ((tables&eISET_Client) && !!m_stateTable[2] && IsClient())
 		{
 			bool c = CallScriptEvent(m_stateTable[2], name, p1, p2, p3, p4);
-			if (rclient) *rclient = c;
+			if(rclient) *rclient = c;
 		}
 	};
 
-	ILINE bool IsServer() { return gEnv->bServer; }
-	ILINE bool IsClient() { return gEnv->bClient; }
+	ILINE bool IsServer() {	return gEnv->bServer; }
+	ILINE bool IsClient() {	return gEnv->bClient; }
 protected:
 	// data
 	_smart_ptr<class CItemSharedParams> m_sharedparams;
@@ -1267,7 +1274,7 @@ protected:
 	TDamageLevelVector		m_damageLevels;
 
 	TInitialSetup					m_initialSetup;
-
+		
 	uint									m_effectGenId;
 
 	EntityId							m_dualWieldMasterId;
@@ -1288,7 +1295,7 @@ protected:
 	string								m_actionSuffix;
 	string								m_actionSuffixSerializationHelper;
 
-	ICharacterInstance* m_pForcedArms;
+	ICharacterInstance		*m_pForcedArms;
 
 	SGeometry							m_fpgeometry[3];		// have to save the first person geometry
 																						// to support dynamic change of hand
@@ -1297,12 +1304,12 @@ protected:
 	EntityId							m_hostId;
 	EntityId							m_postSerializeMountedOwner;
 
-	IScriptTable* m_pEntityScript;
+	IScriptTable					*m_pEntityScript;
 
-	static IEntitySystem* m_pEntitySystem;
-	static IItemSystem* m_pItemSystem;
-	static IGameFramework* m_pGameFramework;
-	static IGameplayRecorder* m_pGameplayRecorder;
+	static IEntitySystem		*m_pEntitySystem;
+	static IItemSystem			*m_pItemSystem;
+	static IGameFramework		*m_pGameFramework;
+	static IGameplayRecorder*m_pGameplayRecorder;
 
 	bool									m_bPostPostSerialize;
 
@@ -1326,37 +1333,38 @@ protected:
 public:
 
 	bool									m_noDrop;				//Fix reseting problem in editor
-	static IEntityClass* sOffHandClass;
-	static IEntityClass* sFistsClass;
-	static IEntityClass* sAlienCloak;
-	static IEntityClass* sSOCOMClass;
-	static IEntityClass* sAY69Class;
-	static IEntityClass* sDetonatorClass;
-	static IEntityClass* sC4Class;
-	static IEntityClass* sBinocularsClass;
-	static IEntityClass* sGaussRifleClass;
-	static IEntityClass* sDebugGunClass;
-	static IEntityClass* sRefWeaponClass;
-	static IEntityClass* sClaymoreExplosiveClass;
-	static IEntityClass* sAVExplosiveClass;
-	static IEntityClass* sDSG1Class;
-	static IEntityClass* sTACGunClass;
-	static IEntityClass* sTACGunFleetClass;
-	static IEntityClass* sAlienMountClass;
-	static IEntityClass* sRocketLauncherClass;
-	static IEntityClass* sLAMFlashLight;
-	static IEntityClass* sLAMRifleFlashLight;
-	static IEntityClass* sFlashbangGrenade;
-	static IEntityClass* sExplosiveGrenade;
-	static IEntityClass* sEMPGrenade;
-	static IEntityClass* sSmokeGrenade;
+	static IEntityClass*	sOffHandClass;
+	static IEntityClass*	sFistsClass;
+	static IEntityClass*	sAlienCloak;
+	static IEntityClass*	sSOCOMClass;
+	static IEntityClass*	sAY69Class;
+	static IEntityClass*	sDetonatorClass;
+	static IEntityClass*	sC4Class;
+	static IEntityClass*	sBinocularsClass;
+	static IEntityClass*	sGaussRifleClass;
+	static IEntityClass*	sDebugGunClass;
+	static IEntityClass*	sRefWeaponClass;
+	static IEntityClass*	sClaymoreExplosiveClass;
+	static IEntityClass*	sAVExplosiveClass;
+	static IEntityClass*	sDSG1Class;
+	static IEntityClass*	sTACGunClass;
+	static IEntityClass*	sTACGunFleetClass;
+	static IEntityClass*	sAlienMountClass;
+	static IEntityClass*	sRocketLauncherClass;
+	static IEntityClass*	sLAMFlashLight;
+	static IEntityClass*	sLAMRifleFlashLight;
+	static IEntityClass*	sFlashbangGrenade;
+	static IEntityClass*	sExplosiveGrenade;
+	static IEntityClass*	sEMPGrenade;
+	static IEntityClass*	sSmokeGrenade;
 
-	static IEntityClass* sIncendiaryAmmo;
+	static IEntityClass*  sIncendiaryAmmo;
 
-	static IEntityClass* sScarGrenadeClass;
+	static IEntityClass*  sScarGrenadeClass;
 
 	// Expansion items
-	static IEntityClass* sGrenadeLauncherClass;
+	static IEntityClass*	sGrenadeLauncherClass;
 };
+
 
 #endif //__ITEM_H__

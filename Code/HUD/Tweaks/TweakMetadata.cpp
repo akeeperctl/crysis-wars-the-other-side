@@ -3,7 +3,7 @@ Crytek Source File.
 Copyright (C), Crytek Studios, 2006.
 -------------------------------------------------------------------------
 
-Description:
+Description: 
 	Abstract class unifying metadata classes
 
 -------------------------------------------------------------------------
@@ -20,7 +20,8 @@ History:
 
 //-------------------------------------------------------------------------
 
-CTweakMetadata::CTweakMetadata(IScriptTable* pTable) {
+
+CTweakMetadata::CTweakMetadata(IScriptTable *pTable) {
 	// Default delta value
 	m_fDelta = 1.0f;
 
@@ -34,21 +35,21 @@ CTweakMetadata::CTweakMetadata(IScriptTable* pTable) {
 		// Check the read value
 		if (fReadDelta == 0.0) {
 			m_sError = "Invalid delta value";
-		}
-		else {
+		} else {
 			m_fDelta = fReadDelta;
 		}
-	}
+	}	
 }
 
 //-------------------------------------------------------------------------
 
 // Identify the type metadata a table represents, return an instance
-CTweakCommon* CTweakMetadata::GetNewMetadata(IScriptTable* pTable) {
+CTweakCommon *CTweakMetadata::GetNewMetadata( IScriptTable *pTable )  {
+
 	bool bLua = pTable->HaveValue("LUA");
 	bool bCVar = pTable->HaveValue("CVAR");
 
-	if (!(bLua ^ bCVar)) {
+	if (! (bLua ^ bCVar) ) {
 		// One, and only one, should be present
 		return new CTweakCommon("*Broken metadata*");
 	}

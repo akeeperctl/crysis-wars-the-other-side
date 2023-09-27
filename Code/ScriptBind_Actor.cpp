@@ -4,7 +4,7 @@
  -------------------------------------------------------------------------
   $Id$
   $DateTime$
-
+  
  -------------------------------------------------------------------------
   History:
   - 7:10:2004   14:19 : Created by Márcio Martins
@@ -18,7 +18,9 @@
 #include "HUD/HUD.h"
 #include "Game.h"
 #include "Player.h"
+#include "Alien.h"
 #include "GameCVars.h"
+
 #include <IGameFramework.h>
 #include <IVehicleSystem.h>
 #include <IGameObject.h>
@@ -26,27 +28,15 @@
 #include <Cry_GeoDistance.h>
 #include <IEntitySystem.h>
 
-//TheOtherSide
-#include "Alien.h"
-#include "Trooper.h"
-#include "Hunter.h"
-#include "Scout.h"
-
-#include "TheOtherSide/Control/ControlSystem.h"
-#include "TheOtherSide/Squad/SquadSystem.h"
-#include "TheOtherSide/Helpers/TOS_Vehicle.h"
-#include "Single.h"
-//~TheOtherSide
-
 enum ESetInventoryAmmoMode
 {
-	CLIENT_SIDE = 1,
+	CLIENT_SIDE = 1,	
 	SERVER_SIDE = 2,
 };
 
 //------------------------------------------------------------------------
-CScriptBind_Actor::CScriptBind_Actor(ISystem* pSystem)
-	: m_pSystem(pSystem),
+CScriptBind_Actor::CScriptBind_Actor(ISystem *pSystem)
+: m_pSystem(pSystem),
 	m_pGameFW(pSystem->GetIGame()->GetIGameFramework())
 {
 	Init(pSystem->GetIScriptSystem(), pSystem, 1);
@@ -59,7 +49,7 @@ CScriptBind_Actor::CScriptBind_Actor(ISystem* pSystem)
 #undef SCRIPT_REG_CLASSNAME
 #define SCRIPT_REG_CLASSNAME &CScriptBind_Actor::
 
-	SCRIPT_REG_FUNC(DumpActorInfo);
+  SCRIPT_REG_FUNC(DumpActorInfo);
 	SCRIPT_REG_FUNC(SetViewAngleOffset);
 	SCRIPT_REG_FUNC(GetViewAngleOffset);
 	SCRIPT_REG_FUNC(Revive);
@@ -78,68 +68,68 @@ CScriptBind_Actor::CScriptBind_Actor(ISystem* pSystem)
 	SCRIPT_REG_TEMPLFUNC(GetLinkedVehicleId, "");
 	SCRIPT_REG_FUNC(LinkToVehicle);
 	SCRIPT_REG_FUNC(LinkToVehicleRemotely);
-	SCRIPT_REG_FUNC(IsGhostPit);
+  SCRIPT_REG_FUNC(IsGhostPit);
 	SCRIPT_REG_FUNC(IsFlying);
-	SCRIPT_REG_TEMPLFUNC(SetAngles, "vAngles");
+	SCRIPT_REG_TEMPLFUNC(SetAngles,"vAngles");
 	SCRIPT_REG_FUNC(GetAngles);
-	SCRIPT_REG_TEMPLFUNC(AddAngularImpulse, "vAngular,deceleration,duration");
-	SCRIPT_REG_TEMPLFUNC(SetViewLimits, "dir,rangeH,rangeV");
-	SCRIPT_REG_TEMPLFUNC(PlayAction, "action,extension");
-	SCRIPT_REG_TEMPLFUNC(SimulateOnAction, "action,mode,value");
-	SCRIPT_REG_TEMPLFUNC(SetMovementTarget, "pos,target,up,speed");
-	SCRIPT_REG_TEMPLFUNC(CameraShake, "amount,duration,frequency,pos");
-	SCRIPT_REG_TEMPLFUNC(SetViewShake, "shakeAngle, shakeShift, duration, frequency, randomness");
+	SCRIPT_REG_TEMPLFUNC(AddAngularImpulse,"vAngular,deceleration,duration");
+	SCRIPT_REG_TEMPLFUNC(SetViewLimits,"dir,rangeH,rangeV");
+	SCRIPT_REG_TEMPLFUNC(PlayAction,"action,extension");
+	SCRIPT_REG_TEMPLFUNC(SimulateOnAction,"action,mode,value");
+	SCRIPT_REG_TEMPLFUNC(SetMovementTarget,"pos,target,up,speed");
+	SCRIPT_REG_TEMPLFUNC(CameraShake,"amount,duration,frequency,pos");
+	SCRIPT_REG_TEMPLFUNC(SetViewShake,"shakeAngle, shakeShift, duration, frequency, randomness");
 	SCRIPT_REG_FUNC(VectorToLocal);
 	SCRIPT_REG_TEMPLFUNC(EnableAspect, "aspects, enable");
-	SCRIPT_REG_TEMPLFUNC(SetExtensionActivation, "extension,bActivate");
-	SCRIPT_REG_TEMPLFUNC(SetExtensionParams, "extension,params");
-	SCRIPT_REG_TEMPLFUNC(GetExtensionParams, "extension,params");
+	SCRIPT_REG_TEMPLFUNC(SetExtensionActivation,"extension,bActivate");
+	SCRIPT_REG_TEMPLFUNC(SetExtensionParams,"extension,params");
+	SCRIPT_REG_TEMPLFUNC(GetExtensionParams,"extension,params");
 
 	SCRIPT_REG_TEMPLFUNC(SetInventoryAmmo, "ammo, amount, serClientMode");
 	SCRIPT_REG_TEMPLFUNC(AddInventoryAmmo, "ammo, amount");
 	SCRIPT_REG_TEMPLFUNC(GetInventoryAmmo, "ammo");
 
-	SCRIPT_REG_TEMPLFUNC(SetHealth, "health");
-	SCRIPT_REG_TEMPLFUNC(DamageInfo, "shooterID, targetID, weaponID, damage, damageType");
-	SCRIPT_REG_TEMPLFUNC(SetMaxHealth, "health");
+	SCRIPT_REG_TEMPLFUNC(SetHealth,"health");
+	SCRIPT_REG_TEMPLFUNC(DamageInfo,"shooterID, targetID, weaponID, damage, damageType");
+	SCRIPT_REG_TEMPLFUNC(SetMaxHealth,"health");
 	SCRIPT_REG_FUNC(GetHealth);
 	SCRIPT_REG_FUNC(GetMaxHealth);
 	SCRIPT_REG_FUNC(GetArmor);
 	SCRIPT_REG_FUNC(GetMaxArmor);
-	SCRIPT_REG_FUNC(GetFrozenAmount);
-	SCRIPT_REG_TEMPLFUNC(AddFrost, "frost");
+  SCRIPT_REG_FUNC(GetFrozenAmount);
+  SCRIPT_REG_TEMPLFUNC(AddFrost, "frost");
 
 	SCRIPT_REG_TEMPLFUNC(SetPhysicalizationProfile, "profile");
 	SCRIPT_REG_TEMPLFUNC(GetPhysicalizationProfile, "");
 
 	SCRIPT_REG_TEMPLFUNC(GetClosestAttachment, "characterSlot, testPos, maxDistance, suffix");
-	SCRIPT_REG_TEMPLFUNC(AttachVulnerabilityEffect, "characterSlot, partid, hitPos, radius, effect, attachmentIdentifier");
-	SCRIPT_REG_TEMPLFUNC(ResetVulnerabilityEffects, "characterSlot");
-	SCRIPT_REG_TEMPLFUNC(GetCloseColliderParts, "characterSlot, hitPos, radius");
-	SCRIPT_REG_TEMPLFUNC(QueueAnimationState, "animationState");
-	SCRIPT_REG_TEMPLFUNC(ChangeAnimGraph, "graph, layer");
-	SCRIPT_REG_TEMPLFUNC(CreateCodeEvent, "params");
+  SCRIPT_REG_TEMPLFUNC(AttachVulnerabilityEffect, "characterSlot, partid, hitPos, radius, effect, attachmentIdentifier");
+  SCRIPT_REG_TEMPLFUNC(ResetVulnerabilityEffects, "characterSlot");
+  SCRIPT_REG_TEMPLFUNC(GetCloseColliderParts, "characterSlot, hitPos, radius");
+	SCRIPT_REG_TEMPLFUNC(QueueAnimationState,"animationState");
+	SCRIPT_REG_TEMPLFUNC(ChangeAnimGraph,"graph, layer");
+	SCRIPT_REG_TEMPLFUNC(CreateCodeEvent,"params");
 	SCRIPT_REG_FUNC(GetCurrentAnimationState);
-	SCRIPT_REG_TEMPLFUNC(SetAnimationInput, "name,value");
-	SCRIPT_REG_TEMPLFUNC(TrackViewControlled, "characterSlot");
-	SCRIPT_REG_TEMPLFUNC(SetSpectatorMode, "mode, target");
-	SCRIPT_REG_TEMPLFUNC(GetSpectatorMode, "");
+	SCRIPT_REG_TEMPLFUNC(SetAnimationInput,"name,value");
+	SCRIPT_REG_TEMPLFUNC(TrackViewControlled,"characterSlot");
+	SCRIPT_REG_TEMPLFUNC(SetSpectatorMode,"mode, target");
+	SCRIPT_REG_TEMPLFUNC(GetSpectatorMode,"");
 	SCRIPT_REG_TEMPLFUNC(GetSpectatorTarget, "");
-
-	SCRIPT_REG_TEMPLFUNC(Fall, "hitPosX, hitPosY, hitPosZ");
+	
+	SCRIPT_REG_TEMPLFUNC(Fall,"hitPosX, hitPosY, hitPosZ");
 	SCRIPT_REG_FUNC(IsFallen);
 	SCRIPT_REG_FUNC(GetFallenTime);
-	SCRIPT_REG_TEMPLFUNC(LooseHelmet, "hitDir, hitPos, simulate");
-	SCRIPT_REG_TEMPLFUNC(GoLimp, "");
-	SCRIPT_REG_TEMPLFUNC(StandUp, "");
+	SCRIPT_REG_TEMPLFUNC(LooseHelmet,"hitDir, hitPos, simulate");
+	SCRIPT_REG_TEMPLFUNC(GoLimp,"");
+	SCRIPT_REG_TEMPLFUNC(StandUp,"");
 
-	SCRIPT_REG_TEMPLFUNC(ActivateNanoSuit, "on");
-	SCRIPT_REG_TEMPLFUNC(SetNanoSuitMode, "mode");
+	SCRIPT_REG_TEMPLFUNC(ActivateNanoSuit,"on");
+	SCRIPT_REG_TEMPLFUNC(SetNanoSuitMode,"mode");
 	SCRIPT_REG_FUNC(GetNanoSuitMode);
 	SCRIPT_REG_FUNC(GetNanoSuitEnergy);
-	SCRIPT_REG_TEMPLFUNC(SetNanoSuitEnergy, "energy");
-	SCRIPT_REG_TEMPLFUNC(PlayNanoSuitSound, "sound");
-	SCRIPT_REG_TEMPLFUNC(NanoSuitHit, "damage");
+	SCRIPT_REG_TEMPLFUNC(SetNanoSuitEnergy,"energy");
+	SCRIPT_REG_TEMPLFUNC(PlayNanoSuitSound,"sound");
+	SCRIPT_REG_TEMPLFUNC(NanoSuitHit,"damage");
 
 	//------------------------------------------------------------------------
 	// NETWORK
@@ -155,40 +145,16 @@ CScriptBind_Actor::CScriptBind_Actor(ISystem* pSystem)
 	SCRIPT_REG_TEMPLFUNC(SelectLastItem, "");
 
 	SCRIPT_REG_TEMPLFUNC(SelectItemByNameRemote, "itemClassName");
-
+  	
 	//------------------------------------------------------------------------
-
-	SCRIPT_REG_TEMPLFUNC(CreateIKLimb, "slot,limbName,rootBone,midBone,endBone,flags");
+	
+	SCRIPT_REG_TEMPLFUNC(CreateIKLimb,"slot,limbName,rootBone,midBone,endBone,flags");
 
 	SCRIPT_REG_TEMPLFUNC(ResetScores, "");
 	SCRIPT_REG_TEMPLFUNC(RenderScore, "");
 
-	SCRIPT_REG_TEMPLFUNC(SetSearchBeam, "dir");
-
-	//TheOtherSide
-	SCRIPT_REG_TEMPLFUNC(IsHaveOwner, "");//.actor:IsHaveOwner()
-	SCRIPT_REG_TEMPLFUNC(IsHaveSlave, "");//.actor:IsHaveSlave()
-	SCRIPT_REG_TEMPLFUNC(IsLocalOwner, "");
-	SCRIPT_REG_TEMPLFUNC(SetAlienEnergy, "energy");
-	SCRIPT_REG_TEMPLFUNC(GetAlienEnergy, "");
-
-	SCRIPT_REG_TEMPLFUNC(SetShieldEnergy, "energy");
-	SCRIPT_REG_TEMPLFUNC(GetShieldEnergy, "");
-	SCRIPT_REG_TEMPLFUNC(IsShieldProjected, "");
-	SCRIPT_REG_TEMPLFUNC(CanLaunchShockwave, "");
-
-	SCRIPT_REG_TEMPLFUNC(GetOwnerId, ""); //.actor:GetOwnerId()
-	SCRIPT_REG_TEMPLFUNC(GetSlaveId, "");
-
-	// SCRIPT_REG_TEMPLFUNC(GetSquadEnabled, ""); //g_gamerules.game:GetSquadEnabled()
-	SCRIPT_REG_TEMPLFUNC(GetSquadMembersCount, ""); //entity.actor:GetSquadMembersCount()
-
-	SCRIPT_REG_TEMPLFUNC(IsRageMode, "");
-	SCRIPT_REG_TEMPLFUNC(IsHumanMode, "");
-	SCRIPT_REG_TEMPLFUNC(IsEMP, "");
-	SCRIPT_REG_TEMPLFUNC(GetProbablySearchLocation, "");
-
-	//~TheOtherSide
+  SCRIPT_REG_TEMPLFUNC(SetSearchBeam, "dir");
+			
 	m_pSS->SetGlobalValue("STANCE_PRONE", STANCE_PRONE);
 	m_pSS->SetGlobalValue("STANCE_CROUCH", STANCE_CROUCH);
 	m_pSS->SetGlobalValue("STANCE_STAND", STANCE_STAND);
@@ -206,7 +172,7 @@ CScriptBind_Actor::CScriptBind_Actor(ISystem* pSystem)
 	m_pSS->SetGlobalValue("NANOMODE_STRENGTH", NANOMODE_STRENGTH);
 	m_pSS->SetGlobalValue("NANOMODE_CLOAK", NANOMODE_CLOAK);
 	m_pSS->SetGlobalValue("NANOMODE_DEFENSE", NANOMODE_DEFENSE);
-	m_pSS->SetGlobalValue("NANOSUIT_ENERGY", NANOSUIT_ENERGY);
+  m_pSS->SetGlobalValue("NANOSUIT_ENERGY", NANOSUIT_ENERGY);
 
 	m_pSS->SetGlobalValue("CLIENT_SIDE", CLIENT_SIDE);
 	m_pSS->SetGlobalValue("SERVER_SIDE", SERVER_SIDE);
@@ -216,389 +182,11 @@ CScriptBind_Actor::CScriptBind_Actor(ISystem* pSystem)
 CScriptBind_Actor::~CScriptBind_Actor()
 {
 }
-//TheOtherSide
-
-int CScriptBind_Actor::GetSquadMembersCount(IFunctionHandler* pH)
-{
-	const CActor* pActor = GetActor(pH);
-	if (!pActor)
-		return pH->EndFunction(0);
-
-	if (g_pControlSystem)
-	{
-		if (CSquadSystem* pSquadSystem = g_pControlSystem->GetSquadSystem())
-		{
-			const CSquad* pSquad = pSquadSystem->GetSquadFromMember(pActor, true);
-			if (pSquad->GetLeader() != nullptr)
-			{
-				const int endFunction = pH->EndFunction(pSquad->GetMembersCount());
-				return endFunction;
-			}
-		}
-	}
-
-	return pH->EndFunction(0);
-}
 
 //------------------------------------------------------------------------
-int CScriptBind_Actor::SetAlienEnergy(IFunctionHandler* pH, const float energy)
+void CScriptBind_Actor::AttachTo(CActor *pActor)
 {
-	CActor* pActor = GetActor(pH);
-
-	if (!pActor || !pActor->IsAlien())
-		return pH->EndFunction();
-
-	if (pActor && pActor->IsAlien())
-	{
-		const auto pAlien = dynamic_cast<CAlien*>(pActor);
-		pAlien->SetAlienEnergy(energy);
-	}
-	return pH->EndFunction();
-}
-
-//------------------------------------------------------------------------
-int CScriptBind_Actor::GetAlienEnergy(IFunctionHandler* pH)
-{
-	CActor* pActor = GetActor(pH);
-	if (!pActor || !pActor->IsAlien())
-		return pH->EndFunction();
-
-	if (pActor && pActor->IsAlien())
-	{
-		const auto pAlien = dynamic_cast<CAlien*>(pActor);
-		const float energy = pAlien->GetEnergyParams().energy;
-
-		return pH->EndFunction(energy);
-	}
-	return pH->EndFunction();
-}
-
-int CScriptBind_Actor::SetShieldEnergy(IFunctionHandler* pH, float energy)
-{
-	CActor* pActor = GetActor(pH);
-
-	if (!pActor || !pActor->IsAlien())
-		return pH->EndFunction();
-
-	if (pActor && pActor->IsAlien())
-	{
-		const string className = pActor->GetEntity()->GetClass()->GetName();
-		if (className == "Trooper")
-		{
-			const auto pTrooper = dynamic_cast<CTrooper*>(pActor);
-			pTrooper->SetShieldEnergy(energy);
-		}
-		else if (className == "Hunter")
-		{
-			const auto pHunter = dynamic_cast<CAlien*>(pActor);
-			pHunter->SetAlienEnergy(energy);
-		}
-	}
-
-	return pH->EndFunction();
-}
-
-int CScriptBind_Actor::GetShieldEnergy(IFunctionHandler* pH)
-{
-	CActor* pActor = GetActor(pH);
-	if (!pActor || !pActor->IsAlien())
-		return pH->EndFunction();
-
-	if (pActor && pActor->IsAlien())
-	{
-		const string className = pActor->GetEntity()->GetClass()->GetName();
-		if (className == "Trooper")
-		{
-			CTrooper* pTrooper = static_cast<CTrooper*>(pActor);
-			float energy = pTrooper->GetShieldEnergy();
-			return pH->EndFunction(energy);
-		}
-		else if (className == "Hunter")
-		{
-			CAlien* pAlien = static_cast<CAlien*>(pActor);
-			float energy = pAlien->GetAlienEnergy();
-
-			return pH->EndFunction(energy);
-		}
-	}
-
-	return pH->EndFunction();
-}
-
-int CScriptBind_Actor::IsShieldProjected(IFunctionHandler* pH)
-{
-	CActor* pActor = GetActor(pH);
-	if (!pActor || !pActor->IsAlien())
-		return pH->EndFunction();
-
-	if (pActor && pActor->IsAlien())
-	{
-		const string className = pActor->GetEntity()->GetClass()->GetName();
-		if (className == "Trooper")
-		{
-
-			const auto* pTrooper = static_cast<CTrooper*>(pActor);
-			if (pTrooper->m_shieldParams.isProjecting)
-				return pH->EndFunction(1);
-		}
-		else if (className == "Hunter")
-		{
-			const auto pHunter = dynamic_cast<CHunter*>(pActor);
-			if (pHunter->IsShieldEnabled())
-				return pH->EndFunction(1);
-		}
-	}
-
-	return pH->EndFunction();
-}
-
-//------------------------------------------------------------------------
-int CScriptBind_Actor::IsLocalOwner(IFunctionHandler* pH)
-{
-	CActor* pActor = GetActor(pH);
-	if (!pActor)
-		return pH->EndFunction();
-
-	if (pActor && pActor->IsLocalOwner())
-		return pH->EndFunction(1);
-	else
-		return pH->EndFunction();
-}
-
-int CScriptBind_Actor::GetOwnerId(IFunctionHandler* pH)
-{
-	CActor* pActor = GetActor(pH);
-	if (!pActor)
-		return pH->EndFunction(0);
-
-	if (pActor)
-		return pH->EndFunction((int)pActor->GetOwnerId());
-	else
-		return pH->EndFunction(0);
-
-	return pH->EndFunction(0);
-}
-
-int CScriptBind_Actor::GetSlaveId(IFunctionHandler* pH)
-{
-	CActor* pActor = GetActor(pH);
-	if (!pActor)
-		return pH->EndFunction(0);
-	if (!pActor->IsPlayer())
-		return pH->EndFunction(0);
-
-	if (pActor)
-		return pH->EndFunction((int)pActor->GetSlaveId());
-	else
-		return pH->EndFunction(0);
-
-	return 0;
-}
-
-int CScriptBind_Actor::IsRageMode(IFunctionHandler* pH)
-{
-	CActor* pActor = GetActor(pH);
-	if (!pActor)
-		return pH->EndFunction();
-
-	string className = pActor->GetEntity()->GetClass()->GetName();
-	if (className == "Trooper")
-	{
-		CTrooper* pTrooper = static_cast<CTrooper*>(pActor);
-
-		if (pTrooper->m_rageMode.isActive)
-			return pH->EndFunction(1);
-	}
-
-	return pH->EndFunction();
-}
-
-int CScriptBind_Actor::IsEMP(IFunctionHandler* pH)
-{
-	auto* pActor = static_cast<CPlayer*>(GetActor(pH));
-	if (!pActor)
-		return pH->EndFunction();
-
-	if (pActor->IsAlien())
-	{
-		auto pAlien = static_cast<CAlien*>(GetActor(pH));
-
-		if (pAlien && pAlien->GetEMPInfo().isEmpState)
-			return pH->EndFunction(1);
-	}
-	else
-	{
-		auto pSuit = pActor->GetNanoSuit();
-		if (pSuit && (pSuit->GetDisabledFlag() == NANODISABLE_EMP))
-			return pH->EndFunction(1);
-	}
-
-	return pH->EndFunction();
-}
-
-int CScriptBind_Actor::GetProbablySearchLocation(IFunctionHandler* pH)
-{
-	auto pActor = static_cast<CActor*>(GetActor(pH));
-	if (!pActor)
-		return pH->EndFunction();
-	
-	auto pSquad = g_pControlSystem->GetSquadSystem()->GetSquadFromMember(pActor, true);
-	if (!pSquad)
-		return pH->EndFunction();
-
-
-	if (pSquad->IsMemberDetached(pActor) || (pSquad->IsLeaderDetached() && pActor == pSquad->GetLeader()))
-	{
-		SDetachedMemberData data;
-		if (pSquad->IsMember(pActor))
-		{
-			auto pInstance = pSquad->GetMemberInstance(pActor);
-			if (!pInstance)
-				return pH->EndFunction();
-
-			pInstance->GetDetachedData(data);
-		}			
-		else if(pActor == pSquad->GetLeader())
-			pSquad->GetLeaderDetachedData(data);
-
-		const auto pGoalEntity = GET_ENTITY(data.targetId);
-		if (!pGoalEntity)
-			return pH->EndFunction();
-
-		const auto refPos = pGoalEntity->GetWorldPos();
-		const auto safeHeight = 15.0f;
-
-		auto isAir = false;
-		auto radius = 30.0f;
-		auto searchPos = refPos;
-
-		auto pVeh = TOS_Vehicle::GetVehicle(pActor);
-		if (pVeh && TOS_Vehicle::ActorIsDriver(pActor))
-		{
-			isAir = TOS_Vehicle::IsAir(pVeh);
-			if (isAir)
-			{
-				radius = 100.0f;
-				//GET_LOCATION_FROM_GROUND(pActor, searchPos, safeHeight);
-			}
-		}
-		else if (!pVeh)
-		{
-			const string className = pActor->GetEntity()->GetClass()->GetName();
-			if (className == "Trooper" || className == "Grunt" || className == "Player")
-			{
-				radius = 30.0f;
-			}
-			else if (className == "Hunter")
-			{
-				radius = 300.0f;
-			}
-			else if (className == "Scout" || className == "Drone")
-			{
-				radius = 80.0f;
-				isAir = true;
-			}
-		}
-
-		searchPos.x += Random(-radius, radius);
-		searchPos.y += Random(-radius, radius);
-
-		if (isAir)
-		{
-			GET_SAFEFLY_LOCATION_FROM_TARGET(pActor, pActor->GetEntity()->GetWorldPos(), searchPos, safeHeight);
-		}
-
-		return pH->EndFunction(Script::SetCachedVector(searchPos, pH, 1));
-	}
-	else
-	{
-		auto pInstance = pSquad->GetMemberInstance(pActor);
-		if (!pInstance)
-			return pH->EndFunction();
-
-		auto pRef = pInstance->GetActionRef();
-		if (!pRef)
-			return pH->EndFunction();
-
-		const auto refPos = pRef->GetWorldPos();
-		const string className = pActor->GetEntity()->GetClass()->GetName();
-		const auto safeHeight = 15.0f;
-
-		auto searchPos = refPos;
-		auto isAir = false;
-		auto radius = 30.0f;
-
-		if (className == "Trooper" || className == "Grunt" || className == "Player")
-		{
-			radius = 30.0f;
-		}
-		else if (className == "Hunter")
-		{
-			radius = 300.0f;
-		}
-		else if (className == "Scout" || className == "Drone")
-		{
-			radius = 80.0f;
-			isAir = true;
-		}
-
-		searchPos.x += Random(-radius, radius);
-		searchPos.y += Random(-radius, radius);
-
-		if (isAir)
-		{
-			GET_LOCATION_FROM_GROUND(pActor, searchPos, safeHeight);
-		}
-
-		return pH->EndFunction(Script::SetCachedVector(searchPos, pH, 1));
-	}
-
-	return pH->EndFunction();
-}
-
-int CScriptBind_Actor::IsHumanMode(IFunctionHandler* pH)
-{
-	auto* pActor = static_cast<CPlayer*>(GetActor(pH));
-	if (!pActor)
-		return pH->EndFunction();
-
-	if (pActor->IsHumanMode())
-		return pH->EndFunction(1);
-
-	return pH->EndFunction();
-}
-
-//------------------------------------------------------------------------
-int CScriptBind_Actor::IsHaveOwner(IFunctionHandler* pH)
-{
-	CActor* pActor = GetActor(pH);
-	if (!pActor)
-		return pH->EndFunction();
-
-	if (pActor && pActor->IsHaveOwner())
-		return pH->EndFunction(1);
-	else
-		return pH->EndFunction();
-}
-
-int CScriptBind_Actor::IsHaveSlave(IFunctionHandler* pH)
-{
-	CActor* pActor = GetActor(pH);
-	if (!pActor)
-		return pH->EndFunction();
-
-	if (pActor && pActor->IsHaveSlave())
-		return pH->EndFunction(1);
-		
-	return pH->EndFunction();
-}
-
-//~TheOtherSide
-
-//------------------------------------------------------------------------
-void CScriptBind_Actor::AttachTo(CActor* pActor)
-{
-	IScriptTable* pScriptTable = pActor->GetEntity()->GetScriptTable();
+	IScriptTable *pScriptTable = pActor->GetEntity()->GetScriptTable();
 
 	if (pScriptTable)
 	{
@@ -612,40 +200,41 @@ void CScriptBind_Actor::AttachTo(CActor* pActor)
 }
 
 //------------------------------------------------------------------------
-CActor* CScriptBind_Actor::GetActor(IFunctionHandler* pH)
+CActor *CScriptBind_Actor::GetActor(IFunctionHandler *pH)
 {
-	void* pThis = pH->GetThis();
+	void *pThis = pH->GetThis();
 
 	if (pThis)
 	{
-		IActor* pActor = m_pGameFW->GetIActorSystem()->GetActor((EntityId)(UINT_PTR)pThis);
+		IActor *pActor = m_pGameFW->GetIActorSystem()->GetActor((EntityId)(UINT_PTR)pThis);
 		if (pActor)
-			return static_cast<CActor*>(pActor);
+			return static_cast<CActor *>(pActor);
 	}
 
 	return 0;
 }
 
+
 //------------------------------------------------------------------------
-int CScriptBind_Actor::DumpActorInfo(IFunctionHandler* pH)
+int CScriptBind_Actor::DumpActorInfo(IFunctionHandler *pH)
 {
-	CActor* pActor = GetActor(pH);
-	if (!pActor)
-		return pH->EndFunction();
+  CActor *pActor = GetActor(pH);
+  if (!pActor)
+    return pH->EndFunction();
 
-	pActor->DumpActorInfo();
-
-	return pH->EndFunction();
+  pActor->DumpActorInfo();
+  
+  return pH->EndFunction();
 }
 
 //------------------------------------------------------------------------
-int CScriptBind_Actor::SetViewAngleOffset(IFunctionHandler* pH)
+int CScriptBind_Actor::SetViewAngleOffset(IFunctionHandler *pH)
 {
-	CActor* pActor = GetActor(pH);
+	CActor *pActor = GetActor(pH);
 	if (!pActor)
 		return pH->EndFunction();
 
-	Vec3 offset(0, 0, 0);
+	Vec3 offset(0,0,0);
 	pH->GetParam(1, offset);
 
 	pActor->SetViewAngleOffset(offset);
@@ -654,9 +243,9 @@ int CScriptBind_Actor::SetViewAngleOffset(IFunctionHandler* pH)
 }
 
 //------------------------------------------------------------------------
-int CScriptBind_Actor::GetViewAngleOffset(IFunctionHandler* pH)
+int CScriptBind_Actor::GetViewAngleOffset(IFunctionHandler *pH)
 {
-	CActor* pActor = GetActor(pH);
+	CActor *pActor = GetActor(pH);
 	if (!pActor)
 		return pH->EndFunction();
 
@@ -664,9 +253,9 @@ int CScriptBind_Actor::GetViewAngleOffset(IFunctionHandler* pH)
 }
 
 //------------------------------------------------------------------------
-int CScriptBind_Actor::Revive(IFunctionHandler* pH)
+int CScriptBind_Actor::Revive(IFunctionHandler *pH)
 {
-	CActor* pActor = GetActor(pH);
+	CActor *pActor = GetActor(pH);
 	if (!pActor)
 		return pH->EndFunction();
 
@@ -676,9 +265,9 @@ int CScriptBind_Actor::Revive(IFunctionHandler* pH)
 }
 
 //------------------------------------------------------------------------
-int CScriptBind_Actor::Kill(IFunctionHandler* pH)
+int CScriptBind_Actor::Kill(IFunctionHandler *pH)
 {
-	CActor* pActor = GetActor(pH);
+	CActor *pActor = GetActor(pH);
 	if (!pActor)
 		return pH->EndFunction();
 
@@ -688,9 +277,9 @@ int CScriptBind_Actor::Kill(IFunctionHandler* pH)
 }
 
 //------------------------------------------------------------------------
-int CScriptBind_Actor::RagDollize(IFunctionHandler* pH)
+int CScriptBind_Actor::RagDollize(IFunctionHandler *pH)
 {
-	CActor* pActor = GetActor(pH);
+	CActor *pActor = GetActor(pH);
 	if (!pActor)
 		return pH->EndFunction();
 
@@ -702,9 +291,9 @@ int CScriptBind_Actor::RagDollize(IFunctionHandler* pH)
 
 //------------------------------------------------------------------------
 //set some status of the actor
-int CScriptBind_Actor::SetStats(IFunctionHandler* pH)
+int CScriptBind_Actor::SetStats(IFunctionHandler *pH)
 {
-	CActor* pActor = GetActor(pH);
+	CActor *pActor = GetActor(pH);
 	if (!pActor)
 		return pH->EndFunction();
 
@@ -715,15 +304,15 @@ int CScriptBind_Actor::SetStats(IFunctionHandler* pH)
 		if (pH->GetParamType(1) != svtNull && pH->GetParam(1, params))
 			pActor->SetStats(params);
 	}
-
+	
 	return pH->EndFunction();
 }
 
 //------------------------------------------------------------------------
 //set the actor params, pass the params table to the actor
-int CScriptBind_Actor::SetParams(IFunctionHandler* pH)
+int CScriptBind_Actor::SetParams(IFunctionHandler *pH)
 {
-	CActor* pActor = GetActor(pH);
+	CActor *pActor = GetActor(pH);
 	if (!pActor)
 		return pH->EndFunction();
 
@@ -734,15 +323,15 @@ int CScriptBind_Actor::SetParams(IFunctionHandler* pH)
 		if (pH->GetParamType(1) != svtNull && pH->GetParam(1, params))
 			pActor->SetParams(params);
 	}
-
+	
 	return pH->EndFunction();
 }
 
 //------------------------------------------------------------------------
 //get some infos from the actor
-int CScriptBind_Actor::GetParams(IFunctionHandler* pH)
+int CScriptBind_Actor::GetParams(IFunctionHandler *pH)
 {
-	CActor* pActor = GetActor(pH);
+	CActor *pActor = GetActor(pH);
 	if (!pActor)
 		return pH->EndFunction();
 
@@ -758,63 +347,63 @@ int CScriptBind_Actor::GetParams(IFunctionHandler* pH)
 
 // has to be changed! (maybe bone position)
 //------------------------------------------------------------------------
-int CScriptBind_Actor::GetHeadDir(IFunctionHandler* pH)
+int CScriptBind_Actor::GetHeadDir(IFunctionHandler *pH)
 {
-	CActor* pActor = GetActor(pH);
+	CActor *pActor = GetActor(pH);
 	if (!pActor)
 		return pH->EndFunction();
 
 	Vec3 headDir = FORWARD_DIRECTION;
 
-	if (IMovementController* pMC = pActor->GetMovementController())
+	if (IMovementController * pMC = pActor->GetMovementController())
 	{
 		SMovementState ms;
-		pMC->GetMovementState(ms);
+		pMC->GetMovementState( ms );
 		headDir = ms.eyeDirection;
 	}
 
-	return pH->EndFunction(Script::SetCachedVector(headDir, pH, 1));
+	return pH->EndFunction(Script::SetCachedVector( headDir, pH, 1 ));
 }
 
 // has to be changed! (maybe bone position)
 //------------------------------------------------------------------------
-int CScriptBind_Actor::GetHeadPos(IFunctionHandler* pH)
+int CScriptBind_Actor::GetHeadPos(IFunctionHandler *pH)
 {
-	CActor* pActor = GetActor(pH);
+	CActor *pActor = GetActor(pH);
 	if (!pActor)
 		return pH->EndFunction();
-
+	
 	//FIXME:dir is not used
 	//	Vec3 dir(0,0,0);
 	//	Vec3 pos(0,0,0);
 	//	pActor->GetActorInfo(pos,dir);
 
-	Vec3 headPos(0, 0, 0);
+	Vec3 headPos(0,0,0);
 
-	if (IMovementController* pMC = pActor->GetMovementController())
+	if (IMovementController * pMC = pActor->GetMovementController())
 	{
 		SMovementState ms;
-		pMC->GetMovementState(ms);
+		pMC->GetMovementState( ms );
 		headPos = ms.eyePosition;
 	}
 
-	return pH->EndFunction(Script::SetCachedVector(headPos, pH, 1));
+	return pH->EndFunction(Script::SetCachedVector( headPos, pH, 1 ));	
 }
 
 //------------------------------------------------------------------------
-int CScriptBind_Actor::GetChannel(IFunctionHandler* pH)
+int CScriptBind_Actor::GetChannel(IFunctionHandler *pH)
 {
-	CActor* pActor = GetActor(pH);
+	CActor *pActor = GetActor(pH);
 	if (!pActor)
 		return pH->EndFunction();
 
-	return pH->EndFunction((int)pActor->GetChannelId());
+	return pH->EndFunction( (int)pActor->GetChannelId() );
 }
 
 //------------------------------------------------------------------------
-int CScriptBind_Actor::IsPlayer(IFunctionHandler* pH)
+int CScriptBind_Actor::IsPlayer(IFunctionHandler *pH)
 {
-	CActor* pActor = GetActor(pH);
+	CActor *pActor = GetActor(pH);
 	if (!pActor)
 		return pH->EndFunction();
 
@@ -822,12 +411,12 @@ int CScriptBind_Actor::IsPlayer(IFunctionHandler* pH)
 		return pH->EndFunction(1);
 	else
 		return pH->EndFunction();
-}
+} 
 
 //------------------------------------------------------------------------
-int CScriptBind_Actor::IsLocalClient(IFunctionHandler* pH)
+int CScriptBind_Actor::IsLocalClient(IFunctionHandler *pH)
 {
-	CActor* pActor = GetActor(pH);
+	CActor *pActor = GetActor(pH);
 	if (!pActor)
 		return pH->EndFunction();
 
@@ -835,12 +424,12 @@ int CScriptBind_Actor::IsLocalClient(IFunctionHandler* pH)
 		return pH->EndFunction(1);
 	else
 		return pH->EndFunction();
-}
+} 
 
 //------------------------------------------------------------------------
-int CScriptBind_Actor::PostPhysicalize(IFunctionHandler* pH)
+int CScriptBind_Actor::PostPhysicalize(IFunctionHandler *pH)
 {
-	CActor* pActor = GetActor(pH);
+	CActor *pActor = GetActor(pH);
 	if (!pActor)
 		return pH->EndFunction();
 
@@ -851,9 +440,9 @@ int CScriptBind_Actor::PostPhysicalize(IFunctionHandler* pH)
 }
 
 //------------------------------------------------------------------------
-int CScriptBind_Actor::GetLinkedVehicleId(IFunctionHandler* pH)
+int CScriptBind_Actor::GetLinkedVehicleId(IFunctionHandler *pH)
 {
-	CActor* pActor = GetActor(pH);
+	CActor *pActor = GetActor(pH);
 	if (!pActor)
 		return pH->EndFunction();
 
@@ -872,21 +461,21 @@ int CScriptBind_Actor::GetLinkedVehicleId(IFunctionHandler* pH)
 }
 
 //------------------------------------------------------------------------
-int CScriptBind_Actor::LinkToVehicle(IFunctionHandler* pH)
+int CScriptBind_Actor::LinkToVehicle(IFunctionHandler *pH)
 {
-	CActor* pActor = GetActor(pH);
+	CActor *pActor = GetActor(pH);
 	if (!pActor)
 		return pH->EndFunction();
 
 	if (pActor)
 	{
-		IVehicle* pVehicle(NULL);
+		IVehicle *pVehicle(NULL);
 		ScriptHandle vehicleId;
 
 		vehicleId.n = 0;
 		if (pH->GetParamType(1) != svtNull)
 			pH->GetParam(1, vehicleId);
-
+	
 		pActor->LinkToVehicle(vehicleId.n);
 	}
 
@@ -894,15 +483,15 @@ int CScriptBind_Actor::LinkToVehicle(IFunctionHandler* pH)
 }
 
 //------------------------------------------------------------------------
-int CScriptBind_Actor::LinkToVehicleRemotely(IFunctionHandler* pH)
+int CScriptBind_Actor::LinkToVehicleRemotely(IFunctionHandler *pH)
 {
-	CActor* pActor = GetActor(pH);
+	CActor *pActor = GetActor(pH);
 	if (!pActor)
 		return pH->EndFunction();
 
 	if (pActor)
 	{
-		IVehicle* pVehicle(NULL);
+		IVehicle *pVehicle(NULL);
 		ScriptHandle vehicleId;
 
 		vehicleId.n = 0;
@@ -916,15 +505,15 @@ int CScriptBind_Actor::LinkToVehicleRemotely(IFunctionHandler* pH)
 }
 
 //------------------------------------------------------------------------
-int CScriptBind_Actor::LinkToEntity(IFunctionHandler* pH)
+int CScriptBind_Actor::LinkToEntity(IFunctionHandler *pH)
 {
-	CActor* pActor = GetActor(pH);
+	CActor *pActor = GetActor(pH);
 	if (!pActor)
 		return pH->EndFunction();
 
 	if (pActor)
 	{
-		IEntity* pEntity(0);
+		IEntity *pEntity(0);
 		ScriptHandle entityId;
 
 		entityId.n = 0;
@@ -939,9 +528,9 @@ int CScriptBind_Actor::LinkToEntity(IFunctionHandler* pH)
 
 //------------------------------------------------------------------------
 //TOFIX:rendundant with CScriptBind_Entity::SetAngles
-int CScriptBind_Actor::SetAngles(IFunctionHandler* pH, Ang3 vAngles)
+int CScriptBind_Actor::SetAngles(IFunctionHandler *pH,Ang3 vAngles)
 {
-	CActor* pActor = GetActor(pH);
+	CActor *pActor = GetActor(pH);
 	if (!pActor)
 		return pH->EndFunction();
 
@@ -951,95 +540,95 @@ int CScriptBind_Actor::SetAngles(IFunctionHandler* pH, Ang3 vAngles)
 	return pH->EndFunction();
 }
 
-int CScriptBind_Actor::GetAngles(IFunctionHandler* pH)
+int CScriptBind_Actor::GetAngles(IFunctionHandler *pH)
 {
-	CActor* pActor = GetActor(pH);
+	CActor *pActor = GetActor(pH);
 	if (!pActor)
 		return pH->EndFunction();
 
-	Ang3 angles(0, 0, 0);
+	Ang3 angles(0,0,0);
 
 	if (pActor)
 		angles = pActor->GetAngles();
 
-	return pH->EndFunction(Script::SetCachedVector((Vec3)angles, pH, 1));
+	return pH->EndFunction( Script::SetCachedVector( (Vec3)angles, pH, 1 ) );
 }
 
-int CScriptBind_Actor::AddAngularImpulse(IFunctionHandler* pH, Ang3 vAngular, float deceleration, float duration)
+int CScriptBind_Actor::AddAngularImpulse(IFunctionHandler *pH,Ang3 vAngular,float deceleration,float duration)
 {
-	CActor* pActor = GetActor(pH);
+	CActor *pActor = GetActor(pH);
 	if (pActor)
-		pActor->AddAngularImpulse(vAngular, deceleration, duration);
+		pActor->AddAngularImpulse(vAngular,deceleration,duration);
 
 	return pH->EndFunction();
 }
 
-int CScriptBind_Actor::SetViewLimits(IFunctionHandler* pH, Vec3 dir, float rangeH, float rangeV)
+int CScriptBind_Actor::SetViewLimits(IFunctionHandler *pH,Vec3 dir,float rangeH,float rangeV)
 {
-	CActor* pActor = GetActor(pH);
+	CActor *pActor = GetActor(pH);
 	if (!pActor)
 		return pH->EndFunction();
 
 	if (pActor)
-		pActor->SetViewLimits(dir, rangeH, rangeV);
+		pActor->SetViewLimits(dir,rangeH,rangeV);
 
 	return pH->EndFunction();
 }
 
-int CScriptBind_Actor::PlayAction(IFunctionHandler* pH, const char* action, const char* extension)
+int CScriptBind_Actor::PlayAction(IFunctionHandler *pH,const char *action,const char *extension)
 {
-	CActor* pActor = GetActor(pH);
+	CActor *pActor = GetActor(pH);
 	if (!pActor)
 		return pH->EndFunction();
 
 	if (pActor)
-		pActor->PlayAction(action, extension);
+		pActor->PlayAction(action,extension);
 
 	return pH->EndFunction();
 }
 
-int CScriptBind_Actor::SimulateOnAction(IFunctionHandler* pH, const char* action, int mode, float value)
+int CScriptBind_Actor::SimulateOnAction(IFunctionHandler *pH,const char *action,int mode,float value)
 {
-	CActor* pActor = GetActor(pH);
+	CActor *pActor = GetActor(pH);
 	if (!pActor)
 		return pH->EndFunction();
 
 	if (pActor)
-		pActor->OnAction(action, mode, value);
-
+		pActor->OnAction(action,mode,value);
+		
 	return pH->EndFunction();
 }
 
-int CScriptBind_Actor::SetMovementTarget(IFunctionHandler* pH, Vec3 pos, Vec3 target, Vec3 up, float speed)
+int CScriptBind_Actor::SetMovementTarget(IFunctionHandler *pH, Vec3 pos, Vec3 target, Vec3 up, float speed )
 {
-	CActor* pActor = GetActor(pH);
+	CActor *pActor = GetActor(pH);
 	if (!pActor)
 		return pH->EndFunction();
 
 	if (pActor)
-		pActor->SetMovementTarget(pos, target, up, speed);
-
+		pActor->SetMovementTarget(pos,target,up,speed);
+		
 	return pH->EndFunction();
 }
 
-int CScriptBind_Actor::CameraShake(IFunctionHandler* pH, float amount, float duration, float frequency, Vec3 pos)
+int CScriptBind_Actor::CameraShake(IFunctionHandler *pH,float amount,float duration,float frequency,Vec3 pos)
 {
-	CActor* pActor = GetActor(pH);
+	CActor *pActor = GetActor(pH);
 	if (!pActor)
 		return pH->EndFunction();
 
-	const char* source = "";
-	if (pH->GetParamType(5) != svtNull)
-		pH->GetParam(5, source);
-
-	pActor->CameraShake(amount, 0, duration, frequency, pos, 0, source);
-
+  const char* source = "";
+  if (pH->GetParamType(5) != svtNull)
+    pH->GetParam(5, source);
+    
+	pActor->CameraShake(amount,0,duration,frequency,pos,0,source);
+		
 	return pH->EndFunction();
 }
 
-int CScriptBind_Actor::SetViewShake(IFunctionHandler* pH, Ang3 shakeAngle, Vec3 shakeShift, float duration, float frequency, float randomness)
+int CScriptBind_Actor::SetViewShake(IFunctionHandler *pH, Ang3 shakeAngle, Vec3 shakeShift, float duration, float frequency, float randomness)
 {
-	CActor* pActor = GetActor(pH);
+	CActor *pActor = GetActor(pH);
 	if (!pActor)
 		return pH->EndFunction();
 
@@ -1054,9 +643,9 @@ int CScriptBind_Actor::SetViewShake(IFunctionHandler* pH, Ang3 shakeAngle, Vec3 
 	return pH->EndFunction();
 }
 
-int CScriptBind_Actor::VectorToLocal(IFunctionHandler* pH)
+int CScriptBind_Actor::VectorToLocal(IFunctionHandler *pH)
 {
-	CActor* pActor = GetActor(pH);
+	CActor *pActor = GetActor(pH);
 	if (!pActor)
 		return pH->EndFunction();
 
@@ -1065,14 +654,14 @@ int CScriptBind_Actor::VectorToLocal(IFunctionHandler* pH)
 		return pH->EndFunction();
 
 	pActor->VectorToLocal(vector);
-
-	return pH->EndFunction(Script::SetCachedVector(vector, pH, 2));
+		
+	return pH->EndFunction(Script::SetCachedVector( vector, pH, 2 ));
 }
 
 //------------------------------------------------------------------------
-int CScriptBind_Actor::EnableAspect(IFunctionHandler* pH, const char* aspect, bool enable)
+int CScriptBind_Actor::EnableAspect(IFunctionHandler *pH, const char *aspect, bool enable)
 {
-	CActor* pActor = GetActor(pH);
+	CActor *pActor = GetActor(pH);
 	if (!pActor)
 		return pH->EndFunction();
 
@@ -1092,9 +681,9 @@ int CScriptBind_Actor::EnableAspect(IFunctionHandler* pH, const char* aspect, bo
 }
 
 //------------------------------------------------------------------------
-int CScriptBind_Actor::SetExtensionActivation(IFunctionHandler* pH, const char* extension, bool activation)
+int CScriptBind_Actor::SetExtensionActivation(IFunctionHandler *pH, const char *extension, bool activation)
 {
-	CActor* pActor = GetActor(pH);
+	CActor *pActor = GetActor(pH);
 	if (!pActor)
 		return pH->EndFunction();
 	bool ok = false;
@@ -1109,14 +698,14 @@ int CScriptBind_Actor::SetExtensionActivation(IFunctionHandler* pH, const char* 
 		}
 	}
 	if (!ok)
-		pH->GetIScriptSystem()->RaiseError("Failed to %s extension %s", activation ? "enable" : "disable", extension);
+		pH->GetIScriptSystem()->RaiseError("Failed to %s extension %s", activation? "enable" : "disable", extension);
 	return pH->EndFunction();
 }
 
 //------------------------------------------------------------------------
-int CScriptBind_Actor::SetExtensionParams(IFunctionHandler* pH, const char* extension, SmartScriptTable params)
+int CScriptBind_Actor::SetExtensionParams(IFunctionHandler* pH, const char *extension, SmartScriptTable params)
 {
-	CActor* pActor = GetActor(pH);
+	CActor * pActor = GetActor(pH);
 	if (!pActor)
 		return pH->EndFunction();
 	bool ok = false;
@@ -1128,9 +717,9 @@ int CScriptBind_Actor::SetExtensionParams(IFunctionHandler* pH, const char* exte
 }
 
 //------------------------------------------------------------------------
-int CScriptBind_Actor::GetExtensionParams(IFunctionHandler* pH, const char* extension, SmartScriptTable params)
+int CScriptBind_Actor::GetExtensionParams(IFunctionHandler* pH, const char *extension, SmartScriptTable params)
 {
-	CActor* pActor = GetActor(pH);
+	CActor * pActor = GetActor(pH);
 	if (!pActor)
 		return pH->EndFunction();
 	bool ok = false;
@@ -1142,40 +731,40 @@ int CScriptBind_Actor::GetExtensionParams(IFunctionHandler* pH, const char* exte
 }
 
 //------------------------------------------------------------------------
-int CScriptBind_Actor::SetInventoryAmmo(IFunctionHandler* pH, const char* ammo, int amount, int serClientMode)
+int CScriptBind_Actor::SetInventoryAmmo(IFunctionHandler *pH, const char *ammo, int amount, int serClientMode)
 {
-	CActor* pActor = GetActor(pH);
+	CActor * pActor = GetActor(pH);
 	if (!pActor)
 		return pH->EndFunction();
 
-	IInventory* pInventory = pActor->GetInventory();
+	IInventory *pInventory=pActor->GetInventory();
 	if (!pInventory)
 		return pH->EndFunction();
 
-	bool doClientSide = (serClientMode & CLIENT_SIDE) != 0;
-	bool doServerSide = (serClientMode & SERVER_SIDE) != 0;
+	bool doClientSide = (serClientMode & CLIENT_SIDE)!=0;
+	bool doServerSide = (serClientMode & SERVER_SIDE)!=0;
 
 	IEntityClass* pClass = gEnv->pEntitySystem->GetClassRegistry()->FindClass(ammo);
 	assert(pClass);
 
 	int capacity = pInventory->GetAmmoCapacity(pClass);
 	int current = pInventory->GetAmmoCount(pClass);
-	if ((!gEnv->pSystem->IsEditor()) && (amount > capacity))
+	if((!gEnv->pSystem->IsEditor()) && (amount > capacity))
 	{
-		if (pActor->IsClient() && doClientSide)
-			SAFE_HUD_FUNC(DisplayFlashMessage("@ammo_maxed_out", 2, ColorF(1.0f, 0, 0), true, (string("@") + pClass->GetName()).c_str()));
+		if(pActor->IsClient() && doClientSide)
+			SAFE_HUD_FUNC(DisplayFlashMessage("@ammo_maxed_out", 2, ColorF(1.0f, 0,0), true, (string("@")+pClass->GetName()).c_str()));
 
 		//If still there's some place, full inventory to maximum...
-		if (current < capacity)
+		if(current<capacity)
 		{
 			if (doServerSide)
-				pInventory->SetAmmoCount(pClass, capacity);
-			if (doClientSide && pActor->IsClient() && capacity - current > 0)
+				pInventory->SetAmmoCount(pClass,capacity);
+			if(doClientSide && pActor->IsClient() && capacity - current > 0)
 			{
 				/*char buffer[5];
 				itoa(capacity - current, buffer, 10);
 				SAFE_HUD_FUNC(DisplayFlashMessage("@grab_ammo", 3, Col_Wheat, true, (string("@")+pClass->GetName()).c_str(), buffer));*/
-				if (g_pGame->GetHUD())
+				if(g_pGame->GetHUD())
 					g_pGame->GetHUD()->DisplayAmmoPickup(pClass->GetName(), capacity - current);
 			}
 			if (doClientSide && gEnv->bServer)
@@ -1186,12 +775,12 @@ int CScriptBind_Actor::SetInventoryAmmo(IFunctionHandler* pH, const char* ammo, 
 	{
 		if (doServerSide)
 			pInventory->SetAmmoCount(pClass, amount);
-		if (doClientSide && pActor->IsClient() && amount - current > 0)
+		if(doClientSide && pActor->IsClient() && amount - current > 0)
 		{
 			/*char buffer[5];
 			itoa(amount - current, buffer, 10);
 			SAFE_HUD_FUNC(DisplayFlashMessage("@grab_ammo", 3, Col_Wheat, true, (string("@")+pClass->GetName()).c_str(), buffer));*/
-			if (g_pGame->GetHUD())
+			if(g_pGame->GetHUD())
 				g_pGame->GetHUD()->DisplayAmmoPickup(pClass->GetName(), amount - current);
 		}
 		if (doClientSide && gEnv->bServer)
@@ -1202,13 +791,13 @@ int CScriptBind_Actor::SetInventoryAmmo(IFunctionHandler* pH, const char* ammo, 
 }
 
 //------------------------------------------------------------------------
-int CScriptBind_Actor::AddInventoryAmmo(IFunctionHandler* pH, const char* ammo, int amount)
+int CScriptBind_Actor::AddInventoryAmmo(IFunctionHandler *pH, const char *ammo, int amount)
 {
-	CActor* pActor = GetActor(pH);
+	CActor * pActor = GetActor(pH);
 	if (!pActor)
 		return pH->EndFunction();
 
-	IInventory* pInventory = pActor->GetInventory();
+	IInventory *pInventory=pActor->GetInventory();
 	if (!pInventory)
 		return pH->EndFunction();
 
@@ -1217,22 +806,22 @@ int CScriptBind_Actor::AddInventoryAmmo(IFunctionHandler* pH, const char* ammo, 
 
 	int capacity = pInventory->GetAmmoCapacity(pClass);
 	int current = pInventory->GetAmmoCount(pClass);
-	if ((!gEnv->pSystem->IsEditor()) && (amount > capacity))
+	if((!gEnv->pSystem->IsEditor()) && (amount > capacity))
 	{
-		if (pActor->IsClient())
-			SAFE_HUD_FUNC(DisplayFlashMessage("@ammo_maxed_out", 2, ColorF(1.0f, 0, 0), true, (string("@") + pClass->GetName()).c_str()));
+		if(pActor->IsClient())
+			SAFE_HUD_FUNC(DisplayFlashMessage("@ammo_maxed_out", 2, ColorF(1.0f, 0,0), true, (string("@")+pClass->GetName()).c_str()));
 
 		//If still there's some place, full inventory to maximum...
 
-		if (current < capacity)
+		if(current<capacity)
 		{
-			pInventory->SetAmmoCount(pClass, capacity);
-			if (pActor->IsClient() && capacity - current > 0)
+			pInventory->SetAmmoCount(pClass,capacity);
+			if(pActor->IsClient() && capacity - current > 0)
 			{
 				/*char buffer[5];
 				itoa(capacity - current, buffer, 10);
 				SAFE_HUD_FUNC(DisplayFlashMessage("@grab_ammo", 3, Col_Wheat, true, (string("@")+pClass->GetName()).c_str(), buffer));*/
-				if (g_pGame->GetHUD())
+				if(g_pGame->GetHUD())
 					g_pGame->GetHUD()->DisplayAmmoPickup(pClass->GetName(), capacity - current);
 			}
 			if (gEnv->bServer)
@@ -1242,12 +831,12 @@ int CScriptBind_Actor::AddInventoryAmmo(IFunctionHandler* pH, const char* ammo, 
 	else
 	{
 		pInventory->SetAmmoCount(pClass, amount);
-		if (pActor->IsClient() && amount - current > 0)
+		if(pActor->IsClient() && amount - current > 0)
 		{
 			/*char buffer[5];
 			itoa(amount - current, buffer, 10);
 			SAFE_HUD_FUNC(DisplayFlashMessage("@grab_ammo", 3, Col_Wheat, true, (string("@")+pClass->GetName()).c_str(), buffer));*/
-			if (g_pGame->GetHUD())
+			if(g_pGame->GetHUD())
 				g_pGame->GetHUD()->DisplayAmmoPickup(pClass->GetName(), amount - current);
 		}
 		if (gEnv->bServer)
@@ -1258,13 +847,13 @@ int CScriptBind_Actor::AddInventoryAmmo(IFunctionHandler* pH, const char* ammo, 
 }
 
 //------------------------------------------------------------------------
-int CScriptBind_Actor::GetInventoryAmmo(IFunctionHandler* pH, const char* ammo)
+int CScriptBind_Actor::GetInventoryAmmo(IFunctionHandler *pH, const char *ammo)
 {
-	CActor* pActor = GetActor(pH);
+	CActor * pActor = GetActor(pH);
 	if (!pActor)
 		return pH->EndFunction();
 
-	IInventory* pInventory = pActor->GetInventory();
+	IInventory *pInventory=pActor->GetInventory();
 	if (!pInventory)
 		return pH->EndFunction();
 
@@ -1274,9 +863,9 @@ int CScriptBind_Actor::GetInventoryAmmo(IFunctionHandler* pH, const char* ammo)
 }
 
 //------------------------------------------------------------------------
-int CScriptBind_Actor::SetHealth(IFunctionHandler* pH, float health)
+int CScriptBind_Actor::SetHealth(IFunctionHandler *pH, float health)
 {
-	CActor* pActor = GetActor(pH);
+	CActor *pActor = GetActor(pH);
 	if (!pActor)
 		return pH->EndFunction();
 
@@ -1286,12 +875,12 @@ int CScriptBind_Actor::SetHealth(IFunctionHandler* pH, float health)
 	return pH->EndFunction();
 }
 //------------------------------------------------------------------------
-int CScriptBind_Actor::DamageInfo(IFunctionHandler* pH, ScriptHandle shooter, ScriptHandle target, ScriptHandle weapon, float damage, const char* damageType)
+int CScriptBind_Actor::DamageInfo(IFunctionHandler *pH, ScriptHandle shooter, ScriptHandle target, ScriptHandle weapon, float damage, const char *damageType)
 {
 	EntityId shooterID = shooter.n;
 	EntityId targetID = target.n;
 	EntityId weaponID = weapon.n;
-	CActor* pActor = GetActor(pH);
+	CActor *pActor = GetActor(pH);
 	if (pActor)
 	{
 		pActor->DamageInfo(shooterID, weaponID, damage, damageType);
@@ -1299,9 +888,9 @@ int CScriptBind_Actor::DamageInfo(IFunctionHandler* pH, ScriptHandle shooter, Sc
 	return pH->EndFunction();
 }
 //------------------------------------------------------------------------
-int CScriptBind_Actor::SetMaxHealth(IFunctionHandler* pH, float health)
+int CScriptBind_Actor::SetMaxHealth(IFunctionHandler *pH, float health)
 {
-	CActor* pActor = GetActor(pH);
+	CActor *pActor = GetActor(pH);
 	if (!pActor)
 		return pH->EndFunction();
 
@@ -1312,9 +901,9 @@ int CScriptBind_Actor::SetMaxHealth(IFunctionHandler* pH, float health)
 }
 
 //------------------------------------------------------------------------
-int CScriptBind_Actor::GetHealth(IFunctionHandler* pH)
+int CScriptBind_Actor::GetHealth(IFunctionHandler *pH)
 {
-	CActor* pActor = GetActor(pH);
+	CActor *pActor = GetActor(pH);
 	if (!pActor)
 		return pH->EndFunction();
 
@@ -1325,22 +914,22 @@ int CScriptBind_Actor::GetHealth(IFunctionHandler* pH)
 }
 
 //------------------------------------------------------------------------
-int CScriptBind_Actor::GetMaxHealth(IFunctionHandler* pH)
+int CScriptBind_Actor::GetMaxHealth(IFunctionHandler *pH)
 {
-	CActor* pActor = GetActor(pH);
+  CActor *pActor = GetActor(pH);
 	if (!pActor)
 		return pH->EndFunction();
 
-	if (pActor)
-		return pH->EndFunction(pActor->GetMaxHealth());
+  if (pActor)
+    return pH->EndFunction(pActor->GetMaxHealth());
 
-	return pH->EndFunction();
+  return pH->EndFunction();
 }
 
 //------------------------------------------------------------------------
-int CScriptBind_Actor::GetArmor(IFunctionHandler* pH)
+int CScriptBind_Actor::GetArmor(IFunctionHandler *pH)
 {
-	CActor* pActor = GetActor(pH);
+	CActor *pActor = GetActor(pH);
 	if (!pActor)
 		return pH->EndFunction();
 
@@ -1351,9 +940,9 @@ int CScriptBind_Actor::GetArmor(IFunctionHandler* pH)
 }
 
 //------------------------------------------------------------------------
-int CScriptBind_Actor::GetMaxArmor(IFunctionHandler* pH)
+int CScriptBind_Actor::GetMaxArmor(IFunctionHandler *pH)
 {
-	CActor* pActor = GetActor(pH);
+	CActor *pActor = GetActor(pH);
 	if (!pActor)
 		return pH->EndFunction();
 
@@ -1364,9 +953,9 @@ int CScriptBind_Actor::GetMaxArmor(IFunctionHandler* pH)
 }
 
 //------------------------------------------------------------------------
-int CScriptBind_Actor::QueueAnimationState(IFunctionHandler* pH, const char* animationState)
+int CScriptBind_Actor::QueueAnimationState(IFunctionHandler *pH, const char *animationState)
 {
-	CActor* pActor = GetActor(pH);
+	CActor *pActor = GetActor(pH);
 	if (!pActor)
 		return pH->EndFunction();
 
@@ -1377,9 +966,9 @@ int CScriptBind_Actor::QueueAnimationState(IFunctionHandler* pH, const char* ani
 }
 
 //------------------------------------------------------------------------
-int CScriptBind_Actor::ChangeAnimGraph(IFunctionHandler* pH, const char* graph, int layer)
+int CScriptBind_Actor::ChangeAnimGraph(IFunctionHandler *pH, const char *graph, int layer)
 {
-	CActor* pActor = GetActor(pH);
+	CActor *pActor = GetActor(pH);
 	if (!pActor)
 		return pH->EndFunction();
 
@@ -1390,59 +979,59 @@ int CScriptBind_Actor::ChangeAnimGraph(IFunctionHandler* pH, const char* graph, 
 }
 
 //------------------------------------------------------------------------
-int CScriptBind_Actor::CreateCodeEvent(IFunctionHandler* pH, SmartScriptTable params)
+int CScriptBind_Actor::CreateCodeEvent(IFunctionHandler *pH,SmartScriptTable params)
 {
-	CActor* pActor = GetActor(pH);
+	CActor *pActor = GetActor(pH);
 	if (!pActor)
 		return pH->EndFunction();
 
 	if (pActor)
 		return (pActor->CreateCodeEvent(params));
-
+			
 	return pH->EndFunction();
 }
 
 //------------------------------------------------------------------------
-int CScriptBind_Actor::GetCurrentAnimationState(IFunctionHandler* pH)
+int CScriptBind_Actor::GetCurrentAnimationState(IFunctionHandler *pH)
 {
-	CActor* pActor = GetActor(pH);
+	CActor *pActor = GetActor(pH);
 	if (!pActor)
 		return pH->EndFunction();
 
-	const char* value = "<no state>";
-	if (IAnimationGraphState* pState = pActor->GetAnimationGraphState())
+	const char * value = "<no state>";
+	if (IAnimationGraphState * pState = pActor->GetAnimationGraphState())
 		value = pState->GetCurrentStateName();
 
 	return pH->EndFunction(value);
 }
 
 //------------------------------------------------------------------------
-int CScriptBind_Actor::SetAnimationInput(IFunctionHandler* pH, const char* inputID, const char* value)
+int CScriptBind_Actor::SetAnimationInput( IFunctionHandler *pH, const char * inputID, const char * value )
 {
-	CActor* pActor = GetActor(pH);
+	CActor *pActor = GetActor(pH);
 	if (pActor)
-		return pH->EndFunction(pActor->SetAnimationInput(inputID, value));
+		return pH->EndFunction(pActor->SetAnimationInput(inputID,value));
 
 	return pH->EndFunction();
 }
 
-int CScriptBind_Actor::TrackViewControlled(IFunctionHandler* pH, int characterSlot)
+int CScriptBind_Actor::TrackViewControlled( IFunctionHandler *pH, int characterSlot )
 {
-	CActor* pActor = GetActor(pH);
+	CActor *pActor = GetActor(pH);
 	if (pActor)
 	{
-		ICharacterInstance* pCharacter = pActor->GetEntity()->GetCharacter(characterSlot);
+		ICharacterInstance *pCharacter = pActor->GetEntity()->GetCharacter(characterSlot);
 		if (pCharacter)
-			return pH->EndFunction((pCharacter->GetISkeletonAnim()->GetTrackViewStatus() ? true : false));
+			return pH->EndFunction((pCharacter->GetISkeletonAnim()->GetTrackViewStatus()?true:false));
 	}
 
 	return pH->EndFunction();
 }
 
 //------------------------------------------------------------------------
-int CScriptBind_Actor::SetSpectatorMode(IFunctionHandler* pH, int mode, ScriptHandle targetId)
+int CScriptBind_Actor::SetSpectatorMode(IFunctionHandler *pH, int mode, ScriptHandle targetId)
 {
-	CActor* pActor = GetActor(pH);
+	CActor *pActor = GetActor(pH);
 	if (!pActor)
 		return pH->EndFunction();
 
@@ -1452,9 +1041,9 @@ int CScriptBind_Actor::SetSpectatorMode(IFunctionHandler* pH, int mode, ScriptHa
 }
 
 //------------------------------------------------------------------------
-int CScriptBind_Actor::GetSpectatorMode(IFunctionHandler* pH)
+int CScriptBind_Actor::GetSpectatorMode(IFunctionHandler *pH)
 {
-	CActor* pActor = GetActor(pH);
+	CActor *pActor = GetActor(pH);
 	if (!pActor)
 		return pH->EndFunction();
 	return pH->EndFunction(pActor->GetSpectatorMode());
@@ -1464,23 +1053,23 @@ int CScriptBind_Actor::GetSpectatorMode(IFunctionHandler* pH)
 int CScriptBind_Actor::GetSpectatorTarget(IFunctionHandler* pH)
 {
 	CActor* pActor = GetActor(pH);
-	if (!pActor)
+	if(!pActor)
 		return pH->EndFunction();
 
 	return pH->EndFunction(pActor->GetSpectatorTarget());
 }
 
 //------------------------------------------------------------------------
-int CScriptBind_Actor::Fall(IFunctionHandler* pH, Vec3 hitPos)
+int CScriptBind_Actor::Fall(IFunctionHandler *pH, Vec3 hitPos)
 {
-	CActor* pActor = GetActor(pH);
+	CActor *pActor = GetActor(pH);
 	if (!pActor)
 		return pH->EndFunction();
 
 	// [Mikko] 11.10.2007 - Moved the check here, since it was causing too much trouble in CActor.Fall().
 	// The point of this filtering is to mostly mask out self-induced collision damage on friendly NPCs
 	// which are playing special animations.
-	if (!g_pGameCVars->g_enableFriendlyFallAndPlay)
+	if(!g_pGameCVars->g_enableFriendlyFallAndPlay)
 	{
 		if (IAnimatedCharacter* pAC = pActor->GetAnimatedCharacter())
 		{
@@ -1507,9 +1096,9 @@ int CScriptBind_Actor::Fall(IFunctionHandler* pH, Vec3 hitPos)
 }
 
 //------------------------------------------------------------------------
-int CScriptBind_Actor::IsFallen(IFunctionHandler* pH)
+int CScriptBind_Actor::IsFallen(IFunctionHandler *pH)
 {
-	CActor* pActor = GetActor(pH);
+	CActor *pActor = GetActor(pH);
 	if (!pActor)
 		return pH->EndFunction();
 
@@ -1517,9 +1106,9 @@ int CScriptBind_Actor::IsFallen(IFunctionHandler* pH)
 }
 
 //------------------------------------------------------------------------
-int CScriptBind_Actor::GetFallenTime(IFunctionHandler* pH)
+int CScriptBind_Actor::GetFallenTime(IFunctionHandler *pH)
 {
-	CActor* pActor = GetActor(pH);
+	CActor *pActor = GetActor(pH);
 	if (!pActor)
 		return pH->EndFunction();
 
@@ -1527,9 +1116,9 @@ int CScriptBind_Actor::GetFallenTime(IFunctionHandler* pH)
 }
 
 //------------------------------------------------------------------------
-int CScriptBind_Actor::LooseHelmet(IFunctionHandler* pH, Vec3 hitDir, Vec3 hitPos, bool simulate)
+int CScriptBind_Actor::LooseHelmet(IFunctionHandler *pH, Vec3 hitDir, Vec3 hitPos, bool simulate)
 {
-	CActor* pActor = GetActor(pH);
+	CActor *pActor = GetActor(pH);
 	if (!pActor)
 		return pH->EndFunction();
 
@@ -1537,9 +1126,9 @@ int CScriptBind_Actor::LooseHelmet(IFunctionHandler* pH, Vec3 hitDir, Vec3 hitPo
 }
 
 //------------------------------------------------------------------------
-int CScriptBind_Actor::GoLimp(IFunctionHandler* pH)
+int CScriptBind_Actor::GoLimp(IFunctionHandler *pH)
 {
-	CActor* pActor = GetActor(pH);
+	CActor *pActor = GetActor(pH);
 	if (!pActor)
 		return pH->EndFunction();
 
@@ -1549,9 +1138,9 @@ int CScriptBind_Actor::GoLimp(IFunctionHandler* pH)
 }
 
 //------------------------------------------------------------------------
-int CScriptBind_Actor::StandUp(IFunctionHandler* pH)
+int CScriptBind_Actor::StandUp(IFunctionHandler *pH)
 {
-	CActor* pActor = GetActor(pH);
+	CActor *pActor = GetActor(pH);
 	if (!pActor)
 		return pH->EndFunction();
 
@@ -1560,33 +1149,13 @@ int CScriptBind_Actor::StandUp(IFunctionHandler* pH)
 	return pH->EndFunction();
 }
 
-int CScriptBind_Actor::CanLaunchShockwave(IFunctionHandler* pH)
-{
-	CActor* pActor = GetActor(pH);
-	if (!pActor || !pActor->IsAlien())
-		return pH->EndFunction();
-
-	if (pActor && pActor->IsAlien())
-	{
-		CTrooper* pTrooper = static_cast<CTrooper*>(pActor);
-		bool isGuardian = pTrooper->m_shieldParams.shieldType == CTrooper::eShieldType_Guardian;
-		bool isEmpActive = pTrooper->GetEMPInfo().isEmpState;
-		bool isRagdoll = pTrooper->GetActorStats()->isRagDoll;
-		bool isAlive = pTrooper->GetHealth() > 0.1f;
-
-		if (!isEmpActive && !isRagdoll && isAlive && isGuardian)
-			return pH->EndFunction(1);
-	}
-	return pH->EndFunction();
-}
-
 //------------------------------------------------------------------------
-int CScriptBind_Actor::SetPhysicalizationProfile(IFunctionHandler* pH, const char* profile)
+int CScriptBind_Actor::SetPhysicalizationProfile(IFunctionHandler *pH, const char *profile)
 {
-	CActor* pActor = GetActor(pH);
+	CActor *pActor = GetActor(pH);
 	if (!pActor)
 		return pH->EndFunction();
-
+	
 	uint p = 0;
 	if (!stricmp(profile, "alive"))
 		p = eAP_Alive;
@@ -1609,7 +1178,7 @@ int CScriptBind_Actor::SetPhysicalizationProfile(IFunctionHandler* pH, const cha
 		return pH->EndFunction();
 
 	//Don't turn ragdoll while grabbed
-	if (p == eAP_Ragdoll && !pActor->CanRagDollize())
+	if(p==eAP_Ragdoll && !pActor->CanRagDollize())
 		return pH->EndFunction();
 
 	pActor->GetGameObject()->SetAspectProfile(eEA_Physics, p);
@@ -1618,16 +1187,16 @@ int CScriptBind_Actor::SetPhysicalizationProfile(IFunctionHandler* pH, const cha
 }
 
 //------------------------------------------------------------------------
-int CScriptBind_Actor::GetPhysicalizationProfile(IFunctionHandler* pH)
+int CScriptBind_Actor::GetPhysicalizationProfile(IFunctionHandler *pH)
 {
-	CActor* pActor = GetActor(pH);
+	CActor *pActor = GetActor(pH);
 	if (!pActor)
 		return pH->EndFunction();
 
-	uint8 profile = pActor->GetGameObject()->GetAspectProfile(eEA_Physics);
-	const char* profileName;
+	uint8 profile=pActor->GetGameObject()->GetAspectProfile(eEA_Physics);
+	const char *profileName;
 	if (profile == eAP_Alive)
-		profileName = "alive";
+		profileName="alive";
 	else if (profile == eAP_NotPhysicalized)
 		profileName = "unragdoll";
 	else if (profile == eAP_Ragdoll)
@@ -1642,229 +1211,230 @@ int CScriptBind_Actor::GetPhysicalizationProfile(IFunctionHandler* pH)
 	return pH->EndFunction(profileName);
 }
 
+
 //------------------------------------------------------------------------
-int CScriptBind_Actor::AttachVulnerabilityEffect(IFunctionHandler* pH, int characterSlot, int partid, Vec3 hitPos, float radius, const char* effect, const char* attachmentIdentifier)
+int CScriptBind_Actor::AttachVulnerabilityEffect(IFunctionHandler *pH, int characterSlot, int partid, Vec3 hitPos, float radius, const char* effect, const char* attachmentIdentifier)
 {
-	CActor* pActor = GetActor(pH);
+  CActor *pActor = GetActor(pH);  
 	if (!pActor)
 		return pH->EndFunction();
 
-	IEntity* pEntity = pActor->GetEntity();
-	ICharacterInstance* pChar = pEntity->GetCharacter(characterSlot);
+  IEntity* pEntity = pActor->GetEntity();
+  ICharacterInstance* pChar = pEntity->GetCharacter(characterSlot);
 
-	if (!pChar || !effect)
-		return pH->EndFunction();
+  if (!pChar || !effect)  
+    return pH->EndFunction();
 
-	//fallback: use nearest attachment
-	float minDiff = radius * radius;
-	IAttachment* pClosestAtt = 0;
+  //fallback: use nearest attachment
+  float minDiff = radius*radius;  
+  IAttachment* pClosestAtt = 0;
+  
+  IAttachmentManager* pMan = pChar->GetIAttachmentManager();
+  for (int i=0; i<pMan->GetAttachmentCount(); ++i)
+  {
+    IAttachment* pAtt = pMan->GetInterfaceByIndex(i);
+    
+    float diff = (hitPos - pAtt->GetAttWorldAbsolute().t).len2();        
+    if (diff < minDiff)
+    {
+      // only use specified attachments 
+      if (attachmentIdentifier[0] && !strstr(pAtt->GetName(), attachmentIdentifier))
+        continue;
 
-	IAttachmentManager* pMan = pChar->GetIAttachmentManager();
-	for (int i = 0; i < pMan->GetAttachmentCount(); ++i)
-	{
-		IAttachment* pAtt = pMan->GetInterfaceByIndex(i);
+      minDiff = diff; 
+      pClosestAtt = pAtt;      
+    }   
+    //CryLog("diff: %.2f, att: %s", diff, attName.c_str());
+  }
 
-		float diff = (hitPos - pAtt->GetAttWorldAbsolute().t).len2();
-		if (diff < minDiff)
-		{
-			// only use specified attachments
-			if (attachmentIdentifier[0] && !strstr(pAtt->GetName(), attachmentIdentifier))
-				continue;
+  if (!pClosestAtt)
+    return pH->EndFunction();
 
-			minDiff = diff;
-			pClosestAtt = pAtt;
-		}
-		//CryLog("diff: %.2f, att: %s", diff, attName.c_str());
-	}
+  //CryLog("AttachVulnerabilityEffect: closest att %s, attaching effect %s", pClosestAtt->GetName(), effect);
+  
+  CEffectAttachment *pEffectAttachment = new CEffectAttachment(effect, Vec3(ZERO), Vec3(0,1,0), 1.f);
 
-	if (!pClosestAtt)
-		return pH->EndFunction();
-
-	//CryLog("AttachVulnerabilityEffect: closest att %s, attaching effect %s", pClosestAtt->GetName(), effect);
-
-	CEffectAttachment* pEffectAttachment = new CEffectAttachment(effect, Vec3(ZERO), Vec3(0, 1, 0), 1.f);
-
-	pClosestAtt->AddBinding(pEffectAttachment);
-	pClosestAtt->HideAttachment(0);
-
-	return pH->EndFunction(pClosestAtt->GetName());
+  pClosestAtt->AddBinding(pEffectAttachment);
+  pClosestAtt->HideAttachment(0);
+  
+  return pH->EndFunction(pClosestAtt->GetName());    
 }
 
-int CScriptBind_Actor::GetClosestAttachment(IFunctionHandler* pH, int characterSlot, Vec3 testPos, float maxDistance, const char* suffix)
+int CScriptBind_Actor::GetClosestAttachment(IFunctionHandler *pH, int characterSlot, Vec3 testPos, float maxDistance, const char* suffix)
 {
-	CActor* pActor = GetActor(pH);
+  CActor *pActor = GetActor(pH);
 	if (!pActor)
 		return pH->EndFunction();
 
-	IEntity* pEntity = pActor->GetEntity();
-	ICharacterInstance* pChar = pEntity->GetCharacter(characterSlot);
+  IEntity* pEntity = pActor->GetEntity();
+  ICharacterInstance* pChar = pEntity->GetCharacter(characterSlot);
 
-	if (!pChar)
-		return pH->EndFunction();
+  if (!pChar)  
+    return pH->EndFunction();
 
-	//fallback: use nearest attachment
-	float minDiff = maxDistance * maxDistance;
-	IAttachment* pClosestAtt = 0;
-
-	IAttachmentManager* pMan = pChar->GetIAttachmentManager();
-	int count = pMan->GetAttachmentCount();
-
-	for (int i = 0; i < count; ++i)
-	{
-		IAttachment* pAtt = pMan->GetInterfaceByIndex(i);
-
-		if (pAtt->IsAttachmentHidden() || !pAtt->GetIAttachmentObject())
+  //fallback: use nearest attachment
+  float minDiff = maxDistance*maxDistance;  
+  IAttachment* pClosestAtt = 0;
+  
+  IAttachmentManager* pMan = pChar->GetIAttachmentManager();
+  int count = pMan->GetAttachmentCount();
+  
+  for (int i=0; i<count; ++i)
+  {
+    IAttachment* pAtt = pMan->GetInterfaceByIndex(i);		
+		
+    if (pAtt->IsAttachmentHidden() || !pAtt->GetIAttachmentObject())
 			continue;
-
-		AABB bbox(AABB::CreateTransformedAABB(Matrix34(pAtt->GetAttWorldAbsolute()), pAtt->GetIAttachmentObject()->GetAABB()));
+		
+		AABB bbox(AABB::CreateTransformedAABB(Matrix34(pAtt->GetAttWorldAbsolute()),pAtt->GetIAttachmentObject()->GetAABB()));
 		//gEnv->pRenderer->GetIRenderAuxGeom()->DrawAABB(bbox,false,ColorB(255,0,0,100),eBBD_Faceted);
-
-	//float diff = (testPos - pAtt->GetWMatrix().GetTranslation()).len2();
+		
+    //float diff = (testPos - pAtt->GetWMatrix().GetTranslation()).len2();
 		float diff((testPos - bbox.GetCenter()).len2());
+		
+    if (diff < minDiff)
+    {
+      //CryLogAlways("%s distance: %.1f", pAtt->GetName(), sqrt(diff));
 
-		if (diff < minDiff)
-		{
-			//CryLogAlways("%s distance: %.1f", pAtt->GetName(), sqrt(diff));
+      if (suffix[0] && !strstr(pAtt->GetName(), suffix))
+        continue;
 
-			if (suffix[0] && !strstr(pAtt->GetName(), suffix))
-				continue;
+      minDiff = diff; 
+      pClosestAtt = pAtt;      
+    }
+  }
 
-			minDiff = diff;
-			pClosestAtt = pAtt;
-		}
-	}
-
-	if (!pClosestAtt)
-		return pH->EndFunction();
-
+  if (!pClosestAtt)
+    return pH->EndFunction();
+  
 	//FIXME FIXME: E3 workaround
 	char attachmentName[64];
-	strncpy(attachmentName, pClosestAtt->GetName(), 63);
-	char* pDotChar = strstr(attachmentName, ".");
+	strncpy(attachmentName,pClosestAtt->GetName(),63);
+	char *pDotChar = strstr(attachmentName,".");
 	if (pDotChar)
 		*pDotChar = 0;
 
 	strlwr(attachmentName);
 	//
 
-	return pH->EndFunction(attachmentName);
+  return pH->EndFunction(attachmentName);    
 }
 
 //------------------------------------------------------------------------
-int CScriptBind_Actor::ResetVulnerabilityEffects(IFunctionHandler* pH, int characterSlot)
+int CScriptBind_Actor::ResetVulnerabilityEffects(IFunctionHandler *pH, int characterSlot)
 {
-	CActor* pActor = GetActor(pH);
+  CActor *pActor = GetActor(pH);  
 	if (!pActor)
 		return pH->EndFunction();
 
-	IEntity* pEntity = pActor->GetEntity();
+  IEntity* pEntity = pActor->GetEntity();
 
-	ICharacterInstance* pChar = pEntity->GetCharacter(characterSlot);
+  ICharacterInstance* pChar = pEntity->GetCharacter(characterSlot);
 
-	if (pChar)
-	{
-		IAttachmentManager* pMan = pChar->GetIAttachmentManager();
-		for (int i = 0; i < pMan->GetAttachmentCount(); ++i)
-		{
-			IAttachment* pAtt = pMan->GetInterfaceByIndex(i);
-			if (strstr(pAtt->GetName(), "vulnerable"))
-				pAtt->ClearBinding();
-		}
-	}
-	return pH->EndFunction();
+  if (pChar)  
+  {
+    IAttachmentManager* pMan = pChar->GetIAttachmentManager();
+    for (int i=0; i<pMan->GetAttachmentCount(); ++i)
+    {
+      IAttachment* pAtt = pMan->GetInterfaceByIndex(i);
+      if (strstr(pAtt->GetName(), "vulnerable"))
+        pAtt->ClearBinding();
+    }
+  }
+  return pH->EndFunction();
 }
 
 //------------------------------------------------------------------------
-int CScriptBind_Actor::GetCloseColliderParts(IFunctionHandler* pH, int characterSlot, Vec3 hitPos, float radius)
+int CScriptBind_Actor::GetCloseColliderParts(IFunctionHandler *pH, int characterSlot, Vec3 hitPos, float radius)
 {
-	// find nearest physic. parts to explosion center
-	// for now we just return the closest part (using the AABB)
-
-	CActor* pActor = GetActor(pH);
+  // find nearest physic. parts to explosion center
+  // for now we just return the closest part (using the AABB)  
+  
+  CActor *pActor = GetActor(pH);  
 	if (!pActor)
 		return pH->EndFunction();
 
-	IEntity* pEntity = pActor->GetEntity();
+  IEntity* pEntity = pActor->GetEntity();
 
-	ICharacterInstance* pChar = pEntity->GetCharacter(characterSlot);
+  ICharacterInstance* pChar = pEntity->GetCharacter(characterSlot);
 
-	if (pChar && pChar->GetISkeletonPose()->GetCharacterPhysics())
-	{
-		IPhysicalEntity* pPhysics = pChar->GetISkeletonPose()->GetCharacterPhysics();
+  if (pChar && pChar->GetISkeletonPose()->GetCharacterPhysics())  
+  { 
+    IPhysicalEntity* pPhysics = pChar->GetISkeletonPose()->GetCharacterPhysics();
+    
+    pe_status_nparts nparts;
+    int numParts = pPhysics->GetStatus(&nparts);    
 
-		pe_status_nparts nparts;
-		int numParts = pPhysics->GetStatus(&nparts);
+    float minLenSq = radius*radius + 0.1f;
+    int minLenPart = -1;
+    
+    pe_status_pos status;
 
-		float minLenSq = radius * radius + 0.1f;
-		int minLenPart = -1;
+    for (int i=0; i<numParts; ++i)
+    {
+      status.ipart = i;
+      if (pPhysics->GetStatus(&status))
+      { 
+        AABB box(status.pos+status.BBox[0], status.pos+status.BBox[1]);
+             
+        // if hitpos inside AABB, return
+        if (box.IsContainPoint(hitPos))
+        {
+          minLenPart = i;          
+          break;
+        }
 
-		pe_status_pos status;
+        // else find closest distance 
+        float lenSq = Distance::Point_AABBSq(hitPos, box);
+        if (lenSq < minLenSq)
+        {
+          minLenSq = lenSq;
+          minLenPart = i;          
+        }
+      }      
+    }
 
-		for (int i = 0; i < numParts; ++i)
-		{
-			status.ipart = i;
-			if (pPhysics->GetStatus(&status))
-			{
-				AABB box(status.pos + status.BBox[0], status.pos + status.BBox[1]);
+    // get material from selected part
+    static ISurfaceTypeManager* pSurfaceMan = gEnv->p3DEngine->GetMaterialManager()->GetSurfaceTypeManager();
 
-				// if hitpos inside AABB, return
-				if (box.IsContainPoint(hitPos))
+    if (minLenPart != -1)
+    {
+	     pe_params_part params;
+      params.ipart = minLenPart;
+      if (pPhysics->GetParams(&params))
+      { 
+        phys_geometry* pGeom = params.pPhysGeomProxy ? params.pPhysGeomProxy : params.pPhysGeom;
+        if (pGeom->surface_idx > 0 &&  pGeom->surface_idx < params.nMats)
 				{
-					minLenPart = i;
-					break;
-				}
-
-				// else find closest distance
-				float lenSq = Distance::Point_AABBSq(hitPos, box);
-				if (lenSq < minLenSq)
-				{
-					minLenSq = lenSq;
-					minLenPart = i;
-				}
-			}
-		}
-
-		// get material from selected part
-		static ISurfaceTypeManager* pSurfaceMan = gEnv->p3DEngine->GetMaterialManager()->GetSurfaceTypeManager();
-
-		if (minLenPart != -1)
-		{
-			pe_params_part params;
-			params.ipart = minLenPart;
-			if (pPhysics->GetParams(&params))
-			{
-				phys_geometry* pGeom = params.pPhysGeomProxy ? params.pPhysGeomProxy : params.pPhysGeom;
-				if (pGeom->surface_idx > 0 && pGeom->surface_idx < params.nMats)
-				{
-					if (ISurfaceType* pSurfaceType = pSurfaceMan->GetSurfaceType(pGeom->pMatMapping[pGeom->surface_idx]))
+					if (ISurfaceType *pSurfaceType=pSurfaceMan->GetSurfaceType(pGeom->pMatMapping[pGeom->surface_idx]))
 						return pH->EndFunction(params.partid, pSurfaceType->GetName(), pSurfaceType->GetType());
 				}
-			}
+      }
 
-			return pH->EndFunction(params.partid);
-		}
-	}
-	return pH->EndFunction();
+      return pH->EndFunction(params.partid);
+    }    
+  }
+  return pH->EndFunction();
 }
 
 //------------------------------------------------------------------------
-int CScriptBind_Actor::CreateIKLimb(IFunctionHandler* pH, int slot, const char* limbName, const char* rootBone, const char* midBone, const char* endBone, int flags)
+int CScriptBind_Actor::CreateIKLimb( IFunctionHandler *pH, int slot, const char *limbName, const char *rootBone, const char *midBone, const char *endBone, int flags)
 {
-	CActor* pActor = GetActor(pH);
+	CActor *pActor = GetActor(pH);
 	if (!pActor)
 		return pH->EndFunction();
 
 	if (pActor)
-		pActor->CreateIKLimb(slot, limbName, rootBone, midBone, endBone, flags);
+		pActor->CreateIKLimb(slot,limbName,rootBone,midBone,endBone,flags);
 
 	return pH->EndFunction();
 }
 
 //------------------------------------------------------------------------
-int CScriptBind_Actor::ResetScores(IFunctionHandler* pH)
+int CScriptBind_Actor::ResetScores(IFunctionHandler *pH)
 {
-	CActor* pActor = (CActor*)(m_pGameFW->GetClientActor());
-	if (!pActor)
+	CActor *pActor = (CActor*)(m_pGameFW->GetClientActor());
+	if(!pActor)
 		return pH->EndFunction();
 
 	SAFE_HUD_FUNC(ResetScoreBoard());
@@ -1873,10 +1443,10 @@ int CScriptBind_Actor::ResetScores(IFunctionHandler* pH)
 }
 
 //------------------------------------------------------------------------
-int CScriptBind_Actor::RenderScore(IFunctionHandler* pH, ScriptHandle player, int kills, int deaths, int ping, int teamKills)
+int CScriptBind_Actor::RenderScore(IFunctionHandler *pH, ScriptHandle player, int kills, int deaths, int ping, int teamKills)
 {
-	CActor* pActor = (CActor*)(m_pGameFW->GetClientActor());
-	if (!pActor)
+	CActor *pActor = (CActor*)(m_pGameFW->GetClientActor());
+	if(!pActor)
 		return pH->EndFunction();
 
 	SAFE_HUD_FUNC(AddToScoreBoard((EntityId)player.n, kills, deaths, ping, teamKills));
@@ -1885,9 +1455,9 @@ int CScriptBind_Actor::RenderScore(IFunctionHandler* pH, ScriptHandle player, in
 }
 
 //------------------------------------------------------------------------
-int CScriptBind_Actor::CheckInventoryRestrictions(IFunctionHandler* pH, const char* itemClassName)
+int CScriptBind_Actor::CheckInventoryRestrictions(IFunctionHandler *pH, const char *itemClassName)
 {
-	CActor* pActor = GetActor(pH);
+	CActor *pActor = GetActor(pH);
 	if (!pActor)
 		return pH->EndFunction();
 
@@ -1898,19 +1468,19 @@ int CScriptBind_Actor::CheckInventoryRestrictions(IFunctionHandler* pH, const ch
 }
 
 //------------------------------------------------------------------------
-int CScriptBind_Actor::CheckVirtualInventoryRestrictions(IFunctionHandler* pH, SmartScriptTable inventory, const char* itemClassName)
+int CScriptBind_Actor::CheckVirtualInventoryRestrictions(IFunctionHandler *pH, SmartScriptTable inventory, const char *itemClassName)
 {
-	CActor* pActor = GetActor(pH);
+	CActor *pActor = GetActor(pH);
 	if (!pActor)
 		return pH->EndFunction();
 
 	static std::vector<string> virtualInventory;
 	virtualInventory.reserve(inventory->Count());
 
-	IScriptTable::Iterator it = inventory->BeginIteration();
-	while (inventory->MoveNext(it))
+	IScriptTable::Iterator it=inventory->BeginIteration();
+	while(inventory->MoveNext(it))
 	{
-		const char* itemClass = 0;
+		const char *itemClass=0;
 		it.value.CopyTo(itemClass);
 
 		if (itemClass && itemClass[0])
@@ -1919,7 +1489,7 @@ int CScriptBind_Actor::CheckVirtualInventoryRestrictions(IFunctionHandler* pH, S
 
 	inventory->EndIteration(it);
 
-	bool result = pActor->CheckVirtualInventoryRestrictions(virtualInventory, itemClassName);
+	bool result=pActor->CheckVirtualInventoryRestrictions(virtualInventory, itemClassName);
 	virtualInventory.resize(0);
 
 	if (result)
@@ -1928,10 +1498,11 @@ int CScriptBind_Actor::CheckVirtualInventoryRestrictions(IFunctionHandler* pH, S
 	return pH->EndFunction();
 }
 
+
 //------------------------------------------------------------------------
-int CScriptBind_Actor::HolsterItem(IFunctionHandler* pH, bool holster)
+int CScriptBind_Actor::HolsterItem(IFunctionHandler *pH, bool holster)
 {
-	CActor* pActor = GetActor(pH);
+	CActor *pActor = GetActor(pH);
 	if (!pActor)
 		return pH->EndFunction();
 
@@ -1941,19 +1512,19 @@ int CScriptBind_Actor::HolsterItem(IFunctionHandler* pH, bool holster)
 }
 
 //------------------------------------------------------------------------
-int CScriptBind_Actor::DropItem(IFunctionHandler* pH, ScriptHandle itemId)
+int CScriptBind_Actor::DropItem(IFunctionHandler *pH, ScriptHandle itemId)
 {
-	CActor* pActor = GetActor(pH);
+	CActor *pActor = GetActor(pH);
 	if (!pActor)
 		return pH->EndFunction();
 
-	float impulse = 1.0f;
-	bool bydeath = false;
+	float impulse=1.0f;
+	bool bydeath=false;
 
-	if (pH->GetParamCount() > 1 && pH->GetParamType(2) == svtNumber)
+	if (pH->GetParamCount()>1 && pH->GetParamType(2)==svtNumber)
 		pH->GetParam(2, impulse);
 
-	if (pH->GetParamCount() > 2 && pH->GetParamType(3) == svtNumber || pH->GetParamType(2) == svtBool)
+	if (pH->GetParamCount()>2 && pH->GetParamType(3)==svtNumber||pH->GetParamType(2)==svtBool)
 		pH->GetParam(3, bydeath);
 
 	pActor->DropItem((EntityId)itemId.n, impulse, true, bydeath);
@@ -1962,9 +1533,9 @@ int CScriptBind_Actor::DropItem(IFunctionHandler* pH, ScriptHandle itemId)
 }
 
 //------------------------------------------------------------------------
-int CScriptBind_Actor::PickUpItem(IFunctionHandler* pH, ScriptHandle itemId)
+int CScriptBind_Actor::PickUpItem(IFunctionHandler *pH, ScriptHandle itemId)
 {
-	CActor* pActor = GetActor(pH);
+	CActor *pActor = GetActor(pH);
 	if (!pActor)
 		return pH->EndFunction();
 
@@ -1974,9 +1545,9 @@ int CScriptBind_Actor::PickUpItem(IFunctionHandler* pH, ScriptHandle itemId)
 }
 
 //------------------------------------------------------------------------
-int CScriptBind_Actor::SelectLastItem(IFunctionHandler* pH)
+int CScriptBind_Actor::SelectLastItem(IFunctionHandler *pH)
 {
-	CActor* pActor = GetActor(pH);
+	CActor *pActor = GetActor(pH);
 	if (!pActor)
 		return pH->EndFunction();
 
@@ -1985,10 +1556,11 @@ int CScriptBind_Actor::SelectLastItem(IFunctionHandler* pH)
 	return pH->EndFunction();
 }
 
+
 //------------------------------------------------------------------------
-int CScriptBind_Actor::SelectItemByName(IFunctionHandler* pH, const char* name)
+int CScriptBind_Actor::SelectItemByName(IFunctionHandler *pH, const char *name)
 {
-	CActor* pActor = GetActor(pH);
+	CActor *pActor = GetActor(pH);
 	if (!pActor)
 		return pH->EndFunction();
 
@@ -1998,23 +1570,23 @@ int CScriptBind_Actor::SelectItemByName(IFunctionHandler* pH, const char* name)
 }
 
 //------------------------------------------------------------------------
-int CScriptBind_Actor::SelectItemByNameRemote(IFunctionHandler* pH, const char* name)
+int CScriptBind_Actor::SelectItemByNameRemote(IFunctionHandler *pH, const char *name)
 {
-	CActor* pActor = GetActor(pH);
+	CActor *pActor = GetActor(pH);
 	if (!pActor)
 		return pH->EndFunction();
 
 	//Only send to this client
-	if (gEnv->bServer)
-		pActor->GetGameObject()->InvokeRMI(CActor::ClSelectItemByName(), CActor::SelectItemParams(name), eRMI_ToClientChannel, pActor->GetGameObject()->GetChannelId());
+	if(gEnv->bServer)
+		pActor->GetGameObject()->InvokeRMI(CActor::ClSelectItemByName(),CActor::SelectItemParams(name),eRMI_ToClientChannel,pActor->GetGameObject()->GetChannelId());
 
 	return pH->EndFunction();
 }
 
 //------------------------------------------------------------------------
-int CScriptBind_Actor::SelectItem(IFunctionHandler* pH, ScriptHandle itemId)
+int CScriptBind_Actor::SelectItem(IFunctionHandler *pH, ScriptHandle itemId)
 {
-	CActor* pActor = GetActor(pH);
+	CActor *pActor = GetActor(pH);
 	if (!pActor)
 		return pH->EndFunction();
 
@@ -2024,75 +1596,75 @@ int CScriptBind_Actor::SelectItem(IFunctionHandler* pH, ScriptHandle itemId)
 }
 
 //------------------------------------------------------------------------
-int CScriptBind_Actor::GetFrozenAmount(IFunctionHandler* pH)
+int CScriptBind_Actor::GetFrozenAmount(IFunctionHandler *pH)
 {
-	CActor* pActor = GetActor(pH);
-	if (!pActor)
-		return pH->EndFunction();
+  CActor *pActor = GetActor(pH);
+  if (!pActor)
+    return pH->EndFunction();
 
-	return pH->EndFunction(pActor->GetFrozenAmount());
+  return pH->EndFunction(pActor->GetFrozenAmount());   
 }
 
 //------------------------------------------------------------------------
-int CScriptBind_Actor::AddFrost(IFunctionHandler* pH, float frost)
+int CScriptBind_Actor::AddFrost(IFunctionHandler *pH, float frost)
 {
-	CActor* pActor = GetActor(pH);
+  CActor *pActor = GetActor(pH);
 
-	if (pActor)
-		pActor->AddFrost(frost);
+  if (pActor)
+    pActor->AddFrost(frost);
+  
+  return pH->EndFunction();  
+}
+
+//------------------------------------------------------------------------
+int CScriptBind_Actor::IsGhostPit(IFunctionHandler *pH)
+{
+	CActor *pActor = GetActor(pH);
+  if (!pActor)
+    return pH->EndFunction();
+
+  bool hidden = false;
+	 
+  if (IVehicle* pVehicle = pActor->GetLinkedVehicle())
+  {
+    IVehicleSeat* pSeat = pVehicle->GetSeatForPassenger(pActor->GetEntityId());
+    if (pSeat)
+    { 
+      if (IVehicleView* pView = pSeat->GetView(pSeat->GetCurrentView()))
+        hidden = pView->IsPassengerHidden();
+    }
+  }
+
+  return pH->EndFunction(hidden);   
+}
+
+//------------------------------------------------------------------------
+int CScriptBind_Actor::ActivateNanoSuit(IFunctionHandler *pH, int on)
+{
+	CActor *pActor = GetActor(pH);
+	if (!pActor)
+		return pH->EndFunction();
+
+	if(pActor->GetActorClass() != CPlayer::GetActorClassType())
+		return pH->EndFunction();
+
+	((CPlayer*)pActor)->ActivateNanosuit((on)?true:false);
 
 	return pH->EndFunction();
 }
 
 //------------------------------------------------------------------------
-int CScriptBind_Actor::IsGhostPit(IFunctionHandler* pH)
+int CScriptBind_Actor::SetNanoSuitMode(IFunctionHandler *pH, int mode)
 {
-	CActor* pActor = GetActor(pH);
+	CActor *pActor = GetActor(pH);
 	if (!pActor)
 		return pH->EndFunction();
-
-	bool hidden = false;
-
-	if (IVehicle* pVehicle = pActor->GetLinkedVehicle())
-	{
-		IVehicleSeat* pSeat = pVehicle->GetSeatForPassenger(pActor->GetEntityId());
-		if (pSeat)
-		{
-			if (IVehicleView* pView = pSeat->GetView(pSeat->GetCurrentView()))
-				hidden = pView->IsPassengerHidden();
-		}
-	}
-
-	return pH->EndFunction(hidden);
-}
-
-//------------------------------------------------------------------------
-int CScriptBind_Actor::ActivateNanoSuit(IFunctionHandler* pH, int on)
-{
-	CActor* pActor = GetActor(pH);
-	if (!pActor)
+	if(mode<0 || mode>=NANOMODE_LAST)
+		return pH->EndFunction();
+	if(pActor->GetActorClass() != CPlayer::GetActorClassType())
 		return pH->EndFunction();
 
-	if (pActor->GetActorClass() != CPlayer::GetActorClassType())
-		return pH->EndFunction();
-
-	((CPlayer*)pActor)->ActivateNanosuit((on) ? true : false);
-
-	return pH->EndFunction();
-}
-
-//------------------------------------------------------------------------
-int CScriptBind_Actor::SetNanoSuitMode(IFunctionHandler* pH, int mode)
-{
-	CActor* pActor = GetActor(pH);
-	if (!pActor)
-		return pH->EndFunction();
-	if (mode < 0 || mode >= NANOMODE_LAST)
-		return pH->EndFunction();
-	if (pActor->GetActorClass() != CPlayer::GetActorClassType())
-		return pH->EndFunction();
-
-	if (CNanoSuit* pSuit = ((CPlayer*)pActor)->GetNanoSuit())
+	if(CNanoSuit *pSuit = ((CPlayer*)pActor)->GetNanoSuit())
 		pSuit->SetMode((ENanoMode)mode);
 	else
 		GameWarning("Lua tried to set NanoMode on not activated/existing Nanosuit of Player %s!", pActor->GetEntity()->GetName());
@@ -2101,107 +1673,107 @@ int CScriptBind_Actor::SetNanoSuitMode(IFunctionHandler* pH, int mode)
 }
 
 //------------------------------------------------------------------------
-int CScriptBind_Actor::GetNanoSuitMode(IFunctionHandler* pH)
+int CScriptBind_Actor::GetNanoSuitMode(IFunctionHandler *pH)
 {
-	CActor* pActor = GetActor(pH);
-	if (!pActor || pActor->GetActorClass() != CPlayer::GetActorClassType())
+	CActor *pActor = GetActor(pH);
+	if (!pActor || pActor->GetActorClass() != CPlayer::GetActorClassType())    
 		return pH->EndFunction(0);
 
-	if (CNanoSuit* pSuit = ((CPlayer*)pActor)->GetNanoSuit())
+	if(CNanoSuit *pSuit = ((CPlayer*)pActor)->GetNanoSuit())
 		return pH->EndFunction((int)(pSuit->GetMode()));
 
 	return pH->EndFunction(0);
 }
 
 //------------------------------------------------------------------------
-int CScriptBind_Actor::GetNanoSuitEnergy(IFunctionHandler* pH)
+int CScriptBind_Actor::GetNanoSuitEnergy(IFunctionHandler *pH)
 {
-	CActor* pActor = GetActor(pH);
-	if (!pActor || pActor->GetActorClass() != CPlayer::GetActorClassType())
+	CActor *pActor = GetActor(pH);
+  if (!pActor || pActor->GetActorClass() != CPlayer::GetActorClassType())    
 		return pH->EndFunction(0);
-
-	if (CNanoSuit* pSuit = ((CPlayer*)pActor)->GetNanoSuit())
+  	
+  if(CNanoSuit *pSuit = ((CPlayer*)pActor)->GetNanoSuit())
 		return pH->EndFunction(pSuit->GetSuitEnergy());
-
-	return pH->EndFunction(0);
+	
+  return pH->EndFunction(0);
 }
 
 //------------------------------------------------------------------------
-int CScriptBind_Actor::SetNanoSuitEnergy(IFunctionHandler* pH, int energy)
+int CScriptBind_Actor::SetNanoSuitEnergy(IFunctionHandler *pH, int energy)
 {
-	CActor* pActor = GetActor(pH);
-	if (!pActor || pActor->GetActorClass() != CPlayer::GetActorClassType())
-		return pH->EndFunction();
-
-	if (CNanoSuit* pSuit = ((CPlayer*)pActor)->GetNanoSuit())
+	CActor *pActor = GetActor(pH);
+  if (!pActor || pActor->GetActorClass() != CPlayer::GetActorClassType())    
+		return pH ->EndFunction();
+	
+  if(CNanoSuit *pSuit = ((CPlayer*)pActor)->GetNanoSuit())
 		pSuit->SetSuitEnergy(energy);
-
-	return pH->EndFunction();
+	
+  return pH->EndFunction();
 }
 
 //------------------------------------------------------------------------
-int CScriptBind_Actor::PlayNanoSuitSound(IFunctionHandler* pH, int sound)
+int CScriptBind_Actor::PlayNanoSuitSound(IFunctionHandler *pH, int sound)
 {
-	if (sound < NO_SOUND || sound > ESound_Suit_Last)
+	if(sound < NO_SOUND || sound > ESound_Suit_Last)
 		return pH->EndFunction();
 
-	CActor* pActor = GetActor(pH);
+	CActor *pActor = GetActor(pH);
 	if (!pActor)
 		return pH->EndFunction();
-	if (pActor->GetActorClass() != CPlayer::GetActorClassType())
+	if(pActor->GetActorClass() != CPlayer::GetActorClassType())
 		return pH->EndFunction();
 
-	if (CNanoSuit* pSuit = ((CPlayer*)pActor)->GetNanoSuit())
+	if(CNanoSuit *pSuit = ((CPlayer*)pActor)->GetNanoSuit())
 		pSuit->PlaySound((ENanoSound)sound);
 
 	return pH->EndFunction();
 }
 
 //------------------------------------------------------------------------
-int CScriptBind_Actor::NanoSuitHit(IFunctionHandler* pH, int damage)
+int CScriptBind_Actor::NanoSuitHit(IFunctionHandler *pH, int damage)
 {
-	CActor* pActor = GetActor(pH);
+	CActor *pActor = GetActor(pH);
 	if (!pActor)
 		return pH->EndFunction();
 
-	if (pActor->GetActorClass() != CPlayer::GetActorClassType())
+	if(pActor->GetActorClass() != CPlayer::GetActorClassType())
 		return pH->EndFunction();
 
-	if (CNanoSuit* pSuit = ((CPlayer*)pActor)->GetNanoSuit())
+	if(CNanoSuit *pSuit = ((CPlayer*)pActor)->GetNanoSuit())
 		pSuit->Hit(damage);
 
-	return pH->EndFunction();
+  return pH->EndFunction();
 }
 
 //------------------------------------------------------------------------
-int CScriptBind_Actor::SetSearchBeam(IFunctionHandler* pH, Vec3 dir)
+int CScriptBind_Actor::SetSearchBeam(IFunctionHandler *pH, Vec3 dir)
 {
-	CActor* pActor = GetActor(pH);
-	if (!pActor || pActor->GetActorClass() != CAlien::GetActorClassType())
-		return pH->EndFunction();
+  CActor *pActor = GetActor(pH);
+  if (!pActor || pActor->GetActorClass() != CAlien::GetActorClassType())
+    return pH->EndFunction();
+  
+  ((CAlien*)pActor)->SetSearchBeamGoal(dir);
 
-	((CAlien*)pActor)->SetSearchBeamGoal(dir);
-
-	return pH->EndFunction();
+  return pH->EndFunction();
 }
 
 //------------------------------------------------------------------------
-int CScriptBind_Actor::IsFlying(IFunctionHandler* pH)
+int CScriptBind_Actor::IsFlying(IFunctionHandler *pH)
 {
-	CActor* pActor = GetActor(pH);
+	CActor *pActor = GetActor(pH);
 	if (!pActor)
 		return pH->EndFunction();
 
 	if (pActor)
 	{
 		pe_status_living livStat;
-		IPhysicalEntity* pPhysEnt = pActor->GetEntity()->GetPhysics();
+		IPhysicalEntity *pPhysEnt = pActor->GetEntity()->GetPhysics();
 
 		if (!pPhysEnt)
 			return pH->EndFunction();
 
-		if (pPhysEnt->GetStatus(&livStat))
-			return pH->EndFunction(livStat.bFlying != 0);
+		if(pPhysEnt->GetStatus(&livStat))
+			return pH->EndFunction(livStat.bFlying!=0);
 	}
 
 	return pH->EndFunction();

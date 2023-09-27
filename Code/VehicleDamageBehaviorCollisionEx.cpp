@@ -4,7 +4,7 @@ Copyright (C), Crytek Studios, 2001-2007.
 -------------------------------------------------------------------------
 $Id$
 $DateTime$
-Description: Implements a damage behavior which improves collision damages
+Description: Implements a damage behavior which improves collision damages 
 
 -------------------------------------------------------------------------
 History:
@@ -24,7 +24,7 @@ CVehicleDamageBehaviorCollisionEx::~CVehicleDamageBehaviorCollisionEx()
 }
 
 //------------------------------------------------------------------------
-bool CVehicleDamageBehaviorCollisionEx::Init(IVehicle* pVehicle, const SmartScriptTable& table)
+bool CVehicleDamageBehaviorCollisionEx::Init(IVehicle* pVehicle, const SmartScriptTable &table)
 {
 	m_pVehicle = pVehicle;
 

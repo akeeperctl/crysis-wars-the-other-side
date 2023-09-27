@@ -14,8 +14,10 @@ History:
 #ifndef __HUDOBITUARY_H__
 #define __HUDOBITUARY_H__
 
+
 #include "HUDObject.h"
 #include <IInput.h>
+
 
 class CHUDObituary : public CHUDObject
 {
@@ -25,12 +27,12 @@ public:
 	~CHUDObituary();
 
 	virtual void Update(float deltaTime);
-	virtual void AddMessage(const wchar_t* msg);
+	virtual void AddMessage(const wchar_t *msg);
 
-	void GetMemoryStatistics(ICrySizer* s);
+	void GetMemoryStatistics(ICrySizer * s);
 
 private:
-	IFFont* m_pDefaultFont;
+	IFFont				*m_pDefaultFont;
 	wstring				m_deaths[OBITUARY_SIZE];
 	CTimeValue		m_deathTimes[OBITUARY_SIZE];
 	int						m_deathHead;

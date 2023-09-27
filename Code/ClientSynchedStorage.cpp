@@ -14,8 +14,9 @@ History:
 #include "ClientSynchedStorage.h"
 #include "ServerSynchedStorage.h"
 
+
 //------------------------------------------------------------------------
-void CClientSynchedStorage::DefineProtocol(IProtocolBuilder* pBuilder)
+void CClientSynchedStorage::DefineProtocol(IProtocolBuilder *pBuilder)
 {
 	pBuilder->AddMessageSink(this, CServerSynchedStorage::GetProtocolDef(), CClientSynchedStorage::GetProtocolDef());
 }
@@ -31,8 +32,8 @@ NET_IMPLEMENT_IMMEDIATE_MESSAGE(CClientSynchedStorage, ResetMsg, eNRT_ReliableOr
 }
 
 //------------------------------------------------------------------------
-CClientSynchedStorage::CResetMsg::CResetMsg(int _channelId, CServerSynchedStorage* pStorage)
-	: INetMessage(CClientSynchedStorage::ResetMsg),
+CClientSynchedStorage::CResetMsg::CResetMsg(int _channelId, CServerSynchedStorage *pStorage)
+: INetMessage(CClientSynchedStorage::ResetMsg),
 	channelId(_channelId),
 	m_pStorage(pStorage)
 {
@@ -55,6 +56,7 @@ size_t CClientSynchedStorage::CResetMsg::GetSize()
 	return sizeof(this);
 };
 
+
 //------------------------------------------------------------------------
 // GLOBAL
 //------------------------------------------------------------------------
@@ -72,6 +74,7 @@ size_t CClientSynchedStorage::CResetMsg::GetSize()
 	TSynchedValue value; \
 	SerializeValue(ser, key, value, NTypelist::IndexOf<type, TSynchedValueTypes>::value); \
 	return true;
+
 
 NET_IMPLEMENT_IMMEDIATE_MESSAGE(CClientSynchedStorage, SetGlobalBoolMsg, eNRT_ReliableUnordered, 0)
 {
@@ -103,14 +106,14 @@ NET_IMPLEMENT_IMMEDIATE_MESSAGE(CClientSynchedStorage, SetGlobalStringMsg, eNRT_
 }
 
 //------------------------------------------------------------------------
-CClientSynchedStorage::CSetGlobalMsg::CSetGlobalMsg(const SNetMessageDef* pDef, int _channelId, CServerSynchedStorage* pStorage, TSynchedKey _key, TSynchedValue& _value)
-	: channelId(_channelId),
+CClientSynchedStorage::CSetGlobalMsg::CSetGlobalMsg(const SNetMessageDef *pDef, int _channelId, CServerSynchedStorage *pStorage, TSynchedKey _key, TSynchedValue &_value)
+:	channelId(_channelId),
 	m_pStorage(pStorage),
 	key(_key),
 	value(_value),
 	INetMessage(pDef)
 {
-	SetGroup('stor');
+	SetGroup( 'stor' );
 };
 
 //------------------------------------------------------------------------
@@ -139,6 +142,8 @@ DEFINE_GLOBAL_MESSAGE(CSetGlobalStringMsg, string, SetGlobalStringMsg);
 #undef DEFINE_GLOBAL_MESSAGE
 #undef IMPLEMENT_IMMEDIATE_GLOBAL_MESSAGE
 
+
+
 //------------------------------------------------------------------------
 // CHANNEL
 //------------------------------------------------------------------------
@@ -156,6 +161,7 @@ DEFINE_GLOBAL_MESSAGE(CSetGlobalStringMsg, string, SetGlobalStringMsg);
 	TSynchedValue value; \
 	SerializeValue(ser, key, value, NTypelist::IndexOf<type, TSynchedValueTypes>::value); \
 	return true;
+
 
 NET_IMPLEMENT_IMMEDIATE_MESSAGE(CClientSynchedStorage, SetChannelBoolMsg, eNRT_ReliableUnordered, 0)
 {
@@ -187,14 +193,14 @@ NET_IMPLEMENT_IMMEDIATE_MESSAGE(CClientSynchedStorage, SetChannelStringMsg, eNRT
 }
 
 //------------------------------------------------------------------------
-CClientSynchedStorage::CSetChannelMsg::CSetChannelMsg(const SNetMessageDef* pDef, int _channelId, CServerSynchedStorage* pStorage, TSynchedKey _key, TSynchedValue& _value)
-	: channelId(_channelId),
+CClientSynchedStorage::CSetChannelMsg::CSetChannelMsg(const SNetMessageDef *pDef, int _channelId, CServerSynchedStorage *pStorage, TSynchedKey _key, TSynchedValue &_value)
+:	channelId(_channelId),
 	m_pStorage(pStorage),
 	key(_key),
 	value(_value),
 	INetMessage(pDef)
 {
-	SetGroup('stor');
+	SetGroup( 'stor' );
 };
 
 //------------------------------------------------------------------------
@@ -275,15 +281,15 @@ NET_IMPLEMENT_IMMEDIATE_MESSAGE(CClientSynchedStorage, SetEntityStringMsg, eNRT_
 }
 
 //------------------------------------------------------------------------
-CClientSynchedStorage::CSetEntityMsg::CSetEntityMsg(const SNetMessageDef* pDef, int _channelId, CServerSynchedStorage* pStorage, EntityId id, TSynchedKey _key, TSynchedValue& _value)
-	: channelId(_channelId),
+CClientSynchedStorage::CSetEntityMsg::CSetEntityMsg(const SNetMessageDef *pDef, int _channelId, CServerSynchedStorage *pStorage, EntityId id, TSynchedKey _key, TSynchedValue &_value)
+:	channelId(_channelId),
 	m_pStorage(pStorage),
-	entityId(id),
+	entityId(id), 
 	key(_key),
 	value(_value),
 	INetMessage(pDef)
 {
-	SetGroup('stor');
+	SetGroup( 'stor' );
 };
 
 //------------------------------------------------------------------------
@@ -313,9 +319,9 @@ DEFINE_ENTITY_MESSAGE(CSetEntityStringMsg, string, SetEntityStringMsg);
 #undef IMPLEMENT_IMMEDIATE_ENTITY_MESSAGE
 
 //------------------------------------------------------------------------
-void CClientSynchedStorage::GetMemoryStatistics(ICrySizer* s)
+void CClientSynchedStorage::GetMemoryStatistics(ICrySizer * s)
 {
-	SIZER_SUBCOMPONENT_NAME(s, "ClientSychedStorage");
+	SIZER_SUBCOMPONENT_NAME(s,"ClientSychedStorage");
 	s->Add(*this);
 	GetStorageMemoryStatistics(s);
 }

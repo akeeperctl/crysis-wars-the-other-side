@@ -18,7 +18,9 @@ History:
 # pragma once
 #endif
 
+
 #include "Projectile.h"
+
 
 class CRocket : public CProjectile
 {
@@ -26,11 +28,12 @@ public:
 	CRocket();
 	virtual ~CRocket();
 
-	// CProjectile
-	virtual void HandleEvent(const SGameObjectEvent&);
-	virtual void Launch(const Vec3& pos, const Vec3& dir, const Vec3& velocity, float speedScale);
 
-	virtual bool Init(IGameObject* pGameObject);
+	// CProjectile
+	virtual void HandleEvent(const SGameObjectEvent &);
+	virtual void Launch(const Vec3 &pos, const Vec3 &dir, const Vec3 &velocity, float speedScale);
+
+	virtual bool Init(IGameObject *pGameObject);
 	//virtual void Serialize(TSerialize ser, unsigned aspects);
 	// ~CProjectile
 
@@ -38,7 +41,8 @@ protected:
 	Vec3			m_launchLoc;
 	float			m_safeExplosion;
 
-	bool			m_skipWater;
+	bool			m_skipWater;  
 };
+
 
 #endif // __ROCKET_H__

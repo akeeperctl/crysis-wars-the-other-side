@@ -18,6 +18,7 @@ History:
 # pragma once
 #endif
 
+
 #include "Projectile.h"
 
 #define MAX_STICKY_POINTS					3
@@ -28,22 +29,22 @@ public:
 	CC4Projectile();
 	virtual ~CC4Projectile();
 
-	virtual void HandleEvent(const SGameObjectEvent& event);
-	virtual void Launch(const Vec3& pos, const Vec3& dir, const Vec3& velocity, float speedScale);
-	virtual void Explode(bool destroy, bool impact/* =false */, const Vec3& pos/* =ZERO */, const Vec3& normal/* =FORWARD_DIRECTION */, const Vec3& vel/* =ZERO */, EntityId targetId/* =0  */);
+	virtual void HandleEvent(const SGameObjectEvent &event);
+	virtual void Launch(const Vec3 &pos, const Vec3 &dir, const Vec3 &velocity, float speedScale);
+	virtual void Explode(bool destroy, bool impact/* =false */, const Vec3 &pos/* =ZERO */, const Vec3 &normal/* =FORWARD_DIRECTION */, const Vec3 &vel/* =ZERO */, EntityId targetId/* =0  */);
 	virtual void OnHit(const HitInfo& hit);
 
-	virtual bool NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int flags);
+	virtual bool NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int flags );
 
 private:
 
-	void Stick(EventPhysCollision* pCollision);
-	void StickToStaticObject(EventPhysCollision* pCollision, IPhysicalEntity* pTarget);
-	void StickToEntity(IEntity* pEntity, Matrix34& localMatrix);
+	void Stick(EventPhysCollision *pCollision);
+	void StickToStaticObject(EventPhysCollision *pCollision, IPhysicalEntity* pTarget);
+	void StickToEntity(IEntity* pEntity, Matrix34 &localMatrix);
 	bool StickToCharacter(bool stick, IEntity* pActor);
 
-	void RefineCollision(EventPhysCollision* pCollision);
-
+	void RefineCollision(EventPhysCollision *pCollision);
+	
 	virtual void SetParams(EntityId ownerId, EntityId hostId, EntityId weaponId, int fmId, int damage, int hitTypeId);
 
 	int				m_teamId;

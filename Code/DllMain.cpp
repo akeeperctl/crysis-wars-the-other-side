@@ -12,11 +12,11 @@ History:
 #if defined(WIN32)
 #include <windows.h>
 
-void* g_hInst = nullptr;
+void* g_hInst = 0;
 
-BOOL APIENTRY DllMain(HINSTANCE hInst, DWORD reason, LPVOID reserved)
+BOOL APIENTRY DllMain ( HINSTANCE hInst, DWORD reason, LPVOID reserved )
 {
-	if (reason == DLL_PROCESS_ATTACH)
+	if ( reason == DLL_PROCESS_ATTACH )
 		g_hInst = hInst;
 	return TRUE;
 }

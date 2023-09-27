@@ -5,11 +5,11 @@
   $Id$
   $DateTime$
   Description:  Register the factory templates used to create classes from names
-				e.g. REGISTER_FACTORY(pFramework, "Player", CPlayer, false);
-				or   REGISTER_FACTORY(pFramework, "Player", CPlayerG4, false);
+                e.g. REGISTER_FACTORY(pFramework, "Player", CPlayer, false);
+                or   REGISTER_FACTORY(pFramework, "Player", CPlayerG4, false);
 
-				Since overriding this function creates template based linker errors,
-				it's been replaced by a standalone function in its own cpp file.
+                Since overriding this function creates template based linker errors,
+                it's been replaced by a standalone function in its own cpp file.
 
   -------------------------------------------------------------------------
   History:
@@ -65,15 +65,6 @@
 #include "VehicleMovementWarrior.h"
 #include "VehicleMovementAmphibious.h"
 
-//TheOtherSide
-#include "VehicleMovementAlienGunship.h"
-#include "TheOtherSide/Control/ControlSystem.h"
-#include "TheOtherSide/Conqueror/StrategicArea.h"
-#include "TheOtherSide/Conqueror/AreaVehicleSpawnPoint.h"
-#include "TheOtherSide/Actor Files/Drone.h"
-#include "TheOtherSide/Actor Files/Pinger.h"
-//~TheOtherSide
-
 #include "ScriptControlledPhysics.h"
 
 #include "HUD/HUD.h"
@@ -88,6 +79,8 @@
 #include <IItemSystem.h>
 #include <IVehicleSystem.h>
 #include <IGameRulesSystem.h>
+
+
 
 #define HIDE_FROM_EDITOR(className)																																				\
   { IEntityClass *pItemClass = gEnv->pEntitySystem->GetClassRegistry()->FindClass(className);\
@@ -131,38 +124,38 @@
 	}
 
 // Register the factory templates used to create classes from names. Called via CGame::Init()
-void InitGameFactory(IGameFramework* pFramework)
+void InitGameFactory(IGameFramework *pFramework)
 {
-	assert(pFramework);
+  assert(pFramework);
 
-	REGISTER_FACTORY(pFramework, "Player", CPlayer, false);
-	REGISTER_FACTORY(pFramework, "Grunt", CPlayer, true);
-	REGISTER_FACTORY(pFramework, "Civilian", CPlayer, true);
+  REGISTER_FACTORY(pFramework, "Player", CPlayer, false);
+  REGISTER_FACTORY(pFramework, "Grunt", CPlayer, true);
+  REGISTER_FACTORY(pFramework, "Civilian", CPlayer, true);
 
-	// Items
-	REGISTER_FACTORY(pFramework, "Item", CItem, false);
-	REGISTER_FACTORY(pFramework, "PlayerFeature", CPlayerFeature, false);
+  // Items
+  REGISTER_FACTORY(pFramework, "Item", CItem, false);
+  REGISTER_FACTORY(pFramework, "PlayerFeature", CPlayerFeature, false);
 	REGISTER_FACTORY(pFramework, "LAM", CLam, false);
 
-	// Weapons
-	REGISTER_FACTORY(pFramework, "Weapon", CWeapon, false);
+  // Weapons
+  REGISTER_FACTORY(pFramework, "Weapon", CWeapon, false);
 	REGISTER_FACTORY(pFramework, "VehicleWeapon", CVehicleWeapon, false);
 	REGISTER_FACTORY(pFramework, "AmmoPickup", CAmmoPickup, false);
 	REGISTER_FACTORY(pFramework, "AVMine", CThrowableWeapon, false);
 	REGISTER_FACTORY(pFramework, "Claymore", CThrowableWeapon, false);
 	REGISTER_FACTORY(pFramework, "Binocular", CBinocular, false);
-	REGISTER_FACTORY(pFramework, "C4", CC4, false);
+  REGISTER_FACTORY(pFramework, "C4", CC4, false);
 	REGISTER_FACTORY(pFramework, "C4Detonator", CC4Detonator, false);
 	REGISTER_FACTORY(pFramework, "DebugGun", CDebugGun, false);
 	REGISTER_FACTORY(pFramework, "ReferenceWeapon", CReferenceWeapon, false);
 	REGISTER_FACTORY(pFramework, "OffHand", COffHand, false);
 	REGISTER_FACTORY(pFramework, "Fists", CFists, false);
-	REGISTER_FACTORY(pFramework, "GunTurret", CGunTurret, false);
+  REGISTER_FACTORY(pFramework, "GunTurret", CGunTurret, false);
 	REGISTER_FACTORY(pFramework, "RocketLauncher", CRocketLauncher, false);
 	REGISTER_FACTORY(pFramework, "TacLauncher", CTacLauncher, false);
-
+		
 	// vehicle objects
-	IVehicleSystem* pVehicleSystem = pFramework->GetIVehicleSystem();
+  IVehicleSystem* pVehicleSystem = pFramework->GetIVehicleSystem();
 
 #define REGISTER_VEHICLEOBJECT(name, obj) \
 	REGISTER_FACTORY((IVehicleSystem*)pVehicleSystem, name, obj, false); \
@@ -172,50 +165,39 @@ void InitGameFactory(IGameFramework* pFramework)
 	REGISTER_VEHICLEOBJECT("CameraShake", CVehicleDamageBehaviorCameraShake);
 	REGISTER_VEHICLEOBJECT("CollisionEx", CVehicleDamageBehaviorCollisionEx);
 	REGISTER_VEHICLEOBJECT("Explosion", CVehicleDamageBehaviorExplosion);
-	REGISTER_VEHICLEOBJECT("BlowTire", CVehicleDamageBehaviorBlowTire);
+  REGISTER_VEHICLEOBJECT("BlowTire", CVehicleDamageBehaviorBlowTire);
 	REGISTER_VEHICLEOBJECT("AutomaticDoor", CVehicleActionAutomaticDoor);
 	REGISTER_VEHICLEOBJECT("DeployRope", CVehicleActionDeployRope);
 	REGISTER_VEHICLEOBJECT("EntityAttachment", CVehicleActionEntityAttachment);
 	REGISTER_VEHICLEOBJECT("LandingGears", CVehicleActionLandingGears);
 
-	// vehicle movements
-	REGISTER_FACTORY(pVehicleSystem, "Hovercraft", CVehicleMovementHovercraft, false);
-	REGISTER_FACTORY(pVehicleSystem, "Helicopter", CVehicleMovementHelicopter, false);
-	REGISTER_FACTORY(pVehicleSystem, "StdBoat", CVehicleMovementStdBoat, false);
+  // vehicle movements
+  REGISTER_FACTORY(pVehicleSystem, "Hovercraft", CVehicleMovementHovercraft, false);
+  REGISTER_FACTORY(pVehicleSystem, "Helicopter", CVehicleMovementHelicopter, false);
+  REGISTER_FACTORY(pVehicleSystem, "StdBoat", CVehicleMovementStdBoat, false);
 	REGISTER_FACTORY(pVehicleSystem, "StdWheeled", CVehicleMovementStdWheeled, false);
-	REGISTER_FACTORY(pVehicleSystem, "Tank", CVehicleMovementTank, false);
+  REGISTER_FACTORY(pVehicleSystem, "Tank", CVehicleMovementTank, false);
 	REGISTER_FACTORY(pVehicleSystem, "VTOL", CVehicleMovementVTOL, false);
-	//TheOtherSide
-	REGISTER_FACTORY(pVehicleSystem, "AlienGunship", CVehicleMovementAlienGunship, false);
-	//~TheOtherSide
-	REGISTER_FACTORY(pVehicleSystem, "Warrior", CVehicleMovementWarrior, false);
-	REGISTER_FACTORY(pVehicleSystem, "Amphibious", CVehicleMovementAmphibious, false);
+  REGISTER_FACTORY(pVehicleSystem, "Warrior", CVehicleMovementWarrior, false);
+  REGISTER_FACTORY(pVehicleSystem, "Amphibious", CVehicleMovementAmphibious, false);
+
 #ifndef SP_DEMO
-	//aliens
-	REGISTER_FACTORY(pFramework, "AlienPlayer", CAlien, false);
-	REGISTER_FACTORY(pFramework, "Aliens/Alien", CAlien, true);
-	//  REGISTER_FACTORY(pFramework, "Aliens/Observer", CObserver, true);
-	REGISTER_FACTORY(pFramework, "Aliens/Trooper", CTrooper, true);
-	//TheOtherSide
-	//REGISTER_FACTORY(pFramework, "Aliens/PlayerTrooper", CTrooper, true);
-	REGISTER_FACTORY(pFramework, "Aliens/Drone", CDrone, true);
-	REGISTER_FACTORY(pFramework, "Aliens/Pinger", CPinger, true);
-	//~TheOtherSide
-	REGISTER_FACTORY(pFramework, "Aliens/Scout", CScout, true);
-	REGISTER_FACTORY(pFramework, "Aliens/Hunter", CHunter, true);
+  //aliens
+  REGISTER_FACTORY(pFramework, "AlienPlayer", CAlien, false);
+  REGISTER_FACTORY(pFramework, "Aliens/Alien", CAlien, true);
+//  REGISTER_FACTORY(pFramework, "Aliens/Observer", CObserver, true);
+  REGISTER_FACTORY(pFramework, "Aliens/Trooper", CTrooper, true);
+  REGISTER_FACTORY(pFramework, "Aliens/Scout", CScout, true);
+  REGISTER_FACTORY(pFramework, "Aliens/Hunter", CHunter, true);
 	REGISTER_FACTORY(pFramework, "Misc/Shark", CShark, true);
-	//	REGISTER_FACTORY(m_pFramework, "Aliens/Warrior", CDrone, true);
-	//REGISTER_FACTORY(pFramework, "Aliens/Coordinator", CObserver, true);
+  //	REGISTER_FACTORY(m_pFramework, "Aliens/Warrior", CDrone, true);
+  //REGISTER_FACTORY(pFramework, "Aliens/Coordinator", CObserver, true);
 #else
 	REGISTER_FACTORY(pFramework, "Aliens/Scout", CScout, true);
 	REGISTER_FACTORY(pFramework, "Aliens/Trooper", CTrooper, true);
 #endif
 
 	// Custom GameObjects
-	REGISTER_GAME_OBJECT(pFramework, AlienHealBomb, "Scripts/Entities/Physics/AlienHealBomb.lua");
-	REGISTER_GAME_OBJECT(pFramework, StrategicArea, "Scripts/Entities/Conqueror/StrategicArea.lua");
-	REGISTER_GAME_OBJECT(pFramework, AreaVehicleSpawnPoint, "Scripts/Entities/Conqueror/AreaVehicleSpawnPoint.lua");
-
 	REGISTER_GAME_OBJECT(pFramework, Tornado, "Scripts/Entities/Environment/Tornado.lua");
 	REGISTER_GAME_OBJECT(pFramework, Shake, "Scripts/Entities/Environment/Shake.lua");
 
@@ -229,9 +211,6 @@ void InitGameFactory(IGameFramework* pFramework)
 	//GameRules
 	REGISTER_FACTORY(pFramework, "GameRules", CGameRules, false);
 
-	//TheOtherSide
-	//REGISTER_FACTORY(pFramework, "ControlClient", CControlClient, false);
-	//~TheOtherSide
 
 	REGISTER_GAME_OBJECT_EXTENSION(pFramework, ScriptControlledPhysics);
 

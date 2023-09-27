@@ -5,9 +5,9 @@
 #include <GameUtils.h>
 
 CBulletTime::CBulletTime()
-	: m_active(false)
-	, m_timeScaleTarget(1.0f)
-	, m_timeScaleCurrent(1.0f)
+: m_active(false)
+, m_timeScaleTarget(1.0f)
+, m_timeScaleCurrent(1.0f)
 {
 	m_energy = g_pGameCVars->bt_energy_max;
 }
@@ -24,7 +24,7 @@ void CBulletTime::Update()
 	if (timeScale < 1.0f)
 	{
 		timeScale = max(0.0001f, timeScale);
-		normFrameTime = frameTime / timeScale;
+		normFrameTime = frameTime/timeScale;
 	}
 
 	if (m_active)
@@ -53,10 +53,10 @@ void CBulletTime::Activate(bool activate)
 		return;
 
 	if (!m_pSoundBegin)
-		m_pSoundBegin = gEnv->pSoundSystem->CreateSound("Sounds/interface/hud/slowmotion_activate_01.mp3", FLAG_SOUND_2D | FLAG_SOUND_RELATIVE | FLAG_SOUND_16BITS | FLAG_SOUND_LOAD_SYNCHRONOUSLY);
+		m_pSoundBegin = gEnv->pSoundSystem->CreateSound("Sounds/interface/hud/slowmotion_activate_01.mp3", FLAG_SOUND_2D|FLAG_SOUND_RELATIVE|FLAG_SOUND_16BITS|FLAG_SOUND_LOAD_SYNCHRONOUSLY);
 
 	if (!m_pSoundEnd)
-		m_pSoundEnd = gEnv->pSoundSystem->CreateSound("Sounds/interface/hud/slowmotion_deactivate_01.mp3", FLAG_SOUND_2D | FLAG_SOUND_RELATIVE | FLAG_SOUND_16BITS | FLAG_SOUND_LOAD_SYNCHRONOUSLY);
+		m_pSoundEnd= gEnv->pSoundSystem->CreateSound("Sounds/interface/hud/slowmotion_deactivate_01.mp3", FLAG_SOUND_2D|FLAG_SOUND_RELATIVE|FLAG_SOUND_16BITS|FLAG_SOUND_LOAD_SYNCHRONOUSLY);
 
 	if (activate)
 	{

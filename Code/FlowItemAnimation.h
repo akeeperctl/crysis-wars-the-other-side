@@ -10,11 +10,11 @@
 class CFlowItemAnimation : public CFlowBaseNode
 {
 public:
-	CFlowItemAnimation(SActivationInfo* pActInfo)
+	CFlowItemAnimation( SActivationInfo * pActInfo )
 	{
 	}
 
-	IFlowNodePtr Clone(SActivationInfo* pActInfo)
+	IFlowNodePtr Clone( SActivationInfo * pActInfo )
 	{
 		return new CFlowItemAnimation(pActInfo);
 	}
@@ -40,20 +40,21 @@ public:
 
 	struct FlowPlayItemAnimationAction
 	{
-		FlowPlayItemAnimationAction(const char* _anim, bool _busy) : anim(_anim), busy(_busy) {};
+		FlowPlayItemAnimationAction(const char *_anim, bool _busy): anim(_anim), busy(_busy) {};
 		string anim;
 		bool busy;
 
 		// nested action ;o
 		struct FlowPlayItemAnimationActionUnbusy
 		{
-			void execute(CItem* pItem)
+			void execute(CItem *pItem)
 			{
 				pItem->SetBusy(false);
 			}
 		};
 
-		void execute(CItem* pItem)
+
+		void execute(CItem *pItem)
 		{
 			pItem->PlayAnimation(anim.c_str());
 
@@ -66,15 +67,15 @@ public:
 		}
 	};
 
-	virtual void ProcessEvent(EFlowEvent event, SActivationInfo* pActInfo)
+	virtual void ProcessEvent( EFlowEvent event, SActivationInfo *pActInfo )
 	{
 		switch (event)
 		{
 		case eFE_Activate:
 			if (IsPortActive(pActInfo, 0))
 			{
-				CItem* pItem = static_cast<CItem*>(g_pGame->GetIGameFramework()->GetIItemSystem()->GetItem(GetPortEntityId(pActInfo, 1)));
-
+				CItem *pItem = static_cast<CItem*>(g_pGame->GetIGameFramework()->GetIItemSystem()->GetItem(GetPortEntityId(pActInfo, 1)));
+				
 				if (pItem)
 				{
 					pItem->GetScheduler()->ScheduleAction(CSchedulerAction<FlowPlayItemAnimationAction>::Create(FlowPlayItemAnimationAction(GetPortString(pActInfo, 3), GetPortBool(pActInfo, 2))));
@@ -84,20 +85,22 @@ public:
 		}
 	}
 
-	virtual void GetMemoryStatistics(ICrySizer* s)
+	virtual void GetMemoryStatistics(ICrySizer * s)
 	{
 		s->Add(*this);
 	}
 };
 
+
+
 class CFlowOffhandAnimation : public CFlowBaseNode
 {
 public:
-	CFlowOffhandAnimation(SActivationInfo* pActInfo)
+	CFlowOffhandAnimation( SActivationInfo * pActInfo )
 	{
 	}
 
-	IFlowNodePtr Clone(SActivationInfo* pActInfo)
+	IFlowNodePtr Clone( SActivationInfo * pActInfo )
 	{
 		return new CFlowOffhandAnimation(pActInfo);
 	}
@@ -123,14 +126,14 @@ public:
 
 	struct FlowPlayOffhandAnimationAction
 	{
-		FlowPlayOffhandAnimationAction(const char* _anim, bool _busy) : anim(_anim), busy(_busy) {};
+		FlowPlayOffhandAnimationAction(const char *_anim, bool _busy): anim(_anim), busy(_busy) {};
 		string anim;
 		bool busy;
 
 		// nested action ;o
 		struct FlowPlayOffhandAnimationActionUnbusy
 		{
-			void execute(CItem* pItem)
+			void execute(CItem *pItem)
 			{
 				pItem->SetBusy(false);
 			}
@@ -139,37 +142,37 @@ public:
 		// nested action ;o
 		struct FlowPlayOffhandAnimationActionDone
 		{
-			void execute(CItem* pOffHand)
+			void execute(CItem *pOffHand)
 			{
-				if (pOffHand->GetEntity()->GetClass() == CItem::sOffHandClass)
+				if (pOffHand->GetEntity()->GetClass()==CItem::sOffHandClass)
 				{
-					if (COffHand* pCOffHand = static_cast<COffHand*>(pOffHand))
+					if (COffHand *pCOffHand=static_cast<COffHand *>(pOffHand))
 						pCOffHand->CancelAction();
 
-					if (CActor* pOwner = pOffHand->GetOwnerActor())
+					if (CActor *pOwner=pOffHand->GetOwnerActor())
 					{
-						CItem* pMainHandItem = static_cast<CItem*>(pOwner->GetCurrentItem());
+						CItem *pMainHandItem=static_cast<CItem *>(pOwner->GetCurrentItem());
 
-						if (!pMainHandItem)
+						if(!pMainHandItem)
 						{
-							if (!pOffHand->GetOwnerActor()->ShouldSwim())
+							if(!pOffHand->GetOwnerActor()->ShouldSwim())
 								pOffHand->GetOwnerActor()->HolsterItem(false);
 						}
-						else if (!pMainHandItem->IsDualWield())
+						else if(!pMainHandItem->IsDualWield())
 						{
 							pMainHandItem->ResetDualWield();
-							pMainHandItem->PlayAction(g_pItemStrings->offhand_off, 0, false, CItem::eIPAF_Default | CItem::eIPAF_NoBlend);
+							pMainHandItem->PlayAction(g_pItemStrings->offhand_off, 0, false, CItem::eIPAF_Default|CItem::eIPAF_NoBlend);
 						}
 					}
 				}
 			}
 		};
 
-		void execute(CItem* pOffHand)
-		{
-			if (pOffHand->GetEntity()->GetClass() == CItem::sOffHandClass)
+		void execute(CItem *pOffHand)
+ 		{
+			if (pOffHand->GetEntity()->GetClass()==CItem::sOffHandClass)
 			{
-				if (COffHand* pCOffHand = static_cast<COffHand*>(pOffHand))
+				if (COffHand *pCOffHand=static_cast<COffHand *>(pOffHand))
 					pCOffHand->PreExecuteAction(eOHA_THROW_GRENADE, eAAM_OnPress);
 			}
 
@@ -181,9 +184,9 @@ public:
 				pOffHand->GetScheduler()->TimerAction(pOffHand->GetCurrentAnimationTime(CItem::eIGS_FirstPerson), CSchedulerAction<FlowPlayOffhandAnimationActionUnbusy>::Create(), false);
 			}
 
-			if (CActor* pOwner = pOffHand->GetOwnerActor())
+			if (CActor *pOwner=pOffHand->GetOwnerActor())
 			{
-				if (CItem* pMainHandItem = static_cast<CItem*>(pOwner->GetCurrentItem()))
+				if (CItem *pMainHandItem=static_cast<CItem *>(pOwner->GetCurrentItem()))
 				{
 					if (busy)
 					{
@@ -205,20 +208,20 @@ public:
 		}
 	};
 
-	virtual void ProcessEvent(EFlowEvent event, SActivationInfo* pActInfo)
+	virtual void ProcessEvent( EFlowEvent event, SActivationInfo *pActInfo )
 	{
 		switch (event)
 		{
 		case eFE_Activate:
 			if (IsPortActive(pActInfo, 0))
 			{
-				CItem* pItem = 0;
-				if (EntityId id = GetPortEntityId(pActInfo, 1))
+				CItem *pItem=0;
+				if (EntityId id=GetPortEntityId(pActInfo, 1))
 					pItem = static_cast<CItem*>(g_pGame->GetIGameFramework()->GetIItemSystem()->GetItem(id));
 				else
 				{
-					if (CActor* pActor = static_cast<CActor*>(g_pGame->GetIGameFramework()->GetClientActor()))
-						pItem = pActor->GetItemByClass(CItem::sOffHandClass);
+					if (CActor *pActor=static_cast<CActor *>(g_pGame->GetIGameFramework()->GetClientActor()))
+						pItem=pActor->GetItemByClass(CItem::sOffHandClass);
 				}
 
 				if (!pItem)
@@ -230,10 +233,11 @@ public:
 		}
 	}
 
-	virtual void GetMemoryStatistics(ICrySizer* s)
+	virtual void GetMemoryStatistics(ICrySizer * s)
 	{
 		s->Add(*this);
 	}
 };
+
 
 #endif //__FLOWITEMANIMATIOn_H__

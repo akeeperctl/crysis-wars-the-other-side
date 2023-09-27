@@ -25,7 +25,7 @@ public:
 	CVehicleDamageBehaviorBlowTire() {}
 	virtual ~CVehicleDamageBehaviorBlowTire() {}
 
-	virtual bool Init(IVehicle* pVehicle, const SmartScriptTable& table);
+	virtual bool Init(IVehicle* pVehicle, const SmartScriptTable &table);
 	virtual void Reset();
 	virtual void Release() { delete this; }
 
@@ -33,20 +33,20 @@ public:
 
 	virtual void Serialize(TSerialize ser, unsigned aspects);
 	virtual void Update(const float deltaTime);
-	virtual void OnVehicleEvent(EVehicleEvent event, const SVehicleEventParams& params);
+  virtual void OnVehicleEvent(EVehicleEvent event, const SVehicleEventParams& params);
 
-	virtual void GetMemoryStatistics(ICrySizer* s);
+	virtual void GetMemoryStatistics(ICrySizer * s);
 
 protected:
-	void Activate(bool activate);
+  void Activate(bool activate);
 	void DamagePlayers();
 
 	IVehicle* m_pVehicle;
-
+	
 	bool m_isActive;
-	string m_component;
-
-	int m_aiImmobilizedTimer;
+  string m_component;
+	  
+  int m_aiImmobilizedTimer;
 	float m_impulseMult;
 };
 

@@ -25,12 +25,7 @@ History:
 #include "HUDCommon.h"
 #include "Actor.h"
 
-//TheOtherSide
-#include "TheOtherSide/Control/ControlSystem.h"
-#include "TheOtherSide/Conqueror/ConquerorSystem.h"
-//~TheOtherSide
-
-CHUDScore::ScoreEntry::ScoreEntry(EntityId id, int kills, int deaths, int ping, int teamKills, int score, bool prioTeamKills) : m_entityId(id), m_team(-1)
+CHUDScore::ScoreEntry::ScoreEntry(EntityId id, int kills, int deaths, int ping, int teamKills, int score, bool prioTeamKills): m_entityId(id), m_team(-1)
 {
 	m_kills = kills;
 	m_teamKills = teamKills;
@@ -40,27 +35,27 @@ CHUDScore::ScoreEntry::ScoreEntry(EntityId id, int kills, int deaths, int ping, 
 	m_score = score;
 	m_prioritizeTeamKills = prioTeamKills;
 
-	if (int team = g_pGame->GetGameRules()->GetTeam(id))
+	if(int team = g_pGame->GetGameRules()->GetTeam(id))
 		m_team = team;
 }
 
 void CHUDScore::ScoreEntry::UpdateLiveStats()
 {
-	if (CActor* pActor = static_cast<CActor*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(m_entityId)))
+	if (CActor *pActor=static_cast<CActor*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(m_entityId)))
 	{
-		m_alive = pActor->GetHealth() > 0;
-		if (pActor->GetSpectatorMode() && !g_pGame->GetGameRules()->IsPlayerActivelyPlaying(pActor->GetEntityId()))
+		m_alive=pActor->GetHealth()>0;
+		if(pActor->GetSpectatorMode() && !g_pGame->GetGameRules()->IsPlayerActivelyPlaying(pActor->GetEntityId()))
 			m_spectating = true;
 		else
 			m_spectating = false;
 
 		//update rank
 		m_currentRank = 0;
-		CGameRules* pGameRules = g_pGame->GetGameRules();
-		if (!m_spectating && pGameRules)
+		CGameRules *pGameRules=g_pGame->GetGameRules();
+		if(!m_spectating && pGameRules)
 		{
-			IScriptTable* pGameRulesScript = pGameRules->GetEntity()->GetScriptTable();
-			if (pGameRulesScript)
+			IScriptTable *pGameRulesScript=pGameRules->GetEntity()->GetScriptTable();
+			if(pGameRulesScript)
 			{
 				HSCRIPTFUNCTION pfnFuHelper = 0;
 				if (pGameRulesScript->GetValue("GetPlayerRank", pfnFuHelper) && pfnFuHelper)
@@ -75,53 +70,53 @@ void CHUDScore::ScoreEntry::UpdateLiveStats()
 
 bool CHUDScore::ScoreEntry::operator<(const ScoreEntry& entry) const
 {
-	if (m_spectating)
+	if(m_spectating)
 		return false;
-	else if (entry.m_spectating)
+	else if(entry.m_spectating)
 		return true;
-	else if (m_team >= 0 && m_team != entry.m_team)
+	else if(m_team >= 0 && m_team != entry.m_team)
 	{
-		if (m_team > entry.m_team)
+		if(m_team > entry.m_team)
 			return false;
 		return true;
 	}
 	else
 	{
-		if (entry.m_currentRank > m_currentRank)
+		if(entry.m_currentRank > m_currentRank)
 			return false;
-		else if (m_currentRank > entry.m_currentRank)
+		else if(m_currentRank > entry.m_currentRank)
 			return true;
-		else if (entry.m_score > m_score)
+		else if(entry.m_score > m_score)
 			return false;
-		else if (m_score > entry.m_score)
+		else if(m_score > entry.m_score)
 			return true;
 		else
 		{
-			if (entry.m_prioritizeTeamKills)
+			if(entry.m_prioritizeTeamKills)
 			{
-				if (entry.m_teamKills < m_teamKills)
+				if(entry.m_teamKills < m_teamKills)
 					return false;
-				else if (m_teamKills < entry.m_teamKills)
+				else if(m_teamKills < entry.m_teamKills)
 					return true;
-				else if (entry.m_kills > m_kills)
+				else if(entry.m_kills > m_kills)
 					return false;
-				else if (m_kills > entry.m_kills)
+				else if(m_kills > entry.m_kills)
 					return true;
 				else
 				{
-					if (m_deaths < entry.m_deaths)
+					if(m_deaths < entry.m_deaths)
 						return true;
 					else if (m_deaths > entry.m_deaths)
 						return false;
 					else
 					{
-						IEntity* pEntity0 = gEnv->pEntitySystem->GetEntity(m_entityId);
-						IEntity* pEntity1 = gEnv->pEntitySystem->GetEntity(entry.m_entityId);
+						IEntity *pEntity0=gEnv->pEntitySystem->GetEntity(m_entityId);
+						IEntity *pEntity1=gEnv->pEntitySystem->GetEntity(entry.m_entityId);
 
-						const char* name0 = pEntity0 ? pEntity0->GetName() : "";
-						const char* name1 = pEntity1 ? pEntity1->GetName() : "";
+						const char *name0=pEntity0?pEntity0->GetName():"";
+						const char *name1=pEntity1?pEntity1->GetName():"";
 
-						if (strcmp(name0, name1) < 0)
+						if (strcmp(name0, name1)<0)
 							return true;
 						else
 							return false;
@@ -130,25 +125,25 @@ bool CHUDScore::ScoreEntry::operator<(const ScoreEntry& entry) const
 			}
 			else
 			{
-				if (entry.m_kills > m_kills)
+				if(entry.m_kills > m_kills)
 					return false;
-				else if (m_kills > entry.m_kills)
+				else if(m_kills > entry.m_kills)
 					return true;
 				else
 				{
-					if (m_deaths < entry.m_deaths)
+					if(m_deaths < entry.m_deaths)
 						return true;
 					else if (m_deaths > entry.m_deaths)
 						return false;
 					else
 					{
-						IEntity* pEntity0 = gEnv->pEntitySystem->GetEntity(m_entityId);
-						IEntity* pEntity1 = gEnv->pEntitySystem->GetEntity(entry.m_entityId);
+						IEntity *pEntity0=gEnv->pEntitySystem->GetEntity(m_entityId);
+						IEntity *pEntity1=gEnv->pEntitySystem->GetEntity(entry.m_entityId);
 
-						const char* name0 = pEntity0 ? pEntity0->GetName() : "";
-						const char* name1 = pEntity1 ? pEntity1->GetName() : "";
+						const char *name0=pEntity0?pEntity0->GetName():"";
+						const char *name1=pEntity1?pEntity1->GetName():"";
 
-						if (strcmp(name0, name1) < 0)
+						if (strcmp(name0, name1)<0)
 							return true;
 						else
 							return false;
@@ -168,17 +163,17 @@ void CHUDScore::SRankStats::Update(IScriptTable* pGameRulesScript, IActor* pActo
 		Script::CallReturn(gEnv->pScriptSystem, pfnFuHelper, pGameRulesScript, ScriptHandle(pActor->GetEntityId()), currentRank);
 		gEnv->pScriptSystem->ReleaseFunc(pfnFuHelper);
 	}
-	if (!currentRank)
+	if(!currentRank)
 		return;
 
 	if (pGameRulesScript->GetValue("GetRankName", pfnFuHelper) && pfnFuHelper)
 	{
 		Script::CallReturn(gEnv->pScriptSystem, pfnFuHelper, pGameRulesScript, currentRank, true, false, currentRankName);
-		Script::CallReturn(gEnv->pScriptSystem, pfnFuHelper, pGameRulesScript, currentRank + 1, true, false, nextRankName);
+		Script::CallReturn(gEnv->pScriptSystem, pfnFuHelper, pGameRulesScript, currentRank+1, true, false, nextRankName);
 		gEnv->pScriptSystem->ReleaseFunc(pfnFuHelper);
 	}
 
-	if (!nextRankName)
+	if(!nextRankName)
 		return;
 
 	if (pGameRulesScript->GetValue("GetPlayerCP", pfnFuHelper) && pfnFuHelper)
@@ -187,30 +182,30 @@ void CHUDScore::SRankStats::Update(IScriptTable* pGameRulesScript, IActor* pActo
 		gEnv->pScriptSystem->ReleaseFunc(pfnFuHelper);
 	}
 
-	if (pGameRulesScript->GetValue("GetRankCP", pfnFuHelper) && pfnFuHelper)
+	if(pGameRulesScript->GetValue("GetRankCP", pfnFuHelper) && pfnFuHelper)
 	{
 		Script::CallReturn(gEnv->pScriptSystem, pfnFuHelper, pGameRulesScript, currentRank, currentRankCP);
-		Script::CallReturn(gEnv->pScriptSystem, pfnFuHelper, pGameRulesScript, currentRank + 1, nextRankCP);
+		Script::CallReturn(gEnv->pScriptSystem, pfnFuHelper, pGameRulesScript, currentRank+1, nextRankCP);
 		gEnv->pScriptSystem->ReleaseFunc(pfnFuHelper);
 
 		//set values to flash
 		if (pFlashBoard)
 		{
-			SFlashVarValue args[4] = { nextRankName, 100.0f * ((playerCP - currentRankCP) / float(nextRankCP - currentRankCP)), currentRank, currentRankName };
+			SFlashVarValue args[4] = {nextRankName, 100.0f * ((playerCP - currentRankCP) / float(nextRankCP - currentRankCP)), currentRank, currentRankName};
 			pFlashBoard->Invoke("setClientRankProgress", args, 4);
 		}
 	}
 
-	if (pGameRulesScript->GetValue("GetRankPP", pfnFuHelper) && pfnFuHelper)
+	if(pGameRulesScript->GetValue("GetRankPP", pfnFuHelper) && pfnFuHelper)
 	{
 		Script::CallReturn(gEnv->pScriptSystem, pfnFuHelper, pGameRulesScript, currentRank, currentRankPP);
-		Script::CallReturn(gEnv->pScriptSystem, pfnFuHelper, pGameRulesScript, currentRank + 1, nextRankPP);
+		Script::CallReturn(gEnv->pScriptSystem, pfnFuHelper, pGameRulesScript, currentRank+1, nextRankPP);
 		gEnv->pScriptSystem->ReleaseFunc(pfnFuHelper);
 
 		//set values to flash
 		if (pFlashBoard)
 		{
-			SFlashVarValue args[2] = { currentRankPP, nextRankPP };
+			SFlashVarValue args[2] = {currentRankPP, nextRankPP};
 			pFlashBoard->Invoke("setMinimumPrestige", args, 2);
 		}
 	}
@@ -227,17 +222,10 @@ CHUDScore::CHUDScore()
 
 void CHUDScore::Update(float fDeltaTime)
 {
-	//TheOtherSide
-	if (m_bShow && gEnv->bMultiplayer || g_pControlSystem->GetConquerorSystem()->IsGamemode())
+	if(m_bShow && gEnv->bMultiplayer)
 		Render();
 	else
 		m_currentClientTeam = -1;
-	//~TheOtherSide
-
-	/*if (m_bShow && gEnv->bMultiplayer)
-		Render();
-	else
-		m_currentClientTeam = -1;*/
 }
 
 void CHUDScore::Reset()
@@ -248,12 +236,12 @@ void CHUDScore::Reset()
 void CHUDScore::AddEntry(EntityId player, int kills, int deaths, int ping, int teamkills)
 {
 	int playerScore = 0;
-	if (g_pGame->GetGameRules())
+	if(g_pGame->GetGameRules())
 	{
-		IScriptTable* pGameRulesScript = g_pGame->GetGameRules()->GetEntity()->GetScriptTable();
-		if (pGameRulesScript)
+		IScriptTable *pGameRulesScript=g_pGame->GetGameRules()->GetEntity()->GetScriptTable();
+		if(pGameRulesScript)
 		{
-			HSCRIPTFUNCTION pfnGetScoreFlags = 0;
+			HSCRIPTFUNCTION pfnGetScoreFlags=0;
 			if (pGameRulesScript->GetValue("GetPlayerScore", pfnGetScoreFlags))
 			{
 				ScriptHandle actorId(player);
@@ -263,28 +251,28 @@ void CHUDScore::AddEntry(EntityId player, int kills, int deaths, int ping, int t
 			//doesn't check for existing entries atm. (scoreboard deleted every frame)
 		}
 	}
-	m_scoreBoard.push_back(ScoreEntry(player, kills, deaths, ping, teamkills, playerScore, g_pGame->GetHUD()->GetCurrentGameRules() == EHUD_TEAMINSTANTACTION));
+	m_scoreBoard.push_back(ScoreEntry(player, kills, deaths, ping, teamkills, playerScore, g_pGame->GetHUD()->GetCurrentGameRules()==EHUD_TEAMINSTANTACTION));
 }
 
 void CHUDScore::Render()
 {
-	if (!m_pFlashBoard)
+	if(!m_pFlashBoard)
 		return;
 
 	int lastTeam = -1;
 	int clientTeamPoints = 0;
 	int enemyTeamPoints = 0;
 
-	CGameRules* pGameRules = g_pGame->GetGameRules();
-	if (!pGameRules)
+	CGameRules *pGameRules=g_pGame->GetGameRules();
+	if(!pGameRules)
 		return;
 
-	IScriptTable* pGameRulesScript = pGameRules->GetEntity()->GetScriptTable();
+	IScriptTable *pGameRulesScript=pGameRules->GetEntity()->GetScriptTable();
 	int ppKey = 0;
-	if (pGameRulesScript)
+	if(pGameRulesScript)
 		pGameRulesScript->GetValue("PP_AMOUNT_KEY", ppKey);
 
-	for (int i = 0; i < m_scoreBoard.size(); ++i)
+	for(int i = 0; i < m_scoreBoard.size(); ++i)
 		m_scoreBoard[i].UpdateLiveStats();
 	std::sort(m_scoreBoard.begin(), m_scoreBoard.end());
 
@@ -292,8 +280,8 @@ void CHUDScore::Render()
 	//m_pFlashBoard->Invoke("clearTable");
 
 	std::vector<ScoreEntry>::iterator it;
-	IActor* pClientActor = g_pGame->GetIGameFramework()->GetClientActor();
-	if (!pClientActor)
+	IActor *pClientActor=g_pGame->GetIGameFramework()->GetClientActor();
+	if(!pClientActor)
 		return;
 
 	static string svr_name;
@@ -302,63 +290,63 @@ void CHUDScore::Render()
 	pGameRules->GetSynchedGlobalValue(GLOBAL_SERVER_IP_KEY, svr_ip);
 	pGameRules->GetSynchedGlobalValue(GLOBAL_SERVER_NAME_KEY, svr_name);
 
-	if (svr_ip != m_currentServerIp || svr_name != m_currentServer)
+	if(svr_ip != m_currentServerIp || svr_name != m_currentServer)
 	{
 		m_currentServer = svr_name;
 		m_currentServerIp = svr_ip;
 
-		SFlashVarValue args[2] = { svr_name.c_str(), svr_ip.c_str() };
-		m_pFlashBoard->CheckedInvoke("setServerInfo", args, 2);
+		SFlashVarValue args[2] = {svr_name.c_str(), svr_ip.c_str()};
+		m_pFlashBoard->CheckedInvoke("setServerInfo",args,2);
 	}
 
-	bool drawTeamScores = false;
+	bool drawTeamScores=false;
 
 	int clientTeam = pGameRules->GetTeam(pClientActor->GetEntityId());
-	bool notTeamed = (clientTeam != 1 && clientTeam != 2);
+	bool notTeamed=(clientTeam != 1 && clientTeam != 2);
 	if (notTeamed)		//Spectate mode
 		clientTeam = 2;
 
 	int teamCount = pGameRules->GetTeamCount();
-	if (teamCount > 1)
+	if(teamCount > 1)
 	{
-		if (clientTeam != m_currentClientTeam)
+		if(clientTeam != m_currentClientTeam)
 		{
-			m_pFlashBoard->CheckedInvoke("setClientTeam", (clientTeam == 1) ? "korean" : "us");
+			m_pFlashBoard->CheckedInvoke("setClientTeam", (clientTeam == 1)? "korean" : "us");
 			m_currentClientTeam = clientTeam;
 		}
 
 		//get the player rank, next rank, CP etc. from gamerules script
 		SRankStats rankStats;
 		rankStats.Update(pGameRulesScript, pClientActor, m_pFlashBoard);
-		drawTeamScores = (g_pGame->GetHUD() && g_pGame->GetHUD()->GetCurrentGameRules() != EHUD_POWERSTRUGGLE);
+		drawTeamScores = (g_pGame->GetHUD() && g_pGame->GetHUD()->GetCurrentGameRules()!=EHUD_POWERSTRUGGLE);
 	}
 
 	m_pFlashBoard->Invoke("clearEntries");
 	std::vector<EntityId>::const_iterator start;
 	std::vector<EntityId>::const_iterator end;
-	std::vector<EntityId>* alreadySelected = NULL;
-	if (g_pGame->GetHUD() && g_pGame->GetHUD()->GetRadar())
+	std::vector<EntityId> *alreadySelected = NULL;
+	if(g_pGame->GetHUD() && g_pGame->GetHUD()->GetRadar())
 	{
 		alreadySelected = g_pGame->GetHUD()->GetRadar()->GetSelectedTeamMates();
 		start = alreadySelected->begin();
 		end = alreadySelected->end();
 	}
 
-	for (it = m_scoreBoard.begin(); it != m_scoreBoard.end(); ++it)
+	for(it = m_scoreBoard.begin(); it != m_scoreBoard.end(); ++it)
 	{
 		ScoreEntry player = *it;
 
-		IEntity* pPlayer = gEnv->pEntitySystem->GetEntity(player.m_entityId);
+		IEntity *pPlayer=gEnv->pEntitySystem->GetEntity(player.m_entityId);
 		//assert(pPlayer);
 		if (!pPlayer)
 			continue;
 
-		if ((teamCount > 1) && (player.m_team != 1 && player.m_team != 2))
+		if((teamCount > 1) && (player.m_team != 1 && player.m_team != 2))
 			continue;
 
 		if (drawTeamScores)
 		{
-			if (lastTeam != player.m_team)	//get next team
+			if(lastTeam != player.m_team)	//get next team
 			{
 				lastTeam = player.m_team;
 
@@ -367,10 +355,10 @@ void CHUDScore::Render()
 					int key0;
 					if (pGameRulesScript->GetValue("TEAMSCORE_TEAM0_KEY", key0))
 					{
-						int teamScore = 0;
-						pGameRules->GetSynchedGlobalValue(key0 + player.m_team, teamScore);
+						int teamScore=0;
+						pGameRules->GetSynchedGlobalValue(key0+player.m_team, teamScore);
 
-						if (lastTeam == clientTeam)
+						if(lastTeam == clientTeam)
 							clientTeamPoints = teamScore;
 						else
 							enemyTeamPoints = teamScore;
@@ -388,7 +376,7 @@ void CHUDScore::Render()
 		}
 
 		SUIWideString name(pPlayer->GetName());
-		if (player.m_spectating)
+		if(player.m_spectating)
 		{
 			name.m_string.append(L" (");
 			name.m_string.append(g_pGame->GetHUD()->LocalizeWithParams("@ui_SPECTATE"));
@@ -399,70 +387,65 @@ void CHUDScore::Render()
 
 		if (!notTeamed)
 		{
-			int playerPP = 0;
+			int playerPP=0;
 			pGameRules->GetSynchedEntityValue(player.m_entityId, TSynchedKey(ppKey), playerPP);
-			pp = SFlashVarValue(playerPP);
+			pp=SFlashVarValue(playerPP);
 		}
 		else
-			pp = SFlashVarValue("---");
+			pp=SFlashVarValue("---");
 
 		bool selected = false;
-		if (alreadySelected)
+		if(alreadySelected)
 		{
-			if (std::find(start, end, player.m_entityId) != end)
+			if(std::find(start, end, player.m_entityId)!=end)
 				selected = true;
 		}
 
-		//TheOtherSide
-		bool muted = false;
-
 		IVoiceContext* pVoiceContext = gEnv->pGame->GetIGameFramework()->GetNetContext()->GetVoiceContext();
-		if (pVoiceContext)
-			muted = pVoiceContext->IsMuted(pClientActor->GetEntityId(), pPlayer->GetId());		
-		//~TheOtherSide
+		bool muted = pVoiceContext->IsMuted(pClientActor->GetEntityId(), pPlayer->GetId());
 
-		int team = (player.m_team == clientTeam) ? 1 : 2;
-		if (player.m_spectating)
+		int team = (player.m_team == clientTeam)?1:2;
+		if(player.m_spectating)
 			team = 3;
 
-		if (g_pGame->GetHUD()->GetCurrentGameRules() == EHUD_TEAMINSTANTACTION)
+		if (g_pGame->GetHUD()->GetCurrentGameRules() == EHUD_TEAMINSTANTACTION) 
 		{
 			int playerScore = player.m_score;
 			SFlashVarValue args[12] = { name.c_str(),
 																	team,
-																	(player.m_entityId == pClientActor->GetEntityId()) ? true : false,
+																	(player.m_entityId==pClientActor->GetEntityId())?true:false,
 																	playerScore,
 																	player.m_kills,
 																	player.m_teamKills,
 																	player.m_deaths,
 																	player.m_ping,
 																	player.m_entityId,
-																	player.m_alive ? 0 : 1,
+																	player.m_alive?0:1,
 																	selected,
-																	muted };
+																	muted};
 			m_pFlashBoard->Invoke("addEntry", args, 12);
 		}
 		else
 		{
-			SFlashVarValue args[12] = { name.c_str(), team, (player.m_entityId == pClientActor->GetEntityId()) ? true : false, pp, player.m_kills,
-															player.m_deaths, player.m_ping, player.m_entityId, rank ? rank : " ", player.m_alive ? 0 : 1,selected, muted };
+			SFlashVarValue args[12] = { name.c_str(), team, (player.m_entityId==pClientActor->GetEntityId())?true:false, pp, player.m_kills, 
+															player.m_deaths, player.m_ping, player.m_entityId, rank?rank:" ", player.m_alive?0:1,selected, muted};
 			m_pFlashBoard->Invoke("addEntry", args, 12);
 		}
 	}
 
 	if (drawTeamScores)
-		//set the teams scores in flash
+	//set the teams scores in flash
 	{
-		SFlashVarValue argsA[2] = { (clientTeam == 1) ? 1 : 2, enemyTeamPoints };
+		SFlashVarValue argsA[2] = {(clientTeam==1)?1:2, enemyTeamPoints};
 		m_pFlashBoard->CheckedInvoke("setTeamPoints", argsA, 2);
-		SFlashVarValue argsB[2] = { (clientTeam == 1) ? 2 : 1, clientTeamPoints };
+		SFlashVarValue argsB[2] = {(clientTeam==1)?2:1, clientTeamPoints};
 		m_pFlashBoard->CheckedInvoke("setTeamPoints", argsB, 2);
 	}
 	else
 	{
-		SFlashVarValue argsA[2] = { 1, "" };
+		SFlashVarValue argsA[2] = {1, ""};
 		m_pFlashBoard->CheckedInvoke("setTeamPoints", argsA, 2);
-		SFlashVarValue argsB[2] = { 2, "" };
+		SFlashVarValue argsB[2] = {2, ""};
 		m_pFlashBoard->CheckedInvoke("setTeamPoints", argsB, 2);
 	}
 
@@ -470,10 +453,10 @@ void CHUDScore::Render()
 	m_pFlashBoard->Invoke("drawAllEntries", playerBeingKicked);
 }
 
-void CHUDScore::GetMemoryStatistics(ICrySizer* s)
+void CHUDScore::GetMemoryStatistics(ICrySizer * s)
 {
 	s->Add(*this);
-	if (m_pFlashBoard)
+	if(m_pFlashBoard)
 		m_pFlashBoard->GetMemoryStatistics(s);
 	s->AddContainer(m_scoreBoard);
 }

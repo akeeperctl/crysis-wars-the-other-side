@@ -34,39 +34,39 @@ History:
 #include "IronSight.h"
 
 #include "IRenderer.h"
-#include "IRenderAuxGeom.h"
+#include "IRenderAuxGeom.h"	
 
 class CGrenadeLaunch::CRotateDrumAction
 {
-public:
-	CRotateDrumAction(CGrenadeLaunch* _launcher, float _time, bool _reverse)
-	{
-		launcher = _launcher;
-		time = _time;
-		reverse = _reverse;
-	}
-
-	void execute(CItem* _this)
-	{
-		if (launcher)
+	public:
+		CRotateDrumAction(CGrenadeLaunch *_launcher, float _time, bool _reverse)
 		{
-			launcher->RotateDrum(time, reverse);
+			launcher = _launcher;
+			time = _time;
+			reverse = _reverse;
 		}
-	}
-private:
-	CGrenadeLaunch* launcher;
-	float time;
-	bool reverse;
+
+		void execute(CItem *_this)
+		{
+			if (launcher)
+			{
+				launcher->RotateDrum(time, reverse);
+			}
+		}
+	private:
+		CGrenadeLaunch *launcher;
+		float time;
+		bool reverse;
 };
 
 CGrenadeLaunch::CGrenadeLaunch()
-	: m_oldAmmo(NULL),
+:	m_oldAmmo(NULL),
 	m_magazineDrum(-1),
 	m_reloadShell(-1),
 	m_lastGrenadeId(0),
 	m_rotateTime(0)
 {
-	m_magazineRotation = Quat::CreateIdentity();
+	m_magazineRotation=Quat::CreateIdentity();
 }
 
 CGrenadeLaunch::~CGrenadeLaunch()
@@ -77,19 +77,19 @@ void CGrenadeLaunch::Activate(bool activate)
 {
 	CShotgun::Activate(activate);
 
-	ICharacterInstance* pCharacter = m_pWeapon ? m_pWeapon->GetEntity()->GetCharacter(0) : NULL;
+	ICharacterInstance *pCharacter = m_pWeapon ? m_pWeapon->GetEntity()->GetCharacter(0) : NULL;
 
-	if (pCharacter)
-	{
+	if (pCharacter) 
+  {
 		IAttachmentManager* pAttachMan = pCharacter->GetIAttachmentManager();
-		m_magazineDrum = pAttachMan->GetIndexByName("magazine");
+		m_magazineDrum=pAttachMan->GetIndexByName("magazine");
 
-		m_reloadShell = pAttachMan->GetIndexByName(m_fireparams.ammo_type_class->GetName());
+		m_reloadShell=pAttachMan->GetIndexByName(m_fireparams.ammo_type_class->GetName());
 	}
 	else
 	{
-		m_magazineDrum = -1;
-		m_reloadShell = -1;
+		m_magazineDrum=-1;
+		m_reloadShell=-1;
 	}
 
 	ResetShells();
@@ -114,16 +114,16 @@ void CGrenadeLaunch::EndReload(int zoomed)
 class CGrenadeLaunch::ScheduleReload
 {
 public:
-	ScheduleReload(CWeapon* wep)
+	ScheduleReload(CWeapon *wep)
 	{
 		_pWeapon = wep;
 	}
-	void execute(CItem* item)
+	void execute(CItem *item) 
 	{
 		_pWeapon->Reload();
 	}
 private:
-	CWeapon* _pWeapon;
+	CWeapon *_pWeapon;
 };
 
 bool CGrenadeLaunch::Shoot(bool resetAnimation, bool autoreload/* =true */, bool noSound /* =false */)
@@ -132,17 +132,17 @@ bool CGrenadeLaunch::Shoot(bool resetAnimation, bool autoreload/* =true */, bool
 
 	if (m_reloading)
 	{
-		if (m_pWeapon->IsBusy())
+		if(m_pWeapon->IsBusy())
 			m_pWeapon->SetBusy(false);
-
-		if (CanFire(true) && !m_break_reload)
+		
+		if(CanFire(true) && !m_break_reload)
 		{
 			m_break_reload = true;
 			m_pWeapon->RequestCancelReload();
 		}
 		return false;
 	}
-
+	
 	bool res = InternalShoot(spawn_ammo, resetAnimation, autoreload, noSound);
 	//bool res = CSingle::Shoot(resetAnimation, autoreload, noSound);
 
@@ -152,19 +152,19 @@ bool CGrenadeLaunch::Shoot(bool resetAnimation, bool autoreload/* =true */, bool
 			StartSecondaryFire(0);*/
 
 		m_launchedGrenades.push_back(m_projectileId);
-		m_lastGrenadeId = m_projectileId;
+		m_lastGrenadeId=m_projectileId;
 	}
 
 	if (res)
 	{
 		m_pWeapon->GetScheduler()->TimerAction(m_grenadeLaunchParams.shoot_delay, CSchedulerAction<CRotateDrumAction>::Create(CRotateDrumAction(this, m_grenadeLaunchParams.shoot_rotate, false)), false);
 	}
-
+	
 	return res;
 }
 
 //------------------------------------------------------------------------
-void CGrenadeLaunch::NetShootEx(const Vec3& pos, const Vec3& dir, const Vec3& vel, const Vec3& hit, float extra, int ph)
+void CGrenadeLaunch::NetShootEx(const Vec3 &pos, const Vec3 &dir, const Vec3 &vel, const Vec3 &hit, float extra, int ph)
 {
 	IEntityClass* spawn_ammo = m_grenadeLaunchParams.ammo_type_class;
 
@@ -177,7 +177,7 @@ void CGrenadeLaunch::NetShootEx(const Vec3& pos, const Vec3& dir, const Vec3& ve
 			StartSecondaryFire(0);*/
 
 		m_launchedGrenades.push_back(m_projectileId);
-		m_lastGrenadeId = m_projectileId;
+		m_lastGrenadeId=m_projectileId;
 	}
 }
 //------------------------------------------------------------------------
@@ -191,15 +191,15 @@ void CGrenadeLaunch::StartSecondaryFire(EntityId shooterId)
 //------------------------------------------------------------------------
 void CGrenadeLaunch::NetStartSecondaryFire()
 {
-	for (TLaunchedGrenades::const_iterator it = m_launchedGrenades.begin(); it != m_launchedGrenades.end(); ++it)
+	for(TLaunchedGrenades::const_iterator it=m_launchedGrenades.begin(); it != m_launchedGrenades.end(); ++it)
 	{
-		IEntity* pGrenade = gEnv->pEntitySystem->GetEntity(*it);
+		IEntity *pGrenade=gEnv->pEntitySystem->GetEntity(*it);
 		//IGameObject *pBomb=gEnv->pGame->GetIGameFramework()->GetGameObject(*it);
 
 		if (pGrenade)
 		{
 			// Trigger grenade explosion
-			CProjectile* pGrenadeProjectile = g_pGame->GetWeaponSystem()->GetProjectile(pGrenade->GetId());
+			CProjectile *pGrenadeProjectile=g_pGame->GetWeaponSystem()->GetProjectile(pGrenade->GetId());
 
 			if (pGrenadeProjectile)
 			{
@@ -211,20 +211,20 @@ void CGrenadeLaunch::NetStartSecondaryFire()
 	m_launchedGrenades.resize(0);
 }
 //------------------------------------------------------------------------
-void CGrenadeLaunch::ResetParams(const struct IItemParamsNode* params)
+void CGrenadeLaunch::ResetParams(const struct IItemParamsNode *params)
 {
 	CShotgun::ResetParams(params);
 
-	const IItemParamsNode* grenade_launch = params ? params->GetChild("grenade_launch") : 0;
+	const IItemParamsNode *grenade_launch = params?params->GetChild("grenade_launch"):0;
 	m_grenadeLaunchParams.Reset(grenade_launch);
 }
 
 //------------------------------------------------------------------------
-void CGrenadeLaunch::PatchParams(const struct IItemParamsNode* patch)
+void CGrenadeLaunch::PatchParams(const struct IItemParamsNode *patch)
 {
 	CShotgun::PatchParams(patch);
 
-	const IItemParamsNode* grenade_launch = patch->GetChild("grenade_launch");
+	const IItemParamsNode *grenade_launch = patch->GetChild("grenade_launch");
 	m_grenadeLaunchParams.Reset(grenade_launch, false);
 }
 
@@ -233,13 +233,13 @@ void CGrenadeLaunch::EnterModify()
 {
 	m_launchedGrenades.resize(0);
 
-	m_oldAmmo = m_fireparams.ammo_type_class;
+	m_oldAmmo=m_fireparams.ammo_type_class;
 }
 
 //------------------------------------------------------------------------
 void CGrenadeLaunch::ExitModify()
 {
-	IEntityClass* new_ammo = m_fireparams.ammo_type_class;
+	IEntityClass* new_ammo=m_fireparams.ammo_type_class;
 	if (m_oldAmmo && m_oldAmmo != new_ammo)
 	{
 		ResetShells();
@@ -251,14 +251,14 @@ void CGrenadeLaunch::ExitModify()
 
 void CGrenadeLaunch::ReloadShell(int zoomed)
 {
-	if (m_reload_was_broken)
+	if(m_reload_was_broken)
 		return;
 
 	CActor* pOwner = m_pWeapon->GetOwnerActor();
 	bool isAI = pOwner && (pOwner->IsPlayer() == false);
 	int ammoCount = m_pWeapon->GetAmmoCount(m_fireparams.ammo_type_class);
-	if ((ammoCount < m_fireparams.clip_size) && (m_max_shells > 0) &&
-		(isAI || (m_pWeapon->GetInventoryAmmoCount(m_fireparams.ammo_type_class) > 0))) // AI has unlimited ammo
+	if ((ammoCount < m_fireparams.clip_size) && (m_max_shells>0) &&
+		(isAI || (m_pWeapon->GetInventoryAmmoCount(m_fireparams.ammo_type_class) > 0)) ) // AI has unlimited ammo
 	{
 		m_pWeapon->GetScheduler()->TimerAction(m_grenadeLaunchParams.reload_delay, CSchedulerAction<CRotateDrumAction>::Create(CRotateDrumAction(this, m_grenadeLaunchParams.reload_rotate, true)), false);
 		HideReloadShell(NULL, 0);
@@ -270,31 +270,31 @@ void CGrenadeLaunch::ReloadShell(int zoomed)
 void CGrenadeLaunch::RotateDrum(float _time, bool reverse)
 {
 	// Weapon relative attachments
-	ICharacterInstance* pCharacter = m_pWeapon ? m_pWeapon->GetEntity()->GetCharacter(0) : NULL;
-	IAttachmentManager* pAttachMan = pCharacter ? pCharacter->GetIAttachmentManager() : NULL;
+	ICharacterInstance *pCharacter = m_pWeapon ? m_pWeapon->GetEntity()->GetCharacter(0) : NULL;
+	IAttachmentManager *pAttachMan = pCharacter ? pCharacter->GetIAttachmentManager() : NULL;
 
 	if (!pAttachMan || m_magazineDrum < 0)
 		return;
 
 	HideReloadShell(pAttachMan, 1);
 
-	IAttachment* pMagazine = pAttachMan->GetInterfaceByIndex(m_magazineDrum);
+	IAttachment *pMagazine=pAttachMan->GetInterfaceByIndex(m_magazineDrum);
 	if (!pMagazine)
 		return;
 
-	int shot_count = m_fireparams.clip_size - GetAmmoCount();
-	int shell_idx = shot_count - 1;
+	int shot_count=m_fireparams.clip_size-GetAmmoCount();
+	int shell_idx=shot_count-1;
 
-	QuatT tr = pMagazine->GetAttRelativeDefault();
-	tr.q = m_magazineRotation;
+	QuatT tr=pMagazine->GetAttRelativeDefault();
+	tr.q=m_magazineRotation;
 	pMagazine->SetAttRelativeDefault(tr);
-	m_magazineRotation = reverse ? Quat::CreateRotationY((gf_PI / 3) * (shot_count - 1)) : Quat::CreateRotationY((gf_PI / 3) * shot_count);
+	m_magazineRotation=reverse ? Quat::CreateRotationY((gf_PI/3)*(shot_count-1)) : Quat::CreateRotationY((gf_PI/3)*shot_count);
 	m_magazineRotation.Normalize();
-	m_rotateTime = _time / 1000.0f;
-	m_rotateState = 0;
+	m_rotateTime=_time/1000.0f;
+	m_rotateState=0;
 
 	// Magazine relative attachments
-	CItem* pAccessory = m_pWeapon->GetAccessory(m_pWeapon->CurrentAttachment("magazine"));
+	CItem *pAccessory = m_pWeapon->GetAccessory(m_pWeapon->CurrentAttachment("magazine"));
 	pCharacter = pAccessory ? pAccessory->GetEntity()->GetCharacter(0) : NULL;
 	pAttachMan = pCharacter ? pCharacter->GetIAttachmentManager() : NULL;
 	HideShell(pAttachMan, shell_idx, !reverse);
@@ -308,40 +308,40 @@ void CGrenadeLaunch::Update(float frameTime, uint frameId)
 
 	if (m_rotateTime)
 	{
-		ICharacterInstance* pCharacter = m_pWeapon ? m_pWeapon->GetEntity()->GetCharacter(0) : NULL;
-		IAttachmentManager* pAttachMan = pCharacter ? pCharacter->GetIAttachmentManager() : NULL;
+		ICharacterInstance *pCharacter = m_pWeapon ? m_pWeapon->GetEntity()->GetCharacter(0) : NULL;
+		IAttachmentManager *pAttachMan = pCharacter ? pCharacter->GetIAttachmentManager() : NULL;
 
 		if (!pAttachMan || m_magazineDrum < 0)
 			return;
 
-		IAttachment* pMagazine = pAttachMan->GetInterfaceByIndex(m_magazineDrum);
+		IAttachment *pMagazine=pAttachMan->GetInterfaceByIndex(m_magazineDrum);
 		if (!pMagazine)
 			return;
 
-		m_rotateState += frameTime;
-		float ratio = m_rotateState / m_rotateTime;
-		QuatT tr = pMagazine->GetAttRelativeDefault();
+		m_rotateState+=frameTime;
+		float ratio=m_rotateState/m_rotateTime;
+		QuatT tr=pMagazine->GetAttRelativeDefault();
 		Quat rot;
 
 		//gEnv->pLog->Log(">>> Rotate ratio: %f", ratio);
 
-		rot = Quat::CreateSlerp(tr.q, m_magazineRotation, min(ratio, 1.0f));
-		tr.q = rot;
+		rot=Quat::CreateSlerp(tr.q, m_magazineRotation, min(ratio, 1.0f));
+		tr.q=rot;
 		pMagazine->SetAttRelativeDefault(tr);
 
 		if (ratio >= 1)
 		{
-			m_rotateTime = 0;
+			m_rotateTime=0;
 
 			Quat rot;
-			tr.q = m_magazineRotation;
+			tr.q=m_magazineRotation;
 			pMagazine->SetAttRelativeDefault(tr);
 		}
 		else
 		{
 			Quat rot;
-			rot = Quat::CreateSlerp(tr.q, m_magazineRotation, min(ratio, 1.0f));
-			tr.q = rot;
+			rot=Quat::CreateSlerp(tr.q, m_magazineRotation, min(ratio, 1.0f));
+			tr.q=rot;
 			pMagazine->SetAttRelativeDefault(tr);
 
 			m_pWeapon->RequireUpdate(eIUS_FireMode);
@@ -351,24 +351,24 @@ void CGrenadeLaunch::Update(float frameTime, uint frameId)
 
 void CGrenadeLaunch::ResetShells()
 {
-	int shot_count = m_fireparams.clip_size - GetAmmoCount();
+	int shot_count=m_fireparams.clip_size-GetAmmoCount();
 
 	// Weapon relative attachments
-	ICharacterInstance* pCharacter = m_pWeapon ? m_pWeapon->GetEntity()->GetCharacter(0) : NULL;
-	if (pCharacter)
+	ICharacterInstance *pCharacter = m_pWeapon ? m_pWeapon->GetEntity()->GetCharacter(0) : NULL;
+	if (pCharacter) 
 	{
 		IAttachmentManager* pAttachMan = pCharacter->GetIAttachmentManager();
 		// gEnv->pLog->Log(">>> Resetting shells at shot count: %d", shot_count);
 
 		if (m_magazineDrum >= 0)
 		{
-			IAttachment* pMagazine = pAttachMan->GetInterfaceByIndex(m_magazineDrum);
+			IAttachment *pMagazine=pAttachMan->GetInterfaceByIndex(m_magazineDrum);
 			if (pMagazine)
 			{
-				m_rotateTime = 0;
-				QuatT tr = pMagazine->GetAttRelativeDefault();
-				m_magazineRotation = Quat::CreateRotationY((gf_PI / 3) * shot_count);
-				tr.q = m_magazineRotation;
+				m_rotateTime=0;
+				QuatT tr=pMagazine->GetAttRelativeDefault();
+				m_magazineRotation=Quat::CreateRotationY((gf_PI/3)*shot_count);
+				tr.q=m_magazineRotation;
 				pMagazine->SetAttRelativeDefault(tr);
 			}
 		}
@@ -377,28 +377,28 @@ void CGrenadeLaunch::ResetShells()
 	}
 
 	// Magazine relative attachments
-	CItem* pAccessory = m_pWeapon->GetAccessory(m_pWeapon->CurrentAttachment("magazine"));
+	CItem *pAccessory = m_pWeapon->GetAccessory(m_pWeapon->CurrentAttachment("magazine"));
 	pCharacter = pAccessory ? pAccessory->GetEntity()->GetCharacter(0) : NULL;
 
-	if (pCharacter)
+	if (pCharacter) 
 	{
 		IAttachmentManager* pAttachMan = pCharacter->GetIAttachmentManager();
 
 		// Request shell attachments and show/hide them according to ammo count
 		m_grenadeShells.resize(0);
 
-		for (int i = 0; i < m_fireparams.clip_size; i++)
+		for (int i=0; i<m_fireparams.clip_size; i++)
 		{
 			char attName[128];
-			_snprintf(attName, sizeof(attName), "grenade_%d", i + 1);
-			attName[sizeof(attName) - 1] = 0;
+			_snprintf(attName, sizeof(attName), "grenade_%d", i+1);
+			attName[sizeof(attName)-1] = 0;
 
-			int32 gidx = pAttachMan->GetIndexByName(attName);
+			int32 gidx=pAttachMan->GetIndexByName(attName);
 
 			if (gidx > -1)
 			{
 				m_grenadeShells.push_back(gidx);
-				HideShell(pAttachMan, i, i < shot_count);
+				HideShell(pAttachMan, i, i<shot_count);
 			}
 		}
 	}
@@ -408,7 +408,7 @@ void CGrenadeLaunch::Serialize(TSerialize ser)
 {
 	CShotgun::Serialize(ser);
 
-	if (ser.GetSerializationTarget() != eST_Network)
+	if(ser.GetSerializationTarget() != eST_Network)
 	{
 		ser.BeginGroup("launchmode");
 		ser.Value("launchedgrenades", m_launchedGrenades);
@@ -425,7 +425,7 @@ void CGrenadeLaunch::HideReloadShell(IAttachmentManager* pAttachMan, uint32 hide
 {
 	if (!pAttachMan)
 	{
-		ICharacterInstance* pCharacter = m_pWeapon ? m_pWeapon->GetEntity()->GetCharacter(0) : NULL;
+		ICharacterInstance *pCharacter = m_pWeapon ? m_pWeapon->GetEntity()->GetCharacter(0) : NULL;
 		pAttachMan = pCharacter ? pCharacter->GetIAttachmentManager() : NULL;
 	}
 
@@ -435,7 +435,7 @@ void CGrenadeLaunch::HideReloadShell(IAttachmentManager* pAttachMan, uint32 hide
 	if (m_reloadShell < 0)
 		return;
 
-	IAttachment* pAtt = pAttachMan->GetInterfaceByIndex(m_reloadShell);
+	IAttachment *pAtt=pAttachMan->GetInterfaceByIndex(m_reloadShell);
 	if (pAtt)
 		pAtt->HideAttachment(hide);
 }
@@ -445,7 +445,7 @@ void CGrenadeLaunch::HideShell(IAttachmentManager* pAttachMan, int idx, uint32 h
 	if (!pAttachMan || idx < 0 || idx >= m_grenadeShells.size() || m_grenadeShells[idx] < 0)
 		return;
 
-	IAttachment* pAtt = pAttachMan->GetInterfaceByIndex(m_grenadeShells[idx]);
+	IAttachment *pAtt=pAttachMan->GetInterfaceByIndex(m_grenadeShells[idx]);
 	if (pAtt)
 		pAtt->HideAttachment(hide);
 }

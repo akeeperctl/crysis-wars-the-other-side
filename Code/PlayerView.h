@@ -8,6 +8,7 @@ $DateTime$
 Description:
 The view specific code (First person, Third person, followCharacterHead etc).
 
+
 -------------------------------------------------------------------------
 History:
 - 21:02:2006: Re-factored from Filippo's CPlayer code by Nick Hesketh
@@ -23,14 +24,15 @@ History:
 
 #include "Player.h"
 
+
 class CPlayerView
 {
 public:
-	CPlayerView(const CPlayer& rPlayer, SViewParams& viewParams);
+	CPlayerView(const CPlayer &rPlayer,SViewParams &viewParams);
 
-	void Process(SViewParams& viewParams);
+	void Process(SViewParams &viewParams);
 
-	void Commit(CPlayer& rPlayer, SViewParams& viewParams);
+	void Commit(CPlayer &rPlayer,SViewParams &viewParams);
 
 protected:
 	struct SViewStateIn
@@ -41,13 +43,8 @@ protected:
 
 		float frameTime;
 
-		ICharacterInstance* pCharacter;
-		IVehicle* pVehicle;
-
-		//TheOtherSide
-		CActor* pControlledActor;
-		bool bForceLowerWeapon;
-		//~TheOtherSide
+		ICharacterInstance *pCharacter;
+		IVehicle *pVehicle;
 
 		bool bIsGrabbing;
 		bool stats_isRagDoll;							// ViewFollowCharacterFirstPerson (Primarily: Dead or TrackView) uses to add a small z offset to the view
@@ -67,7 +64,7 @@ protected:
 		uint8 stats_spectatorMode;
 		EntityId stats_spectatorTarget;
 		bool  stats_onLadder;
-
+		
 		float params_viewFoVScale;
 		Vec3 params_viewPivot;
 		float params_viewDistance;
@@ -141,33 +138,31 @@ protected:
 
 	SViewStateIn m_viewStateIn_private;	// only write-able from pre-process (Should move into a base class to enforce this)
 
-	const SViewStateIn& m_in;
+	const SViewStateIn &m_in;
 	SViewStateInOut m_io;
-	//TheOtherSide
-	void ViewControlledEntity(SViewParams& viewParams);
-	//~TheOtherSide
-	void ViewFirstThirdSharedPre(SViewParams& viewParams);
-	void ViewFirstThirdSharedPost(SViewParams& viewParams);
-	void ViewThirdPerson(SViewParams& viewParams);
-	void ViewFirstPerson(SViewParams& viewParams);
-	void FirstPersonJump(SViewParams& viewParams, Vec3& weaponOffset, Ang3& weaponAngleOffset);
-	void ViewVehicle(SViewParams& viewParams);
-	void ViewFollowCharacterFirstPerson(SViewParams& viewParams);
-	void ViewFirstPersonOnLadder(SViewParams& viewParams);
-	void ViewSpectatorTarget(SViewParams& viewParams);
-	void ViewDeathCamTarget(SViewParams& viewParams);
 
-	void ViewExternalControlPostProcess(CPlayer& rPlayer, SViewParams& viewParams);
-public:
-	void FirstPersonWeaponPostProcess(CPlayer& rPlayer, SViewParams& viewParams);
-protected:
-	void ViewShakePostProcess(CPlayer& rPlayer, SViewParams& viewParams);
-	void HudPostProcess(CPlayer& rPlayer, SViewParams& viewParams);
-	void HandsPostProcess(CPlayer& rPlayer, SViewParams& viewParams);
+	void ViewFirstThirdSharedPre(SViewParams &viewParams);
+	void ViewFirstThirdSharedPost(SViewParams &viewParams);
+	void ViewThirdPerson(SViewParams &viewParams);
+	void ViewFirstPerson(SViewParams &viewParams);
+	void FirstPersonJump(SViewParams &viewParams,Vec3 &weaponOffset, Ang3 &weaponAngleOffset);
+	void ViewVehicle(SViewParams &viewParams);
+	void ViewFollowCharacterFirstPerson(SViewParams &viewParams);
+	void ViewFirstPersonOnLadder(SViewParams & viewParams);
+	void ViewSpectatorTarget(SViewParams &viewParams);
+	void ViewDeathCamTarget(SViewParams &viewParams);
 
-	void ViewProcess(SViewParams& viewParams);
-	void ViewPreProcess(const CPlayer& rPlayer, SViewParams& viewParams, SViewStateIn& m_viewStateIn);
-	void ViewPostProcess(CPlayer& rPlayer, SViewParams& viewParams);
+	void ViewExternalControlPostProcess(CPlayer &rPlayer,SViewParams &viewParams);
+	public:
+	void FirstPersonWeaponPostProcess(CPlayer &rPlayer,SViewParams &viewParams);
+	protected:
+	void ViewShakePostProcess(CPlayer &rPlayer,SViewParams &viewParams);
+	void HudPostProcess(CPlayer &rPlayer,SViewParams &viewParams);
+	void HandsPostProcess(CPlayer &rPlayer,SViewParams &viewParams);
+
+	void ViewProcess(SViewParams &viewParams);
+	void ViewPreProcess(const CPlayer &rPlayer,SViewParams &viewParams,SViewStateIn & m_viewStateIn);
+	void ViewPostProcess(CPlayer &rPlayer,SViewParams &viewParams);
 };
 
 #endif

@@ -12,110 +12,11 @@ enum EExplosiveType
 };
 
 struct SCVars
-{
+{	
 	static const float v_altitudeLimitDefault()
 	{
 		return 600.0f;
 	}
-
-	//TheOtherSide
-
-	ICVar* g_singleplayer_start_map;
-
-	float g_trooperMeleeDamage;
-	float g_trooperMeleeDamageMultiplier;
-	float g_trooperVehicleDamageMultiplier;
-
-	int sqd_ScoutCanSearch;
-	int sqd_HideControls;
-	int sqd_TrooperCanSay;
-	int sqd_vehicle_follow_method;
-	int sqd_debug_log_detached;
-	int sqd_debug_log_creating;
-	int sqd_debug_log_executing;
-	int sqd_debug_log_hidespots;
-	int sqd_debug_draw_Info;
-	int sqd_debug_draw_client_squad;
-	float sqd_membersUpdateDelay;
-	float sqd_detachedUpdateDelay;
-	//int sqd_debug_log;
-
-	//ability
-	int abil_debug_draw_info;
-	int abil_debug_log;
-
-	//conqueror
-	float conq_area_update_delay;
-	int conq_debug_log_vehiclespawner;
-	int conq_debug_log_area;
-	int conq_debug_log_aichannel;
-	int conq_debug_log_commander;
-	int conq_debug_log_requests;
-	int conq_debug_log_strategies;
-	int conq_debug_log_classes;
-	int conq_debug_log_ometer;
-	int conq_debug_log;
-	int conq_debug_draw_client_area;
-	int conq_debug_draw_aichannel;
-	int conq_debug_draw_commanders;
-	int conq_debug_draw_commander_squads;
-	int conq_debug_draw_rar_requests;
-	int conq_botsJoinBeforePlayer;
-	int conq_respawnTime;
-	float conq_squads_update_delay;
-	int conq_teamChangeLimit;
-	float conq_limitTime;
-	int conq_enableHumanHealthRegen;
-
-	//debug
-	int tos_debug_draw_aiactiontracker;
-	int tos_debug_log_aiactiontracker;
-	int tos_show_version;
-	int tos_debug_log_all;
-	int ctrl_debug_draw;
-
-	//common
-	float ctrl_shootRange;
-	float ctrl_alienEnergyRechargeDelay;
-
-	//pinger
-	float ctrl_pgTargetx;
-	float ctrl_pgTargety;
-	float ctrl_pgTargetz;
-	float ctrl_pgFov;
-
-	//alien
-	float ctrl_alTargetx;
-	float ctrl_alTargety;
-	float ctrl_alTargetz;
-	float ctrl_alFov;
-
-	//scout
-	float ctrl_scTargetx;
-	float ctrl_scTargety;
-	float ctrl_scTargetz;
-	float ctrl_scFov;
-	float ctrl_scAimSupport;
-
-	//trooper
-	float ctrl_trWalls;
-	float ctrl_trTargetx;
-	float ctrl_trTargety;
-	float ctrl_trTargetz;
-	float ctrl_trFov;
-
-	//hunter
-	float ctrl_hrTargetx;
-	float ctrl_hrTargety;
-	float ctrl_hrTargetz;
-	float ctrl_hrFov;
-	float ctrl_hrForwardOffset;
-
-	//grunt
-	float ctrl_grDistance;
-	float ctrl_grHeight;
-	float ctrl_grFov;
-	//~TheOtherSide
 
 	float cl_fov;
 	float cl_bob;
@@ -138,7 +39,7 @@ struct SCVars
 	int   cl_g15lcdEnable;
 	int   cl_g15lcdTick;
 
-	ICVar* ca_GameControlledStrafingPtr;
+	ICVar* 	ca_GameControlledStrafingPtr;
 	float pl_curvingSlowdownSpeedScale;
 	float ac_enableProceduralLeaning;
 
@@ -179,9 +80,9 @@ struct SCVars
 	float dt_meleeTime;
 
 	int   sv_votingTimeout;
-	int   sv_votingCooldown;
-	float sv_votingRatio;
-	float sv_votingTeamRatio;
+  int   sv_votingCooldown;
+  float sv_votingRatio;
+  float sv_votingTeamRatio;
 
 	int   sv_input_timeout;
 
@@ -202,7 +103,7 @@ struct SCVars
 	int		i_unlimitedammo;
 	int   i_iceeffects;
 	int		i_lighteffectsShadows;
-
+  
 	float int_zoomAmount;
 	float int_zoomInTime;
 	float int_moveZoomTime;
@@ -251,7 +152,7 @@ struct SCVars
 	float g_playerLowHealthThreshold;
 	float g_playerLowHealthThreshold2;
 	float g_playerLowHealthThresholdMultiplayer;
-	float g_playerLowHealthThreshold2Multiplayer;
+	float g_playerLowHealthThreshold2Multiplayer;	
 	int		g_punishFriendlyDeaths;
 	int		g_enableMPStealthOMeter;
 	int   g_meleeWhileSprinting;
@@ -304,7 +205,7 @@ struct SCVars
 	int		g_suddendeathtime;
 	int		g_roundlimit;
 	int		g_fraglimit;
-	int		g_fraglead;
+  int		g_fraglead;
 	int		g_scorelimit;
 	int		g_scorelead;
 	int		g_spawn_force_timeout;
@@ -313,10 +214,10 @@ struct SCVars
 	float	g_spawndeathdist;
 	int		g_spawnDebug;
 
-	float g_friendlyfireratio;
+  float g_friendlyfireratio;
 	float g_friendlyVehicleCollisionRatio;
-	int   g_revivetime;
-	int   g_autoteambalance;
+  int   g_revivetime; 
+  int   g_autoteambalance;
 	int		g_autoteambalance_threshold;
 	int   g_minplayerlimit;
 	int   g_minteamlimit;
@@ -336,7 +237,7 @@ struct SCVars
 	*/
 	float g_trooperTentacleAnimBlend;
 	float g_trooperBankingMultiplier;
-	float g_alienPhysicsAnimRatio;
+	float g_alienPhysicsAnimRatio;  
 
 	int		g_debug_fscommand;
 	int		g_debugDirectMPMenu;
@@ -358,21 +259,21 @@ struct SCVars
 	int		pl_debug_ladders;
 	int		pl_debug_movement;
 	int		pl_debug_jumping;
-	ICVar* pl_debug_filter;
+	ICVar*pl_debug_filter;
 
 	int		aln_debug_movement;
-	ICVar* aln_debug_filter;
+	ICVar*aln_debug_filter;
 
-	int   v_profileMovement;
+	int   v_profileMovement;  
 	int   v_draw_suspension;
 	int   v_draw_slip;
-	int   v_pa_surface;
-	int   v_invertPitchControl;
-	float v_wind_minspeed;
+	int   v_pa_surface;    
+	int   v_invertPitchControl;  
+	float v_wind_minspeed; 
 	float v_sprintSpeed;
 	int   v_dumpFriction;
 	int   v_rockBoats;
-	int   v_debugSounds;
+  int   v_debugSounds;
 	float v_altitudeLimit;
 	ICVar* pAltitudeLimitCVar;
 	float v_altitudeLimitLowerOffset;
@@ -380,7 +281,7 @@ struct SCVars
 	float v_airControlSensivity;
 	float v_stabilizeVTOL;
 	int   v_help_tank_steering;
-	int   v_debugMountedWeapon;
+  int   v_debugMountedWeapon;
 	ICVar* pVehicleQuality;
 	int		v_newBrakingFriction;
 	int		v_newBoost;
@@ -405,8 +306,8 @@ struct SCVars
 	float pl_fallDamage_Strength_SpeedFatal;
 	float pl_fallDamage_SpeedBias;
 	int pl_debugFallDamage;
-
-	float pl_zeroGSpeedMultSpeed;
+	
+  float pl_zeroGSpeedMultSpeed;
 	float pl_zeroGSpeedMultSpeedSprint;
 	float pl_zeroGSpeedMultNormal;
 	float pl_zeroGSpeedMultNormalSprint;
@@ -498,15 +399,15 @@ struct SCVars
 	int hit_assistSingleplayerEnabled;
 	int hit_assistMultiplayerEnabled;
 
-	int aim_assistCrosshairSize;
-	int aim_assistCrosshairDebug;
-
+  int aim_assistCrosshairSize;
+  int aim_assistCrosshairDebug;
+		
 	float g_combatFadeTime;
 	float g_combatFadeTimeDelay;
 	float g_battleRange;
 
-	ICVar* i_debuggun_1;
-	ICVar* i_debuggun_2;
+	ICVar*i_debuggun_1;
+	ICVar*i_debuggun_2;
 
 	float	tracer_min_distance;
 	float	tracer_max_distance;
@@ -518,32 +419,31 @@ struct SCVars
 	int		i_auto_turret_target;
 	int		i_auto_turret_target_tacshells;
 	int		i_debug_zoom_mods;
-	int   i_debug_turrets;
-	int   i_debug_sounds;
+  int   i_debug_turrets;
+  int   i_debug_sounds;
 	int		i_debug_mp_flowgraph;
-
+  
 	float h_turnSpeed;
 	int		h_useIK;
 	int		h_drawSlippers;
-	int		h_useLookId;
 
-	ICVar* g_quickGame_map;
-	ICVar* g_quickGame_mode;
-	int     g_quickGame_min_players;
-	int     g_quickGame_prefer_lan;
-	int     g_quickGame_prefer_favorites;
-	int     g_quickGame_prefer_my_country;
-	int     g_quickGame_ping1_level;
-	int     g_quickGame_ping2_level;
-	int     g_quickGame_debug;
+  ICVar*  g_quickGame_map;
+  ICVar*  g_quickGame_mode;
+  int     g_quickGame_min_players;
+  int     g_quickGame_prefer_lan;
+  int     g_quickGame_prefer_favorites;
+  int     g_quickGame_prefer_my_country;
+  int     g_quickGame_ping1_level;
+  int     g_quickGame_ping2_level;
+  int     g_quickGame_debug;
 	int			g_skip_tutorial;
 
-	int     g_displayIgnoreList;
-	int     g_buddyMessagesIngame;
+  int     g_displayIgnoreList;
+  int     g_buddyMessagesIngame;
 
-	int			g_battleDust_enable;
+  int			g_battleDust_enable;
 	int			g_battleDust_debug;
-	ICVar* g_battleDust_effect;
+	ICVar*  g_battleDust_effect;
 
 	int			g_PSTutorial_Enabled;
 
@@ -562,11 +462,11 @@ struct SCVars
 	int			g_deathCamMaxZoomDistance;
 	int			g_deathEffects;
 
-	ICVar* i_restrictItems;	// list of item names which aren't allowed in this MP game.
+	ICVar*	i_restrictItems;	// list of item names which aren't allowed in this MP game.
 	int			g_spawnProtectionTime;
 	int			g_roundRestartTime;
 
-	ICVar* net_mapDownloadURL;
+	ICVar*  net_mapDownloadURL;
 
 	int			g_debugShotValidator;
 
@@ -575,16 +475,16 @@ struct SCVars
 
 	SCVars()
 	{
-		memset(this, 0, sizeof(SCVars));
+		memset(this,0,sizeof(SCVars));
 	}
 
 	~SCVars() { ReleaseCVars(); }
 
-	void InitCVars(IConsole* pConsole);
+	void InitCVars(IConsole *pConsole);
 	void ReleaseCVars();
 
 protected:
-	static void RestrictedItemsChanged(ICVar* var);
+	static void RestrictedItemsChanged( ICVar* var );
 };
 
 #endif //__GAMECVARS_H__

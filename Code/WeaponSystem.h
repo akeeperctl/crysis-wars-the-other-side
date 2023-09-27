@@ -18,6 +18,7 @@ History:
 # pragma once
 #endif
 
+
 #include <IItemSystem.h>
 #include <ILevelSystem.h>
 #include <IWeapon.h>
@@ -35,7 +36,7 @@ struct SProjectileQuery
 {
 	AABB        box;
 	const char* ammoName;
-	IEntity** pResults;
+	IEntity     **pResults;
 	int         nCount;
 	SProjectileQuery()
 	{
@@ -49,64 +50,64 @@ class CWeaponSystem : public ILevelSystemListener
 {
 	typedef struct SAmmoTypeDesc
 	{
-		SAmmoTypeDesc() : params(0) {};
-		const SAmmoParams* params;
-		std::map<string, const SAmmoParams*> configurations;
+		SAmmoTypeDesc(): params(0) {};
+		const SAmmoParams *params;
+		std::map<string, const SAmmoParams *> configurations;
 	};
 
-	typedef std::map<string, IFireMode* (*)()>								TFireModeRegistry;
-	typedef std::map<string, IZoomMode* (*)()>								TZoomModeRegistry;
-	typedef std::map<string, IGameObjectExtensionCreatorBase*>	TProjectileRegistry;
-	typedef std::map<EntityId, CProjectile*>										TProjectileMap;
+	typedef std::map<string, IFireMode		*(*)()>								TFireModeRegistry;
+	typedef std::map<string, IZoomMode		*(*)()>								TZoomModeRegistry;
+	typedef std::map<string, IGameObjectExtensionCreatorBase *>	TProjectileRegistry;
+	typedef std::map<EntityId, CProjectile *>										TProjectileMap;
 	typedef VectorMap<IEntityClass*, SAmmoTypeDesc>							TAmmoTypeParams;
 	typedef std::vector<string>																	TFolderList;
 	typedef std::vector<IEntity*>																TIEntityVector;
 
 public:
-	CWeaponSystem(CGame* pGame, ISystem* pSystem);
+	CWeaponSystem(CGame *pGame, ISystem *pSystem);
 	virtual ~CWeaponSystem();
 
 	void Update(float frameTime);
 	void Release();
 
-	void GetMemoryStatistics(ICrySizer*);
+	void GetMemoryStatistics( ICrySizer * );
 
 	void Reload();
 
-	void SetConfiguration(const char* config) { m_config = config; };
-	const char* GetConfiguration() const { return m_config.c_str(); };
+	void SetConfiguration(const char *config) { m_config=config; };
+	const char *GetConfiguration() const { return m_config.c_str(); };
 
 	// ILevelSystemListener
-	virtual void OnLevelNotFound(const char* levelName) {};
-	virtual void OnLoadingStart(ILevelInfo* pLevel);
-	virtual void OnLoadingComplete(ILevel* pLevel);
-	virtual void OnLoadingError(ILevelInfo* pLevel, const char* error) {};
-	virtual void OnLoadingProgress(ILevelInfo* pLevel, int progressAmount) {};
+	virtual void OnLevelNotFound(const char *levelName) {};
+	virtual void OnLoadingStart(ILevelInfo *pLevel);
+	virtual void OnLoadingComplete(ILevel *pLevel);
+	virtual void OnLoadingError(ILevelInfo *pLevel, const char *error) {};
+	virtual void OnLoadingProgress(ILevelInfo *pLevel, int progressAmount) {};
 	//~ILevelSystemListener
 
-	IFireMode* CreateFireMode(const char* name);
-	void RegisterFireMode(const char* name, IFireMode* (*)());
+	IFireMode *CreateFireMode(const char *name);
+	void RegisterFireMode(const char *name, IFireMode *(*)());
+	
+	IZoomMode *CreateZoomMode(const char *name);
+	void RegisterZoomMode(const char *name, IZoomMode *(*)());
 
-	IZoomMode* CreateZoomMode(const char* name);
-	void RegisterZoomMode(const char* name, IZoomMode* (*)());
-
-	CProjectile* SpawnAmmo(IEntityClass* pAmmoType, bool isRemote = false);
+	CProjectile *SpawnAmmo(IEntityClass* pAmmoType, bool isRemote=false);
 	bool IsServerSpawn(IEntityClass* pAmmoType) const;
-	void RegisterProjectile(const char* name, IGameObjectExtensionCreatorBase* pCreator);
+	void RegisterProjectile(const char *name, IGameObjectExtensionCreatorBase *pCreator);
 	const SAmmoParams* GetAmmoParams(IEntityClass* pAmmoType) const;
 
-	void AddProjectile(IEntity* pEntity, CProjectile* pProjectile);
-	void RemoveProjectile(CProjectile* pProjectile);
-	CProjectile* GetProjectile(EntityId entityId);
+	void AddProjectile(IEntity *pEntity, CProjectile *pProjectile);
+	void RemoveProjectile(CProjectile *pProjectile);
+	CProjectile *GetProjectile(EntityId entityId);
 	int	QueryProjectiles(SProjectileQuery& q);
 
-	CTracerManager& GetTracerManager() { return m_tracerManager; };
+	CTracerManager &GetTracerManager() { return m_tracerManager; };
 
-	void Scan(const char* folderName);
-	bool ScanXML(XmlNodeRef& root, const char* xmlFile);
+	void Scan(const char *folderName);
+	bool ScanXML(XmlNodeRef &root, const char *xmlFile);
 
-	static void DebugGun(IConsoleCmdArgs* args = 0);
-	static void RefGun(IConsoleCmdArgs* args = 0);
+  static void DebugGun(IConsoleCmdArgs *args = 0);
+	static void RefGun(IConsoleCmdArgs *args = 0);
 
 	bool IsFrozenEnvironment() { return m_frozenEnvironment; }
 	bool IsWetEnvironment() { return m_wetEnvironment; }
@@ -118,11 +119,11 @@ public:
 
 	void Serialize(TSerialize ser);
 
-private:
+private: 
 
-	CGame* m_pGame;
-	ISystem* m_pSystem;
-	IItemSystem* m_pItemSystem;
+	CGame								*m_pGame;
+	ISystem							*m_pSystem;
+	IItemSystem					*m_pItemSystem;
 
 	CTracerManager			m_tracerManager;
 
@@ -138,7 +139,7 @@ private:
 
 	string							m_config;
 
-	ICVar* m_pPrecache;
+	ICVar								*m_pPrecache;
 	TIEntityVector			m_queryResults;//for caching queries results
 
 	bool								m_frozenEnvironment;
@@ -146,5 +147,7 @@ private:
 
 	bool                m_tokensUpdated;
 };
+
+
 
 #endif //__WEAPONSYSTEM_H__

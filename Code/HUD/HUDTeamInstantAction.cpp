@@ -21,10 +21,10 @@ History:
 #include "../GameCVars.h"
 #include "../GameRules.h"
 
-CHUDTeamInstantAction::CHUDTeamInstantAction(CHUD* pHUD) :
-	g_pHUD(pHUD)
+CHUDTeamInstantAction::CHUDTeamInstantAction(CHUD *pHUD) : 
+g_pHUD(pHUD)
 {
-	m_animTIAScore.Load("Libs/UI/HUD_TIAScore.gfx", eFD_Center, eFAF_ManualRender | eFAF_Visible);
+	m_animTIAScore.Load("Libs/UI/HUD_TIAScore.gfx", eFD_Center, eFAF_ManualRender|eFAF_Visible);
 	m_animTIAScore.SetVisible(false);
 }
 
@@ -50,17 +50,19 @@ void CHUDTeamInstantAction::SetHUDColor()
 
 void CHUDTeamInstantAction::UpdateStats()
 {
-	CGameRules* pGameRules = g_pGame->GetGameRules();
-	if (!pGameRules)
+
+	CGameRules *pGameRules=g_pGame->GetGameRules();
+	if(!pGameRules)
 		return;
 
-	IActor* pClientActor = g_pGame->GetIGameFramework()->GetClientActor();
-	if (!pClientActor)
+	IActor *pClientActor=g_pGame->GetIGameFramework()->GetClientActor();
+	if(!pClientActor)
 		return;
 
-	IScriptTable* pGameRulesScript = pGameRules->GetEntity()->GetScriptTable();
-	if (!pGameRulesScript)
+	IScriptTable *pGameRulesScript=pGameRules->GetEntity()->GetScriptTable();
+	if(!pGameRulesScript)
 		return;
+
 
 	int ownTeam = pGameRules->GetTeam(pClientActor->GetEntityId());
 
@@ -71,18 +73,18 @@ void CHUDTeamInstantAction::UpdateStats()
 	int scoreLimit = 100;
 	int firstTeam = 1;
 
-	if (ownTeam != 0) //no spectator
+	if(ownTeam!=0) //no spectator
 	{
 		firstTeam = ownTeam;
 	}
 	int team0ScoreKey = 0;
-	if (pGameRulesScript->GetValue("TEAMSCORE_TEAM0_KEY", team0ScoreKey))
+	if(pGameRulesScript->GetValue("TEAMSCORE_TEAM0_KEY", team0ScoreKey))
 	{
-		for (int i = 1; i < 3; ++i)
+		for(int i=1; i<3; ++i)
 		{
 			int points = 0;
-			pGameRules->GetSynchedGlobalValue(team0ScoreKey + i, points);
-			if (firstTeam == i)
+			pGameRules->GetSynchedGlobalValue(team0ScoreKey+i, points);
+			if(firstTeam==i)
 			{
 				ownTeamScore = points;
 			}
@@ -93,7 +95,7 @@ void CHUDTeamInstantAction::UpdateStats()
 		}
 	}
 
-	HSCRIPTFUNCTION pfnGetScoreFlags = 0;
+	HSCRIPTFUNCTION pfnGetScoreFlags=0;
 	if (pGameRulesScript->GetValue("GetPlayerScore", pfnGetScoreFlags))
 	{
 		ScriptHandle actorId(pClientActor->GetEntityId());
@@ -104,12 +106,12 @@ void CHUDTeamInstantAction::UpdateStats()
 	roundTime = floor(pGameRules->GetRemainingGameTime());
 	scoreLimit = g_pGameCVars->g_scorelimit;
 
-	if (ownTeamScore != m_ownTeamScore ||
-		enemyTeamScore != m_enemyTeamScore ||
-		ownScore != m_ownScore ||
-		roundTime != m_roundTime ||
-		scoreLimit != m_scoreLimit ||
-		ownTeam != m_ownTeam)
+	if(	ownTeamScore!=m_ownTeamScore ||
+			enemyTeamScore!=m_enemyTeamScore ||
+			ownScore!=m_ownScore ||
+			roundTime!=m_roundTime ||
+			scoreLimit!=m_scoreLimit ||
+			ownTeam!=m_ownTeam)
 	{
 		m_ownTeamScore = ownTeamScore;
 		m_enemyTeamScore = enemyTeamScore;
@@ -119,6 +121,7 @@ void CHUDTeamInstantAction::UpdateStats()
 		m_ownTeam = ownTeam;
 		PushToFlash();
 	}
+
 }
 
 void CHUDTeamInstantAction::Show(bool show)
@@ -128,17 +131,17 @@ void CHUDTeamInstantAction::Show(bool show)
 
 void CHUDTeamInstantAction::PushToFlash()
 {
-	SFlashVarValue args[6] = { m_scoreLimit, m_ownTeamScore, m_enemyTeamScore, m_ownScore, m_roundTime, m_ownTeam };
+	SFlashVarValue args[6] = {m_scoreLimit, m_ownTeamScore, m_enemyTeamScore, m_ownScore, m_roundTime, m_ownTeam};
 	m_animTIAScore.Invoke("setValues", args, 6);
-	if (m_ownTeam == 0)
+	if(m_ownTeam==0)
 		g_pHUD->SetTeamDisplay("");
 	else
-		g_pHUD->SetTeamDisplay(m_ownTeam == 1 ? "NK" : "US");
+		g_pHUD->SetTeamDisplay(m_ownTeam==1?"NK":"US");
 }
 
 void CHUDTeamInstantAction::Update(float fDeltaTime)
 {
-	if (!m_animTIAScore.IsLoaded() || !m_animTIAScore.GetVisible())
+	if(!m_animTIAScore.IsLoaded() || !m_animTIAScore.GetVisible())
 		return;
 
 	UpdateStats();

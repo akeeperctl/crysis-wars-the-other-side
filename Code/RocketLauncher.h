@@ -17,6 +17,7 @@ History:
 #if _MSC_VER > 1000
 # pragma once
 #endif
+	
 
 #include "Weapon.h"
 
@@ -34,13 +35,13 @@ public:
 	virtual void Drop(float impulseScale, bool selectNext/* =true */, bool byDeath/* =false */);
 	virtual void ProcessEvent(SEntityEvent& event);
 
-	virtual void GetAttachmentsAtHelper(const char* helper, std::vector<string>& rAttachments);
+	virtual void GetAttachmentsAtHelper(const char *helper, std::vector<string> &rAttachments);
 
 	virtual bool CanPickUp(EntityId userId) const;
 
 	virtual void Update(SEntityUpdateContext& ctx, int);
 
-	virtual void FullSerialize(TSerialize ser);
+	virtual void FullSerialize( TSerialize ser );
 	virtual void PostSerialize();
 
 private:
@@ -70,5 +71,6 @@ private:
 	bool  m_lastLaserHitViewPlane;
 	float m_smoothLaserLength;
 };
+
 
 #endif // __ROCKETLAUNCHER_H__

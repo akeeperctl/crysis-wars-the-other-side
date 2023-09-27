@@ -11,9 +11,9 @@ class CPlayerMovement
 {
 public:
 	// NOTE: Removed const from player, so that PlayerMovement ZeroG can play sounds through it.
-	CPlayerMovement(CPlayer& player, const SActorFrameMovementParams& movement, float frameTime);
-	void Process(CPlayer& player);
-	void Commit(CPlayer& player);
+	CPlayerMovement(CPlayer& player, const SActorFrameMovementParams& movement, float frameTime );
+	void Process( CPlayer& player );
+	void Commit( CPlayer& player );
 
 private:
 	const float m_frameTime;
@@ -31,12 +31,12 @@ private:
 	void ProcessMovementOnLadder(CPlayer& player);
 	void ProcessFlyingZeroG();
 	void ProcessSwimming();
-	void ProcessOnGroundOrJumping(CPlayer& player);
+	void ProcessOnGroundOrJumping( CPlayer& player );
 	void ProcessTurning();
 	void ProcessParachute();
 
-	void AdjustMovementForEnvironment(Vec3& movement, bool sprinting);
-	void AdjustPlayerPositionOnLadder(CPlayer& player);
+	void AdjustMovementForEnvironment( Vec3& movement, bool sprinting );
+	void AdjustPlayerPositionOnLadder(CPlayer &player);
 
 	SCharacterMoveRequest m_request; // our primary output... how to move!
 	Vec3 m_velocity; // from CPlayer... gets updated here and committed
@@ -52,5 +52,6 @@ private:
 	float m_stickySurfaceTimer;
 	bool m_swimJumping;
 };
+
 
 #endif

@@ -25,19 +25,19 @@ public:
 
 	bool Load(const char* name);
 
-	HBITMAP GetHBitmap() const { return m_hBitmap; }
-	HANDLE GetHandle() const { return m_hHandle; }
+	HBITMAP GetHBitmap() const {	return m_hBitmap;	}
+	HANDLE GetHandle() const {	return m_hHandle;	}
 
 	void SetOrigin(int x, int y);
 	void SetVisible(bool bVisible);
 	bool GetVisible();
 
 protected:
-	CEzLcd* GetEzLcd() const { return m_pLCD ? m_pLCD->GetEzLcd() : 0; };
-	CG15LCD* GetG15LCD() const { return m_pLCD; };
+	CEzLcd*		GetEzLcd() const	{	return m_pLCD ? m_pLCD->GetEzLcd() : 0;	};
+	CG15LCD*	GetG15LCD() const	{	return m_pLCD ;	};
 
 private:
-	CG15LCD* m_pLCD;
+	CG15LCD*	m_pLCD;
 	HBITMAP		m_hBitmap;
 	HANDLE		m_hHandle;
 	bool			m_bVisible;

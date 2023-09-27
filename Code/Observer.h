@@ -5,7 +5,7 @@
   $Id$
   $DateTime$
   Description: Implements the Observer alien.
-
+  
  -------------------------------------------------------------------------
   History:
   - 9:6:2005: Created by Filippo De Luca
@@ -26,12 +26,13 @@ class CObserver :
 {
 public:
 
-	virtual void	SetActorStance(SMovementRequestParams& control, int& actions)
+	virtual void	SetActorStance(SMovementRequestParams &control, int& actions)
 	{
 		// Empty
 	}
 
 protected:
 };
+
 
 #endif //__OBSERVER_H__

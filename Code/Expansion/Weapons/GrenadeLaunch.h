@@ -18,6 +18,7 @@ History:
 # pragma once
 #endif
 
+
 class CGrenadeLaunch :
 	public CShotgun
 {
@@ -29,7 +30,7 @@ protected:
 	typedef struct SGrenadeLaunchParams
 	{
 		SGrenadeLaunchParams() { Reset(); };
-		void Reset(const IItemParamsNode* params = 0, bool defaultInit = true)
+		void Reset(const IItemParamsNode *params=0, bool defaultInit=true)
 		{
 			CItemParamReader reader(params);
 			string ammo_type;
@@ -51,7 +52,8 @@ protected:
 		float reload_rotate;
 
 		float shoot_delay;
-		float reload_delay;
+    float reload_delay;
+
 	} SGrenadeLaunchParams;
 
 public:
@@ -62,19 +64,19 @@ public:
 	virtual void Reload(int zoomed);
 	virtual void EndReload(int zoomed);
 
-	virtual bool Shoot(bool resetAnimation, bool autoreload = true, bool noSound = false);
-	virtual void NetShootEx(const Vec3& pos, const Vec3& dir, const Vec3& vel, const Vec3& hit, float extra, int ph);
+	virtual bool Shoot(bool resetAnimation, bool autoreload = true , bool noSound = false );
+	virtual void NetShootEx(const Vec3 &pos, const Vec3 &dir, const Vec3 &vel, const Vec3 &hit, float extra, int ph);
 
 	virtual void StartSecondaryFire(EntityId shooterId);
 	virtual void NetStartSecondaryFire();
 
-	virtual void ResetParams(const struct IItemParamsNode* params);
-	virtual void PatchParams(const struct IItemParamsNode* patch);
+	virtual void ResetParams(const struct IItemParamsNode *params);
+	virtual void PatchParams(const struct IItemParamsNode *patch);
 
 	virtual void EnterModify();
 	virtual void ExitModify();
 
-	virtual const char* GetType() const { return "GrenadeLaunch"; }
+	virtual const char *GetType() const { return "GrenadeLaunch"; }
 
 	virtual void ReloadShell(int zoomed);
 	virtual void Update(float frameTime, uint frameId);
@@ -83,7 +85,7 @@ public:
 
 	virtual void Serialize(TSerialize ser);
 	virtual void PostSerialize();
-
+	
 protected:
 	void ResetShells();
 
@@ -106,6 +108,9 @@ protected:
 	float m_rotateTime;
 	float m_rotateState;
 private:
+
+	
 };
+
 
 #endif //__GRENADE_LAUNCH_H__

@@ -15,13 +15,14 @@ History:
 #include "ClientSynchedStorage.h"
 #include "Game.h"
 
+
 void CServerSynchedStorage::Reset()
 {
 	CCryMutex::CLock lock(m_mutex);
 
 	CSynchedStorage::Reset();
 
-	for (TChannelMap::const_iterator it = m_channels.begin(); it != m_channels.end(); ++it)
+	for (TChannelMap::const_iterator it=m_channels.begin(); it!=m_channels.end(); ++it)
 		ResetChannel(it->first);
 }
 
@@ -29,7 +30,7 @@ void CServerSynchedStorage::ResetChannel(int channelId)
 {
 	CCryMutex::CLock lock(m_mutex);
 
-	TChannelQueueMap::iterator cit = m_channelQueue.lower_bound(SChannelQueueEnt(channelId, 0));
+	TChannelQueueMap::iterator cit=m_channelQueue.lower_bound(SChannelQueueEnt(channelId, 0));
 	while (cit != m_channelQueue.end() && cit->first.channel == channelId)
 	{
 		TChannelQueueMap::iterator next = cit;
@@ -38,7 +39,7 @@ void CServerSynchedStorage::ResetChannel(int channelId)
 		cit = next;
 	}
 
-	TChannelQueueMap::iterator git = m_globalQueue.lower_bound(SChannelQueueEnt(channelId, 0));
+	TChannelQueueMap::iterator git=m_globalQueue.lower_bound(SChannelQueueEnt(channelId, 0));
 	while (git != m_globalQueue.end() && git->first.channel == channelId)
 	{
 		TChannelQueueMap::iterator next = git;
@@ -47,7 +48,7 @@ void CServerSynchedStorage::ResetChannel(int channelId)
 		git = next;
 	}
 
-	TChannelEntityQueueMap::iterator eit = m_entityQueue.lower_bound(SChannelEntityQueueEnt(channelId, 0, 0));
+	TChannelEntityQueueMap::iterator eit=m_entityQueue.lower_bound(SChannelEntityQueueEnt(channelId, 0, 0));
 	while (eit != m_entityQueue.end() && eit->first.channel == channelId)
 	{
 		TChannelEntityQueueMap::iterator next = eit;
@@ -56,15 +57,15 @@ void CServerSynchedStorage::ResetChannel(int channelId)
 		eit = next;
 	}
 
-	if (SChannel* pChannel = GetChannel(channelId))
+	if (SChannel *pChannel = GetChannel(channelId))
 	{
 		if (pChannel->pNetChannel)
-			pChannel->pNetChannel->AddSendable(new CClientSynchedStorage::CResetMsg(channelId, this), 1, &pChannel->lastOrderedMessage, &pChannel->lastOrderedMessage);
+			pChannel->pNetChannel->AddSendable( new CClientSynchedStorage::CResetMsg(channelId, this), 1, &pChannel->lastOrderedMessage, &pChannel->lastOrderedMessage );
 	}
 }
 
 //------------------------------------------------------------------------
-void CServerSynchedStorage::DefineProtocol(IProtocolBuilder* pBuilder)
+void CServerSynchedStorage::DefineProtocol(IProtocolBuilder *pBuilder)
 {
 	pBuilder->AddMessageSink(this, CClientSynchedStorage::GetProtocolDef(), CServerSynchedStorage::GetProtocolDef());
 }
@@ -72,7 +73,7 @@ void CServerSynchedStorage::DefineProtocol(IProtocolBuilder* pBuilder)
 //------------------------------------------------------------------------
 void CServerSynchedStorage::AddToGlobalQueue(TSynchedKey key)
 {
-	for (TChannelMap::iterator it = m_channels.begin(); it != m_channels.end(); ++it)
+	for (TChannelMap::iterator it=m_channels.begin(); it!=m_channels.end(); ++it)
 	{
 		if (!it->second.local)
 			AddToGlobalQueueFor(it->first, key);
@@ -82,7 +83,7 @@ void CServerSynchedStorage::AddToGlobalQueue(TSynchedKey key)
 //------------------------------------------------------------------------
 void CServerSynchedStorage::AddToEntityQueue(EntityId entityId, TSynchedKey key)
 {
-	for (TChannelMap::iterator it = m_channels.begin(); it != m_channels.end(); ++it)
+	for (TChannelMap::iterator it=m_channels.begin(); it!=m_channels.end(); ++it)
 	{
 		if (!it->second.local)
 			AddToEntityQueueFor(it->first, entityId, key);
@@ -92,37 +93,37 @@ void CServerSynchedStorage::AddToEntityQueue(EntityId entityId, TSynchedKey key)
 //------------------------------------------------------------------------
 void CServerSynchedStorage::AddToChannelQueue(int channelId, TSynchedKey key)
 {
-	SChannel* pChannel = GetChannel(channelId);
+	SChannel * pChannel = GetChannel(channelId);
 	assert(pChannel);
 	if (!pChannel || !pChannel->pNetChannel || pChannel->local)
 		return;
 
 	SSendableHandle& msgHdl = m_channelQueue[SChannelQueueEnt(channelId, key)];
 
-	TSynchedValue value;
-	bool ok = GetChannelValue(channelId, key, value);
+	TSynchedValue value; 
+	bool ok=GetChannelValue(channelId, key, value);
 	assert(ok);
 	if (!ok)
 		return;
 
-	CClientSynchedStorage::CSetChannelMsg* pMsg = 0;
+	CClientSynchedStorage::CSetChannelMsg *pMsg=0;
 
 	switch (value.GetType())
 	{
 	case eSVT_Bool:
-		pMsg = new CClientSynchedStorage::CSetChannelBoolMsg(channelId, this, key, value);
+		pMsg=new CClientSynchedStorage::CSetChannelBoolMsg(channelId, this, key, value);
 		break;
 	case eSVT_Float:
-		pMsg = new CClientSynchedStorage::CSetChannelFloatMsg(channelId, this, key, value);
+		pMsg=new CClientSynchedStorage::CSetChannelFloatMsg(channelId, this, key, value);
 		break;
 	case eSVT_Int:
-		pMsg = new CClientSynchedStorage::CSetChannelIntMsg(channelId, this, key, value);
+		pMsg=new CClientSynchedStorage::CSetChannelIntMsg(channelId, this, key, value);
 		break;
 	case eSVT_EntityId:
-		pMsg = new CClientSynchedStorage::CSetChannelEntityIdMsg(channelId, this, key, value);
+		pMsg=new CClientSynchedStorage::CSetChannelEntityIdMsg(channelId, this, key, value);
 		break;
 	case eSVT_String:
-		pMsg = new CClientSynchedStorage::CSetChannelStringMsg(channelId, this, key, value);
+		pMsg=new CClientSynchedStorage::CSetChannelStringMsg(channelId, this, key, value);
 		break;
 	}
 
@@ -137,37 +138,37 @@ void CServerSynchedStorage::AddToChannelQueue(int channelId, TSynchedKey key)
 //------------------------------------------------------------------------
 void CServerSynchedStorage::AddToGlobalQueueFor(int channelId, TSynchedKey key)
 {
-	SChannel* pChannel = GetChannel(channelId);
+	SChannel * pChannel = GetChannel(channelId);
 	assert(pChannel);
 	if (!pChannel || !pChannel->pNetChannel || pChannel->local)
 		return;
 
 	SSendableHandle& msgHdl = m_globalQueue[SChannelQueueEnt(channelId, key)];
 
-	TSynchedValue value;
-	bool ok = GetGlobalValue(key, value);
+	TSynchedValue value; 
+	bool ok=GetGlobalValue(key, value);
 	assert(ok);
 	if (!ok)
 		return;
 
-	CClientSynchedStorage::CSetGlobalMsg* pMsg = 0;
+	CClientSynchedStorage::CSetGlobalMsg *pMsg=0;
 
 	switch (value.GetType())
 	{
 	case eSVT_Bool:
-		pMsg = new CClientSynchedStorage::CSetGlobalBoolMsg(channelId, this, key, value);
+		pMsg=new CClientSynchedStorage::CSetGlobalBoolMsg(channelId, this, key, value);
 		break;
 	case eSVT_Float:
-		pMsg = new CClientSynchedStorage::CSetGlobalFloatMsg(channelId, this, key, value);
+		pMsg=new CClientSynchedStorage::CSetGlobalFloatMsg(channelId, this, key, value);
 		break;
 	case eSVT_Int:
-		pMsg = new CClientSynchedStorage::CSetGlobalIntMsg(channelId, this, key, value);
+		pMsg=new CClientSynchedStorage::CSetGlobalIntMsg(channelId, this, key, value);
 		break;
 	case eSVT_EntityId:
-		pMsg = new CClientSynchedStorage::CSetGlobalEntityIdMsg(channelId, this, key, value);
+		pMsg=new CClientSynchedStorage::CSetGlobalEntityIdMsg(channelId, this, key, value);
 		break;
 	case eSVT_String:
-		pMsg = new CClientSynchedStorage::CSetGlobalStringMsg(channelId, this, key, value);
+		pMsg=new CClientSynchedStorage::CSetGlobalStringMsg(channelId, this, key, value);
 		break;
 	}
 
@@ -182,37 +183,37 @@ void CServerSynchedStorage::AddToGlobalQueueFor(int channelId, TSynchedKey key)
 //------------------------------------------------------------------------
 void CServerSynchedStorage::AddToEntityQueueFor(int channelId, EntityId entityId, TSynchedKey key)
 {
-	SChannel* pChannel = GetChannel(channelId);
+	SChannel * pChannel = GetChannel(channelId);
 	assert(pChannel);
 	if (!pChannel || !pChannel->pNetChannel || pChannel->local)
 		return;
 
 	SSendableHandle& msgHdl = m_entityQueue[SChannelEntityQueueEnt(channelId, entityId, key)];
 
-	TSynchedValue value;
-	bool ok = GetEntityValue(entityId, key, value);
+	TSynchedValue value; 
+	bool ok=GetEntityValue(entityId, key, value);
 	assert(ok);
 	if (!ok)
 		return;
 
-	CClientSynchedStorage::CSetEntityMsg* pMsg = 0;
+	CClientSynchedStorage::CSetEntityMsg *pMsg=0;
 
 	switch (value.GetType())
 	{
 	case eSVT_Bool:
-		pMsg = new CClientSynchedStorage::CSetEntityBoolMsg(channelId, this, entityId, key, value);
+		pMsg=new CClientSynchedStorage::CSetEntityBoolMsg(channelId, this, entityId, key, value);
 		break;
 	case eSVT_Float:
-		pMsg = new CClientSynchedStorage::CSetEntityFloatMsg(channelId, this, entityId, key, value);
+		pMsg=new CClientSynchedStorage::CSetEntityFloatMsg(channelId, this, entityId, key, value);
 		break;
 	case eSVT_Int:
-		pMsg = new CClientSynchedStorage::CSetEntityIntMsg(channelId, this, entityId, key, value);
+		pMsg=new CClientSynchedStorage::CSetEntityIntMsg(channelId, this, entityId, key, value);
 		break;
 	case eSVT_EntityId:
-		pMsg = new CClientSynchedStorage::CSetEntityEntityIdMsg(channelId, this, entityId, key, value);
+		pMsg=new CClientSynchedStorage::CSetEntityEntityIdMsg(channelId, this, entityId, key, value);
 		break;
 	case eSVT_String:
-		pMsg = new CClientSynchedStorage::CSetEntityStringMsg(channelId, this, entityId, key, value);
+		pMsg=new CClientSynchedStorage::CSetEntityStringMsg(channelId, this, entityId, key, value);
 		break;
 	}
 
@@ -230,34 +231,34 @@ void CServerSynchedStorage::FullSynch(int channelId, bool reset)
 	if (reset)
 		ResetChannel(channelId);
 
-	for (TStorage::iterator it = m_channelStorage.begin(); it != m_channelStorage.end(); ++it)
+	for (TStorage::iterator it=m_channelStorage.begin(); it!=m_channelStorage.end();++it)
 		AddToChannelQueue(channelId, it->first);
 
-	for (TStorage::iterator it = m_globalStorage.begin(); it != m_globalStorage.end(); ++it)
+	for (TStorage::iterator it=m_globalStorage.begin(); it!=m_globalStorage.end();++it)
 		AddToGlobalQueueFor(channelId, it->first);
 
-	for (TEntityStorageMap::const_iterator eit = m_entityStorage.begin(); eit != m_entityStorage.end(); ++eit)
+	for (TEntityStorageMap::const_iterator eit=m_entityStorage.begin(); eit!=m_entityStorage.end();++eit)
 	{
-		const TStorage& storage = eit->second;
-		for (TStorage::const_iterator it = storage.begin(); it != storage.end(); ++it)
+		const TStorage &storage=eit->second;
+		for (TStorage::const_iterator it=storage.begin();it!=storage.end();++it)
 			AddToEntityQueueFor(channelId, eit->first, it->first);
 	}
 }
 
 //------------------------------------------------------------------------
-void CServerSynchedStorage::OnGlobalChanged(TSynchedKey key, const TSynchedValue& value)
+void CServerSynchedStorage::OnGlobalChanged(TSynchedKey key, const TSynchedValue &value)
 {
 	AddToGlobalQueue(key);
 }
 
 //------------------------------------------------------------------------
-void CServerSynchedStorage::OnChannelChanged(int channelId, TSynchedKey key, const TSynchedValue& value)
+void CServerSynchedStorage::OnChannelChanged(int channelId, TSynchedKey key, const TSynchedValue &value)
 {
 	AddToChannelQueue(channelId, key);
 }
 
 //------------------------------------------------------------------------
-void CServerSynchedStorage::OnEntityChanged(EntityId entityId, TSynchedKey key, const TSynchedValue& value)
+void CServerSynchedStorage::OnEntityChanged(EntityId entityId, TSynchedKey key, const TSynchedValue &value)
 {
 	AddToEntityQueue(entityId, key);
 }
@@ -265,11 +266,11 @@ void CServerSynchedStorage::OnEntityChanged(EntityId entityId, TSynchedKey key, 
 //------------------------------------------------------------------------
 void CServerSynchedStorage::OnClientConnect(int channelId)
 {
-	INetChannel* pNetChannel = g_pGame->GetIGameFramework()->GetNetChannel(channelId);
+	INetChannel *pNetChannel=g_pGame->GetIGameFramework()->GetNetChannel(channelId);
 
-	SChannel* pChannel = GetChannel(channelId);
+	SChannel *pChannel=GetChannel(channelId);
 	if (pChannel && pChannel->onhold)
-		pChannel->pNetChannel = pNetChannel;
+		pChannel->pNetChannel=pNetChannel;
 	else
 	{
 		if (pChannel)
@@ -285,16 +286,16 @@ void CServerSynchedStorage::OnClientConnect(int channelId)
 //------------------------------------------------------------------------
 void CServerSynchedStorage::OnClientDisconnect(int channelId, bool onhold)
 {
-	SChannel* pChannel = GetChannel(channelId);
+	SChannel *pChannel=GetChannel(channelId);
 	if (pChannel)
-		pChannel->pNetChannel = 0;
+		pChannel->pNetChannel=0;
 
 	if (!onhold)
 		m_channels.erase(channelId);
 	else
-		pChannel->onhold = onhold;
-	//	m_globalQueue.erase(channelId);
-	//	m_entityQueue.erase(channelId);
+		pChannel->onhold=onhold;
+//	m_globalQueue.erase(channelId);
+//	m_entityQueue.erase(channelId);
 
 	ResetChannel(channelId);
 }
@@ -302,13 +303,13 @@ void CServerSynchedStorage::OnClientDisconnect(int channelId, bool onhold)
 //------------------------------------------------------------------------
 void CServerSynchedStorage::OnClientEnteredGame(int channelId)
 {
-	SChannel* pChannel = GetChannel(channelId);
-	if (pChannel && pChannel->pNetChannel && !pChannel->pNetChannel->IsLocal())
+	SChannel *pChannel=GetChannel(channelId);
+ 	if (pChannel && pChannel->pNetChannel && !pChannel->pNetChannel->IsLocal())
 		FullSynch(channelId, true);
 }
 
 //------------------------------------------------------------------------
-bool CServerSynchedStorage::OnSetGlobalMsgComplete(CClientSynchedStorage::CSetGlobalMsg* pMsg, int channelId, uint32 fromSeq, bool ack)
+bool CServerSynchedStorage::OnSetGlobalMsgComplete(CClientSynchedStorage::CSetGlobalMsg *pMsg, int channelId, uint32 fromSeq, bool ack)
 {
 	CCryMutex::CLock lock(m_mutex);
 
@@ -323,7 +324,7 @@ bool CServerSynchedStorage::OnSetGlobalMsgComplete(CClientSynchedStorage::CSetGl
 }
 
 //------------------------------------------------------------------------
-bool CServerSynchedStorage::OnSetChannelMsgComplete(CClientSynchedStorage::CSetChannelMsg* pMsg, int channelId, uint32 fromSeq, bool ack)
+bool CServerSynchedStorage::OnSetChannelMsgComplete(CClientSynchedStorage::CSetChannelMsg *pMsg, int channelId, uint32 fromSeq, bool ack)
 {
 	CCryMutex::CLock lock(m_mutex);
 
@@ -338,7 +339,7 @@ bool CServerSynchedStorage::OnSetChannelMsgComplete(CClientSynchedStorage::CSetC
 }
 
 //------------------------------------------------------------------------
-bool CServerSynchedStorage::OnSetEntityMsgComplete(CClientSynchedStorage::CSetEntityMsg* pMsg, int channelId, uint32 fromSeq, bool ack)
+bool CServerSynchedStorage::OnSetEntityMsgComplete(CClientSynchedStorage::CSetEntityMsg *pMsg, int channelId, uint32 fromSeq, bool ack)
 {
 	CCryMutex::CLock lock(m_mutex);
 
@@ -353,35 +354,35 @@ bool CServerSynchedStorage::OnSetEntityMsgComplete(CClientSynchedStorage::CSetEn
 }
 
 //------------------------------------------------------------------------
-CServerSynchedStorage::SChannel* CServerSynchedStorage::GetChannel(int channelId)
+CServerSynchedStorage::SChannel *CServerSynchedStorage::GetChannel(int channelId)
 {
-	TChannelMap::iterator it = m_channels.find(channelId);
-	if (it != m_channels.end())
+	TChannelMap::iterator it=m_channels.find(channelId);
+	if (it!=m_channels.end())
 		return &it->second;
 	return 0;
 }
 
 //------------------------------------------------------------------------
-CServerSynchedStorage::SChannel* CServerSynchedStorage::GetChannel(INetChannel* pNetChannel)
+CServerSynchedStorage::SChannel *CServerSynchedStorage::GetChannel(INetChannel *pNetChannel)
 {
-	for (TChannelMap::iterator it = m_channels.begin(); it != m_channels.end(); ++it)
-		if (it->second.pNetChannel == pNetChannel)
+	for (TChannelMap::iterator it=m_channels.begin(); it!=m_channels.end(); ++it)
+		if (it->second.pNetChannel==pNetChannel)
 			return &it->second;
 	return 0;
 }
 
 //------------------------------------------------------------------------
-int CServerSynchedStorage::GetChannelId(INetChannel* pNetChannel) const
+int CServerSynchedStorage::GetChannelId(INetChannel *pNetChannel) const
 {
-	for (TChannelMap::const_iterator it = m_channels.begin(); it != m_channels.end(); ++it)
-		if (it->second.pNetChannel == pNetChannel)
+	for (TChannelMap::const_iterator it=m_channels.begin(); it!=m_channels.end(); ++it)
+		if (it->second.pNetChannel==pNetChannel)
 			return it->first;
 	return 0;
 }
 
-void CServerSynchedStorage::GetMemoryStatistics(ICrySizer* s)
+void CServerSynchedStorage::GetMemoryStatistics(ICrySizer * s)
 {
-	SIZER_SUBCOMPONENT_NAME(s, "ServerSychedStorage");
+	SIZER_SUBCOMPONENT_NAME(s,"ServerSychedStorage");
 	s->Add(*this);
 	s->AddContainer(m_globalQueue);
 	s->AddContainer(m_entityQueue);

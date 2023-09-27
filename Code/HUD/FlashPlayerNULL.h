@@ -4,7 +4,7 @@ Copyright (C), Crytek Studios, 2001-2005.
 -------------------------------------------------------------------------
 $Id$
 $DateTime$
-Description:
+Description: 
 
 -------------------------------------------------------------------------
 History:
@@ -26,21 +26,21 @@ public:
 
 	// IFlashPlayer
 	virtual void Release() { delete this; }
-	virtual bool Load(const char* pSWFFilePath, unsigned int options = RENDER_EDGE_AA | INIT_FIRST_FRAME) { return true; }
-	virtual void SetBackgroundColor(unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha) {}
-	virtual void SetBackgroundAlpha(float alpha) {}
-	virtual void SetViewport(int x0, int y0, int width, int height, float aspectRatio = 1.0f) {}
-	virtual void GetViewport(int& x0, int& y0, int& width, int& height, float& aspectRatio) {}
+	virtual bool Load( const char* pSWFFilePath, unsigned int options = RENDER_EDGE_AA | INIT_FIRST_FRAME ) { return true; }
+	virtual void SetBackgroundColor( unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha ) {}
+	virtual void SetBackgroundAlpha( float alpha ) {}
+	virtual void SetViewport( int x0, int y0, int width, int height, float aspectRatio = 1.0f ) {}
+	virtual void GetViewport( int& x0, int& y0, int& width, int& height, float& aspectRatio ) {}
 	virtual void SetScissorRect(int x0, int y0, int width, int height) {}
 	virtual void GetScissorRect(int& x0, int& y0, int& width, int& height) {}
-	virtual void Advance(float deltaTime) {}
+	virtual void Advance( float deltaTime ) {}
 	virtual void Render() {}
 	virtual void SetCompositingDepth(float depth) {}
-	virtual void SetFSCommandHandler(IFSCommandHandler* pHandler) {}
+	virtual void SetFSCommandHandler( IFSCommandHandler* pHandler ) {}
 	virtual void SetExternalInterfaceHandler(IExternalInterfaceHandler* pHandler) {};
 	virtual void SetLoadMovieHandler(IFlashLoadMovieHandler* pHandler) {}
-	virtual void SendCursorEvent(const SFlashCursorEvent& cursorEvent) {}
-	virtual void SendKeyEvent(const SFlashKeyEvent& keyEvent) {}
+	virtual void SendCursorEvent( const SFlashCursorEvent& cursorEvent ) {}
+	virtual void SendKeyEvent( const SFlashKeyEvent& keyEvent ) {}
 	virtual void SetVisible(bool visible) {}
 	virtual bool GetVisible() const { return false; }
 	virtual bool SetVariable(const char* pPathToVar, const SFlashVarValue& value) { return true; }
@@ -52,19 +52,19 @@ public:
 	virtual bool Invoke(const char* pMethodName, const SFlashVarValue* pArgs, unsigned int numArgs, SFlashVarValue* pResult) { return true; }
 	virtual int	GetWidth() const { return 0; }
 	virtual int	GetHeight() const { return 0; }
-	virtual size_t GetMetadata(char* pBuff, unsigned int buffSize) const { return 0; }
+	virtual size_t GetMetadata( char* pBuff, unsigned int buffSize ) const { return 0; }
 	virtual int GetFlags() const { return 0; }
 	virtual const char* GetFilePath() const { return 0; }
 	virtual void ScreenToClient(int& x, int& y) const {}
 	virtual void ClientToScreen(int& x, int& y) const {}
 
-	virtual void SetVariableDouble(const char*, double) {}
-	virtual void SetVariableArrayDouble(const char*, const double*, int) {}
-	virtual double GetVariableDouble(const char*) const { return 0; }
+	virtual void SetVariableDouble(const char *,double) {}
+	virtual void SetVariableArrayDouble(const char *,const double *,int) {}
+	virtual double GetVariableDouble(const char *) const { return 0; }
 	// ~IFlashPlayer
 
 	CFlashPlayerNULL() {}
-	~CFlashPlayerNULL() {}
+	~CFlashPlayerNULL()	{}
 };
 
 //-----------------------------------------------------------------------------------------------------

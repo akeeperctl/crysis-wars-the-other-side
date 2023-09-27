@@ -3,7 +3,7 @@ Crytek Source File.
 Copyright (C), Crytek Studios, 2006.
 -------------------------------------------------------------------------
 
-Description:
+Description: 
 	Header for CTweakMetadata
 
 -------------------------------------------------------------------------
@@ -11,6 +11,7 @@ History:
 - 28:02:2006  : Created by Matthew Jack
 
 *************************************************************************/
+
 
 #ifndef __CTWEAKMETADATA_H__
 #define __CTWEAKMETADATA_H__
@@ -30,9 +31,9 @@ struct IScriptTable;
 
 class CTweakMetadata : public CTweakCommon {
 public:
-
-	CTweakMetadata(IScriptTable* pTable);
-
+	
+	CTweakMetadata(IScriptTable *pTable);
+	
 	~CTweakMetadata() {};
 
 	virtual string GetValue(void) = 0;
@@ -43,7 +44,7 @@ public:
 
 	ETweakType GetType(void) { return eTT_Metadata; }
 
-	static CTweakCommon* GetNewMetadata(IScriptTable* pTable);
+	static CTweakCommon * GetNewMetadata(IScriptTable *pTable);
 
 	void Init(void) {};
 

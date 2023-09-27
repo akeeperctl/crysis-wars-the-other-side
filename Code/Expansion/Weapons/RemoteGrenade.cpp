@@ -26,40 +26,40 @@ CRemoteGrenade::CRemoteGrenade()
 //------------------------------------------------------------------------
 CRemoteGrenade::~CRemoteGrenade()
 {
-	if (gEnv->bMultiplayer && gEnv->bServer)
+	if(gEnv->bMultiplayer && gEnv->bServer)
 	{
-		IActor* pOwner = g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(m_ownerId);
-		if (pOwner && pOwner->IsPlayer())
+		IActor *pOwner = g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(m_ownerId);
+		if(pOwner && pOwner->IsPlayer())
 		{
 			((CPlayer*)pOwner)->RecordExplosiveDestroyed(GetEntityId(), eET_LaunchedGrenade);
 		}
 	}
 
-	// 	if(g_pGame->GetHUD())
-	// 		g_pGame->GetHUD()->RecordExplosiveDestroyed(GetEntityId());
+// 	if(g_pGame->GetHUD())
+// 		g_pGame->GetHUD()->RecordExplosiveDestroyed(GetEntityId());
 }
 
 //------------------------------------------------------------------------
-bool CRemoteGrenade::Init(IGameObject* pGameObject)
+bool CRemoteGrenade::Init(IGameObject *pGameObject)
 {
 	bool ok = CProjectile::Init(pGameObject);
 
-	// 	if(g_pGame->GetHUD())
-	// 		g_pGame->GetHUD()->RecordExplosivePlaced(GetEntityId());
+// 	if(g_pGame->GetHUD())
+// 		g_pGame->GetHUD()->RecordExplosivePlaced(GetEntityId());
 
 	return ok;
 }
 
 //------------------------------------------------------------------------
 
-void CRemoteGrenade::Launch(const Vec3& pos, const Vec3& dir, const Vec3& velocity, float speedScale)
+void CRemoteGrenade::Launch(const Vec3 &pos, const Vec3 &dir, const Vec3 &velocity, float speedScale)
 {
 	CProjectile::Launch(pos, dir, velocity, speedScale);
 
-	if (gEnv->bMultiplayer && gEnv->bServer)
+	if(gEnv->bMultiplayer && gEnv->bServer)
 	{
 		CActor* pOwner = GetWeapon()->GetOwnerActor();
-		if (pOwner && pOwner->IsPlayer())
+		if(pOwner && pOwner->IsPlayer())
 		{
 			((CPlayer*)pOwner)->RecordExplosivePlaced(GetEntityId(), eET_LaunchedGrenade);
 		}

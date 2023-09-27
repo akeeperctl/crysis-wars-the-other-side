@@ -29,7 +29,7 @@ class CWeaponAttachmentManager
 public:
 
 	//TODO: Change to ItemStrings
-	typedef std::map<ItemString, EntityId> TBoneAttachmentMap;
+	typedef std::map<ItemString,EntityId> TBoneAttachmentMap;
 	typedef std::list<EntityId>       TAttachedWeaponsList;
 
 	CWeaponAttachmentManager(CActor* _pOwner);
@@ -48,19 +48,19 @@ public:
 	TAttachedWeaponsList GetAttachedWeapons() { return m_attachedWeaponList; }
 
 	bool IsAttachmentFree(const char* attachmentName);
-
+	
 protected:
 
 	//Create different weapon attachments
 	void CreatePlayerBoneAttachments();
-
+	
 	//Create c4 projected attachments
 	void CreatePlayerProjectedAttachments();
 
 private:
-
-	CActor* m_pOwner;
-
+	
+	CActor *m_pOwner;
+	
 	TBoneAttachmentMap		m_boneAttachmentMap;
 	TAttachedWeaponsList	m_attachedWeaponList;
 

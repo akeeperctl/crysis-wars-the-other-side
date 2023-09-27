@@ -21,10 +21,10 @@ struct SFlashVarValue;
 
 enum EFlashDock
 {
-	eFD_Stretch = (1 << 0),
-	eFD_Center = (1 << 1),
-	eFD_Left = (1 << 3),
-	eFD_Right = (1 << 4)
+	eFD_Stretch	= (1 << 0),
+	eFD_Center	= (1 << 1),
+	eFD_Left		= (1 << 3),
+	eFD_Right		= (1 << 4)
 };
 
 class CFlashAnimation
@@ -33,7 +33,7 @@ public:
 	CFlashAnimation();
 	virtual ~CFlashAnimation();
 
-	IFlashPlayer* GetFlashPlayer() const;
+	IFlashPlayer*	GetFlashPlayer() const;
 
 	void SetDock(uint32 eFDock);
 
@@ -70,11 +70,11 @@ public:
 
 private:
 
-	IFlashPlayer* m_pFlashPlayer;
+	IFlashPlayer*	m_pFlashPlayer;
 	uint32	m_dock;
 
 	// shared null player
-	static IFlashPlayer* s_pFlashPlayerNull;
+	static IFlashPlayer*	s_pFlashPlayerNull;
 };
 
 // SUIWideString should be used when we pass sASCII+ISO Latin1 strings to Scaleform
@@ -87,3 +87,4 @@ struct SUIWideString
 };
 
 #endif //__FLASHANIMATION_H__
+

@@ -15,7 +15,7 @@ History:
 #include "IFlashPlayer.h"
 #include "HUD/FlashPlayerNULL.h"
 
-IFlashPlayer* CFlashAnimation::s_pFlashPlayerNull = 0;
+IFlashPlayer*	CFlashAnimation::s_pFlashPlayerNull = 0;
 
 CFlashAnimation::CFlashAnimation()
 {
@@ -28,7 +28,7 @@ CFlashAnimation::~CFlashAnimation()
 	SAFE_RELEASE(m_pFlashPlayer);
 }
 
-IFlashPlayer* CFlashAnimation::GetFlashPlayer() const
+IFlashPlayer*	CFlashAnimation::GetFlashPlayer() const
 {
 	if (m_pFlashPlayer)
 		return m_pFlashPlayer;
@@ -54,7 +54,7 @@ bool CFlashAnimation::LoadAnimation(const char* name)
 
 	m_pFlashPlayer = GetISystem()->CreateFlashPlayerInstance();
 
-	if (m_pFlashPlayer && m_pFlashPlayer->Load(name))
+	if(m_pFlashPlayer && m_pFlashPlayer->Load(name))
 		return true;
 
 	SAFE_RELEASE(m_pFlashPlayer);
@@ -73,23 +73,23 @@ bool CFlashAnimation::IsLoaded() const
 
 void CFlashAnimation::RepositionFlashAnimation()
 {
-	if (m_pFlashPlayer)
+	if(m_pFlashPlayer)
 	{
-		IRenderer* pRenderer = gEnv->pRenderer;
+		IRenderer *pRenderer = gEnv->pRenderer;
 
-		float fMovieRatio = ((float)m_pFlashPlayer->GetWidth()) / ((float)m_pFlashPlayer->GetHeight());
-		float fRenderRatio = ((float)pRenderer->GetWidth()) / ((float)pRenderer->GetHeight());
+		float fMovieRatio		=	((float)m_pFlashPlayer->GetWidth()) / ((float)m_pFlashPlayer->GetHeight());
+		float fRenderRatio	=	((float)pRenderer->GetWidth()) / ((float)pRenderer->GetHeight());
 
-		float fWidth = pRenderer->GetWidth();
-		float fHeight = pRenderer->GetHeight();
+		float fWidth				=	pRenderer->GetWidth();
+		float fHeight				=	pRenderer->GetHeight();
 		float fXPos = 0.0f;
 		float fYPos = 0.0f;
 
-		float fXOffset = (fWidth - (fMovieRatio * fHeight));
+		float fXOffset			= (fWidth - (fMovieRatio * fHeight));
 
-		if (fRenderRatio != fMovieRatio && !(m_dock & eFD_Stretch))
+		if(fRenderRatio != fMovieRatio && !(m_dock & eFD_Stretch))
 		{
-			fWidth = fWidth - fXOffset;
+			fWidth = fWidth-fXOffset;
 
 			if (m_dock & eFD_Left)
 				fXPos = 0;
@@ -99,7 +99,7 @@ void CFlashAnimation::RepositionFlashAnimation()
 				fXPos = fXOffset * 0.5;
 		}
 
-		m_pFlashPlayer->SetViewport(int(fXPos), 0, int(fWidth), int(fHeight));
+		m_pFlashPlayer->SetViewport(int(fXPos),0,int(fWidth),int(fHeight));
 	}
 }
 

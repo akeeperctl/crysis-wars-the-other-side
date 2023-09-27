@@ -13,8 +13,8 @@ Copyright (C), Crytek Studios, 2001-2007.
 #ifdef USE_G15_LCD
 
 CPlayerStatus::CPlayerStatus()
-	: m_healthProgress(0)
-	, m_energyProgress(0)
+: m_healthProgress(0)
+, m_energyProgress(0)
 {
 }
 
@@ -24,10 +24,10 @@ CPlayerStatus::~CPlayerStatus()
 
 bool	CPlayerStatus::PreUpdate()
 {
-	CPlayer* pPlayer = static_cast<CPlayer*>(gEnv->pGame->GetIGameFramework()->GetClientActor());
+	CPlayer *pPlayer = static_cast<CPlayer*>(gEnv->pGame->GetIGameFramework()->GetClientActor());
 
-	if ((pPlayer && !g_pGame->GetGameRules()->IsPlayerActivelyPlaying(pPlayer->GetEntityId())) ||
-		GetEzLcd()->ButtonIsPressed(LG_BUTTON_2))
+	if ((pPlayer && !g_pGame->GetGameRules()->IsPlayerActivelyPlaying(pPlayer->GetEntityId())) || 
+			GetEzLcd()->ButtonIsPressed(LG_BUTTON_2))
 	{
 		GetG15LCD()->SetCurrentPage(GetG15LCD()->GameStatusPage);
 		return false;
@@ -40,13 +40,13 @@ void CPlayerStatus::Update(float frameTime)
 {
 	MakeModifyTarget();
 
-	CPlayer* pPlayer = static_cast<CPlayer*>(gEnv->pGame->GetIGameFramework()->GetClientActor());
-	if (pPlayer)
+	CPlayer *pPlayer = static_cast<CPlayer*>(gEnv->pGame->GetIGameFramework()->GetClientActor());
+	if(pPlayer)
 	{
 		const SPlayerStats stats = *(static_cast<SPlayerStats*>(pPlayer->GetActorStats()));
 		float fHealth = (pPlayer->GetHealth() / float(pPlayer->GetMaxHealth())) * 100.0f;
-		GetEzLcd()->SetProgressBarPosition(m_healthProgress, stats.spectatorMode ? 100.0f : fHealth);
-		float fEnergy = pPlayer->GetNanoSuit()->GetSuitEnergy() * 0.5f;
+		GetEzLcd()->SetProgressBarPosition(m_healthProgress, stats.spectatorMode?100.0f:fHealth);
+		float fEnergy = pPlayer->GetNanoSuit()->GetSuitEnergy()*0.5f;
 		GetEzLcd()->SetProgressBarPosition(m_energyProgress, fEnergy);
 
 		bool hasGrenades = false;
@@ -57,31 +57,31 @@ void CPlayerStatus::Update(float frameTime)
 
 		UpdateWeapon(pPlayer);
 
-		IItem* pOffhand = g_pGame->GetIGameFramework()->GetIItemSystem()->GetItem(pPlayer->GetInventory()->GetItemByClass(CItem::sOffHandClass));
-		if (pOffhand)
+		IItem *pOffhand = g_pGame->GetIGameFramework()->GetIItemSystem()->GetItem(pPlayer->GetInventory()->GetItemByClass(CItem::sOffHandClass));
+		if(pOffhand)
 		{
 			m_pGrenadeSelect->SetVisible(false);
 			int firemode = pOffhand->GetIWeapon()->GetCurrentFireMode();
-			if (IFireMode* pFm = pOffhand->GetIWeapon()->GetFireMode(firemode))
+			if(IFireMode *pFm = pOffhand->GetIWeapon()->GetFireMode(firemode))
 			{
-				if (pFm->GetAmmoType())
+				if(pFm->GetAmmoType())
 				{
 					int x = -1;
 					if (pFm->GetAmmoType() == CItem::sExplosiveGrenade)
 					{
-						x = 0;
+						x = 0;							
 					}
 					else if (pFm->GetAmmoType() == CItem::sSmokeGrenade)
 					{
-						x = 18;
+						x = 18;							
 					}
 					else if (pFm->GetAmmoType() == CItem::sFlashbangGrenade)
 					{
-						x = 39;
+						x = 39;							
 					}
 					else if (pFm->GetAmmoType() == CItem::sEMPGrenade)
 					{
-						x = 59;
+						x = 59;							
 					}
 					if (x != -1)
 					{
@@ -132,28 +132,28 @@ void CPlayerStatus::OnAttach()
 
 	m_pCurrentVehicleDisplayed = NULL;
 	m_vehicleIconMap.clear();
-	CLCDImage* pLTVImage = GetG15LCD()->CreateImage(MAKEINTRESOURCE(IDB_VEHICLE_LTVUS), false);
+	CLCDImage *pLTVImage = GetG15LCD()->CreateImage(MAKEINTRESOURCE(IDB_VEHICLE_LTVUS), false);
 	m_vehicleIconMap[gEnv->pEntitySystem->GetClassRegistry()->FindClass("US_ltv")] = pLTVImage;
 	m_vehicleIconMap[gEnv->pEntitySystem->GetClassRegistry()->FindClass("Asian_ltv")] = pLTVImage;
 	m_vehicleIconMap[gEnv->pEntitySystem->GetClassRegistry()->FindClass("Civ_car1")] = pLTVImage;
-	CLCDImage* pTankImage = GetG15LCD()->CreateImage(MAKEINTRESOURCE(IDB_VEHICLE_TANK), false);
+	CLCDImage *pTankImage = GetG15LCD()->CreateImage(MAKEINTRESOURCE(IDB_VEHICLE_TANK), false);
 	m_vehicleIconMap[gEnv->pEntitySystem->GetClassRegistry()->FindClass("US_tank")] = pTankImage;
 	m_vehicleIconMap[gEnv->pEntitySystem->GetClassRegistry()->FindClass("Asian_tank")] = pTankImage;
-	CLCDImage* pAPCImage = GetG15LCD()->CreateImage(MAKEINTRESOURCE(IDB_VEHICLE_APC), false);
+	CLCDImage *pAPCImage = GetG15LCD()->CreateImage(MAKEINTRESOURCE(IDB_VEHICLE_APC), false);
 	m_vehicleIconMap[gEnv->pEntitySystem->GetClassRegistry()->FindClass("Asian_apc")] = pAPCImage;
 	m_vehicleIconMap[gEnv->pEntitySystem->GetClassRegistry()->FindClass("US_apc")] = pAPCImage;
 	m_vehicleIconMap[gEnv->pEntitySystem->GetClassRegistry()->FindClass("Asian_aaa")] = pAPCImage;
-	CLCDImage* pTruckImage = GetG15LCD()->CreateImage(MAKEINTRESOURCE(IDB_VEHICLE_TRUCK), false);
+	CLCDImage *pTruckImage = GetG15LCD()->CreateImage(MAKEINTRESOURCE(IDB_VEHICLE_TRUCK), false);
 	m_vehicleIconMap[gEnv->pEntitySystem->GetClassRegistry()->FindClass("Asian_truck")] = pTruckImage;
-	CLCDImage* pBoatImage = GetG15LCD()->CreateImage(MAKEINTRESOURCE(IDB_VEHICLE_BOAT), false);
+	CLCDImage *pBoatImage = GetG15LCD()->CreateImage(MAKEINTRESOURCE(IDB_VEHICLE_BOAT), false);
 	m_vehicleIconMap[gEnv->pEntitySystem->GetClassRegistry()->FindClass("US_smallboat")] = pBoatImage;
 	m_vehicleIconMap[gEnv->pEntitySystem->GetClassRegistry()->FindClass("Civ_speedboat")] = pBoatImage;
 	m_vehicleIconMap[gEnv->pEntitySystem->GetClassRegistry()->FindClass("Asian_patrolboat")] = pBoatImage;
 	m_vehicleIconMap[gEnv->pEntitySystem->GetClassRegistry()->FindClass("US_hovercraft")] = pBoatImage;
-	CLCDImage* pHeliImage = GetG15LCD()->CreateImage(MAKEINTRESOURCE(IDB_VEHICLE_HELICOPTER), false);
+	CLCDImage *pHeliImage = GetG15LCD()->CreateImage(MAKEINTRESOURCE(IDB_VEHICLE_HELICOPTER), false);
 	m_vehicleIconMap[gEnv->pEntitySystem->GetClassRegistry()->FindClass("US_vtol")] = pHeliImage;
 	m_vehicleIconMap[gEnv->pEntitySystem->GetClassRegistry()->FindClass("Asian_helicopter")] = pHeliImage;
-	CLCDImage* pASVImage = GetG15LCD()->CreateImage(MAKEINTRESOURCE(IDB_VEHICLE_ASV), false);
+	CLCDImage *pASVImage = GetG15LCD()->CreateImage(MAKEINTRESOURCE(IDB_VEHICLE_ASV), false);
 	m_vehicleIconMap[gEnv->pEntitySystem->GetClassRegistry()->FindClass("US_asv")] = pASVImage;
 
 	m_ammoText = GetEzLcd()->AddText(LG_STATIC_TEXT, LG_SMALL, DT_RIGHT, 60);
@@ -176,7 +176,7 @@ void CPlayerStatus::OnAttach()
 	GetEzLcd()->SetProgressBarPosition(m_healthProgress, 0.0f);
 
 	m_pGrenadeExplosive = GetG15LCD()->CreateImage(MAKEINTRESOURCE(IDB_GRENADE_EXPLOSIVE));
-	m_pGrenadeExplosive->SetOrigin(0, 33);
+	m_pGrenadeExplosive->SetOrigin(0,33);
 	m_explosiveText = GetEzLcd()->AddText(LG_STATIC_TEXT, LG_SMALL, DT_CENTER, 10);
 	GetEzLcd()->SetOrigin(m_explosiveText, 8, 34);
 
@@ -218,37 +218,38 @@ int CPlayerStatus::UpdateAmmoCountText(HANDLE text, CPlayer* pPlayer, IEntityCla
 
 void CPlayerStatus::UpdateWeapon(CPlayer* pPlayer)
 {
-	IVehicle* pVehicle = pPlayer->GetLinkedVehicle();
-	IItem* pItem = pPlayer->GetCurrentItem(false);
+	IVehicle *pVehicle = pPlayer->GetLinkedVehicle();
+	IItem *pItem = pPlayer->GetCurrentItem(false);
 	int ammo = -1;
 	int clipSize = -1;
 	int restAmmo = -1;
 
-	if (pItem)
+	if(pItem)
 	{
-		if (CWeapon* pWeapon = static_cast<CWeapon*>(pItem->GetIWeapon()))
+		if(CWeapon *pWeapon = static_cast<CWeapon*>(pItem->GetIWeapon()))
 		{
 			int fm = pWeapon->GetCurrentFireMode();
-			if (IFireMode* pFM = pWeapon->GetFireMode(fm))
+			if(IFireMode *pFM = pWeapon->GetFireMode(fm))
 			{
 				ammo = pFM->GetAmmoCount();
-				if (IItem* pSlave = pWeapon->GetDualWieldSlave())
+				if(IItem *pSlave = pWeapon->GetDualWieldSlave())
 				{
-					if (IWeapon* pSlaveWeapon = pSlave->GetIWeapon())
-						if (IFireMode* pSlaveFM = pSlaveWeapon->GetFireMode(pSlaveWeapon->GetCurrentFireMode()))
+					if(IWeapon *pSlaveWeapon = pSlave->GetIWeapon())
+						if(IFireMode *pSlaveFM = pSlaveWeapon->GetFireMode(pSlaveWeapon->GetCurrentFireMode()))
 							ammo += pSlaveFM->GetAmmoCount();
 				}
 				clipSize = pFM->GetClipSize();
 				restAmmo = pPlayer->GetInventory()->GetAmmoCount(pFM->GetAmmoType());
 
+
 				char buffer[128];
-				if (!pVehicle)
+				if(!pVehicle)
 					_snprintf(buffer, 128, "%03d / %03d", ammo, restAmmo);
 				else
 					_snprintf(buffer, 128, "");
 				GetEzLcd()->SetText(m_ammoText, buffer);
 
-				if (pFM->CanOverheat())
+				if(pFM->CanOverheat())
 				{
 					//int heat = int(pFM->GetHeat()*100.0f);
 				}
@@ -310,18 +311,18 @@ void CPlayerStatus::UpdateWeapon(CPlayer* pPlayer)
 				//TODO: distinguish between MOAC and MOAR
 			}
 
-			if (!UpdateWeaponImage(m_pItemTACGun, CItem::sTACGunClass, pCurrentClass))
+			if(!UpdateWeaponImage(m_pItemTACGun, CItem::sTACGunClass, pCurrentClass))
 				UpdateWeaponImage(m_pItemTACGun, CItem::sTACGunFleetClass, pCurrentClass);
 		}
 	}
 
 	//vehicle overwrites weapon
-	if (pVehicle)
+	if(pVehicle)
 	{
-		CLCDImage* pImage = stl::find_in_map(m_vehicleIconMap, pVehicle->GetEntity()->GetClass(), NULL);
-		if (pImage && pImage != m_pCurrentVehicleDisplayed)
+		CLCDImage *pImage = stl::find_in_map(m_vehicleIconMap, pVehicle->GetEntity()->GetClass(), NULL);
+		if(pImage && pImage != m_pCurrentVehicleDisplayed)
 		{
-			if (m_pCurrentVehicleDisplayed)
+			if(m_pCurrentVehicleDisplayed)
 				m_pCurrentVehicleDisplayed->SetVisible(false);
 			pImage->SetOrigin(100, 0);
 			pImage->SetVisible(true);
@@ -333,11 +334,12 @@ void CPlayerStatus::UpdateWeapon(CPlayer* pPlayer)
 		_snprintf(buffer, 2, "");
 		GetEzLcd()->SetText(m_ammoText, buffer);
 	}
-	else if (m_pCurrentVehicleDisplayed)
+	else if(m_pCurrentVehicleDisplayed)
 	{
 		m_pCurrentVehicleDisplayed->SetVisible(false);
 		m_pCurrentVehicleDisplayed = NULL;
 	}
+
 }
 
 bool CPlayerStatus::UpdateWeaponImage(CLCDImage* image, IEntityClass* pClass, IEntityClass* pCurrentItem)

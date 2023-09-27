@@ -18,7 +18,9 @@ History:
 # pragma once
 #endif
 
+
 #include "Single.h"
+
 
 class CAutomatic : public CSingle
 {
@@ -26,18 +28,19 @@ protected:
 	typedef struct SAutomaticActions
 	{
 		SAutomaticActions() { Reset(); };
-		void Reset(const IItemParamsNode* params = 0, bool defaultInit = true)
+		void Reset(const IItemParamsNode *params=0, bool defaultInit=true)
 		{
 			CItemParamReader reader(params);
-			ResetValue(automatic_fire, "automatic_fire");
+			ResetValue(automatic_fire,"automatic_fire");
 		}
 
-		void GetMemoryStatistics(ICrySizer* s)
+		void GetMemoryStatistics(ICrySizer * s)
 		{
 			s->Add(automatic_fire);
 		}
 
 		ItemString automatic_fire;
+
 	} SAutomaticActions;
 
 public:
@@ -46,15 +49,15 @@ public:
 
 	// CSingle
 
-	virtual void ResetParams(const struct IItemParamsNode* params);
-	virtual void PatchParams(const struct IItemParamsNode* patch);
+	virtual void ResetParams(const struct IItemParamsNode *params);
+	virtual void PatchParams(const struct IItemParamsNode *patch);
 
-	virtual void GetMemoryStatistics(ICrySizer* s);
+	virtual void GetMemoryStatistics(ICrySizer * s);
 
 	virtual void Update(float frameTime, uint frameId);
 	virtual void StartFire();
 	virtual void StopFire();
-	virtual const char* GetType() const;
+	virtual const char *GetType() const;
 	// no new members... don't override GetMemoryStatistics
 
 	// ~CSingle

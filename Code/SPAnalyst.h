@@ -42,15 +42,15 @@ public:
 	void Reset();
 
 	// IGameplayListener
-	virtual void OnGameplayEvent(IEntity* pEntity, const GameplayEvent& event);
+	virtual void OnGameplayEvent(IEntity *pEntity, const GameplayEvent &event);
 	// ~IGameplayListener
 
 	// ILevelSystemListener
-	virtual void OnLevelNotFound(const char* levelName) {};
-	virtual void OnLoadingStart(ILevelInfo* pLevel);
-	virtual void OnLoadingComplete(ILevel* pLevel);
-	virtual void OnLoadingError(ILevelInfo* pLevel, const char* error) {};
-	virtual void OnLoadingProgress(ILevelInfo* pLevel, int progressAmount) {};
+	virtual void OnLevelNotFound(const char *levelName) {};
+	virtual void OnLoadingStart(ILevelInfo *pLevel);
+	virtual void OnLoadingComplete(ILevel *pLevel);
+	virtual void OnLoadingError(ILevelInfo *pLevel, const char *error) {};
+	virtual void OnLoadingProgress(ILevelInfo *pLevel, int progressAmount) {};
 	// ~ILevelSystemListener
 
 	// IGameFrameworkListener
@@ -61,8 +61,8 @@ public:
 	virtual void OnActionEvent(const SActionEvent& event) {};
 	// ~IGameFrameworkListener
 
-	ILINE void StopRecording() { WriteXML(); }
-	ILINE int GetTimePlayed() { return (int)((gEnv->pTimer->GetFrameStartTime() - m_gameAnalysis.levelStartTime).GetSeconds()); }
+	ILINE void StopRecording() {WriteXML();}
+	ILINE int GetTimePlayed() { return (int)((gEnv->pTimer->GetFrameStartTime()-m_gameAnalysis.levelStartTime).GetSeconds()); }
 
 protected:
 	struct PlayerAnalysis
@@ -72,26 +72,23 @@ protected:
 		int      kills;
 		int      deaths;
 
-		PlayerAnalysis(EntityId entityId = 0)
-			: entityId(entityId),
+		PlayerAnalysis(EntityId entityId=0)
+		: entityId(entityId),
 			kills(0),
 			deaths(0)
 		{
 		}
-
+		
 		void Serialize(TSerialize ser);
 	};
 
 	struct GameAnalysis
 	{
-		GameAnalysis()
-		{
-		}
 		PlayerAnalysis player;
 		CTimeValue levelStartTime;  // time when this level has started, restored from SG
-									// will be set whenever a new level is loaded
+		                            // will be set whenever a new level is loaded
 		CTimeValue gameStartTime;   // will be set when 'Island' is loaded (also restored from SG)
-									// will never be touched again
+		                            // will never be touched again
 	};
 
 protected:
@@ -108,7 +105,7 @@ private:
 	void RecordGameplayFrame();
 	template<class T> void WriteValue(const char* name, T value)
 	{
-		if (m_recordingData)
+		if(m_recordingData)
 			WriteToSection(name, value);
 	}
 	void WriteToSection(const char* name, int value);

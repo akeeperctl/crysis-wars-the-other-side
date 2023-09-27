@@ -17,6 +17,7 @@
 #if !defined(AFX_STDAFX_H__B36C365D_F0EA_4545_B3BC_1E0EAB3B5E43__INCLUDED_)
 #define AFX_STDAFX_H__B36C365D_F0EA_4545_B3BC_1E0EAB3B5E43__INCLUDED_
 
+
 //#define _CRTDBG_MAP_ALLOC
 
 #if _MSC_VER > 1000
@@ -45,11 +46,6 @@
 #include <ILog.h>
 #include <IGameplayRecorder.h>
 
-//TheOtherSide
-#include "TheOtherSide/Helpers/TOS_Debug.h"
-#include "TheOtherSide/Helpers/TOS_STL.h"
-//~TheOtherSide
-
 #ifndef GAMEDLL_EXPORTS
 #define GAMEDLL_EXPORTS
 #endif
@@ -62,8 +58,8 @@
 
 //////////////////////////////////////////////////////////////////////////
 //! Reports a Game Warning to validator with WARNING severity.
-inline void GameWarning(const char* format, ...) PRINTF_PARAMS(1, 2);
-inline void GameWarning(const char* format, ...)
+inline void GameWarning( const char *format,... ) PRINTF_PARAMS(1, 2);
+inline void GameWarning( const char *format,... )
 {
 	if (!format)
 		return;
@@ -72,10 +68,10 @@ inline void GameWarning(const char* format, ...)
 	va_start(args, format);
 	vsprintf_s(buffer, sizeof(buffer), format, args);
 	va_end(args);
-	CryWarning(VALIDATOR_MODULE_GAME, VALIDATOR_WARNING, buffer);
+	CryWarning( VALIDATOR_MODULE_GAME,VALIDATOR_WARNING,buffer );
 }
 
-extern struct SCVars* g_pGameCVars;
+extern struct SCVars *g_pGameCVars;
 
 #if defined(WIN32)
 extern void* g_hInst;
@@ -84,16 +80,17 @@ extern void* g_hInst;
 //---------------------------------------------------------------------
 inline float LinePointDistanceSqr(const Line& line, const Vec3& point, float zScale = 1.0f)
 {
-	Vec3 x0 = point;
-	Vec3 x1 = line.pointonline;
-	Vec3 x2 = line.pointonline + line.direction;
+	Vec3 x0=point;
+	Vec3 x1=line.pointonline;
+	Vec3 x2=line.pointonline+line.direction;
 
-	x0.z *= zScale;
-	x1.z *= zScale;
-	x2.z *= zScale;
+	x0.z*=zScale;
+	x1.z*=zScale;
+	x2.z*=zScale;
 
-	return ((x2 - x1).Cross(x1 - x0)).GetLengthSquared() / (x2 - x1).GetLengthSquared();
+	return ((x2-x1).Cross(x1-x0)).GetLengthSquared()/(x2-x1).GetLengthSquared();
 }
+
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.

@@ -4,6 +4,7 @@
 
 #include "LaptopUtil.h"
 
+
 #if !defined (EXCLUDE_ILG_SDK)
 
 #pragma comment ( lib, "../../SDKs/IntelLaptop/Lib/IntelLaptopGaming.lib" )
@@ -14,12 +15,12 @@ class CGamingTDKObserver : public Notifiable
 {
 public:
 	CGamingTDKObserver() : Notifiable(), m_pLaptopUtil(0){}
-
+	
 	void Init(CLaptopUtil * pLaptopUtil)
 	{
 		m_pLaptopUtil = pLaptopUtil;
 	}
-
+	
 	virtual void notify(int event, long value = 0);
 private:
 	CLaptopUtil * m_pLaptopUtil;
@@ -44,18 +45,20 @@ namespace
 
 #endif
 
-int CLaptopUtil::g_show_laptop_status_test = 0;
-int CLaptopUtil::g_show_laptop_status = 0;
+
+
+int CLaptopUtil::g_show_laptop_status_test=0;
+int CLaptopUtil::g_show_laptop_status=0;
 
 CLaptopUtil::CLaptopUtil()
 {
-	IConsole* pConsole = gEnv->pConsole;
+	IConsole * pConsole = gEnv->pConsole;
 
-	pConsole->Register("g_show_laptop_status", &CLaptopUtil::g_show_laptop_status, 0, 0,
-		"Show laptop status");
+	pConsole->Register(	"g_show_laptop_status", &CLaptopUtil::g_show_laptop_status, 0, 0,
+											"Show laptop status");
 
-	pConsole->Register("g_show_laptop_status_test", &CLaptopUtil::g_show_laptop_status_test, 0, 0,
-		"Show fake laptop status for testing");
+	pConsole->Register(	"g_show_laptop_status_test", &CLaptopUtil::g_show_laptop_status_test, 0, 0,
+											"Show fake laptop status for testing");
 
 	m_isLaptop = false;
 	m_percentBatLife = 0;
@@ -66,16 +69,17 @@ CLaptopUtil::CLaptopUtil()
 
 	Init();
 
-	if (m_isLaptop)
+	if(m_isLaptop)
 	{
 		Update();
 		//gEnv->pGame->GetIGameFramework()->RegisterListener(this, "laptoputil", FRAMEWORKLISTENERPRIORITY_MENU);
 	}
 }
 
+
 CLaptopUtil::~CLaptopUtil()
 {
-	if (m_isLaptop)
+	if(m_isLaptop)
 	{
 		//gEnv->pGame->GetIGameFramework()->UnregisterListener(this);
 
@@ -90,20 +94,21 @@ CLaptopUtil::~CLaptopUtil()
 			IGT->UnregisterEventObserver(WIRELESS_SIGNAL_STRENGTH);
 		}
 		*/
-#endif
+#endif 
 	}
 }
+
 
 void CLaptopUtil::Update()
 {
 #if !defined (EXCLUDE_ILG_SDK)
-	IntelLaptopGamingTDKInterface* IGT = IntelLaptopGamingTDKInterface::GetTDKInterface();
-	if (!IGT)
+	IntelLaptopGamingTDKInterface *IGT = IntelLaptopGamingTDKInterface::GetTDKInterface();
+	if(!IGT)
 		return;
-	m_isBattery = (IGT->GetPowerSrc() == Battery_Power);
+	m_isBattery =(IGT->GetPowerSrc()==Battery_Power);
 	m_percentBatLife = IGT->GetPercentBatteryLife();
 	m_secBatLife = IGT->GetSecBatteryLifeTimeRemaining();
-	m_isWLan = IGT->IsWirelessAdapterConnected() & IGT->IsWirelessAdapterEnabled();
+	m_isWLan = IGT->IsWirelessAdapterConnected() &  IGT->IsWirelessAdapterEnabled();
 	m_signalStrength = IGT->Get80211SignalStrength();
 
 	//gEnv->pLog->Log("Battery: %d, %d", m_percentBatLife, m_isBattery);
@@ -111,11 +116,12 @@ void CLaptopUtil::Update()
 #endif
 }
 
+
 void CLaptopUtil::Init()
 {
 #if !defined (EXCLUDE_ILG_SDK)
-	IntelLaptopGamingTDKInterface* IGT = IntelLaptopGamingTDKInterface::GetTDKInterface();
-	if (!IGT)
+	IntelLaptopGamingTDKInterface *IGT = IntelLaptopGamingTDKInterface::GetTDKInterface();
+	if(!IGT)
 		return;
 	m_isLaptop = IGT->IsLaptop();
 	/*
@@ -143,12 +149,13 @@ void CLaptopUtil::OnPostUpdate(float fDeltaTime)
 }
 */
 
+
 /*
 	if (ms_sys_flash_info)
 		gEnv->pRenderer->SF_Flush();
 
 	{
-	int* isLost((int*) m_pRenderer->GetXRender()->EF_Query(EFQ_DeviceLost, 0));
+    int* isLost((int*) m_pRenderer->GetXRender()->EF_Query(EFQ_DeviceLost, 0));
 		if (m_pMovieView && !*isLost)
 		{
 			UpdateRenderFlags();

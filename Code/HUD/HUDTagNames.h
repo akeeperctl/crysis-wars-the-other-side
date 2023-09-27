@@ -4,7 +4,7 @@ Copyright (C), Crytek Studios, 2001-2005.
 -------------------------------------------------------------------------
 $Id$
 $DateTime$
-Description:
+Description: 
 	MP TagNames
 
 -------------------------------------------------------------------------
@@ -21,23 +21,24 @@ class CHUDTagNames
 {
 public:
 
-	CHUDTagNames();
-	~CHUDTagNames();
+		CHUDTagNames();
+	~	CHUDTagNames();
 
 	void Update();
 
 	//added in MP when client hit another player/vehicle
 	void AddEnemyTagName(EntityId uiEntityId);
-	const char* GetPlayerRank(EntityId uiEntityId);
+	const char *GetPlayerRank(EntityId uiEntityId);
+
 
 private:
 
-	bool ProjectOnSphere(Vec3& rvWorldPos, const AABB& rvBBox);
+	bool ProjectOnSphere(Vec3 &rvWorldPos,const AABB &rvBBox);
 
 	bool IsFriendlyToClient(EntityId uiEntityId);
 
-	IUIDraw* m_pUIDraw;
-	IFFont* m_pMPNamesFont;
+	IUIDraw *m_pUIDraw;
+	IFFont *m_pMPNamesFont;
 
 	struct STagName
 	{
@@ -57,8 +58,8 @@ private:
 	typedef std::list<SEnemyTagName> TEnemyTagNamesList;
 	TEnemyTagNamesList m_enemyTagNamesList;
 
-	void DrawTagName(IActor* pActor, bool bLocalVehicle = false);
-	void DrawTagName(IVehicle* pVehicle);
+	void DrawTagName(IActor *pActor,bool bLocalVehicle=false);
+	void DrawTagName(IVehicle *pVehicle);
 	void DrawTagNames();
 };
 

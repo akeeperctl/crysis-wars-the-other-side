@@ -4,7 +4,7 @@ Copyright (C), Crytek Studios, 2001-2004.
 -------------------------------------------------------------------------
 $Id$
 $DateTime$
-Description:
+Description: 
 
 -------------------------------------------------------------------------
 History:
@@ -18,7 +18,9 @@ History:
 # pragma once
 #endif
 
+
 #include "IGameRulesSystem.h"
+
 
 class CGameRules;
 
@@ -26,30 +28,32 @@ class CShotValidator
 {
 	typedef struct TShot
 	{
-		TShot(uint16 seqn, EntityId wpnId, CTimeValue t, uint8 lives) : seq(seqn), weaponId(wpnId), time(t), life(lives) {};
-		bool ILINE operator==(const TShot& that) const {
-			return seq == that.seq && weaponId == that.weaponId;
+		TShot(uint16 seqn, EntityId wpnId, CTimeValue t, uint8 lives): seq(seqn), weaponId(wpnId), time(t), life(lives) {};
+		bool ILINE operator==(const TShot &that) const {
+			return seq==that.seq && weaponId==that.weaponId;
 		};
-		bool ILINE operator!=(const TShot& that) const {
+		bool ILINE operator!=(const TShot &that) const {
 			return !(*this == that);
 		};
-		bool ILINE operator<(const TShot& that) const {
-			return weaponId < that.weaponId || (weaponId == that.weaponId && seq < that.seq);
+		bool ILINE operator<(const TShot &that) const {
+			return weaponId<that.weaponId || (weaponId==that.weaponId && seq<that.seq);
 		};
 
 		uint16			seq;
 		EntityId		weaponId;
-
+		
 		CTimeValue	time;
 		uint8				life;
+
 	} TShot;
 
 	typedef struct THit
 	{
-		THit(const HitInfo& hit, CTimeValue t) : info(hit), time(t) {};
+		THit(const HitInfo &hit, CTimeValue t): info(hit), time(t) {};
 
 		CTimeValue	time;
 		HitInfo			info;
+
 	} THit;
 
 	typedef std::set<TShot>																TShots;
@@ -61,11 +65,11 @@ class CShotValidator
 	typedef std::map<int, uint16>													TChannelExpiredHits;
 
 public:
-	CShotValidator(CGameRules* pGameRules, IItemSystem* pItemSystem, IGameFramework* pGameFramework);
+	CShotValidator(CGameRules *pGameRules, IItemSystem *pItemSystem, IGameFramework *pGameFramework);
 	~CShotValidator();
 
 	void AddShot(EntityId playerId, EntityId weaponId, uint16 seq, uint8 seqr);
-	bool ProcessHit(const HitInfo& hit);
+	bool ProcessHit(const HitInfo &hit);
 
 	void Reset();
 	void Update();
@@ -74,20 +78,21 @@ public:
 	void Disconnected(int channelId);
 
 private:
-	bool CanHit(const HitInfo& hit) const;
-	bool Expired(const CTimeValue& now, const TShot& shot) const;
-	bool Expired(const CTimeValue& now, const THit& hit) const;
+	bool CanHit(const HitInfo &hit) const;
+	bool Expired(const CTimeValue &now, const TShot &shot) const;
+	bool Expired(const CTimeValue &now, const THit &hit) const;
 
-	void DeclareExpired(int channelId, const HitInfo& hit);
+	void DeclareExpired(int channelId, const HitInfo &hit);
 
-	CGameRules* m_pGameRules;
-	IItemSystem* m_pItemSystem;
-	IGameFramework* m_pGameFramework;
+	CGameRules					*m_pGameRules;
+	IItemSystem					*m_pItemSystem;
+	IGameFramework			*m_pGameFramework;
 
 	TChannelShots				m_shots;
 	TChannelHits				m_pendinghits;
 	bool								m_doingHit;
 	TChannelExpiredHits	m_expired;
 };
+
 
 #endif //__SHOTVALIDATOR_H__

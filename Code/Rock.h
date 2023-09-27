@@ -18,6 +18,7 @@ History:
 # pragma once
 #endif
 
+
 #include "Projectile.h"
 #include "VectorSet.h"
 
@@ -30,11 +31,12 @@ public:
 	virtual ~CRock();
 
 	// CProjectile
-	virtual void HandleEvent(const SGameObjectEvent&);
+	virtual void HandleEvent(const SGameObjectEvent &);
 	// ~CProjectile
 
 private:
 	static VectorSet<CRock*> s_rocks;
 };
+
 
 #endif // __ROCK_H__

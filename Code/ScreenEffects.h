@@ -40,13 +40,13 @@ public:
 	CWaveBlend() {};
 	virtual ~CWaveBlend() {};
 	virtual float Blend(float progress) {
-		return ((cos((progress * g_PI) - g_PI) + 1.0f) / 2.0f);
+		return ((cos((progress * g_PI) - g_PI) + 1.0f)/2.0f);
 	}
 };
 
 //-BlendedEffects-----------------------
 // BlendedEffect interface, derive from this.
-typedef struct IBlendedEffect
+typedef struct IBlendedEffect 
 {
 public:
 	virtual void Init() {}; // called when the effect actually starts rather than when it is created.
@@ -91,9 +91,9 @@ private:
 // Speed is how fast progress goes from 0 to 1.
 typedef struct SBlendJobNode
 {
-	IBlendedEffect* myEffect;
-	SBlendJobNode* next;
-	IBlendType* blendType;
+	IBlendedEffect *myEffect;
+	SBlendJobNode *next;
+	IBlendType *blendType;
 	int blendGroup;
 	float speed;
 	float progress;
@@ -127,7 +127,7 @@ typedef struct SBlendJobNode
 } SBlendJobNode;
 
 // A blend group is a queue of blend jobs.
-typedef struct SBlendGroup
+typedef struct SBlendGroup 
 {
 	SBlendGroup()
 	{
@@ -136,10 +136,10 @@ typedef struct SBlendGroup
 	}
 	~SBlendGroup()
 	{
-		SBlendJobNode* cur = m_head;
+		SBlendJobNode *cur = m_head;
 		while (cur)
 		{
-			SBlendJobNode* next = cur->next;
+			SBlendJobNode *next = cur->next;
 			delete cur;
 			cur = next;
 		}
@@ -151,7 +151,7 @@ typedef struct SBlendGroup
 			m_head->Update(frameTime);
 			if (m_head->Done())
 			{
-				SBlendJobNode* next = m_head->next;
+				SBlendJobNode *next = m_head->next;
 				if (m_head == m_tail)
 					m_tail = next;
 				delete m_head;
@@ -162,7 +162,7 @@ typedef struct SBlendGroup
 			}
 		}
 	}
-	void Enqueue(SBlendJobNode* newNode)
+	void Enqueue(SBlendJobNode *newNode)
 	{
 		if (m_tail)
 		{
@@ -180,18 +180,18 @@ typedef struct SBlendGroup
 	{
 		return (!m_head);
 	}
-	SBlendJobNode* m_tail;
-	SBlendJobNode* m_head;
+	SBlendJobNode	*m_tail;
+	SBlendJobNode	*m_head;
 } SBlendGroup;
 
 //-ScreenEffects------------------------
 class CScreenEffects
 {
 public:
-	CScreenEffects(IActor* owner);
+	CScreenEffects(IActor *owner);
 	~CScreenEffects(void);
 	// Start a blend
-	virtual void StartBlend(IBlendedEffect* effect, IBlendType* blendType, float speed, int blendGroup);
+	virtual void StartBlend(IBlendedEffect *effect, IBlendType *blendType, float speed, int blendGroup);
 	virtual bool HasJobs(int blendGroup);
 	virtual int GetUniqueID();
 
@@ -207,11 +207,11 @@ public:
 	// Camera shake
 	virtual void CamShake(Vec3 shiftShake, Vec3 rotateShake, float freq, float shakeTime, float randomness = 0, int shakeID = 5);
 
-	virtual void EnableBlends(bool enable) { m_enableBlends = enable; };
+	virtual void EnableBlends(bool enable) {m_enableBlends = enable;};
 	virtual void EnableBlends(bool enable, int blendGroup);
 
 	// Update x/y coords
-	virtual void SetUpdateCoords(const char* coordsXname, const char* coordsYname, Vec3 pos);
+	virtual void SetUpdateCoords(const char *coordsXname, const char *coordsYname, Vec3 pos);
 
 	// Util
 	virtual float GetCurrentFOV();

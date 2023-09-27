@@ -21,9 +21,9 @@ History:
 class CFlashMenuScreen : public CFlashAnimation
 {
 public:
-	void GetMemoryStatistics(ICrySizer* s);
+	void GetMemoryStatistics(ICrySizer * s);
 
-	bool Load(const char* strFile);
+	bool Load(const char *strFile);
 	void UpdateRatio();
 };
 
