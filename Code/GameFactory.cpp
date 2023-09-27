@@ -80,7 +80,11 @@
 #include <IVehicleSystem.h>
 #include <IGameRulesSystem.h>
 
-
+//TheOtherSide
+#include "TheOtherSideMP/Actor Files/player/TOSPlayer.h"
+#include "TheOtherSideMP/Actor Files/aliens/TOSAlien.h"
+#include "TheOtherSideMP/Actor Files/aliens/TOSTrooper.h"
+//TheOtherSide
 
 #define HIDE_FROM_EDITOR(className)																																				\
   { IEntityClass *pItemClass = gEnv->pEntitySystem->GetClassRegistry()->FindClass(className);\
@@ -128,7 +132,11 @@ void InitGameFactory(IGameFramework *pFramework)
 {
   assert(pFramework);
 
-  REGISTER_FACTORY(pFramework, "Player", CPlayer, false);
+  //TheOtherSide
+  //REGISTER_FACTORY(pFramework, "Player", CPlayer, false);
+  REGISTER_FACTORY(pFramework, "Player", CTOSPlayer, false);
+  //~TheOtherSide
+
   REGISTER_FACTORY(pFramework, "Grunt", CPlayer, true);
   REGISTER_FACTORY(pFramework, "Civilian", CPlayer, true);
 
@@ -184,12 +192,18 @@ void InitGameFactory(IGameFramework *pFramework)
 #ifndef SP_DEMO
   //aliens
   REGISTER_FACTORY(pFramework, "AlienPlayer", CAlien, false);
-  REGISTER_FACTORY(pFramework, "Aliens/Alien", CAlien, true);
 //  REGISTER_FACTORY(pFramework, "Aliens/Observer", CObserver, true);
-  REGISTER_FACTORY(pFramework, "Aliens/Trooper", CTrooper, true);
+  
+  //TheOtherSide
+  //REGISTER_FACTORY(pFramework, "Aliens/Alien", CAlien, true);
+  //REGISTER_FACTORY(pFramework, "Aliens/Trooper", CTrooper, true);
+  REGISTER_FACTORY(pFramework, "Aliens/Alien", CTOSAlien, true);
+  REGISTER_FACTORY(pFramework, "Aliens/Trooper", CTOSTrooper, true);
+  //~TheOtherSide
+
   REGISTER_FACTORY(pFramework, "Aliens/Scout", CScout, true);
   REGISTER_FACTORY(pFramework, "Aliens/Hunter", CHunter, true);
-	REGISTER_FACTORY(pFramework, "Misc/Shark", CShark, true);
+  REGISTER_FACTORY(pFramework, "Misc/Shark", CShark, true);
   //	REGISTER_FACTORY(m_pFramework, "Aliens/Warrior", CDrone, true);
   //REGISTER_FACTORY(pFramework, "Aliens/Coordinator", CObserver, true);
 #else

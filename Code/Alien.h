@@ -18,7 +18,11 @@
 # pragma once
 #endif
 
-#include "Actor.h"
+//TheOtherSide
+//#include "Actor.h"
+#include "TheOtherSideMP/Actor Files/TOSActor.h"
+//TheOtherSide
+
 #include <IActionMapManager.h>
 
 struct SViewParams;
@@ -313,7 +317,10 @@ private:
 
 
 class CAlien :
-	public CActor,
+	//TheOtherSide
+	//public CActor,
+	public CTOSActor,
+	//~TheOtherSide
 	public IActionListener
 {
 public:

@@ -18,7 +18,12 @@
 # pragma once
 #endif
 
-#include "Actor.h"
+//TheOtherSide
+//#include "Actor.h"
+#include "TheOtherSideMP/Actor Files/TOSActor.h"
+//TheOtherSide
+
+
 #include "NanoSuit.h"
 #include <IActionMapManager.h>
 #include "Network/NetActionSync.h"
@@ -273,7 +278,11 @@ struct IPlayerEventListener
 class CPlayerView;
 
 class CPlayer :
-	public CActor, public ISoundSystemEventListener
+	//TheOtherSide
+	public CTOSActor,
+	//public CActor, 
+	//TheOtherSide
+	public ISoundSystemEventListener
 {
 	friend class CPlayerMovement;
 	friend class CPlayerRotation;
