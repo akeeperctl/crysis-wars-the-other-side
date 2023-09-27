@@ -59,6 +59,12 @@
 
 #include "DownloadTask.h"
 
+//TheOtherSide
+#include "TheOtherSideMP\Game Files\TOSGameEventRecorder.h"
+#include "TheOtherSideMP\Game Files\TOSGameCvars.h"
+#include "TheOtherSideMP\Game Files\TOSGame.h"
+//TheOtherSide
+
 #define GAME_DEBUG_MEM  // debug memory usage
 #undef  GAME_DEBUG_MEM
 
@@ -86,6 +92,11 @@ CG2AutoRegFlowNodeBase *CG2AutoRegFlowNodeBase::m_pLast=0;
 CGame *g_pGame = 0;
 SCVars *g_pGameCVars = 0;
 CGameActions *g_pGameActions = 0;
+
+//TheOtherSide
+CTOSGame* g_pTOSGame = 0;
+STOSCvars* g_pTOSGameCvars = 0;
+//TheOtherSide
 
 CGame::CGame()
 : m_pFramework(0),
@@ -119,6 +130,11 @@ CGame::CGame()
 	m_pMultiplayerAM = 0;
 
 	GetISystem()->SetIGame( this );
+
+	//TheOtherSide
+	g_pTOSGame = new CTOSGame();
+	g_pTOSGameCvars = new STOSCvars();
+	//TheOtherSide
 }
 
 CGame::~CGame()
@@ -395,6 +411,11 @@ bool CGame::CompleteInit()
 		}
 	}
 
+	//TheOtherSide
+	g_pTOSGame->Init();
+	g_pTOSGameCvars->InitCVars(m_pConsole);
+	//TheOtherSide
+
 #ifdef GAME_DEBUG_MEM
 	DumpMemInfo("CGame::CompleteInit");
 #endif
@@ -430,6 +451,11 @@ int CGame::Update(bool haveFocus, unsigned int updateFlags)
 	if(m_pDownloadTask)
 		m_pDownloadTask->Update();
 
+	//TheOtherSide
+	const int frameId = gEnv->pRenderer->GetFrameID();
+	g_pTOSGame->Update(frameTime, frameId);
+	//TheOtherSide
+
 	return bRun ? 1 : 0;
 }
 
@@ -458,11 +484,15 @@ void CGame::EditorResetGame(bool bStart)
 		}
 		m_pHUD = new CHUD;
 		m_pHUD->Init();
-		m_pHUD->PlayerIdSet(m_uiPlayerID);	
+		m_pHUD->PlayerIdSet(m_uiPlayerID);
+
+		g_pTOSGame->GetEventRecorder()->RecordEvent(nullptr, STOSGameEvent(eEGE_EditorGameEnter, "", true));
 	}
 	else
 	{
 		SAFE_DELETE(m_pHUD);
+		g_pTOSGame->GetEventRecorder()->RecordEvent(nullptr, STOSGameEvent(eEGE_EditorGameExit, "", true));
+
 	}
 }
 
@@ -535,6 +565,13 @@ string CGame::InitMapReloading()
 
 void CGame::Shutdown()
 {
+	//TheOtherSide
+	g_pTOSGame->Shutdown();
+	g_pTOSGame = nullptr;
+
+	SAFE_DELETE(g_pTOSGameCvars);
+	//TheOtherSide
+
 	if (m_pPlayerProfileManager)
 	{
 		m_pPlayerProfileManager->LogoutUser(m_pPlayerProfileManager->GetCurrentUser());
