@@ -598,6 +598,13 @@ bool CGameRules::OnClientConnect(int channelId, bool isReset)
 	CActor* pActor = GetActorByChannelId(channelId);
 	if (pActor)
 	{
+		//TheOtherSide
+		CryLogAlways("[C++][FuncCall][CGameRules::OnClientConnect] Actor: %s, Spectator Mode: %i, Channel Id: %i, Event: eGE_Connected",
+			pActor->GetEntity()->GetName(),
+			pActor->GetSpectatorMode(),
+			channelId);
+		//~TheOtherSide
+
 		//we need to pass team somehow so it will be reported correctly
 		int status[2];
 		status[0] = GetTeam(pActor->GetEntityId());

@@ -36,6 +36,7 @@ History:
 //TheOtherSide
 #include "TheOtherSide/Control/ControlSystem.h"
 #include "TheOtherSide/Helpers/TOS_Sounds.h"
+constexpr bool TOS_RMI_DEBUG_DRAW = false;
 //~TheOtherSide
 
 #include <StlUtils.h>
@@ -1405,10 +1406,19 @@ IMPLEMENT_RMI(CGameRules, ClEnteredGame)
 		CActor* pActor = GetActorByChannelId(m_pGameFramework->GetClientActor()->GetChannelId());
 		if (pActor)
 		{
+			//TheOtherSide
+			if (TOS_RMI_DEBUG_DRAW)
+			{
+				CryLogAlways("[C++][RMI][Client] ClEnteredGame Actor: %s, Spectator Mode: %i, Event: eGE_Connected",
+					pActor->GetEntity()->GetName(),
+					pActor->GetSpectatorMode());
+			}
+			//~TheOtherSide
+
 			int status[2];
 			status[0] = GetTeam(pActor->GetEntityId());
 			status[1] = pActor->GetSpectatorMode();
-			m_pGameplayRecorder->Event(pActor->GetEntity(), GameplayEvent(eGE_Connected, 0, 0, (void*)status));
+			m_pGameplayRecorder->Event(pActor->GetEntity(), GameplayEvent(eGE_Connected, 0, 0, (void*)status));	
 		}
 	}
 	return true;

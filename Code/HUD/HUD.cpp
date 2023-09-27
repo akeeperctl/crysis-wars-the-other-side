@@ -586,11 +586,13 @@ bool CHUD::Init()
 		m_pHUDInstantAction = new CHUDInstantAction(this);
 		m_hudObjectsList.push_back(m_pHUDInstantAction);
 
-		if (g_pGame->GetGameRules()->GetTeamCount() > 1)
+		//TheOtherSide fix crash g_pGame->GetGameRules() null
+		if (g_pGame->GetGameRules() && g_pGame->GetGameRules()->GetTeamCount() > 1)
 		{
 			m_animTeamSelection.Load("Libs/UI/HUD_TeamSelection.gfx", eFD_Center, eFAF_ManualRender | eFAF_ThisHandler);
 			m_animTeamSelection.GetFlashPlayer()->SetVisible(false);
 		}
+		//~TheOtherSide fix crash g_pGame->GetGameRules() null
 	}
 	else
 	{
