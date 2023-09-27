@@ -19,6 +19,10 @@
 #include "Player.h"
 #include "GameRules.h"
 
+//TheOtherSide
+#include <functional>
+//TheOtherSide
+
 void SGrabStats::Serialize(TSerialize ser)
 {
 	assert(ser.GetSerializationTarget() != eST_Network);

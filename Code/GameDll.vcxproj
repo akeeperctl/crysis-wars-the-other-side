@@ -25,6 +25,7 @@
     <SccLocalPath>.</SccLocalPath>
     <SccProvider>MSSCCI:Perforce SCM</SccProvider>
     <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'" Label="Configuration">
@@ -79,6 +80,7 @@
     <OutDir>$(SolutionDir)..\Bin64\</OutDir>
     <IntDir>$(SolutionDir)..\..\..\BinTemp\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
     <LinkIncremental>true</LinkIncremental>
+    <TargetName>TheOtherSide</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">
     <OutDir>$(SolutionDir)..\Bin32\</OutDir>
@@ -88,7 +90,8 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">
     <OutDir>$(SolutionDir)..\Bin64\</OutDir>
     <IntDir>$(SolutionDir)..\..\..\BinTemp\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
-    <LinkIncremental>false</LinkIncremental>
+    <LinkIncremental>true</LinkIncremental>
+    <TargetName>TheOtherSide</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -105,8 +108,8 @@
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>StdAfx.h</PrecompiledHeaderFile>
-      <WarningLevel>Level3</WarningLevel>
-      <TreatWarningAsError>true</TreatWarningAsError>
+      <WarningLevel>TurnOffAllWarnings</WarningLevel>
+      <TreatWarningAsError>false</TreatWarningAsError>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
     </ClCompile>
     <Link>
@@ -118,6 +121,7 @@
       <LargeAddressAware>true</LargeAddressAware>
       <ImportLibrary>$(OutDir)GameDll.lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
+      <TreatLinkerWarningAsErrors>false</TreatLinkerWarningAsErrors>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -136,18 +140,20 @@
       <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>StdAfx.h</PrecompiledHeaderFile>
-      <WarningLevel>Level3</WarningLevel>
-      <TreatWarningAsError>true</TreatWarningAsError>
+      <WarningLevel>TurnOffAllWarnings</WarningLevel>
+      <TreatWarningAsError>false</TreatWarningAsError>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <OutputFile>$(OutDir)CrysisWarsMod.dll</OutputFile>
+      <OutputFile>$(OutDir)TheOtherSide.dll</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)CryGame.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
       <ImportLibrary>$(OutDir)GameDll.lib</ImportLibrary>
       <TargetMachine>MachineX64</TargetMachine>
+      <AdditionalDependencies>version.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <TreatLinkerWarningAsErrors>false</TreatLinkerWarningAsErrors>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">
@@ -169,8 +175,8 @@
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>StdAfx.h</PrecompiledHeaderFile>
-      <WarningLevel>Level3</WarningLevel>
-      <TreatWarningAsError>true</TreatWarningAsError>
+      <WarningLevel>TurnOffAllWarnings</WarningLevel>
+      <TreatWarningAsError>false</TreatWarningAsError>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
@@ -183,6 +189,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <BaseAddress>0x39000000</BaseAddress>
       <TargetMachine>MachineX86</TargetMachine>
+      <TreatLinkerWarningAsErrors>false</TreatLinkerWarningAsErrors>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">
@@ -204,12 +211,13 @@
       <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>StdAfx.h</PrecompiledHeaderFile>
-      <WarningLevel>Level3</WarningLevel>
-      <TreatWarningAsError>true</TreatWarningAsError>
+      <WarningLevel>TurnOffAllWarnings</WarningLevel>
+      <TreatWarningAsError>false</TreatWarningAsError>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DisableSpecificWarnings>4091;4311;4302;4312;4305;</DisableSpecificWarnings>
     </ClCompile>
     <Link>
-      <OutputFile>$(OutDir)CrysisWarsMod.dll</OutputFile>
+      <OutputFile>$(OutDir)TheOtherSide.dll</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)CryGame.pdb</ProgramDatabaseFile>
@@ -217,6 +225,8 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <BaseAddress>0x39000000</BaseAddress>
       <TargetMachine>MachineX64</TargetMachine>
+      <AdditionalDependencies>version.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <TreatLinkerWarningAsErrors>false</TreatLinkerWarningAsErrors>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -391,6 +401,13 @@
     <ClCompile Include="TacBullet.cpp" />
     <ClCompile Include="TacLauncher.cpp" />
     <ClCompile Include="TagBullet.cpp" />
+    <ClCompile Include="TheOtherSideMP\Actor Files\aliens\TOSAlien.cpp" />
+    <ClCompile Include="TheOtherSideMP\Actor Files\aliens\TOSTrooper.cpp" />
+    <ClCompile Include="TheOtherSideMP\Actor Files\TOSActor.cpp" />
+    <ClCompile Include="TheOtherSideMP\Actor Files\TOSPlayer.cpp" />
+    <ClCompile Include="TheOtherSideMP\Game Files\TOSGame.cpp" />
+    <ClCompile Include="TheOtherSideMP\Game Files\TOSGameCvars.cpp" />
+    <ClCompile Include="TheOtherSideMP\Game Files\TOSGameEventRecorder.cpp" />
     <ClCompile Include="Throw.cpp" />
     <ClCompile Include="ThrowableWeapon.cpp" />
     <ClCompile Include="TracerManager.cpp" />
@@ -573,6 +590,25 @@
     <ClInclude Include="TacBullet.h" />
     <ClInclude Include="TacLauncher.h" />
     <ClInclude Include="TagBullet.h" />
+    <ClInclude Include="TheOtherSideMP\Actor Files\aliens\TOSAlien.h" />
+    <ClInclude Include="TheOtherSideMP\Actor Files\aliens\TOSTrooper.h" />
+    <ClInclude Include="TheOtherSideMP\Actor Files\Player\TOSPlayer.h" />
+    <ClInclude Include="TheOtherSideMP\Actor Files\TOSActor.h" />
+    <ClInclude Include="TheOtherSideMP\Control System\ControlSystem.h" />
+    <ClInclude Include="TheOtherSideMP\Control System\IControlSystemChild.h" />
+    <ClInclude Include="TheOtherSideMP\Game Files\ITOSGameModule.h" />
+    <ClInclude Include="TheOtherSideMP\Game Files\TOSGame.h" />
+    <ClInclude Include="TheOtherSideMP\Game Files\TOSGameCvars.h" />
+    <ClInclude Include="TheOtherSideMP\Game Files\TOSGameEventRecorder.h" />
+    <ClInclude Include="TheOtherSideMP\Helpers\TOS_AI.h" />
+    <ClInclude Include="TheOtherSideMP\Helpers\TOS_Debug.h" />
+    <ClInclude Include="TheOtherSideMP\Helpers\TOS_Enums.h" />
+    <ClInclude Include="TheOtherSideMP\Helpers\TOS_HUD.h" />
+    <ClInclude Include="TheOtherSideMP\Helpers\TOS_Inventory.h" />
+    <ClInclude Include="TheOtherSideMP\Helpers\TOS_Script.h" />
+    <ClInclude Include="TheOtherSideMP\Helpers\TOS_Sounds.h" />
+    <ClInclude Include="TheOtherSideMP\Helpers\TOS_STL.h" />
+    <ClInclude Include="TheOtherSideMP\Helpers\TOS_Vehicle.h" />
     <ClInclude Include="Throw.h" />
     <ClInclude Include="ThrowableWeapon.h" />
     <ClInclude Include="TracerManager.h" />

@@ -115,6 +115,27 @@
     <Filter Include="TheOtherSideMP\Actor Files">
       <UniqueIdentifier>{9c15a8d5-e10f-4dce-9b4d-835c97230a4f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="TheOtherSideMP\Control System">
+      <UniqueIdentifier>{eb69eba3-4e82-4a2a-bde9-b78a06664056}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TheOtherSideMP\AI Files">
+      <UniqueIdentifier>{9819ac0e-82ff-477d-acc4-c0c0e819d9fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TheOtherSideMP\Helpers">
+      <UniqueIdentifier>{a4a2112c-d269-4422-b0fa-bcffc2771a4e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TheOtherSideMP\Abilities Files">
+      <UniqueIdentifier>{b10610bf-eccd-486d-9935-373dd9721475}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TheOtherSideMP\Game Files">
+      <UniqueIdentifier>{6a638ed2-5d3b-4d9e-9662-c6daf842ff8c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TheOtherSideMP\Actor Files\aliens">
+      <UniqueIdentifier>{584b3523-2624-471a-a304-0e6d5abcf77f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TheOtherSideMP\Actor Files\player">
+      <UniqueIdentifier>{80f2a524-f64c-4877-b6d4-c9976bff1110}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Actor.cpp">
@@ -710,6 +731,27 @@
     </ClCompile>
     <ClCompile Include="DllMain.cpp" />
     <ClCompile Include="StdAfx.cpp" />
+    <ClCompile Include="TheOtherSideMP\Actor Files\TOSActor.cpp">
+      <Filter>TheOtherSideMP\Actor Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TheOtherSideMP\Game Files\TOSGame.cpp">
+      <Filter>TheOtherSideMP\Game Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TheOtherSideMP\Game Files\TOSGameCvars.cpp">
+      <Filter>TheOtherSideMP\Game Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TheOtherSideMP\Game Files\TOSGameEventRecorder.cpp">
+      <Filter>TheOtherSideMP\Game Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TheOtherSideMP\Actor Files\TOSPlayer.cpp">
+      <Filter>TheOtherSideMP\Actor Files\player</Filter>
+    </ClCompile>
+    <ClCompile Include="TheOtherSideMP\Actor Files\aliens\TOSAlien.cpp">
+      <Filter>TheOtherSideMP\Actor Files\aliens</Filter>
+    </ClCompile>
+    <ClCompile Include="TheOtherSideMP\Actor Files\aliens\TOSTrooper.cpp">
+      <Filter>TheOtherSideMP\Actor Files\aliens</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor.h">
@@ -1238,6 +1280,63 @@
       <Filter>Expansion\Weapons</Filter>
     </ClInclude>
     <ClInclude Include="StdAfx.h" />
+    <ClInclude Include="TheOtherSideMP\Actor Files\TOSActor.h">
+      <Filter>TheOtherSideMP\Actor Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TheOtherSideMP\Game Files\TOSGame.h">
+      <Filter>TheOtherSideMP\Game Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TheOtherSideMP\Game Files\TOSGameCvars.h">
+      <Filter>TheOtherSideMP\Game Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TheOtherSideMP\Helpers\TOS_AI.h">
+      <Filter>TheOtherSideMP\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="TheOtherSideMP\Helpers\TOS_Debug.h">
+      <Filter>TheOtherSideMP\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="TheOtherSideMP\Helpers\TOS_Enums.h">
+      <Filter>TheOtherSideMP\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="TheOtherSideMP\Helpers\TOS_HUD.h">
+      <Filter>TheOtherSideMP\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="TheOtherSideMP\Helpers\TOS_Inventory.h">
+      <Filter>TheOtherSideMP\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="TheOtherSideMP\Helpers\TOS_Script.h">
+      <Filter>TheOtherSideMP\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="TheOtherSideMP\Helpers\TOS_Sounds.h">
+      <Filter>TheOtherSideMP\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="TheOtherSideMP\Helpers\TOS_STL.h">
+      <Filter>TheOtherSideMP\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="TheOtherSideMP\Helpers\TOS_Vehicle.h">
+      <Filter>TheOtherSideMP\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="TheOtherSideMP\Game Files\ITOSGameModule.h">
+      <Filter>TheOtherSideMP\Game Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TheOtherSideMP\Game Files\TOSGameEventRecorder.h">
+      <Filter>TheOtherSideMP\Game Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TheOtherSideMP\Control System\ControlSystem.h">
+      <Filter>TheOtherSideMP\Control System</Filter>
+    </ClInclude>
+    <ClInclude Include="TheOtherSideMP\Control System\IControlSystemChild.h">
+      <Filter>TheOtherSideMP\Control System</Filter>
+    </ClInclude>
+    <ClInclude Include="TheOtherSideMP\Actor Files\Player\TOSPlayer.h">
+      <Filter>TheOtherSideMP\Actor Files\player</Filter>
+    </ClInclude>
+    <ClInclude Include="TheOtherSideMP\Actor Files\aliens\TOSAlien.h">
+      <Filter>TheOtherSideMP\Actor Files\aliens</Filter>
+    </ClInclude>
+    <ClInclude Include="TheOtherSideMP\Actor Files\aliens\TOSTrooper.h">
+      <Filter>TheOtherSideMP\Actor Files\aliens</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="GameActions.actions">
