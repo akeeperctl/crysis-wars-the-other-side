@@ -517,7 +517,10 @@ class CItem;
 class CWeapon;
 
 class CActor :
-	public CGameObjectExtensionHelper<CActor, IActor>,
+	//TheOtherSide crash fix
+	public CGameObjectExtensionHelper<CActor, IActor, 64>,
+	//public CGameObjectExtensionHelper<CActor, IActor>,
+	//~TheOtherSide
 	public IGameObjectView,
 	public IGameObjectProfileManager
 {
