@@ -3,6 +3,48 @@
 #include <IGameObject.h>
 #include "TheOtherSideMP/Game/Modules/MasterSystem/MasterModule.h"
 
+struct PintestParams;
+
+// Send pintest rmi to the server
+//Example: RMISENDER_SERVER_PINTEST("[CTOSGame::OnExtraGameplayEvent]");
+#define RMISENDER_SERVER_PINTEST(comment)\
+	auto pSender = g_pTOSGame->GetMasterModule()->GetRMISender();\
+	assert(pSender);\
+	PintestParams params;\
+	params.commentary = comment;\
+	pSender->RMISend(CTOSMasterRMISender::SvRequestPintest(), params, eRMI_ToServer)\
+
+// Send pintest rmi to the client
+//Example: RMISENDER_CLIENT_PINTEST("[CTOSGame::OnExtraGameplayEvent]", pGO->GetChannelId());
+#define RMISENDER_CLIENT_PINTEST(comment, clientChannelId)\
+	auto pSender = g_pTOSGame->GetMasterModule()->GetRMISender();\
+	assert(pSender);\
+	PintestParams params;\
+	params.commentary = comment;\
+	pSender->RMISend(CTOSMasterRMISender::ClPintest(), params, eRMI_ToClientChannel, clientChannelId)\
+
+struct NoParams
+{
+	NoParams() {};
+
+	void SerializeWith(TSerialize ser) {};
+};
+
+struct PintestParams
+{
+	string commentary;
+	PintestParams() {};
+	PintestParams(const char* _commentary)
+		: commentary(_commentary)
+	{
+	}
+
+	void SerializeWith(TSerialize ser)
+	{
+		ser.Value("commentary", commentary, 'stab');
+	}
+};
+
 struct MasterAddingParams
 {
 	EntityId entityId;
@@ -75,7 +117,11 @@ public:
 	//NOATTACH - Без привязки к данным сериализации
 	//Reliable - надёжная доставка пакета
 	
+	DECLARE_SERVER_RMI_NOATTACH(SvRequestPintest, PintestParams, eNRT_ReliableOrdered);
+	DECLARE_CLIENT_RMI_NOATTACH(ClPintest, PintestParams, eNRT_ReliableOrdered);
+
 	DECLARE_SERVER_RMI_NOATTACH(SvRequestMasterAdd, MasterAddingParams, eNRT_ReliableOrdered);
+	DECLARE_SERVER_RMI_NOATTACH(SvRequestMasterRemove, MasterAddingParams, eNRT_ReliableOrdered);
 
 protected:
 

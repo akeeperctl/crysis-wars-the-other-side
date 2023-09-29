@@ -5,12 +5,12 @@
 
 CTOSMasterRMISender::CTOSMasterRMISender()
 {
-	TOS_RECORD_EVENT(0, STOSGameEvent(eEGE_RMISenderCreated, "By Master Module", true));
+	TOS_RECORD_EVENT(0, STOSGameEvent(eEGE_RMISenderCreated, "MasterModule", true));
 }
 
 CTOSMasterRMISender::~CTOSMasterRMISender()
 {
-	TOS_RECORD_EVENT(0, STOSGameEvent(eEGE_RMISenderDestroyed, "By Master Module", true));
+	TOS_RECORD_EVENT(0, STOSGameEvent(eEGE_RMISenderDestroyed, "MasterModule", true));
 }
 
 bool CTOSMasterRMISender::Init(IGameObject* pGameObject)
@@ -106,3 +106,47 @@ IMPLEMENT_RMI(CTOSMasterRMISender, SvRequestMasterAdd)
 
 	return true;
 }
+
+//------------------------------------------------------------------------
+IMPLEMENT_RMI(CTOSMasterRMISender, SvRequestMasterRemove)
+{
+	if (gEnv->bServer)
+	{
+		auto pEntity = gEnv->pEntitySystem->GetEntity(params.entityId);
+		assert(pEntity);
+
+		CryLogAlways(" ");
+		CryLogAlways("[C++][%s][%s][SvRequestMasterRemove] MasterEntity: %s",
+			TOS_Debug::GetEnv(), TOS_Debug::GetAct(3), pEntity->GetName());
+		//[RMI RECEIVED][SERVER][SvRequestMasterAdd] NetChannel: lmlicenses.wip4.adobe.com:50632, MasterEntity: Akeeper
+
+		g_pTOSGame->GetMasterModule()->MasterRemove(pEntity);
+	}
+
+	return true;
+}
+
+//------------------------------------------------------------------------
+IMPLEMENT_RMI(CTOSMasterRMISender, SvRequestPintest)
+{
+	if (gEnv->bServer)
+	{
+		CryLogAlways("[C++][%s][%s][SvRequestPintest] from %s", 
+			TOS_Debug::GetEnv(), TOS_Debug::GetAct(3),params.commentary);
+	}
+
+	return true;
+}
+
+//------------------------------------------------------------------------
+IMPLEMENT_RMI(CTOSMasterRMISender, ClPintest)
+{
+	if (gEnv->bClient)
+	{
+		CryLogAlways("[C++][%s][%s][ClPintest] from %s", 
+			TOS_Debug::GetEnv(), TOS_Debug::GetAct(3), params.commentary);
+	}
+
+	return true;
+}
+
