@@ -39,11 +39,11 @@ class CTOSMasterRMISender;
  * Мастер - это игрок, управляющий несвоим актёром.
  * Автоудаление: отсутствует.
  */
-class CTOSModuleMasterSystem : ITOSGameModule
+class CTOSMasterModule : ITOSGameModule
 {
 public:
-	CTOSModuleMasterSystem();
-	~CTOSModuleMasterSystem();
+	CTOSMasterModule();
+	~CTOSMasterModule();
 
 	//ITOSGameModule
 	void OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event);

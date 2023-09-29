@@ -101,7 +101,7 @@ IMPLEMENT_RMI(CTOSMasterRMISender, SvRequestMasterAdd)
 			 pEntity->GetName());
 		//[RMI RECEIVED][SERVER][SvRequestMasterAdd] NetChannel: lmlicenses.wip4.adobe.com:50632, MasterEntity: Akeeper
 
-		g_pTOSGame->GetModuleMasterSystem()->MasterAdd(pEntity);
+		g_pTOSGame->GetMasterModule()->MasterAdd(pEntity);
 	}
 
 	return true;

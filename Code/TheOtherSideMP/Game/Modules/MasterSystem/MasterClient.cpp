@@ -31,7 +31,7 @@ CTOSMasterClient::CTOSMasterClient(CTOSPlayer* _player) :
 
 		//InvokeRMI(ClTempRadarEntity(), params, eRMI_ToClientChannel, GetChannelId(*it));
 
-		auto pSender = g_pTOSGame->GetModuleMasterSystem()->GetRMISender();
+		auto pSender = g_pTOSGame->GetMasterModule()->GetRMISender();
 		assert(pSender);
 
 		MasterAddingParams params;

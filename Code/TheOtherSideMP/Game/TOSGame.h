@@ -12,7 +12,7 @@ class CGameFlashAnimation;
 
 class STOSCvars;
 class CTOSGameEventRecorder;
-class CTOSModuleMasterSystem;
+class CTOSMasterModule;
 class CTOSAbilitiesSystem;
 class CTOSAIActionTracker;
 
@@ -84,7 +84,7 @@ public:
 	//~Events
 
 	CTOSGameEventRecorder* GetEventRecorder() const;
-	CTOSModuleMasterSystem* GetModuleMasterSystem() const;
+	CTOSMasterModule* GetMasterModule() const;
 
 	bool ModuleAdd(ITOSGameModule* pModule, bool flowGraph);
 	bool ModuleRemove(ITOSGameModule* pModule, bool flowGraph);
@@ -96,7 +96,7 @@ private:
 	CControlClient* m_pLocalControlClient;
 
 	CTOSGameEventRecorder* m_pEventRecorder;
-	CTOSModuleMasterSystem* m_pModuleMasterSystem;
+	CTOSMasterModule* m_pMasterModule;
 
 	std::vector<ITOSGameModule*> m_modules;
 	std::vector<ITOSGameModule*> m_flowgraphModules;

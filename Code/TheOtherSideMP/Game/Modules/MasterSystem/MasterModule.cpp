@@ -8,22 +8,22 @@
 #include "TheOtherSideMP/Game/TOSGameEventRecorder.h"
 #include "TheOtherSideMP/Helpers/TOS_Debug.h"
 
-#include "MasterSystemClientServer.h"
+#include "MasterModule.h"
 #include "RMISender.h"
 
-CTOSModuleMasterSystem::CTOSModuleMasterSystem():
+CTOSMasterModule::CTOSMasterModule():
 	m_pRMISender(nullptr)
 {
 	m_masters.clear();
 	g_pTOSGame->ModuleAdd(this, false);
 }
 
-CTOSModuleMasterSystem::~CTOSModuleMasterSystem()
+CTOSMasterModule::~CTOSMasterModule()
 {
 	g_pTOSGame->ModuleRemove(this, false);
 }
 
-void CTOSModuleMasterSystem::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event)
+void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event)
 {
 	switch (event.event)
 	{
@@ -53,13 +53,16 @@ void CTOSModuleMasterSystem::OnExtraGameplayEvent(IEntity* pEntity, const STOSGa
 		
 		SEntitySpawnParams params;
 		params.pClass = pRMISenderCls;
-		params.bStaticEntityId = true;
+		//params.bStaticEntityId = true;
 		params.sName = "MasterSystem_RMISender";
 		params.nFlags |= ENTITY_FLAG_NO_PROXIMITY | ENTITY_FLAG_UNREMOVABLE;
-		//params.id = 2;
+		params.id = 2;
 
 		pRMISender = gEnv->pEntitySystem->SpawnEntity(params);
 		assert(pRMISender);
+
+		if (!pRMISender)
+			return;
 
 		IGameObject* pGO = g_pGame->GetIGameFramework()->GetGameObject(pRMISender->GetId());
 		if (pGO)
@@ -78,24 +81,24 @@ void CTOSModuleMasterSystem::OnExtraGameplayEvent(IEntity* pEntity, const STOSGa
 	}
 }
 
-void CTOSModuleMasterSystem::GetMemoryStatistics(ICrySizer* s)
+void CTOSMasterModule::GetMemoryStatistics(ICrySizer* s)
 {
 }
 
-void CTOSModuleMasterSystem::Init()
+void CTOSMasterModule::Init()
 {
 	
 }
 
-void CTOSModuleMasterSystem::Update(float frametime)
+void CTOSMasterModule::Update(float frametime)
 {
 }
 
-void CTOSModuleMasterSystem::Serialize(TSerialize ser)
+void CTOSMasterModule::Serialize(TSerialize ser)
 {
 }
 
-void CTOSModuleMasterSystem::MasterAdd(const IEntity* pMasterEntity)
+void CTOSMasterModule::MasterAdd(const IEntity* pMasterEntity)
 {
 	if (gEnv->bServer && pMasterEntity)
 	{
@@ -105,12 +108,12 @@ void CTOSModuleMasterSystem::MasterAdd(const IEntity* pMasterEntity)
 
 			m_masters[id] = 0;
 
-			TOS_RECORD_EVENT(id, STOSGameEvent(eEGE_MasterAdd, "SERVER", true));
+			TOS_RECORD_EVENT(id, STOSGameEvent(eEGE_MasterAdd, "", true));
 		}
 	}
 }
 
-void CTOSModuleMasterSystem::MasterRemove(const IEntity* pMasterEntity)
+void CTOSMasterModule::MasterRemove(const IEntity* pMasterEntity)
 {
 	if (gEnv->bServer && pMasterEntity)
 	{
@@ -120,12 +123,12 @@ void CTOSModuleMasterSystem::MasterRemove(const IEntity* pMasterEntity)
 
 			m_masters.erase(id);
 
-			TOS_RECORD_EVENT(id, STOSGameEvent(eEGE_MasterRemove, "SERVER", true));
+			TOS_RECORD_EVENT(id, STOSGameEvent(eEGE_MasterRemove, "", true));
 		}
 	}
 }
 
-bool CTOSModuleMasterSystem::IsMaster(const IEntity* pMasterEntity)
+bool CTOSMasterModule::IsMaster(const IEntity* pMasterEntity)
 {
 	if (gEnv->bServer && pMasterEntity)
 	{
@@ -135,7 +138,7 @@ bool CTOSModuleMasterSystem::IsMaster(const IEntity* pMasterEntity)
 	return false;
 }
 
-IEntity* CTOSModuleMasterSystem::GetSlave(const IEntity* pMasterEntity)
+IEntity* CTOSMasterModule::GetSlave(const IEntity* pMasterEntity)
 {
 	if (gEnv->bServer && pMasterEntity)
 	{
@@ -152,7 +155,7 @@ IEntity* CTOSModuleMasterSystem::GetSlave(const IEntity* pMasterEntity)
 	return nullptr;
 }
 
-void CTOSModuleMasterSystem::DebugDrawMasters(const Vec2& screenPos, float fontSize, float interval, int maxElemNum)
+void CTOSMasterModule::DebugDrawMasters(const Vec2& screenPos, float fontSize, float interval, int maxElemNum)
 {
 	//Header
 	TOS_Debug::Draw2dText(
@@ -188,7 +191,7 @@ void CTOSModuleMasterSystem::DebugDrawMasters(const Vec2& screenPos, float fontS
 	}
 }
 
-CTOSMasterRMISender* CTOSModuleMasterSystem::GetRMISender() const
+CTOSMasterRMISender* CTOSMasterModule::GetRMISender() const
 {
 	return m_pRMISender;
 }

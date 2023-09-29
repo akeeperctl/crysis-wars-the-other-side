@@ -749,7 +749,7 @@
     <ClCompile Include="TheOtherSideMP\Game\Modules\MasterSystem\MasterClient.cpp">
       <Filter>TheOtherSideMP\Game\Modules\MasterSystem</Filter>
     </ClCompile>
-    <ClCompile Include="TheOtherSideMP\Game\Modules\MasterSystem\MasterSystemClientServer.cpp">
+    <ClCompile Include="TheOtherSideMP\Game\Modules\MasterSystem\MasterModule.cpp">
       <Filter>TheOtherSideMP\Game\Modules\MasterSystem</Filter>
     </ClCompile>
     <ClCompile Include="TheOtherSideMP\Game\Modules\MasterSystem\RMISender.cpp">
@@ -1337,7 +1337,7 @@
     <ClInclude Include="TheOtherSideMP\Game\Modules\MasterSystem\MasterClient.h">
       <Filter>TheOtherSideMP\Game\Modules\MasterSystem</Filter>
     </ClInclude>
-    <ClInclude Include="TheOtherSideMP\Game\Modules\MasterSystem\MasterSystemClientServer.h">
+    <ClInclude Include="TheOtherSideMP\Game\Modules\MasterSystem\MasterModule.h">
       <Filter>TheOtherSideMP\Game\Modules\MasterSystem</Filter>
     </ClInclude>
     <ClInclude Include="TheOtherSideMP\Game\Modules\MasterSystem\RMISender.h">

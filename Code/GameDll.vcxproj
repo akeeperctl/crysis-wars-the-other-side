@@ -406,7 +406,7 @@
     <ClCompile Include="TheOtherSideMP\Actors\Player\TOSPlayer.cpp" />
     <ClCompile Include="TheOtherSideMP\Actors\TOSActor.cpp" />
     <ClCompile Include="TheOtherSideMP\Game\Modules\MasterSystem\MasterClient.cpp" />
-    <ClCompile Include="TheOtherSideMP\Game\Modules\MasterSystem\MasterSystemClientServer.cpp" />
+    <ClCompile Include="TheOtherSideMP\Game\Modules\MasterSystem\MasterModule.cpp" />
     <ClCompile Include="TheOtherSideMP\Game\Modules\MasterSystem\RMISender.cpp" />
     <ClCompile Include="TheOtherSideMP\Game\TOSGame.cpp" />
     <ClCompile Include="TheOtherSideMP\Game\TOSGameCvars.cpp" />
@@ -599,7 +599,7 @@
     <ClInclude Include="TheOtherSideMP\Actors\TOSActor.h" />
     <ClInclude Include="TheOtherSideMP\Game\Modules\ITOSGameModule.h" />
     <ClInclude Include="TheOtherSideMP\Game\Modules\MasterSystem\MasterClient.h" />
-    <ClInclude Include="TheOtherSideMP\Game\Modules\MasterSystem\MasterSystemClientServer.h" />
+    <ClInclude Include="TheOtherSideMP\Game\Modules\MasterSystem\MasterModule.h" />
     <ClInclude Include="TheOtherSideMP\Game\Modules\MasterSystem\RMISender.h" />
     <ClInclude Include="TheOtherSideMP\Game\TOSGame.h" />
     <ClInclude Include="TheOtherSideMP\Game\TOSGameCvars.h" />

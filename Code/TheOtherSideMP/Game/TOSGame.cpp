@@ -4,7 +4,7 @@
 #include "TOSGameEventRecorder.h"
 
 #include "Modules/ITOSGameModule.h"
-#include "Modules/MasterSystem/MasterSystemClientServer.h"
+#include "Modules/MasterSystem/MasterModule.h"
 
 #include "TOSGame.h"
 #include "Game.h"
@@ -17,7 +17,7 @@ CTOSGame::CTOSGame()
 CTOSGame::~CTOSGame()
 {
 	SAFE_DELETE(m_pEventRecorder);
-	SAFE_DELETE(m_pModuleMasterSystem);
+	SAFE_DELETE(m_pMasterModule);
 
 	delete this;
 }
@@ -29,7 +29,7 @@ void CTOSGame::Init()
 	m_pEventRecorder = new CTOSGameEventRecorder();
 
 	//Modules
-	m_pModuleMasterSystem = new CTOSModuleMasterSystem();
+	m_pMasterModule = new CTOSMasterModule();
 
 	//~Modules
 
@@ -65,9 +65,9 @@ CTOSGameEventRecorder* CTOSGame::GetEventRecorder() const
 	return m_pEventRecorder;
 }
 
-CTOSModuleMasterSystem* CTOSGame::GetModuleMasterSystem() const
+CTOSMasterModule* CTOSGame::GetMasterModule() const
 {
-	return m_pModuleMasterSystem;
+	return m_pMasterModule;
 }
 
 bool CTOSGame::ModuleAdd(ITOSGameModule* pModule, bool flowGraph)

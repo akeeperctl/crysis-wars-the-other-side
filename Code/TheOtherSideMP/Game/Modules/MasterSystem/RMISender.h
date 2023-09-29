@@ -1,7 +1,7 @@
 #pragma once
 
 #include <IGameObject.h>
-#include "TheOtherSideMP/Game/Modules/MasterSystem/MasterSystemClientServer.h"
+#include "TheOtherSideMP/Game/Modules/MasterSystem/MasterModule.h"
 
 struct MasterAddingParams
 {
