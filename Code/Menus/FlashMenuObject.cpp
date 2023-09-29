@@ -45,6 +45,11 @@ History:
 #include "GameNetworkProfile.h"
 #include "SPAnalyst.h"
 
+//TheOtherSide
+#include "TheOtherSideMP/Game/TOSGame.h"
+#include "TheOtherSideMP/Game/TOSGameEventRecorder.h"
+//TheOtherSide
+
 //both are defined again in FlashMenuObjectOptions
 static const char* scuiControlCodePrefix = "@cc_"; // "@cc_"; // AlexL 03/04/2007: enable this when keys/controls are fully localized
 static const size_t scuiControlCodePrefixLen = strlen(scuiControlCodePrefix);
@@ -3033,6 +3038,10 @@ void CFlashMenuObject::InitStartMenu()
 	SetAntiAliasingModes();
 
 	SetProfile();
+
+	//TheOtherSide
+	TOS_RECORD_EVENT(0, STOSGameEvent(eEGE_MainMenuOpened, "", true));
+	//~TheOtherSide
 }
 
 //-----------------------------------------------------------------------------------------------------

@@ -218,6 +218,10 @@ void CGameRules::PostInit( IGameObject * pGameObject )
 	IConsole *pConsole=m_pSystem->GetIConsole();
 	RegisterConsoleCommands(pConsole);
 	RegisterConsoleVars(pConsole);
+
+	//TheOtherSide
+	TOS_RECORD_EVENT(GetEntityId(), STOSGameEvent(eEGE_GamerulesPostInit, "", true));
+	//~TheOtherSide
 }
 
 //------------------------------------------------------------------------

@@ -414,6 +414,7 @@ bool CGame::CompleteInit()
 	//TheOtherSide
 	g_pTOSGame->Init();
 	g_pTOSGameCvars->InitCVars(m_pConsole);
+	g_pTOSGameCvars->InitCCommands(m_pConsole);
 	//TheOtherSide
 
 #ifdef GAME_DEBUG_MEM
@@ -486,13 +487,17 @@ void CGame::EditorResetGame(bool bStart)
 		m_pHUD->Init();
 		m_pHUD->PlayerIdSet(m_uiPlayerID);
 
-		g_pTOSGame->GetEventRecorder()->RecordEvent(nullptr, STOSGameEvent(eEGE_EditorGameEnter, "", true));
+		//TheOtherSide
+		TOS_RECORD_EVENT(0, STOSGameEvent(eEGE_EditorGameEnter, "", true));
+		//~TheOtherSide
 	}
 	else
 	{
 		SAFE_DELETE(m_pHUD);
-		g_pTOSGame->GetEventRecorder()->RecordEvent(nullptr, STOSGameEvent(eEGE_EditorGameExit, "", true));
 
+		//TheOtherSide
+		TOS_RECORD_EVENT(0, STOSGameEvent(eEGE_EditorGameExit, "", true));
+		//~TheOtherSide
 	}
 }
 
