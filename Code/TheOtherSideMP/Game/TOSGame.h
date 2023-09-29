@@ -7,22 +7,23 @@
 #include <IVehicleSystem.h>
 #include <IGameplayRecorder.h>
 
-class STOSCvars;
-class CAIActionTracker;
 class CControlClient;
 class CGameFlashAnimation;
-class CAbilitiesSystem;
 
+class STOSCvars;
 class CTOSGameEventRecorder;
-class STOSGameEvent;
+class CTOSModuleMasterSystem;
+class CTOSAbilitiesSystem;
+class CTOSAIActionTracker;
 
+struct STOSGameEvent;
+struct ITOSGameModule;
 struct IHardwareMouseEventListener;
 struct IHitListener;
-struct ITOSGameModule;
 
 enum EExtraGameplayEvent;
 
-class CTOSGame
+class CTOSGame : public IGameplayListener
 {
 public:
 	CTOSGame();
@@ -83,13 +84,19 @@ public:
 	//~Events
 
 	CTOSGameEventRecorder* GetEventRecorder() const;
+	CTOSModuleMasterSystem* GetModuleMasterSystem() const;
+
+	bool ModuleAdd(ITOSGameModule* pModule, bool flowGraph);
+	bool ModuleRemove(ITOSGameModule* pModule, bool flowGraph);
 
 
 private:
 
-	CAIActionTracker* m_pAIActionTracker;
+	CTOSAIActionTracker* m_pAIActionTracker;
 	CControlClient* m_pLocalControlClient;
+
 	CTOSGameEventRecorder* m_pEventRecorder;
+	CTOSModuleMasterSystem* m_pModuleMasterSystem;
 
 	std::vector<ITOSGameModule*> m_modules;
 	std::vector<ITOSGameModule*> m_flowgraphModules;

@@ -20,7 +20,7 @@
 
 //TheOtherSide
 //#include "Actor.h"
-#include "TheOtherSideMP/Actor Files/TOSActor.h"
+#include "TheOtherSideMP/Actors/TOSActor.h"
 //TheOtherSide
 
 

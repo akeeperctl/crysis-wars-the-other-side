@@ -13,11 +13,17 @@ struct STOSCvars
 	~STOSCvars()
 	{
 		ReleaseCVars();
+		ReleaseCCommands();
 		delete this;
 	}
 
 	void InitCVars(IConsole *pConsole);
+	void InitCCommands(IConsole *pConsole);
 	void ReleaseCVars();
+	void ReleaseCCommands();
+
+	static void CmdNetChName(IConsoleCmdArgs *pArgs);
+	static void CmdGetLocalName(IConsoleCmdArgs *pArgs);
 
 	int tos_debug_draw_aiactiontracker;
 	int tos_debug_log_aiactiontracker;

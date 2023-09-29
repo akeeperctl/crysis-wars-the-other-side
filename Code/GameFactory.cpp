@@ -81,9 +81,10 @@
 #include <IGameRulesSystem.h>
 
 //TheOtherSide
-#include "TheOtherSideMP/Actor Files/player/TOSPlayer.h"
-#include "TheOtherSideMP/Actor Files/aliens/TOSAlien.h"
-#include "TheOtherSideMP/Actor Files/aliens/TOSTrooper.h"
+#include "TheOtherSideMP/Actors/player/TOSPlayer.h"
+#include "TheOtherSideMP/Actors/aliens/TOSAlien.h"
+#include "TheOtherSideMP/Actors/aliens/TOSTrooper.h"
+#include "TheOtherSideMP/Game/Modules/MasterSystem/RMISender.h"
 //TheOtherSide
 
 #define HIDE_FROM_EDITOR(className)																																				\

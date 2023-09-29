@@ -85,7 +85,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">
     <OutDir>$(SolutionDir)..\Bin32\</OutDir>
     <IntDir>$(SolutionDir)..\..\..\BinTemp\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
-    <LinkIncremental>false</LinkIncremental>
+    <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">
     <OutDir>$(SolutionDir)..\Bin64\</OutDir>
@@ -158,7 +158,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">
     <ClCompile>
-      <Optimization>Full</Optimization>
+      <Optimization>Disabled</Optimization>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
@@ -197,7 +197,7 @@
       <TargetEnvironment>X64</TargetEnvironment>
     </Midl>
     <ClCompile>
-      <Optimization>MaxSpeed</Optimization>
+      <Optimization>Disabled</Optimization>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <OmitFramePointers>true</OmitFramePointers>
@@ -401,13 +401,16 @@
     <ClCompile Include="TacBullet.cpp" />
     <ClCompile Include="TacLauncher.cpp" />
     <ClCompile Include="TagBullet.cpp" />
-    <ClCompile Include="TheOtherSideMP\Actor Files\aliens\TOSAlien.cpp" />
-    <ClCompile Include="TheOtherSideMP\Actor Files\aliens\TOSTrooper.cpp" />
-    <ClCompile Include="TheOtherSideMP\Actor Files\TOSActor.cpp" />
-    <ClCompile Include="TheOtherSideMP\Actor Files\TOSPlayer.cpp" />
-    <ClCompile Include="TheOtherSideMP\Game Files\TOSGame.cpp" />
-    <ClCompile Include="TheOtherSideMP\Game Files\TOSGameCvars.cpp" />
-    <ClCompile Include="TheOtherSideMP\Game Files\TOSGameEventRecorder.cpp" />
+    <ClCompile Include="TheOtherSideMP\Actors\Aliens\TOSAlien.cpp" />
+    <ClCompile Include="TheOtherSideMP\Actors\Aliens\TOSTrooper.cpp" />
+    <ClCompile Include="TheOtherSideMP\Actors\Player\TOSPlayer.cpp" />
+    <ClCompile Include="TheOtherSideMP\Actors\TOSActor.cpp" />
+    <ClCompile Include="TheOtherSideMP\Game\Modules\MasterSystem\MasterClient.cpp" />
+    <ClCompile Include="TheOtherSideMP\Game\Modules\MasterSystem\MasterSystemClientServer.cpp" />
+    <ClCompile Include="TheOtherSideMP\Game\Modules\MasterSystem\RMISender.cpp" />
+    <ClCompile Include="TheOtherSideMP\Game\TOSGame.cpp" />
+    <ClCompile Include="TheOtherSideMP\Game\TOSGameCvars.cpp" />
+    <ClCompile Include="TheOtherSideMP\Game\TOSGameEventRecorder.cpp" />
     <ClCompile Include="Throw.cpp" />
     <ClCompile Include="ThrowableWeapon.cpp" />
     <ClCompile Include="TracerManager.cpp" />
@@ -590,16 +593,17 @@
     <ClInclude Include="TacBullet.h" />
     <ClInclude Include="TacLauncher.h" />
     <ClInclude Include="TagBullet.h" />
-    <ClInclude Include="TheOtherSideMP\Actor Files\aliens\TOSAlien.h" />
-    <ClInclude Include="TheOtherSideMP\Actor Files\aliens\TOSTrooper.h" />
-    <ClInclude Include="TheOtherSideMP\Actor Files\Player\TOSPlayer.h" />
-    <ClInclude Include="TheOtherSideMP\Actor Files\TOSActor.h" />
-    <ClInclude Include="TheOtherSideMP\Control System\ControlSystem.h" />
-    <ClInclude Include="TheOtherSideMP\Control System\IControlSystemChild.h" />
-    <ClInclude Include="TheOtherSideMP\Game Files\ITOSGameModule.h" />
-    <ClInclude Include="TheOtherSideMP\Game Files\TOSGame.h" />
-    <ClInclude Include="TheOtherSideMP\Game Files\TOSGameCvars.h" />
-    <ClInclude Include="TheOtherSideMP\Game Files\TOSGameEventRecorder.h" />
+    <ClInclude Include="TheOtherSideMP\Actors\Aliens\TOSAlien.h" />
+    <ClInclude Include="TheOtherSideMP\Actors\Aliens\TOSTrooper.h" />
+    <ClInclude Include="TheOtherSideMP\Actors\Player\TOSPlayer.h" />
+    <ClInclude Include="TheOtherSideMP\Actors\TOSActor.h" />
+    <ClInclude Include="TheOtherSideMP\Game\Modules\ITOSGameModule.h" />
+    <ClInclude Include="TheOtherSideMP\Game\Modules\MasterSystem\MasterClient.h" />
+    <ClInclude Include="TheOtherSideMP\Game\Modules\MasterSystem\MasterSystemClientServer.h" />
+    <ClInclude Include="TheOtherSideMP\Game\Modules\MasterSystem\RMISender.h" />
+    <ClInclude Include="TheOtherSideMP\Game\TOSGame.h" />
+    <ClInclude Include="TheOtherSideMP\Game\TOSGameCvars.h" />
+    <ClInclude Include="TheOtherSideMP\Game\TOSGameEventRecorder.h" />
     <ClInclude Include="TheOtherSideMP\Helpers\TOS_AI.h" />
     <ClInclude Include="TheOtherSideMP\Helpers\TOS_Debug.h" />
     <ClInclude Include="TheOtherSideMP\Helpers\TOS_Enums.h" />

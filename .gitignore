@@ -357,7 +357,10 @@ Game/Objects
 Game/Sounds
 Game/Textures
 Game/Music
+Game/Libs
+/SPCode
 /Examples
+/Скриншоты логов
 
 
 #Bin trash files from code compiling

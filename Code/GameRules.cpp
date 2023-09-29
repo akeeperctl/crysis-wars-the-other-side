@@ -43,6 +43,10 @@
 #include <StlUtils.h>
 #include <StringUtils.h>
 
+//TheOtherSide
+#include "TheOtherSideMP/Game/TOSGameEventRecorder.h"
+//TheOtherSide
+
 DbgPlotter	g_dbgPlotter;
 
 int CGameRules::s_invulnID = 0;

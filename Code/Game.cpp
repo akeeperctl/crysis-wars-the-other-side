@@ -60,9 +60,9 @@
 #include "DownloadTask.h"
 
 //TheOtherSide
-#include "TheOtherSideMP\Game Files\TOSGameEventRecorder.h"
-#include "TheOtherSideMP\Game Files\TOSGameCvars.h"
-#include "TheOtherSideMP\Game Files\TOSGame.h"
+#include "TheOtherSideMP\Game\TOSGameEventRecorder.h"
+#include "TheOtherSideMP\Game\TOSGameCvars.h"
+#include "TheOtherSideMP\Game\TOSGame.h"
 //TheOtherSide
 
 #define GAME_DEBUG_MEM  // debug memory usage
