@@ -6,6 +6,8 @@
 #include "TOSGame.h"
 #include "TOSGameEventRecorder.h"
 
+#include "Modules/MasterSystem/RMISender.h"
+
 CTOSGameEventRecorder::CTOSGameEventRecorder()
 {
 
@@ -79,22 +81,41 @@ void CTOSGameEventRecorder::RecordEvent(EntityId id, const STOSGameEvent& event)
 void CTOSGame::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event)
 {
 	//This code Handle gameplay events from ALL game and The Other Side
+	TOS_INIT_EVENT_VALUES(pEntity, event);
+	const char* envName = "";
+
+	if (gEnv->bServer)
+	{
+		envName = "[SERVER]";
+	}
+	else if (pGO)
+	{
+		auto pNetCh = pGO->GetNetChannel();
+		if (pNetCh && pNetCh->IsLocal())
+		{
+			envName = "[LOCAL]";
+		}
+
+	}
+	else if (gEnv->bClient)
+	{
+		envName = "[CLIENT]";
+	}
 
 	switch(event.event)
 	{
+	case eGE_Disconnected:
 	case eGE_Connected:
 	{
 		//if (pEntity && event.console_log)
 		if (pEntity && gEnv->bServer)
 		{
-			auto pGO = g_pGame->GetIGameFramework()->GetGameObject(pEntity->GetId());
-			assert(pGO);
-
 			//Net channel is null on client
 			auto pNetCh = pGO->GetNetChannel();
 
-			CryLogAlways("[C++][SERVER][FUNC CALL][CTOSGame::OnExtraGameplayEvent] Event: eGE_Connected, Name: (CH:%s|GO:%s)",
-				pNetCh ? pNetCh->GetName() : "NULL", pGO->GetEntity()->GetName());
+			//Case 1
+			CryLogAlways("[C++][SERVER][FUNC CALL][CTOSGame::OnExtraGameplayEvent] Event: %s, Name: (CH:%s|GO:%s|Id:%i)",
+				eventName, pNetCh ? pNetCh->GetName() : "NULL", entName, pEntity->GetId());
 		}
 		break;
 	}
@@ -102,33 +123,14 @@ void CTOSGame::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event
 
 	if (event.console_log && !event.vanilla_recorder)
 	{
-		const char* entName = pEntity ? pEntity->GetName() : "";
-		const char* eventName = m_pEventRecorder->GetStringFromEnum(event.event);
-		const char* eventDesc = event.description;
-		const char* envName = "";
+		CryLogAlways("[C++]%s[FUNC CALL][CTOSGame::OnExtraGameplayEvent] Event: %s, Entity: (%s|%i), Desc: %s",
+			envName, eventName, entName, entId, eventDesc);
 
-		auto pGO = pEntity ? g_pGame->GetIGameFramework()->GetGameObject(pEntity->GetId()) : nullptr;
-
-		if (gEnv->bServer)
-		{
-			envName = "[SERVER]";
-		}
-		else if (pGO)
-		{
-			auto pNetCh = pGO->GetNetChannel();
-			if (pNetCh && pNetCh->IsLocal())
-			{
-				envName = "[LOCAL]";
-			}
-
-		}
-		else if (gEnv->bClient)
-		{
-			envName = "[CLIENT]";
-		}
-
-		CryLogAlways("[C++]%s[FUNC CALL][CTOSGame::OnExtraGameplayEvent] Event: %s, Entity: %s, Desc: %s",
-			envName, eventName, entName, eventDesc);
+		//Case 2
+		//CryLogAlways("[C++]%s[FUNC CALL][CTOSGame::OnExtraGameplayEvent]", envName);
+		//CryLogAlways("	Event: %s", eventName);
+		//CryLogAlways("	Entity: %s", entName);
+		//CryLogAlways("	Desc: %s", eventDesc);
 	}
 
 	for (auto pModule : m_modules)

@@ -6,7 +6,19 @@
 
 #define TOS_RECORD_EVENT(entityId, tosGameEventExample) \
 if (g_pTOSGame)\
-	g_pTOSGame->GetEventRecorder()->RecordEvent(entityId, tosGameEventExample); \
+	g_pTOSGame->GetEventRecorder()->RecordEvent(entityId, tosGameEventExample) \
+
+// Summary
+//   Initialize the event vars
+// Remarks
+//   entName, eventName, eventDesc, pGO
+#define TOS_INIT_EVENT_VALUES(pEntity, _event) \
+const char* entName = pEntity ? pEntity->GetName() : "";\
+const EntityId entId = pEntity ? pEntity->GetId() : 0;\
+const char* eventName = g_pTOSGame->GetEventRecorder()->GetStringFromEnum(_event.event);\
+const char* eventDesc = _event.description;\
+const auto pGO = pEntity ? g_pGame->GetIGameFramework()->GetGameObject(pEntity->GetId()) : nullptr\
+
 
 enum EExtraGameplayEvent
 {
@@ -102,6 +114,15 @@ public:
 	{
 		switch (value)
 		{
+		//eGE - Vanilla events
+		case eGE_Connected:
+			return "eGE_Connected";
+			break;
+		case eGE_Disconnected:
+			return "eGE_Disconnected";
+			break;
+
+		//eEGE - TOS events
 		case eEGE_MainMenuOpened:
 			return "eEGE_MainMenuOpened";
 			break;
@@ -158,7 +179,7 @@ public:
 			break;
 		case eEGE_RMISenderDestroyed:
 			return "eEGE_RMISenderDestroyed";
-		break;
+			break;
 		case eEGE_GamerulesPostInit:
 			return "eEGE_GamerulesPostInit";
 			break;
