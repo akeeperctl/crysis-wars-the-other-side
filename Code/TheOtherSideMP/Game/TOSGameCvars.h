@@ -22,7 +22,15 @@ struct STOSCvars
 	void ReleaseCVars();
 	void ReleaseCCommands();
 
-	static void CmdNetChName(IConsoleCmdArgs *pArgs);
+	// SERVER COMMANDS
+	static void CmdNetChName(IConsoleCmdArgs *pArgs);	
+	static void CmdGetMastersList(IConsoleCmdArgs *pArgs);
+	static void CmdIsMaster(IConsoleCmdArgs *pArgs);
+
+	static void CmdSpawnTrooper(IConsoleCmdArgs* pArgs);
+	static void CmdRemoveEntity(IConsoleCmdArgs* pArgs);
+
+	// CLIENT COMMANDS
 	static void CmdGetLocalName(IConsoleCmdArgs *pArgs);
 
 	int tos_debug_draw_aiactiontracker;
