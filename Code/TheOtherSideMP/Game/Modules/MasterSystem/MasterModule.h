@@ -1,6 +1,7 @@
 #pragma once
 
 #include "TheOtherSideMP/Game/Modules/ITOSGameModule.h"
+#include "TheOtherSideMP/Game/TOSGame.h"
 
 class CTOSMasterRMISender;
 
@@ -57,9 +58,12 @@ public:
 	void MasterAdd(const IEntity* pMasterEntity);
 	void MasterRemove(const IEntity* pMasterEntity);
 	bool IsMaster(const IEntity* pMasterEntity);
+	void GetMasters(std::map<EntityId, EntityId>& masters);
+
 	IEntity* GetSlave(const IEntity* pMasterEntity);
 
 	void DebugDrawMasters(const Vec2& screenPos = {20,300}, float fontSize = 1.2f, float interval = 20.0f, int maxElemNum = 5);
+
 
 	CTOSMasterRMISender* GetRMISender() const;
 

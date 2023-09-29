@@ -21,10 +21,20 @@ void CTOSActor::PostInit(IGameObject* pGameObject)
 	CActor::PostInit(pGameObject);
 }
 
+void CTOSActor::InitClient(int channelId)
+{
+	CryLogAlways("[C++][%s][%s][CTOSActor::InitClient] Actor: %s|%i|ch:%i",
+		TOS_Debug::GetEnv(), TOS_Debug::GetAct(1), GetEntity()->GetName(), GetEntity()->GetId(), channelId);
+
+	CActor::InitClient(channelId);
+}
+
 bool CTOSActor::NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int flags)
 {
-	CActor::NetSerialize(ser,aspect,profile,flags);
-	return false;
+	if (!CActor::NetSerialize(ser,aspect,profile,flags))
+		return false;
+
+	return true;
 }
 
 void CTOSActor::Update(SEntityUpdateContext& ctx, int updateSlot)

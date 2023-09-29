@@ -273,7 +273,13 @@ bool CPlayer::Init(IGameObject * pGameObject)
 
 void CPlayer::PostInit( IGameObject * pGameObject )
 {
-	CActor::PostInit(pGameObject);
+	//TheOtherSide
+	
+	//CActor::PostInit(pGameObject);
+	
+	CTOSActor::PostInit(pGameObject);
+
+	//~TheOtherSide
 
 	ResetAnimGraph();
 
@@ -288,7 +294,12 @@ void CPlayer::InitClient(int channelId )
 {
 	GetGameObject()->InvokeRMI(CActor::ClSetSpectatorMode(), CActor::SetSpectatorModeParams(GetSpectatorMode(), 0), eRMI_ToClientChannel|eRMI_NoLocalCalls, channelId);
 	
-	CActor::InitClient(channelId);
+	//TheOtherSide
+
+	//CActor::InitClient(channelId);
+	CTOSActor::InitClient(channelId);
+
+	//~TheOtherSide
 }
 
 void CPlayer::InitLocalPlayer()
@@ -789,7 +800,13 @@ void CPlayer::Update(SEntityUpdateContext& ctx, int updateSlot)
 				}
 	}
 
-	CActor::Update(ctx,updateSlot);
+	//TheOtherSide
+	
+	//CActor::Update(ctx,updateSlot);
+	CTOSActor::Update(ctx,updateSlot);
+
+	//~TheOtherSide
+	
 
 	const float frameTime = ctx.fFrameTime;
 
@@ -4140,8 +4157,15 @@ bool CPlayer::SetAspectProfile(EEntityAspects aspect, uint8 profile )
 
 bool CPlayer::NetSerialize( TSerialize ser, EEntityAspects aspect, uint8 profile, int flags )
 {
-	if (!CActor::NetSerialize(ser, aspect, profile, flags))
+	//TheOtherSide
+	
+	//if (!CActor::NetSerialize(ser, aspect, profile, flags))
+	//	return false;
+
+	if (!CTOSActor::NetSerialize(ser, aspect, profile, flags))
 		return false;
+
+	//~TheOtherSide
 
 	if (aspect == ASPECT_HEALTH)
 	{
