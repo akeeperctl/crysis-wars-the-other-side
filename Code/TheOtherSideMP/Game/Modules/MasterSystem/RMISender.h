@@ -120,8 +120,8 @@ public:
 	DECLARE_SERVER_RMI_NOATTACH(SvRequestPintest, PintestParams, eNRT_ReliableOrdered);
 	DECLARE_CLIENT_RMI_NOATTACH(ClPintest, PintestParams, eNRT_ReliableOrdered);
 
-	DECLARE_SERVER_RMI_NOATTACH(SvRequestMasterAdd, MasterAddingParams, eNRT_ReliableOrdered);
-	DECLARE_SERVER_RMI_NOATTACH(SvRequestMasterRemove, MasterAddingParams, eNRT_ReliableOrdered);
+	//DECLARE_SERVER_RMI_NOATTACH(SvRequestMasterAdd, MasterAddingParams, eNRT_ReliableOrdered);
+	//DECLARE_SERVER_RMI_NOATTACH(SvRequestMasterRemove, MasterAddingParams, eNRT_ReliableOrdered);
 
 protected:
 

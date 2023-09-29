@@ -6,12 +6,12 @@
 //#include "HUD/HUDSilhouettes.h"
 
 #include "TheOtherSideMP/Actors/Player/TOSPlayer.h"
-#include "TheOtherSideMP/Game/Modules/MasterSystem/RMISender.h"
 #include "TheOtherSideMP/Game/TOSGame.h"
 
 //#include "PlayerInput.h"
 
 #include "MasterClient.h"
+#include "RMISender.h"
 
 CTOSMasterClient::CTOSMasterClient(CTOSPlayer* _player) :
 	m_pLocalDude(_player)
@@ -31,13 +31,13 @@ CTOSMasterClient::CTOSMasterClient(CTOSPlayer* _player) :
 
 		//InvokeRMI(ClTempRadarEntity(), params, eRMI_ToClientChannel, GetChannelId(*it));
 
-		auto pSender = g_pTOSGame->GetMasterModule()->GetRMISender();
-		assert(pSender);
+		//auto pSender = g_pTOSGame->GetMasterModule()->GetRMISender();
+		//assert(pSender);
 
-		MasterAddingParams params;
-		params.entityId = m_pLocalDude->GetEntityId();
+		//MasterAddingParams params;
+		//params.entityId = m_pLocalDude->GetEntityId();
 
-		pSender->RMISend(CTOSMasterRMISender::SvRequestMasterAdd(), params, eRMI_ToServer);
+		//pSender->RMISend(CTOSMasterRMISender::SvRequestMasterAdd(), params, eRMI_ToServer);
 	}
 }
 
@@ -47,6 +47,18 @@ CTOSMasterClient::~CTOSMasterClient()
 	//g_pTOSGame->GetModuleMasterSystem()->MasterRemove(m_pLocalDude->GetEntity());
 
 	// delete this;
+
+	//Case 1 not work
+	//if (gEnv->bClient)
+	//{
+	//	auto pSender = g_pTOSGame->GetMasterModule()->GetRMISender();
+	//	assert(pSender);
+
+	//	MasterAddingParams params;
+	//	params.entityId = m_pLocalDude->GetEntityId();
+
+	//	pSender->RMISend(CTOSMasterRMISender::SvRequestMasterRemove(), params, eRMI_ToServer);
+	//}
 }
 
 //void CMasterClient::InitDudeMaster(bool toStart)

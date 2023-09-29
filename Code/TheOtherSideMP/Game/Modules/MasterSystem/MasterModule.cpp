@@ -25,6 +25,8 @@ CTOSMasterModule::~CTOSMasterModule()
 
 void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event)
 {
+	TOS_INIT_EVENT_VALUES(pEntity, event);
+
 	switch (event.event)
 	{
 	case eEGE_GamerulesPostInit:
@@ -75,7 +77,22 @@ void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEven
 
 		break;
 	}
-
+	case eGE_Connected:
+	{
+		if (pEntity && gEnv->bServer)
+		{
+			MasterAdd(pEntity);
+		}
+		break;
+	}
+	case eGE_Disconnected:
+	{
+		if (pEntity && gEnv->bServer)
+		{
+			MasterRemove(pEntity);
+		}
+		break;
+	}
 	default:
 		break;
 	}
@@ -132,7 +149,8 @@ bool CTOSMasterModule::IsMaster(const IEntity* pMasterEntity)
 {
 	if (gEnv->bServer && pMasterEntity)
 	{
-		return stl::find_in_map(m_masters, pMasterEntity->GetId(), 0) != 0;
+		auto it = m_masters.find(pMasterEntity->GetId());
+		return it != m_masters.end();
 	}
 
 	return false;
@@ -189,6 +207,11 @@ void CTOSMasterModule::DebugDrawMasters(const Vec2& screenPos, float fontSize, f
 			"%i) %s:%s", 
 			channelId, masterName, slaveName);
 	}
+}
+
+void CTOSMasterModule::GetMasters(std::map<EntityId, EntityId>& masters)
+{
+	masters = m_masters;
 }
 
 CTOSMasterRMISender* CTOSMasterModule::GetRMISender() const

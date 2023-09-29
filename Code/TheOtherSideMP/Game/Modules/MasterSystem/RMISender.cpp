@@ -88,43 +88,44 @@ void CTOSMasterRMISender::GetMemoryStatistics(ICrySizer* s)
 	s->Add(*this);
 }
 
-//------------------------------------------------------------------------
-IMPLEMENT_RMI(CTOSMasterRMISender, SvRequestMasterAdd)
-{
-	if (gEnv->bServer)
-	{
-		auto pEntity = gEnv->pEntitySystem->GetEntity(params.entityId);
-		assert(pEntity);
-
-		CryLogAlways(" ");
-		CryLogAlways("[C++][SERVER][RMI RECEIVED][SvRequestMasterAdd] MasterEntity: %s",
-			 pEntity->GetName());
-		//[RMI RECEIVED][SERVER][SvRequestMasterAdd] NetChannel: lmlicenses.wip4.adobe.com:50632, MasterEntity: Akeeper
-
-		g_pTOSGame->GetMasterModule()->MasterAdd(pEntity);
-	}
-
-	return true;
-}
-
-//------------------------------------------------------------------------
-IMPLEMENT_RMI(CTOSMasterRMISender, SvRequestMasterRemove)
-{
-	if (gEnv->bServer)
-	{
-		auto pEntity = gEnv->pEntitySystem->GetEntity(params.entityId);
-		assert(pEntity);
-
-		CryLogAlways(" ");
-		CryLogAlways("[C++][%s][%s][SvRequestMasterRemove] MasterEntity: %s",
-			TOS_Debug::GetEnv(), TOS_Debug::GetAct(3), pEntity->GetName());
-		//[RMI RECEIVED][SERVER][SvRequestMasterAdd] NetChannel: lmlicenses.wip4.adobe.com:50632, MasterEntity: Akeeper
-
-		g_pTOSGame->GetMasterModule()->MasterRemove(pEntity);
-	}
-
-	return true;
-}
+//Not actual any more
+////------------------------------------------------------------------------
+//IMPLEMENT_RMI(CTOSMasterRMISender, SvRequestMasterAdd)
+//{
+//	if (gEnv->bServer)
+//	{
+//		auto pEntity = gEnv->pEntitySystem->GetEntity(params.entityId);
+//		assert(pEntity);
+//
+//		CryLogAlways(" ");
+//		CryLogAlways("[C++][SERVER][RMI RECEIVED][SvRequestMasterAdd] MasterEntity: %s",
+//			 pEntity->GetName());
+//		//[RMI RECEIVED][SERVER][SvRequestMasterAdd] NetChannel: lmlicenses.wip4.adobe.com:50632, MasterEntity: Akeeper
+//
+//		g_pTOSGame->GetMasterModule()->MasterAdd(pEntity);
+//	}
+//
+//	return true;
+//}
+//
+////------------------------------------------------------------------------
+//IMPLEMENT_RMI(CTOSMasterRMISender, SvRequestMasterRemove)
+//{
+//	if (gEnv->bServer)
+//	{
+//		auto pEntity = gEnv->pEntitySystem->GetEntity(params.entityId);
+//		assert(pEntity);
+//
+//		CryLogAlways(" ");
+//		CryLogAlways("[C++][%s][%s][SvRequestMasterRemove] MasterEntity: %s",
+//			TOS_Debug::GetEnv(), TOS_Debug::GetAct(3), pEntity->GetName());
+//		//[RMI RECEIVED][SERVER][SvRequestMasterAdd] NetChannel: lmlicenses.wip4.adobe.com:50632, MasterEntity: Akeeper
+//
+//		g_pTOSGame->GetMasterModule()->MasterRemove(pEntity);
+//	}
+//
+//	return true;
+//}
 
 //------------------------------------------------------------------------
 IMPLEMENT_RMI(CTOSMasterRMISender, SvRequestPintest)
