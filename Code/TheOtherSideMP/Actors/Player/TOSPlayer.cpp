@@ -59,21 +59,27 @@ void CTOSPlayer::InitLocalPlayer()
 {
 	CPlayer::InitLocalPlayer();
 
-	if (gEnv->bServer)
-	{
-		CryLogAlways(" ");
-		CryLogAlways("[C++][SERVER][FUNC CALL][CTOSPlayer::InitLocalPlayer] Player: %s", GetEntity()->GetName());
-	}
-	else if (this->GetEntityId() == g_pGame->GetIGameFramework()->GetClientActorId())
-	{
-		CryLogAlways(" ");
-		CryLogAlways("[C++][LOCAL][FUNC CALL][CTOSPlayer::InitLocalPlayer] Player: %s", GetEntity()->GetName());
-	}
-	else if (gEnv->bClient)
-	{
-		CryLogAlways(" ");
-		CryLogAlways("[C++][CLIENT][FUNC CALL][CTOSPlayer::InitLocalPlayer] Player: %s", GetEntity()->GetName());
-	}
+	//if (gEnv->bServer)
+	//{
+	//	CryLogAlways(" ");
+	//	CryLogAlways("[C++][%s][%s][CTOSPlayer::InitLocalPlayer] Player: %s", 
+	//		TOS_Debug::GetEnv(), TOS_Debug::GetAct(1), GetEntity()->GetName());
+	//}
+	//else if (this->GetEntityId() == g_pGame->GetIGameFramework()->GetClientActorId())
+	//{
+	//	CryLogAlways(" ");
+	//	CryLogAlways("[C++][%s][%s][CTOSPlayer::InitLocalPlayer] Player: %s", 
+	//		TOS_Debug::GetEnv(), TOS_Debug::GetAct(1), GetEntity()->GetName());
+	//}
+	//else if (gEnv->bClient)
+	//{
+	//	CryLogAlways(" ");
+	//	CryLogAlways("[C++][%s][%s][CTOSPlayer::InitLocalPlayer] Player: %s", 
+	//		TOS_Debug::GetEnv(), TOS_Debug::GetAct(1), GetEntity()->GetName());
+	//}
+
+	CryLogAlways("[C++][%s][%s][CTOSPlayer::InitLocalPlayer] Player: %s",
+		TOS_Debug::GetEnv(), TOS_Debug::GetAct(1), GetEntity()->GetName());
 
 	//Case 4 perfect - Master Client was created only on local machine
 	if (!m_pMasterClient)

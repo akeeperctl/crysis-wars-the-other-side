@@ -3776,6 +3776,11 @@ IMPLEMENT_RMI(CActor, ClSetSpectatorMode)
 {
 	SetSpectatorMode(params.mode, params.targetId);
 
+	//TheOtherSide
+	CryLogAlways("[C++][%s][%s][CActor::ClSetSpectatorMode] Mode: %i, Target: %i, ThisActor: %s|%i",
+		TOS_Debug::GetEnv(), TOS_Debug::GetAct(3), params.mode, params.targetId, GetEntity()->GetName(), GetEntityId());
+	//~TheOtherSide
+
 	return true;
 }
 

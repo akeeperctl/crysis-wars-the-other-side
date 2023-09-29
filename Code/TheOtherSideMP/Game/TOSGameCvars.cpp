@@ -123,8 +123,6 @@ void STOSCvars::CmdIsMaster(IConsoleCmdArgs* pArgs)
 
 void STOSCvars::CmdSpawnTrooper(IConsoleCmdArgs* pArgs)
 {
-	//1) При вызове с сервера, у клиента не вызывается функция PostInit у трупера
-
 	if (!gEnv->bServer)
 	{
 		CryLogAlways("can spawn only on the server");
