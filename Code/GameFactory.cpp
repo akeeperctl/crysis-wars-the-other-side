@@ -226,6 +226,12 @@ void InitGameFactory(IGameFramework *pFramework)
 	//GameRules
 	REGISTER_FACTORY(pFramework, "GameRules", CGameRules, false);
 
+	//TheOtherSide
+	//REGISTER_FACTORY(pFramework, "TOSMasterRMISender", CTOSMasterRMISender, false);
+	REGISTER_GAME_OBJECT(pFramework, TOSMasterRMISender, "");
+	HIDE_FROM_EDITOR("TOSMasterRMISender");
+	//~TheOtherSide
+
 
 	REGISTER_GAME_OBJECT_EXTENSION(pFramework, ScriptControlledPhysics);
 
