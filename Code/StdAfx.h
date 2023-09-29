@@ -46,6 +46,10 @@
 #include <ILog.h>
 #include <IGameplayRecorder.h>
 
+//TheOtherSide
+#include "TheOtherSideMP/Helpers/TOS_Debug.h";
+//~TheOtherSide
+
 #ifndef GAMEDLL_EXPORTS
 #define GAMEDLL_EXPORTS
 #endif

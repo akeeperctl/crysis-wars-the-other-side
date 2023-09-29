@@ -11,6 +11,7 @@ public:
 	virtual void PostInit( IGameObject * pGameObject );
 	virtual bool NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int flags);
 	virtual void Update(SEntityUpdateContext& ctx, int updateSlot);
+	virtual void Release();
 
 	void SetMasterEntityId(EntityId id);
 	const EntityId GetMasterEntityId() {return m_masterEntityId;};
