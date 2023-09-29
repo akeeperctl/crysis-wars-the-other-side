@@ -66,6 +66,46 @@ namespace TOS_Debug
 	//	}
 	//}
 
+	// Summary
+	//   Get string of type of action
+	// Parameters
+	//   type - type of action: 1 - FUNC CALL, 2 - CONSTR CALL, 3 - RMI RECEIVED.
+	inline const char* GetAct(int type)
+	{
+		switch (type)
+		{
+		case 1:
+			return "FUNC CALL";
+		case 2:
+			return "CONSTR CALL";
+		case 3:
+			return "RMI RECEIVED";
+		default:
+			return "UNDEFINED_DEBUG_ACTION";
+			break;
+		}
+	}
+
+	inline const char* GetEnv()
+	{
+		if (gEnv->bServer && !gEnv->bClient)
+		{
+			return "DEDICATED";
+		}
+		else if (gEnv->bServer && gEnv->bClient)
+		{
+			return "SERVERCLIENT";
+		}
+		else if (gEnv->bServer)
+		{
+			return "SERVER";
+		}
+		else if (gEnv->bClient)
+		{
+			return "CLIENT";
+		}
+	}
+
 	inline void Draw2dText(float x, float y, float size, const char* format, ...)
 	{
 		if (gEnv && gEnv->pSystem)
