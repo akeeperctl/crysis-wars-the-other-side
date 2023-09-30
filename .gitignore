@@ -347,17 +347,19 @@ healthchecksdb
 *.pak
 
 # Demo levels and local test levels
-Game/Levels
-Game/Languages
-Game/Localized
-Game/Materials
-Game/Prefabs
-Game/Animations
-Game/Objects
-Game/Sounds
-Game/Textures
-Game/Music
-Game/Libs
+#Game/Levels
+#Game/Languages
+#Game/Localized
+#Game/Materials
+#Game/Prefabs
+#Game/Animations
+#Game/Objects
+#Game/Sounds
+#Game/Textures
+#Game/Music
+#Game/Libs
+/Game/*
+/Code/TheOtherSideMP/Control/*
 /SPCode
 /Examples
 /Скриншоты логов

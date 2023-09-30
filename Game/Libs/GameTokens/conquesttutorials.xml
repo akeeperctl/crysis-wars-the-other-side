@@ -1,9 +1,0 @@
-<GameTokensLibrary Name="ConquestTutorials">
- <GameToken Name="Aliens.Scout.WasActive" Type="Int" Value="0"/>
- <GameToken Name="Aliens.Trooper.WasActive" Type="Int" Value="0"/>
- <GameToken Name="Lobby.WasActive" Type="Int" Value="0"/>
- <GameToken Name="Abilities.Buttons.WasActive" Type="Int" Value="0"/>
- <GameToken Name="Aliens.CanHeal.WasActive" Type="Int" Value="0"/>
- <GameToken Name="Squad.Controls.WasActive" Type="Int" Value="0"/>
- <GameToken Name="Common.Any.IsActive" Type="Int" Value="0"/>
-</GameTokensLibrary>

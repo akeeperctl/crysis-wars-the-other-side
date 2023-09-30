@@ -1,5 +1,0 @@
-<Items>
-  <Weapons> 
-	  <Item name="@mp_eSniper" price="200" className="DSG1" uniqueId="9" ammoClass=""/>
-  </Weapons>
-</Items>

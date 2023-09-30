@@ -1,3 +1,0 @@
-<DialogScript Name="tos_first_level.Player_trooper_activate" Description="">
- <Line actor="0" lookatActor="255" flagLookAtSticky="0" flagSoundStopsAnim="0" flagAGSignal="0" flagAGEP="0" sound="tos_first_level/operator_trooper_land" anim="" facial="" delay="0.2" facialWeight="0.5" facialFadeTime="0.5" desc="Operator 6041: Trooper landed and activated"/>
-</DialogScript>

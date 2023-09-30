@@ -1,6 +1,0 @@
-<Factions>
-  <Faction name="USA" speciesIndex="0" unitsCount="20" squadsCount="5" reinforcements="440"/>
-  <Faction name="NK" speciesIndex="1" unitsCount="20" squadsCount="5" reinforcements="370"/>
-  <Faction name="Aliens" speciesIndex="2" unitsCount="16" squadsCount="4" reinforcements="200"/>
-  <Faction name="CELL" speciesIndex="3" unitsCount="0" squadsCount="0" reinforcements="0"/>
-</Factions>

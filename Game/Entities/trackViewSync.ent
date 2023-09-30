@@ -1,4 +1,0 @@
-<Entity 
- Name="TrackViewSync"
- Script="Scripts/Entities/Others/TrackViewSync.lua"
-/>
