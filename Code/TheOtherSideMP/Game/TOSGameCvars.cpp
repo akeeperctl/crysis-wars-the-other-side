@@ -4,6 +4,7 @@
 
 #include "TOSGameCvars.h"
 #include "Modules/MasterSystem/MasterModule.h"
+#include "Modules/GenericSynchronizer.h"
 #include "../Actors/Player/TOSPlayer.h"
 
 #include "Game.h"
@@ -24,8 +25,10 @@ void STOSCvars::InitCCommands(IConsole* pConsole)
 	pConsole->AddCommand("netchname", CmdNetChName);
 	pConsole->AddCommand("getmasterslist", CmdGetMastersList);
 	pConsole->AddCommand("ismaster", CmdIsMaster);
-	pConsole->AddCommand("spawntrooper", CmdSpawnTrooper);
+	pConsole->AddCommand("spawnentity", CmdSpawnEntity);
 	pConsole->AddCommand("removeentity", CmdRemoveEntity);
+	pConsole->AddCommand("getentitiesbyclass", CmdGetEntitiesByClass);
+	pConsole->AddCommand("getsync", CmdGetSync);
 
 	//CLIENT COMMANDS
 	pConsole->AddCommand("getlocalname", CmdGetLocalName);
@@ -125,7 +128,7 @@ void STOSCvars::CmdIsMaster(IConsoleCmdArgs* pArgs)
 	CryLogAlways("Result: (%i|%s)", playerId, result);
 }
 
-void STOSCvars::CmdSpawnTrooper(IConsoleCmdArgs* pArgs)
+void STOSCvars::CmdSpawnEntity(IConsoleCmdArgs* pArgs)
 {
 	if (!gEnv->bServer)
 	{
@@ -133,10 +136,10 @@ void STOSCvars::CmdSpawnTrooper(IConsoleCmdArgs* pArgs)
 		return;
 	}
 
-	auto pClass = gEnv->pEntitySystem->GetClassRegistry()->FindClass("Trooper");
+	auto pClass = gEnv->pEntitySystem->GetClassRegistry()->FindClass(pArgs->GetArg(1));
 	assert(pClass);
 
-	const char* plName = pArgs->GetArg(1);
+	const char* plName = pArgs->GetArg(2);
 
 	auto pPlayerEntity = gEnv->pEntitySystem->FindEntityByName(plName);
 	assert(pPlayerEntity);
@@ -151,6 +154,7 @@ void STOSCvars::CmdSpawnTrooper(IConsoleCmdArgs* pArgs)
 	params.pClass = pClass;
 	params.sName = "spawned_1";
 	params.vPosition = pPlayerEntity->GetWorldPos();
+	params.nFlags |= ENTITY_FLAG_UNREMOVABLE;
 
 	gEnv->pEntitySystem->SpawnEntity(params);
 }
@@ -173,7 +177,42 @@ void STOSCvars::CmdRemoveEntity(IConsoleCmdArgs* pArgs)
 		return;
 	}
 
+	pEntity->ClearFlags(ENTITY_FLAG_UNREMOVABLE);
 	gEnv->pEntitySystem->RemoveEntity(pEntity->GetId());
+}
+
+void STOSCvars::CmdGetEntitiesByClass(IConsoleCmdArgs* pArgs)
+{
+	if (!gEnv->bServer)
+	{
+		CryLogAlways("Failed: only on the server");
+		return;
+	}
+
+	CryLogAlways("Result: (entity_name|entity_id)");
+
+	auto iter = gEnv->pEntitySystem->GetEntityIterator();
+	while(!iter->IsEnd())
+	{
+		auto pEntity = iter->Next();
+		if (!pEntity)
+			continue;
+
+		string name = pEntity->GetName();
+		string clsname = pEntity->GetClass()->GetName();
+		string argName = pArgs->GetArg(1);
+		if (clsname == argName) //"TOSMasterSynchronizer")
+			CryLogAlways("	%s|%i", name, pEntity->GetId());
+	}
+}
+
+void STOSCvars::CmdGetSync(IConsoleCmdArgs* pArgs)
+{
+	auto pSynchronizer = g_pTOSGame->GetMasterModule()->GetSynchronizer();
+
+	const char* name = pSynchronizer ? pSynchronizer->GetEntity()->GetName() : "NULL";
+
+	CryLogAlways("Result: %s", name);
 }
 
 void STOSCvars::CmdGetLocalName(IConsoleCmdArgs* pArgs)

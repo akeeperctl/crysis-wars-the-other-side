@@ -27,8 +27,11 @@ struct STOSCvars
 	static void CmdGetMastersList(IConsoleCmdArgs *pArgs);
 	static void CmdIsMaster(IConsoleCmdArgs *pArgs);
 
-	static void CmdSpawnTrooper(IConsoleCmdArgs* pArgs);
+	static void CmdSpawnEntity(IConsoleCmdArgs* pArgs);
 	static void CmdRemoveEntity(IConsoleCmdArgs* pArgs);
+
+	static void CmdGetEntitiesByClass(IConsoleCmdArgs* pArgs);
+	static void CmdGetSync(IConsoleCmdArgs* pArgs);
 
 	// CLIENT COMMANDS
 	static void CmdGetLocalName(IConsoleCmdArgs *pArgs);
