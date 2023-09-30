@@ -1,6 +1,7 @@
 #include "StdAfx.h"
 #include "TOSActor.h"
 #include "Actor.h"
+#include "../Game/TOSGameEventRecorder.h"
 
 CTOSActor::CTOSActor() : 
 	m_masterEntityId(0),
@@ -15,16 +16,20 @@ CTOSActor::~CTOSActor()
 
 void CTOSActor::PostInit(IGameObject* pGameObject)
 {
-	CryLogAlways("[C++][%s][%s][CTOSActor::PostInit] Actor: %s|%i",
-		TOS_Debug::GetEnv(), TOS_Debug::GetAct(1), GetEntity()->GetName(), GetEntity()->GetId());
+	//CryLogAlways("[C++][%s][%s][CTOSActor::PostInit] Actor: %s|%i",
+	//	TOS_Debug::GetEnv(), TOS_Debug::GetAct(1), GetEntity()->GetName(), GetEntity()->GetId());
+
+	TOS_RECORD_EVENT(GetEntityId(), STOSGameEvent(eEGE_ActorPostInit, "", true));
 
 	CActor::PostInit(pGameObject);
 }
 
 void CTOSActor::InitClient(int channelId)
 {
-	CryLogAlways("[C++][%s][%s][CTOSActor::InitClient] Actor: %s|%i|ch:%i",
-		TOS_Debug::GetEnv(), TOS_Debug::GetAct(1), GetEntity()->GetName(), GetEntity()->GetId(), channelId);
+	//CryLogAlways("[C++][%s][%s][CTOSActor::InitClient] Actor: %s|%i|ch:%i",
+	//	TOS_Debug::GetEnv(), TOS_Debug::GetAct(1), GetEntity()->GetName(), GetEntity()->GetId(), channelId);
+
+	TOS_RECORD_EVENT(GetEntityId(), STOSGameEvent(eEGE_ActorInitClient, "", true, false, 0.0f, channelId));
 
 	CActor::InitClient(channelId);
 }
@@ -44,8 +49,10 @@ void CTOSActor::Update(SEntityUpdateContext& ctx, int updateSlot)
 
 void CTOSActor::Release()
 {
-	CryLogAlways("[C++][%s][%s][CTOSActor::Release] Actor: %s|%i",
-		TOS_Debug::GetEnv(), TOS_Debug::GetAct(1), GetEntity()->GetName(), GetEntity()->GetId());
+	//CryLogAlways("[C++][%s][%s][CTOSActor::Release] Actor: %s|%i",
+	//	TOS_Debug::GetEnv(), TOS_Debug::GetAct(1), GetEntity()->GetName(), GetEntity()->GetId());
+
+	TOS_RECORD_EVENT(GetEntityId(), STOSGameEvent(eEGE_ActorReleased, "", true));
 
 	CActor::Release();
 }

@@ -77,19 +77,27 @@ void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEven
 
 		break;
 	}
-	case eGE_Connected:
+	case eEGE_ActorPostInit:
 	{
-		if (pEntity && gEnv->bServer)
+		if (gEnv->bServer)
 		{
-			MasterAdd(pEntity);
+			auto pPlayer = dynamic_cast<CTOSPlayer*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pEntity->GetId()));
+			if (!pPlayer)
+				break;
+
+			MasterAdd(pPlayer->GetEntity());
 		}
 		break;
 	}
-	case eGE_Disconnected:
+	case eEGE_ActorReleased:
 	{
-		if (pEntity && gEnv->bServer)
+		if (gEnv->bServer)
 		{
-			MasterRemove(pEntity);
+			auto pPlayer = dynamic_cast<CTOSPlayer*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pEntity->GetId()));
+			if (!pPlayer)
+				break;
+
+			MasterRemove(pPlayer->GetEntity());
 		}
 		break;
 	}

@@ -4,15 +4,15 @@
 #include "IEntity.h"
 #include "TOSGame.h"
 
-// Example:
+// Example
 //   TOS_RECORD_EVENT(0, STOSGameEvent(eEGE_SynchronizerCreated, "MasterModule", true));
 #define TOS_RECORD_EVENT(entityId, tosGameEventExample) \
 if (g_pTOSGame)\
 	g_pTOSGame->GetEventRecorder()->RecordEvent(entityId, tosGameEventExample) \
 
-// Summary
+// Description
 //   Initialize the event vars
-// Remarks
+// Values
 //   entName, eventName, eventDesc, pGO
 #define TOS_INIT_EVENT_VALUES(pEntity, _event) \
 const char* entName = pEntity ? pEntity->GetName() : "";\
@@ -32,6 +32,9 @@ enum EExtraGameplayEvent
 	eEGE_ActorDropped,
 	eEGE_ActorGrab,
 	eEGE_ActorDrop,
+	eEGE_ActorPostInit,
+	eEGE_ActorInitClient,
+	eEGE_ActorReleased,
 
 	eEGE_GamerulesReset,
 
@@ -139,6 +142,15 @@ public:
 			break;
 		case eEGE_ActorDrop:
 			return "eEGE_ActorDrop";
+			break;
+		case eEGE_ActorReleased:
+			return "eEGE_ActorReleased";
+			break;		
+		case eEGE_ActorPostInit:
+			return "eEGE_ActorPostInit";
+			break;
+		case eEGE_ActorInitClient:
+			return "eEGE_ActorInitClient";
 			break;
 		case eEGE_GamerulesReset:
 			return "eEGE_GamerulesReset";
