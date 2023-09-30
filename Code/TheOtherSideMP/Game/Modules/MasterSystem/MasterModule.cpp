@@ -27,11 +27,19 @@ void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEven
 {
 	TOS_INIT_EVENT_VALUES(pEntity, event);
 
+	// Обнаружен баг
+	//	При вводе sv_restart у Synchronizer не вызывается Release(), но при этом он всё же куда-то пропадает. 
+	//	Флаг у Synchronizer на неудаляемость присутствует.
+	// Исправление: 
+	//	удаление вручную при событии eGE_GameReset
+
 	switch (event.event)
 	{
-	case eEGE_GamerulesPostInit:
+	//case eEGE_GamerulesStartGame: is ok
+	//case eEGE_GamerulesPostInit: not ok
+	case eEGE_GamerulesStartGame:
 	{
-		//Spawn the RMI Sender entity
+		//Create Synchronizer entity
 
 		auto pSynchronizer = gEnv->pEntitySystem->FindEntityByName("MasterSynchronizer");
 		if (pSynchronizer)
@@ -46,19 +54,20 @@ void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEven
 			return;
 		}
 
-		auto pSynchronizerCls = gEnv->pEntitySystem->GetClassRegistry()->FindClass("TOSMasterSynchronizer");
-		assert(pSynchronizerCls);
+		//auto pSynchronizerCls = gEnv->pEntitySystem->GetClassRegistry()->FindClass("TOSMasterSynchronizer");
+		//assert(pSynchronizerCls);
 
-		if (!pSynchronizerCls)
-			return;
+		//if (!pSynchronizerCls)
+		//	return;
 
-		
 		SEntitySpawnParams params;
-		params.pClass = pSynchronizerCls;
-		//params.bStaticEntityId = true;
+		params.pClass = gEnv->pEntitySystem->GetClassRegistry()->GetDefaultClass();
+		params.bStaticEntityId = true;
 		params.sName = "MasterSynchronizer";
+		//params.nFlags |= ENTITY_FLAG_NO_PROXIMITY;
+		//Флаг ENTITY_FLAG_UNREMOVABLE не работает при sv_restart
 		params.nFlags |= ENTITY_FLAG_NO_PROXIMITY | ENTITY_FLAG_UNREMOVABLE;
-		params.id = 2;
+		//params.id = 2;
 
 		pSynchronizer = gEnv->pEntitySystem->SpawnEntity(params);
 		assert(pSynchronizer);
@@ -66,7 +75,8 @@ void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEven
 		if (!pSynchronizer)
 			return;
 
-		IGameObject* pGO = g_pGame->GetIGameFramework()->GetGameObject(pSynchronizer->GetId());
+		//IGameObject* pGO = g_pGame->GetIGameFramework()->GetGameObject(pSynchronizer->GetId());
+		IGameObject* pGO = g_pGame->GetIGameFramework()->GetIGameObjectSystem()->CreateGameObjectForEntity(pSynchronizer->GetId());
 		if (pGO)
 		{
 			m_pSynchronizer = dynamic_cast<CTOSMasterSynchronizer*>(pGO->AcquireExtension("TOSMasterSynchronizer"));
@@ -74,12 +84,24 @@ void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEven
 
 			pGO->ForceUpdate(true);
 		}
-
 		break;
+	}
+	case eGE_GameReset:
+	{
+		//Delete Synchronizer entity
+
+		//if (m_pSynchronizer)
+		//{
+		//	m_pSynchronizer->GetEntity()->ClearFlags(ENTITY_FLAG_UNREMOVABLE);
+
+		//	gEnv->pEntitySystem->RemoveEntity(m_pSynchronizer->GetEntityId());
+		//	m_pSynchronizer = nullptr;
+		//}
+		//break;
 	}
 	case eEGE_ActorPostInit:
 	{
-		if (gEnv->bServer)
+		if (pEntity && gEnv->bServer)
 		{
 			auto pPlayer = dynamic_cast<CTOSPlayer*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pEntity->GetId()));
 			if (!pPlayer)
@@ -91,7 +113,7 @@ void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEven
 	}
 	case eEGE_ActorReleased:
 	{
-		if (gEnv->bServer)
+		if (pEntity && gEnv->bServer)
 		{
 			auto pPlayer = dynamic_cast<CTOSPlayer*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pEntity->GetId()));
 			if (!pPlayer)
