@@ -214,7 +214,7 @@ void CTOSMasterModule::GetMasters(std::map<EntityId, EntityId>& masters)
 	masters = m_masters;
 }
 
-CTOSMasterSynchronizer* CTOSMasterModule::GetRMISender() const
+CTOSGenericSynchronizer* CTOSMasterModule::GetSynchronizer() const
 {
 	return m_pSynchronizer;
 }

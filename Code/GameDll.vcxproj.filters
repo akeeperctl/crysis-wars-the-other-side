@@ -767,6 +767,9 @@
     <ClCompile Include="TheOtherSideMP\Actors\Aliens\TOSTrooper.cpp">
       <Filter>TheOtherSideMP\Actors\aliens</Filter>
     </ClCompile>
+    <ClCompile Include="TheOtherSideMP\Game\Modules\GenericSynchronizer.cpp">
+      <Filter>TheOtherSideMP\Game\Modules</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor.h">
@@ -1354,6 +1357,9 @@
     </ClInclude>
     <ClInclude Include="TheOtherSideMP\Actors\Aliens\TOSTrooper.h">
       <Filter>TheOtherSideMP\Actors\aliens</Filter>
+    </ClInclude>
+    <ClInclude Include="TheOtherSideMP\Game\Modules\GenericSynchronizer.h">
+      <Filter>TheOtherSideMP\Game\Modules</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

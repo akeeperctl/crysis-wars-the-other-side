@@ -3,6 +3,7 @@
 #include "IActorSystem.h"
 #include "IInput.h"
 struct STOSGameEvent;
+class CTOSGenericSynchronizer;
 
 
 struct ITOSGameModule
@@ -23,6 +24,7 @@ struct ITOSGameModule
 	virtual bool OnInputEvent(const SInputEvent& event) { return true; };
 	virtual bool OnInputEventUI(const SInputEvent& event) { return false; };
 
+	virtual CTOSGenericSynchronizer* GetSynchronizer() const = 0;
 	virtual void OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event) = 0;
 	virtual void GetMemoryStatistics(ICrySizer* s) = 0;
 	virtual const char* GetName() = 0;

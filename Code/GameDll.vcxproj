@@ -408,6 +408,7 @@
     <ClCompile Include="TheOtherSideMP\Game\Modules\MasterSystem\MasterClient.cpp" />
     <ClCompile Include="TheOtherSideMP\Game\Modules\MasterSystem\MasterModule.cpp" />
     <ClCompile Include="TheOtherSideMP\Game\Modules\MasterSystem\Synchronizer.cpp" />
+    <ClCompile Include="TheOtherSideMP\Game\Modules\GenericSynchronizer.cpp" />
     <ClCompile Include="TheOtherSideMP\Game\TOSGame.cpp" />
     <ClCompile Include="TheOtherSideMP\Game\TOSGameCvars.cpp" />
     <ClCompile Include="TheOtherSideMP\Game\TOSGameEventRecorder.cpp" />
@@ -601,6 +602,7 @@
     <ClInclude Include="TheOtherSideMP\Game\Modules\MasterSystem\MasterClient.h" />
     <ClInclude Include="TheOtherSideMP\Game\Modules\MasterSystem\MasterModule.h" />
     <ClInclude Include="TheOtherSideMP\Game\Modules\MasterSystem\Synchronizer.h" />
+    <ClInclude Include="TheOtherSideMP\Game\Modules\GenericSynchronizer.h" />
     <ClInclude Include="TheOtherSideMP\Game\TOSGame.h" />
     <ClInclude Include="TheOtherSideMP\Game\TOSGameCvars.h" />
     <ClInclude Include="TheOtherSideMP\Game\TOSGameEventRecorder.h" />
