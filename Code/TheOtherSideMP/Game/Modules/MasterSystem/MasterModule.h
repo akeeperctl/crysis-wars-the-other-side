@@ -3,7 +3,7 @@
 #include "TheOtherSideMP/Game/Modules/ITOSGameModule.h"
 #include "TheOtherSideMP/Game/TOSGame.h"
 
-class CTOSMasterRMISender;
+class CTOSMasterSynchronizer;
 
 /**
  * TOS Master Info
@@ -65,10 +65,10 @@ public:
 	void DebugDrawMasters(const Vec2& screenPos = {20,300}, float fontSize = 1.2f, float interval = 20.0f, int maxElemNum = 5);
 
 
-	CTOSMasterRMISender* GetRMISender() const;
+	CTOSMasterSynchronizer* GetRMISender() const;
 
 private:
 	std::map<EntityId, EntityId> m_masters;
-	CTOSMasterRMISender* m_pRMISender;
+	CTOSMasterSynchronizer* m_pSynchronizer;
 
 };

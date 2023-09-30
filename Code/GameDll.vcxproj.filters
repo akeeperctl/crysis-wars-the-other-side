@@ -752,7 +752,7 @@
     <ClCompile Include="TheOtherSideMP\Game\Modules\MasterSystem\MasterModule.cpp">
       <Filter>TheOtherSideMP\Game\Modules\MasterSystem</Filter>
     </ClCompile>
-    <ClCompile Include="TheOtherSideMP\Game\Modules\MasterSystem\RMISender.cpp">
+    <ClCompile Include="TheOtherSideMP\Game\Modules\MasterSystem\Synchronizer.cpp">
       <Filter>TheOtherSideMP\Game\Modules\MasterSystem</Filter>
     </ClCompile>
     <ClCompile Include="TheOtherSideMP\Actors\TOSActor.cpp">
@@ -1340,7 +1340,7 @@
     <ClInclude Include="TheOtherSideMP\Game\Modules\MasterSystem\MasterModule.h">
       <Filter>TheOtherSideMP\Game\Modules\MasterSystem</Filter>
     </ClInclude>
-    <ClInclude Include="TheOtherSideMP\Game\Modules\MasterSystem\RMISender.h">
+    <ClInclude Include="TheOtherSideMP\Game\Modules\MasterSystem\Synchronizer.h">
       <Filter>TheOtherSideMP\Game\Modules\MasterSystem</Filter>
     </ClInclude>
     <ClInclude Include="TheOtherSideMP\Actors\TOSActor.h">

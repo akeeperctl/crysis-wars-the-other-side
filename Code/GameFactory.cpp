@@ -84,7 +84,7 @@
 #include "TheOtherSideMP/Actors/player/TOSPlayer.h"
 #include "TheOtherSideMP/Actors/aliens/TOSAlien.h"
 #include "TheOtherSideMP/Actors/aliens/TOSTrooper.h"
-#include "TheOtherSideMP/Game/Modules/MasterSystem/RMISender.h"
+#include "TheOtherSideMP/Game/Modules/MasterSystem/Synchronizer.h"
 //TheOtherSide
 
 #define HIDE_FROM_EDITOR(className)																																				\
@@ -228,8 +228,8 @@ void InitGameFactory(IGameFramework *pFramework)
 
 	//TheOtherSide
 	//REGISTER_FACTORY(pFramework, "TOSMasterRMISender", CTOSMasterRMISender, false);
-	REGISTER_GAME_OBJECT(pFramework, TOSMasterRMISender, "");
-	HIDE_FROM_EDITOR("TOSMasterRMISender");
+	REGISTER_GAME_OBJECT(pFramework, TOSMasterSynchronizer, "");
+	HIDE_FROM_EDITOR("TOSMasterSynchronizer");
 	//~TheOtherSide
 
 

@@ -4,6 +4,8 @@
 #include "IEntity.h"
 #include "TOSGame.h"
 
+// Example:
+//   TOS_RECORD_EVENT(0, STOSGameEvent(eEGE_SynchronizerCreated, "MasterModule", true));
 #define TOS_RECORD_EVENT(entityId, tosGameEventExample) \
 if (g_pTOSGame)\
 	g_pTOSGame->GetEventRecorder()->RecordEvent(entityId, tosGameEventExample) \
@@ -46,8 +48,8 @@ enum EExtraGameplayEvent
 	eEGE_EditorGameEnter,
 	eEGE_EditorGameExit,
 
-	eEGE_RMISenderCreated,
-	eEGE_RMISenderDestroyed,
+	eEGE_SynchronizerCreated,
+	eEGE_SynchronizerDestroyed,
 	
 	eEGE_EnterGame,
 	eEGE_EnterSpectator,
@@ -174,11 +176,11 @@ public:
 		case eEGE_MasterRemove:
 			return "eEGE_MasterRemove";
 			break;
-		case eEGE_RMISenderCreated:
-			return "eEGE_RMISenderCreated";
+		case eEGE_SynchronizerCreated:
+			return "eEGE_SynchronizerCreated";
 			break;
-		case eEGE_RMISenderDestroyed:
-			return "eEGE_RMISenderDestroyed";
+		case eEGE_SynchronizerDestroyed:
+			return "eEGE_SynchronizerDestroyed";
 			break;
 		case eEGE_GamerulesPostInit:
 			return "eEGE_GamerulesPostInit";

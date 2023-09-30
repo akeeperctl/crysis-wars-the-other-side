@@ -9,10 +9,10 @@
 #include "TheOtherSideMP/Helpers/TOS_Debug.h"
 
 #include "MasterModule.h"
-#include "RMISender.h"
+#include "Synchronizer.h"
 
 CTOSMasterModule::CTOSMasterModule():
-	m_pRMISender(nullptr)
+	m_pSynchronizer(nullptr)
 {
 	m_masters.clear();
 	g_pTOSGame->ModuleAdd(this, false);
@@ -33,44 +33,44 @@ void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEven
 	{
 		//Spawn the RMI Sender entity
 
-		auto pRMISender = gEnv->pEntitySystem->FindEntityByName("MasterSystem_RMISender");
-		if (pRMISender)
+		auto pSynchronizer = gEnv->pEntitySystem->FindEntityByName("MasterSynchronizer");
+		if (pSynchronizer)
 		{
-			IGameObject* pGO = g_pGame->GetIGameFramework()->GetGameObject(pRMISender->GetId());
+			IGameObject* pGO = g_pGame->GetIGameFramework()->GetGameObject(pSynchronizer->GetId());
 			if (pGO)
 			{
-				m_pRMISender = dynamic_cast<CTOSMasterRMISender*>(pGO->AcquireExtension("TOSMasterRMISender"));
-				assert(m_pRMISender);
+				m_pSynchronizer = dynamic_cast<CTOSMasterSynchronizer*>(pGO->AcquireExtension("TOSMasterSynchronizer"));
+				assert(m_pSynchronizer);
 			}
 
 			return;
 		}
 
-		auto pRMISenderCls = gEnv->pEntitySystem->GetClassRegistry()->FindClass("TOSMasterRMISender");
-		assert(pRMISenderCls);
+		auto pSynchronizerCls = gEnv->pEntitySystem->GetClassRegistry()->FindClass("TOSMasterSynchronizer");
+		assert(pSynchronizerCls);
 
-		if (!pRMISenderCls)
+		if (!pSynchronizerCls)
 			return;
 
 		
 		SEntitySpawnParams params;
-		params.pClass = pRMISenderCls;
+		params.pClass = pSynchronizerCls;
 		//params.bStaticEntityId = true;
-		params.sName = "MasterSystem_RMISender";
+		params.sName = "MasterSynchronizer";
 		params.nFlags |= ENTITY_FLAG_NO_PROXIMITY | ENTITY_FLAG_UNREMOVABLE;
 		params.id = 2;
 
-		pRMISender = gEnv->pEntitySystem->SpawnEntity(params);
-		assert(pRMISender);
+		pSynchronizer = gEnv->pEntitySystem->SpawnEntity(params);
+		assert(pSynchronizer);
 
-		if (!pRMISender)
+		if (!pSynchronizer)
 			return;
 
-		IGameObject* pGO = g_pGame->GetIGameFramework()->GetGameObject(pRMISender->GetId());
+		IGameObject* pGO = g_pGame->GetIGameFramework()->GetGameObject(pSynchronizer->GetId());
 		if (pGO)
 		{
-			m_pRMISender = dynamic_cast<CTOSMasterRMISender*>(pGO->AcquireExtension("TOSMasterRMISender"));
-			assert(m_pRMISender);
+			m_pSynchronizer = dynamic_cast<CTOSMasterSynchronizer*>(pGO->AcquireExtension("TOSMasterSynchronizer"));
+			assert(m_pSynchronizer);
 
 			pGO->ForceUpdate(true);
 		}
@@ -214,7 +214,7 @@ void CTOSMasterModule::GetMasters(std::map<EntityId, EntityId>& masters)
 	masters = m_masters;
 }
 
-CTOSMasterRMISender* CTOSMasterModule::GetRMISender() const
+CTOSMasterSynchronizer* CTOSMasterModule::GetRMISender() const
 {
-	return m_pRMISender;
+	return m_pSynchronizer;
 }
