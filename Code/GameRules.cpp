@@ -205,6 +205,10 @@ bool CGameRules::Init( IGameObject * pGameObject )
 		CreateRestrictedItemList(g_pGameCVars->i_restrictItems->GetString());
 	}
 
+	//TheOtherSide
+	TOS_RECORD_EVENT(GetEntityId(), STOSGameEvent(eEGE_GamerulesInit, "", true));
+	//~TheOtherSide
+
 	return true;
 }
 
@@ -222,6 +226,7 @@ void CGameRules::PostInit( IGameObject * pGameObject )
 	//TheOtherSide
 	TOS_RECORD_EVENT(GetEntityId(), STOSGameEvent(eEGE_GamerulesPostInit, "", true));
 	//~TheOtherSide
+
 }
 
 //------------------------------------------------------------------------
@@ -406,6 +411,11 @@ void CGameRules::ProcessEvent( SEntityEvent& event)
 		g_pGame->GetWeaponSystem()->GetTracerManager().Reset();
 		m_respawns.clear();
 		m_removals.clear();
+
+		//TheOtherSide
+		TOS_RECORD_EVENT(GetEntityId(), STOSGameEvent(eEGE_GamerulesReset, "", true));
+		//~TheOtherSide
+
 		break;
 
 	case ENTITY_EVENT_START_GAME:
@@ -419,7 +429,19 @@ void CGameRules::ProcessEvent( SEntityEvent& event)
 				gEnv->p3DEngine->GetTimeOfDay()->SetTime(pStart->GetFVal(), true);
 		}
 
+		//TheOtherSide
+		TOS_RECORD_EVENT(GetEntityId(), STOSGameEvent(eEGE_GamerulesStartGame, "", true));
+		//~TheOtherSide
+
 		break;
+
+	//TheOtherSide
+
+	case ENTITY_EVENT_INIT:
+		TOS_RECORD_EVENT(GetEntityId(), STOSGameEvent(eEGE_GamerulesEventInit, "", true));
+		break;
+
+	//~TheOtherSide
 
 	case ENTITY_EVENT_ENTER_SCRIPT_STATE:
 		m_currentStateId=event.nParam[0];
