@@ -228,8 +228,11 @@ void InitGameFactory(IGameFramework *pFramework)
 
 	//TheOtherSide
 	//REGISTER_FACTORY(pFramework, "TOSMasterRMISender", CTOSMasterRMISender, false);
-	REGISTER_GAME_OBJECT(pFramework, TOSMasterSynchronizer, "");
-	HIDE_FROM_EDITOR("TOSMasterSynchronizer");
+	
+	//REGISTER_GAME_OBJECT(pFramework, TOSMasterSynchronizer, "");
+	//HIDE_FROM_EDITOR("TOSMasterSynchronizer");
+	 
+	REGISTER_FACTORY(pFramework, "TOSMasterSynchronizer", CTOSMasterSynchronizer, false);
 	//~TheOtherSide
 
 
