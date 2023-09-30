@@ -121,7 +121,7 @@ void CTOSGame::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event
 	}
 	}
 
-	if (event.console_log && !event.vanilla_recorder)
+	if ((event.console_log && !event.vanilla_recorder) || event.vanilla_recorder)
 	{
 		CryLogAlways("[C++][%s][%s][CTOSGame::OnExtraGameplayEvent] Event: %s, Entity: (%s|%i), Desc: %s",
 			TOS_Debug::GetEnv(), TOS_Debug::GetAct(1), eventName, entName, entId, eventDesc);

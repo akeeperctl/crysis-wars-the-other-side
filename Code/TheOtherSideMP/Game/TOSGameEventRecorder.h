@@ -36,8 +36,6 @@ enum EExtraGameplayEvent
 	eEGE_ActorInitClient,
 	eEGE_ActorReleased,
 
-	eEGE_GamerulesReset,
-
 	eEGE_MasterStartControl,
 	eEGE_MasterStopControl,
 	eEGE_MasterEnterSpectator,
@@ -57,7 +55,11 @@ enum EExtraGameplayEvent
 	eEGE_EnterGame,
 	eEGE_EnterSpectator,
 
+	eEGE_GamerulesReset,
+	eEGE_GamerulesStartGame,
+	eEGE_GamerulesEventInit,
 	eEGE_GamerulesPostInit,
+	eEGE_GamerulesInit,
 	eEGE_GamerulesDestroyed,
 
 	//eEGE_TOSGame_Init,
@@ -125,6 +127,102 @@ public:
 			break;
 		case eGE_Disconnected:
 			return "eGE_Disconnected";
+			break;
+		case eGE_GameReset:
+			return "eGE_GameReset";
+			break;
+		case eGE_GameStarted:
+			return "eGE_GameStarted";
+			break;
+		case eGE_GameEnd:
+			return "eGE_GameEnd";
+			break;
+		case eGE_Renamed:
+			return "eGE_Renamed";
+			break;
+		case eGE_ChangedTeam:
+			return "eGE_ChangedTeam";
+			break;
+		case eGE_Died:
+			return "eGE_Died";
+			break;
+		case eGE_Scored:
+			return "eGE_Scored";
+			break;
+		case eGE_Currency:
+			return "eGE_Currency";
+			break;
+		case eGE_Rank:
+			return "eGE_Rank";
+			break;
+		case eGE_Spectator:
+			return "eGE_Spectator";
+			break;
+		case eGE_ScoreReset:
+			return "eGE_ScoreReset";
+			break;
+		case eGE_AttachedAccessory:
+			return "eGE_AttachedAccessory";
+			break;
+		case eGE_ZoomedIn:
+			return "eGE_ZoomedIn";
+			break;
+		case eGE_ZoomedOut:
+			return "eGE_ZoomedOut";
+			break;
+		case eGE_Kill:
+			return "eGE_Kill";
+			break;
+		case eGE_Death:
+			return "eGE_Death";
+			break;
+		case eGE_Revive:
+			return "eGE_Revive";
+			break;
+		case eGE_SuitModeChanged:
+			return "eGE_SuitModeChanged";
+			break;
+		case eGE_Hit:
+			return "eGE_Hit";
+			break;
+		case eGE_Damage:
+			return "eGE_Damage";
+			break;
+		case eGE_WeaponHit:
+			return "eGE_WeaponHit";
+			break;
+		case eGE_WeaponReload:
+			return "eGE_WeaponReload";
+			break;
+		case eGE_WeaponShot:
+			return "eGE_WeaponShot";
+			break;
+		case eGE_WeaponMelee:
+			return "eGE_WeaponMelee";
+			break;
+		case eGE_WeaponFireModeChanged:
+			return "eGE_WeaponFireModeChanged";
+			break;
+		case eGE_Explosion:
+			return "eGE_Explosion";
+			break;
+		case eGE_ItemSelected:
+			return "eGE_ItemSelected";
+			break;
+		case eGE_ItemPickedUp:
+			return "eGE_ItemPickedUp";
+			break;
+		case eGE_ItemDropped:
+			return "eGE_ItemDropped";
+			break;
+		case eGE_ItemBought:
+			return "eGE_ItemBought";
+			break;
+		case eGE_EnteredVehicle:
+			return "eGE_EnteredVehicle";
+			break;
+		case eGE_LeftVehicle:
+			return "eGE_LeftVehicle";
 			break;
 
 		//eEGE - TOS events
@@ -194,11 +292,20 @@ public:
 		case eEGE_SynchronizerDestroyed:
 			return "eEGE_SynchronizerDestroyed";
 			break;
+		case eEGE_GamerulesDestroyed:
+			return "eEGE_GamerulesDestroyed";
+			break;
+		case eEGE_GamerulesStartGame:
+			return "eEGE_GamerulesStartGame";
+			break;
+		case eEGE_GamerulesEventInit:
+			return "eEGE_GamerulesEventInit";
+			break;
 		case eEGE_GamerulesPostInit:
 			return "eEGE_GamerulesPostInit";
 			break;
-		case eEGE_GamerulesDestroyed:
-			return "eEGE_GamerulesDestroyed";
+		case eEGE_GamerulesInit:
+			return "eEGE_GamerulesInit";
 			break;
 		case eEGE_Last:
 			return "eEGE_Last";
