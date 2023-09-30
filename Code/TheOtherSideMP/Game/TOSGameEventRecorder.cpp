@@ -82,25 +82,25 @@ void CTOSGame::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event
 {
 	//This code Handle gameplay events from ALL game and The Other Side
 	TOS_INIT_EVENT_VALUES(pEntity, event);
-	const char* envName = "";
+	//const char* envName = "";
 
-	if (gEnv->bServer)
-	{
-		envName = "[SERVER]";
-	}
-	else if (pGO)
-	{
-		auto pNetCh = pGO->GetNetChannel();
-		if (pNetCh && pNetCh->IsLocal())
-		{
-			envName = "[LOCAL]";
-		}
+	//if (gEnv->bServer)
+	//{
+	//	envName = "[SERVER]";
+	//}
+	//else if (pGO)
+	//{
+	//	auto pNetCh = pGO->GetNetChannel();
+	//	if (pNetCh && pNetCh->IsLocal())
+	//	{
+	//		envName = "[LOCAL]";
+	//	}
 
-	}
-	else if (gEnv->bClient)
-	{
-		envName = "[CLIENT]";
-	}
+	//}
+	//else if (gEnv->bClient)
+	//{
+	//	envName = "[CLIENT]";
+	//}
 
 	switch(event.event)
 	{
@@ -114,8 +114,8 @@ void CTOSGame::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event
 			auto pNetCh = pGO->GetNetChannel();
 
 			//Case 1
-			CryLogAlways("[C++][SERVER][FUNC CALL][CTOSGame::OnExtraGameplayEvent] Event: %s, Name: (CH:%s|GO:%s|Id:%i)",
-				eventName, pNetCh ? pNetCh->GetName() : "NULL", entName, pEntity->GetId());
+			CryLogAlways("[C++][%s][%s][CTOSGame::OnExtraGameplayEvent] Event: %s, Name: (CH:%s|GO:%s|Id:%i)",
+				TOS_Debug::GetEnv(), TOS_Debug::GetAct(1), eventName, pNetCh ? pNetCh->GetName() : "NULL", entName, pEntity->GetId());
 		}
 		break;
 	}
@@ -123,8 +123,8 @@ void CTOSGame::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event
 
 	if (event.console_log && !event.vanilla_recorder)
 	{
-		CryLogAlways("[C++]%s[FUNC CALL][CTOSGame::OnExtraGameplayEvent] Event: %s, Entity: (%s|%i), Desc: %s",
-			envName, eventName, entName, entId, eventDesc);
+		CryLogAlways("[C++][%s][%s][CTOSGame::OnExtraGameplayEvent] Event: %s, Entity: (%s|%i), Desc: %s",
+			TOS_Debug::GetEnv(), TOS_Debug::GetAct(1), eventName, entName, entId, eventDesc);
 
 		//Case 2
 		//CryLogAlways("[C++]%s[FUNC CALL][CTOSGame::OnExtraGameplayEvent]", envName);
