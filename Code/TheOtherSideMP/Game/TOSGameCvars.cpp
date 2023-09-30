@@ -113,7 +113,11 @@ void STOSCvars::CmdIsMaster(IConsoleCmdArgs* pArgs)
 	auto pEntity = gEnv->pEntitySystem->GetEntity(playerId);
 	assert(pEntity);
 	if (!pEntity)
+	{
+		CryLogAlways("IsMaster failed: not found entity with id (%i)", strPlayerId);
 		return;
+	}
+		
 
 	const bool isMaster = g_pTOSGame->GetMasterModule()->IsMaster(pEntity);
 	const char* result = isMaster ? "Yes" : "No";
@@ -125,15 +129,22 @@ void STOSCvars::CmdSpawnTrooper(IConsoleCmdArgs* pArgs)
 {
 	if (!gEnv->bServer)
 	{
-		CryLogAlways("can spawn only on the server");
+		CryLogAlways("Spawn failed: can spawn only on the server");
 		return;
 	}
 
 	auto pClass = gEnv->pEntitySystem->GetClassRegistry()->FindClass("Trooper");
 	assert(pClass);
 
-	auto pPlayerEntity = gEnv->pEntitySystem->FindEntityByName(pArgs->GetArg(1));
+	const char* plName = pArgs->GetArg(1);
+
+	auto pPlayerEntity = gEnv->pEntitySystem->FindEntityByName(plName);
 	assert(pPlayerEntity);
+	if (!pPlayerEntity)
+	{
+		CryLogAlways("Spawn failed: player entity %(s) not found", plName);
+		return;
+	}
 
 	SEntitySpawnParams params;
 	params.bStaticEntityId = true;
@@ -148,15 +159,19 @@ void STOSCvars::CmdRemoveEntity(IConsoleCmdArgs* pArgs)
 {
 	if (!gEnv->bServer)
 	{
-		CryLogAlways("can remove only on the server");
+		CryLogAlways("Remove failed: can remove only on the server");
 		return;
 	}
 
-	auto pClass = gEnv->pEntitySystem->GetClassRegistry()->FindClass("Trooper");
-	assert(pClass);
+	const char* entName = pArgs->GetArg(1);
 
-	auto pEntity = gEnv->pEntitySystem->FindEntityByName(pArgs->GetArg(1));
+	auto pEntity = gEnv->pEntitySystem->FindEntityByName(entName);
 	assert(pEntity);
+	if (!pEntity)
+	{
+		CryLogAlways("Remove failed: entity %s not found", entName);
+		return;
+	}
 
 	gEnv->pEntitySystem->RemoveEntity(pEntity->GetId());
 }
