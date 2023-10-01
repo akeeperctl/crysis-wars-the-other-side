@@ -6,6 +6,7 @@
 #include <IGameRulesSystem.h>
 #include <IVehicleSystem.h>
 #include <IGameplayRecorder.h>
+#include <IInput.h>
 
 class CControlClient;
 class CGameFlashAnimation;
@@ -23,7 +24,7 @@ struct IHitListener;
 
 enum EExtraGameplayEvent;
 
-class CTOSGame : public IGameplayListener
+class CTOSGame : public IGameplayListener, public IInputEventListener
 {
 public:
 	CTOSGame();
@@ -40,14 +41,14 @@ public:
 	//IHardwareMouseEventListener
 	void OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eHardwareMouseEvent);
 	//~IHardwareMouseEventListener
-	// 
+
 	//IInputEventListener
-	virtual bool OnInputEvent(const SInputEvent& event);
-	virtual bool OnInputEventUI(const SInputEvent& event) { return false; }
+	bool OnInputEvent(const SInputEvent& event) override;
+	bool OnInputEventUI(const SInputEvent& event) override { return false; }
 	//~IInputEventListener
 
 	//IGameplayListener
-	virtual void OnGameplayEvent(IEntity* pEntity, const GameplayEvent& event);
+	void OnGameplayEvent(IEntity* pEntity, const GameplayEvent& event) override;
 	//~IGameplayListener
 
 	//TOSEventRecorder->RecordEvent->calling this

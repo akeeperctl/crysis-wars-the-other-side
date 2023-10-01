@@ -25,6 +25,7 @@ CTOSGame::~CTOSGame()
 void CTOSGame::Init()
 {
 	g_pGame->GetIGameFramework()->GetIGameplayRecorder()->RegisterListener(this);
+	gEnv->pInput->AddEventListener(this);
 
 	m_pEventRecorder = new CTOSGameEventRecorder();
 
@@ -45,6 +46,7 @@ void CTOSGame::Init()
 void CTOSGame::Shutdown()
 {
 	g_pGame->GetIGameFramework()->GetIGameplayRecorder()->UnregisterListener(this);
+	gEnv->pInput->RemoveEventListener(this);
 
 	this->~CTOSGame();
 }
