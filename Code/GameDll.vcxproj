@@ -409,7 +409,7 @@
     <ClCompile Include="TheOtherSideMP\Game\Modules\GenericSynchronizer.cpp" />
     <ClCompile Include="TheOtherSideMP\Game\Modules\Master\MasterClient.cpp" />
     <ClCompile Include="TheOtherSideMP\Game\Modules\Master\MasterModule.cpp" />
-    <ClCompile Include="TheOtherSideMP\Game\Modules\Master\Synchronizer.cpp" />
+    <ClCompile Include="TheOtherSideMP\Game\Modules\Master\MasterSynchronizer.cpp" />
     <ClCompile Include="TheOtherSideMP\Game\Modules\RestartResurrection\RestartResurrectionModule.cpp" />
     <ClCompile Include="TheOtherSideMP\Game\TOSGame.cpp" />
     <ClCompile Include="TheOtherSideMP\Game\TOSGameCvars.cpp" />
@@ -605,7 +605,7 @@
     <ClInclude Include="TheOtherSideMP\Game\Modules\GenericSynchronizer.h" />
     <ClInclude Include="TheOtherSideMP\Game\Modules\Master\MasterClient.h" />
     <ClInclude Include="TheOtherSideMP\Game\Modules\Master\MasterModule.h" />
-    <ClInclude Include="TheOtherSideMP\Game\Modules\Master\Synchronizer.h" />
+    <ClInclude Include="TheOtherSideMP\Game\Modules\Master\MasterSynchronizer.h" />
     <ClInclude Include="TheOtherSideMP\Game\Modules\RestartResurrection\RestartResurrectionModule.h" />
     <ClInclude Include="TheOtherSideMP\Game\TOSGame.h" />
     <ClInclude Include="TheOtherSideMP\Game\TOSGameCvars.h" />

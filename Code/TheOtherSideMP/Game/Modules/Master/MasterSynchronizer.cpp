@@ -1,6 +1,6 @@
 #include "StdAfx.h"
 
-#include "Synchronizer.h"
+#include "MasterSynchronizer.h"
 #include "TheOtherSideMP/Game/TOSGameEventRecorder.h"
 
 CTOSMasterSynchronizer::CTOSMasterSynchronizer()
@@ -14,15 +14,11 @@ CTOSMasterSynchronizer::~CTOSMasterSynchronizer()
 void CTOSMasterSynchronizer::PostInit(IGameObject* pGameObject)
 {
 	CTOSGenericSynchronizer::PostInit(pGameObject);
-
-	TOS_RECORD_EVENT(GetEntityId(), STOSGameEvent(eEGE_SynchronizerCreated, "MasterModule", true));
 }
 
 void CTOSMasterSynchronizer::Release()
 {
 	CTOSGenericSynchronizer::Release();
-
-	TOS_RECORD_EVENT(GetEntityId(), STOSGameEvent(eEGE_SynchronizerDestroyed, "MasterModule", true));
 }
 
 void CTOSMasterSynchronizer::FullSerialize(TSerialize ser)

@@ -11,7 +11,7 @@
 //#include "PlayerInput.h"
 
 #include "MasterClient.h"
-#include "Synchronizer.h"
+#include "MasterSynchronizer.h"
 
 CTOSMasterClient::CTOSMasterClient(CTOSPlayer* _player) :
 	m_pLocalDude(_player)

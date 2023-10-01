@@ -6,7 +6,7 @@
 #include "TOSGame.h"
 #include "TOSGameEventRecorder.h"
 
-#include "Modules/Master/Synchronizer.h"
+#include "Modules/Master/MasterSynchronizer.h"
 
 CTOSGameEventRecorder::CTOSGameEventRecorder()
 {

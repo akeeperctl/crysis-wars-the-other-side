@@ -84,7 +84,7 @@
 #include "TheOtherSideMP/Actors/player/TOSPlayer.h"
 #include "TheOtherSideMP/Actors/aliens/TOSAlien.h"
 #include "TheOtherSideMP/Actors/aliens/TOSTrooper.h"
-#include "TheOtherSideMP/Game/Modules/Master/Synchronizer.h"
+#include "TheOtherSideMP/Game/Modules/Master/MasterSynchronizer.h"
 //TheOtherSide
 
 #define HIDE_FROM_EDITOR(className)																																				\

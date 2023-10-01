@@ -9,7 +9,7 @@
 #include "TheOtherSideMP/Helpers/TOS_Debug.h"
 
 #include "MasterModule.h"
-#include "Synchronizer.h"
+#include "MasterSynchronizer.h"
 
 CTOSMasterModule::CTOSMasterModule():
 	m_pSynchronizer(nullptr)
