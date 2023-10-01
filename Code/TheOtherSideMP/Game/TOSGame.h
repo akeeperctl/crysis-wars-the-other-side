@@ -56,7 +56,7 @@ public:
 
 	//TOSEventRecorder->RecordEvent->calling this
 	//IGameplayRecorder->Event->calling this
-	void OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event);
+	void OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event) const;
 
 	//ILevelSystemListener
 	//virtual void OnLevelNotFound(const char* levelName);
