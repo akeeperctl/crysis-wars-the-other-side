@@ -2,6 +2,7 @@
 
 #include <IGameObject.h>
 
+class CTOSGenericModule;
 struct PintestParams;
 
 // Send pintest rmi to the server
@@ -48,7 +49,8 @@ struct MasterAddingParams
 {
 	EntityId entityId;
 	MasterAddingParams() {};
-	MasterAddingParams(EntityId entId)
+
+	explicit MasterAddingParams(const EntityId entId)
 		: entityId(entId)
 	{
 	}
@@ -64,9 +66,12 @@ struct MasterAddingParams
 //    Used as a parent class of network synchronizers of TOS game modules
 class CTOSGenericSynchronizer : public CGameObjectExtensionHelper<CTOSGenericSynchronizer, IGameObjectExtension, 64>
 {
+	friend class CTOSMasterSynchronizer;
+	friend class CTOSGenericModule;
+
 public:
 	CTOSGenericSynchronizer();
-	~CTOSGenericSynchronizer();
+	virtual ~CTOSGenericSynchronizer();
 
 	// IGameObjectExtension
 	bool Init(IGameObject* pGameObject) override;
@@ -76,9 +81,9 @@ public:
 	void Release() override;
 	void FullSerialize(TSerialize ser) override;
 	bool NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int flags) override;
-	void PostSerialize() {}
-	void SerializeSpawnInfo(TSerialize ser) {}
-	ISerializableInfoPtr GetSpawnInfo() { return 0; }
+	void PostSerialize() override {};
+	void SerializeSpawnInfo(TSerialize ser) override {}
+	ISerializableInfoPtr GetSpawnInfo() override { return 0; }
 	void Update(SEntityUpdateContext& ctx, int updateSlot) override;
 	void PostUpdate(float frameTime) override {};
 	void PostRemoteSpawn() override {};
@@ -88,6 +93,8 @@ public:
 	void SetAuthority(bool auth) override;
 	void GetMemoryStatistics(ICrySizer* s) override;
 	//~IGameObjectExtension
+
+	//CTOSGenericModule* GetModule();
 
 	template <class MI, class T>
 	void RMISend(const MI method, const T& params, unsigned where, int channel = -1)
@@ -113,6 +120,7 @@ public:
 		pGP->InvokeRMI_Primitive(method, params, where, channel, ent);
 	}
 
+	static void GetSynchonizers(std::vector<EntityId>& array);
 
 	//CLIENT - Направленные на клиент
 	//SERVER - Направленные на сервер с клиента
@@ -126,6 +134,9 @@ public:
 	//DECLARE_SERVER_RMI_NOATTACH(SvRequestMasterRemove, MasterAddingParams, eNRT_ReliableOrdered);
 
 protected:
-
+	//void SetModule(CTOSGenericModule* pModule);
+	//CTOSGenericModule* m_pModule;
 private:
+	typedef std::vector<EntityId> TEntities;
+	static TEntities s_synchronizers;
 };

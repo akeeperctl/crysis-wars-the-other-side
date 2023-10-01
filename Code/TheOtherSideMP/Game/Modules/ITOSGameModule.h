@@ -8,6 +8,7 @@ class CTOSGenericSynchronizer;
 
 struct ITOSGameModule
 {
+	virtual ~ITOSGameModule() = 0;
 	//virtual void OnMainMenuEnter() = 0;
 	//virtual void OnGameRulesReset() = 0;
 	//virtual void OnActorDeath(IActor* pActor) = 0;
@@ -24,7 +25,6 @@ struct ITOSGameModule
 	virtual bool OnInputEvent(const SInputEvent& event) { return true; };
 	virtual bool OnInputEventUI(const SInputEvent& event) { return false; };
 
-	virtual CTOSGenericSynchronizer* GetSynchronizer() const = 0;
 	virtual void OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event) = 0;
 	virtual void GetMemoryStatistics(ICrySizer* s) = 0;
 	virtual const char* GetName() = 0;

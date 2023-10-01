@@ -1,10 +1,15 @@
 #include "StdAfx.h"
 
+//#include "GenericModule.h"
 #include "GenericSynchronizer.h"
 #include "TheOtherSideMP/Game/TOSGameEventRecorder.h"
 
+CTOSGenericSynchronizer::TEntities CTOSGenericSynchronizer::s_synchronizers;
+
 CTOSGenericSynchronizer::CTOSGenericSynchronizer()
 {
+	//m_pModule = nullptr;
+	
 }
 
 CTOSGenericSynchronizer::~CTOSGenericSynchronizer()
@@ -19,7 +24,6 @@ bool CTOSGenericSynchronizer::Init(IGameObject* pGameObject)
 		return false;
 
 	GetGameObject()->EnablePostUpdates(this);
-
 	return true;
 }
 
@@ -28,6 +32,9 @@ void CTOSGenericSynchronizer::PostInit(IGameObject* pGameObject)
 	pGameObject->EnableUpdateSlot(this, 0);
 	pGameObject->SetUpdateSlotEnableCondition(this, 0, eUEC_WithoutAI);
 	pGameObject->EnablePostUpdates(this);
+
+	stl::push_back_unique(s_synchronizers, GetEntityId());
+	TOS_RECORD_EVENT(GetEntityId(), STOSGameEvent(eEGE_SynchronizerCreated, "", true));
 }
 
 void CTOSGenericSynchronizer::InitClient(int channelId)
@@ -42,6 +49,8 @@ void CTOSGenericSynchronizer::PostInitClient(int channelId)
 
 void CTOSGenericSynchronizer::Release()
 {
+	TOS_RECORD_EVENT(GetEntityId(), STOSGameEvent(eEGE_SynchronizerDestroyed, "", true));
+
 	delete this;
 }
 
@@ -60,15 +69,15 @@ void CTOSGenericSynchronizer::Update(SEntityUpdateContext& ctx, int updateSlot)
 
 void CTOSGenericSynchronizer::HandleEvent(const SGameObjectEvent& event)
 {
-	//switch (event.event)
-	//{
-	//case ENTITY_EVENT_RESET:
-	//	break;
-	//case ENTITY_EVENT_ENTERAREA:
-	//	break;
-	//case ENTITY_EVENT_LEAVEAREA:
-	//	break;
-	//}
+	switch (event.event)
+	{
+	case ENTITY_EVENT_START_GAME:
+		break;
+	case ENTITY_EVENT_RESET:
+		break;	
+	case ENTITY_EVENT_INIT:
+		break;
+	}
 }
 
 void CTOSGenericSynchronizer::ProcessEvent(SEntityEvent& event)
@@ -85,6 +94,22 @@ void CTOSGenericSynchronizer::GetMemoryStatistics(ICrySizer* s)
 {
 	s->Add(*this);
 }
+
+void CTOSGenericSynchronizer::GetSynchonizers(std::vector<EntityId>& _array)
+{
+	_array = s_synchronizers;
+}
+
+//CTOSGenericModule* CTOSGenericSynchronizer::GetModule()
+//{
+//	return m_pModule;
+//}
+//
+//void CTOSGenericSynchronizer::SetModule(CTOSGenericModule* pModule)
+//{
+//	m_pModule = pModule;
+//	assert(m_pModule);
+//}
 
 //Not actual any more
 ////------------------------------------------------------------------------

@@ -29,13 +29,11 @@ void STOSCvars::InitCCommands(IConsole* pConsole)
 	pConsole->AddCommand("spawnentity", CmdSpawnEntity);
 	pConsole->AddCommand("removeentity", CmdRemoveEntity);
 	pConsole->AddCommand("getentitiesbyclass", CmdGetEntitiesByClass);
-	pConsole->AddCommand("getsync", CmdGetSync);
+	pConsole->AddCommand("getsyncs", CmdGetSyncs);
 
 	//CLIENT COMMANDS
 	pConsole->AddCommand("getlocalname", CmdGetLocalName);
 }
-	
-
 
 void STOSCvars::ReleaseCCommands()
 {
@@ -207,13 +205,20 @@ void STOSCvars::CmdGetEntitiesByClass(IConsoleCmdArgs* pArgs)
 	}
 }
 
-void STOSCvars::CmdGetSync(IConsoleCmdArgs* pArgs)
+void STOSCvars::CmdGetSyncs(IConsoleCmdArgs* pArgs)
 {
-	auto pSynchronizer = g_pTOSGame->GetMasterModule()->GetSynchronizer();
+	CryLogAlways("Result: (name|id)");
 
-	const char* name = pSynchronizer ? pSynchronizer->GetEntity()->GetName() : "NULL";
+	std::vector<EntityId> syncs;
+	CTOSGenericSynchronizer::GetSynchonizers(syncs);
 
-	CryLogAlways("Result: %s", name);
+	for (auto id: syncs)
+	{
+		auto pEntity = gEnv->pEntitySystem->GetEntity(id);
+		const char* name = pEntity ? pEntity->GetName() : "NULL";
+
+		CryLogAlways("	%s|%i", name, id);
+	}
 }
 
 void STOSCvars::CmdGetLocalName(IConsoleCmdArgs* pArgs)

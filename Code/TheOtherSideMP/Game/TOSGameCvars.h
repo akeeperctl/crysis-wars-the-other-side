@@ -31,7 +31,7 @@ struct STOSCvars
 	static void CmdRemoveEntity(IConsoleCmdArgs* pArgs);
 
 	static void CmdGetEntitiesByClass(IConsoleCmdArgs* pArgs);
-	static void CmdGetSync(IConsoleCmdArgs* pArgs);
+	static void CmdGetSyncs(IConsoleCmdArgs* pArgs);
 
 	// CLIENT COMMANDS
 	static void CmdGetLocalName(IConsoleCmdArgs *pArgs);
