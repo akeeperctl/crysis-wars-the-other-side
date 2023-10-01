@@ -26,3 +26,18 @@
 1.  Перейти по ссылке на Moddb <https://www.moddb.com/mods/crysis-the-other-side/downloads/the-other-side-conquest-build-4011>
 2.  Скачать файл и развернуть описание
 3.  Найти и прочитать пункт `Installation`
+
+## Настройка проекта и компиляция (разработчик)
+1.	В исходном коде движка, поставляемым из **CrysisWars_ModSDK_SourceCode_v1.1**, 
+зайти в папку `CrysisWars\Code\CryEngine\CryCommon`
+
+2.	Открыть файл **StlUtils.h** и в 21 строке прописать `#define _SILENCE_STDEXT_HASH_DEPRECATION_WARNINGS`
+
+3.	Открыть файл **NetHelpers.h** и 132 строку заменить на 
+`return TNetMessageCallbackResult( ((cls*)p)->Handle##name( serialize, curSeq, oldSeq, pEntityId, pChannel ), reinterpret_cast<INetAtSyncItem*>(NULL) ); \`
+
+4.	Перейти в папку `CrysisWars\Code\CryEngine\CryAction`
+
+5.	Открыть файл **IGameObject.h** и заменить 
+`template <class T_Derived, class T_Parent, size_t MAX_STATIC_MESSAGES = 32>` на 
+`template <class T_Derived, class T_Parent, size_t MAX_STATIC_MESSAGES = 64>`
