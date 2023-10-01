@@ -1,7 +1,7 @@
 #pragma once
 
-#include "TheOtherSideMP/Game/Modules/ITOSGameModule.h"
-#include "TheOtherSideMP/Game/TOSGame.h"
+#include "../GenericModule.h"
+#include "../../TOSGame.h"
 
 class CTOSMasterSynchronizer;
 class CTOSGenericSynchronizer;
@@ -41,7 +41,7 @@ class CTOSGenericSynchronizer;
  * Мастер - это игрок, управляющий несвоим актёром.
  * Автоудаление: отсутствует.
  */
-class CTOSMasterModule : ITOSGameModule
+class CTOSMasterModule : CTOSGenericModule
 {
 public:
 	CTOSMasterModule();
@@ -49,8 +49,7 @@ public:
 
 	//ITOSGameModule
 	void OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event) override;
-	void GetMemoryStatistics(ICrySizer* s) override;
-	const char* GetName() override {return "CTOSMasterSystem";};
+	const char* GetName() override {return "CTOSMasterModule";};
 	void Init() override;
 	void Update(float frametime) override;
 	void Serialize(TSerialize ser) override;

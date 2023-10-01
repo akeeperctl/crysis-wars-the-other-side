@@ -15,12 +15,10 @@ CTOSMasterModule::CTOSMasterModule():
 	m_pSynchronizer(nullptr)
 {
 	m_masters.clear();
-	g_pTOSGame->ModuleAdd(this, false);
 }
 
 CTOSMasterModule::~CTOSMasterModule()
 {
-	g_pTOSGame->ModuleRemove(this, false);
 }
 
 void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event)
@@ -130,13 +128,9 @@ void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEven
 	}
 }
 
-void CTOSMasterModule::GetMemoryStatistics(ICrySizer* s)
-{
-}
-
 void CTOSMasterModule::Init()
 {
-	
+	CTOSGenericModule::Init();
 }
 
 void CTOSMasterModule::Update(float frametime)
