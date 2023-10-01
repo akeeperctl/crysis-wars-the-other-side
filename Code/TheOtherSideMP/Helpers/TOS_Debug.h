@@ -104,6 +104,8 @@ namespace TOS_Debug
 		{
 			return "CLIENT";
 		}
+
+		return "ENV_NULL";
 	}
 
 	inline void Draw2dText(float x, float y, float size, const char* format, ...)
