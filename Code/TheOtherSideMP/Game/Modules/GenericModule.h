@@ -2,13 +2,13 @@
 
 #include "ITOSGameModule.h"
 
-class CTOSGenericModule: public ITOSGameModule
+class CTOSGenericModule: public ITOSGameModule  // NOLINT(cppcoreguidelines-special-member-functions)
 {
 public:
 	friend class CTOSMasterModule;
 
 	CTOSGenericModule();
-	~CTOSGenericModule();
+	~CTOSGenericModule() override;
 
 	//ITOSGameModule
 	bool OnInputEvent(const SInputEvent& event) override { return true; };

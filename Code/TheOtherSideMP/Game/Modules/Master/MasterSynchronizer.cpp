@@ -1,7 +1,7 @@
 #include "StdAfx.h"
 
 #include "MasterSynchronizer.h"
-#include "TheOtherSideMP/Game/TOSGameEventRecorder.h"
+#include "../../TOSGameEventRecorder.h"
 
 CTOSMasterSynchronizer::CTOSMasterSynchronizer()
 {

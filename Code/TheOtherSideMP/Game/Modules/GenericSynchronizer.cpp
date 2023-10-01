@@ -2,7 +2,8 @@
 
 //#include "GenericModule.h"
 #include "GenericSynchronizer.h"
-#include "TheOtherSideMP/Game/TOSGameEventRecorder.h"
+
+#include "../TOSGameEventRecorder.h"
 
 CTOSGenericSynchronizer::TEntities CTOSGenericSynchronizer::s_synchronizers;
 
@@ -69,15 +70,17 @@ void CTOSGenericSynchronizer::Update(SEntityUpdateContext& ctx, int updateSlot)
 
 void CTOSGenericSynchronizer::HandleEvent(const SGameObjectEvent& event)
 {
-	switch (event.event)
-	{
-	case ENTITY_EVENT_START_GAME:
-		break;
-	case ENTITY_EVENT_RESET:
-		break;	
-	case ENTITY_EVENT_INIT:
-		break;
-	}
+	//switch (event.event)
+	//{
+	//case ENTITY_EVENT_START_GAME:
+	//	break;
+	//case ENTITY_EVENT_RESET:
+	//	break;	
+	//case ENTITY_EVENT_INIT:
+	//	break;
+	//default: 
+	//	break;
+	//}
 }
 
 void CTOSGenericSynchronizer::ProcessEvent(SEntityEvent& event)
@@ -156,7 +159,7 @@ IMPLEMENT_RMI(CTOSGenericSynchronizer, SvRequestPintest)
 	if (gEnv->bServer)
 	{
 		CryLogAlways("[C++][%s][%s][SvRequestPintest] from %s",
-			TOS_Debug::GetEnv(), TOS_Debug::GetAct(3), params.commentary);
+			TOS_Debug::GetEnv(), TOS_Debug::GetAct(3), params.commentary.c_str());
 	}
 
 	return true;
@@ -168,7 +171,7 @@ IMPLEMENT_RMI(CTOSGenericSynchronizer, ClPintest)
 	if (gEnv->bClient)
 	{
 		CryLogAlways("[C++][%s][%s][ClPintest] from %s",
-			TOS_Debug::GetEnv(), TOS_Debug::GetAct(3), params.commentary);
+			TOS_Debug::GetEnv(), TOS_Debug::GetAct(3), params.commentary.c_str());
 	}
 
 	return true;

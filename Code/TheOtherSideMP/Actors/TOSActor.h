@@ -2,23 +2,23 @@
 
 #include "Actor.h"
 
-class CTOSActor: public CActor
+class CTOSActor: public CActor  // NOLINT(cppcoreguidelines-special-member-functions)
 {
 public:
 	CTOSActor();
-	virtual ~CTOSActor();
+	~CTOSActor() override;
 
-	
-	virtual void PostInit( IGameObject * pGameObject );
-	virtual void InitClient(int channelId );
-	virtual bool NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int flags);
-	virtual void Update(SEntityUpdateContext& ctx, int updateSlot);
-	virtual void Release();
+
+	void PostInit( IGameObject * pGameObject ) override;
+	void InitClient(int channelId ) override;
+	bool NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int flags) override;
+	void Update(SEntityUpdateContext& ctx, int updateSlot) override;
+	void Release() override;
 
 	void SetMasterEntityId(EntityId id);
-	const EntityId GetMasterEntityId() {return m_masterEntityId;};
+	EntityId GetMasterEntityId() const {return m_masterEntityId;}
 	void SetSlaveEntityId(EntityId id);
-	const EntityId GetSlaveEntityId() { return m_slaveEntityId;};
+	EntityId GetSlaveEntityId() const { return m_slaveEntityId;}
 
 private:
 

@@ -3,7 +3,7 @@
 #include "Player.h"
 class CTOSMasterClient;
 
-class CTOSPlayer : public CPlayer
+class CTOSPlayer final : public CPlayer  // NOLINT(cppcoreguidelines-special-member-functions)
 {
 	friend class CPlayerMovement;
 	friend class CPlayerRotation;
@@ -13,7 +13,7 @@ class CTOSPlayer : public CPlayer
 
 public:
 	CTOSPlayer();
-	~CTOSPlayer();
+	~CTOSPlayer() override;
 
 
 public:
@@ -24,20 +24,20 @@ public:
 	* Вызывается на сервере при создании объекта на сервере.
 	* Инициализирует текущий GameObjectExtension на клиенте по определенному каналу.
 	*/
-	virtual void InitClient(int channelId );
+	void InitClient(int channelId ) override;
 
 
 	/**
 	* Init Local Player
 	* Вызывается на локальной машине игрока при подключении его к серверу
 	*/
-	virtual void InitLocalPlayer();
+	void InitLocalPlayer() override;
 
 
-	virtual void PostInit( IGameObject * pGameObject );
-	virtual void Update(SEntityUpdateContext& ctx, int updateSlot);
-	virtual bool NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int flags);
-	virtual void Release();
+	void PostInit( IGameObject * pGameObject ) override;
+	void Update(SEntityUpdateContext& ctx, int updateSlot) override;
+	bool NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int flags) override;
+	void Release() override;
 
 	CTOSMasterClient* GetMasterClient();
 

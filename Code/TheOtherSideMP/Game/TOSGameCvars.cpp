@@ -1,15 +1,11 @@
 #include "StdAfx.h"
-
-#include "IConsole.h"
-
 #include "TOSGameCvars.h"
-#include "Modules/GenericSynchronizer.h"
-#include "Modules/Master/MasterModule.h"
-#include "Modules/Master/MasterSynchronizer.h"
-#include "../Actors/Player/TOSPlayer.h"
 
 #include "Game.h"
-#include "GameCVars.h"
+#include "IConsole.h"
+
+#include "Modules/GenericSynchronizer.h"
+#include "Modules/Master/MasterModule.h"
 
 
 void STOSCvars::InitCVars(IConsole *pConsole)

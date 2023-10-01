@@ -4,8 +4,8 @@
 #include "../Game/TOSGameEventRecorder.h"
 
 CTOSActor::CTOSActor() : 
-	m_masterEntityId(0),
-	m_slaveEntityId(0)
+	m_slaveEntityId(0),
+	m_masterEntityId(0)
 {
 }
 
@@ -24,7 +24,7 @@ void CTOSActor::PostInit(IGameObject* pGameObject)
 	CActor::PostInit(pGameObject);
 }
 
-void CTOSActor::InitClient(int channelId)
+void CTOSActor::InitClient(const int channelId)
 {
 	//CryLogAlways("[C++][%s][%s][CTOSActor::InitClient] Actor: %s|%i|ch:%i",
 	//	TOS_Debug::GetEnv(), TOS_Debug::GetAct(1), GetEntity()->GetName(), GetEntity()->GetId(), channelId);
@@ -34,7 +34,8 @@ void CTOSActor::InitClient(int channelId)
 	CActor::InitClient(channelId);
 }
 
-bool CTOSActor::NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int flags)
+// ReSharper disable once CppParameterMayBeConst
+bool CTOSActor::NetSerialize(TSerialize ser, const EEntityAspects aspect, const uint8 profile, const int flags)
 {
 	if (!CActor::NetSerialize(ser,aspect,profile,flags))
 		return false;
@@ -42,7 +43,7 @@ bool CTOSActor::NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profil
 	return true;
 }
 
-void CTOSActor::Update(SEntityUpdateContext& ctx, int updateSlot)
+void CTOSActor::Update(SEntityUpdateContext& ctx, const int updateSlot)
 {
 	CActor::Update(ctx, updateSlot);
 }
@@ -57,13 +58,13 @@ void CTOSActor::Release()
 	CActor::Release();
 }
 
-void CTOSActor::SetMasterEntityId(EntityId id)
+void CTOSActor::SetMasterEntityId(const EntityId id)
 {
 	//gEnv->pRenderer->GetFrameID();
 	m_masterEntityId = id;
 }
 
-void CTOSActor::SetSlaveEntityId(EntityId id)
+void CTOSActor::SetSlaveEntityId(const EntityId id)
 {
 	m_slaveEntityId = id;
 }

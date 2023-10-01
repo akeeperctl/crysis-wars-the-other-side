@@ -6,7 +6,7 @@ struct STOSGameEvent;
 class CTOSGenericSynchronizer;
 
 
-struct ITOSGameModule
+struct ITOSGameModule  // NOLINT(cppcoreguidelines-special-member-functions)
 {
 	virtual ~ITOSGameModule() {};
 	//virtual void OnMainMenuEnter() = 0;

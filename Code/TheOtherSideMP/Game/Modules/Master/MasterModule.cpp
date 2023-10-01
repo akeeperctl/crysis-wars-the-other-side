@@ -1,15 +1,13 @@
 #include "StdAfx.h"
-#include "IEntitySystem.h"
+#include "MasterModule.h"
 
 #include "Game.h"
+#include "IEntitySystem.h"
 
 #include "TheOtherSideMP/Actors/Player/TOSPlayer.h"
 #include "TheOtherSideMP/Game/TOSGame.h"
 #include "TheOtherSideMP/Game/TOSGameEventRecorder.h"
 #include "TheOtherSideMP/Helpers/TOS_Debug.h"
-
-#include "MasterModule.h"
-#include "MasterSynchronizer.h"
 
 CTOSMasterModule::CTOSMasterModule()
 {

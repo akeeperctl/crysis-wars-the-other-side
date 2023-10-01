@@ -20,6 +20,10 @@ History:
 
 #include "Alien.h"
 
+//TheOtherSide
+#include "TheOtherSideMP/Actors/Aliens/TOSAlien.h"
+//~TheOtherSide
+
 #define LOOKIK_BLEND_RATIOS 5
 
 struct STrooperBeam
@@ -38,8 +42,12 @@ struct STrooperBeam
 	void Update(IEntity *owner,float frameTime);
 };
 
+
 class CTrooper :
-	public CAlien
+	//TheOtherSide
+	//public CAlien
+	public CTOSAlien
+	//~TheOtherSide
 {
 public:
 	enum EJumpState {
@@ -142,8 +150,10 @@ public:
 			bUseLandEvent = false;
 		}
 	};
-
-	CTrooper() : CAlien(), 
+	//TheOtherSide
+	//CTrooper() : CAlien(),
+	CTrooper() : CTOSAlien(),
+	//~TheOtherSide
 		m_heightVariance(0),	
 		m_heightVarianceLow(0),	
 		m_heightVarianceHigh(0),

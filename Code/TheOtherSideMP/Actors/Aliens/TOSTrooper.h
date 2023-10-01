@@ -2,17 +2,16 @@
 
 #include "Trooper.h"
 
-class CTOSTrooper : public CTrooper
+class CTOSTrooper final : public CTrooper  // NOLINT(cppcoreguidelines-special-member-functions)
 {
 public:
 	CTOSTrooper();
-	~CTOSTrooper();
+	~CTOSTrooper() override;
 
 
-public:
-	virtual void PostInit(IGameObject* pGameObject);
-	virtual void Update(SEntityUpdateContext& ctx, int updateSlot);
-	virtual bool NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int flags);
+	void PostInit(IGameObject* pGameObject) override;
+	void Update(SEntityUpdateContext& ctx, int updateSlot) override;
+	bool NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int flags) override;
 
 
 

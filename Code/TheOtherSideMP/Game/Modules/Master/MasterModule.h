@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../GenericModule.h"
+
 #include "../../TOSGame.h"
 
 class CTOSMasterSynchronizer;

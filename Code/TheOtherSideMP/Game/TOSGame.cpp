@@ -1,18 +1,20 @@
 #include "StdAfx.h"
+#include "TOSGame.h"
 
-#include "TOSGameCvars.h"
+#include "Game.h"
 #include "TOSGameEventRecorder.h"
 
 #include "Modules/ITOSGameModule.h"
 #include "Modules/Master/MasterModule.h"
 #include "Modules/RestartResurrection/RestartResurrectionModule.h"
 
-#include "TOSGame.h"
-#include "Game.h"
-
-CTOSGame::CTOSGame()
+CTOSGame::CTOSGame():
+	m_pAIActionTracker(nullptr),
+	m_pLocalControlClient(nullptr),
+	m_pEventRecorder(nullptr),
+	m_pMasterModule(nullptr),
+	m_pResurrectionModule(nullptr)
 {
-
 }
 
 CTOSGame::~CTOSGame()
@@ -62,7 +64,8 @@ void CTOSGame::Shutdown()
 	this->~CTOSGame();
 }
 
-void CTOSGame::Update(float frameTime, int frameId)
+// ReSharper disable once CppMemberFunctionMayBeConst
+void CTOSGame::Update(const float frameTime, int frameId)
 {
 	for (ITOSGameModule* pModules : m_modules)
 	{

@@ -2,17 +2,16 @@
 
 #include "Alien.h"
 
-class CTOSAlien : public CAlien
+class CTOSAlien: public CAlien  // NOLINT(cppcoreguidelines-special-member-functions)
 {
 public:
 	CTOSAlien();
-	~CTOSAlien();
+	~CTOSAlien() override;
 
 
-public:
-	virtual void PostInit(IGameObject* pGameObject);
-	virtual void Update(SEntityUpdateContext& ctx, int updateSlot);
-	virtual bool NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int flags);
+	void PostInit(IGameObject* pGameObject) override;
+	void Update(SEntityUpdateContext& ctx, int updateSlot) override;
+	bool NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int flags) override;
 
 
 

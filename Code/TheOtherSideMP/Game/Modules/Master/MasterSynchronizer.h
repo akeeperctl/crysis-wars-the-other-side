@@ -1,18 +1,20 @@
 #pragma once
 
 #include <IGameObject.h>
-#include "TheOtherSideMP/Game/Modules/Master/MasterModule.h"
-#include "TheOtherSideMP/Game/Modules/GenericSynchronizer.h"
+
+#include "MasterModule.h"
+
+#include "../GenericSynchronizer.h"
 
 
 // Description: 
 //    Network synchronizer for Master Module.
 //    Can send RMI's to synchronize Master Module states.
-class CTOSMasterSynchronizer : public CTOSGenericSynchronizer
+class CTOSMasterSynchronizer final : public CTOSGenericSynchronizer  // NOLINT(cppcoreguidelines-special-member-functions)
 {
 public:
 	CTOSMasterSynchronizer();
-	~CTOSMasterSynchronizer();
+	~CTOSMasterSynchronizer() override;
 
 	// IGameObjectExtension
 	//virtual bool Init(IGameObject* pGameObject);

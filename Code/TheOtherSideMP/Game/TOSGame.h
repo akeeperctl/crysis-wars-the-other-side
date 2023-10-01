@@ -1,9 +1,7 @@
 #pragma once
 
 #include <IHardwareMouse.h>
-#include <ILevelSystem.h>
 #include <IGameFramework.h>
-#include <IGameRulesSystem.h>
 #include <IVehicleSystem.h>
 #include <IGameplayRecorder.h>
 #include <IInput.h>
@@ -11,7 +9,7 @@
 class CControlClient;
 class CGameFlashAnimation;
 
-class STOSCvars;
+struct STOSCvars;
 class CTOSAbilitiesSystem;
 class CTOSAIActionTracker;
 class CTOSGameEventRecorder;
@@ -25,13 +23,14 @@ struct ITOSGameModule;
 struct IHardwareMouseEventListener;
 struct IHitListener;
 
-enum EExtraGameplayEvent;
+//enum EExtraGameplayEvent;
 
-class CTOSGame : public IGameplayListener, public IInputEventListener
+// ReSharper disable once CppPolymorphicClassWithNonVirtualPublicDestructor
+class CTOSGame final : public IGameplayListener, public IInputEventListener  // NOLINT(cppcoreguidelines-special-member-functions)
 {
 public:
 	CTOSGame();
-	~CTOSGame();
+	virtual ~CTOSGame();
 
 	friend class CTOSGameEventRecorder;
 

@@ -1,11 +1,12 @@
 #include "StdAfx.h"
 #include "TOSPlayer.h"
-#include "TheOtherSideMP\Game\Modules\Master\MasterClient.h"
-#include "TheOtherSideMP\Game\Modules\Master\MasterSynchronizer.h"
-#include "TheOtherSideMP\Game\TOSGame.h"
+
+#include "../../Game/TOSGame.h"
+#include "../../Game/Modules/Master/MasterClient.h"
+#include "../../Game/Modules/Master/MasterSynchronizer.h"
 
 CTOSPlayer::CTOSPlayer():
-	m_pMasterClient(0)
+	m_pMasterClient(nullptr)
 {
 }
 
@@ -33,7 +34,7 @@ void CTOSPlayer::PostInit(IGameObject* pGameObject)
 	//}
 }
 
-void CTOSPlayer::InitClient(int channelId)
+void CTOSPlayer::InitClient(const int channelId)
 {
 	CPlayer::InitClient(channelId);
 
@@ -93,6 +94,7 @@ void CTOSPlayer::Update(SEntityUpdateContext& ctx, int updateSlot)
 	CPlayer::Update(ctx,updateSlot);
 }
 
+// ReSharper disable once CppParameterMayBeConst
 bool CTOSPlayer::NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int flags)
 {
 	if (!CPlayer::NetSerialize(ser,aspect,profile,flags))

@@ -1,10 +1,10 @@
 #include "StdAfx.h"
-
-#include "Modules/ITOSGameModule.h"
+#include "TOSGameEventRecorder.h"
 
 #include "Game.h"
 #include "TOSGame.h"
-#include "TOSGameEventRecorder.h"
+
+#include "Modules/ITOSGameModule.h"
 
 CTOSGameEventRecorder::CTOSGameEventRecorder()
 {

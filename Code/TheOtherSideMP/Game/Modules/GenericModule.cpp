@@ -1,11 +1,11 @@
 #include "StdAfx.h"
 #include "GenericModule.h"
+
+#include "Game.h"
 #include "GenericSynchronizer.h"
 
 #include "../TOSGame.h"
 #include "../TOSGameEventRecorder.h"
-
-#include "Game.h"
 
 CTOSGenericModule::CTOSGenericModule()
 {
@@ -87,7 +87,7 @@ CTOSGenericSynchronizer* CTOSGenericModule::CreateSynchonizer(const char* entity
 	params.nFlags |= ENTITY_FLAG_NO_PROXIMITY | ENTITY_FLAG_UNREMOVABLE;
 	//params.id = 2;
 
-	IEntity* pSynchEntity = gEnv->pEntitySystem->SpawnEntity(params);
+	const IEntity* pSynchEntity = gEnv->pEntitySystem->SpawnEntity(params);
 	assert(pSynchEntity);
 
 	if (!pSynchEntity)

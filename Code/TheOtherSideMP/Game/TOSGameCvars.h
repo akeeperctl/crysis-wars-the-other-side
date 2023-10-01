@@ -3,11 +3,11 @@
 struct IConsole;
 struct SCVars;
 
-struct STOSCvars
+struct STOSCvars  // NOLINT(cppcoreguidelines-special-member-functions)
 {
-	STOSCvars()
+	STOSCvars()  // NOLINT(cppcoreguidelines-pro-type-member-init)
 	{
-		memset(this, 0, sizeof(STOSCvars));
+		memset(this, 0, sizeof(STOSCvars));  // NOLINT(bugprone-undefined-memory-manipulation)
 	}
 
 	~STOSCvars()

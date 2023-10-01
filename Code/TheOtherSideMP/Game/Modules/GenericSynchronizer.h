@@ -27,14 +27,15 @@ struct NoParams
 {
 	NoParams() {};
 
-	void SerializeWith(TSerialize ser) {};
+	void SerializeWith(TSerialize ser) const {};
 };
 
 struct PintestParams
 {
 	string commentary;
 	PintestParams() {};
-	PintestParams(const char* _commentary)
+
+	explicit PintestParams(const char* _commentary)
 		: commentary(_commentary)
 	{
 	}

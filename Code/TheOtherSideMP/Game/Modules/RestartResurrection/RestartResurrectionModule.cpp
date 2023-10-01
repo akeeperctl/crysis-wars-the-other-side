@@ -1,11 +1,8 @@
 #include "StdAfx.h"
-
 #include "RestartResurrectionModule.h"
 
 #include "../../TOSGame.h"
 #include "../../TOSGameEventRecorder.h"
-
-#include "Game.h"
 
 CTOSRestartResurrectionModule::CTOSRestartResurrectionModule()
 {
