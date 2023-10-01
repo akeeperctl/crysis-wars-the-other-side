@@ -20,16 +20,7 @@ CTOSGenericModule::~CTOSGenericModule()
 
 void CTOSGenericModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event)
 {
-	TOS_INIT_EVENT_VALUES(pEntity, event);
 
-	switch (event.event)
-	{
-	case eGE_GameReset:
-		m_pSynchonizer = nullptr;
-		break;
-	default:
-		break;
-	}
 }
 
 void CTOSGenericModule::GetMemoryStatistics(ICrySizer* s)
@@ -57,19 +48,18 @@ CTOSGenericSynchronizer* CTOSGenericModule::GetSynchronizer() const
 
 CTOSGenericSynchronizer* CTOSGenericModule::CreateSynchonizer(const char* entityName, const char* extensionName)
 {
-	//IEntity* pSynchronizer = gEnv->pEntitySystem->FindEntityByName("MasterSynchronizer");
-	if (m_pSynchonizer)
+	const IEntity* pSynchronizer = gEnv->pEntitySystem->FindEntityByName(entityName);
+	if (pSynchronizer)
 	{
-		IGameObject* pGO = g_pGame->GetIGameFramework()->GetGameObject(m_pSynchonizer->GetEntityId());
+		IGameObject* pGO = g_pGame->GetIGameFramework()->GetGameObject(pSynchronizer->GetId());
 		if (pGO)
 		{
 			m_pSynchonizer = dynamic_cast<CTOSGenericSynchronizer*>(pGO->AcquireExtension(extensionName));
 			assert(m_pSynchonizer);
 
 			//m_pSynchonizer->SetModule(this);
+			return m_pSynchonizer;
 		}
-
-		return m_pSynchonizer;
 	}
 
 	//auto pSynchronizerCls = gEnv->pEntitySystem->GetClassRegistry()->FindClass("TOSMasterSynchronizer");
