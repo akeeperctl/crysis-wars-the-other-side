@@ -62,6 +62,8 @@ struct MasterAddingParams
 	}
 };
 
+typedef std::map<const char*, EntityId> TSynches;
+
 // Description: 
 //    Generic network synchronizer for any module.
 //    Used as a parent class of network synchronizers of TOS game modules
@@ -121,7 +123,13 @@ public:
 		pGP->InvokeRMI_Primitive(method, params, where, channel, ent);
 	}
 
-	static void GetSynchonizers(std::vector<EntityId>& array);
+	virtual const char* GetClassName()
+	{
+		CRY_ASSERT_MESSAGE(0, "GetClassName called from CTOSGenericSynchronizer");
+		return "CTOSGenericSynchronizer";
+	}
+
+	static void GetSynchonizers(TSynches& synches);
 
 	//CLIENT - Направленные на клиент
 	//SERVER - Направленные на сервер с клиента
@@ -138,6 +146,5 @@ protected:
 	//void SetModule(CTOSGenericModule* pModule);
 	//CTOSGenericModule* m_pModule;
 private:
-	typedef std::vector<EntityId> TEntities;
-	static TEntities s_synchronizers;
+	static TSynches s_synchronizers;
 };

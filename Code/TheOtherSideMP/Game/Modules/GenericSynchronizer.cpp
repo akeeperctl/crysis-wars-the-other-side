@@ -5,7 +5,7 @@
 
 #include "../TOSGameEventRecorder.h"
 
-CTOSGenericSynchronizer::TEntities CTOSGenericSynchronizer::s_synchronizers;
+TSynches CTOSGenericSynchronizer::s_synchronizers;
 
 CTOSGenericSynchronizer::CTOSGenericSynchronizer()
 {
@@ -25,6 +25,7 @@ bool CTOSGenericSynchronizer::Init(IGameObject* pGameObject)
 		return false;
 
 	GetGameObject()->EnablePostUpdates(this);
+
 	return true;
 }
 
@@ -34,7 +35,8 @@ void CTOSGenericSynchronizer::PostInit(IGameObject* pGameObject)
 	pGameObject->SetUpdateSlotEnableCondition(this, 0, eUEC_WithoutAI);
 	pGameObject->EnablePostUpdates(this);
 
-	stl::push_back_unique(s_synchronizers, GetEntityId());
+	//stl::push_back_unique(s_synchronizers, GetEntityId());
+	s_synchronizers[GetEntity()->GetName()] = GetEntityId();
 	TOS_RECORD_EVENT(GetEntityId(), STOSGameEvent(eEGE_SynchronizerCreated, "", true));
 }
 
@@ -98,9 +100,9 @@ void CTOSGenericSynchronizer::GetMemoryStatistics(ICrySizer* s)
 	s->Add(*this);
 }
 
-void CTOSGenericSynchronizer::GetSynchonizers(std::vector<EntityId>& _array)
+void CTOSGenericSynchronizer::GetSynchonizers(TSynches& synches)
 {
-	_array = s_synchronizers;
+	synches = s_synchronizers;
 }
 
 //CTOSGenericModule* CTOSGenericSynchronizer::GetModule()
