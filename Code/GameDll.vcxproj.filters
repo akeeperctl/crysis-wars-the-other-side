@@ -776,6 +776,9 @@
     <ClCompile Include="TheOtherSideMP\Game\Modules\Master\Synchronizer.cpp">
       <Filter>TheOtherSideMP\Game\Modules\Master</Filter>
     </ClCompile>
+    <ClCompile Include="TheOtherSideMP\Game\Modules\GenericModule.cpp">
+      <Filter>TheOtherSideMP\Game\Modules</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor.h">
@@ -1369,6 +1372,9 @@
     </ClInclude>
     <ClInclude Include="TheOtherSideMP\Game\Modules\RestartResurrection\RestartResurrectionModule.h">
       <Filter>TheOtherSideMP\Game\Modules\RestartResurrection</Filter>
+    </ClInclude>
+    <ClInclude Include="TheOtherSideMP\Game\Modules\GenericModule.h">
+      <Filter>TheOtherSideMP\Game\Modules</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
