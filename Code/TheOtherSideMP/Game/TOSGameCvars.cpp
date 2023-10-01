@@ -3,7 +3,7 @@
 #include "IConsole.h"
 
 #include "TOSGameCvars.h"
-#include "Modules/MasterSystem/MasterModule.h"
+#include "Modules/Master/MasterModule.h"
 #include "Modules/GenericSynchronizer.h"
 #include "../Actors/Player/TOSPlayer.h"
 

@@ -31,7 +31,9 @@ void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEven
 	//	При вводе sv_restart у Synchronizer не вызывается Release(), но при этом он всё же куда-то пропадает. 
 	//	Флаг у Synchronizer на неудаляемость присутствует.
 	// Исправление: 
-	//	удаление вручную при событии eGE_GameReset
+	//	- удаление вручную при событии eGE_GameReset (неактуально)
+	//	- оставить как есть и создавать синхронизатор при событии eEGE_GamerulesStartGame.
+	//		это гарантирует его наличие при sv_restart'е
 
 	switch (event.event)
 	{

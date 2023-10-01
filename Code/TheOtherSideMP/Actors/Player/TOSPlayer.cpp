@@ -1,7 +1,7 @@
 #include "StdAfx.h"
 #include "TOSPlayer.h"
-#include "TheOtherSideMP\Game\Modules\MasterSystem\MasterClient.h"
-#include "TheOtherSideMP\Game\Modules\MasterSystem\Synchronizer.h"
+#include "TheOtherSideMP\Game\Modules\Master\MasterClient.h"
+#include "TheOtherSideMP\Game\Modules\Master\Synchronizer.h"
 #include "TheOtherSideMP\Game\TOSGame.h"
 
 CTOSPlayer::CTOSPlayer():

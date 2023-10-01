@@ -136,10 +136,13 @@
     <Filter Include="TheOtherSideMP\Game\Modules">
       <UniqueIdentifier>{dcb9eed8-ab04-4777-b851-0c772b9fd469}</UniqueIdentifier>
     </Filter>
-    <Filter Include="TheOtherSideMP\Game\Modules\MasterSystem">
+    <Filter Include="TheOtherSideMP\Game\Modules\RestartResurrection">
+      <UniqueIdentifier>{4dbf98cb-5bcc-44bd-a90a-53515600b9be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TheOtherSideMP\Game\Modules\Master">
       <UniqueIdentifier>{363aa5d2-2482-4d45-b798-025a2cbefdbf}</UniqueIdentifier>
     </Filter>
-    <Filter Include="TheOtherSideMP\Game\Modules\AbilitiesSystem">
+    <Filter Include="TheOtherSideMP\Game\Modules\Abilities">
       <UniqueIdentifier>{5296425c-fe99-465e-bbeb-c3689f5f81d8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -746,15 +749,6 @@
     <ClCompile Include="TheOtherSideMP\Game\TOSGameEventRecorder.cpp">
       <Filter>TheOtherSideMP\Game</Filter>
     </ClCompile>
-    <ClCompile Include="TheOtherSideMP\Game\Modules\MasterSystem\MasterClient.cpp">
-      <Filter>TheOtherSideMP\Game\Modules\MasterSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="TheOtherSideMP\Game\Modules\MasterSystem\MasterModule.cpp">
-      <Filter>TheOtherSideMP\Game\Modules\MasterSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="TheOtherSideMP\Game\Modules\MasterSystem\Synchronizer.cpp">
-      <Filter>TheOtherSideMP\Game\Modules\MasterSystem</Filter>
-    </ClCompile>
     <ClCompile Include="TheOtherSideMP\Actors\TOSActor.cpp">
       <Filter>TheOtherSideMP\Actors</Filter>
     </ClCompile>
@@ -769,6 +763,18 @@
     </ClCompile>
     <ClCompile Include="TheOtherSideMP\Game\Modules\GenericSynchronizer.cpp">
       <Filter>TheOtherSideMP\Game\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="TheOtherSideMP\Game\Modules\RestartResurrection\RestartResurrectionModule.cpp">
+      <Filter>TheOtherSideMP\Game\Modules\RestartResurrection</Filter>
+    </ClCompile>
+    <ClCompile Include="TheOtherSideMP\Game\Modules\Master\MasterClient.cpp">
+      <Filter>TheOtherSideMP\Game\Modules\Master</Filter>
+    </ClCompile>
+    <ClCompile Include="TheOtherSideMP\Game\Modules\Master\MasterModule.cpp">
+      <Filter>TheOtherSideMP\Game\Modules\Master</Filter>
+    </ClCompile>
+    <ClCompile Include="TheOtherSideMP\Game\Modules\Master\Synchronizer.cpp">
+      <Filter>TheOtherSideMP\Game\Modules\Master</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1337,15 +1343,6 @@
     <ClInclude Include="TheOtherSideMP\Game\Modules\ITOSGameModule.h">
       <Filter>TheOtherSideMP\Game\Modules</Filter>
     </ClInclude>
-    <ClInclude Include="TheOtherSideMP\Game\Modules\MasterSystem\MasterClient.h">
-      <Filter>TheOtherSideMP\Game\Modules\MasterSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="TheOtherSideMP\Game\Modules\MasterSystem\MasterModule.h">
-      <Filter>TheOtherSideMP\Game\Modules\MasterSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="TheOtherSideMP\Game\Modules\MasterSystem\Synchronizer.h">
-      <Filter>TheOtherSideMP\Game\Modules\MasterSystem</Filter>
-    </ClInclude>
     <ClInclude Include="TheOtherSideMP\Actors\TOSActor.h">
       <Filter>TheOtherSideMP\Actors</Filter>
     </ClInclude>
@@ -1360,6 +1357,18 @@
     </ClInclude>
     <ClInclude Include="TheOtherSideMP\Game\Modules\GenericSynchronizer.h">
       <Filter>TheOtherSideMP\Game\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="TheOtherSideMP\Game\Modules\Master\MasterClient.h">
+      <Filter>TheOtherSideMP\Game\Modules\Master</Filter>
+    </ClInclude>
+    <ClInclude Include="TheOtherSideMP\Game\Modules\Master\MasterModule.h">
+      <Filter>TheOtherSideMP\Game\Modules\Master</Filter>
+    </ClInclude>
+    <ClInclude Include="TheOtherSideMP\Game\Modules\Master\Synchronizer.h">
+      <Filter>TheOtherSideMP\Game\Modules\Master</Filter>
+    </ClInclude>
+    <ClInclude Include="TheOtherSideMP\Game\Modules\RestartResurrection\RestartResurrectionModule.h">
+      <Filter>TheOtherSideMP\Game\Modules\RestartResurrection</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

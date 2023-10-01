@@ -4,7 +4,7 @@
 #include "TOSGameEventRecorder.h"
 
 #include "Modules/ITOSGameModule.h"
-#include "Modules/MasterSystem/MasterModule.h"
+#include "Modules/Master/MasterModule.h"
 
 #include "TOSGame.h"
 #include "Game.h"

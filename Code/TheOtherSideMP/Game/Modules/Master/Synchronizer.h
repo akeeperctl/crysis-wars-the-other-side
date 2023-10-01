@@ -1,7 +1,7 @@
 #pragma once
 
 #include <IGameObject.h>
-#include "TheOtherSideMP/Game/Modules/MasterSystem/MasterModule.h"
+#include "TheOtherSideMP/Game/Modules/Master/MasterModule.h"
 #include "TheOtherSideMP/Game/Modules/GenericSynchronizer.h"
 
 
