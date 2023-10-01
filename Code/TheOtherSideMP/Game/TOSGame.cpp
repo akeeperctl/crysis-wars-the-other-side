@@ -5,6 +5,7 @@
 
 #include "Modules/ITOSGameModule.h"
 #include "Modules/Master/MasterModule.h"
+#include "Modules/RestartResurrection/RestartResurrectionModule.h"
 
 #include "TOSGame.h"
 #include "Game.h"
@@ -17,7 +18,13 @@ CTOSGame::CTOSGame()
 CTOSGame::~CTOSGame()
 {
 	SAFE_DELETE(m_pEventRecorder);
+
+	//Modules
+
 	SAFE_DELETE(m_pMasterModule);
+	SAFE_DELETE(m_pResurrectionModule);
+
+	//~Modules
 
 	delete this;
 }
@@ -25,12 +32,15 @@ CTOSGame::~CTOSGame()
 void CTOSGame::Init()
 {
 	g_pGame->GetIGameFramework()->GetIGameplayRecorder()->RegisterListener(this);
-	gEnv->pInput->AddEventListener(this);
+	if (gEnv->pInput) 
+		gEnv->pInput->AddEventListener(this);
 
 	m_pEventRecorder = new CTOSGameEventRecorder();
 
 	//Modules
+
 	m_pMasterModule = new CTOSMasterModule();
+	m_pResurrectionModule = new CTOSRestartResurrectionModule();
 
 	//~Modules
 
@@ -46,7 +56,8 @@ void CTOSGame::Init()
 void CTOSGame::Shutdown()
 {
 	g_pGame->GetIGameFramework()->GetIGameplayRecorder()->UnregisterListener(this);
-	gEnv->pInput->RemoveEventListener(this);
+	if (gEnv->pInput)
+		gEnv->pInput->RemoveEventListener(this);
 
 	this->~CTOSGame();
 }

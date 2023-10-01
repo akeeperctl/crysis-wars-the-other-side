@@ -12,10 +12,13 @@ class CControlClient;
 class CGameFlashAnimation;
 
 class STOSCvars;
-class CTOSGameEventRecorder;
-class CTOSMasterModule;
 class CTOSAbilitiesSystem;
 class CTOSAIActionTracker;
+class CTOSGameEventRecorder;
+
+class CTOSMasterModule;
+class CTOSRestartResurrectionModule;
+
 
 struct STOSGameEvent;
 struct ITOSGameModule;
@@ -98,6 +101,7 @@ private:
 
 	CTOSGameEventRecorder* m_pEventRecorder;
 	CTOSMasterModule* m_pMasterModule;
+	CTOSRestartResurrectionModule* m_pResurrectionModule;
 
 	std::vector<ITOSGameModule*> m_modules;
 	std::vector<ITOSGameModule*> m_flowgraphModules;
