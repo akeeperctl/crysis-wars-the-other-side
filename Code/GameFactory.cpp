@@ -227,12 +227,19 @@ void InitGameFactory(IGameFramework *pFramework)
 	REGISTER_FACTORY(pFramework, "GameRules", CGameRules, false);
 
 	//TheOtherSide
-	//REGISTER_FACTORY(pFramework, "TOSMasterRMISender", CTOSMasterRMISender, false);
-	
 	//REGISTER_GAME_OBJECT(pFramework, TOSMasterSynchronizer, "");
 	//HIDE_FROM_EDITOR("TOSMasterSynchronizer");
-	 
-	REGISTER_FACTORY(pFramework, "TOSMasterSynchronizer", CTOSMasterSynchronizer, false);
+
+	//REGISTER_FACTORY может зарегистрировать любой из видов фабрики.
+	//ќн необходим чтобы отдельно регистрировать классы актЄров/транспорта/оружи€.
+	//“акже он подходит дл€ регистрации классов GameObjectExtension. —мотреть CryAction, строка 113.
+
+	//REGISTER_GAME_OBJECT_EXTENSION целенаправленно используетс€ только дл€ регистрации классов GameObjectExtension
+
+	// RegisterGameRules - регистрирует новый класс std с названием "SinglePlayer" и с extension "GameRules"
+
+	//	//REGISTER_FACTORY(pFramework, "TOSMasterSynchronizer", CTOSMasterSynchronizer, false); //is ok
+	REGISTER_GAME_OBJECT_EXTENSION(pFramework, TOSMasterSynchronizer); //is ok
 	//~TheOtherSide
 
 
