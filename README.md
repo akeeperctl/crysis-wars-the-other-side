@@ -1,9 +1,9 @@
-# crysis-wars-tos-conquest
-Исходный код от модификации **The Other Side: Conquest**
+# crysis-wars-the-other-side
+Исходный код от модификации **The Other Side: Multiplayer**
 
 ## Описание
 
-**The Other Side: Conquest** - синглплеерная модификация к игре Crysis Wars, добавляющая новый игровой режим, новую игровую фракцию, новые возможности.
+**The Other Side: Multiplayer** - **мультиплеерная** модификация к игре Crysis Wars, добавляющая в сетевую игру возможность играть за пришельцев.
 
 ## Стэк технологий
 - **CryENGINE 2** - игровой движок игры Crysis Wars
