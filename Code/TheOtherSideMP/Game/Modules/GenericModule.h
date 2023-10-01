@@ -5,13 +5,14 @@
 class CTOSGenericModule: public ITOSGameModule
 {
 public:
+	friend class CTOSMasterModule;
+
 	CTOSGenericModule();
 	~CTOSGenericModule();
 
 	//ITOSGameModule
 	bool OnInputEvent(const SInputEvent& event) override { return true; };
 	bool OnInputEventUI(const SInputEvent& event) override { return false; };
-	CTOSGenericSynchronizer* GetSynchronizer() const override;
 	void OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event) override;
 	void GetMemoryStatistics(ICrySizer* s) override;
 	const char* GetName() override { return "CTOSGenericModule"; };
@@ -20,6 +21,12 @@ public:
 	void Serialize(TSerialize ser) override;
 	//~ITOSGameModule
 
+	virtual CTOSGenericSynchronizer* GetSynchronizer() const;
+	virtual CTOSGenericSynchronizer* CreateSynchonizer(const char* entityName, const char* extensionName);
+
 protected:
+	CTOSGenericSynchronizer* m_pSynchonizer;
+
 private:
+
 };

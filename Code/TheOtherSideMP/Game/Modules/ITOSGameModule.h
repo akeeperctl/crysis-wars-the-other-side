@@ -8,7 +8,7 @@ class CTOSGenericSynchronizer;
 
 struct ITOSGameModule
 {
-	virtual ~ITOSGameModule() = 0;
+	virtual ~ITOSGameModule() {};
 	//virtual void OnMainMenuEnter() = 0;
 	//virtual void OnGameRulesReset() = 0;
 	//virtual void OnActorDeath(IActor* pActor) = 0;

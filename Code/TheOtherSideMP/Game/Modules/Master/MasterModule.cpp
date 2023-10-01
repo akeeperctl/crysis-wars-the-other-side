@@ -11,8 +11,7 @@
 #include "MasterModule.h"
 #include "MasterSynchronizer.h"
 
-CTOSMasterModule::CTOSMasterModule():
-	m_pSynchronizer(nullptr)
+CTOSMasterModule::CTOSMasterModule()
 {
 	m_masters.clear();
 }
@@ -41,49 +40,51 @@ void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEven
 	{
 		//Create Synchronizer entity
 
-		auto pSynchronizer = gEnv->pEntitySystem->FindEntityByName("MasterSynchronizer");
-		if (pSynchronizer)
-		{
-			IGameObject* pGO = g_pGame->GetIGameFramework()->GetGameObject(pSynchronizer->GetId());
-			if (pGO)
-			{
-				m_pSynchronizer = dynamic_cast<CTOSMasterSynchronizer*>(pGO->AcquireExtension("TOSMasterSynchronizer"));
-				assert(m_pSynchronizer);
-			}
+		CreateSynchonizer("MasterSynchronizer", "TOSMasterSynchronizer");
 
-			return;
-		}
+		//auto pSynchronizer = gEnv->pEntitySystem->FindEntityByName("MasterSynchronizer");
+		//if (pSynchronizer)
+		//{
+		//	IGameObject* pGO = g_pGame->GetIGameFramework()->GetGameObject(pSynchronizer->GetId());
+		//	if (pGO)
+		//	{
+		//		m_pSynchronizer = dynamic_cast<CTOSMasterSynchronizer*>(pGO->AcquireExtension("TOSMasterSynchronizer"));
+		//		assert(m_pSynchronizer);
+		//	}
 
-		//auto pSynchronizerCls = gEnv->pEntitySystem->GetClassRegistry()->FindClass("TOSMasterSynchronizer");
-		//assert(pSynchronizerCls);
+		//	return;
+		//}
 
-		//if (!pSynchronizerCls)
+		////auto pSynchronizerCls = gEnv->pEntitySystem->GetClassRegistry()->FindClass("TOSMasterSynchronizer");
+		////assert(pSynchronizerCls);
+
+		////if (!pSynchronizerCls)
+		////	return;
+
+		//SEntitySpawnParams params;
+		//params.pClass = gEnv->pEntitySystem->GetClassRegistry()->GetDefaultClass();
+		//params.bStaticEntityId = true;
+		//params.sName = "MasterSynchronizer";
+		////params.nFlags |= ENTITY_FLAG_NO_PROXIMITY;
+		////Флаг ENTITY_FLAG_UNREMOVABLE не работает при sv_restart
+		//params.nFlags |= ENTITY_FLAG_NO_PROXIMITY | ENTITY_FLAG_UNREMOVABLE;
+		////params.id = 2;
+
+		//pSynchronizer = gEnv->pEntitySystem->SpawnEntity(params);
+		//assert(pSynchronizer);
+
+		//if (!pSynchronizer)
 		//	return;
 
-		SEntitySpawnParams params;
-		params.pClass = gEnv->pEntitySystem->GetClassRegistry()->GetDefaultClass();
-		params.bStaticEntityId = true;
-		params.sName = "MasterSynchronizer";
-		//params.nFlags |= ENTITY_FLAG_NO_PROXIMITY;
-		//Флаг ENTITY_FLAG_UNREMOVABLE не работает при sv_restart
-		params.nFlags |= ENTITY_FLAG_NO_PROXIMITY | ENTITY_FLAG_UNREMOVABLE;
-		//params.id = 2;
+		////IGameObject* pGO = g_pGame->GetIGameFramework()->GetGameObject(pSynchronizer->GetId());
+		//IGameObject* pGO = g_pGame->GetIGameFramework()->GetIGameObjectSystem()->CreateGameObjectForEntity(pSynchronizer->GetId());
+		//if (pGO)
+		//{
+		//	m_pSynchronizer = dynamic_cast<CTOSMasterSynchronizer*>(pGO->AcquireExtension("TOSMasterSynchronizer"));
+		//	assert(m_pSynchronizer);
 
-		pSynchronizer = gEnv->pEntitySystem->SpawnEntity(params);
-		assert(pSynchronizer);
-
-		if (!pSynchronizer)
-			return;
-
-		//IGameObject* pGO = g_pGame->GetIGameFramework()->GetGameObject(pSynchronizer->GetId());
-		IGameObject* pGO = g_pGame->GetIGameFramework()->GetIGameObjectSystem()->CreateGameObjectForEntity(pSynchronizer->GetId());
-		if (pGO)
-		{
-			m_pSynchronizer = dynamic_cast<CTOSMasterSynchronizer*>(pGO->AcquireExtension("TOSMasterSynchronizer"));
-			assert(m_pSynchronizer);
-
-			pGO->ForceUpdate(true);
-		}
+		//	pGO->ForceUpdate(true);
+		//}
 		break;
 	}
 	case eGE_GameReset:
@@ -238,9 +239,4 @@ void CTOSMasterModule::DebugDrawMasters(const Vec2& screenPos, float fontSize, f
 void CTOSMasterModule::GetMasters(std::map<EntityId, EntityId>& masters)
 {
 	masters = m_masters;
-}
-
-CTOSGenericSynchronizer* CTOSMasterModule::GetSynchronizer() const
-{
-	return m_pSynchronizer;
 }

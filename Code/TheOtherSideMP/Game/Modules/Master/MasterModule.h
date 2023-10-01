@@ -41,7 +41,7 @@ class CTOSGenericSynchronizer;
  * Мастер - это игрок, управляющий несвоим актёром.
  * Автоудаление: отсутствует.
  */
-class CTOSMasterModule : CTOSGenericModule
+class CTOSMasterModule : public CTOSGenericModule
 {
 public:
 	CTOSMasterModule();
@@ -61,10 +61,8 @@ public:
 	void GetMasters(std::map<EntityId, EntityId>& masters);
 	IEntity* GetSlave(const IEntity* pMasterEntity);
 	void DebugDrawMasters(const Vec2& screenPos = {20,300}, float fontSize = 1.2f, float interval = 20.0f, int maxElemNum = 5);
-	CTOSGenericSynchronizer* GetSynchronizer() const override;
 
 private:
 	std::map<EntityId, EntityId> m_masters;
-	CTOSMasterSynchronizer* m_pSynchronizer;
 
 };
