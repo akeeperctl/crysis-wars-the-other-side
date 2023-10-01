@@ -3,11 +3,13 @@
 
 #include "Game.h"
 #include "IEntitySystem.h"
+#include "MasterSynchronizer.h"
 
-#include "TheOtherSideMP/Actors/Player/TOSPlayer.h"
-#include "TheOtherSideMP/Game/TOSGame.h"
-#include "TheOtherSideMP/Game/TOSGameEventRecorder.h"
-#include "TheOtherSideMP/Helpers/TOS_Debug.h"
+#include "../../TOSGame.h"
+#include "../../TOSGameEventRecorder.h"
+#include "../../../Actors/Player/TOSPlayer.h"
+#include "../../../Helpers/TOS_Debug.h"
+
 
 CTOSMasterModule::CTOSMasterModule()
 {
@@ -37,8 +39,8 @@ void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEven
 	case eEGE_GamerulesStartGame:
 	{
 		//Create Synchronizer entity
+		CreateSynchonizer<CTOSMasterSynchronizer>("MasterSynchronizer", "TOSMasterSynchronizer");
 
-		CreateSynchonizer("MasterSynchronizer", "TOSMasterSynchronizer");
 
 		//auto pSynchronizer = gEnv->pEntitySystem->FindEntityByName("MasterSynchronizer");
 		//if (pSynchronizer)
