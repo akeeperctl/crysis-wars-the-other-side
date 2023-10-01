@@ -42,11 +42,11 @@ class CTOSGenericSynchronizer;
  * Мастер - это игрок, управляющий несвоим актёром.
  * Автоудаление: отсутствует.
  */
-class CTOSMasterModule : public CTOSGenericModule
+class CTOSMasterModule : public CTOSGenericModule  // NOLINT(cppcoreguidelines-special-member-functions)
 {
 public:
 	CTOSMasterModule();
-	~CTOSMasterModule();
+	~CTOSMasterModule() override;
 
 	//ITOSGameModule
 	void OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event) override;
@@ -59,7 +59,7 @@ public:
 	void MasterAdd(const IEntity* pMasterEntity);
 	void MasterRemove(const IEntity* pMasterEntity);
 	bool IsMaster(const IEntity* pMasterEntity);
-	void GetMasters(std::map<EntityId, EntityId>& masters);
+	void GetMasters(std::map<EntityId, EntityId>& masters) const;
 	IEntity* GetSlave(const IEntity* pMasterEntity);
 	void DebugDrawMasters(const Vec2& screenPos = {20,300}, float fontSize = 1.2f, float interval = 20.0f, int maxElemNum = 5);
 

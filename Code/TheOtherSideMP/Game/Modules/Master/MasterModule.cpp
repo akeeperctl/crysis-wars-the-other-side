@@ -104,7 +104,7 @@ void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEven
 	{
 		if (pEntity && gEnv->bServer)
 		{
-			auto pPlayer = dynamic_cast<CTOSPlayer*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pEntity->GetId()));
+			const auto pPlayer = dynamic_cast<CTOSPlayer*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pEntity->GetId()));
 			if (!pPlayer)
 				break;
 
@@ -116,7 +116,7 @@ void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEven
 	{
 		if (pEntity && gEnv->bServer)
 		{
-			auto pPlayer = dynamic_cast<CTOSPlayer*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pEntity->GetId()));
+			const auto pPlayer = dynamic_cast<CTOSPlayer*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pEntity->GetId()));
 			if (!pPlayer)
 				break;
 
@@ -176,7 +176,7 @@ bool CTOSMasterModule::IsMaster(const IEntity* pMasterEntity)
 {
 	if (gEnv->bServer && pMasterEntity)
 	{
-		auto it = m_masters.find(pMasterEntity->GetId());
+		const auto it = m_masters.find(pMasterEntity->GetId());
 		return it != m_masters.end();
 	}
 
@@ -189,10 +189,10 @@ IEntity* CTOSMasterModule::GetSlave(const IEntity* pMasterEntity)
 	{
 		if (IsMaster(pMasterEntity))
 		{
-			for (auto& MasterSlavePair : m_masters)
+			for (const auto& masterSlavePair : m_masters)
 			{
-				if (MasterSlavePair.first == pMasterEntity->GetId())
-					return gEnv->pEntitySystem->GetEntity(MasterSlavePair.second);
+				if (masterSlavePair.first == pMasterEntity->GetId())
+					return gEnv->pEntitySystem->GetEntity(masterSlavePair.second);
 			}				
 		}
 	}
@@ -210,17 +210,17 @@ void CTOSMasterModule::DebugDrawMasters(const Vec2& screenPos, float fontSize, f
 		"--- TOS Master System (MasterName:SlaveName) ---");
 
 	//Body
-	for (auto& masterInfoPair : m_masters)
+	for (const auto& masterInfoPair : m_masters)
 	{
-		auto pMasterActor = dynamic_cast<CTOSPlayer*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(masterInfoPair.first));
+		const auto pMasterActor = dynamic_cast<CTOSPlayer*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(masterInfoPair.first));
 		if (!pMasterActor)
 			continue;
 
-		auto pMasterEnt = pMasterActor->GetEntity();
+		const auto pMasterEnt = pMasterActor->GetEntity();
 		if (!pMasterEnt)
 			continue;
 
-		auto pSlaveEntity = GetSlave(pMasterEnt);
+		const auto pSlaveEntity = GetSlave(pMasterEnt);
 
 		const char* masterName = pMasterEnt->GetName();
 		const char* slaveName = pSlaveEntity != nullptr ? pSlaveEntity->GetName() : "NULL";
@@ -236,7 +236,7 @@ void CTOSMasterModule::DebugDrawMasters(const Vec2& screenPos, float fontSize, f
 	}
 }
 
-void CTOSMasterModule::GetMasters(std::map<EntityId, EntityId>& masters)
+void CTOSMasterModule::GetMasters(std::map<EntityId, EntityId>& masters) const
 {
 	masters = m_masters;
 }
