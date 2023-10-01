@@ -6,8 +6,6 @@
 #include "TOSGame.h"
 #include "TOSGameEventRecorder.h"
 
-#include "Modules/Master/MasterSynchronizer.h"
-
 CTOSGameEventRecorder::CTOSGameEventRecorder()
 {
 
@@ -73,12 +71,12 @@ void CTOSGame::OnGameplayEvent(IEntity* pEntity, const GameplayEvent& event)
 	this->OnExtraGameplayEvent(pEntity, event1);
 }
 
-void CTOSGameEventRecorder::RecordEvent(EntityId id, const STOSGameEvent& event)
+void CTOSGameEventRecorder::RecordEvent(const EntityId id, const STOSGameEvent& event)
 {
 	g_pTOSGame->OnExtraGameplayEvent(gEnv->pEntitySystem->GetEntity(id), event);
 }
 
-void CTOSGame::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event)
+void CTOSGame::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event) const
 {
 	//This code Handle gameplay events from ALL game and The Other Side
 	TOS_INIT_EVENT_VALUES(pEntity, event);
@@ -102,29 +100,50 @@ void CTOSGame::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event
 	//	envName = "[CLIENT]";
 	//}
 
-	switch(event.event)
-	{
-	case eGE_Disconnected:
-	case eGE_Connected:
-	{
-		//if (pEntity && event.console_log)
-		if (pEntity && gEnv->bServer)
-		{
-			//Net channel is null on client
-			auto pNetCh = pGO->GetNetChannel();
+	//switch(event.event)
+	//{
+	//case eGE_Disconnected:
+	//case eGE_Connected:
+	//{
+	//	//if (pEntity && event.console_log)
+	//	if (pEntity && gEnv->bServer)
+	//	{
+	//		//Net channel is null on client
+	//		auto pNetCh = pGO->GetNetChannel();
 
-			//Case 1
-			CryLogAlways("[C++][%s][%s][CTOSGame::OnExtraGameplayEvent] Event: %s, Name: (CH:%s|GO:%s|Id:%i)",
-				TOS_Debug::GetEnv(), TOS_Debug::GetAct(1), eventName, pNetCh ? pNetCh->GetName() : "NULL", entName, pEntity->GetId());
-		}
-		break;
-	}
-	}
+	//		//Case 1
+	//		CryLogAlways("[C++][%s][%s][CTOSGame::OnExtraGameplayEvent] Event: %s, Name: (CH:%s|GO:%s|Id:%i)",
+	//			TOS_Debug::GetEnv(), TOS_Debug::GetAct(1), eventName, pNetCh ? pNetCh->GetName() : "NULL", entName, pEntity->GetId());
+	//	}
+	//	break;
+	//}
+	//}
 
 	if ((event.console_log && !event.vanilla_recorder) || event.vanilla_recorder)
 	{
-		CryLogAlways("[C++][%s][%s][CTOSGame::OnExtraGameplayEvent] Event: %s, Entity: (%s|%i), Desc: %s",
-			TOS_Debug::GetEnv(), TOS_Debug::GetAct(1), eventName, entName, entId, eventDesc);
+		const bool mustDrawDesc = eventDesc.length() > 1;
+		const bool mustDrawEnt = entName.length() > 1 || entId > 0;
+
+		if (mustDrawDesc && mustDrawEnt)
+		{
+			CryLogAlways("[C++][%s][%s][CTOSGame::OnExtraGameplayEvent] Event: %s, Entity: (%s|%i), Desc: %s",
+				TOS_Debug::GetEnv(), TOS_Debug::GetAct(1), eventName.c_str(), entName.c_str(), entId, eventDesc.c_str());
+		}
+		else if (mustDrawEnt && !mustDrawDesc)
+		{
+			CryLogAlways("[C++][%s][%s][CTOSGame::OnExtraGameplayEvent] Event: %s, Entity: (%s|%i)",
+				TOS_Debug::GetEnv(), TOS_Debug::GetAct(1), eventName.c_str(), entName.c_str(), entId);
+		}
+		else if (mustDrawDesc && !mustDrawEnt)
+		{
+			CryLogAlways("[C++][%s][%s][CTOSGame::OnExtraGameplayEvent] Event: %s, Desc: %s",
+				TOS_Debug::GetEnv(), TOS_Debug::GetAct(1), eventName.c_str(), eventDesc.c_str());
+		}
+		else
+		{
+			CryLogAlways("[C++][%s][%s][CTOSGame::OnExtraGameplayEvent] Event: %s",
+				TOS_Debug::GetEnv(), TOS_Debug::GetAct(1), eventName.c_str());
+		}
 
 		//Case 2
 		//CryLogAlways("[C++]%s[FUNC CALL][CTOSGame::OnExtraGameplayEvent]", envName);
@@ -133,13 +152,13 @@ void CTOSGame::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event
 		//CryLogAlways("	Desc: %s", eventDesc);
 	}
 
-	for (auto pModule : m_modules)
+	for (const auto pModule : m_modules)
 	{
 		if (pModule)
 			pModule->OnExtraGameplayEvent(pEntity, event);
 	}
 
-	for (auto pModule : m_flowgraphModules)
+	for (const auto pModule : m_flowgraphModules)
 	{
 		if (pModule)
 			pModule->OnExtraGameplayEvent(pEntity, event);

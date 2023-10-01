@@ -15,11 +15,11 @@ if (g_pTOSGame)\
 // Values
 //   entName, eventName, eventDesc, pGO
 #define TOS_INIT_EVENT_VALUES(pEntity, _event) \
-const char* entName = pEntity ? pEntity->GetName() : "";\
-const EntityId entId = pEntity ? pEntity->GetId() : 0;\
-const char* eventName = g_pTOSGame->GetEventRecorder()->GetStringFromEnum(_event.event);\
-const char* eventDesc = _event.description;\
-const auto pGO = pEntity ? g_pGame->GetIGameFramework()->GetGameObject(pEntity->GetId()) : nullptr\
+const string entName = (pEntity) ? (pEntity)->GetName() : "";\
+const EntityId entId = (pEntity) ? (pEntity)->GetId() : 0;\
+const string eventName = g_pTOSGame->GetEventRecorder()->GetStringFromEnum(_event.event);\
+const string eventDesc = (_event).description;\
+const auto pGO = (pEntity) ? g_pGame->GetIGameFramework()->GetGameObject(pEntity->GetId()) : nullptr\
 
 
 enum EExtraGameplayEvent
@@ -319,5 +319,6 @@ public:
 
 		return "EExtraGameplayEvent UNDEFINED";
 	}
-	void RecordEvent(EntityId id, const STOSGameEvent &event);
+
+	static void RecordEvent(EntityId id, const STOSGameEvent &event);
 };
