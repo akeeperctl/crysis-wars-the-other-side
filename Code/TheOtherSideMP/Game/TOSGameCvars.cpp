@@ -26,6 +26,7 @@ void STOSCvars::InitCCommands(IConsole* pConsole)
 	pConsole->AddCommand("removeentity", CmdRemoveEntity);
 	pConsole->AddCommand("getentitiesbyclass", CmdGetEntitiesByClass);
 	pConsole->AddCommand("getsyncs", CmdGetSyncs);
+	pConsole->AddCommand("getentbyid", CmdGetEntityById);
 
 	//CLIENT COMMANDS
 	pConsole->AddCommand("getlocalname", CmdGetLocalName);
@@ -176,6 +177,45 @@ void STOSCvars::CmdRemoveEntity(IConsoleCmdArgs* pArgs)
 	gEnv->pEntitySystem->RemoveEntity(pEntity->GetId());
 }
 
+void STOSCvars::CmdGetEntityById(IConsoleCmdArgs* pArgs)
+{
+	if (!gEnv->bServer)
+	{
+		CryLogAlways("Failed: only on the server");
+		return;
+	}
+
+	const EntityId id = atoi(pArgs->GetArg(1));
+	const EntityId playerId = atoi(pArgs->GetArg(2));
+
+	const auto pEntity = gEnv->pEntitySystem->GetEntity(id);
+	if (!pEntity)
+	{
+		CryLogAlways("Failed: wrong 1 arg entityId");
+		return;
+	}
+
+	const auto pPlayer = g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(playerId);
+	if (!pPlayer)
+	{
+		CryLogAlways("Failed: wrong 2 arg playerId");
+		return;
+	}
+
+	const auto playerChannelId = pPlayer->GetChannelId();
+	const auto pPlayerChannel = g_pGame->GetIGameFramework()->GetNetChannel(playerChannelId);
+	const auto isAuth = g_pGame->GetIGameFramework()->GetNetContext()->RemoteContextHasAuthority(pPlayerChannel, id);
+
+	const char* strExist = pEntity ? "True" : "False";
+	const char* strName = pEntity ? pEntity->GetName() : "NULL";
+	const char* strAuth = isAuth ? "True" : "False";
+
+	CryLogAlways("Result: ");
+	CryLogAlways("	Is Exist: %s", strExist);
+	CryLogAlways("	Name: %s", strName);
+	CryLogAlways("	Authority: %s", strAuth);
+}
+
 void STOSCvars::CmdGetEntitiesByClass(IConsoleCmdArgs* pArgs)
 {
 	if (!gEnv->bServer)
@@ -205,13 +245,14 @@ void STOSCvars::CmdGetSyncs(IConsoleCmdArgs* pArgs)
 {
 	CryLogAlways("Result: (name|id)");
 
-	std::vector<EntityId> syncs;
+	TSynches syncs;
 	CTOSGenericSynchronizer::GetSynchonizers(syncs);
 
-	for (auto id: syncs)
+	for (const auto &syncPair: syncs)
 	{
-		auto pEntity = gEnv->pEntitySystem->GetEntity(id);
-		const char* name = pEntity ? pEntity->GetName() : "NULL";
+		const char* name = syncPair.first;
+		const auto pEntity = gEnv->pEntitySystem->FindEntityByName(name);
+		const auto id = syncPair.second;
 
 		CryLogAlways("	%s|%i", name, id);
 	}
