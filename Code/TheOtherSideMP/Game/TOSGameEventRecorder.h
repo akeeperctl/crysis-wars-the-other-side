@@ -62,6 +62,8 @@ enum EExtraGameplayEvent
 	eEGE_GamerulesInit,
 	eEGE_GamerulesDestroyed,
 
+	eEGE_GameModuleInit,
+
 	//eEGE_TOSGame_Init,
 
 	//eEGE_VehicleStuck,
@@ -306,6 +308,9 @@ public:
 			break;
 		case eEGE_GamerulesInit:
 			return "eEGE_GamerulesInit";
+			break;
+		case eEGE_GameModuleInit:
+			return "eEGE_GameModuleInit";
 			break;
 		case eEGE_Last:
 			return "eEGE_Last";
