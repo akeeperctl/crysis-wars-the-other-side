@@ -66,6 +66,76 @@ namespace TOS_Debug
 	//	}
 	//}
 
+	inline void LogEntityFlags(const IEntity* pEntity)
+	{
+		assert(pEntity);
+		if (!pEntity)
+			return;
+
+		CryLogAlways("Flags of %s entity:", pEntity->GetName());
+
+		if (pEntity->CheckFlags(ENTITY_FLAG_CASTSHADOW))
+			CryLogAlways("	%s", "ENTITY_FLAG_CASTSHADOW");
+		if (pEntity->CheckFlags(ENTITY_FLAG_UNREMOVABLE))
+			CryLogAlways("	%s", "ENTITY_FLAG_UNREMOVABLE");
+		if (pEntity->CheckFlags(ENTITY_FLAG_GOOD_OCCLUDER))
+			CryLogAlways("	%s", "ENTITY_FLAG_GOOD_OCCLUDER");
+		if (pEntity->CheckFlags(ENTITY_FLAG_WRITE_ONLY))
+			CryLogAlways("	%s", "ENTITY_FLAG_WRITE_ONLY");
+		if (pEntity->CheckFlags(ENTITY_FLAG_NOT_REGISTER_IN_SECTORS))
+			CryLogAlways("	%s", "ENTITY_FLAG_NOT_REGISTER_IN_SECTORS");
+		if (pEntity->CheckFlags(ENTITY_FLAG_CALC_PHYSICS))
+			CryLogAlways("	%s", "ENTITY_FLAG_CALC_PHYSICS");
+		if (pEntity->CheckFlags(ENTITY_FLAG_CLIENT_ONLY))
+			CryLogAlways("	%s", "ENTITY_FLAG_CLIENT_ONLY");
+		if (pEntity->CheckFlags(ENTITY_FLAG_SERVER_ONLY))
+			CryLogAlways("	%s", "ENTITY_FLAG_SERVER_ONLY");
+		if (pEntity->CheckFlags(ENTITY_FLAG_CUSTOM_VIEWDIST_RATIO))
+			CryLogAlways("	%s", "ENTITY_FLAG_CUSTOM_VIEWDIST_RATIO");
+		if (pEntity->CheckFlags(ENTITY_FLAG_CALCBBOX_USEALL))
+			CryLogAlways("	%s", "ENTITY_FLAG_CALCBBOX_USEALL");
+		if (pEntity->CheckFlags(ENTITY_FLAG_VOLUME_SOUND))
+			CryLogAlways("	%s", "ENTITY_FLAG_VOLUME_SOUND");
+		if (pEntity->CheckFlags(ENTITY_FLAG_HAS_AI))
+			CryLogAlways("	%s", "ENTITY_FLAG_HAS_AI");
+		if (pEntity->CheckFlags(ENTITY_FLAG_TRIGGER_AREAS))
+			CryLogAlways("	%s", "ENTITY_FLAG_TRIGGER_AREAS");
+		if (pEntity->CheckFlags(ENTITY_FLAG_NO_SAVE))
+			CryLogAlways("	%s", "ENTITY_FLAG_NO_SAVE");
+		if (pEntity->CheckFlags(ENTITY_FLAG_NET_PRESENT))
+			CryLogAlways("	%s", "ENTITY_FLAG_NET_PRESENT");
+		if (pEntity->CheckFlags(ENTITY_FLAG_CLIENTSIDE_STATE))
+			CryLogAlways("	%s", "ENTITY_FLAG_CLIENTSIDE_STATE");
+		if (pEntity->CheckFlags(ENTITY_FLAG_SEND_RENDER_EVENT))
+			CryLogAlways("	%s", "ENTITY_FLAG_SEND_RENDER_EVENT");
+		if (pEntity->CheckFlags(ENTITY_FLAG_NO_PROXIMITY))
+			CryLogAlways("	%s", "ENTITY_FLAG_NO_PROXIMITY");
+		if (pEntity->CheckFlags(ENTITY_FLAG_ON_RADAR))
+			CryLogAlways("	%s", "ENTITY_FLAG_ON_RADAR");
+		if (pEntity->CheckFlags(ENTITY_FLAG_UPDATE_HIDDEN))
+			CryLogAlways("	%s", "ENTITY_FLAG_UPDATE_HIDDEN");
+		if (pEntity->CheckFlags(ENTITY_FLAG_NEVER_NETWORK_STATIC))
+			CryLogAlways("	%s", "ENTITY_FLAG_NEVER_NETWORK_STATIC");
+		if (pEntity->CheckFlags(ENTITY_FLAG_IGNORE_PHYSICS_UPDATE))
+			CryLogAlways("	%s", "ENTITY_FLAG_IGNORE_PHYSICS_UPDATE");
+		if (pEntity->CheckFlags(ENTITY_FLAG_SPAWNED))
+			CryLogAlways("	%s", "ENTITY_FLAG_SPAWNED");
+		if (pEntity->CheckFlags(ENTITY_FLAG_SLOTS_CHANGED))
+			CryLogAlways("	%s", "ENTITY_FLAG_SLOTS_CHANGED");
+		if (pEntity->CheckFlags(ENTITY_FLAG_MODIFIED_BY_PHYSICS))
+			CryLogAlways("	%s", "ENTITY_FLAG_MODIFIED_BY_PHYSICS");
+		if (pEntity->CheckFlags(ENTITY_FLAG_OUTDOORONLY))
+			CryLogAlways("	%s", "ENTITY_FLAG_OUTDOORONLY");
+		if (pEntity->CheckFlags(ENTITY_FLAG_SEND_NOT_SEEN_TIMEOUT))
+			CryLogAlways("	%s", "ENTITY_FLAG_SEND_NOT_SEEN_TIMEOUT");
+		if (pEntity->CheckFlags(ENTITY_FLAG_RECVWIND))
+			CryLogAlways("	%s", "ENTITY_FLAG_RECVWIND");
+		if (pEntity->CheckFlags(ENTITY_FLAG_LOCAL_PLAYER))
+			CryLogAlways("	%s", "ENTITY_FLAG_LOCAL_PLAYER");
+		if (pEntity->CheckFlags(ENTITY_FLAG_AI_HIDEABLE))
+			CryLogAlways("	%s", "ENTITY_FLAG_AI_HIDEABLE");
+	}
+
 	// Summary
 	//   Get string of type of action
 	// Parameters
