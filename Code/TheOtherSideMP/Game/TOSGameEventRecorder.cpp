@@ -164,3 +164,48 @@ void CTOSGame::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event
 			pModule->OnExtraGameplayEvent(pEntity, event);
 	}
 }
+
+//IEntitySystemSink
+///////////////////////////////////////////////////////////////////////////////
+bool CTOSGame::OnBeforeSpawn(SEntitySpawnParams& params)
+{
+	return true;
+}
+
+void CTOSGame::OnSpawn(IEntity* pEntity, SEntitySpawnParams& params)
+{
+	assert(pEntity);
+
+	TOS_RECORD_EVENT(pEntity->GetId(), STOSGameEvent(eEGE_EntitySpawned, "", false));
+
+}
+
+bool CTOSGame::OnRemove(IEntity* pEntity)
+{
+	assert(pEntity);
+
+	TOS_RECORD_EVENT(pEntity->GetId(), STOSGameEvent(eEGE_EntityRemoved, "", false));
+
+	return true;
+}
+///////////////////////////////////////////////////////////////////////////////
+//~IEntitySystemSink
+
+void CTOSGame::OnEvent(IEntity* pEntity, SEntityEvent& event)
+{
+
+}
+
+//IScriptTableDumpSink
+///////////////////////////////////////////////////////////////////////////////
+void CTOSGame::OnElementFound(const char* sName, ScriptVarType type)
+{
+
+}
+
+void CTOSGame::OnElementFound(int nIdx, ScriptVarType type)
+{
+
+}
+///////////////////////////////////////////////////////////////////////////////
+//~IScriptTableDumpSink

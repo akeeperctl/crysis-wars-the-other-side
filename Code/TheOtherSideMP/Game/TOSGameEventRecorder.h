@@ -64,6 +64,9 @@ enum EExtraGameplayEvent
 
 	eEGE_GameModuleInit,
 
+	eEGE_EntitySpawned,
+	eEGE_EntityRemoved,
+
 	//eEGE_TOSGame_Init,
 
 	//eEGE_VehicleStuck,
@@ -115,9 +118,9 @@ struct STOSGameEvent
 
 /**
  * TOS Game Event Recorder
- * На сервере и клиенте: записывает и реагирует на все события в течение работы игры
- * RecordEvent() - записывает событие
- * Автоудаление: отсутствует.
+ * РќР° СЃРµСЂРІРµСЂРµ Рё РєР»РёРµРЅС‚Рµ: Р·Р°РїРёСЃС‹РІР°РµС‚ Рё СЂРµР°РіРёСЂСѓРµС‚ РЅР° РІСЃРµ СЃРѕР±С‹С‚РёСЏ РІ С‚РµС‡РµРЅРёРµ СЂР°Р±РѕС‚С‹ РёРіСЂС‹
+ * RecordEvent() - Р·Р°РїРёСЃС‹РІР°РµС‚ СЃРѕР±С‹С‚РёРµ
+ * РђРІС‚РѕСѓРґР°Р»РµРЅРёРµ: РѕС‚СЃСѓС‚СЃС‚РІСѓРµС‚.
  */
 class CTOSGameEventRecorder
 {
@@ -256,8 +259,13 @@ public:
 			return "eEGE_GamerulesInit";
 		case eEGE_GameModuleInit:
 			return "eEGE_GameModuleInit";
+		case eEGE_EntitySpawned:
+			return "eEGE_EntitySpawned";
+		case eEGE_EntityRemoved:
+			return "eEGE_EntityRemoved";
 		case eEGE_Last:
 			return "eEGE_Last";
+
 		default: 
 			return "UNDEFINED";
 		}
