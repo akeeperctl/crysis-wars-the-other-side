@@ -15,7 +15,7 @@ class CTOSAIActionTracker;
 class CTOSGameEventRecorder;
 
 class CTOSMasterModule;
-class CTOSRestartResurrectionModule;
+class CTOSEntitySpawnModule;
 
 
 struct STOSGameEvent;
@@ -26,7 +26,11 @@ struct IHitListener;
 //enum EExtraGameplayEvent;
 
 // ReSharper disable once CppPolymorphicClassWithNonVirtualPublicDestructor
-class CTOSGame final : public IGameplayListener, public IInputEventListener  // NOLINT(cppcoreguidelines-special-member-functions)
+class CTOSGame final :  // NOLINT(cppcoreguidelines-special-member-functions)
+	public IGameplayListener,
+	public IInputEventListener,
+	public IEntitySystemSink,
+	public IScriptTableDumpSink
 {
 public:
 	CTOSGame();
@@ -56,6 +60,18 @@ public:
 	//TOSEventRecorder->RecordEvent->calling this
 	//IGameplayRecorder->Event->calling this
 	void OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event) const;
+
+	//IEntitySystemSink
+	bool OnBeforeSpawn( SEntitySpawnParams &params ) override;
+	void OnSpawn(IEntity* pEntity, SEntitySpawnParams& params) override;
+	bool OnRemove(IEntity* pEntity) override;
+	void OnEvent(IEntity* pEntity, SEntityEvent& event) override;
+	//~IEntitySystemSink
+
+	//IScriptTableDumpSink
+	void OnElementFound(const char* sName, ScriptVarType type) override;
+	void OnElementFound(int nIdx, ScriptVarType type) override;
+	//~IScriptTableDumpSink
 
 	//ILevelSystemListener
 	//virtual void OnLevelNotFound(const char* levelName);
@@ -100,7 +116,7 @@ private:
 
 	CTOSGameEventRecorder* m_pEventRecorder;
 	CTOSMasterModule* m_pMasterModule;
-	CTOSRestartResurrectionModule* m_pResurrectionModule;
+	CTOSEntitySpawnModule* m_pEntitySpawnModule;
 
 	std::vector<ITOSGameModule*> m_modules;
 	std::vector<ITOSGameModule*> m_flowgraphModules;

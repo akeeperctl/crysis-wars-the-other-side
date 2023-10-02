@@ -6,14 +6,14 @@
 
 #include "Modules/ITOSGameModule.h"
 #include "Modules/Master/MasterModule.h"
-#include "Modules/RestartResurrection/RestartResurrectionModule.h"
+#include "Modules/EntitySpawn/EntitySpawnModule.h"
 
 CTOSGame::CTOSGame():
 	m_pAIActionTracker(nullptr),
 	m_pLocalControlClient(nullptr),
 	m_pEventRecorder(nullptr),
 	m_pMasterModule(nullptr),
-	m_pResurrectionModule(nullptr)
+	m_pEntitySpawnModule(nullptr)
 {
 }
 
@@ -24,7 +24,7 @@ CTOSGame::~CTOSGame()
 	//Modules
 
 	SAFE_DELETE(m_pMasterModule);
-	SAFE_DELETE(m_pResurrectionModule);
+	SAFE_DELETE(m_pEntitySpawnModule);
 
 	//~Modules
 
@@ -36,13 +36,15 @@ void CTOSGame::Init()
 	g_pGame->GetIGameFramework()->GetIGameplayRecorder()->RegisterListener(this);
 	if (gEnv->pInput) 
 		gEnv->pInput->AddEventListener(this);
+	if (gEnv->pEntitySystem)
+		gEnv->pEntitySystem->AddSink(this);
 
 	m_pEventRecorder = new CTOSGameEventRecorder();
 
 	//Modules
 
 	m_pMasterModule = new CTOSMasterModule();
-	m_pResurrectionModule = new CTOSRestartResurrectionModule();
+	m_pEntitySpawnModule = new CTOSEntitySpawnModule();
 
 	//~Modules
 
@@ -60,6 +62,9 @@ void CTOSGame::Shutdown()
 	g_pGame->GetIGameFramework()->GetIGameplayRecorder()->UnregisterListener(this);
 	if (gEnv->pInput)
 		gEnv->pInput->RemoveEventListener(this);
+	if (gEnv->pEntitySystem)
+		gEnv->pEntitySystem->RemoveSink(this);
+
 
 	this->~CTOSGame();
 }
