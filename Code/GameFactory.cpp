@@ -5,11 +5,11 @@
   $Id$
   $DateTime$
   Description:  Register the factory templates used to create classes from names
-                e.g. REGISTER_FACTORY(pFramework, "Player", CPlayer, false);
-                or   REGISTER_FACTORY(pFramework, "Player", CPlayerG4, false);
+				e.g. REGISTER_FACTORY(pFramework, "Player", CPlayer, false);
+				or   REGISTER_FACTORY(pFramework, "Player", CPlayerG4, false);
 
-                Since overriding this function creates template based linker errors,
-                it's been replaced by a standalone function in its own cpp file.
+				Since overriding this function creates template based linker errors,
+				it's been replaced by a standalone function in its own cpp file.
 
   -------------------------------------------------------------------------
   History:
@@ -230,13 +230,14 @@ void InitGameFactory(IGameFramework *pFramework)
 	//REGISTER_GAME_OBJECT(pFramework, TOSMasterSynchronizer, "");
 	//HIDE_FROM_EDITOR("TOSMasterSynchronizer");
 
-	//REGISTER_FACTORY может зарегистрировать любой из видов фабрики.
-	//Он необходим чтобы отдельно регистрировать классы актёров/транспорта/оружия.
-	//Также он подходит для регистрации классов GameObjectExtension. Смотреть CryAction, строка 113.
+	//REGISTER_FACTORY РјРѕР¶РµС‚ Р·Р°СЂРµРіРёСЃС‚СЂРёСЂРѕРІР°С‚СЊ Р»СЋР±РѕР№ РёР· РІРёРґРѕРІ С„Р°Р±СЂРёРєРё.
+	//РћРЅ РЅРµРѕР±С…РѕРґРёРј С‡С‚РѕР±С‹ РѕС‚РґРµР»СЊРЅРѕ СЂРµРіРёСЃС‚СЂРёСЂРѕРІР°С‚СЊ РєР»Р°СЃСЃС‹ Р°РєС‚С‘СЂРѕРІ/С‚СЂР°РЅСЃРїРѕСЂС‚Р°/РѕСЂСѓР¶РёСЏ.
+	
+	//РўР°РєР¶Рµ РѕРЅ РїРѕРґС…РѕРґРёС‚ РґР»СЏ СЂРµРіРёСЃС‚СЂР°С†РёРё РєР»Р°СЃСЃРѕРІ GameObjectExtension. РЎРјРѕС‚СЂРµС‚СЊ CryAction, СЃС‚СЂРѕРєР° 113.
 
-	//REGISTER_GAME_OBJECT_EXTENSION целенаправленно используется только для регистрации классов GameObjectExtension
+	//REGISTER_GAME_OBJECT_EXTENSION С†РµР»РµРЅР°РїСЂР°РІР»РµРЅРЅРѕ РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ С‚РѕР»СЊРєРѕ РґР»СЏ СЂРµРіРёСЃС‚СЂР°С†РёРё РєР»Р°СЃСЃРѕРІ GameObjectExtension
 
-	// RegisterGameRules - регистрирует новый класс std с названием "SinglePlayer" и с extension "GameRules"
+	// RegisterGameRules - СЂРµРіРёСЃС‚СЂРёСЂСѓРµС‚ РЅРѕРІС‹Р№ РєР»Р°СЃСЃ std СЃ РЅР°Р·РІР°РЅРёРµРј "SinglePlayer" Рё СЃ extension "GameRules"
 
 	//	//REGISTER_FACTORY(pFramework, "TOSMasterSynchronizer", CTOSMasterSynchronizer, false); //is ok
 	REGISTER_GAME_OBJECT_EXTENSION(pFramework, TOSMasterSynchronizer); //is ok
