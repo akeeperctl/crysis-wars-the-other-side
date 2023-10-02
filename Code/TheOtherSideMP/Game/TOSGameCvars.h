@@ -18,9 +18,9 @@ struct STOSCvars  // NOLINT(cppcoreguidelines-special-member-functions)
 	}
 
 	void InitCVars(IConsole *pConsole);
-	void InitCCommands(IConsole *pConsole);
-	void ReleaseCVars();
-	void ReleaseCCommands();
+	void InitCCommands(IConsole *pConsole) const;
+	void ReleaseCVars() const;
+	void ReleaseCCommands() const;
 
 	// SERVER COMMANDS
 	static void CmdNetChName(IConsoleCmdArgs *pArgs);	

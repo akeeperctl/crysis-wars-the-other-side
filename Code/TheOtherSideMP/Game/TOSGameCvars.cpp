@@ -1,3 +1,5 @@
+// ReSharper disable CppParameterMayBeConstPtrOrRef
+// ReSharper disable CppClangTidyClangDiagnosticExtraSemiStmt
 #include "StdAfx.h"
 #include "TOSGameCvars.h"
 
@@ -7,8 +9,22 @@
 #include "Modules/GenericSynchronizer.h"
 #include "Modules/Master/MasterModule.h"
 
+#define ONLY_SERVER \
+if (!gEnv->bServer)\
+{\
+	CryLogAlways("Failed: only on the server");\
+	return;\
+}\
 
-void STOSCvars::InitCVars(IConsole *pConsole)
+#define ONLY_CLIENT \
+if (!gEnv->bClient)\
+{\
+	CryLogAlways("Failed: only on the client");\
+	return;\
+}\
+
+
+void STOSCvars::InitCVars(IConsole* pConsole)
 {
 	pConsole->Register("tos_debug_draw_aiactiontracker", &tos_debug_draw_aiactiontracker, 0, 0, "");
 	pConsole->Register("tos_debug_log_aiactiontracker", &tos_debug_log_aiactiontracker, 0, 0, "");
@@ -16,7 +32,7 @@ void STOSCvars::InitCVars(IConsole *pConsole)
 	pConsole->Register("tos_show_version", &tos_show_version, 1, 0, "");
 }
 
-void STOSCvars::InitCCommands(IConsole* pConsole)
+void STOSCvars::InitCCommands(IConsole* pConsole) const
 {
 	//SERVER COMMANDS
 	pConsole->AddCommand("netchname", CmdNetChName);
@@ -32,9 +48,9 @@ void STOSCvars::InitCCommands(IConsole* pConsole)
 	pConsole->AddCommand("getlocalname", CmdGetLocalName);
 }
 
-void STOSCvars::ReleaseCCommands()
+void STOSCvars::ReleaseCCommands() const
 {
-	auto pConsole = gEnv->pConsole;
+	const auto pConsole = gEnv->pConsole;
 
 	pConsole->RemoveCommand("netchname");
 	pConsole->RemoveCommand("getlocalname");
@@ -42,9 +58,9 @@ void STOSCvars::ReleaseCCommands()
 	pConsole->RemoveCommand("ismaster");
 }
 
-void STOSCvars::ReleaseCVars()
+void STOSCvars::ReleaseCVars() const
 {
-	auto pConsole = gEnv->pConsole;
+	const auto pConsole = gEnv->pConsole;
 
 	pConsole->UnregisterVariable("tos_debug_draw_aiactiontracker", true);
 	pConsole->UnregisterVariable("tos_debug_log_aiactiontracker", true);
@@ -54,22 +70,21 @@ void STOSCvars::ReleaseCVars()
 
 void STOSCvars::CmdNetChName(IConsoleCmdArgs* pArgs)
 {
-	if (!gEnv->bServer)
-		return;
+	ONLY_SERVER;
 
 	const char* playerEntityName = pArgs->GetArg(1);
 
-	auto pEntity = gEnv->pEntitySystem->FindEntityByName(playerEntityName);
+	const auto pEntity = gEnv->pEntitySystem->FindEntityByName(playerEntityName);
 	assert(pEntity);
 	if (!pEntity)
 		return;
 
-	auto pGO = g_pGame->GetIGameFramework()->GetGameObject(pEntity->GetId());
+	const auto pGO = g_pGame->GetIGameFramework()->GetGameObject(pEntity->GetId());
 	assert(pGO);
 	if (!pGO)
 		return;
 
-	auto pChannel = pGO->GetNetChannel();
+	const auto pChannel = pGO->GetNetChannel();
 	assert(pChannel);
 	if (!pChannel)
 		return;
@@ -79,20 +94,19 @@ void STOSCvars::CmdNetChName(IConsoleCmdArgs* pArgs)
 
 void STOSCvars::CmdGetMastersList(IConsoleCmdArgs* pArgs)
 {
-	if (!gEnv->bServer)
-		return;
+	ONLY_SERVER;
 
 	std::map<EntityId, EntityId> masters;
 	g_pTOSGame->GetMasterModule()->GetMasters(masters);
 
 	CryLogAlways("Result: (master(id)|slave(id))");
-	for (auto& masterPair : masters)
+	for (const auto& masterPair : masters)
 	{
-		const int masterId = masterPair.first;
-		const int slaveId = masterPair.second;
+		const EntityId masterId = masterPair.first;
+		const EntityId slaveId = masterPair.second;
 
-		auto pMasterEnt = gEnv->pEntitySystem->GetEntity(masterId);
-		auto pSlaveEnt = gEnv->pEntitySystem->GetEntity(slaveId);
+		const auto pMasterEnt = gEnv->pEntitySystem->GetEntity(masterId);
+		const auto pSlaveEnt = gEnv->pEntitySystem->GetEntity(slaveId);
 
 		const char* masterName = pMasterEnt ? pMasterEnt->GetName() : "NULL";
 		const char* slaveName = pSlaveEnt ? pSlaveEnt->GetName() : "NULL";
@@ -103,20 +117,19 @@ void STOSCvars::CmdGetMastersList(IConsoleCmdArgs* pArgs)
 
 void STOSCvars::CmdIsMaster(IConsoleCmdArgs* pArgs)
 {
-	if (!gEnv->bServer)
-		return;
+	ONLY_SERVER;
 
 	const char* strPlayerId = pArgs->GetArg(1);
 	const EntityId playerId = atoi(strPlayerId);
 
-	auto pEntity = gEnv->pEntitySystem->GetEntity(playerId);
+	const auto pEntity = gEnv->pEntitySystem->GetEntity(playerId);
 	assert(pEntity);
 	if (!pEntity)
 	{
 		CryLogAlways("IsMaster failed: not found entity with id (%i)", strPlayerId);
 		return;
 	}
-		
+
 
 	const bool isMaster = g_pTOSGame->GetMasterModule()->IsMaster(pEntity);
 	const char* result = isMaster ? "Yes" : "No";
@@ -126,18 +139,14 @@ void STOSCvars::CmdIsMaster(IConsoleCmdArgs* pArgs)
 
 void STOSCvars::CmdSpawnEntity(IConsoleCmdArgs* pArgs)
 {
-	if (!gEnv->bServer)
-	{
-		CryLogAlways("Spawn failed: can spawn only on the server");
-		return;
-	}
+	ONLY_SERVER;
 
-	auto pClass = gEnv->pEntitySystem->GetClassRegistry()->FindClass(pArgs->GetArg(1));
+	const auto pClass = gEnv->pEntitySystem->GetClassRegistry()->FindClass(pArgs->GetArg(1));
 	assert(pClass);
 
 	const char* plName = pArgs->GetArg(2);
 
-	auto pPlayerEntity = gEnv->pEntitySystem->FindEntityByName(plName);
+	const auto pPlayerEntity = gEnv->pEntitySystem->FindEntityByName(plName);
 	assert(pPlayerEntity);
 	if (!pPlayerEntity)
 	{
@@ -157,15 +166,11 @@ void STOSCvars::CmdSpawnEntity(IConsoleCmdArgs* pArgs)
 
 void STOSCvars::CmdRemoveEntity(IConsoleCmdArgs* pArgs)
 {
-	if (!gEnv->bServer)
-	{
-		CryLogAlways("Remove failed: can remove only on the server");
-		return;
-	}
+	ONLY_SERVER;
 
 	const char* entName = pArgs->GetArg(1);
 
-	auto pEntity = gEnv->pEntitySystem->FindEntityByName(entName);
+	const auto pEntity = gEnv->pEntitySystem->FindEntityByName(entName);
 	assert(pEntity);
 	if (!pEntity)
 	{
@@ -173,17 +178,12 @@ void STOSCvars::CmdRemoveEntity(IConsoleCmdArgs* pArgs)
 		return;
 	}
 
-	pEntity->ClearFlags(ENTITY_FLAG_UNREMOVABLE);
-	gEnv->pEntitySystem->RemoveEntity(pEntity->GetId());
+	gEnv->pEntitySystem->RemoveEntity(pEntity->GetId(), true);
 }
 
 void STOSCvars::CmdGetEntityById(IConsoleCmdArgs* pArgs)
 {
-	if (!gEnv->bServer)
-	{
-		CryLogAlways("Failed: only on the server");
-		return;
-	}
+	ONLY_SERVER;
 
 	const EntityId id = atoi(pArgs->GetArg(1));
 	const EntityId playerId = atoi(pArgs->GetArg(2));
@@ -206,38 +206,34 @@ void STOSCvars::CmdGetEntityById(IConsoleCmdArgs* pArgs)
 	const auto pPlayerChannel = g_pGame->GetIGameFramework()->GetNetChannel(playerChannelId);
 	const auto isAuth = g_pGame->GetIGameFramework()->GetNetContext()->RemoteContextHasAuthority(pPlayerChannel, id);
 
-	const char* strExist = pEntity ? "True" : "False";
 	const char* strName = pEntity ? pEntity->GetName() : "NULL";
 	const char* strAuth = isAuth ? "True" : "False";
 
 	CryLogAlways("Result: ");
-	CryLogAlways("	Is Exist: %s", strExist);
 	CryLogAlways("	Name: %s", strName);
 	CryLogAlways("	Authority: %s", strAuth);
+
+	TOS_Debug::LogEntityFlags(pEntity);
 }
 
 void STOSCvars::CmdGetEntitiesByClass(IConsoleCmdArgs* pArgs)
 {
-	if (!gEnv->bServer)
-	{
-		CryLogAlways("Failed: only on the server");
-		return;
-	}
+	ONLY_SERVER;
 
 	CryLogAlways("Result: (entity_name|entity_id)");
 
-	auto iter = gEnv->pEntitySystem->GetEntityIterator();
-	while(!iter->IsEnd())
+	const auto iter = gEnv->pEntitySystem->GetEntityIterator();
+	while (!iter->IsEnd())
 	{
-		auto pEntity = iter->Next();
+		const auto pEntity = iter->Next();
 		if (!pEntity)
 			continue;
 
-		string name = pEntity->GetName();
+		const string name = pEntity->GetName();
 		string clsname = pEntity->GetClass()->GetName();
 		string argName = pArgs->GetArg(1);
 		if (clsname == argName) //"TOSMasterSynchronizer")
-			CryLogAlways("	%s|%i", name, pEntity->GetId());
+			CryLogAlways("	%s|%i", name.c_str(), pEntity->GetId());
 	}
 }
 
@@ -248,7 +244,7 @@ void STOSCvars::CmdGetSyncs(IConsoleCmdArgs* pArgs)
 	TSynches syncs;
 	CTOSGenericSynchronizer::GetSynchonizers(syncs);
 
-	for (const auto &syncPair: syncs)
+	for (const auto& syncPair : syncs)
 	{
 		const char* name = syncPair.first;
 		const auto pEntity = gEnv->pEntitySystem->FindEntityByName(name);
@@ -260,10 +256,9 @@ void STOSCvars::CmdGetSyncs(IConsoleCmdArgs* pArgs)
 
 void STOSCvars::CmdGetLocalName(IConsoleCmdArgs* pArgs)
 {
-	if (!gEnv->bClient)
-		return;
+	ONLY_CLIENT;
 
-	auto pPlayer = g_pGame->GetIGameFramework()->GetClientActor();
+	const auto pPlayer = g_pGame->GetIGameFramework()->GetClientActor();
 	assert(pPlayer);
 
 	CryLogAlways("Result: (%s)", pPlayer->GetEntity()->GetName());
