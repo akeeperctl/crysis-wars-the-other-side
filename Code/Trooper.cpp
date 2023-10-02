@@ -1013,12 +1013,34 @@ void CTrooper::ProcessMovement(float frameTime)
 			if(m_jumpParams.bUseSpecialAnim && m_jumpParams.specialAnimType == JUMP_ANIM_LAND 
 					&& !m_jumpParams.bPlayingSpecialAnim)
 			{
+				//TheOtherSide
+
+				//pData = gEnv->pAISystem->CreateSignalExtraData();
+				//pData->iValue = 1;
+
 				// something went wrong, trooper landed before playing the special land animation he was supposed to do
-				pData = gEnv->pAISystem->CreateSignalExtraData();
-				pData->iValue = 1;
+				if (gEnv->pAISystem)
+				{
+					pData = gEnv->pAISystem->CreateSignalExtraData();
+					pData->iValue = 1;
+				}
+
+				//~TheOtherSide
+
 			}
-			// send land event/signal			
-			gEnv->pAISystem->SendSignal(SIGNALFILTER_SENDER,1,"OnLand",GetEntity()->GetAI(),pData);
+			// send land event/signal
+
+			//TheOtherSide
+
+			//gEnv->pAISystem->SendSignal(SIGNALFILTER_SENDER, 1, "OnLand", GetEntity()->GetAI(), pData);
+
+			if (gEnv->pAISystem && GetEntity()->GetAI())
+			{
+				gEnv->pAISystem->SendSignal(SIGNALFILTER_SENDER, 1, "OnLand", GetEntity()->GetAI(), pData);
+			}
+
+			//~TheOtherSide
+
 			if(m_jumpParams.bUseLandEvent)
 			{
 				SEntityEvent event( ENTITY_EVENT_SCRIPT_EVENT );
