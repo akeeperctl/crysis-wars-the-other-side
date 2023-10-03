@@ -9,6 +9,7 @@
 #include "../TOSGameEventRecorder.h"
 
 CTOSGenericModule::CTOSGenericModule()
+	: m_debugLogMode(0)
 {
 	m_pSynchonizer = nullptr;
 	g_pTOSGame->ModuleAdd(this, false);

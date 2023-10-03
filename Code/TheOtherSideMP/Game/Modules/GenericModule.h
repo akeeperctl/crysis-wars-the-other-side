@@ -1,8 +1,9 @@
 #pragma once
 
+#include "Game.h"
 #include "ITOSGameModule.h"
 
-class CTOSGenericModule: public ITOSGameModule  // NOLINT(cppcoreguidelines-special-member-functions)
+class CTOSGenericModule : public ITOSGameModule // NOLINT(cppcoreguidelines-special-member-functions)
 {
 public:
 	friend class CTOSMasterModule;
@@ -19,21 +20,25 @@ public:
 	void Init() override;
 	void Update(float frametime) override;
 	void Serialize(TSerialize ser) override;
+
+	int GetDebugLog() override { return m_debugLogMode; }
 	//~ITOSGameModule
 
 	virtual CTOSGenericSynchronizer* GetSynchronizer() const;
 
-	template <class CSynchType> CSynchType* CreateSynchonizer(const char* entityName, const char* extensionName);
+	template <class CSynchType>
+	CSynchType* CreateSynchonizer(const char* entityName, const char* extensionName);
 
 protected:
 	CTOSGenericSynchronizer* m_pSynchonizer;
 
 private:
-
+	int m_debugLogMode; // режим отладки модуля (1 - вкл, 0 - выкл)
 };
 
 
-template <class CSynchType> CSynchType* CTOSGenericModule::CreateSynchonizer(const char* entityName, const char* extensionName)
+template <class CSynchType>
+CSynchType* CTOSGenericModule::CreateSynchonizer(const char* entityName, const char* extensionName)
 {
 	const char* extName = extensionName;
 	CSynchType* pSynchExt = nullptr;
@@ -63,8 +68,7 @@ template <class CSynchType> CSynchType* CTOSGenericModule::CreateSynchonizer(con
 	pSynchEntity = gEnv->pEntitySystem->SpawnEntity(params);
 	assert(pSynchEntity);
 
-	if (!pSynchEntity)
-		return nullptr;
+	if (!pSynchEntity) return nullptr;
 
 	//IGameObject* pGO = g_pGame->GetIGameFramework()->GetGameObject(pSynchronizer->GetId());
 	IGameObject* pGO = g_pGame->GetIGameFramework()->GetIGameObjectSystem()->CreateGameObjectForEntity(pSynchEntity->GetId());

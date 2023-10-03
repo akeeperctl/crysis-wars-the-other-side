@@ -24,13 +24,13 @@ void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEven
 {
 	TOS_INIT_EVENT_VALUES(pEntity, event);
 
-	// Обнаружен баг
-	//	При вводе sv_restart у Synchronizer не вызывается Release(), но при этом он всё же куда-то пропадает. 
-	//	Флаг у Synchronizer на неудаляемость присутствует.
-	// Исправление: 
-	//	- удаление вручную при событии eGE_GameReset (неактуально)
-	//	- оставить как есть и создавать синхронизатор при событии eEGE_GamerulesStartGame.
-	//		это гарантирует его наличие при sv_restart'е
+	// РћР±РЅР°СЂСѓР¶РµРЅ Р±Р°Рі
+	//	РџСЂРё РІРІРѕРґРµ sv_restart Сѓ Synchronizer РЅРµ РІС‹Р·С‹РІР°РµС‚СЃСЏ Release(), РЅРѕ РїСЂРё СЌС‚РѕРј РѕРЅ РІСЃС‘ Р¶Рµ РєСѓРґР°-С‚Рѕ РїСЂРѕРїР°РґР°РµС‚. 
+	//	Р¤Р»Р°Рі Сѓ Synchronizer РЅР° РЅРµСѓРґР°Р»СЏРµРјРѕСЃС‚СЊ РїСЂРёСЃСѓС‚СЃС‚РІСѓРµС‚.
+	// РСЃРїСЂР°РІР»РµРЅРёРµ: 
+	//	- СѓРґР°Р»РµРЅРёРµ РІСЂСѓС‡РЅСѓСЋ РїСЂРё СЃРѕР±С‹С‚РёРё eGE_GameReset (РЅРµР°РєС‚СѓР°Р»СЊРЅРѕ)
+	//	- РѕСЃС‚Р°РІРёС‚СЊ РєР°Рє РµСЃС‚СЊ Рё СЃРѕР·РґР°РІР°С‚СЊ СЃРёРЅС…СЂРѕРЅРёР·Р°С‚РѕСЂ РїСЂРё СЃРѕР±С‹С‚РёРё eEGE_GamerulesStartGame.
+	//		СЌС‚Рѕ РіР°СЂР°РЅС‚РёСЂСѓРµС‚ РµРіРѕ РЅР°Р»РёС‡РёРµ РїСЂРё sv_restart'Рµ
 
 	switch (event.event)
 	{
@@ -66,7 +66,7 @@ void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEven
 		//params.bStaticEntityId = true;
 		//params.sName = "MasterSynchronizer";
 		////params.nFlags |= ENTITY_FLAG_NO_PROXIMITY;
-		////Флаг ENTITY_FLAG_UNREMOVABLE не работает при sv_restart
+		////Р¤Р»Р°Рі ENTITY_FLAG_UNREMOVABLE РЅРµ СЂР°Р±РѕС‚Р°РµС‚ РїСЂРё sv_restart
 		//params.nFlags |= ENTITY_FLAG_NO_PROXIMITY | ENTITY_FLAG_UNREMOVABLE;
 		////params.id = 2;
 
@@ -200,7 +200,7 @@ IEntity* CTOSMasterModule::GetSlave(const IEntity* pMasterEntity)
 	return nullptr;
 }
 
-void CTOSMasterModule::DebugDrawMasters(const Vec2& screenPos, float fontSize, float interval, int maxElemNum)
+void CTOSMasterModule::DebugDraw(const Vec2& screenPos, float fontSize, float interval, int maxElemNum)
 {
 	//Header
 	TOS_Debug::Draw2dText(

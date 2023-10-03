@@ -31,6 +31,7 @@ struct ITOSGameModule  // NOLINT(cppcoreguidelines-special-member-functions)
 	virtual void Init() = 0;
 	virtual void Update(float frametime) = 0;
 	virtual void Serialize(TSerialize ser) = 0;
+	virtual int GetDebugLog() = 0;
 
 	bool operator == (ITOSGameModule* pModule)
 	{

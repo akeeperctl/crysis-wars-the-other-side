@@ -9,9 +9,9 @@ class CTOSGenericSynchronizer;
 
 /**
  * TOS Master Info
- * На сервере: хранит информацию о работе одного мастера
- * На клиенте: отсутсвует.
- * Включено автоудаление.
+ * РќР° СЃРµСЂРІРµСЂРµ: С…СЂР°РЅРёС‚ РёРЅС„РѕСЂРјР°С†РёСЋ Рѕ СЂР°Р±РѕС‚Рµ РѕРґРЅРѕРіРѕ РјР°СЃС‚РµСЂР°
+ * РќР° РєР»РёРµРЅС‚Рµ: РѕС‚СЃСѓС‚СЃРІСѓРµС‚.
+ * Р’РєР»СЋС‡РµРЅРѕ Р°РІС‚РѕСѓРґР°Р»РµРЅРёРµ.
  */
 //struct STOSMasterInfo
 //{
@@ -37,10 +37,10 @@ class CTOSGenericSynchronizer;
 
 /**
  * TOS Master System
- * На сервере: хранит информацию о работе всех мастеров.
- * На клиенте: ничего не делает.
- * Мастер - это игрок, управляющий несвоим актёром.
- * Автоудаление: отсутствует.
+ * РќР° СЃРµСЂРІРµСЂРµ: С…СЂР°РЅРёС‚ РёРЅС„РѕСЂРјР°С†РёСЋ Рѕ СЂР°Р±РѕС‚Рµ РІСЃРµС… РјР°СЃС‚РµСЂРѕРІ.
+ * РќР° РєР»РёРµРЅС‚Рµ: РЅРёС‡РµРіРѕ РЅРµ РґРµР»Р°РµС‚.
+ * РњР°СЃС‚РµСЂ - СЌС‚Рѕ РёРіСЂРѕРє, СѓРїСЂР°РІР»СЏСЋС‰РёР№ РЅРµСЃРІРѕРёРј Р°РєС‚С‘СЂРѕРј.
+ * РђРІС‚РѕСѓРґР°Р»РµРЅРёРµ: РѕС‚СЃСѓС‚СЃС‚РІСѓРµС‚.
  */
 class CTOSMasterModule : public CTOSGenericModule  // NOLINT(cppcoreguidelines-special-member-functions)
 {
@@ -61,7 +61,7 @@ public:
 	bool IsMaster(const IEntity* pMasterEntity);
 	void GetMasters(std::map<EntityId, EntityId>& masters) const;
 	IEntity* GetSlave(const IEntity* pMasterEntity);
-	void DebugDrawMasters(const Vec2& screenPos = {20,300}, float fontSize = 1.2f, float interval = 20.0f, int maxElemNum = 5);
+	void DebugDraw(const Vec2& screenPos = {20,300}, float fontSize = 1.2f, float interval = 20.0f, int maxElemNum = 5);
 
 private:
 	std::map<EntityId, EntityId> m_masters;
