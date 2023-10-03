@@ -53,7 +53,7 @@ struct STOSEntitySpawnParams
 
 	SEntitySpawnParams vanilla;
 
-	string savedName;
+	string savedName; //ИСПРАВИЛО БАГ https://github.com/akeeperctl/crysis-wars-the-other-side/issues/6
 
 	IScriptTable* pSavedScript;
 

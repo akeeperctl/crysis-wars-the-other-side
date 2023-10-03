@@ -35,12 +35,12 @@ void CTOSEntitySpawnModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGam
 			auto pParams = new SEntitySpawnParams(*static_cast<SEntitySpawnParams*>(event.extra_data));
 			assert(pParams);
 
-			// id будет генерироваться
+			// id должен генерироваться
 			pParams->id = 0;
 
 			//pParams->sName = pEntity->GetName();
 
-			CryLogAlways("[%s|%s|%id] Create saved params ", pParams->sName, pEntity->GetName(), entId);
+			//CryLogAlways("[%s|%s|%id] Create saved params ", pParams->sName, pEntity->GetName(), entId);
 
 			m_savedParams[entId] = pParams;
 		}
@@ -251,13 +251,13 @@ void CTOSEntitySpawnModule::ScheduleRecreation(const IEntity* pEntity)
 	pParams->vanilla = *m_savedParams[entId];
 
 	// Излишние строки для проверки сохраняемости имени
-	pParams->vanilla.sName = pEntity->GetName();
-	pParams->savedName = pEntity->GetName(); //ИСПРАВИЛО БАГ https://github.com/akeeperctl/crysis-wars-the-other-side/issues/6
+	//pParams->vanilla.sName = pEntity->GetName();
+	pParams->savedName = pEntity->GetName();
 
 	// Здесь, в переменной pParams.vanilla имя sName присутствует
 	m_scheduledRecreations[entId] = pParams;
 
-	CryLogAlways("BEFORE SAVED DELETION sName = %s", pParams->savedName);
+	//CryLogAlways("BEFORE SAVED DELETION sName = %s", pParams->savedName);
 
 	stl::find_and_erase(s_markedForRecreation, entId);
 
@@ -267,7 +267,7 @@ void CTOSEntitySpawnModule::ScheduleRecreation(const IEntity* pEntity)
 		delete it2->second;
 		m_savedParams.erase(entId);
 
-		CryLogAlways("AFTER SAVED DELETION sName = %s", pParams->savedName);
+		//CryLogAlways("AFTER SAVED DELETION sName = %s", pParams->savedName);
 		//CryLogAlways("[%s|%id] Remove saved params", pEntity->GetName(), entId);
 	}
 }
