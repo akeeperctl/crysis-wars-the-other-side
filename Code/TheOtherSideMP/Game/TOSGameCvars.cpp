@@ -7,7 +7,10 @@
 #include "IConsole.h"
 
 #include "Modules/GenericSynchronizer.h"
+#include "Modules/EntitySpawn/EntitySpawnModule.h"
 #include "Modules/Master/MasterModule.h"
+
+#include "TheOtherSideMP/Helpers/TOS_Entity.h"
 
 #define ONLY_SERVER \
 if (!gEnv->bServer)\
@@ -144,24 +147,25 @@ void STOSCvars::CmdSpawnEntity(IConsoleCmdArgs* pArgs)
 	const auto pClass = gEnv->pEntitySystem->GetClassRegistry()->FindClass(pArgs->GetArg(1));
 	assert(pClass);
 
-	const char* plName = pArgs->GetArg(2);
+	const string newEntName = pArgs->GetArg(2);
+	const string plName = pArgs->GetArg(3);
 
-	const auto pPlayerEntity = gEnv->pEntitySystem->FindEntityByName(plName);
+	const auto pPlayerEntity = gEnv->pEntitySystem->FindEntityByName(plName.c_str());
 	assert(pPlayerEntity);
 	if (!pPlayerEntity)
 	{
-		CryLogAlways("Spawn failed: player entity %(s) not found", plName);
+		CryLogAlways("Spawn failed: player entity %(s) not found", plName.c_str());
 		return;
 	}
 
-	SEntitySpawnParams params;
-	params.bStaticEntityId = true;
-	params.pClass = pClass;
-	params.sName = "spawned_1";
-	params.vPosition = pPlayerEntity->GetWorldPos();
-	params.nFlags |= ENTITY_FLAG_UNREMOVABLE;
+	STOSEntitySpawnParams params;
+	params.vanilla.bStaticEntityId = true;
+	params.vanilla.pClass = pClass;
+	params.vanilla.sName = newEntName.c_str();
+	params.vanilla.vPosition = pPlayerEntity->GetWorldPos();
+	params.tosFlags |= TOS_ENTITY_FLAG_MUST_RECREATED;
 
-	gEnv->pEntitySystem->SpawnEntity(params);
+	TOS_Entity::Spawn(params);
 }
 
 void STOSCvars::CmdRemoveEntity(IConsoleCmdArgs* pArgs)

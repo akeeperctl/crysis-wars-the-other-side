@@ -5,6 +5,7 @@
 #include "TOSGame.h"
 
 #include "Modules/ITOSGameModule.h"
+#include "Modules/EntitySpawn/EntitySpawnModule.h"
 
 CTOSGameEventRecorder::CTOSGameEventRecorder()
 {
@@ -119,7 +120,7 @@ void CTOSGame::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event
 	//}
 	//}
 
-	if ((event.console_log && !event.vanilla_recorder) || event.vanilla_recorder)
+	if ((event.console_log && !event.vanilla_recorder) /*|| event.vanilla_recorder*/)
 	{
 		const bool mustDrawDesc = eventDesc.length() > 1;
 		const bool mustDrawEnt = entName.length() > 1 || entId > 0;
@@ -174,27 +175,26 @@ bool CTOSGame::OnBeforeSpawn(SEntitySpawnParams& params)
 
 void CTOSGame::OnSpawn(IEntity* pEntity, SEntitySpawnParams& params)
 {
-	assert(pEntity);
+	//assert(pEntity);
 
-	TOS_RECORD_EVENT(pEntity->GetId(), STOSGameEvent(eEGE_EntitySpawned, "", false));
-
+	TOS_RECORD_EVENT(pEntity->GetId(), STOSGameEvent(eEGE_EntityOnSpawn, "", true));
 }
 
 bool CTOSGame::OnRemove(IEntity* pEntity)
 {
-	assert(pEntity);
+	//assert(pEntity);
 
-	TOS_RECORD_EVENT(pEntity->GetId(), STOSGameEvent(eEGE_EntityRemoved, "", false));
+	TOS_RECORD_EVENT(pEntity->GetId(), STOSGameEvent(eEGE_EntityOnRemove, "", true));
 
 	return true;
 }
-///////////////////////////////////////////////////////////////////////////////
-//~IEntitySystemSink
 
 void CTOSGame::OnEvent(IEntity* pEntity, SEntityEvent& event)
 {
 
 }
+///////////////////////////////////////////////////////////////////////////////
+//~IEntitySystemSink
 
 //IScriptTableDumpSink
 ///////////////////////////////////////////////////////////////////////////////

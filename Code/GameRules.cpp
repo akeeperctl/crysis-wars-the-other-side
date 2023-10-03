@@ -7,7 +7,7 @@
 
 	-------------------------------------------------------------------------
 	History:
-		- 7:2:2006   15:38 : Created by Márcio Martins
+		- 7:2:2006   15:38 : Created by MÐ±rcio Martins
 
 *************************************************************************/
 #include "StdAfx.h"
@@ -3889,7 +3889,13 @@ void CGameRules::ResetEntities()
 	for (TPlayerTeamIdMap::iterator tit=m_playerteams.begin(); tit!=m_playerteams.end(); tit++)
 		tit->second.resize(0);
 
+	//TheOtherSide
+	TOS_RECORD_EVENT(0, STOSGameEvent(eEGE_EntitiesPreReset, "", true));
 	g_pGame->GetIGameFramework()->Reset(gEnv->bServer);
+	TOS_RECORD_EVENT(0, STOSGameEvent(eEGE_EntitiesPostReset, "", true));
+
+	//~TheOtherSide
+
 
 //	SEntityEvent event(ENTITY_EVENT_START_GAME);
 //	gEnv->pEntitySystem->SendEventToAll(event);

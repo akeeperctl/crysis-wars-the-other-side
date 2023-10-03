@@ -1418,6 +1418,9 @@
     <ClInclude Include="TheOtherSideMP\Game\Modules\EntitySpawn\EntitySpawnModule.h">
       <Filter>TheOtherSideMP\Game\Modules\EntitySpawn</Filter>
     </ClInclude>
+    <ClInclude Include="TheOtherSideMP\Helpers\TOS_Entity.h">
+      <Filter>TheOtherSideMP\Helpers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="GameActions.actions">

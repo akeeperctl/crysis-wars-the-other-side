@@ -43,8 +43,8 @@ void CTOSGame::Init()
 
 	//Modules
 
-	m_pMasterModule = new CTOSMasterModule();
 	m_pEntitySpawnModule = new CTOSEntitySpawnModule();
+	m_pMasterModule = new CTOSMasterModule();
 
 	//~Modules
 
@@ -91,14 +91,19 @@ CTOSMasterModule* CTOSGame::GetMasterModule() const
 	return m_pMasterModule;
 }
 
-bool CTOSGame::ModuleAdd(ITOSGameModule* pModule, bool flowGraph)
+CTOSEntitySpawnModule* CTOSGame::GetEntitySpawnModule() const
+{
+	return m_pEntitySpawnModule;
+}
+
+bool CTOSGame::ModuleAdd(ITOSGameModule* pModule, const bool flowGraph)
 {
 	auto& modules = flowGraph == true ? m_flowgraphModules : m_modules;
 
 	return stl::push_back_unique(modules, pModule);
 }
 
-bool CTOSGame::ModuleRemove(ITOSGameModule* pModule, bool flowGraph)
+bool CTOSGame::ModuleRemove(ITOSGameModule* pModule, const bool flowGraph)
 {
 	auto& modules = flowGraph == true ? m_flowgraphModules : m_modules;
 
