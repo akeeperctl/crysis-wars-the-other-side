@@ -63,7 +63,7 @@ CSynchType* CTOSGenericModule::CreateSynchonizer(const char* entityName, const c
 	params.bStaticEntityId = true;
 	params.bIgnoreLock = true; // i dont know why i use it
 	params.sName = entityName;
-	params.nFlags |= ENTITY_FLAG_NO_PROXIMITY | ENTITY_FLAG_UNREMOVABLE;
+	params.nFlags |= ENTITY_FLAG_NO_PROXIMITY;// | ENTITY_FLAG_UNREMOVABLE; Флаг ENTITY_FLAG_UNREMOVABLE удалён, ибо не работает при sv_restart
 
 	pSynchEntity = gEnv->pEntitySystem->SpawnEntity(params);
 	assert(pSynchEntity);
