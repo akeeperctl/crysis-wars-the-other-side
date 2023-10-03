@@ -8,7 +8,7 @@ Description: Vehicle HUD object (refactored from old HUD code)
 
 -------------------------------------------------------------------------
 History:
-- 21:02:2007  16:00 : Created by Jan M�ller
+- 21:02:2007  16:00 : Created by Jan Mьller
 
 *************************************************************************/
 
@@ -939,7 +939,9 @@ void CHUDVehicleInterface::ShowVehicleInterface(EVehicleHud type, bool forceFlas
 	sprintf(szAltitude,"%.0f",0.f);
 	sprintf(szDistance,"%.0f",0.f);
 
-	float fAltitude;
+	// TheOtherSide неинициализированная переменная
+	float fAltitude = 0.0f;
+	// ~TheOtherSide неинициализированная переменная
 
 	if(((int)fSpeed) != m_statsSpeed)
 	{
