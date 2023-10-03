@@ -104,6 +104,7 @@ public:
 
 	CTOSGameEventRecorder* GetEventRecorder() const;
 	CTOSMasterModule* GetMasterModule() const;
+	CTOSEntitySpawnModule* GetEntitySpawnModule() const;
 
 	bool ModuleAdd(ITOSGameModule* pModule, bool flowGraph);
 	bool ModuleRemove(ITOSGameModule* pModule, bool flowGraph);
