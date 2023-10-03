@@ -13,6 +13,15 @@ enum ETOSEntityFlags
 	//TOS_ENTITY_FLAG_ALREADY_RECREATED = (1 << 2),
 };
 
+struct STOSScheduleDelegateAuthorityParams
+{
+	STOSScheduleDelegateAuthorityParams()
+		: scheduledTime(0) {}
+
+	string playerName; // имя игрока, который получит власть
+	float scheduledTime; // штамп времени, когда свершилось планирование
+};
+
 struct STOSEntitySpawnParams
 {
 	STOSEntitySpawnParams()
@@ -37,6 +46,8 @@ struct STOSEntitySpawnParams
 		this->tosFlags = params.tosFlags;
 		this->vanilla = params.vanilla;
 		this->pSavedScript = params.pSavedScript;
+		this->authorityPlayerName = params.authorityPlayerName;
+		this->savedName = params.savedName;
 	}
 
 	~STOSEntitySpawnParams() { }
@@ -51,12 +62,10 @@ struct STOSEntitySpawnParams
 		}
 	}
 
-	SEntitySpawnParams vanilla;
-
-	string savedName; //ИСПРАВИЛО БАГ https://github.com/akeeperctl/crysis-wars-the-other-side/issues/6
-
 	IScriptTable* pSavedScript;
-
+	SEntitySpawnParams vanilla;
+	string authorityPlayerName; // Имя персонажа игрока, которому будет передана власть над сущностью после её пересоздания 
+	string savedName; //ИСПРАВИЛО БАГ https://github.com/akeeperctl/crysis-wars-the-other-side/issues/6
 	uint32 tosFlags;
 
 private:
@@ -65,12 +74,13 @@ private:
 
 
 typedef std::vector<EntityId> TVecEntities;
-typedef std::map<EntityId, SEntitySpawnParams*> TMapParams;
+typedef std::map<EntityId, STOSScheduleDelegateAuthorityParams> TMapAuthorityParams;
+//typedef std::map<EntityId, SEntitySpawnParams*> TMapParams;
 typedef std::map<EntityId, _smart_ptr<STOSEntitySpawnParams>> TMapTOSParams;
 
 /**
  * \brief Модуль создания сущностей, используемых в моде The Other Side
- * \note Также модуль предназначен для воскрешения сущностей, удаленных во время работы консольной команды sv_restart.
+ * \note Также модуль предназначен для пересоздания сущностей, удаленных во время работы консольной команды sv_restart.
  */
 class CTOSEntitySpawnModule final :
 	public CTOSGenericModule
@@ -109,11 +119,18 @@ private:
 	 * \param pEntity - указатель на сущность, которую нужно пересоздать
 	 */
 	void ScheduleRecreation(const IEntity* pEntity);
+
+	/**
+	 * \brief Проверяет, спавнилась ли сущность через EntitySpawnModule::SpawnEntity()
+	 * \param pEntity - указатель на сущность, у которого проверяется наличие сохраненных параметров
+	 * \return Если сущность pEntity когда либо спавнилась через EntitySpawnModule::SpawnEntity(), то вернёт True
+	 */
 	bool HaveSavedParams(const IEntity* pEntity) const;
 
 	void DebugDraw(const Vec2& screenPos, float fontSize, float interval, int maxElemNum, bool draw);
 
-	static TVecEntities s_markedForRecreation; // сущности которые должны быть пересозданы после sv_restart
+	static TVecEntities s_markedForRecreation; // Что хранит: сущности которые должны быть пересозданы после sv_restart
+	TMapAuthorityParams m_scheduledAuthorities; // Что хранит: ключ - id сущности, значение - структура, где есть имя игрока, который получит власть над сущностью и штамп времени, когда случилось планирование
 	TMapTOSParams m_scheduledRecreations; 
-	TMapParams m_savedParams; // сюда добавляются entityId и SEntitySpawnParams от сущности, заспавненной в этом модуле
+	TMapTOSParams m_savedParams; // Что хранит: ключ - id сущности, которая была заспавнена в этом модуле, значение - её STOSEntitySpawnParams, захваченные при спавне в этом модуле
 };

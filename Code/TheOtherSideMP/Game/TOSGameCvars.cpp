@@ -159,6 +159,7 @@ void STOSCvars::CmdSpawnEntity(IConsoleCmdArgs* pArgs)
 	}
 
 	STOSEntitySpawnParams params;
+	params.authorityPlayerName = plName;
 	params.vanilla.bStaticEntityId = true;
 	params.vanilla.pClass = pClass;
 	//params.vanilla.sName = newEntName.c_str();
@@ -208,8 +209,8 @@ void STOSCvars::CmdGetEntityById(IConsoleCmdArgs* pArgs)
 	}
 
 	const auto playerChannelId = pPlayer->GetChannelId();
-	const auto pPlayerChannel = g_pGame->GetIGameFramework()->GetNetChannel(playerChannelId);
-	const auto isAuth = g_pGame->GetIGameFramework()->GetNetContext()->RemoteContextHasAuthority(pPlayerChannel, id);
+	const auto pPlayerNetChannel = g_pGame->GetIGameFramework()->GetNetChannel(playerChannelId);
+	const auto isAuth = g_pGame->GetIGameFramework()->GetNetContext()->RemoteContextHasAuthority(pPlayerNetChannel, id);
 
 	const char* strName = pEntity ? pEntity->GetName() : "NULL";
 	const char* strAuth = isAuth ? "True" : "False";

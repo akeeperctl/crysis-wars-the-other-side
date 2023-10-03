@@ -67,10 +67,13 @@ enum EExtraGameplayEvent
 	eEGE_EntityOnSpawn, // Сущность была заспавнена с помощью pEntitySystem->SpawnEntity()
 	eEGE_EntityOnRemove, 
 
-	eEGE_TOSEntityOnSpawn, // Сущность была заспавнена с помощью TOS_Entity::Spawn()
+	eEGE_TOSEntityOnSpawn, // Сущность была заспавнена с помощью CTOSEntitySpawnModule::SpawnEntity()
 	eEGE_TOSEntityOnRemove, 
 	eEGE_TOSEntityMarkForRecreation,
 	eEGE_TOSEntityRecreated,
+
+	eEGE_TOSEntityScheduleDelegateAuthority,
+	eEGE_TOSEntityAuthorityDetegated,
 
 	eEGE_EntitiesPreReset,
 	eEGE_EntitiesPostReset,
@@ -278,6 +281,10 @@ public:
 			return "eEGE_TOSEntityMarkForRecreation";
 		case eEGE_TOSEntityRecreated:
 			return "eEGE_TOSEntityRecreated";
+		case eEGE_TOSEntityScheduleDelegateAuthority:
+			return "eEGE_TOSEntityScheduleDelegateAuthority";
+		case eEGE_TOSEntityAuthorityDetegated:
+			return "eEGE_TOSEntityAuthorityDetegated";
 		case eEGE_EntitiesPreReset:
 			return "eEGE_EntitiesPreReset";
 		case eEGE_EntitiesPostReset:

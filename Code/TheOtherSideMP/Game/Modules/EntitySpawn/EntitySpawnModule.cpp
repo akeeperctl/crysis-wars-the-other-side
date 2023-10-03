@@ -8,7 +8,6 @@
 #include "../../TOSGame.h"
 #include "../../TOSGameEventRecorder.h"
 
-#include "TheOtherSideMP/Helpers/TOS_Entity.h"
 #include "TheOtherSideMP/Helpers/TOS_STL.h"
 
 TVecEntities CTOSEntitySpawnModule::s_markedForRecreation;
@@ -25,18 +24,34 @@ void CTOSEntitySpawnModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGam
 {
 	TOS_INIT_EVENT_VALUES(pEntity, event);
 
+	if (!gEnv->bServer)
+		return;
+
 	switch (event.event)
 	{
+	case eEGE_TOSEntityScheduleDelegateAuthority:
+	{
+		const char* playerName = event.description;
+
+		auto it = m_scheduledAuthorities.find(entId);
+		if (it == m_scheduledAuthorities.end())
+		{
+			m_scheduledAuthorities[entId].playerName = playerName;
+			m_scheduledAuthorities[entId].scheduledTime = gEnv->pTimer->GetFrameStartTime().GetSeconds();
+		}
+
+		break;
+	}
 	case eEGE_TOSEntityOnSpawn:
 	{
 		//2
 		if (!HaveSavedParams(pEntity))
 		{
-			auto pParams = new SEntitySpawnParams(*static_cast<SEntitySpawnParams*>(event.extra_data));
+			auto pParams = new STOSEntitySpawnParams(*static_cast<STOSEntitySpawnParams*>(event.extra_data));
 			assert(pParams);
 
 			// id должен генерироваться
-			pParams->id = 0;
+			pParams->vanilla.id = 0;
 
 			//pParams->sName = pEntity->GetName();
 
@@ -73,17 +88,17 @@ void CTOSEntitySpawnModule::Init()
 	CTOSGenericModule::Init();
 
 	m_scheduledRecreations.clear();
-
-	for (auto savedPair : m_savedParams)
-		delete savedPair.second;
-
 	m_savedParams.clear();
 	s_markedForRecreation.clear();
+	m_scheduledAuthorities.clear();
 }
 
 void CTOSEntitySpawnModule::Update(float frametime)
 {
 	//DebugDraw(Vec2(20, 70), 1.2f, 1.0f, 5, true);
+
+	if (!gEnv->bServer)
+		return;
 
 	for (auto &schedPair : m_scheduledRecreations)
 	{
@@ -112,29 +127,96 @@ void CTOSEntitySpawnModule::Update(float frametime)
 			break;
 		}
 	}
+
+	for (auto& schedPair : m_scheduledAuthorities)
+	{
+		EntityId scheduledId = schedPair.first;
+		IEntity* pScheduledEnt = gEnv->pEntitySystem->GetEntity(scheduledId);
+
+		const char* schedName = pScheduledEnt->GetName();
+		const char* playerName = schedPair.second.playerName.c_str();
+
+		const auto pPlayerEnt = gEnv->pEntitySystem->FindEntityByName(playerName);
+		//assert(pPlayerEnt);
+
+		if (pPlayerEnt)
+		{
+			auto pGO = g_pGame->GetIGameFramework()->GetGameObject(pPlayerEnt->GetId());
+			assert(pGO);
+
+			auto pNetContext = g_pGame->GetIGameFramework()->GetNetContext();
+
+			const auto playerChannelId = pGO->GetChannelId();
+			const auto pPlayerNetChannel = g_pGame->GetIGameFramework()->GetNetChannel(playerChannelId);
+			auto isAuth = pNetContext->RemoteContextHasAuthority(pPlayerNetChannel, scheduledId);
+
+			if (!isAuth)
+			{
+				CryLogAlways("[%s] Try delegate authority to player %s", schedName, playerName);
+				pNetContext->DelegateAuthority(scheduledId, pPlayerNetChannel);
+			}
+			else
+			{
+				m_scheduledAuthorities.erase(scheduledId);
+
+				char buffer[256];
+				sprintf(buffer, "%s take own of %s", playerName, schedName);
+
+				TOS_RECORD_EVENT(0, STOSGameEvent(eEGE_TOSEntityAuthorityDetegated, buffer, true));
+			}
+
+			break;
+			//isAuth = pNetContext->RemoteContextHasAuthority(pPlayerNetChannel, entityId);
+
+			//if (isAuth)
+			//{
+			//	CryLogAlways("[%s] Server delegate authority to this entity to player with name %s", pEntity->GetName(), pPlayerEnt->GetName());
+			//}
+			//else
+			//{
+			//	CryLogAlways("[%s] Server NOT delegate authority of this entity to player with name %s", pEntity->GetName(), pPlayerEnt->GetName());
+			//}
+		}
+		// ReSharper disable once CppRedundantElseKeywordInsideCompoundStatement
+		else
+		{
+			const float currentTime = gEnv->pTimer->GetFrameStartTime().GetSeconds();
+
+			// если запланированной передачи власти не было более 10 секунд, то удаляем пару
+			if (currentTime - schedPair.second.scheduledTime > 10.0f)
+			{
+				m_scheduledAuthorities.erase(scheduledId);
+			}
+		}
+	}
 }
 
 void CTOSEntitySpawnModule::Serialize(TSerialize ser)
 {
 }
 
-IEntity* CTOSEntitySpawnModule::SpawnEntity(STOSEntitySpawnParams& params, bool sendTosEvent)
+IEntity* CTOSEntitySpawnModule::SpawnEntity(STOSEntitySpawnParams& params, const bool sendTosEvent)
 {
+	CRY_ASSERT_MESSAGE(gEnv->bServer, "Entity spawning process only can be on the server");
+	if (!gEnv->bServer)
+		return nullptr;
+
 	const auto pEntSys = gEnv->pEntitySystem;
 	assert(pEntSys);
 	if (!pEntSys)
 		return nullptr;
 
-	const auto pEntity = pEntSys->SpawnEntity(params.vanilla);
+	const auto pEntity = pEntSys->SpawnEntity(params.vanilla, false);
 	assert(pEntity);
 
 	pEntity->SetName(params.savedName);
+	const EntityId entityId = pEntity->GetId();
+	
+	gEnv->pEntitySystem->InitEntity(pEntity, params.vanilla);
 
 	//1
-	const EntityId entityId = pEntity->GetId();
-
 	if (sendTosEvent)
-		TOS_RECORD_EVENT(entityId, STOSGameEvent(eEGE_TOSEntityOnSpawn, params.savedName, true, false, &params.vanilla));
+		TOS_RECORD_EVENT(entityId, STOSGameEvent(eEGE_TOSEntityOnSpawn, "", true, false, &params));
 
 	if (params.tosFlags & TOS_ENTITY_FLAG_MUST_RECREATED)
 	{
@@ -142,9 +224,17 @@ IEntity* CTOSEntitySpawnModule::SpawnEntity(STOSEntitySpawnParams& params, bool 
 		if (!alreadyInside)
 		{
 			s_markedForRecreation.push_back(entityId);
-			TOS_RECORD_EVENT(entityId, STOSGameEvent(eEGE_TOSEntityMarkForRecreation, params.savedName, true));
+			TOS_RECORD_EVENT(entityId, STOSGameEvent(eEGE_TOSEntityMarkForRecreation, "", true));
 		}
 	}
+
+	// Планирование передачи игроку власти на сущность
+	// Осуществление самой передачи происходит тогда, когда указатель на игрока будет валидным
+	if (!params.authorityPlayerName.empty())
+	{
+		TOS_RECORD_EVENT(entityId, STOSGameEvent(eEGE_TOSEntityScheduleDelegateAuthority, params.authorityPlayerName.c_str(), true));
+	}
+
 
 	return pEntity;
 }
@@ -190,7 +280,7 @@ void CTOSEntitySpawnModule::DebugDraw(const Vec2& screenPos, float fontSize, flo
 			continue;
 
 		string entName = pEnt->GetName();
-		string savedName = ppair.second->sName;
+		string savedName = ppair.second->vanilla.sName;
 
 		const int index = TOS_STL::GetIndexFromMapKey(m_savedParams, ppair.first) + 1;
 
@@ -224,6 +314,10 @@ void CTOSEntitySpawnModule::ScheduleRecreation(const IEntity* pEntity)
 	// Или
 	// 1) MustBeRecreated(pEntity) должен вернуть True
 
+	CRY_ASSERT_MESSAGE(gEnv->bServer, "Entity scheduling process only can be on the server");
+	if (!gEnv->bServer)
+		return;
+
 	assert(pEntity);
 	if (!pEntity)
 		return;
@@ -244,11 +338,10 @@ void CTOSEntitySpawnModule::ScheduleRecreation(const IEntity* pEntity)
 
 	pParams->pSavedScript = pSavedScript;
 	pParams->tosFlags |= TOS_ENTITY_FLAG_SCHEDULED_RECREATION;
-	pParams->vanilla = *m_savedParams[entId];
+	pParams->vanilla = m_savedParams[entId]->vanilla;
 
-	// Излишние строки для проверки сохраняемости имени
-	//pParams->vanilla.sName = pEntity->GetName();
 	pParams->savedName = pEntity->GetName();
+	pParams->authorityPlayerName = m_savedParams[entId]->authorityPlayerName;
 
 	// Здесь, в переменной pParams.vanilla имя sName присутствует
 	m_scheduledRecreations[entId] = pParams;
@@ -260,7 +353,6 @@ void CTOSEntitySpawnModule::ScheduleRecreation(const IEntity* pEntity)
 	auto it2 = m_savedParams.find(entId);
 	if (it2 != m_savedParams.end())
 	{
-		delete it2->second;
 		m_savedParams.erase(entId);
 
 		//CryLogAlways("AFTER SAVED DELETION sName = %s", pParams->savedName);
