@@ -51,7 +51,7 @@ enum EExtraGameplayEvent
 
 	eEGE_SynchronizerCreated,
 	eEGE_SynchronizerDestroyed,
-	
+
 	eEGE_EnterGame,
 	eEGE_EnterSpectator,
 
@@ -64,9 +64,16 @@ enum EExtraGameplayEvent
 
 	eEGE_GameModuleInit,
 
-	eEGE_EntitySpawned,
-	eEGE_EntityRemoved,
+	eEGE_EntityOnSpawn, // Сущность была заспавнена с помощью pEntitySystem->SpawnEntity()
+	eEGE_EntityOnRemove, 
 
+	eEGE_TOSEntityOnSpawn, // Сущность была заспавнена с помощью TOS_Entity::Spawn()
+	eEGE_TOSEntityOnRemove, 
+	eEGE_TOSEntityMarkForRecreation,
+	eEGE_TOSEntityRecreated,
+
+	eEGE_EntitiesPreReset,
+	eEGE_EntitiesPostReset,
 	//eEGE_TOSGame_Init,
 
 	//eEGE_VehicleStuck,
@@ -75,44 +82,44 @@ enum EExtraGameplayEvent
 
 struct STOSGameEvent
 {
-	STOSGameEvent():
+	STOSGameEvent() :
 		event(0),
 		description(nullptr),
 		value(0),
-		extra(nullptr),
+		extra_data(nullptr),
 		int_value(0),
 		console_log(false),
 		vanilla_recorder(false)
 	{
 	};
 
-	explicit STOSGameEvent(const GameplayEvent& _event):
+	explicit STOSGameEvent(const GameplayEvent& _event) :
 		event(_event.event),
 		description(_event.description),
 		value(_event.value),
-		extra(_event.extra),
+		extra_data(_event.extra),
 		int_value(0),
 		console_log(false),
 		vanilla_recorder(false)
 	{
 	};
 
-	explicit STOSGameEvent(const uint8 evt, const char* desc = nullptr, const bool log = false, const bool vanilla = false, const float val = 0.0f, const int int_val = 0, void* xtra = nullptr) : 
-		event(evt), 
-		description(desc), 
-		value(val), 
-		extra(xtra), 
-		int_value(int_val), 
-		console_log(log), 
+	explicit STOSGameEvent(const uint8 evt, const char* desc = nullptr, const bool log = false, const bool vanilla = false, void* xtra = nullptr, const float val = 0.0f, const int int_val = 0) :
+		event(evt),
+		description(desc),
+		value(val),
+		extra_data(xtra),
+		int_value(int_val),
+		console_log(log),
 		vanilla_recorder(vanilla) {};
 
 	uint8 event;
 	const char* description;
 	float value;
-	void* extra;
+	void* extra_data;
 	int int_value;
 	bool console_log;
-	bool vanilla_recorder;
+	bool vanilla_recorder; // события, которые обозначены в IGameplayRecorder
 };
 
 
@@ -132,7 +139,7 @@ public:
 	{
 		switch (value)
 		{
-		//eGE - Vanilla events
+			//eGE - Vanilla events
 		case eGE_Connected:
 			return "eGE_Connected";
 		case eGE_Disconnected:
@@ -202,7 +209,7 @@ public:
 		case eGE_LeftVehicle:
 			return "eGE_LeftVehicle";
 
-		//eEGE - TOS events
+			//eEGE - TOS events
 		case eEGE_MainMenuOpened:
 			return "eEGE_MainMenuOpened";
 		case eEGE_ActorGrabbed:
@@ -259,17 +266,29 @@ public:
 			return "eEGE_GamerulesInit";
 		case eEGE_GameModuleInit:
 			return "eEGE_GameModuleInit";
-		case eEGE_EntitySpawned:
-			return "eEGE_EntitySpawned";
-		case eEGE_EntityRemoved:
-			return "eEGE_EntityRemoved";
+		case eEGE_EntityOnSpawn:
+			return "eEGE_EntityOnSpawn";
+		case eEGE_EntityOnRemove:
+			return "eEGE_EntityOnRemove";
+		case eEGE_TOSEntityOnSpawn:
+			return "eEGE_TOSEntityOnSpawn";
+		case eEGE_TOSEntityOnRemove:
+			return "eEGE_TOSEntityOnRemove";
+		case eEGE_TOSEntityMarkForRecreation:
+			return "eEGE_TOSEntityMarkForRecreation";
+		case eEGE_TOSEntityRecreated:
+			return "eEGE_TOSEntityRecreated";
+		case eEGE_EntitiesPreReset:
+			return "eEGE_EntitiesPreReset";
+		case eEGE_EntitiesPostReset:
+			return "eEGE_EntitiesPostReset";
 		case eEGE_Last:
 			return "eEGE_Last";
 
-		default: 
+		default:
 			return "UNDEFINED";
 		}
 	}
 
-	static void RecordEvent(EntityId id, const STOSGameEvent &event);
+	static void RecordEvent(EntityId id, const STOSGameEvent& event);
 };
