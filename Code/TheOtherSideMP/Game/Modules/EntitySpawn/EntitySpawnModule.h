@@ -53,6 +53,8 @@ struct STOSEntitySpawnParams
 
 	SEntitySpawnParams vanilla;
 
+	string savedName;
+
 	IScriptTable* pSavedScript;
 
 	uint32 tosFlags;

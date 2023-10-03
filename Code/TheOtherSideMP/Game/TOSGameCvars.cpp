@@ -161,7 +161,8 @@ void STOSCvars::CmdSpawnEntity(IConsoleCmdArgs* pArgs)
 	STOSEntitySpawnParams params;
 	params.vanilla.bStaticEntityId = true;
 	params.vanilla.pClass = pClass;
-	params.vanilla.sName = newEntName.c_str();
+	//params.vanilla.sName = newEntName.c_str();
+	params.savedName = newEntName.c_str();
 	params.vanilla.vPosition = pPlayerEntity->GetWorldPos();
 	params.tosFlags |= TOS_ENTITY_FLAG_MUST_RECREATED;
 

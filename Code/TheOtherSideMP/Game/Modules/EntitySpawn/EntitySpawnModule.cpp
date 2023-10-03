@@ -93,7 +93,6 @@ void CTOSEntitySpawnModule::Update(float frametime)
 
 		if (pScheduledEnt)
 		{
-			pScheduledParams;
 			CryLogAlways("");
 		}
 
@@ -133,11 +132,13 @@ IEntity* CTOSEntitySpawnModule::SpawnEntity(STOSEntitySpawnParams& params, bool 
 	const auto pEntity = pEntSys->SpawnEntity(params.vanilla);
 	assert(pEntity);
 
+	pEntity->SetName(params.savedName);
+
 	//1
 	const EntityId entityId = pEntity->GetId();
 
 	if (sendTosEvent)
-		TOS_RECORD_EVENT(entityId, STOSGameEvent(eEGE_TOSEntityOnSpawn, "", true, false, &params.vanilla));
+		TOS_RECORD_EVENT(entityId, STOSGameEvent(eEGE_TOSEntityOnSpawn, params.savedName, true, false, &params.vanilla));
 
 	if (params.tosFlags & TOS_ENTITY_FLAG_MUST_RECREATED)
 	{
@@ -145,7 +146,7 @@ IEntity* CTOSEntitySpawnModule::SpawnEntity(STOSEntitySpawnParams& params, bool 
 		if (!alreadyInside)
 		{
 			s_markedForRecreation.push_back(entityId);
-			TOS_RECORD_EVENT(entityId, STOSGameEvent(eEGE_TOSEntityMarkForRecreation, "", true));
+			TOS_RECORD_EVENT(entityId, STOSGameEvent(eEGE_TOSEntityMarkForRecreation, params.savedName, true));
 		}
 	}
 
@@ -248,12 +249,15 @@ void CTOSEntitySpawnModule::ScheduleRecreation(const IEntity* pEntity)
 	pParams->pSavedScript = pSavedScript;
 	pParams->tosFlags |= TOS_ENTITY_FLAG_SCHEDULED_RECREATION;
 	pParams->vanilla = *m_savedParams[entId];
-	pParams->vanilla.sName = pEntity->GetName();
 
-	// Здесь, в переменной pParams.vanilla имя sName присутствует при удалении в 1ый раз
+	// Излишние строки для проверки сохраняемости имени
+	pParams->vanilla.sName = pEntity->GetName();
+	pParams->savedName = pEntity->GetName(); //ИСПРАВИЛО БАГ https://github.com/akeeperctl/crysis-wars-the-other-side/issues/6
+
+	// Здесь, в переменной pParams.vanilla имя sName присутствует
 	m_scheduledRecreations[entId] = pParams;
 
-	CryLogAlways("BEFORE SAVED DELETION sName = %s", pParams->vanilla.sName);
+	CryLogAlways("BEFORE SAVED DELETION sName = %s", pParams->savedName);
 
 	stl::find_and_erase(s_markedForRecreation, entId);
 
@@ -263,7 +267,7 @@ void CTOSEntitySpawnModule::ScheduleRecreation(const IEntity* pEntity)
 		delete it2->second;
 		m_savedParams.erase(entId);
 
-		CryLogAlways("AFTER SAVED DELETION sName = %s", pParams->vanilla.sName);
+		CryLogAlways("AFTER SAVED DELETION sName = %s", pParams->savedName);
 		//CryLogAlways("[%s|%id] Remove saved params", pEntity->GetName(), entId);
 	}
 }
