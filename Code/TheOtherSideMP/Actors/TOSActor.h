@@ -8,12 +8,14 @@ public:
 	CTOSActor();
 	~CTOSActor() override;
 
-
+	// CActor
 	void PostInit( IGameObject * pGameObject ) override;
 	void InitClient(int channelId ) override;
 	bool NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int flags) override;
 	void Update(SEntityUpdateContext& ctx, int updateSlot) override;
 	void Release() override;
+	void Revive(bool fromInit = false) override;
+	// ~CActor
 
 	void SetMasterEntityId(EntityId id);
 	EntityId GetMasterEntityId() const {return m_masterEntityId;}

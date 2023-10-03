@@ -53,9 +53,14 @@ void CTOSActor::Release()
 	//CryLogAlways("[C++][%s][%s][CTOSActor::Release] Actor: %s|%i",
 	//	TOS_Debug::GetEnv(), TOS_Debug::GetAct(1), GetEntity()->GetName(), GetEntity()->GetId());
 
-	TOS_RECORD_EVENT(GetEntityId(), STOSGameEvent(eEGE_ActorReleased, "", true));
+	TOS_RECORD_EVENT(GetEntityId(), STOSGameEvent(eEGE_ActorRelease, "", true));
 
 	CActor::Release();
+}
+
+void CTOSActor::Revive(const bool fromInit)
+{
+	CActor::Revive(fromInit);
 }
 
 void CTOSActor::SetMasterEntityId(const EntityId id)
