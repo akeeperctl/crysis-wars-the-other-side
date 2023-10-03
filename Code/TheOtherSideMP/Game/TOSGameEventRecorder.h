@@ -34,7 +34,7 @@ enum EExtraGameplayEvent
 	eEGE_ActorDrop,
 	eEGE_ActorPostInit,
 	eEGE_ActorInitClient,
-	eEGE_ActorReleased,
+	eEGE_ActorRelease,
 
 	eEGE_MasterStartControl,
 	eEGE_MasterStopControl,
@@ -220,8 +220,8 @@ public:
 			return "eEGE_ActorGrab";
 		case eEGE_ActorDrop:
 			return "eEGE_ActorDrop";
-		case eEGE_ActorReleased:
-			return "eEGE_ActorReleased";
+		case eEGE_ActorRelease:
+			return "eEGE_ActorRelease";
 		case eEGE_ActorPostInit:
 			return "eEGE_ActorPostInit";
 		case eEGE_ActorInitClient:

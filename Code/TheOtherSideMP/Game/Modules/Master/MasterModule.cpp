@@ -112,7 +112,7 @@ void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEven
 		}
 		break;
 	}
-	case eEGE_ActorReleased:
+	case eEGE_ActorRelease:
 	{
 		if (pEntity && gEnv->bServer)
 		{

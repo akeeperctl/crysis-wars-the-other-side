@@ -120,7 +120,7 @@ void CTOSGame::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event
 	//}
 	//}
 
-	if ((event.console_log && !event.vanilla_recorder) /*|| event.vanilla_recorder*/)
+	if ((event.console_log && !event.vanilla_recorder) || event.vanilla_recorder)
 	{
 		const bool mustDrawDesc = eventDesc.length() > 1;
 		const bool mustDrawEnt = entName.length() > 1 || entId > 0;
@@ -177,14 +177,14 @@ void CTOSGame::OnSpawn(IEntity* pEntity, SEntitySpawnParams& params)
 {
 	//assert(pEntity);
 
-	TOS_RECORD_EVENT(pEntity->GetId(), STOSGameEvent(eEGE_EntityOnSpawn, "", true));
+	TOS_RECORD_EVENT(pEntity->GetId(), STOSGameEvent(eEGE_EntityOnSpawn, "", false));
 }
 
 bool CTOSGame::OnRemove(IEntity* pEntity)
 {
 	//assert(pEntity);
 
-	TOS_RECORD_EVENT(pEntity->GetId(), STOSGameEvent(eEGE_EntityOnRemove, "", true));
+	TOS_RECORD_EVENT(pEntity->GetId(), STOSGameEvent(eEGE_EntityOnRemove, "", false));
 
 	return true;
 }
