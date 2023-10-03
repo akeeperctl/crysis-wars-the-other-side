@@ -515,15 +515,15 @@ void CPlayer::UpdateFirstPersonEffects(float frameTime)
 {
 
 	//=========================alien interference effect============================
-  bool doInterference = g_pGameCVars->hud_enableAlienInterference && !m_interferenceParams.empty();
-  if (doInterference)		
+	bool doInterference = g_pGameCVars->hud_enableAlienInterference && !m_interferenceParams.empty();
+	if (doInterference)		
 	{
 		if(CScreenEffects *pSFX = GetScreenEffects())
 		{
 			//look whether there is an alien around
 			float aiStrength = g_pGameCVars->hud_alienInterferenceStrength;
-      float interferenceRatio = 0.f;      
-      CHUDRadar *pRad = SAFE_HUD_FUNC_RET(GetRadar());
+			float interferenceRatio = 0.f;      
+			CHUDRadar *pRad = SAFE_HUD_FUNC_RET(GetRadar());
       
 			if(pRad && aiStrength > 0.0f)
 			{
@@ -531,8 +531,8 @@ void CPlayer::UpdateFirstPersonEffects(float frameTime)
         
 				if(pNearbyEntities && !pNearbyEntities->empty())
 				{
-          Vec3 vPos = GetEntity()->GetWorldPos();
-          CNanoSuit* pSuit = GetNanoSuit();      
+					Vec3 vPos = GetEntity()->GetWorldPos();
+					CNanoSuit* pSuit = GetNanoSuit();      
           
 					std::vector<EntityId>::const_iterator it = pNearbyEntities->begin();
 					std::vector<EntityId>::const_iterator itEnd = pNearbyEntities->end();
@@ -540,28 +540,28 @@ void CPlayer::UpdateFirstPersonEffects(float frameTime)
 					while (it != itEnd)
 					{
 						IEntity *pTempEnt = gEnv->pEntitySystem->GetEntity(*it);            
-            IEntityClass* pClass = pTempEnt ? pTempEnt->GetClass() : 0;
+						IEntityClass* pClass = pTempEnt ? pTempEnt->GetClass() : 0;
 
 						if(pClass)
 						{ 
-              TAlienInterferenceParams::const_iterator it = m_interferenceParams.find(pClass);
-              if (it != m_interferenceParams.end())
-						  {
-                float minDistSq = sqr(it->second.maxdist);
-                float distSq = vPos.GetSquaredDistance(pTempEnt->GetWorldPos());
+							TAlienInterferenceParams::const_iterator it = m_interferenceParams.find(pClass);
+							if (it != m_interferenceParams.end())
+							{
+								float minDistSq = sqr(it->second.maxdist);
+								float distSq = vPos.GetSquaredDistance(pTempEnt->GetWorldPos());
               
-                if (distSq < minDistSq)
-							  {
-                  IActor* pActor = m_pGameFramework->GetIActorSystem()->GetActor(pTempEnt->GetId());
-                  if (pActor && pActor->GetHealth() > 0)
-                  {
-                  float ratio = 1.f - sqrt(distSq)/it->second.maxdist; // linear falloff
+								if (distSq < minDistSq)
+								{
+									IActor* pActor = m_pGameFramework->GetIActorSystem()->GetActor(pTempEnt->GetId());
+									if (pActor && pActor->GetHealth() > 0)
+									{
+										float ratio = 1.f - sqrt(distSq)/it->second.maxdist; // linear falloff
                 
-                  if (ratio > interferenceRatio)                  
-                    interferenceRatio = ratio;                  
-                }                
+										if (ratio > interferenceRatio)                  
+											interferenceRatio = ratio;                  
+									}                
+								}
 							}
-						}
 						}
 						++it;
 					}
@@ -570,34 +570,34 @@ void CPlayer::UpdateFirstPersonEffects(float frameTime)
 
 			if(interferenceRatio != 0.f)
 			{	
-        float strength = interferenceRatio * aiStrength;                    
-			  gEnv->pSystem->GetI3DEngine()->SetPostEffectParam("AlienInterference_Amount", 0.75f*strength);
-        SAFE_HUD_FUNC(StartInterference(20.0f*strength, 10.0f*strength, 100.0f, 0.f));
+				float strength = interferenceRatio * aiStrength;                    
+				gEnv->pSystem->GetI3DEngine()->SetPostEffectParam("AlienInterference_Amount", 0.75f*strength);
+				SAFE_HUD_FUNC(StartInterference(20.0f*strength, 10.0f*strength, 100.0f, 0.f));
         
-        if (!stl::find(m_clientPostEffects, EEffect_AlienInterference))
-        {
+				if (!stl::find(m_clientPostEffects, EEffect_AlienInterference))
+				{
 					m_clientPostEffects.push_back(EEffect_AlienInterference);
 					PlaySound(ESound_Fear);
-        }
+				}
 			}
 			else
-        doInterference = false;			
+				doInterference = false;			
 		}
 	}
 
-  if (!doInterference && !m_clientPostEffects.empty() && GetScreenEffects())
+	if (!doInterference && !m_clientPostEffects.empty() && GetScreenEffects())
 	{
-    // turn off
+		// turn off
 		std::vector<EClientPostEffect>::iterator it = m_clientPostEffects.begin();
 		for(; it != m_clientPostEffects.end(); ++it)
 		{
 			if((*it) == EEffect_AlienInterference)
 			{
-        float aiStrength = g_pGameCVars->hud_alienInterferenceStrength;
-        gEnv->pSystem->GetI3DEngine()->SetPostEffectParam("AlienInterference_Amount", 0.0f);
-        SAFE_HUD_FUNC(StartInterference(20.0f*aiStrength, 10.0f*aiStrength, 100.0f, 3.f));
+				float aiStrength = g_pGameCVars->hud_alienInterferenceStrength;
+				gEnv->pSystem->GetI3DEngine()->SetPostEffectParam("AlienInterference_Amount", 0.0f);
+				SAFE_HUD_FUNC(StartInterference(20.0f*aiStrength, 10.0f*aiStrength, 100.0f, 3.f));
 
-        PlaySound(ESound_Fear, false);
+				PlaySound(ESound_Fear, false);
 				m_clientPostEffects.erase(it);
 				break;
 			}
@@ -3188,7 +3188,10 @@ bool CPlayer::IsThirdPerson() const
 
 void CPlayer::Revive( bool fromInit )
 {
-	CActor::Revive(fromInit);
+	// TheOtherSide
+	//CActor::Revive(fromInit);
+	CTOSActor::Revive(fromInit);
+	// ~TheOtherSide
 
 	ResetScreenFX();
 

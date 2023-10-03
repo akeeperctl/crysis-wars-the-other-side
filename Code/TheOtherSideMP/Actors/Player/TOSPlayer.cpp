@@ -5,6 +5,8 @@
 #include "../../Game/Modules/Master/MasterClient.h"
 #include "../../Game/Modules/Master/MasterSynchronizer.h"
 
+#include "HUD/HUD.h"
+
 CTOSPlayer::CTOSPlayer():
 	m_pMasterClient(nullptr)
 {
@@ -31,6 +33,12 @@ void CTOSPlayer::PostInit(IGameObject* pGameObject)
 	//if (!m_pMasterClient)
 	//{
 	//	m_pMasterClient = new CTOSMasterClient(this);
+	//}
+
+	//if (IsClient())
+	//{
+	//	gEnv->pSystem->GetI3DEngine()->SetPostEffectParam("AlienInterference_Amount", 0.0f);
+	//	SAFE_HUD_FUNC(StartInterference(0, 0, 0, 0));
 	//}
 }
 
@@ -87,6 +95,11 @@ void CTOSPlayer::InitLocalPlayer()
 	{
 		m_pMasterClient = new CTOSMasterClient(this);
 	}
+
+	// Исправление бага https://github.com/akeeperctl/crysis-wars-the-other-side/issues/5
+	m_clientPostEffects.clear();
+	gEnv->pSystem->GetI3DEngine()->SetPostEffectParam("AlienInterference_Amount", 0.0f);
+	SAFE_HUD_FUNC(StartInterference(0, 0, 0, 0));
 }
 
 void CTOSPlayer::Update(SEntityUpdateContext& ctx, int updateSlot)
