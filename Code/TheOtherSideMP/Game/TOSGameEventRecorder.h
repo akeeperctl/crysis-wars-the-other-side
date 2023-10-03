@@ -28,23 +28,23 @@ enum EExtraGameplayEvent
 
 	eEGE_MainMenuOpened = 36,
 
-	eEGE_ActorGrabbed,
-	eEGE_ActorDropped,
-	eEGE_ActorGrab,
-	eEGE_ActorDrop,
+	eEGE_ActorGrabbed, //NOT USED
+	eEGE_ActorDropped, //NOT USED
+	eEGE_ActorGrab, //NOT USED
+	eEGE_ActorDrop, //NOT USED
 	eEGE_ActorPostInit,
 	eEGE_ActorInitClient,
 	eEGE_ActorRelease,
 
-	eEGE_MasterStartControl,
-	eEGE_MasterStopControl,
-	eEGE_MasterEnterSpectator,
+	eEGE_MasterStartControl, //NOT USED
+	eEGE_MasterStopControl, //NOT USED
+	eEGE_MasterEnterSpectator, //NOT USED
 
 	eEGE_MasterAdd,
 	eEGE_MasterRemove,
 
-	eEGE_SlaveStartObey,
-	eEGE_SlaveStopObey,
+	eEGE_SlaveStartObey, //NOT USED
+	eEGE_SlaveStopObey, //NOT USED
 
 	eEGE_EditorGameEnter,
 	eEGE_EditorGameExit,
@@ -52,15 +52,15 @@ enum EExtraGameplayEvent
 	eEGE_SynchronizerCreated,
 	eEGE_SynchronizerDestroyed,
 
-	eEGE_EnterGame,
-	eEGE_EnterSpectator,
+	eEGE_EnterGame, //NOT USED
+	eEGE_EnterSpectator, //NOT USED
 
 	eEGE_GamerulesReset,
 	eEGE_GamerulesStartGame,
 	eEGE_GamerulesEventInit,
 	eEGE_GamerulesPostInit,
 	eEGE_GamerulesInit,
-	eEGE_GamerulesDestroyed,
+	eEGE_GamerulesDestroyed, //NOT USED
 
 	eEGE_GameModuleInit,
 
