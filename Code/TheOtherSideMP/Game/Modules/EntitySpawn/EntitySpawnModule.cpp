@@ -91,11 +91,6 @@ void CTOSEntitySpawnModule::Update(float frametime)
 		IEntity* pScheduledEnt = gEnv->pEntitySystem->GetEntity(scheduledId);
 		STOSEntitySpawnParams* pScheduledParams = schedPair.second;
 
-		if (pScheduledEnt)
-		{
-			CryLogAlways("");
-		}
-
 		// Проверка на необходимость выполнить пересоздание
 		if (!pScheduledEnt && (pScheduledParams->tosFlags & TOS_ENTITY_FLAG_SCHEDULED_RECREATION))
 		{
@@ -104,6 +99,7 @@ void CTOSEntitySpawnModule::Update(float frametime)
 
 			// Обнаружен баг. В переменной pScheduledParams.vanilla исчезает имя сущности sName
 			// Имя исчезает, когда указатель pScheduledEnt становится nullptr!
+			// Баг исправлен
 
 			auto pRecreatedEntity = SpawnEntity(*pScheduledParams);
 			assert(pRecreatedEntity);
