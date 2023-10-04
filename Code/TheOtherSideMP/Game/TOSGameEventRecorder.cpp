@@ -1,11 +1,37 @@
 #include "StdAfx.h"
 #include "TOSGameEventRecorder.h"
 
+#include "Actor.h"
 #include "Game.h"
 #include "TOSGame.h"
+#include "TOSGameCvars.h"
 
 #include "Modules/ITOSGameModule.h"
-#include "Modules/EntitySpawn/EntitySpawnModule.h"
+
+#define LOG_EVENT(eventName, entName, entId, eventDesc)\
+const bool mustDrawDesc = (eventDesc).length() > 1;\
+const bool mustDrawEnt = (entName).length() > 1 || (entId) > 0;\
+if (mustDrawDesc && mustDrawEnt)\
+{\
+	CryLogAlways("[C++][%s][%s][CTOSGame::OnExtraGameplayEvent] Event: %s, Entity: (%s|%i), Desc: %s",\
+		TOS_Debug::GetEnv(), TOS_Debug::GetAct(1), (eventName).c_str(), (entName).c_str(), entId, (eventDesc).c_str());\
+}\
+else if (mustDrawEnt && !mustDrawDesc)\
+{\
+	CryLogAlways("[C++][%s][%s][CTOSGame::OnExtraGameplayEvent] Event: %s, Entity: (%s|%i)",\
+		TOS_Debug::GetEnv(), TOS_Debug::GetAct(1), (eventName).c_str(), (entName).c_str(), entId);\
+}\
+else if (mustDrawDesc && !mustDrawEnt)\
+{\
+	CryLogAlways("[C++][%s][%s][CTOSGame::OnExtraGameplayEvent] Event: %s, Desc: %s",\
+		TOS_Debug::GetEnv(), TOS_Debug::GetAct(1), (eventName).c_str(), (eventDesc).c_str());\
+}\
+else\
+{\
+	CryLogAlways("[C++][%s][%s][CTOSGame::OnExtraGameplayEvent] Event: %s",\
+		TOS_Debug::GetEnv(), TOS_Debug::GetAct(1), (eventName).c_str());\
+}\
+
 
 CTOSGameEventRecorder::CTOSGameEventRecorder()
 {
@@ -120,31 +146,42 @@ void CTOSGame::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event
 	//}
 	//}
 
-	if ((event.console_log && !event.vanilla_recorder) || event.vanilla_recorder)
-	{
-		const bool mustDrawDesc = eventDesc.length() > 1;
-		const bool mustDrawEnt = entName.length() > 1 || entId > 0;
+	const bool logVanillaEvents = event.vanilla_recorder && g_pTOSGameCvars->tos_any_EventRecorderLogVanilla > 0;
+	const bool logExtraEvents = event.console_log && !event.vanilla_recorder;
 
-		if (mustDrawDesc && mustDrawEnt)
+	if (logExtraEvents || logVanillaEvents)
+	{
+		if (event.event == eGE_Spectator)
 		{
-			CryLogAlways("[C++][%s][%s][CTOSGame::OnExtraGameplayEvent] Event: %s, Entity: (%s|%i), Desc: %s",
-				TOS_Debug::GetEnv(), TOS_Debug::GetAct(1), eventName.c_str(), entName.c_str(), entId, eventDesc.c_str());
+			const char* modeName = nullptr;
+
+			switch (static_cast<int>(event.value))
+			{
+			case CActor::eASM_None:
+				modeName = " eASM_None";
+				break;
+			case CActor::eASM_Fixed:
+				modeName = " eASM_Fixed";
+				break;
+			case CActor::eASM_Free:
+				modeName = " eASM_Free";
+				break;
+			case CActor::eASM_Follow:
+				modeName = " eASM_Follow";
+				break;
+			case CActor::eASM_Cutscene:
+				modeName = " eASM_Cutscene";
+				break;
+			default: 
+				break;
+			}
+
+			eventDesc.append(modeName);
 		}
-		else if (mustDrawEnt && !mustDrawDesc)
-		{
-			CryLogAlways("[C++][%s][%s][CTOSGame::OnExtraGameplayEvent] Event: %s, Entity: (%s|%i)",
-				TOS_Debug::GetEnv(), TOS_Debug::GetAct(1), eventName.c_str(), entName.c_str(), entId);
-		}
-		else if (mustDrawDesc && !mustDrawEnt)
-		{
-			CryLogAlways("[C++][%s][%s][CTOSGame::OnExtraGameplayEvent] Event: %s, Desc: %s",
-				TOS_Debug::GetEnv(), TOS_Debug::GetAct(1), eventName.c_str(), eventDesc.c_str());
-		}
-		else
-		{
-			CryLogAlways("[C++][%s][%s][CTOSGame::OnExtraGameplayEvent] Event: %s",
-				TOS_Debug::GetEnv(), TOS_Debug::GetAct(1), eventName.c_str());
-		}
+
+		LOG_EVENT(eventName, entName, entId, eventDesc);
+
+
 
 		//Case 2
 		//CryLogAlways("[C++]%s[FUNC CALL][CTOSGame::OnExtraGameplayEvent]", envName);
@@ -200,7 +237,37 @@ void CTOSGame::OnEvent(IEntity* pEntity, SEntityEvent& event)
 ///////////////////////////////////////////////////////////////////////////////
 void CTOSGame::OnElementFound(const char* sName, ScriptVarType type)
 {
+	const char* typeName = nullptr;
 
+	switch (type)
+	{
+	case svtNull:
+		typeName = "svtNull    ";
+		break;
+	case svtString:
+		typeName = "svtString  ";
+		break;
+	case svtNumber:
+		typeName = "svtNumber  ";
+		break;
+	case svtBool:
+		typeName = "svtBool    ";
+		break;
+	case svtFunction:
+		typeName = "svtFunction";
+		break;
+	case svtObject:
+		typeName = "svtObject  ";
+		break;
+	case svtPointer:
+		typeName = "svtPointer ";
+		break;
+	case svtUserData:
+		typeName = "svtUserData";
+		break;
+	}
+
+	CryLogAlways("	Element: %s\t%s",typeName, sName);
 }
 
 void CTOSGame::OnElementFound(int nIdx, ScriptVarType type)

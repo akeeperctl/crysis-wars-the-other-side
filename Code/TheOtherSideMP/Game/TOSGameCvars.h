@@ -1,4 +1,19 @@
+// ReSharper disable CppInconsistentNaming
 #pragma once
+
+#define ONLY_SERVER_CMD \
+if (!gEnv->bServer)\
+{\
+	CryLogAlways("Failed: only on the server");\
+	return;\
+}\
+
+#define ONLY_CLIENT_CMD \
+if (!gEnv->bClient)\
+{\
+	CryLogAlways("Failed: only on the client");\
+	return;\
+}\
 
 struct IConsole;
 struct SCVars;
@@ -24,12 +39,11 @@ struct STOSCvars  // NOLINT(cppcoreguidelines-special-member-functions)
 
 	// SERVER COMMANDS
 	static void CmdNetChName(IConsoleCmdArgs *pArgs);	
-	static void CmdGetMastersList(IConsoleCmdArgs *pArgs);
-	static void CmdIsMaster(IConsoleCmdArgs *pArgs);
 
 	static void CmdSpawnEntity(IConsoleCmdArgs* pArgs);
 	static void CmdRemoveEntity(IConsoleCmdArgs* pArgs);
 
+	static void CmdGetEntityScriptValue(IConsoleCmdArgs* pArgs);
 	static void CmdGetEntityById(IConsoleCmdArgs* pArgs);
 	static void CmdGetEntitiesByClass(IConsoleCmdArgs* pArgs);
 	static void CmdGetSyncs(IConsoleCmdArgs* pArgs);
@@ -37,10 +51,16 @@ struct STOSCvars  // NOLINT(cppcoreguidelines-special-member-functions)
 	// CLIENT COMMANDS
 	static void CmdGetLocalName(IConsoleCmdArgs *pArgs);
 
-	int tos_debug_draw_aiactiontracker;
-	int tos_debug_log_aiactiontracker;
-	int tos_show_version;
-	int tos_debug_log_all;
+	// Правило написания консольных значений
+	// мод_среда_ОписаниеДействия
+
+	int tos_sv_AIActionTrackerDebugDraw;
+	int tos_sv_AIActionTrackerDebugLog;
+	int tos_sv_AllDebugLog;
+
+	int tos_any_EventRecorderLogVanilla;
+
+	int tos_cl_ShowModVersion;
 };
 
-extern struct STOSCvars* g_pTOSGameCvars;
+extern STOSCvars* g_pTOSGameCvars;

@@ -7,6 +7,8 @@
 
 #include "HUD/HUD.h"
 
+#include "TheOtherSideMP/Game/TOSGameEventRecorder.h"
+
 CTOSPlayer::CTOSPlayer():
 	m_pMasterClient(nullptr)
 {
@@ -100,6 +102,38 @@ void CTOSPlayer::InitLocalPlayer()
 	m_clientPostEffects.clear();
 	gEnv->pSystem->GetI3DEngine()->SetPostEffectParam("AlienInterference_Amount", 0.0f);
 	SAFE_HUD_FUNC(StartInterference(0, 0, 0, 0));
+}
+
+void CTOSPlayer::SetSpectatorMode(uint8 mode, EntityId targetId)
+{
+	const int oldMode = GetSpectatorMode();
+	CPlayer::SetSpectatorMode(mode, targetId);
+
+	switch (mode)
+	{
+	case eASM_None:
+	{
+		if (oldMode > eASM_None)
+		{
+			TOS_RECORD_EVENT(GetEntityId(), STOSGameEvent(eEGE_PlayerJoinedGame, "", true));
+		}
+
+		break;
+	}
+	case eASM_Fixed:
+	case eASM_Free:
+	case eASM_Follow:
+	case eASM_Cutscene:
+	{
+		if (oldMode == eASM_None)
+		{
+			TOS_RECORD_EVENT(GetEntityId(), STOSGameEvent(eEGE_PlayerJoinedSpectator, "", true, false, nullptr, 0.0f, mode));
+		}
+		break;
+	}
+	default:
+		break;
+	}
 }
 
 void CTOSPlayer::Update(SEntityUpdateContext& ctx, int updateSlot)

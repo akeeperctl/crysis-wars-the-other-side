@@ -22,6 +22,12 @@ public:
 	void Serialize(TSerialize ser) override;
 
 	int GetDebugLog() override { return m_debugLogMode; }
+
+	void InitCVars(IConsole* pConsole) override {};
+	void InitCCommands(IConsole* pConsole) override {};
+	void ReleaseCVars() override {};
+	void ReleaseCCommands() override {};
+
 	//~ITOSGameModule
 
 	virtual CTOSGenericSynchronizer* GetSynchronizer() const;

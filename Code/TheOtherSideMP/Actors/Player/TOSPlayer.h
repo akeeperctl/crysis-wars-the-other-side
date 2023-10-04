@@ -15,10 +15,7 @@ public:
 	CTOSPlayer();
 	~CTOSPlayer() override;
 
-
-public:
-
-
+	//CPlayer
 	/**
 	* Init Client
 	* Вызывается на сервере при создании объекта на сервере.
@@ -32,13 +29,13 @@ public:
 	* Вызывается на локальной машине игрока при подключении его к серверу
 	*/
 	void InitLocalPlayer() override;
-
-
+	void SetSpectatorMode(uint8 mode, EntityId targetId) override;
 
 	void PostInit( IGameObject * pGameObject ) override;
 	void Update(SEntityUpdateContext& ctx, int updateSlot) override;
 	bool NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int flags) override;
 	void Release() override;
+	//~CPlayer
 
 	CTOSMasterClient* GetMasterClient();
 

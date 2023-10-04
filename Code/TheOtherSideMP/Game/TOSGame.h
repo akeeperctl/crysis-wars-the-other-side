@@ -37,6 +37,7 @@ public:
 	virtual ~CTOSGame();
 
 	friend class CTOSGameEventRecorder;
+	friend struct STOSCvars;
 
 	void Init();
 	void Shutdown();

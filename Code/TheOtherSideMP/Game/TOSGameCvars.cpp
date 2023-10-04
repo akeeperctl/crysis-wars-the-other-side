@@ -5,6 +5,7 @@
 
 #include "Game.h"
 #include "IConsole.h"
+#include "ScriptUtils.h"
 
 #include "Modules/GenericSynchronizer.h"
 #include "Modules/EntitySpawn/EntitySpawnModule.h"
@@ -12,68 +13,70 @@
 
 #include "TheOtherSideMP/Helpers/TOS_Entity.h"
 
-#define ONLY_SERVER \
-if (!gEnv->bServer)\
-{\
-	CryLogAlways("Failed: only on the server");\
-	return;\
-}\
-
-#define ONLY_CLIENT \
-if (!gEnv->bClient)\
-{\
-	CryLogAlways("Failed: only on the client");\
-	return;\
-}\
-
-
 void STOSCvars::InitCVars(IConsole* pConsole)
 {
-	pConsole->Register("tos_debug_draw_aiactiontracker", &tos_debug_draw_aiactiontracker, 0, 0, "");
-	pConsole->Register("tos_debug_log_aiactiontracker", &tos_debug_log_aiactiontracker, 0, 0, "");
-	pConsole->Register("tos_debug_log_all", &tos_debug_log_all, 0, 0, "");
-	pConsole->Register("tos_show_version", &tos_show_version, 1, 0, "");
+	// 04/10/2023 пока что уберем неиспользуемые консольные значения
+	//pConsole->Register("tos_debug_draw_aiactiontracker", &tos_debug_draw_aiactiontracker, 0, 0, "");
+	//pConsole->Register("tos_debug_log_aiactiontracker", &tos_debug_log_aiactiontracker, 0, 0, "");
+	//pConsole->Register("tos_debug_log_all", &tos_debug_log_all, 0, 0, "");
+	//pConsole->Register("tos_show_version", &tos_show_version, 1, 0, "");
+
+	pConsole->Register("tos_any_EventRecorderLogVanilla", &tos_any_EventRecorderLogVanilla, 0, 0, "Log vanilla events to the console (eGE_ prefix) 1 - yes, 0 - no");
+
+	for (const auto pModule : g_pTOSGame->m_modules)
+		pModule->InitCVars(pConsole);
 }
 
 void STOSCvars::InitCCommands(IConsole* pConsole) const
 {
 	//SERVER COMMANDS
 	pConsole->AddCommand("netchname", CmdNetChName);
-	pConsole->AddCommand("getmasterslist", CmdGetMastersList);
-	pConsole->AddCommand("ismaster", CmdIsMaster);
 	pConsole->AddCommand("spawnentity", CmdSpawnEntity);
 	pConsole->AddCommand("removeentity", CmdRemoveEntity);
 	pConsole->AddCommand("getentitiesbyclass", CmdGetEntitiesByClass);
 	pConsole->AddCommand("getsyncs", CmdGetSyncs);
 	pConsole->AddCommand("getentbyid", CmdGetEntityById);
+	pConsole->AddCommand("getentscriptvalue", CmdGetEntityScriptValue);
 
 	//CLIENT COMMANDS
 	pConsole->AddCommand("getlocalname", CmdGetLocalName);
+
+	for (const auto pModule : g_pTOSGame->m_modules)
+		pModule->InitCCommands(pConsole);
 }
 
 void STOSCvars::ReleaseCCommands() const
 {
+	for (const auto pModule : g_pTOSGame->m_modules)
+		pModule->ReleaseCCommands();
+
 	const auto pConsole = gEnv->pConsole;
 
 	pConsole->RemoveCommand("netchname");
 	pConsole->RemoveCommand("getlocalname");
-	pConsole->RemoveCommand("getmasterslist");
-	pConsole->RemoveCommand("ismaster");
 }
 
 void STOSCvars::ReleaseCVars() const
 {
+	for (const auto pModule : g_pTOSGame->m_modules)
+		pModule->ReleaseCVars();
+
+
 	const auto pConsole = gEnv->pConsole;
 
-	pConsole->UnregisterVariable("tos_debug_draw_aiactiontracker", true);
-	pConsole->UnregisterVariable("tos_debug_log_aiactiontracker", true);
-	pConsole->UnregisterVariable("tos_debug_log_all", true);
-	pConsole->UnregisterVariable("tos_show_version", true);
+	//pConsole->UnregisterVariable("tos_debug_draw_aiactiontracker", true);
+	//pConsole->UnregisterVariable("tos_debug_log_aiactiontracker", true);
+	//pConsole->UnregisterVariable("tos_debug_log_all", true);
+	//pConsole->UnregisterVariable("tos_show_version", true);
+	pConsole->UnregisterVariable("tos_cl_SlaveEntityClass", true);
+	pConsole->UnregisterVariable("tos_cl_JoinAsMaster", true);
+
+	pConsole->UnregisterVariable("tos_any_EventRecorderLogVanilla", true);
 }
 
 void STOSCvars::CmdNetChName(IConsoleCmdArgs* pArgs)
 {
-	ONLY_SERVER;
+	ONLY_SERVER_CMD;
 
 	const char* playerEntityName = pArgs->GetArg(1);
 
@@ -95,54 +98,9 @@ void STOSCvars::CmdNetChName(IConsoleCmdArgs* pArgs)
 	CryLogAlways("Result: (%s|%s)", playerEntityName, pChannel->GetName());
 }
 
-void STOSCvars::CmdGetMastersList(IConsoleCmdArgs* pArgs)
-{
-	ONLY_SERVER;
-
-	std::map<EntityId, EntityId> masters;
-	g_pTOSGame->GetMasterModule()->GetMasters(masters);
-
-	CryLogAlways("Result: (master(id)|slave(id))");
-	for (const auto& masterPair : masters)
-	{
-		const EntityId masterId = masterPair.first;
-		const EntityId slaveId = masterPair.second;
-
-		const auto pMasterEnt = gEnv->pEntitySystem->GetEntity(masterId);
-		const auto pSlaveEnt = gEnv->pEntitySystem->GetEntity(slaveId);
-
-		const char* masterName = pMasterEnt ? pMasterEnt->GetName() : "NULL";
-		const char* slaveName = pSlaveEnt ? pSlaveEnt->GetName() : "NULL";
-
-		CryLogAlways("	%s(%i)|%s(%i)", masterName, masterId, slaveName, slaveId);
-	}
-}
-
-void STOSCvars::CmdIsMaster(IConsoleCmdArgs* pArgs)
-{
-	ONLY_SERVER;
-
-	const char* strPlayerId = pArgs->GetArg(1);
-	const EntityId playerId = atoi(strPlayerId);
-
-	const auto pEntity = gEnv->pEntitySystem->GetEntity(playerId);
-	assert(pEntity);
-	if (!pEntity)
-	{
-		CryLogAlways("IsMaster failed: not found entity with id (%i)", strPlayerId);
-		return;
-	}
-
-
-	const bool isMaster = g_pTOSGame->GetMasterModule()->IsMaster(pEntity);
-	const char* result = isMaster ? "Yes" : "No";
-
-	CryLogAlways("Result: (%i|%s)", playerId, result);
-}
-
 void STOSCvars::CmdSpawnEntity(IConsoleCmdArgs* pArgs)
 {
-	ONLY_SERVER;
+	ONLY_SERVER_CMD;
 
 	const auto pClass = gEnv->pEntitySystem->GetClassRegistry()->FindClass(pArgs->GetArg(1));
 	assert(pClass);
@@ -172,7 +130,7 @@ void STOSCvars::CmdSpawnEntity(IConsoleCmdArgs* pArgs)
 
 void STOSCvars::CmdRemoveEntity(IConsoleCmdArgs* pArgs)
 {
-	ONLY_SERVER;
+	ONLY_SERVER_CMD;
 
 	const char* entName = pArgs->GetArg(1);
 
@@ -187,9 +145,103 @@ void STOSCvars::CmdRemoveEntity(IConsoleCmdArgs* pArgs)
 	gEnv->pEntitySystem->RemoveEntity(pEntity->GetId(), true);
 }
 
+void STOSCvars::CmdGetEntityScriptValue(IConsoleCmdArgs* pArgs)
+{
+	const EntityId id = atoi(pArgs->GetArg(1));
+	const char* pathToValue = pArgs->GetArg(2);
+	//const char* valueName =  pArgs->GetArg(3);
+
+	const auto pEntity = gEnv->pEntitySystem->GetEntity(id);
+	if (!pEntity)
+	{
+		CryLogAlways("Failed: wrong 1 arg entityId");
+		return;
+	}
+
+	const auto pScriptTable = pEntity->GetScriptTable();
+	if (!pScriptTable)
+	{
+		CryLogAlways("Failed: pointer to script table is NULL");
+		return;
+	}
+
+	//ScriptAnyValue value;
+	//auto ok = GetLuaVarRecursive(tableName, value);
+	//if (!ok)
+	//{
+	//	CryLogAlways("Failed: something wrong in getting value of script table in full path", ok);
+	//	return;
+	//}
+
+	const string tokenStream(pathToValue);
+	int curPos = 0;
+
+	ScriptAnyValue value;
+
+	// Deal with first token specially
+	string token = tokenStream.Tokenize(".", curPos);
+	if (token.empty())
+	{
+		CryLogAlways("Failed: path to value is NULL");
+		return; // Catching, say, an empty string
+	}
+	if (!pScriptTable->GetValueAny(token, value))
+	{
+		CryLogAlways("Failed: script table value %s not found", token.c_str());
+		return;
+	}
+
+	// Tokenize remainder
+	token = tokenStream.Tokenize(".", curPos);
+	while (!token.empty())
+	{
+		// Make sure the last step was a table
+		if (value.type != ANY_TTABLE)
+		{
+			CryLogAlways("Failed: previos path of %s is not a table", token.c_str());
+			return;
+		}
+
+		// Must use temporary 
+		ScriptAnyValue getter;
+		value.table->GetValueAny(token, getter);
+		value = getter;
+		token = tokenStream.Tokenize(".", curPos);
+	}
+
+	switch (value.type)
+	{
+	case ANY_TNIL:
+		CryLogAlways("Failed: %s not found in script table", pathToValue);
+		break;
+	case ANY_TBOOLEAN:
+		CryLogAlways("Result: %s = %i", pathToValue, value.b);
+		break;
+	case ANY_TNUMBER:
+		CryLogAlways("Result: %s = %f", pathToValue, value.number);
+		break;
+	case ANY_TSTRING:
+		CryLogAlways("Result: %s = %s", pathToValue, value.str);
+		break;
+	case ANY_TVECTOR:
+		CryLogAlways("Result: %s = (%1.f, %1.f, %1.f)", pathToValue, value.vec3.x, value.vec3.y, value.vec3.z);
+		break;
+	case ANY_TTABLE:
+		CryLogAlways("Result: values of table %s", pathToValue);
+		value.table->Dump(g_pTOSGame);
+		break;
+	case ANY_THANDLE:
+	case ANY_ANY:
+	case ANY_TFUNCTION:
+	case ANY_TUSERDATA:
+	case ANY_COUNT:
+		break;
+	}
+}
+
 void STOSCvars::CmdGetEntityById(IConsoleCmdArgs* pArgs)
 {
-	ONLY_SERVER;
+	ONLY_SERVER_CMD;
 
 	const EntityId id = atoi(pArgs->GetArg(1));
 	const EntityId playerId = atoi(pArgs->GetArg(2));
@@ -224,7 +276,7 @@ void STOSCvars::CmdGetEntityById(IConsoleCmdArgs* pArgs)
 
 void STOSCvars::CmdGetEntitiesByClass(IConsoleCmdArgs* pArgs)
 {
-	ONLY_SERVER;
+	ONLY_SERVER_CMD;
 
 	CryLogAlways("Result: (entity_name|entity_id)");
 
@@ -253,7 +305,6 @@ void STOSCvars::CmdGetSyncs(IConsoleCmdArgs* pArgs)
 	for (const auto& syncPair : syncs)
 	{
 		const char* name = syncPair.first;
-		const auto pEntity = gEnv->pEntitySystem->FindEntityByName(name);
 		const auto id = syncPair.second;
 
 		CryLogAlways("	%s|%i", name, id);
@@ -262,11 +313,10 @@ void STOSCvars::CmdGetSyncs(IConsoleCmdArgs* pArgs)
 
 void STOSCvars::CmdGetLocalName(IConsoleCmdArgs* pArgs)
 {
-	ONLY_CLIENT;
+	ONLY_CLIENT_CMD;
 
 	const auto pPlayer = g_pGame->GetIGameFramework()->GetClientActor();
 	assert(pPlayer);
 
 	CryLogAlways("Result: (%s)", pPlayer->GetEntity()->GetName());
 }
-

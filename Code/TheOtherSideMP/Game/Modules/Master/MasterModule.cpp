@@ -10,6 +10,7 @@
 #include "../../../Actors/Player/TOSPlayer.h"
 #include "../../../Helpers/TOS_Debug.h"
 
+#include "TheOtherSideMP/Game/TOSGameCvars.h"
 
 CTOSMasterModule::CTOSMasterModule()
 {
