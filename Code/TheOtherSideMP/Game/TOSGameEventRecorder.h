@@ -73,7 +73,7 @@ enum EExtraGameplayEvent
 	eEGE_TOSEntityRecreated,
 
 	eEGE_TOSEntityScheduleDelegateAuthority,
-	eEGE_TOSEntityAuthorityDetegated,
+	eEGE_TOSEntityAuthorityDelegated,
 
 	eEGE_EntitiesPreReset,
 	eEGE_EntitiesPostReset,
@@ -283,8 +283,8 @@ public:
 			return "eEGE_TOSEntityRecreated";
 		case eEGE_TOSEntityScheduleDelegateAuthority:
 			return "eEGE_TOSEntityScheduleDelegateAuthority";
-		case eEGE_TOSEntityAuthorityDetegated:
-			return "eEGE_TOSEntityAuthorityDetegated";
+		case eEGE_TOSEntityAuthorityDelegated:
+			return "eEGE_TOSEntityAuthorityDelegated";
 		case eEGE_EntitiesPreReset:
 			return "eEGE_EntitiesPreReset";
 		case eEGE_EntitiesPostReset:

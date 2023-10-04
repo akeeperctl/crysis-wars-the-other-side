@@ -162,7 +162,7 @@ void CTOSEntitySpawnModule::Update(float frametime)
 				char buffer[256];
 				sprintf(buffer, "%s take own of %s", playerName, schedName);
 
-				TOS_RECORD_EVENT(0, STOSGameEvent(eEGE_TOSEntityAuthorityDetegated, buffer, true));
+				TOS_RECORD_EVENT(0, STOSGameEvent(eEGE_TOSEntityAuthorityDelegated, buffer, true));
 			}
 
 			break;
