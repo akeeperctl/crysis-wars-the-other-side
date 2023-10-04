@@ -152,7 +152,7 @@ void CTOSEntitySpawnModule::Update(float frametime)
 
 			if (!isAuth)
 			{
-				CryLogAlways("[%s] Try delegate authority to player %s", schedName, playerName);
+				//CryLogAlways("[%s] Try delegate authority to player %s", schedName, playerName);
 				pNetContext->DelegateAuthority(scheduledId, pPlayerNetChannel);
 			}
 			else
@@ -260,7 +260,7 @@ bool CTOSEntitySpawnModule::HaveSavedParams(const IEntity* pEntity) const
 	return m_savedParams.find(pEntity->GetId()) != m_savedParams.end();
 }
 
-void CTOSEntitySpawnModule::DebugDraw(const Vec2& screenPos, float fontSize, float interval, int maxElemNum, bool draw)
+void CTOSEntitySpawnModule::DebugDraw(const Vec2& screenPos, float fontSize, float interval, int maxElemNum, bool draw) const
 {
 	if (!draw)
 		return;

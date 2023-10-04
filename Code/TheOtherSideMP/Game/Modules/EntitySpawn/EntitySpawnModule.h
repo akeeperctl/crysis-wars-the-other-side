@@ -127,7 +127,7 @@ private:
 	 */
 	bool HaveSavedParams(const IEntity* pEntity) const;
 
-	void DebugDraw(const Vec2& screenPos, float fontSize, float interval, int maxElemNum, bool draw);
+	void DebugDraw(const Vec2& screenPos, float fontSize, float interval, int maxElemNum, bool draw) const;
 
 	static TVecEntities s_markedForRecreation; // Что хранит: сущности которые должны быть пересозданы после sv_restart
 	TMapAuthorityParams m_scheduledAuthorities; // Что хранит: ключ - id сущности, значение - структура, где есть имя игрока, который получит власть над сущностью и штамп времени, когда случилось планирование
