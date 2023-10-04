@@ -3,6 +3,8 @@
 #include "Game.h"
 #include "ITOSGameModule.h"
 
+#include "TheOtherSideMP/Game/TOSGameEventRecorder.h"
+
 class CTOSGenericModule : public ITOSGameModule // NOLINT(cppcoreguidelines-special-member-functions)
 {
 public:
@@ -60,6 +62,9 @@ CSynchType* CTOSGenericModule::CreateSynchonizer(const char* entityName, const c
 
 			//m_pSynchonizer->SetModule(this);
 			m_pSynchonizer = pSynchExt;
+
+			TOS_RECORD_EVENT(pSynchEntity->GetId(), STOSGameEvent(eEGE_SynchronizerCreated, "", true));
+
 			return pSynchExt;
 		}
 	}
@@ -90,6 +95,8 @@ CSynchType* CTOSGenericModule::CreateSynchonizer(const char* entityName, const c
 
 		pSynchExt->GetGameObject()->ForceUpdate(true);
 		m_pSynchonizer = pSynchExt;
+
+		TOS_RECORD_EVENT(pSynchEntity->GetId(), STOSGameEvent(eEGE_SynchronizerCreated, "", true));
 	}
 
 	return pSynchExt;

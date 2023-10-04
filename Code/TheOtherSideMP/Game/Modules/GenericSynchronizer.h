@@ -49,19 +49,22 @@ struct PintestParams
 struct MasterAddingParams
 {
 	EntityId entityId;
-	MasterAddingParams() {};
+	string desiredSlaveClassName;
 
-	explicit MasterAddingParams(const EntityId entId)
-		: entityId(entId)
-	{
-	}
+	MasterAddingParams():
+		entityId(0) ,desiredSlaveClassName(nullptr) {} ;
+
+	explicit MasterAddingParams(const EntityId entId, const char* slaveClsName) :
+		entityId(entId), desiredSlaveClassName(slaveClsName) {}
 
 	void SerializeWith(TSerialize ser)
 	{
 		ser.Value("entityId", entityId, 'eid');
+		ser.Value("desiredSlaveClassName", desiredSlaveClassName, 'stab');
 	}
 };
 
+typedef MasterAddingParams DesiredSlaveClsParams;
 typedef std::map<const char*, EntityId> TSynches;
 
 // Description: 
@@ -99,6 +102,7 @@ public:
 
 	//CTOSGenericModule* GetModule();
 
+	// РџСЂРёРјРµСЂ: RMISend(CTOSMasterSynchronizer::SvRequestMasterAdd(), params, eRMI_ToServer);
 	template <class MI, class T>
 	void RMISend(const MI method, const T& params, unsigned where, int channel = -1)
 	{
@@ -111,6 +115,7 @@ public:
 		pGP->InvokeRMI(method, params, where, channel);
 	}
 
+	// РџСЂРёРјРµСЂ: RMISendWithDependentObject(CTOSMasterSynchronizer::SvRequestMasterAdd(), params, eRMI_ToServer, entityId);
 	template <class MI, class T>
 	void RMISendWithDependentObject(const MI method, const T& params, unsigned where, EntityId ent, int channel = -1)
 	{
@@ -131,16 +136,13 @@ public:
 
 	static void GetSynchonizers(TSynches& synches);
 
-	//CLIENT - Направленные на клиент
-	//SERVER - Направленные на сервер с клиента
-	//NOATTACH - Без привязки к данным сериализации
-	//Reliable - надёжная доставка пакета
+	//CLIENT - РќР°РїСЂР°РІР»РµРЅРЅС‹Рµ РЅР° РєР»РёРµРЅС‚
+	//SERVER - РќР°РїСЂР°РІР»РµРЅРЅС‹Рµ РЅР° СЃРµСЂРІРµСЂ СЃ РєР»РёРµРЅС‚Р°
+	//NOATTACH - Р‘РµР· РїСЂРёРІСЏР·РєРё Рє РґР°РЅРЅС‹Рј СЃРµСЂРёР°Р»РёР·Р°С†РёРё
+	//Reliable - РЅР°РґС‘Р¶РЅР°СЏ РґРѕСЃС‚Р°РІРєР° РїР°РєРµС‚Р°
 
 	DECLARE_SERVER_RMI_NOATTACH(SvRequestPintest, PintestParams, eNRT_ReliableOrdered);
 	DECLARE_CLIENT_RMI_NOATTACH(ClPintest, PintestParams, eNRT_ReliableOrdered);
-
-	//DECLARE_SERVER_RMI_NOATTACH(SvRequestMasterAdd, MasterAddingParams, eNRT_ReliableOrdered);
-	//DECLARE_SERVER_RMI_NOATTACH(SvRequestMasterRemove, MasterAddingParams, eNRT_ReliableOrdered);
 
 protected:
 	//void SetModule(CTOSGenericModule* pModule);

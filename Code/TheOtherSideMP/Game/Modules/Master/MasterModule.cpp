@@ -11,6 +11,8 @@
 #include "../../../Helpers/TOS_Debug.h"
 
 #include "TheOtherSideMP/Game/TOSGameCvars.h"
+#include "TheOtherSideMP/Helpers/TOS_Entity.h"
+
 
 CTOSMasterModule::CTOSMasterModule()
 {
@@ -39,78 +41,77 @@ void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEven
 	//case eEGE_GamerulesPostInit: not ok
 	case eEGE_GamerulesStartGame:
 	{
-		//Create Synchronizer entity
 		CreateSynchonizer<CTOSMasterSynchronizer>("MasterSynchronizer", "TOSMasterSynchronizer");
-
-
-		//auto pSynchronizer = gEnv->pEntitySystem->FindEntityByName("MasterSynchronizer");
-		//if (pSynchronizer)
-		//{
-		//	IGameObject* pGO = g_pGame->GetIGameFramework()->GetGameObject(pSynchronizer->GetId());
-		//	if (pGO)
-		//	{
-		//		m_pSynchronizer = dynamic_cast<CTOSMasterSynchronizer*>(pGO->AcquireExtension("TOSMasterSynchronizer"));
-		//		assert(m_pSynchronizer);
-		//	}
-
-		//	return;
-		//}
-
-		////auto pSynchronizerCls = gEnv->pEntitySystem->GetClassRegistry()->FindClass("TOSMasterSynchronizer");
-		////assert(pSynchronizerCls);
-
-		////if (!pSynchronizerCls)
-		////	return;
-
-		//SEntitySpawnParams params;
-		//params.pClass = gEnv->pEntitySystem->GetClassRegistry()->GetDefaultClass();
-		//params.bStaticEntityId = true;
-		//params.sName = "MasterSynchronizer";
-		////params.nFlags |= ENTITY_FLAG_NO_PROXIMITY;
-		////Флаг ENTITY_FLAG_UNREMOVABLE не работает при sv_restart
-		//params.nFlags |= ENTITY_FLAG_NO_PROXIMITY | ENTITY_FLAG_UNREMOVABLE;
-		////params.id = 2;
-
-		//pSynchronizer = gEnv->pEntitySystem->SpawnEntity(params);
-		//assert(pSynchronizer);
-
-		//if (!pSynchronizer)
-		//	return;
-
-		////IGameObject* pGO = g_pGame->GetIGameFramework()->GetGameObject(pSynchronizer->GetId());
-		//IGameObject* pGO = g_pGame->GetIGameFramework()->GetIGameObjectSystem()->CreateGameObjectForEntity(pSynchronizer->GetId());
-		//if (pGO)
-		//{
-		//	m_pSynchronizer = dynamic_cast<CTOSMasterSynchronizer*>(pGO->AcquireExtension("TOSMasterSynchronizer"));
-		//	assert(m_pSynchronizer);
-
-		//	pGO->ForceUpdate(true);
-		//}
 		break;
 	}
-	case eGE_GameReset:
+	//case eEGE_ActorPostInit: no ok on client
+	case eEGE_SynchronizerCreated:	
 	{
-		//Delete Synchronizer entity
-
-		//if (m_pSynchronizer)
+		//if (pEntity && gEnv->bServer)
 		//{
-		//	m_pSynchronizer->GetEntity()->ClearFlags(ENTITY_FLAG_UNREMOVABLE);
+		//	const auto pPlayer = dynamic_cast<CTOSPlayer*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pEntity->GetId()));
+		//	if (!pPlayer)
+		//		break;
 
-		//	gEnv->pEntitySystem->RemoveEntity(m_pSynchronizer->GetEntityId());
-		//	m_pSynchronizer = nullptr;
+		//	MasterAdd(pPlayer->GetEntity());
 		//}
-		//break;
-	}
-	case eEGE_ActorPostInit:
-	{
-		if (pEntity && gEnv->bServer)
-		{
-			const auto pPlayer = dynamic_cast<CTOSPlayer*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pEntity->GetId()));
-			if (!pPlayer)
-				break;
 
-			MasterAdd(pPlayer->GetEntity());
+		if (pEntity && gEnv->bClient)
+		{
+			const int joinAsAlien = gEnv->pConsole->GetCVar("tos_cl_JoinAsMaster")->GetIVal();
+			if (joinAsAlien > 0)
+			{
+				const auto clientEntityId = g_pGame->GetIGameFramework()->GetClientActorId();
+				const auto pSlaveEntClsCvar = gEnv->pConsole->GetCVar("tos_cl_SlaveEntityClass");
+				assert(pSlaveEntClsCvar);
+
+				const auto params = MasterAddingParams(clientEntityId, pSlaveEntClsCvar->GetString());
+
+				assert(m_pSynchonizer);
+				m_pSynchonizer->RMISend(CTOSMasterSynchronizer::SvRequestMasterAdd(), params, eRMI_ToServer);
+			}
 		}
+
+		break;
+	}
+	case eEGE_PlayerJoinedGame:
+	{
+		if (gEnv->bServer)
+		{
+			if (IsMaster(pEntity))
+			{
+				STOSMasterInfo info;
+				GetMasterInfo(pEntity, info);
+
+				const string slaveClsName = info.desiredSlaveClassName;
+				const string slaveName = entName + " (Slave)";
+				const auto pClass = gEnv->pEntitySystem->GetClassRegistry()->FindClass(slaveClsName.c_str());
+
+				assert(pClass);
+				if (!pClass)
+				{
+					CryLogAlways("[C++][%s][%s] Class %s not found", 
+						TOS_Debug::GetEnv(), 
+						TOS_Debug::GetAct(1),
+						slaveClsName.c_str());
+					break;
+				}
+
+				STOSEntitySpawnParams params;
+				params.savedName = slaveName;
+				params.authorityPlayerName = entName;
+				params.tosFlags |= TOS_ENTITY_FLAG_MUST_RECREATED;
+				params.vanilla.bStaticEntityId = true;
+				params.vanilla.nFlags |= ENTITY_FLAG_NEVER_NETWORK_STATIC | ENTITY_FLAG_TRIGGER_AREAS | ENTITY_FLAG_CASTSHADOW;
+				params.vanilla.pClass = pClass;
+				params.vanilla.vPosition = pEntity->GetWorldPos();
+				params.vanilla.qRotation = pEntity->GetWorldRotation();
+
+				TOS_Entity::Spawn(params);
+			}
+
+		}
+
 		break;
 	}
 	case eEGE_ActorRelease:
@@ -143,7 +144,7 @@ void CTOSMasterModule::Serialize(TSerialize ser)
 {
 }
 
-void CTOSMasterModule::MasterAdd(const IEntity* pMasterEntity)
+void CTOSMasterModule::MasterAdd(const IEntity* pMasterEntity, const char* slaveDesiredClass)
 {
 	if (gEnv->bServer && pMasterEntity)
 	{
@@ -151,7 +152,10 @@ void CTOSMasterModule::MasterAdd(const IEntity* pMasterEntity)
 		{
 			const EntityId id = pMasterEntity->GetId();
 
-			m_masters[id] = 0;
+			auto info = STOSMasterInfo();
+			info.desiredSlaveClassName = slaveDesiredClass;
+
+			m_masters[id] = info;
 
 			TOS_RECORD_EVENT(id, STOSGameEvent(eEGE_MasterAdd, "", true));
 		}
@@ -193,7 +197,7 @@ IEntity* CTOSMasterModule::GetSlave(const IEntity* pMasterEntity)
 			for (const auto& masterSlavePair : m_masters)
 			{
 				if (masterSlavePair.first == pMasterEntity->GetId())
-					return gEnv->pEntitySystem->GetEntity(masterSlavePair.second);
+					return gEnv->pEntitySystem->GetEntity(masterSlavePair.second.slaveId);
 			}				
 		}
 	}
@@ -237,7 +241,31 @@ void CTOSMasterModule::DebugDraw(const Vec2& screenPos, float fontSize, float in
 	}
 }
 
-void CTOSMasterModule::GetMasters(std::map<EntityId, EntityId>& masters) const
+bool CTOSMasterModule::GetMasterInfo(const IEntity* pMasterEntity, STOSMasterInfo& info)
+{
+	if (!IsMaster(pMasterEntity))
+		return false;
+
+	info = m_masters[pMasterEntity->GetId()];
+
+	return true;
+}
+
+void CTOSMasterModule::GetMasters(std::map<EntityId, STOSMasterInfo>& masters) const
 {
 	masters = m_masters;
+}
+
+bool CTOSMasterModule::SetMasterDesiredSlaveCls(const IEntity* pEntity, const char* slaveDesiredClass)
+{
+	assert(pEntity);
+	if (!pEntity)
+		return false;
+
+	if (!IsMaster(pEntity))
+		return false;
+
+	m_masters[pEntity->GetId()].desiredSlaveClassName = slaveDesiredClass;
+
+	return true;
 }

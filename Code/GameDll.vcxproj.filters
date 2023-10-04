@@ -800,6 +800,9 @@
     <ClCompile Include="TheOtherSideMP\Game\Modules\EntitySpawn\EntitySpawnModule.cpp">
       <Filter>TheOtherSideMP\Game\Modules\EntitySpawn</Filter>
     </ClCompile>
+    <ClCompile Include="TheOtherSideMP\MasterCvars.cpp">
+      <Filter>TheOtherSideMP\Game\Modules\Master</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor.h">

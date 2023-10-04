@@ -29,12 +29,13 @@ public:
 
 	const char* GetClassName() override {return "CTOSMasterSynchronizer";}
 
-	//CLIENT - Направленные на клиент
-	//SERVER - Направленные на сервер с клиента
-	//NOATTACH - Без привязки к данным сериализации
-	//Reliable - надёжная доставка пакета
+	//CLIENT - РќР°РїСЂР°РІР»РµРЅРЅС‹Рµ РЅР° РєР»РёРµРЅС‚
+	//SERVER - РќР°РїСЂР°РІР»РµРЅРЅС‹Рµ РЅР° СЃРµСЂРІРµСЂ СЃ РєР»РёРµРЅС‚Р°
+	//NOATTACH - Р‘РµР· РїСЂРёРІСЏР·РєРё Рє РґР°РЅРЅС‹Рј СЃРµСЂРёР°Р»РёР·Р°С†РёРё
+	//Reliable - РЅР°РґС‘Р¶РЅР°СЏ РґРѕСЃС‚Р°РІРєР° РїР°РєРµС‚Р°
 
-	//DECLARE_SERVER_RMI_NOATTACH(SvRequestMasterAdd, MasterAddingParams, eNRT_ReliableOrdered);
+	DECLARE_SERVER_RMI_NOATTACH(SvRequestMasterAdd, MasterAddingParams, eNRT_ReliableOrdered);
+	DECLARE_SERVER_RMI_NOATTACH(SvRequestSetDesiredSlaveCls, DesiredSlaveClsParams, eNRT_ReliableOrdered);
 
 protected:
 

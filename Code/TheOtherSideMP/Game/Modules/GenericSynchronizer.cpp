@@ -37,7 +37,7 @@ void CTOSGenericSynchronizer::PostInit(IGameObject* pGameObject)
 
 	//stl::push_back_unique(s_synchronizers, GetEntityId());
 	s_synchronizers[GetEntity()->GetName()] = GetEntityId();
-	TOS_RECORD_EVENT(GetEntityId(), STOSGameEvent(eEGE_SynchronizerCreated, "", true));
+	//TOS_RECORD_EVENT(GetEntityId(), STOSGameEvent(eEGE_SynchronizerCreated, "", true));
 }
 
 void CTOSGenericSynchronizer::InitClient(int channelId)
@@ -114,45 +114,6 @@ void CTOSGenericSynchronizer::GetSynchonizers(TSynches& synches)
 //{
 //	m_pModule = pModule;
 //	assert(m_pModule);
-//}
-
-//Not actual any more
-////------------------------------------------------------------------------
-//IMPLEMENT_RMI(CTOSMasterRMISender, SvRequestMasterAdd)
-//{
-//	if (gEnv->bServer)
-//	{
-//		auto pEntity = gEnv->pEntitySystem->GetEntity(params.entityId);
-//		assert(pEntity);
-//
-//		CryLogAlways(" ");
-//		CryLogAlways("[C++][SERVER][RMI RECEIVED][SvRequestMasterAdd] MasterEntity: %s",
-//			 pEntity->GetName());
-//		//[RMI RECEIVED][SERVER][SvRequestMasterAdd] NetChannel: lmlicenses.wip4.adobe.com:50632, MasterEntity: Akeeper
-//
-//		g_pTOSGame->GetMasterModule()->MasterAdd(pEntity);
-//	}
-//
-//	return true;
-//}
-//
-////------------------------------------------------------------------------
-//IMPLEMENT_RMI(CTOSMasterRMISender, SvRequestMasterRemove)
-//{
-//	if (gEnv->bServer)
-//	{
-//		auto pEntity = gEnv->pEntitySystem->GetEntity(params.entityId);
-//		assert(pEntity);
-//
-//		CryLogAlways(" ");
-//		CryLogAlways("[C++][%s][%s][SvRequestMasterRemove] MasterEntity: %s",
-//			TOS_Debug::GetEnv(), TOS_Debug::GetAct(3), pEntity->GetName());
-//		//[RMI RECEIVED][SERVER][SvRequestMasterAdd] NetChannel: lmlicenses.wip4.adobe.com:50632, MasterEntity: Akeeper
-//
-//		g_pTOSGame->GetMasterModule()->MasterRemove(pEntity);
-//	}
-//
-//	return true;
 //}
 
 //------------------------------------------------------------------------

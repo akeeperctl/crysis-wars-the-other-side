@@ -52,10 +52,11 @@ public:
 	void ReleaseCCommands() override;
 	//ITOSGameModule
 
-	void MasterAdd(const IEntity* pMasterEntity);
+	void MasterAdd(const IEntity* pMasterEntity, const char* slaveDesiredClass);
 	void MasterRemove(const IEntity* pMasterEntity);
 	bool IsMaster(const IEntity* pMasterEntity);
-	void GetMasters(std::map<EntityId, EntityId>& masters) const;
+	void GetMasters(std::map<EntityId, STOSMasterInfo>& masters) const;
+	bool SetMasterDesiredSlaveCls(const IEntity* pEntity, const char* slaveDesiredClass);
 	IEntity* GetSlave(const IEntity* pMasterEntity);
 	void DebugDraw(const Vec2& screenPos = {20,300}, float fontSize = 1.2f, float interval = 20.0f, int maxElemNum = 5);
 
@@ -63,6 +64,9 @@ public:
 	static void CmdGetMastersList(IConsoleCmdArgs* pArgs);
 	static void CmdIsMaster(IConsoleCmdArgs* pArgs);
 	static void CVarSetDesiredSlaveCls(ICVar* pVar);
+
+private:
+	bool GetMasterInfo(const IEntity* pMasterEntity, STOSMasterInfo& info);
 
 
 public:

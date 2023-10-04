@@ -456,6 +456,7 @@
     <ClCompile Include="TheOtherSideMP\Game\TOSGame.cpp" />
     <ClCompile Include="TheOtherSideMP\Game\TOSGameCvars.cpp" />
     <ClCompile Include="TheOtherSideMP\Game\TOSGameEventRecorder.cpp" />
+    <ClCompile Include="TheOtherSideMP\MasterCvars.cpp" />
     <ClCompile Include="Throw.cpp" />
     <ClCompile Include="ThrowableWeapon.cpp" />
     <ClCompile Include="TracerManager.cpp" />

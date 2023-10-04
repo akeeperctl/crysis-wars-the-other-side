@@ -116,6 +116,23 @@ void CTOSEntitySpawnModule::Update(float frametime)
 			// Имя исчезает, когда указатель pScheduledEnt становится nullptr!
 			// Баг исправлен
 
+			// Применение сохраненной таблицы к сущности
+			// 04/10/2023 Пока что оставим без применения сохраненной таблицы
+
+			//auto pSavedScriptTable = pScheduledParams->pSavedScript;
+			//if (pSavedScriptTable)
+			//{
+			//	SmartScriptTable props;
+			//	SmartScriptTable instanceProps;
+
+			//	if (pSavedScriptTable->GetValue("Properties", props) &&
+			//		pSavedScriptTable->GetValue("PropertiesInstance", instanceProps))
+			//	{
+			//		pScheduledParams->vanilla.pPropertiesTable = props;
+			//		pScheduledParams->vanilla.pPropertiesInstanceTable = instanceProps;
+			//	}
+			//}
+
 			auto pRecreatedEntity = SpawnEntity(*pScheduledParams);
 			assert(pRecreatedEntity);
 
@@ -323,6 +340,7 @@ void CTOSEntitySpawnModule::ScheduleRecreation(const IEntity* pEntity)
 		return;
 
 	const auto entId = pEntity->GetId();
+	const auto entName = pEntity->GetName();
 
 	auto it = m_scheduledRecreations.find(entId);
 	bool alreadyScheduled = it != m_scheduledRecreations.end();
@@ -334,13 +352,18 @@ void CTOSEntitySpawnModule::ScheduleRecreation(const IEntity* pEntity)
 	auto pParams = new STOSEntitySpawnParams();
 	auto pSavedScript = gEnv->pScriptSystem->CreateTable(false);
 
-	pSavedScript->Clone(pEntity->GetScriptTable());
+	if (pSavedScript->Clone(pEntity->GetScriptTable()))
+	{
+		CryLogAlways("[%s] Script table successfully cloned", entName);
+		CryLogAlways("[%s] Script dump:", entName);
+		pSavedScript->Dump(g_pTOSGame);
+	}
 
 	pParams->pSavedScript = pSavedScript;
 	pParams->tosFlags |= TOS_ENTITY_FLAG_SCHEDULED_RECREATION;
 	pParams->vanilla = m_savedParams[entId]->vanilla;
 
-	pParams->savedName = pEntity->GetName();
+	pParams->savedName = entName;
 	pParams->authorityPlayerName = m_savedParams[entId]->authorityPlayerName;
 
 	// Здесь, в переменной pParams.vanilla имя sName присутствует
