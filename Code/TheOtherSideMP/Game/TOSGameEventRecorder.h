@@ -18,7 +18,7 @@ if (g_pTOSGame)\
 const string entName = (pEntity) ? (pEntity)->GetName() : "";\
 const EntityId entId = (pEntity) ? (pEntity)->GetId() : 0;\
 const string eventName = g_pTOSGame->GetEventRecorder()->GetStringFromEnum(_event.event);\
-const string eventDesc = (_event).description;\
+	  string eventDesc = (_event).description;\
 const auto pGO = (pEntity) ? g_pGame->GetIGameFramework()->GetGameObject(pEntity->GetId()) : nullptr\
 
 
@@ -52,8 +52,8 @@ enum EExtraGameplayEvent
 	eEGE_SynchronizerCreated,
 	eEGE_SynchronizerDestroyed,
 
-	eEGE_EnterGame, //NOT USED
-	eEGE_EnterSpectator, //NOT USED
+	eEGE_PlayerJoinedGame, // Игрок нажал кнопку "Присоединится" и появился в игре
+	eEGE_PlayerJoinedSpectator, // Игрок нажал кнопку "Зритель" и перешёл в режим зрителя
 
 	eEGE_GamerulesReset,
 	eEGE_GamerulesStartGame,
@@ -245,10 +245,10 @@ public:
 			return "eEGE_EditorGameEnter";
 		case eEGE_EditorGameExit:
 			return "eEGE_EditorGameExit";
-		case eEGE_EnterGame:
-			return "eEGE_EnterGame";
-		case eEGE_EnterSpectator:
-			return "eEGE_EnterSpectator";
+		case eEGE_PlayerJoinedGame:
+			return "eEGE_PlayerJoinedGame";
+		case eEGE_PlayerJoinedSpectator:
+			return "eEGE_PlayerJoinedSpectator";
 		case eEGE_MasterAdd:
 			return "eEGE_MasterAdd";
 		case eEGE_MasterRemove:
