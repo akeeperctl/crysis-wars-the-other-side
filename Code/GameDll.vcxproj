@@ -704,6 +704,7 @@
     <ClInclude Include="TheOtherSideMP\Helpers\TOS_Sounds.h" />
     <ClInclude Include="TheOtherSideMP\Helpers\TOS_STL.h" />
     <ClInclude Include="TheOtherSideMP\Helpers\TOS_Vehicle.h" />
+    <ClInclude Include="TheOtherSideMP\TOSSmartStruct.h" />
     <ClInclude Include="Throw.h" />
     <ClInclude Include="ThrowableWeapon.h" />
     <ClInclude Include="TracerManager.h" />

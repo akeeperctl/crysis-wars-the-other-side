@@ -5,6 +5,8 @@
 #include "../GenericModule.h"
 #include "IEntity.h"
 
+#include "TheOtherSideMP/TOSSmartStruct.h"
+
 
 enum ETOSEntityFlags
 {
@@ -22,27 +24,28 @@ struct STOSScheduleDelegateAuthorityParams
 	float scheduledTime; // штамп времени, когда свершилось планирование
 };
 
-struct STOSEntitySpawnParams
+struct STOSEntitySpawnParams : public STOSSmartStruct
 {
 	STOSEntitySpawnParams()
 		: pSavedScript(nullptr),
-		tosFlags(0),
-		m_refs(0)
+		tosFlags(0)
 	{
+		m_refs = 0;
 		vanilla = SEntitySpawnParams();
 	}
 
 	explicit STOSEntitySpawnParams(const SEntitySpawnParams& _vanillaParams)
 		: pSavedScript(nullptr),
-		tosFlags(0),
-		m_refs(0)
+		tosFlags(0)
 	{
+		m_refs = 0;
 		vanilla = _vanillaParams;
 	}
 
 	explicit STOSEntitySpawnParams(const STOSEntitySpawnParams& params)
-		: m_refs(0)
+		: STOSSmartStruct(params)
 	{
+		this->m_refs = 0;
 		this->tosFlags = params.tosFlags;
 		this->vanilla = params.vanilla;
 		this->pSavedScript = params.pSavedScript;
@@ -50,17 +53,7 @@ struct STOSEntitySpawnParams
 		this->savedName = params.savedName;
 	}
 
-	~STOSEntitySpawnParams() { }
-
-	void AddRef() const { ++m_refs; };
-	uint GetRefCount() const { return m_refs; };
-	void Release() const
-	{
-		if (--m_refs <= 0)
-		{
-			delete this;
-		}
-	}
+	~STOSEntitySpawnParams() override { }
 
 	IScriptTable* pSavedScript;
 	SEntitySpawnParams vanilla;
@@ -69,7 +62,6 @@ struct STOSEntitySpawnParams
 	uint32 tosFlags;
 
 private:
-	mutable uint	m_refs;
 };
 
 

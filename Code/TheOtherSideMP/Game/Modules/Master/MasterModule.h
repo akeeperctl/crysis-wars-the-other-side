@@ -4,36 +4,27 @@
 
 #include "../../TOSGame.h"
 
+#include "TheOtherSideMP/TOSSmartStruct.h"
+
 class CTOSMasterSynchronizer;
 class CTOSGenericSynchronizer;
 
 /**
- * TOS Master Info
- * На сервере: хранит информацию о работе одного мастера
- * На клиенте: отсутсвует.
- * Включено автоудаление.
+ * \brief хранит информацию о работе одного мастера
  */
-//struct STOSMasterInfo
-//{
-//public:
-//	STOSMasterInfo() :
-//		id(0),
-//		slaveId(0)
-//	{}
-//
-//	STOSMasterInfo(EntityId _id, EntityId _slaveId) :
-//		id(_id),
-//		slaveId(_slaveId)
-//	{}
-//
-//	~STOSMasterInfo()
-//	{
-//		delete this;
-//	}
-//
-//	EntityId id;
-//	EntityId slaveId;
-//};
+struct STOSMasterInfo : STOSSmartStruct  // NOLINT(cppcoreguidelines-special-member-functions)
+{
+	STOSMasterInfo() :
+		slaveId(0)
+	{}
+
+	explicit STOSMasterInfo(const EntityId _slaveId) :
+		slaveId(_slaveId)
+	{}
+
+	EntityId slaveId;
+	string desiredSlaveClassName;
+};
 
 /**
  * TOS Master System

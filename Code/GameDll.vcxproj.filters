@@ -1421,6 +1421,9 @@
     <ClInclude Include="TheOtherSideMP\Helpers\TOS_Entity.h">
       <Filter>TheOtherSideMP\Helpers</Filter>
     </ClInclude>
+    <ClInclude Include="TheOtherSideMP\TOSSmartStruct.h">
+      <Filter>TheOtherSideMP</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="GameActions.actions">
