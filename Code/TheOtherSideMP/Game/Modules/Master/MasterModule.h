@@ -6,6 +6,7 @@
 
 #include "TheOtherSideMP/TOSSmartStruct.h"
 
+class CTOSMasterClient;
 class CTOSMasterSynchronizer;
 class CTOSGenericSynchronizer;
 
@@ -52,6 +53,27 @@ public:
 	void ReleaseCCommands() override;
 	//ITOSGameModule
 
+	/**
+	 * \brief Возвращает локальный мастер-клиент, доступный только для локальной машины
+	 * \return Указатель на локальный мастер-клиент
+	 */
+	CTOSMasterClient* GetMasterClient() const
+	{
+		assert(m_pLocalMasterClient);
+		return m_pLocalMasterClient;
+	};
+
+	void RegisterMasterClient(CTOSMasterClient* pMC)
+	{
+		assert(pMC);
+		m_pLocalMasterClient = pMC;
+	};
+
+	void UnregisterMasterClient()
+	{
+		m_pLocalMasterClient = nullptr;
+	}
+
 	void MasterAdd(const IEntity* pMasterEntity, const char* slaveDesiredClass);
 	void MasterRemove(const IEntity* pMasterEntity);
 	bool IsMaster(const IEntity* pMasterEntity);
@@ -80,5 +102,5 @@ public:
 
 private:
 	std::map<EntityId, STOSMasterInfo> m_masters; //ключ - мастер, значение - структура, хранящая имя класса раба, который должен будет заспавниться
-
+	CTOSMasterClient* m_pLocalMasterClient;
 };

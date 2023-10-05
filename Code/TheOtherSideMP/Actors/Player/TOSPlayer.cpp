@@ -96,6 +96,7 @@ void CTOSPlayer::InitLocalPlayer()
 	if (!m_pMasterClient)
 	{
 		m_pMasterClient = new CTOSMasterClient(this);
+		g_pTOSGame->GetMasterModule()->RegisterMasterClient(m_pMasterClient);
 	}
 
 	// Исправление бага https://github.com/akeeperctl/crysis-wars-the-other-side/issues/5
@@ -180,10 +181,18 @@ void CTOSPlayer::Release()
 	//	pSender->RMISend(CTOSMasterRMISender::SvRequestPintest(), params, eRMI_ToServer);
 
 	SAFE_DELETE(m_pMasterClient);
+
+	// Если локальный игрок, то снимает удаляем мастер-клиент на локальной машине 
+	if (IsClient())
+	{
+		g_pTOSGame->GetMasterModule()->UnregisterMasterClient();
+	}
+
 	CPlayer::Release();
 }
 
-CTOSMasterClient* CTOSPlayer::GetMasterClient()
+CTOSMasterClient* CTOSPlayer::GetMasterClient() const
 {
+	assert(m_pMasterClient);
 	return m_pMasterClient;
 }

@@ -37,7 +37,7 @@ public:
 	void Release() override;
 	//~CPlayer
 
-	CTOSMasterClient* GetMasterClient();
+	CTOSMasterClient* GetMasterClient() const;
 
 protected:
 private:
