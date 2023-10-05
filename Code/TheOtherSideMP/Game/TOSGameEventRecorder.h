@@ -38,7 +38,7 @@ enum EExtraGameplayEvent
 
 	eEGE_MasterStartControl, //NOT USED
 	eEGE_MasterStopControl, //NOT USED
-	eEGE_MasterEnterSpectator, //NOT USED
+	//eEGE_MasterEnterSpectator, //NOT USED
 
 	eEGE_MasterAdd,
 	eEGE_MasterRemove,
@@ -79,6 +79,18 @@ enum EExtraGameplayEvent
 
 	eEGE_EntitiesPreReset,
 	eEGE_EntitiesPostReset,
+
+	eEGE_EventExample1,
+	eEGE_EventExample2,
+	eEGE_EventExample3,
+	eEGE_EventExample4,
+	eEGE_EventExample5,
+	eEGE_EventExample6,
+	eEGE_EventExample7,
+	eEGE_EventExample8,
+	eEGE_EventExample9,
+	eEGE_EventExample10,
+
 	//eEGE_TOSGame_Init,
 
 	//eEGE_VehicleStuck,
@@ -237,8 +249,8 @@ public:
 			return "eEGE_MasterStartControl";
 		case eEGE_MasterStopControl:
 			return "eEGE_MasterStopControl";
-		case eEGE_MasterEnterSpectator:
-			return "eEGE_MasterEnterSpectator";
+		//case eEGE_MasterEnterSpectator:
+		//	return "eEGE_MasterEnterSpectator";
 		case eEGE_SlaveStartObey:
 			return "eEGE_SlaveStartObey";
 		case eEGE_SlaveStopObey:
@@ -287,10 +299,32 @@ public:
 			return "eEGE_TOSEntityScheduleDelegateAuthority";
 		case eEGE_TOSEntityAuthorityDelegated:
 			return "eEGE_TOSEntityAuthorityDelegated";
+		case eEGE_SlaveReadyToObey:
+			return "eEGE_SlaveReadyToObey";
 		case eEGE_EntitiesPreReset:
 			return "eEGE_EntitiesPreReset";
 		case eEGE_EntitiesPostReset:
 			return "eEGE_EntitiesPostReset";
+		case eEGE_EventExample1:
+			return "eEGE_EventExample1";
+		case eEGE_EventExample2:
+			return "eEGE_EventExample2";
+		case eEGE_EventExample3:
+			return "eEGE_EventExample3";
+		case eEGE_EventExample4:
+			return "eEGE_EventExample4";
+		case eEGE_EventExample5:
+			return "eEGE_EventExample5";
+		case eEGE_EventExample6:
+			return "eEGE_EventExample6";
+		case eEGE_EventExample7:
+			return "eEGE_EventExample7";
+		case eEGE_EventExample8:
+			return "eEGE_EventExample8";
+		case eEGE_EventExample9:
+			return "eEGE_EventExample9";
+		case eEGE_EventExample10:
+			return "eEGE_EventExample10";
 		case eEGE_Last:
 			return "eEGE_Last";
 

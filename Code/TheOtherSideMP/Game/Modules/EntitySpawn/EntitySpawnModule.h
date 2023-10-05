@@ -114,7 +114,16 @@ public:
 	void Init() override;
 	void Update(float frametime) override;
 	void Serialize(TSerialize ser) override;
+	void InitCVars(IConsole* pConsole) override;
+	void InitCCommands(IConsole* pConsole) override;
+	void ReleaseCVars() override;
+	void ReleaseCCommands() override;
 	//~ITOSGameModule
+
+	//Console command's functions
+	static void CmdSpawnEntity(IConsoleCmdArgs* pArgs);
+	static void CmdRemoveEntityById(IConsoleCmdArgs* pArgs);
+	static void CmdRemoveEntityByIdForced(IConsoleCmdArgs* pArgs);
 
 	/**
 	 * \brief Создаёт сущность по определенным параметрам
@@ -123,6 +132,20 @@ public:
 	 * \return Если успешно, то указатель IEntity* на созданную сущность, иначе nullptr
 	 */
 	static IEntity* SpawnEntity(STOSEntitySpawnParams& params, bool sendTosEvent = true);
+
+	/**
+	 * \brief Создаёт сущность по определенным параметрам с некоторой задержкой
+	 * \param params - параметры создания сущности. Задержка прописана внутри параметров.
+	 * \param sendTosEvent - если True, то при спавне произойдет отправка события eEGE_TOSEntityOnSpawn
+	 * \return Если успешно, то True
+	 */
+	static bool SpawnEntityDelay(STOSEntityDelaySpawnParams& params, bool sendTosEvent = true);
+
+	/**
+	 * \brief Удаляет сущность и очищает её записи, несмотря на флаг пересоздания \n TOS_ENTITY_FLAG_MUST_RECREATED в ETOSEntityFlags
+	 * \param id - идентификатор сущности, которую нужно удалить
+	 */
+	static void RemoveEntityForced(EntityId id);
 
 	/**
 	 * \brief Проверяет, должна ли быть воссоздана сущность после sv_restart
@@ -140,9 +163,9 @@ private:
 	void ScheduleRecreation(const IEntity* pEntity);
 
 	/**
-	 * \brief Проверяет, спавнилась ли сущность через EntitySpawnModule::SpawnEntity()
+	 * \brief Проверяет, спавнилась ли сущность через \a EntitySpawnModule::SpawnEntity()
 	 * \param pEntity - указатель на сущность, у которого проверяется наличие сохраненных параметров
-	 * \return Если сущность pEntity когда либо спавнилась через EntitySpawnModule::SpawnEntity(), то вернёт True
+	 * \return Если сущность pEntity когда либо спавнилась через \a EntitySpawnModule::SpawnEntity(), то вернёт True
 	 */
 	bool HaveSavedParams(const IEntity* pEntity) const;
 

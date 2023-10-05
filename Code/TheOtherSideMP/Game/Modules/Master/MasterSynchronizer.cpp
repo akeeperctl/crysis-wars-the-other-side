@@ -63,10 +63,10 @@ IMPLEMENT_RMI(CTOSMasterSynchronizer, SvRequestMasterAdd)
 
 	if (gEnv->bServer)
 	{
+		CryLogAlways("[C++][%s][%s][SvRequestMasterAdd]", TOS_Debug::GetEnv(), TOS_Debug::GetAct(3));
+
 		const auto pEntity = gEnv->pEntitySystem->GetEntity(params.entityId);
 		assert(pEntity);
-
-		CryLogAlways("[C++][%s][%s][SvRequestMasterAdd]", TOS_Debug::GetEnv(), TOS_Debug::GetAct(3));
 
 		g_pTOSGame->GetMasterModule()->MasterAdd(pEntity, params.desiredSlaveClassName);
 	}
@@ -81,7 +81,6 @@ IMPLEMENT_RMI(CTOSMasterSynchronizer, SvRequestSetDesiredSlaveCls)
 	if (gEnv->bServer)
 	{
 		CryLogAlways("[C++][%s][%s][SvRequestSetDesiredSlaveCls]", TOS_Debug::GetEnv(), TOS_Debug::GetAct(3));
-
 		// Указатель на класс уже проверен на этапе перед отправкой RMI
 		const auto pEntity = gEnv->pEntitySystem->GetEntity(params.entityId);
 		assert(pEntity);

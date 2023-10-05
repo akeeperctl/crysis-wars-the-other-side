@@ -31,12 +31,10 @@ void STOSCvars::InitCCommands(IConsole* pConsole) const
 {
 	//SERVER COMMANDS
 	pConsole->AddCommand("netchname", CmdNetChName);
-	pConsole->AddCommand("spawnentity", CmdSpawnEntity);
-	pConsole->AddCommand("removeentity", CmdRemoveEntity);
 	pConsole->AddCommand("getentitiesbyclass", CmdGetEntitiesByClass);
 	pConsole->AddCommand("getsyncs", CmdGetSyncs);
-	pConsole->AddCommand("getentbyid", CmdGetEntityById);
-	pConsole->AddCommand("getentscriptvalue", CmdGetEntityScriptValue);
+	pConsole->AddCommand("getentitybyid", CmdGetEntityById);
+	pConsole->AddCommand("getentityscriptvalue", CmdGetEntityScriptValue);
 
 	//CLIENT COMMANDS
 	pConsole->AddCommand("getlocalname", CmdGetLocalName);
@@ -96,53 +94,6 @@ void STOSCvars::CmdNetChName(IConsoleCmdArgs* pArgs)
 		return;
 
 	CryLogAlways("Result: (%s|%s)", playerEntityName, pChannel->GetName());
-}
-
-void STOSCvars::CmdSpawnEntity(IConsoleCmdArgs* pArgs)
-{
-	ONLY_SERVER_CMD;
-
-	const auto pClass = gEnv->pEntitySystem->GetClassRegistry()->FindClass(pArgs->GetArg(1));
-	assert(pClass);
-
-	const string newEntName = pArgs->GetArg(2);
-	const string plName = pArgs->GetArg(3);
-
-	const auto pPlayerEntity = gEnv->pEntitySystem->FindEntityByName(plName.c_str());
-	assert(pPlayerEntity);
-	if (!pPlayerEntity)
-	{
-		CryLogAlways("Spawn failed: player entity %(s) not found", plName.c_str());
-		return;
-	}
-
-	STOSEntitySpawnParams params;
-	params.authorityPlayerName = plName;
-	params.vanilla.bStaticEntityId = true;
-	params.vanilla.pClass = pClass;
-	//params.vanilla.sName = newEntName.c_str();
-	params.savedName = newEntName.c_str();
-	params.vanilla.vPosition = pPlayerEntity->GetWorldPos();
-	params.tosFlags |= TOS_ENTITY_FLAG_MUST_RECREATED;
-
-	TOS_Entity::Spawn(params);
-}
-
-void STOSCvars::CmdRemoveEntity(IConsoleCmdArgs* pArgs)
-{
-	ONLY_SERVER_CMD;
-
-	const char* entName = pArgs->GetArg(1);
-
-	const auto pEntity = gEnv->pEntitySystem->FindEntityByName(entName);
-	assert(pEntity);
-	if (!pEntity)
-	{
-		CryLogAlways("Remove failed: entity %s not found", entName);
-		return;
-	}
-
-	gEnv->pEntitySystem->RemoveEntity(pEntity->GetId(), true);
 }
 
 void STOSCvars::CmdGetEntityScriptValue(IConsoleCmdArgs* pArgs)

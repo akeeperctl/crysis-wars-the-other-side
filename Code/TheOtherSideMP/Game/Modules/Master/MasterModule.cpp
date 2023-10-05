@@ -48,15 +48,6 @@ void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEven
 	//case eEGE_ActorPostInit: no ok on client
 	case eEGE_SynchronizerCreated:	
 	{
-		//if (pEntity && gEnv->bServer)
-		//{
-		//	const auto pPlayer = dynamic_cast<CTOSPlayer*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pEntity->GetId()));
-		//	if (!pPlayer)
-		//		break;
-
-		//	MasterAdd(pPlayer->GetEntity());
-		//}
-
 		if (pEntity && gEnv->bClient)
 		{
 			const int joinAsAlien = gEnv->pConsole->GetCVar("tos_cl_JoinAsMaster")->GetIVal();
@@ -85,7 +76,7 @@ void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEven
 				GetMasterInfo(pEntity, info);
 
 				const string slaveClsName = info.desiredSlaveClassName;
-				const string slaveName = entName + " (Slave)";
+				const string slaveName = entName + "(Slave)";
 				const auto pClass = gEnv->pEntitySystem->GetClassRegistry()->FindClass(slaveClsName.c_str());
 
 				assert(pClass);
@@ -98,19 +89,49 @@ void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEven
 					break;
 				}
 
-				STOSEntitySpawnParams params;
-				params.savedName = slaveName;
+				STOSEntityDelaySpawnParams params;
 				params.authorityPlayerName = entName;
+				params.savedName = slaveName;
+				params.scheduledTimeStamp = gEnv->pTimer->GetFrameStartTime().GetSeconds();
+				params.spawnDelay = tos_sv_SlaveSpawnDelay;
 				params.tosFlags |= TOS_ENTITY_FLAG_MUST_RECREATED;
 				params.vanilla.bStaticEntityId = true;
 				params.vanilla.nFlags |= ENTITY_FLAG_NEVER_NETWORK_STATIC | ENTITY_FLAG_TRIGGER_AREAS | ENTITY_FLAG_CASTSHADOW;
 				params.vanilla.pClass = pClass;
-				params.vanilla.vPosition = pEntity->GetWorldPos();
 				params.vanilla.qRotation = pEntity->GetWorldRotation();
+				params.vanilla.vPosition = pEntity->GetWorldPos();
+				params.willBeSlave = true;
 
-				TOS_Entity::Spawn(params);
+				TOS_Entity::SpawnDelay(params);
 			}
 
+		}
+
+		break;
+	}
+	case eEGE_SlaveReadyToObey:
+	{
+		if (gEnv->bServer)
+		{
+			const auto masterChannelId = event.int_value;
+
+			//TODO:
+			//1) Создать RMI на клиенте для начала управления рабом
+			//2) Отправить RMI на клиент мастера, чтобы мастер начал управлять рабом
+		}
+
+		break;
+	}
+	case eEGE_PlayerJoinedSpectator:
+	{
+		if (gEnv->bServer)
+		{
+			if (IsMaster(pEntity))
+			{
+				const auto pSlave = GetSlave(pEntity);
+				if (pSlave)
+					TOS_Entity::RemoveEntityForced(pSlave->GetId());
+			}
 		}
 
 		break;
@@ -122,6 +143,13 @@ void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEven
 			const auto pPlayer = dynamic_cast<CTOSPlayer*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pEntity->GetId()));
 			if (!pPlayer)
 				break;
+
+			if (IsMaster(pPlayer->GetEntity()))
+			{
+				const auto pSlave = GetSlave(pEntity);
+				if (pSlave)
+					TOS_Entity::RemoveEntityForced(pSlave->GetId());
+			}
 
 			MasterRemove(pPlayer->GetEntity());
 		}

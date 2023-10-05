@@ -40,9 +40,6 @@ struct STOSCvars  // NOLINT(cppcoreguidelines-special-member-functions)
 	// SERVER COMMANDS
 	static void CmdNetChName(IConsoleCmdArgs *pArgs);	
 
-	static void CmdSpawnEntity(IConsoleCmdArgs* pArgs);
-	static void CmdRemoveEntity(IConsoleCmdArgs* pArgs);
-
 	static void CmdGetEntityScriptValue(IConsoleCmdArgs* pArgs);
 	static void CmdGetEntityById(IConsoleCmdArgs* pArgs);
 	static void CmdGetEntitiesByClass(IConsoleCmdArgs* pArgs);

@@ -803,6 +803,9 @@
     <ClCompile Include="TheOtherSideMP\MasterCvars.cpp">
       <Filter>TheOtherSideMP\Game\Modules\Master</Filter>
     </ClCompile>
+    <ClCompile Include="TheOtherSideMP\Game\Modules\EntitySpawn\EntitySpawnCvars.cpp">
+      <Filter>TheOtherSideMP\Game\Modules\EntitySpawn</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor.h">
@@ -1426,6 +1429,9 @@
     </ClInclude>
     <ClInclude Include="TheOtherSideMP\TOSSmartStruct.h">
       <Filter>TheOtherSideMP</Filter>
+    </ClInclude>
+    <ClInclude Include="TheOtherSideMP\Helpers\TOS_Cache.h">
+      <Filter>TheOtherSideMP\Helpers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

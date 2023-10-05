@@ -103,6 +103,34 @@ void CTOSEntitySpawnModule::Update(float frametime)
 	if (!gEnv->bServer)
 		return;
 
+	for (auto &schedPair : s_scheduledSpawnsDelay)
+	{
+		const int scheduledRecordId = schedPair.first;
+		auto pSpawnParams = schedPair.second;
+		assert(pSpawnParams);
+
+		const float curTime = gEnv->pTimer->GetFrameStartTime().GetSeconds();
+		const float recordedTime = pSpawnParams->scheduledTimeStamp;
+		const float delay = pSpawnParams->spawnDelay;
+
+		if (curTime - recordedTime > delay)
+		{
+			// Обновим актуальные координаты мастера в записи сущности, если таковой мастер имеется.
+			// Это нужно для того, чтобы когда сущность респавнилась она была в одной позиции с её мастером
+			auto pAuthorityPlayerEnt = gEnv->pEntitySystem->FindEntityByName(pSpawnParams->authorityPlayerName);
+			if (pAuthorityPlayerEnt)
+			{
+				pSpawnParams->vanilla.vPosition = pAuthorityPlayerEnt->GetWorldPos();
+				pSpawnParams->vanilla.qRotation = pAuthorityPlayerEnt->GetWorldRotation();
+			}
+
+			SpawnEntity(*pSpawnParams, true);
+
+			s_scheduledSpawnsDelay.erase(scheduledRecordId);
+			break;
+		}
+	}
+
 	for (auto &schedPair : m_scheduledRecreations)
 	{
 		EntityId scheduledId = schedPair.first;
@@ -222,7 +250,7 @@ void CTOSEntitySpawnModule::Serialize(TSerialize ser)
 {
 }
 
-IEntity* CTOSEntitySpawnModule::SpawnEntity(STOSEntitySpawnParams& params, const bool sendTosEvent)
+IEntity* CTOSEntitySpawnModule::SpawnEntity(STOSEntitySpawnParams& params, bool sendTosEvent /*= true*/)
 {
 	CRY_ASSERT_MESSAGE(gEnv->bServer, "Entity spawning process only can be on the server");
 	if (!gEnv->bServer)
@@ -269,6 +297,51 @@ IEntity* CTOSEntitySpawnModule::SpawnEntity(STOSEntitySpawnParams& params, const
 	return pEntity;
 }
 
+bool CTOSEntitySpawnModule::SpawnEntityDelay(STOSEntityDelaySpawnParams& params, bool sendTosEvent /*= true*/)
+{
+	CRY_ASSERT_MESSAGE(gEnv->bServer, "Entity spawning process only can be on the server");
+	if (!gEnv->bServer)
+		return false;
+
+	const auto pEntSys = gEnv->pEntitySystem;
+	assert(pEntSys);
+	if (!pEntSys)
+		return false;
+
+	if (params.spawnDelay < 0.001f)
+	{
+		return SpawnEntity(params,sendTosEvent);
+	}
+
+	// Мы не можем проверить наличие этой записи в map, потому что у нас нет идентификатора записи.
+	// Поэтому просто добавим следующую запись.
+	auto delayedParams = new STOSEntityDelaySpawnParams(params);
+
+	const int curRecordId = static_cast<int>(s_scheduledSpawnsDelay.size());
+	s_scheduledSpawnsDelay[curRecordId] = delayedParams;
+
+	return true;
+}
+
+void CTOSEntitySpawnModule::RemoveEntityForced(EntityId id)
+{
+	// Обманка для компилятора, чтобы я мог в static методе использовать не static переменные
+	auto pSM = g_pTOSGame->GetEntitySpawnModule();
+	assert(pSM);
+
+	stl::find_and_erase(s_markedForRecreation, id);
+
+	if (pSM->m_scheduledAuthorities.find(id) != pSM->m_scheduledAuthorities.end())
+		pSM->m_scheduledAuthorities.erase(id);
+
+	if (pSM->m_scheduledRecreations.find(id) != pSM->m_scheduledRecreations.end())
+		pSM->m_scheduledRecreations.erase(id);
+
+	if (pSM->m_savedParams.find(id) != pSM->m_savedParams.end())
+		pSM->m_savedParams.erase(id);
+
+	gEnv->pEntitySystem->RemoveEntity(id);
+}
 
 bool CTOSEntitySpawnModule::MustBeRecreated(const IEntity* pEntity) const
 {

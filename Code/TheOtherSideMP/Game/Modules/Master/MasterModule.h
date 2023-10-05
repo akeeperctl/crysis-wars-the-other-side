@@ -60,9 +60,11 @@ public:
 	IEntity* GetSlave(const IEntity* pMasterEntity);
 	void DebugDraw(const Vec2& screenPos = {20,300}, float fontSize = 1.2f, float interval = 20.0f, int maxElemNum = 5);
 
-	//Console commands
+	//Console command's functions
 	static void CmdGetMastersList(IConsoleCmdArgs* pArgs);
 	static void CmdIsMaster(IConsoleCmdArgs* pArgs);
+
+	//Console variable's functions
 	static void CVarSetDesiredSlaveCls(ICVar* pVar);
 
 private:
@@ -70,9 +72,11 @@ private:
 
 
 public:
+
 	//Console variables
 	int tos_cl_JoinAsMaster;
 	ICVar* tos_cl_SlaveEntityClass;
+	float tos_sv_SlaveSpawnDelay;
 
 private:
 	std::map<EntityId, STOSMasterInfo> m_masters; //ключ - мастер, значение - структура, хранящая имя класса раба, который должен будет заспавниться
