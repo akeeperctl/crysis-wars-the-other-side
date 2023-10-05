@@ -75,6 +75,8 @@ enum EExtraGameplayEvent
 	eEGE_TOSEntityScheduleDelegateAuthority,
 	eEGE_TOSEntityAuthorityDelegated,
 
+	eEGE_SlaveReadyToObey,
+
 	eEGE_EntitiesPreReset,
 	eEGE_EntitiesPostReset,
 	//eEGE_TOSGame_Init,

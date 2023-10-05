@@ -11,6 +11,7 @@
 #include "TheOtherSideMP/Helpers/TOS_STL.h"
 
 TVecEntities CTOSEntitySpawnModule::s_markedForRecreation;
+TMapDelayTOSParams CTOSEntitySpawnModule::s_scheduledSpawnsDelay;
 
 CTOSEntitySpawnModule::CTOSEntitySpawnModule()
 {
@@ -36,8 +37,9 @@ void CTOSEntitySpawnModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGam
 		auto it = m_scheduledAuthorities.find(entId);
 		if (it == m_scheduledAuthorities.end())
 		{
+			m_scheduledAuthorities[entId].willBeSlave = static_cast<bool>(event.int_value);
 			m_scheduledAuthorities[entId].playerName = playerName;
-			m_scheduledAuthorities[entId].scheduledTime = gEnv->pTimer->GetFrameStartTime().GetSeconds();
+			m_scheduledAuthorities[entId].scheduledTimeStamp = gEnv->pTimer->GetFrameStartTime().GetSeconds();
 		}
 
 		break;
@@ -91,6 +93,7 @@ void CTOSEntitySpawnModule::Init()
 	m_savedParams.clear();
 	s_markedForRecreation.clear();
 	m_scheduledAuthorities.clear();
+	s_scheduledSpawnsDelay.clear();
 }
 
 void CTOSEntitySpawnModule::Update(float frametime)
@@ -152,6 +155,7 @@ void CTOSEntitySpawnModule::Update(float frametime)
 
 		const char* schedName = pScheduledEnt->GetName();
 		const char* playerName = schedPair.second.playerName.c_str();
+		const bool willBeSlave = schedPair.second.willBeSlave;
 
 		const auto pPlayerEnt = gEnv->pEntitySystem->FindEntityByName(playerName);
 		//assert(pPlayerEnt);
@@ -180,6 +184,12 @@ void CTOSEntitySpawnModule::Update(float frametime)
 				sprintf(buffer, "%s take own of %s", playerName, schedName);
 
 				TOS_RECORD_EVENT(0, STOSGameEvent(eEGE_TOSEntityAuthorityDelegated, buffer, true));
+
+				if (willBeSlave)
+				{
+					const auto masterChannelId = playerChannelId;
+					TOS_RECORD_EVENT(scheduledId, STOSGameEvent(eEGE_SlaveReadyToObey, "", true, false, nullptr, 0.0f, masterChannelId));
+				}
 			}
 
 			break;
@@ -200,7 +210,7 @@ void CTOSEntitySpawnModule::Update(float frametime)
 			const float currentTime = gEnv->pTimer->GetFrameStartTime().GetSeconds();
 
 			// если запланированной передачи власти не было более 10 секунд, то удаляем пару
-			if (currentTime - schedPair.second.scheduledTime > 10.0f)
+			if (currentTime - schedPair.second.scheduledTimeStamp > 10.0f)
 			{
 				m_scheduledAuthorities.erase(scheduledId);
 			}
@@ -249,12 +259,16 @@ IEntity* CTOSEntitySpawnModule::SpawnEntity(STOSEntitySpawnParams& params, const
 	// Осуществление самой передачи происходит тогда, когда указатель на игрока будет валидным
 	if (!params.authorityPlayerName.empty())
 	{
-		TOS_RECORD_EVENT(entityId, STOSGameEvent(eEGE_TOSEntityScheduleDelegateAuthority, params.authorityPlayerName.c_str(), true));
+		const char* plName = params.authorityPlayerName;
+		const bool willBeSlave = params.willBeSlave;
+
+		TOS_RECORD_EVENT(entityId, STOSGameEvent(eEGE_TOSEntityScheduleDelegateAuthority, plName, true, false, nullptr, 0.0f, willBeSlave));
 	}
 
 
 	return pEntity;
 }
+
 
 bool CTOSEntitySpawnModule::MustBeRecreated(const IEntity* pEntity) const
 {
@@ -365,6 +379,7 @@ void CTOSEntitySpawnModule::ScheduleRecreation(const IEntity* pEntity)
 
 	pParams->savedName = entName;
 	pParams->authorityPlayerName = m_savedParams[entId]->authorityPlayerName;
+	pParams->willBeSlave = m_savedParams[entId]->willBeSlave;
 
 	// Здесь, в переменной pParams.vanilla имя sName присутствует
 	m_scheduledRecreations[entId] = pParams;
