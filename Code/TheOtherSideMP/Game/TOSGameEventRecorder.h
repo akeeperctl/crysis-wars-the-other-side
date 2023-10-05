@@ -36,10 +36,7 @@ enum EExtraGameplayEvent
 	eEGE_ActorInitClient,
 	eEGE_ActorRelease,
 
-	eEGE_MasterStartControl, //NOT USED
-	eEGE_MasterStopControl, //NOT USED
 	//eEGE_MasterEnterSpectator, //NOT USED
-
 	eEGE_MasterAdd,
 	eEGE_MasterRemove,
 
@@ -54,11 +51,13 @@ enum EExtraGameplayEvent
 
 	eEGE_PlayerJoinedGame, // Игрок нажал кнопку "Присоединится" и появился в игре
 	eEGE_PlayerJoinedSpectator, // Игрок нажал кнопку "Зритель" и перешёл в режим зрителя
+	eEGE_PlayerJoinedCutscene,
 
 	eEGE_GamerulesReset,
 	eEGE_GamerulesStartGame,
 	eEGE_GamerulesEventInit,
 	eEGE_GamerulesPostInit,
+	eEGE_GamerulesPostInitClient,
 	eEGE_GamerulesInit,
 	eEGE_GamerulesDestroyed, //NOT USED
 
@@ -80,16 +79,28 @@ enum EExtraGameplayEvent
 	eEGE_EntitiesPreReset,
 	eEGE_EntitiesPostReset,
 
-	eEGE_EventExample1,
-	eEGE_EventExample2,
-	eEGE_EventExample3,
-	eEGE_EventExample4,
-	eEGE_EventExample5,
-	eEGE_EventExample6,
-	eEGE_EventExample7,
-	eEGE_EventExample8,
-	eEGE_EventExample9,
-	eEGE_EventExample10,
+	eEGE_MasterClientSetSlave, ///< Вызывается с локальной машины, когда у мастер-клиента изменяется указатель на контролируемого раб
+	eEGE_MasterClientClearSlave, ///< Вызывается с локальной машины, когда у мастер-клиента указатель на контролируемого раба становится равен 0
+	eEGE_MasterClientStartControl, ///< Вызывается с локальной машины, когда мастер-клиент начинает контролировать сущность раба
+	eEGE_MasterClientStopControl, ///< Вызывается с локальной машины, когда мастер-клиент завершает контролировать сущность раба
+
+	eEGE_SlaveEntityOnRemove,
+
+	eEGE_GameChannelDestroyed,
+	eEGE_ConfigureGameChannel,
+
+	eEGE_ClientConnect,
+	eEGE_ClientDisconnect,
+	eEGE_ClientEnteredGame,
+
+	eEGE_UpdateContextViewState,
+	eEGE_UpdateChannelConnectionState,
+
+	eEGE_Example3,
+	eEGE_Example4,
+	eEGE_Example5,
+	eEGE_Example6,
+	eEGE_Example7,
 
 	//eEGE_TOSGame_Init,
 
@@ -245,10 +256,10 @@ public:
 			return "eEGE_ActorInitClient";
 		case eEGE_GamerulesReset:
 			return "eEGE_GamerulesReset";
-		case eEGE_MasterStartControl:
-			return "eEGE_MasterStartControl";
-		case eEGE_MasterStopControl:
-			return "eEGE_MasterStopControl";
+		case eEGE_MasterClientStartControl:
+			return "eEGE_MasterClientStartControl";
+		case eEGE_MasterClientStopControl:
+			return "eEGE_MasterClientStopControl";
 		//case eEGE_MasterEnterSpectator:
 		//	return "eEGE_MasterEnterSpectator";
 		case eEGE_SlaveStartObey:
@@ -305,31 +316,44 @@ public:
 			return "eEGE_EntitiesPreReset";
 		case eEGE_EntitiesPostReset:
 			return "eEGE_EntitiesPostReset";
-		case eEGE_EventExample1:
-			return "eEGE_EventExample1";
-		case eEGE_EventExample2:
-			return "eEGE_EventExample2";
-		case eEGE_EventExample3:
-			return "eEGE_EventExample3";
-		case eEGE_EventExample4:
-			return "eEGE_EventExample4";
-		case eEGE_EventExample5:
-			return "eEGE_EventExample5";
-		case eEGE_EventExample6:
-			return "eEGE_EventExample6";
-		case eEGE_EventExample7:
-			return "eEGE_EventExample7";
-		case eEGE_EventExample8:
-			return "eEGE_EventExample8";
-		case eEGE_EventExample9:
-			return "eEGE_EventExample9";
-		case eEGE_EventExample10:
-			return "eEGE_EventExample10";
+		case eEGE_MasterClientSetSlave:
+			return "eEGE_MasterClientSetSlave";
+		case eEGE_MasterClientClearSlave:
+			return "eEGE_MasterClientClearSlave";
+		case eEGE_SlaveEntityOnRemove:
+			return "eEGE_SlaveEntityOnRemove";
+		case eEGE_PlayerJoinedCutscene:
+			return "eEGE_PlayerJoinedCutscene";
+		case eEGE_GameChannelDestroyed:
+			return "eEGE_GameChannelDestroyed";
+		case eEGE_ConfigureGameChannel:
+			return "eEGE_ConfigureGameChannel";
+		case eEGE_ClientConnect:
+			return "eEGE_ClientConnect";
+		case eEGE_ClientDisconnect:
+			return "eEGE_ClientDisconnect";
+		case eEGE_ClientEnteredGame:
+			return "eEGE_ClientEnteredGame";
+		case eEGE_GamerulesPostInitClient:
+			return "eEGE_GamerulesPostInitClient";
+		case eEGE_UpdateContextViewState:
+			return "eEGE_UpdateContextViewState";
+		case eEGE_UpdateChannelConnectionState:
+			return "eEGE_UpdateChannelConnectionState";
+		case eEGE_Example3:
+			return "eEGE_Example3";
+		case eEGE_Example4:
+			return "eEGE_Example4";
+		case eEGE_Example5:
+			return "eEGE_Example5";
+		case eEGE_Example6:
+			return "eEGE_Example6";
+		case eEGE_Example7:
+			return "eEGE_Example7";
 		case eEGE_Last:
 			return "eEGE_Last";
-
 		default:
-			return "UNDEFINED";
+			return "<UNDEFINED>";
 		}
 	}
 

@@ -642,6 +642,7 @@
     <ClInclude Include="TagBullet.h" />
     <ClInclude Include="TheOtherSideMP\Actors\Aliens\TOSAlien.h" />
     <ClInclude Include="TheOtherSideMP\Actors\Aliens\TOSTrooper.h" />
+    <ClInclude Include="TheOtherSideMP\Actors\ITOSMasterControllable.h" />
     <ClInclude Include="TheOtherSideMP\Actors\Player\TOSPlayer.h" />
     <ClInclude Include="TheOtherSideMP\Actors\TOSActor.h" />
     <ClInclude Include="TheOtherSideMP\AI\AIActionTracker.h">

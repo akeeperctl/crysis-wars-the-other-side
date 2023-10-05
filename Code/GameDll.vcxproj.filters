@@ -1433,6 +1433,9 @@
     <ClInclude Include="TheOtherSideMP\Helpers\TOS_Cache.h">
       <Filter>TheOtherSideMP\Helpers</Filter>
     </ClInclude>
+    <ClInclude Include="TheOtherSideMP\Actors\ITOSMasterControllable.h">
+      <Filter>TheOtherSideMP\Actors</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="GameActions.actions">

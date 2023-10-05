@@ -109,7 +109,7 @@ public:
 		if (!pGP)
 			return;
 
-		pGP->InvokeRMI_Primitive(method, params, where, channel, ent);
+		pGP->InvokeRMIWithDependentObject(method, params, where, ent, channel);
 	}
 
 	virtual const char* GetClassName()

@@ -1,6 +1,8 @@
 #include "StdAfx.h"
 #include "TOSActor.h"
+
 #include "Actor.h"
+
 #include "../Game/TOSGameEventRecorder.h"
 
 CTOSActor::CTOSActor() : 
@@ -61,6 +63,11 @@ void CTOSActor::Release()
 void CTOSActor::Revive(const bool fromInit)
 {
 	CActor::Revive(fromInit);
+}
+
+void CTOSActor::UpdateMasterView(SViewParams& viewParams, Vec3& offsetX, Vec3& offsetY, Vec3& offsetZ, Vec3& target, Vec3& current, float& currentFov)
+{
+
 }
 
 void CTOSActor::SetMasterEntityId(const EntityId id)

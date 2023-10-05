@@ -1,6 +1,9 @@
 #include "StdAfx.h"
 
 #include "MasterSynchronizer.h"
+
+#include "MasterClient.h"
+
 #include "../../TOSGameEventRecorder.h"
 
 CTOSMasterSynchronizer::CTOSMasterSynchronizer()
@@ -95,7 +98,7 @@ IMPLEMENT_RMI(CTOSMasterSynchronizer, SvRequestSetDesiredSlaveCls)
 	return true;
 }
 ////------------------------------------------------------------------------
-IMPLEMENT_RMI(CTOSMasterSynchronizer, ClMasterStartControl)
+IMPLEMENT_RMI(CTOSMasterSynchronizer, ClMasterClientStartControl)
 {
 	// Здесь пишем всё, что должно выполниться на клиенте
 
@@ -103,17 +106,75 @@ IMPLEMENT_RMI(CTOSMasterSynchronizer, ClMasterStartControl)
 	{
 		const auto localPlayerNick = g_pGame->GetIGameFramework()->GetClientActor()->GetEntity()->GetName();
 
-		CryLogAlways("[C++][%s][%s][ClMasterStartControl] LocalPlayerNick: %s", 
+		CryLogAlways("[C++][%s][%s][ClMasterClientStartControl] LocalPlayerNick: %s", 
 			TOS_Debug::GetEnv(), TOS_Debug::GetAct(3), localPlayerNick);
 
 		const auto pSlaveEntity = gEnv->pEntitySystem->GetEntity(params.slaveId);
 		assert(pSlaveEntity);
 
-
+		// В данном случае params.masterId равен 0, т.к. мы уже на локальном клиенте,
+		// который имеет мастер-клиент и локального игрока
+		g_pTOSGame->GetMasterModule()->GetMasterClient()->StartControl(pSlaveEntity);
 	}
 
 	return true;
 }
+////------------------------------------------------------------------------
+IMPLEMENT_RMI(CTOSMasterSynchronizer, SvRequestMasterClientStartControl)
+{
+	// Здесь пишем всё, что должно выполниться на сервере
+
+	if (gEnv->bServer)
+	{
+		CryLogAlways("[C++][%s][%s][SvRequestMasterClientStartControl]",
+			TOS_Debug::GetEnv(), TOS_Debug::GetAct(3));
+
+		const auto pSlaveEntity = gEnv->pEntitySystem->GetEntity(params.slaveId);
+		const auto pMasterEntity = gEnv->pEntitySystem->GetEntity(params.masterId);
+		assert(pSlaveEntity);
+		assert(pMasterEntity);
+
+		// В данном случае сервер не знает какому мастеру нужно прописать полученного раба.
+		// Поэтому мы передаём серверу информацию как о рабе, так и о мастере.
+		g_pTOSGame->GetMasterModule()->SetSlave(pMasterEntity, pSlaveEntity);
+	}
+
+	return true;
+}
+////------------------------------------------------------------------------
+IMPLEMENT_RMI(CTOSMasterSynchronizer, SvRequestMasterClientStopControl)
+{
+	// Здесь пишем всё, что должно выполниться на сервере
+
+	if (gEnv->bServer)
+	{
+		CryLogAlways("[C++][%s][%s][SvRequestMasterClientStopControl]",
+			TOS_Debug::GetEnv(), TOS_Debug::GetAct(3));
+
+		const auto pMasterEntity = gEnv->pEntitySystem->GetEntity(params.masterId);
+		assert(pMasterEntity);
+
+		g_pTOSGame->GetMasterModule()->ClearSlave(pMasterEntity);
+	}
+
+	return true;
+}
+////------------------------------------------------------------------------
+IMPLEMENT_RMI(CTOSMasterSynchronizer, ClMasterClientStopControl)
+{
+	// Здесь пишем всё, что должно выполниться на клиенте
+
+	if (gEnv->bClient)
+	{
+		CryLogAlways("[C++][%s][%s][ClMasterClientStopControl]",
+			TOS_Debug::GetEnv(), TOS_Debug::GetAct(3));
+
+		g_pTOSGame->GetMasterModule()->GetMasterClient()->StopControl();
+	}
+
+	return true;
+}
+
 //Not actual any more
 ////------------------------------------------------------------------------
 //IMPLEMENT_RMI(CTOSMasterRMISender, SvRequestMasterRemove)

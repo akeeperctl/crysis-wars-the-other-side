@@ -35,7 +35,15 @@ public:
 	void Update(SEntityUpdateContext& ctx, int updateSlot) override;
 	bool NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int flags) override;
 	void Release() override;
+	void UpdateView(SViewParams& viewParams) override;
+	void PostUpdateView(SViewParams& viewParams) override;
 	//~CPlayer
+
+	//CTOSActor
+	Matrix33 GetViewMtx() override;
+	Matrix33 GetBaseMtx() override;
+	Matrix33 GetEyeMtx() override;
+	//~CTOSActor
 
 	CTOSMasterClient* GetMasterClient() const;
 

@@ -2,7 +2,9 @@
 #include "MasterModule.h"
 
 #include "Game.h"
+#include "GameRules.h"
 #include "IEntitySystem.h"
+#include "MasterClient.h"
 #include "MasterSynchronizer.h"
 
 #include "../../TOSGame.h"
@@ -18,6 +20,7 @@
 CTOSMasterModule::CTOSMasterModule()
 {
 	m_masters.clear();
+	m_scheduledTakeControls.clear();
 }
 
 CTOSMasterModule::~CTOSMasterModule()
@@ -40,7 +43,9 @@ void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEven
 	{
 	//case eEGE_GamerulesStartGame: is ok
 	//case eEGE_GamerulesPostInit: not ok
-	case eEGE_GamerulesStartGame:
+	//case eEGE_GameModuleInit: not ok
+	//case eEGE_EntitiesPostReset: not ok
+	case eEGE_GamerulesStartGame: //not ok long time still ok
 	{
 		CreateSynchonizer<CTOSMasterSynchronizer>("MasterSynchronizer", "TOSMasterSynchronizer");
 		break;
@@ -115,31 +120,111 @@ void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEven
 		{
 			const auto masterChannelId = event.int_value;
 
-			//TODO:
-			//1) Создать RMI на клиенте для начала управления рабом
-			//2) Отправить RMI на клиент мастера, чтобы мастер начал управлять рабом
+			//Обнаружен баг
+			//При sv_restart на сервере синхронизатор появляется раньше и раб тоже
+			//а на клиенте много позже, так что при попытке отправить RMI'шку на клиент
+			//во время его загрузки вызывает дисконнект клиента. И пишет что у синхронизатора
+			//не найден GameObjectExtension
+			// Исправление: запланировать передачу контроля после того как сущность готова
+			// подчиняться и когда клиент полностью инициализирован
+
+			const auto inGame = g_pGame->GetGameRules()->IsChannelInGame(masterChannelId);
+			if (!inGame)
+			{
+				//раб, клиент мастера
+				STOSStartControlInfo info;
+				info.masterChannelId = masterChannelId;
+				info.slaveId = entId;
+
+				ScheduleMasterStartControl(info);
+
+				break;
+			}
+
 			MasterStartControlParams params;
-			params.slaveId = pEntity->GetId();
+			params.slaveId = entId;
 
 			assert(m_pSynchonizer);
 			m_pSynchonizer->RMISend(
-				CTOSMasterSynchronizer::ClMasterStartControl(), 
-				params, 
-				eRMI_ToClientChannel, 
-				masterChannelId);
+				CTOSMasterSynchronizer::ClMasterClientStartControl(),
+				params,
+				eRMI_ToClientChannel,
+				masterChannelId
+			);
 		}
 
 		break;
 	}
+	case eEGE_MasterClientStartControl:
+	{
+		// Излишняя проверка на клиента
+		if (gEnv->bClient)
+		{
+			MasterStartControlParams params;
+			params.slaveId = pEntity->GetId();
+			params.masterId = g_pGame->GetIGameFramework()->GetClientActorId();
+
+			assert(m_pSynchonizer);
+			m_pSynchonizer->RMISend(
+				CTOSMasterSynchronizer::SvRequestMasterClientStartControl(),
+				params,
+				eRMI_ToServer
+			);
+		}
+		break;
+	}
+	case eEGE_MasterClientStopControl:
+	{
+		// Излишняя проверка на клиента
+		if (gEnv->bClient)
+		{
+			MasterStopControlParams params;
+			params.masterId = g_pGame->GetIGameFramework()->GetClientActorId();
+
+			assert(m_pSynchonizer);
+			m_pSynchonizer->RMISend(
+				CTOSMasterSynchronizer::SvRequestMasterClientStopControl(),
+				params,
+				eRMI_ToServer
+			);
+		}
+		break;
+	}
 	case eEGE_PlayerJoinedSpectator:
 	{
+		const auto pPlayer = g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(entId);
+		assert(pPlayer);
+
 		if (gEnv->bServer)
 		{
+			const int playerChannelId = pPlayer->GetChannelId();
+
 			if (IsMaster(pEntity))
 			{
 				const auto pSlave = GetSlave(pEntity);
 				if (pSlave)
+				{
+					assert(m_pSynchonizer);
+					m_pSynchonizer->RMISend(
+						CTOSMasterSynchronizer::ClMasterClientStopControl(),
+						NoParams(),
+						eRMI_ToClientChannel,
+						playerChannelId
+					);
+
 					TOS_Entity::RemoveEntityForced(pSlave->GetId());
+				}
+			}
+		}
+
+		if (gEnv->bClient && pPlayer->IsClient())
+		{
+			const auto pLocalMS = g_pTOSGame->GetMasterModule()->GetMasterClient();
+			assert(pLocalMS);
+
+			if (pLocalMS->GetSlaveEntity())
+			{
+				pLocalMS->StopControl();
 			}
 		}
 
@@ -157,10 +242,20 @@ void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEven
 			{
 				const auto pSlave = GetSlave(pEntity);
 				if (pSlave)
+				{
 					TOS_Entity::RemoveEntityForced(pSlave->GetId());
+				}
 			}
 
 			MasterRemove(pPlayer->GetEntity());
+		}
+		break;
+	}
+	case eEGE_EntityOnRemove:
+	{
+		if (gEnv->bServer && IsSlave(pEntity))
+		{
+			TOS_RECORD_EVENT(pEntity->GetId(), STOSGameEvent(eEGE_SlaveEntityOnRemove), "", true);
 		}
 		break;
 	}
@@ -180,10 +275,35 @@ void CTOSMasterModule::Init()
 	TOS_Cache::CacheObject("Objects/Characters/Alien/scout/scout_leader.cdf");
 	TOS_Cache::CacheObject("Objects/Characters/Alien/hunter/Hunter.cdf");
 	TOS_Cache::CacheObject("Objects/Characters/Alien/AlienBase/AlienBase.cdf");
+
+	m_scheduledTakeControls.clear();
 }
 
 void CTOSMasterModule::Update(float frametime)
 {
+	for (const auto &schedPair : m_scheduledTakeControls)
+	{
+		const auto slaveId = schedPair.first;
+		const auto masterChannelId = schedPair.second;
+
+		const auto inGame = g_pGame->GetGameRules()->IsChannelInGame(masterChannelId);
+		if (inGame)
+		{
+			MasterStartControlParams params;
+			params.slaveId = slaveId;
+
+			assert(m_pSynchonizer);
+			m_pSynchonizer->RMISend(
+				CTOSMasterSynchronizer::ClMasterClientStartControl(),
+				params,
+				eRMI_ToClientChannel,
+				masterChannelId
+			);
+
+			m_scheduledTakeControls.erase(slaveId);
+			break;
+		}
+	}
 }
 
 void CTOSMasterModule::Serialize(TSerialize ser)
@@ -251,6 +371,41 @@ IEntity* CTOSMasterModule::GetSlave(const IEntity* pMasterEntity)
 	return nullptr;
 }
 
+void CTOSMasterModule::SetSlave(const IEntity* pMasterEntity, IEntity* pSlaveEntity)
+{
+	assert(pMasterEntity);
+	assert(pSlaveEntity);
+
+	if (!IsMaster(pMasterEntity))
+		return;
+
+	m_masters[pMasterEntity->GetId()].slaveId = pSlaveEntity->GetId();
+}
+
+void CTOSMasterModule::ClearSlave(const IEntity* pMasterEntity)
+{
+	assert(pMasterEntity);
+
+	if (!IsMaster(pMasterEntity))
+		return;
+
+	m_masters[pMasterEntity->GetId()].slaveId = 0;
+}
+
+bool CTOSMasterModule::IsSlave(const IEntity* pEntity) const
+{
+	if (!pEntity)
+		return false;
+
+	for (auto &masterPair : m_masters)
+	{
+		if (masterPair.second.slaveId == pEntity->GetId())
+			return true;
+	}
+
+	return false;
+}
+
 void CTOSMasterModule::DebugDraw(const Vec2& screenPos, float fontSize, float interval, int maxElemNum)
 {
 	//Header
@@ -295,6 +450,13 @@ bool CTOSMasterModule::GetMasterInfo(const IEntity* pMasterEntity, STOSMasterInf
 	info = m_masters[pMasterEntity->GetId()];
 
 	return true;
+}
+
+void CTOSMasterModule::ScheduleMasterStartControl(const STOSStartControlInfo& info)
+{
+	const auto it = m_scheduledTakeControls.find(info.slaveId);
+	if (it == m_scheduledTakeControls.end())
+		m_scheduledTakeControls[info.slaveId] = info.masterChannelId;
 }
 
 void CTOSMasterModule::GetMasters(std::map<EntityId, STOSMasterInfo>& masters) const

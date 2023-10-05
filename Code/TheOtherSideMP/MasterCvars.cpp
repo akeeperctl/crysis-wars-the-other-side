@@ -1,6 +1,7 @@
 #include "StdAfx.h"
 
 #include "Game/TOSGameCvars.h"
+#include "Game/Modules/Master/MasterClient.h"
 #include "Game/Modules/Master/MasterModule.h"
 #include "Game/Modules/Master/MasterSynchronizer.h"
 
@@ -20,6 +21,7 @@ void CTOSMasterModule::InitCCommands(IConsole* pConsole)
 
 	pConsole->AddCommand("getmasterslist", CmdGetMastersList);
 	pConsole->AddCommand("ismaster", CmdIsMaster);
+	pConsole->AddCommand("stopcontrol", CmdStopControl);
 
 }
 
@@ -88,6 +90,14 @@ void CTOSMasterModule::CmdIsMaster(IConsoleCmdArgs* pArgs)
 	const char* result = isMaster ? "Yes" : "No";
 
 	CryLogAlways("Result: (%i|%s)", playerId, result);
+}
+
+void CTOSMasterModule::CmdStopControl(IConsoleCmdArgs* pArgs)
+{
+	const auto pLocalMC = g_pTOSGame->GetMasterModule()->GetMasterClient();
+	assert(pLocalMC);
+
+	pLocalMC->StopControl();
 }
 
 void CTOSMasterModule::CVarSetDesiredSlaveCls(ICVar* pVar)

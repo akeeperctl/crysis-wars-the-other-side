@@ -23,6 +23,12 @@ struct ITOSGameModule;
 struct IHardwareMouseEventListener;
 struct IHitListener;
 
+// ReSharper disable once CppInconsistentNaming
+/**
+ * \brief указатель на функцию
+ */
+typedef void (*func)();
+
 //enum EExtraGameplayEvent;
 
 // ReSharper disable once CppPolymorphicClassWithNonVirtualPublicDestructor
@@ -113,6 +119,9 @@ public:
 
 private:
 
+	void UpdateChannelConnectionState();
+	void UpdateContextViewState();
+
 	CTOSAIActionTracker* m_pAIActionTracker;
 	CControlClient* m_pLocalControlClient;
 
@@ -125,6 +134,9 @@ private:
 
 	Vec3 m_mouseScreenPos;
 	Vec3 m_mouseWorldPos;
+
+	uint m_lastChannelConnectionState;
+	uint m_lastContextViewState;
 };
 
 extern class CTOSGame* g_pTOSGame;

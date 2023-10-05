@@ -7,7 +7,7 @@
   
  -------------------------------------------------------------------------
   History:
-  - 3:8:2004   11:26 : Created by Márcio Martins
+  - 3:8:2004   11:26 : Created by MÐ±rcio Martins
   - 17:8:2005        : Modified - NickH: Factory registration moved to GameFactory.cpp
 
 *************************************************************************/
@@ -469,6 +469,10 @@ void CGame::ConfigureGameChannel(bool isServer, IProtocolBuilder *pBuilder)
 		m_pClientSynchedStorage = new CClientSynchedStorage(GetIGameFramework());
 		m_pClientSynchedStorage->DefineProtocol(pBuilder);
 	}
+
+	//TheOtherSide
+	TOS_RECORD_EVENT(0, STOSGameEvent(eEGE_ConfigureGameChannel, "", true));
+	//~TheOtherSide
 }
 
 void CGame::EditorResetGame(bool bStart)
@@ -722,6 +726,10 @@ void CGame::GameChannelDestroyed(bool isServer)
     SAFE_DELETE(m_pHUD);
     }*/
   }
+
+	//TheOtherSide
+	TOS_RECORD_EVENT(0, STOSGameEvent(eEGE_GameChannelDestroyed, "", true));
+	//~TheOtherSide
 }
 
 void CGame::DestroyHUD()

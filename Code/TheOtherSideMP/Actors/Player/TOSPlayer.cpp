@@ -124,11 +124,18 @@ void CTOSPlayer::SetSpectatorMode(uint8 mode, EntityId targetId)
 	case eASM_Fixed:
 	case eASM_Free:
 	case eASM_Follow:
-	case eASM_Cutscene:
 	{
 		if (oldMode == eASM_None)
 		{
 			TOS_RECORD_EVENT(GetEntityId(), STOSGameEvent(eEGE_PlayerJoinedSpectator, "", true, false, nullptr, 0.0f, mode));
+		}
+		break;
+	}
+	case eASM_Cutscene:
+	{
+		if (oldMode == eASM_None)
+		{
+			TOS_RECORD_EVENT(GetEntityId(), STOSGameEvent(eEGE_PlayerJoinedCutscene, "", true, false, nullptr, 0.0f, mode));
 		}
 		break;
 	}
@@ -189,6 +196,50 @@ void CTOSPlayer::Release()
 	}
 
 	CPlayer::Release();
+}
+
+void CTOSPlayer::UpdateView(SViewParams& viewParams)
+{
+	if (m_pMasterClient && m_pMasterClient->GetSlaveEntity())
+	{
+		m_pMasterClient->UpdateView(viewParams);
+	}
+	else
+	{
+		CPlayer::UpdateView(viewParams);
+	}
+}
+
+void CTOSPlayer::PostUpdateView(SViewParams& viewParams)
+{
+	CPlayer::PostUpdateView(viewParams);
+}
+
+Matrix33 CTOSPlayer::GetViewMtx()
+{
+	//TODO: 10/05/2023, 15:56 проверить правильность конвертации
+	const auto mat33 = static_cast<Matrix33>(m_viewQuatFinal);
+	assert(mat33.IsValid());
+
+	return mat33;
+}
+
+Matrix33 CTOSPlayer::GetBaseMtx()
+{
+	//TODO: 10/05/2023, 15:56 проверить правильность конвертации
+	const auto mat33 = static_cast<Matrix33>(m_baseQuat);
+	assert(mat33.IsValid());
+
+	return mat33;
+}
+Matrix33 CTOSPlayer::GetEyeMtx()
+{
+	//TODO: 10/05/2023, 15:56 проверить правильность конвертации
+	const auto mat33 = static_cast<Matrix33>(this->m_viewQuatFinal);
+	assert(mat33.IsValid());
+
+	return mat33;
+
 }
 
 CTOSMasterClient* CTOSPlayer::GetMasterClient() const

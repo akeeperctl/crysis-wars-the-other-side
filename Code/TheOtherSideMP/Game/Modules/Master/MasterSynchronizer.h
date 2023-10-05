@@ -27,16 +27,31 @@ struct MasterAddingParams
 struct MasterStartControlParams
 {
 	EntityId slaveId;
+	EntityId masterId;
 
 	MasterStartControlParams()
-		: slaveId(0) {}
-
-	explicit MasterStartControlParams(const EntityId entId, const char* slaveClsName)
-		: slaveId(entId) {}
+		: slaveId(0), masterId(0) {}
 
 	void SerializeWith(TSerialize ser)
 	{
 		ser.Value("slaveId", slaveId, 'eid');
+		ser.Value("masterId", masterId, 'eid');
+	}
+};
+
+struct MasterStopControlParams
+{
+	EntityId masterId;
+
+	MasterStopControlParams()
+		: masterId(0) {}
+
+	explicit MasterStopControlParams(const EntityId entId)
+		: masterId(entId) {}
+
+	void SerializeWith(TSerialize ser)
+	{
+		ser.Value("masterId", masterId, 'eid');
 	}
 };
 
@@ -72,5 +87,12 @@ public:
 
 	DECLARE_SERVER_RMI_NOATTACH(SvRequestMasterAdd, MasterAddingParams, eNRT_ReliableOrdered);
 	DECLARE_SERVER_RMI_NOATTACH(SvRequestSetDesiredSlaveCls, DesiredSlaveClsParams, eNRT_ReliableOrdered);
-	DECLARE_CLIENT_RMI_NOATTACH(ClMasterStartControl, MasterStartControlParams, eNRT_ReliableOrdered);
+
+	DECLARE_CLIENT_RMI_NOATTACH(ClMasterClientStartControl, MasterStartControlParams, eNRT_ReliableOrdered);
+	DECLARE_SERVER_RMI_NOATTACH(SvRequestMasterClientStartControl, MasterStartControlParams, eNRT_ReliableOrdered);
+
+	DECLARE_CLIENT_RMI_NOATTACH(ClMasterClientStopControl, NoParams, eNRT_ReliableOrdered);
+	DECLARE_SERVER_RMI_NOATTACH(SvRequestMasterClientStopControl, MasterStopControlParams, eNRT_ReliableOrdered);
+
+
 };

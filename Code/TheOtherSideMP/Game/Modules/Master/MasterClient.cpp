@@ -12,10 +12,16 @@
 
 #include "MasterClient.h"
 
+#include "GameUtils.h"
+#include "IViewSystem.h"
 #include "MasterSynchronizer.h"
+#include "Single.h"
 
-CTOSMasterClient::CTOSMasterClient(CTOSPlayer* _player) :
-	m_pLocalDude(_player)
+#include "TheOtherSideMP/Actors/Aliens/TOSAlien.h"
+
+CTOSMasterClient::CTOSMasterClient(CTOSPlayer* pPlayer)
+	: m_pLocalDude(pPlayer),
+	m_pControlledEntity(nullptr)
 {
 	if (gEnv->bClient)
 	{
@@ -27,7 +33,6 @@ CTOSMasterClient::CTOSMasterClient(CTOSPlayer* _player) :
 		//	_player->GetEntity()->GetName(), clientChannelName);
 		//[C++][CallConstructor][CTOSMasterClient] Player: Akeeper, ClientChName: lmlicenses.wip4.adobe.com:64100
 
-		//TODO: Invoke RMI to Server from Client
 		//g_pTOSGame->GetModuleMasterSystem()->MasterAdd(m_pLocalDude->GetEntity());
 
 		//InvokeRMI(ClTempRadarEntity(), params, eRMI_ToClientChannel, GetChannelId(*it));
@@ -44,7 +49,6 @@ CTOSMasterClient::CTOSMasterClient(CTOSPlayer* _player) :
 
 CTOSMasterClient::~CTOSMasterClient()
 {
-	//TODO: Invoke RMI to Server from Client
 	//g_pTOSGame->GetModuleMasterSystem()->MasterRemove(m_pLocalDude->GetEntity());
 
 	// delete this;
@@ -60,6 +64,322 @@ CTOSMasterClient::~CTOSMasterClient()
 
 	//	pSender->RMISend(CTOSMasterRMISender::SvRequestMasterRemove(), params, eRMI_ToServer);
 	//}
+}
+
+void CTOSMasterClient::StartControl(IEntity* pEntity)
+{
+	assert(pEntity);
+    SetSlaveEntity(pEntity, pEntity->GetClass()->GetName());
+
+	TOS_RECORD_EVENT(m_pControlledEntity->GetId(), STOSGameEvent(eEGE_MasterClientStartControl, "", true));
+}
+
+void CTOSMasterClient::StopControl()
+{
+	TOS_RECORD_EVENT(0, STOSGameEvent(eEGE_MasterClientStopControl, "", true));
+
+    ClearSlaveEntity();
+}
+
+bool CTOSMasterClient::SetSlaveEntity(IEntity* pEntity, const char* cls)
+{
+	assert(pEntity);
+	m_pControlledEntity = pEntity;
+
+
+	TOS_RECORD_EVENT(m_pControlledEntity->GetId(), STOSGameEvent(eEGE_MasterClientSetSlave, "", true));
+	return true;
+}
+
+void CTOSMasterClient::ClearSlaveEntity()
+{
+	m_pControlledEntity = nullptr;
+
+	TOS_RECORD_EVENT(0, STOSGameEvent(eEGE_MasterClientClearSlave, "", true));
+}
+
+void CTOSMasterClient::UpdateView(SViewParams& viewParams) const
+{
+    assert(m_pControlledEntity);
+
+    viewParams.position = m_pControlledEntity->GetWorldPos();
+
+    static float currentFov = -1.0f;
+
+	// Copied from ViewThirdPerson() in PlayerView.cpp
+    static Vec3 target;
+    static Vec3 current;
+
+	Vec3 offsetX(0, 0, 0); //= pAlien->GetViewRotation().GetColumn0() * current.x;
+	Vec3 offsetY(0, 0, 0);
+    Vec3 offsetZ(0, 0, 0); //= pAlien->GetViewRotation().GetColumn2() * current.z;
+
+    if (target)
+    {
+        current = target;
+        Interpolate(current, target, 5.0f, viewParams.frameTime);
+    }
+
+    const EntityId controlledId = m_pControlledEntity->GetId();
+	const string   controlledCls = m_pControlledEntity->GetClass()->GetName();
+
+	const auto pControlledActor = dynamic_cast<CTOSActor*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(controlledId));
+    if (pControlledActor)
+    {
+
+    	//if (controlledCls == "Hunter")
+     //   {
+     //       target(g_pGameCVars->ctrl_hrTargetx, g_pGameCVars->ctrl_hrTargety, g_pGameCVars->ctrl_hrTargetz);
+     //       offsetY = gEnv->pSystem->GetViewCamera().GetViewdir() * current.y + alienWorldMtx.GetColumn1() *
+     //           g_pGameCVars->ctrl_hrForwardOffset;
+     //       currentFov = g_pGameCVars->ctrl_hrFov;
+     //   }
+     //   else if (controlledCls == "Scout")
+     //   {
+     //       offsetY = gEnv->pSystem->GetViewCamera().GetViewdir() * current.y; //Used by all aliens in this mod
+     //       target(g_pGameCVars->ctrl_scTargetx, g_pGameCVars->ctrl_scTargety, g_pGameCVars->ctrl_scTargetz);
+     //       currentFov = g_pGameCVars->ctrl_scFov;
+     //   }
+     //   else if (controlledCls == "Drone")
+     //   {
+     //       target(g_pGameCVars->ctrl_trTargetx, g_pGameCVars->ctrl_trTargety, g_pGameCVars->ctrl_trTargetz);
+     //       offsetY = gEnv->pSystem->GetViewCamera().GetViewdir() * current.y; //Used by all aliens in this mod
+     //       currentFov = g_pGameCVars->ctrl_trFov;
+     //   }
+     //   else if (controlledCls == "Pinger")
+     //   {
+     //       target(g_pGameCVars->ctrl_pgTargetx, g_pGameCVars->ctrl_pgTargety, g_pGameCVars->ctrl_pgTargetz);
+     //       offsetY = gEnv->pSystem->GetViewCamera().GetViewdir() * current.y + alienWorldMtx.GetColumn1();
+     //       currentFov = g_pGameCVars->ctrl_pgFov;
+     //   }
+     //   else if (controlledCls == "Alien")
+     //   {
+     //       target(g_pGameCVars->ctrl_alTargetx, g_pGameCVars->ctrl_alTargety, g_pGameCVars->ctrl_alTargetz);
+     //       offsetY = gEnv->pSystem->GetViewCamera().GetViewdir() * current.y; //Used by all aliens in this mod
+     //       currentFov = g_pGameCVars->ctrl_alFov;
+     //   }
+
+        pControlledActor->UpdateMasterView(viewParams, offsetX, offsetY, offsetZ, target, current, currentFov);
+
+    	//Get skip entities
+	    IPhysicalEntity* pSkipEntities[10];  // NOLINT(modernize-avoid-c-arrays)
+	    int nSkip = 0;
+	    IItem* pItem = pControlledActor->GetCurrentItem();
+	    if (pItem)
+	    {
+		    const auto pWeapon = dynamic_cast<CWeapon*>(pItem->GetIWeapon());
+	        if (pWeapon)
+	            nSkip = CSingle::GetSkipEntities(pWeapon, pSkipEntities, 10);
+	    }
+
+	    const float oldLen = offsetY.len();
+
+	    // Ray cast to camera with offset position to check colliding
+	    const Vec3 eyeOffsetView = pControlledActor->GetStanceInfo(pControlledActor->GetStance())->viewOffset;
+	    const Vec3 start = (pControlledActor->GetBaseMtx() * eyeOffsetView + viewParams.position + offsetX);
+	    // +offsetZ;// + offsetX;// +offsetZ;
+
+	    constexpr float wallSafeDistance = 0.3f; // how far to keep camera from walls
+
+	    primitives::sphere sphere;
+	    sphere.center = start;
+	    sphere.r = wallSafeDistance;
+
+	    geom_contact* pContact = nullptr;
+	    const float hitDist = gEnv->pPhysicalWorld->PrimitiveWorldIntersection(
+	        sphere.type, &sphere, offsetY, ent_static | ent_terrain | ent_rigid | ent_sleeping_rigid,
+	        &pContact, 0, rwi_stop_at_pierceable, nullptr, nullptr, 0, pSkipEntities, nSkip);
+
+	    if (hitDist > 0 && pContact /*&& !m_pAbilitiesSystem->trooper.isCeiling*/)
+	    {
+	        offsetY = pContact->pt - start;
+	        if (offsetY.len() > 0.3f)
+	        {
+	            offsetY -= offsetY.GetNormalized() * 0.3f;
+	        }
+	        current.y = current.y * (hitDist / oldLen);
+	    }
+
+        viewParams.position += (offsetX + offsetY + offsetZ);
+    }
+
+
+    //const auto pAlien = dynamic_cast<CAlien*>(m_pControlledActor);
+    //if (pAlien)
+    //{
+    //    static float currentFov = -1;
+
+    //    //Copied from ViewThirdPerson() in PlayerView.cpp
+    //    static Vec3 target;
+    //    static Vec3 current;
+    //    if (target)
+    //    {
+    //        current = target;
+    //        Interpolate(current, target, 5.0f, viewParams.frameTime);
+    //    }
+
+    //    Vec3 offsetY(0, 0, 0);
+
+    //    if (m_pControlledActor->IsAlien())
+    //    {
+    //        const Matrix33 alienWorldMtx(pAlien->GetGameObject()->GetEntity()->GetWorldTM());
+
+    //        if (GetActorClassName() == "Hunter")
+    //        {
+    //            target(g_pGameCVars->ctrl_hrTargetx, g_pGameCVars->ctrl_hrTargety, g_pGameCVars->ctrl_hrTargetz);
+    //            offsetY = gEnv->pSystem->GetViewCamera().GetViewdir() * current.y + alienWorldMtx.GetColumn1() *
+    //                g_pGameCVars->ctrl_hrForwardOffset;
+    //            currentFov = g_pGameCVars->ctrl_hrFov;
+    //        }
+    //        else if (GetActorClassName() == "Scout")
+    //        {
+    //            offsetY = gEnv->pSystem->GetViewCamera().GetViewdir() * current.y; //Used by all aliens in this mod
+    //            target(g_pGameCVars->ctrl_scTargetx, g_pGameCVars->ctrl_scTargety, g_pGameCVars->ctrl_scTargetz);
+    //            currentFov = g_pGameCVars->ctrl_scFov;
+    //        }
+    //        else if (GetActorClassName() == "Trooper")
+    //        {
+    //            if (!m_pAbilitiesSystem->trooper.isCeiling)
+    //                target(g_pGameCVars->ctrl_trTargetx, g_pGameCVars->ctrl_trTargety, g_pGameCVars->ctrl_trTargetz);
+    //            else
+    //            {
+    //                target(g_pGameCVars->ctrl_trTargetx, g_pGameCVars->ctrl_trTargety,
+    //                       g_pGameCVars->ctrl_trTargetz - 2.f);
+    //            }
+    //            offsetY = gEnv->pSystem->GetViewCamera().GetViewdir() * current.y; //Used by all aliens in this mod
+    //            currentFov = g_pGameCVars->ctrl_trFov;
+    //        }
+    //        else if (GetActorClassName() == "Drone")
+    //        {
+    //            target(g_pGameCVars->ctrl_trTargetx, g_pGameCVars->ctrl_trTargety, g_pGameCVars->ctrl_trTargetz);
+    //            offsetY = gEnv->pSystem->GetViewCamera().GetViewdir() * current.y; //Used by all aliens in this mod
+    //            currentFov = g_pGameCVars->ctrl_trFov;
+    //        }
+    //        else if (GetActorClassName() == "Pinger")
+    //        {
+    //            target(g_pGameCVars->ctrl_pgTargetx, g_pGameCVars->ctrl_pgTargety, g_pGameCVars->ctrl_pgTargetz);
+    //            offsetY = gEnv->pSystem->GetViewCamera().GetViewdir() * current.y + alienWorldMtx.GetColumn1();
+    //            currentFov = g_pGameCVars->ctrl_pgFov;
+    //        }
+    //        else if (GetActorClassName() == "Alien")
+    //        {
+    //            target(g_pGameCVars->ctrl_alTargetx, g_pGameCVars->ctrl_alTargety, g_pGameCVars->ctrl_alTargetz);
+    //            offsetY = gEnv->pSystem->GetViewCamera().GetViewdir() * current.y; //Used by all aliens in this mod
+    //            currentFov = g_pGameCVars->ctrl_alFov;
+    //        }
+    //    }
+
+    //    const Vec3 offsetX = pAlien->GetViewRotation().GetColumn0() * current.x;
+    //    const Vec3 offsetZ = pAlien->GetViewRotation().GetColumn2() * current.z;
+
+    //    //Get skip entities
+    //    IPhysicalEntity* pSkipEntities[10];
+    //    int nSkip = 0;
+    //    IItem* pItem = pAlien->GetCurrentItem();
+    //    if (pItem)
+    //    {
+    //        CWeapon* pWeapon = dynamic_cast<CWeapon*>(pItem->GetIWeapon());
+    //        if (pWeapon)
+    //            nSkip = CSingle::GetSkipEntities(pWeapon, pSkipEntities, 10);
+    //    }
+
+    //    const float oldLen = offsetY.len();
+
+    //    // Ray cast to camera with offset position to check colliding
+    //    const Vec3 eyeOffsetView = pAlien->GetStanceInfo(pAlien->GetStance())->viewOffset;
+    //    const Vec3 start = (pAlien->GetAlienBaseMtx() * eyeOffsetView + viewParams.position + offsetX);
+    //    // +offsetZ;// + offsetX;// +offsetZ;
+
+    //    static float wallSafeDistance = 0.3f; // how far to keep camera from walls
+
+    //    primitives::sphere sphere;
+    //    sphere.center = start;
+    //    sphere.r = wallSafeDistance;
+
+    //    geom_contact* pContact = nullptr;
+    //    const float hitDist = gEnv->pPhysicalWorld->PrimitiveWorldIntersection(
+    //        sphere.type, &sphere, offsetY, ent_static | ent_terrain | ent_rigid | ent_sleeping_rigid,
+    //        &pContact, 0, rwi_stop_at_pierceable, nullptr, nullptr, 0, pSkipEntities, nSkip);
+
+    //    if (hitDist > 0 && pContact && !m_pAbilitiesSystem->trooper.isCeiling)
+    //    {
+    //        offsetY = pContact->pt - start;
+    //        if (offsetY.len() > 0.3f)
+    //        {
+    //            offsetY -= offsetY.GetNormalized() * 0.3f;
+    //        }
+    //        current.y = current.y * (hitDist / oldLen);
+    //    }
+
+    //    if (m_pAbilitiesSystem->trooper.isCeiling)
+    //    {
+    //        Vec3 pos = pAlien->GetLocalEyePos() + pAlien->GetEntity()->GetWorldPos();
+    //        pos.z += 0.3f;
+    //        viewParams.position = pos;
+    //    }
+    //    else if (m_pAbilitiesSystem->scout.IsSearch)
+    //    {
+    //        if (pAlien->m_searchbeam.itemId != NULL)
+    //        {
+    //            const IEntity* pEntity = gEnv->pEntitySystem->GetEntity(pAlien->m_searchbeam.itemId);
+    //            if (pEntity)
+    //            {
+    //                Vec3 pos = pEntity->GetWorldTM().GetTranslation();
+    //                pos.z -= 1.5f;
+
+    //                viewParams.position = pos;
+    //            }
+    //        }
+    //    }
+    //    else
+    //    {
+    //        viewParams.position += (offsetX + offsetY + offsetZ);
+    //    }
+
+    //    if (!m_generic.isUsingBinocular)
+    //    {
+    //        viewParams.fov = currentFov * gf_PI / 180.0f;
+    //        m_currentFov = currentFov;
+    //    }
+    //    else
+    //    {
+    //        viewParams.fov = m_currentFov * gf_PI / 180.0f;
+    //    }
+
+    //    //Old
+    //    /*Vec3 pActorWorldPos = m_pAlien->GetEntity()->GetWorldPos();
+    //    string m_pClassName = m_pAlien->GetEntity()->GetClass()->GetName();
+
+    //    if (m_pClassName == "Alien")
+    //    {
+    //        viewParams.fov = g_pGameCVars->ctrl_alFov * gf_PI / 180.0f;
+    //        Matrix33 viewMtx(m_pAlien->GetAlienViewMtx());
+    //        viewParams.position = pActorWorldPos +(viewMtx.GetColumn(1) * -m_pDistance + viewMtx.GetColumn(2) * +m_pHeight);
+    //    }
+    //    else if (m_pClassName == "Scout")
+    //    {
+    //        viewParams.fov = g_pGameCVars->ctrl_scFov * gf_PI / 180.0f;
+    //        Matrix33 viewMtx(m_pAlien->GetAlienViewMtx());
+    //        viewParams.position = pActorWorldPos + (viewMtx.GetColumn(1) * -m_pDistance + viewMtx.GetColumn(2) * +m_pHeight);
+    //    }
+    //    else if (m_pClassName == "PlayerTrooper")
+    //    {
+    //        viewParams.fov = g_pGameCVars->ctrl_trFov * gf_PI / 180.0f;
+    //        Vec3 CamViewdir = gEnv->pSystem->GetViewCamera().GetViewdir() * -m_pDistance;
+    //        Matrix33 viewMtx(m_pAlien->GetGameObject()->GetEntity()->GetWorldTM());
+    //        viewParams.position = pActorWorldPos + (viewMtx.GetColumn(2) * m_pHeight) + CamViewdir;
+    //    }
+    //    else if (m_pClassName == "Hunter")
+    //    {
+    //        float m_pForwardOffset = g_pGameCVars->ctrl_hrForwardOffset;
+    //        viewParams.fov = g_pGameCVars->ctrl_hrFov * gf_PI / 180.0f;
+    //        Vec3 CamViewdir = gEnv->pSystem->GetViewCamera().GetViewdir() * -m_pDistance;
+    //        Matrix33 viewMtx(m_pAlien->GetGameObject()->GetEntity()->GetWorldTM());
+    //        viewParams.position = pActorWorldPos + (viewMtx.GetColumn(2) * m_pHeight + viewMtx.GetColumn(1) * m_pForwardOffset) + CamViewdir;
+    //    }*/
+    //}
+
+	viewParams.rotation = m_pLocalDude->GetViewQuatFinal();
 }
 
 //void CMasterClient::InitDudeMaster(bool toStart)

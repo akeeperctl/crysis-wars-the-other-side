@@ -57,6 +57,8 @@ CSynchType* CTOSGenericModule::CreateSynchonizer(const char* entityName, const c
 		IGameObject* pGO = g_pGame->GetIGameFramework()->GetGameObject(pSynchEntity->GetId());
 		if (pGO)
 		{
+			// pGO->RegisterAsPredicted();
+
 			pSynchExt = dynamic_cast<CSynchType*>(pGO->AcquireExtension(extName));
 			assert(pSynchExt);
 
@@ -79,12 +81,16 @@ CSynchType* CTOSGenericModule::CreateSynchonizer(const char* entityName, const c
 	pSynchEntity = gEnv->pEntitySystem->SpawnEntity(params);
 	assert(pSynchEntity);
 
-	if (!pSynchEntity) return nullptr;
+	if (!pSynchEntity) 
+		return nullptr;
 
 	//IGameObject* pGO = g_pGame->GetIGameFramework()->GetGameObject(pSynchronizer->GetId());
 	IGameObject* pGO = g_pGame->GetIGameFramework()->GetIGameObjectSystem()->CreateGameObjectForEntity(pSynchEntity->GetId());
 	if (pGO)
 	{
+		// Вообще эффекта не имеет
+		// pGO->RegisterAsPredicted(); 
+
 		//m_pSynchonizer = dynamic_cast<CSynchType*>(pGO->AcquireExtension(extName));
 		//assert(m_pSynchonizer);
 		pSynchExt = dynamic_cast<CSynchType*>(pGO->AcquireExtension(extName));

@@ -7,7 +7,7 @@ $DateTime$
 
 -------------------------------------------------------------------------
 History:
-- 23:5:2006   9:27 : Created by Márcio Martins
+- 23:5:2006   9:27 : Created by MÐ±rcio Martins
 
 *************************************************************************/
 #include "StdAfx.h"
@@ -1201,6 +1201,11 @@ IMPLEMENT_RMI(CGameRules, ClEnteredGame)
 			status[0] = GetTeam(pActor->GetEntityId());
 			status[1] = pActor->GetSpectatorMode();
 			m_pGameplayRecorder->Event(pActor->GetEntity(), GameplayEvent(eGE_Connected, 0, 0, (void*)status));
+
+			//TheOtherSide
+			CryLogAlways("[C++][%s][%s][ClEnteredGame] LocalPlayerNick = %s",
+				TOS_Debug::GetEnv(), TOS_Debug::GetAct(3), pActor->GetEntity()->GetName());
+			//~TheOtherSide
 		}
 	}
 	return true;
