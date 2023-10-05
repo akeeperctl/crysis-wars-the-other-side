@@ -94,7 +94,26 @@ IMPLEMENT_RMI(CTOSMasterSynchronizer, SvRequestSetDesiredSlaveCls)
 
 	return true;
 }
+////------------------------------------------------------------------------
+IMPLEMENT_RMI(CTOSMasterSynchronizer, ClMasterStartControl)
+{
+	// Здесь пишем всё, что должно выполниться на клиенте
 
+	if (gEnv->bClient)
+	{
+		const auto localPlayerNick = g_pGame->GetIGameFramework()->GetClientActor()->GetEntity()->GetName();
+
+		CryLogAlways("[C++][%s][%s][ClMasterStartControl] LocalPlayerNick: %s", 
+			TOS_Debug::GetEnv(), TOS_Debug::GetAct(3), localPlayerNick);
+
+		const auto pSlaveEntity = gEnv->pEntitySystem->GetEntity(params.slaveId);
+		assert(pSlaveEntity);
+
+
+	}
+
+	return true;
+}
 //Not actual any more
 ////------------------------------------------------------------------------
 //IMPLEMENT_RMI(CTOSMasterRMISender, SvRequestMasterRemove)

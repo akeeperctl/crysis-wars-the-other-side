@@ -46,30 +46,14 @@ struct PintestParams
 	}
 };
 
-struct MasterAddingParams
-{
-	EntityId entityId;
-	string desiredSlaveClassName;
-
-	MasterAddingParams():
-		entityId(0) ,desiredSlaveClassName(nullptr) {} ;
-
-	explicit MasterAddingParams(const EntityId entId, const char* slaveClsName) :
-		entityId(entId), desiredSlaveClassName(slaveClsName) {}
-
-	void SerializeWith(TSerialize ser)
-	{
-		ser.Value("entityId", entityId, 'eid');
-		ser.Value("desiredSlaveClassName", desiredSlaveClassName, 'stab');
-	}
-};
-
-typedef MasterAddingParams DesiredSlaveClsParams;
 typedef std::map<const char*, EntityId> TSynches;
 
-// Description: 
-//    Generic network synchronizer for any module.
-//    Used as a parent class of network synchronizers of TOS game modules
+/**
+ * \brief TOS Generic Module сетевой синхронизатор
+ * \note Обеспечивает вызов RMI'шек, необходимых для сетевой синхронизации работы модуля.
+ * \note Используется как родительский синхронизатор для остальных модулей.
+ * \note Сам по себе синхронизатор с этим классом не создаётся.
+ */
 class CTOSGenericSynchronizer : public CGameObjectExtensionHelper<CTOSGenericSynchronizer, IGameObjectExtension, 64>
 {
 	friend class CTOSMasterSynchronizer;

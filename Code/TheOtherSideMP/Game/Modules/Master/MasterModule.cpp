@@ -111,13 +111,22 @@ void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEven
 	}
 	case eEGE_SlaveReadyToObey:
 	{
-		if (gEnv->bServer)
+		if (gEnv->bServer && pEntity)
 		{
 			const auto masterChannelId = event.int_value;
 
 			//TODO:
 			//1) Создать RMI на клиенте для начала управления рабом
 			//2) Отправить RMI на клиент мастера, чтобы мастер начал управлять рабом
+			MasterStartControlParams params;
+			params.slaveId = pEntity->GetId();
+
+			assert(m_pSynchonizer);
+			m_pSynchonizer->RMISend(
+				CTOSMasterSynchronizer::ClMasterStartControl(), 
+				params, 
+				eRMI_ToClientChannel, 
+				masterChannelId);
 		}
 
 		break;

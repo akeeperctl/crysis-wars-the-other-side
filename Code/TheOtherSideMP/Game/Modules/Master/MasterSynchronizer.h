@@ -6,10 +6,46 @@
 
 #include "../GenericSynchronizer.h"
 
+struct MasterAddingParams
+{
+	EntityId entityId;
+	string desiredSlaveClassName;
 
-// Description: 
-//    Network synchronizer for Master Module.
-//    Can send RMI's to synchronize Master Module states.
+	MasterAddingParams() :
+		entityId(0), desiredSlaveClassName(nullptr) {};
+
+	explicit MasterAddingParams(const EntityId entId, const char* slaveClsName) :
+		entityId(entId), desiredSlaveClassName(slaveClsName) {}
+
+	void SerializeWith(TSerialize ser)
+	{
+		ser.Value("entityId", entityId, 'eid');
+		ser.Value("desiredSlaveClassName", desiredSlaveClassName, 'stab');
+	}
+};
+
+struct MasterStartControlParams
+{
+	EntityId slaveId;
+
+	MasterStartControlParams()
+		: slaveId(0) {}
+
+	explicit MasterStartControlParams(const EntityId entId, const char* slaveClsName)
+		: slaveId(entId) {}
+
+	void SerializeWith(TSerialize ser)
+	{
+		ser.Value("slaveId", slaveId, 'eid');
+	}
+};
+
+typedef MasterAddingParams DesiredSlaveClsParams;
+
+/**
+ * \brief TOS Master Module сетевой синхронизатор
+ * \note Обеспечивает вызов RMI'шек, необходимых для сетевой синхронизации работы модуля
+ */
 class CTOSMasterSynchronizer final : public CTOSGenericSynchronizer  // NOLINT(cppcoreguidelines-special-member-functions)
 {
 public:
@@ -36,8 +72,5 @@ public:
 
 	DECLARE_SERVER_RMI_NOATTACH(SvRequestMasterAdd, MasterAddingParams, eNRT_ReliableOrdered);
 	DECLARE_SERVER_RMI_NOATTACH(SvRequestSetDesiredSlaveCls, DesiredSlaveClsParams, eNRT_ReliableOrdered);
-
-protected:
-
-private:
+	DECLARE_CLIENT_RMI_NOATTACH(ClMasterStartControl, MasterStartControlParams, eNRT_ReliableOrdered);
 };
