@@ -76,25 +76,25 @@
     <OutDir>$(SolutionDir)..\Bin32\</OutDir>
     <IntDir>$(SolutionDir)..\BinTemp\$(Platform)\$(Configuration)\$(TargetName)\</IntDir>
     <LinkIncremental>true</LinkIncremental>
-    <TargetName>TheOtherSide</TargetName>
+    <TargetName>CrysisTheOtherSide</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)..\Bin64\</OutDir>
     <IntDir>$(SolutionDir)..\BinTemp\$(Platform)\$(Configuration)\$(TargetName)\</IntDir>
     <LinkIncremental>true</LinkIncremental>
-    <TargetName>TheOtherSide</TargetName>
+    <TargetName>CrysisTheOtherSide</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">
     <OutDir>$(SolutionDir)..\Bin32\</OutDir>
     <IntDir>$(SolutionDir)..\BinTemp\$(Platform)\$(Configuration)\$(TargetName)\</IntDir>
     <LinkIncremental>true</LinkIncremental>
-    <TargetName>TheOtherSide</TargetName>
+    <TargetName>CrysisTheOtherSide</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">
     <OutDir>$(SolutionDir)..\Bin64\</OutDir>
     <IntDir>$(SolutionDir)..\BinTemp\$(Platform)\$(Configuration)\$(TargetName)\</IntDir>
     <LinkIncremental>true</LinkIncremental>
-    <TargetName>TheOtherSide</TargetName>
+    <TargetName>CrysisTheOtherSide</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
