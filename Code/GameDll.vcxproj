@@ -26,6 +26,7 @@
     <SccProvider>MSSCCI:Perforce SCM</SccProvider>
     <Keyword>Win32Proj</Keyword>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>GameDLL</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'" Label="Configuration">
@@ -73,23 +74,25 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>$(SolutionDir)..\Bin32\</OutDir>
-    <IntDir>$(SolutionDir)..\..\..\BinTemp\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir>$(SolutionDir)..\BinTemp\$(Platform)\$(Configuration)\$(TargetName)\</IntDir>
     <LinkIncremental>true</LinkIncremental>
+    <TargetName>TheOtherSide</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)..\Bin64\</OutDir>
-    <IntDir>$(SolutionDir)..\..\..\BinTemp\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir>$(SolutionDir)..\BinTemp\$(Platform)\$(Configuration)\$(TargetName)\</IntDir>
     <LinkIncremental>true</LinkIncremental>
     <TargetName>TheOtherSide</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">
     <OutDir>$(SolutionDir)..\Bin32\</OutDir>
-    <IntDir>$(SolutionDir)..\..\..\BinTemp\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir>$(SolutionDir)..\BinTemp\$(Platform)\$(Configuration)\$(TargetName)\</IntDir>
     <LinkIncremental>true</LinkIncremental>
+    <TargetName>TheOtherSide</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">
     <OutDir>$(SolutionDir)..\Bin64\</OutDir>
-    <IntDir>$(SolutionDir)..\..\..\BinTemp\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir>$(SolutionDir)..\BinTemp\$(Platform)\$(Configuration)\$(TargetName)\</IntDir>
     <LinkIncremental>true</LinkIncremental>
     <TargetName>TheOtherSide</TargetName>
   </PropertyGroup>
@@ -113,13 +116,13 @@
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <OutputFile>$(OutDir)CrysisWarsMod.dll</OutputFile>
+      <OutputFile>$(OutDir)$(TargetName).dll</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ProgramDatabaseFile>$(OutDir)CryGame.pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile>$(OutDir)$(TargetName).pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
       <LargeAddressAware>true</LargeAddressAware>
-      <ImportLibrary>$(OutDir)GameDll.lib</ImportLibrary>
+      <ImportLibrary>$(OutDir)$(TargetName).lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
       <TreatLinkerWarningAsErrors>false</TreatLinkerWarningAsErrors>
     </Link>
@@ -145,12 +148,12 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <OutputFile>$(OutDir)TheOtherSide.dll</OutputFile>
+      <OutputFile>$(OutDir)$(TargetName).dll</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ProgramDatabaseFile>$(OutDir)CryGame.pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile>$(OutDir)$(TargetName).pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
-      <ImportLibrary>$(OutDir)GameDll.lib</ImportLibrary>
+      <ImportLibrary>$(OutDir)$(TargetName).lib</ImportLibrary>
       <TargetMachine>MachineX64</TargetMachine>
       <AdditionalDependencies>version.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <TreatLinkerWarningAsErrors>false</TreatLinkerWarningAsErrors>
