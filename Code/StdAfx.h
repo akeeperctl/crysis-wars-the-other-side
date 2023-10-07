@@ -19,6 +19,7 @@
 
 
 //#define _CRTDBG_MAP_ALLOC
+#define _SILENCE_STDEXT_HASH_DEPRECATION_WARNINGS
 
 #if _MSC_VER > 1000
 #pragma once
