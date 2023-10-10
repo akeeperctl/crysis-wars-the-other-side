@@ -47,7 +47,8 @@ void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEven
 	//case eEGE_EntitiesPostReset: not ok
 	case eEGE_GamerulesStartGame: //not ok long time still ok
 	{
-		CreateSynchonizer<CTOSMasterSynchronizer>("MasterSynchronizer", "TOSMasterSynchronizer");
+		//10/10/2023, 18:43 Теперь синхронизаторы нужно спавнить через редактор (заебался я с ними возиться)
+		//CreateSynchonizer<CTOSMasterSynchronizer>("MasterSynchronizer", "TOSMasterSynchronizer");
 		break;
 	}
 	//case eEGE_ActorPostInit: no ok on client
@@ -135,6 +136,7 @@ void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEven
 				STOSStartControlInfo info;
 				info.masterChannelId = masterChannelId;
 				info.slaveId = entId;
+				info.startDelay = gEnv->pConsole->GetCVar("tos_sv_MasterStartControlDelay")->GetFVal();
 
 				ScheduleMasterStartControl(info);
 
@@ -281,13 +283,15 @@ void CTOSMasterModule::Init()
 
 void CTOSMasterModule::Update(float frametime)
 {
-	for (const auto &schedPair : m_scheduledTakeControls)
+	for (auto &schedPair : m_scheduledTakeControls)
 	{
 		const auto slaveId = schedPair.first;
-		const auto masterChannelId = schedPair.second;
-
+		const auto masterChannelId = schedPair.second.masterChannelId;
 		const auto inGame = g_pGame->GetGameRules()->IsChannelInGame(masterChannelId);
-		if (inGame)
+
+		auto& delay = schedPair.second.inGameDelay;
+
+		if (inGame && delay < 0.0f)
 		{
 			MasterStartControlParams params;
 			params.slaveId = slaveId;
@@ -303,6 +307,8 @@ void CTOSMasterModule::Update(float frametime)
 			m_scheduledTakeControls.erase(slaveId);
 			break;
 		}
+
+		delay -= gEnv->pTimer->GetFrameStartTime().GetSeconds();
 	}
 }
 
@@ -371,7 +377,7 @@ IEntity* CTOSMasterModule::GetSlave(const IEntity* pMasterEntity)
 	return nullptr;
 }
 
-void CTOSMasterModule::SetSlave(const IEntity* pMasterEntity, IEntity* pSlaveEntity)
+void CTOSMasterModule::SetSlave(const IEntity* pMasterEntity, const IEntity* pSlaveEntity)
 {
 	assert(pMasterEntity);
 	assert(pSlaveEntity);
@@ -456,7 +462,10 @@ void CTOSMasterModule::ScheduleMasterStartControl(const STOSStartControlInfo& in
 {
 	const auto it = m_scheduledTakeControls.find(info.slaveId);
 	if (it == m_scheduledTakeControls.end())
-		m_scheduledTakeControls[info.slaveId] = info.masterChannelId;
+	{
+		m_scheduledTakeControls[info.slaveId].masterChannelId = info.masterChannelId;
+		m_scheduledTakeControls[info.slaveId].inGameDelay = info.startDelay;
+	}
 }
 
 void CTOSMasterModule::GetMasters(std::map<EntityId, STOSMasterInfo>& masters) const

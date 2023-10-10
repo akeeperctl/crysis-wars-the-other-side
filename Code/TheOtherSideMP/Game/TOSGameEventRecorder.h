@@ -48,8 +48,9 @@ enum EExtraGameplayEvent
 
 	eEGE_SynchronizerCreated,
 	eEGE_SynchronizerDestroyed,
+	eEGE_SynchronizerRegistered,
 
-	eEGE_PlayerJoinedGame, // Игрок нажал кнопку "Присоединится" и появился в игре
+	eEGE_PlayerJoinedGame, // Игрок нажал кнопку "Присоединится" и появился в игре. Не срабатывает автоматически когда игрок в игре, но после sv_restart 
 	eEGE_PlayerJoinedSpectator, // Игрок нажал кнопку "Зритель" и перешёл в режим зрителя
 	eEGE_PlayerJoinedCutscene,
 
@@ -65,11 +66,13 @@ enum EExtraGameplayEvent
 
 	eEGE_EntityOnSpawn, // Сущность была заспавнена с помощью pEntitySystem->SpawnEntity()
 	eEGE_EntityOnRemove, 
+	eEGE_EntityRemovedForced, // Не важно какая сущность была удалена с помощью CTOSEntitySpawnModule::RemoveEntityForced()
 
 	eEGE_TOSEntityOnSpawn, // Сущность была заспавнена с помощью CTOSEntitySpawnModule::SpawnEntity()
-	eEGE_TOSEntityOnRemove, 
+	eEGE_TOSEntityOnRemove,
 	eEGE_TOSEntityMarkForRecreation,
 	eEGE_TOSEntityRecreated,
+
 
 	eEGE_TOSEntityScheduleDelegateAuthority,
 	eEGE_TOSEntityAuthorityDelegated,
@@ -89,15 +92,14 @@ enum EExtraGameplayEvent
 	eEGE_GameChannelDestroyed,
 	eEGE_ConfigureGameChannel,
 
-	eEGE_ClientConnect,
-	eEGE_ClientDisconnect,
-	eEGE_ClientEnteredGame,
+	eEGE_ClientConnect, // Вызывается только на сервере
+	eEGE_ClientDisconnect, // Вызывается только на сервере
+	eEGE_ClientEnteredGame, // Вызывается и на сервере и на клиенте
 
 	eEGE_UpdateContextViewState,
 	eEGE_UpdateChannelConnectionState,
 
-	eEGE_Example3,
-	eEGE_Example4,
+
 	eEGE_Example5,
 	eEGE_Example6,
 	eEGE_Example7,
@@ -340,10 +342,10 @@ public:
 			return "eEGE_UpdateContextViewState";
 		case eEGE_UpdateChannelConnectionState:
 			return "eEGE_UpdateChannelConnectionState";
-		case eEGE_Example3:
-			return "eEGE_Example3";
-		case eEGE_Example4:
-			return "eEGE_Example4";
+		case eEGE_SynchronizerRegistered:
+			return "eEGE_SynchronizerRegistered";
+		case eEGE_EntityRemovedForced:
+			return "eEGE_EntityRemovedForced";
 		case eEGE_Example5:
 			return "eEGE_Example5";
 		case eEGE_Example6:

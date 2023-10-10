@@ -47,3 +47,9 @@ CTOSGenericSynchronizer* CTOSGenericModule::GetSynchronizer() const
 {
 	return m_pSynchonizer;
 }
+
+void CTOSGenericModule::RegisterSynchronizer(CTOSGenericSynchronizer* pSynch)
+{
+	assert(pSynch);
+	m_pSynchonizer = pSynch;
+}

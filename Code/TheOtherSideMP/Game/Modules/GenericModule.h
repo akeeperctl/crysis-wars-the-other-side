@@ -34,10 +34,16 @@ public:
 
 	virtual CTOSGenericSynchronizer* GetSynchronizer() const;
 
-	template <class CSynchType>
-	CSynchType* CreateSynchonizer(const char* entityName, const char* extensionName);
+	//template <class CSynchType>
+	//CSynchType* CreateSynchonizer(const char* entityName, const char* extensionName);
 
 protected:
+	/**
+	 * \brief Регистрация синхронизатора для этого модуля.
+		\n смотреть \a m_pSynchonizer
+	 */
+	void RegisterSynchronizer(CTOSGenericSynchronizer* pSynch);
+
 	CTOSGenericSynchronizer* m_pSynchonizer;
 
 private:
@@ -45,65 +51,68 @@ private:
 };
 
 
-template <class CSynchType>
-CSynchType* CTOSGenericModule::CreateSynchonizer(const char* entityName, const char* extensionName)
-{
-	const char* extName = extensionName;
-	CSynchType* pSynchExt = nullptr;
-
-	const IEntity* pSynchEntity = gEnv->pEntitySystem->FindEntityByName(entityName);
-	if (pSynchEntity)
-	{
-		IGameObject* pGO = g_pGame->GetIGameFramework()->GetGameObject(pSynchEntity->GetId());
-		if (pGO)
-		{
-			// pGO->RegisterAsPredicted();
-
-			pSynchExt = dynamic_cast<CSynchType*>(pGO->AcquireExtension(extName));
-			assert(pSynchExt);
-
-			//m_pSynchonizer->SetModule(this);
-			m_pSynchonizer = pSynchExt;
-
-			TOS_RECORD_EVENT(pSynchEntity->GetId(), STOSGameEvent(eEGE_SynchronizerCreated, "", true));
-
-			return pSynchExt;
-		}
-	}
-
-	SEntitySpawnParams params;
-	params.pClass = gEnv->pEntitySystem->GetClassRegistry()->GetDefaultClass();
-	params.bStaticEntityId = true;
-	params.bIgnoreLock = true; // i dont know why i use it
-	params.sName = entityName;
-	params.nFlags |= ENTITY_FLAG_NO_PROXIMITY;// | ENTITY_FLAG_UNREMOVABLE; Флаг ENTITY_FLAG_UNREMOVABLE удалён, ибо не работает при sv_restart
-
-	pSynchEntity = gEnv->pEntitySystem->SpawnEntity(params);
-	assert(pSynchEntity);
-
-	if (!pSynchEntity) 
-		return nullptr;
-
-	//IGameObject* pGO = g_pGame->GetIGameFramework()->GetGameObject(pSynchronizer->GetId());
-	IGameObject* pGO = g_pGame->GetIGameFramework()->GetIGameObjectSystem()->CreateGameObjectForEntity(pSynchEntity->GetId());
-	if (pGO)
-	{
-		// Вообще эффекта не имеет
-		// pGO->RegisterAsPredicted(); 
-
-		//m_pSynchonizer = dynamic_cast<CSynchType*>(pGO->AcquireExtension(extName));
-		//assert(m_pSynchonizer);
-		pSynchExt = dynamic_cast<CSynchType*>(pGO->AcquireExtension(extName));
-		assert(pSynchExt);
-
-
-		//m_pSynchonizer->SetModule(this);
-
-		pSynchExt->GetGameObject()->ForceUpdate(true);
-		m_pSynchonizer = pSynchExt;
-
-		TOS_RECORD_EVENT(pSynchEntity->GetId(), STOSGameEvent(eEGE_SynchronizerCreated, "", true));
-	}
-
-	return pSynchExt;
-}
+// Not actual anymore
+//template <class CSynchType>
+//CSynchType* CTOSGenericModule::CreateSynchonizer(const char* entityName, const char* extensionName)
+//{
+//	//const char* extName = extensionName;
+//	//CSynchType* pSynchExt = nullptr;
+//
+//	//const IEntity* pSynchEntity = gEnv->pEntitySystem->FindEntityByName(entityName);
+//	//if (pSynchEntity)
+//	//{
+//	//	IGameObject* pGO = g_pGame->GetIGameFramework()->GetGameObject(pSynchEntity->GetId());
+//	//	if (pGO)
+//	//	{
+//	//		// pGO->RegisterAsPredicted();
+//
+//	//		pSynchExt = dynamic_cast<CSynchType*>(pGO->AcquireExtension(extName));
+//	//		assert(pSynchExt);
+//
+//	//		//m_pSynchonizer->SetModule(this);
+//	//		m_pSynchonizer = pSynchExt;
+//
+//	//		TOS_RECORD_EVENT(pSynchEntity->GetId(), STOSGameEvent(eEGE_SynchronizerCreated, "", true));
+//
+//	//		return pSynchExt;
+//	//	}
+//	//}
+//
+//	//SEntitySpawnParams params;
+//	//params.pClass = gEnv->pEntitySystem->GetClassRegistry()->GetDefaultClass();
+//	//params.bStaticEntityId = true;
+//	//params.bIgnoreLock = true; // i dont know why i use it
+//	//params.sName = entityName;
+//	//params.nFlags |= ENTITY_FLAG_NO_PROXIMITY;// | ENTITY_FLAG_UNREMOVABLE; Флаг ENTITY_FLAG_UNREMOVABLE удалён, ибо не работает при sv_restart
+//
+//	//pSynchEntity = gEnv->pEntitySystem->SpawnEntity(params);
+//	//assert(pSynchEntity);
+//
+//	//if (!pSynchEntity) 
+//	//	return nullptr;
+//
+//	////IGameObject* pGO = g_pGame->GetIGameFramework()->GetGameObject(pSynchronizer->GetId());
+//	//IGameObject* pGO = g_pGame->GetIGameFramework()->GetIGameObjectSystem()->CreateGameObjectForEntity(pSynchEntity->GetId());
+//	//if (pGO)
+//	//{
+//	//	// Вообще эффекта не имеет
+//	//	// pGO->RegisterAsPredicted(); 
+//
+//	//	//m_pSynchonizer = dynamic_cast<CSynchType*>(pGO->AcquireExtension(extName));
+//	//	//assert(m_pSynchonizer);
+//	//	pSynchExt = dynamic_cast<CSynchType*>(pGO->AcquireExtension(extName));
+//	//	assert(pSynchExt);
+//
+//
+//	//	//m_pSynchonizer->SetModule(this);
+//
+//	//	pSynchExt->GetGameObject()->ForceUpdate(true);
+//	//	m_pSynchonizer = pSynchExt;
+//
+//	//	TOS_RECORD_EVENT(pSynchEntity->GetId(), STOSGameEvent(eEGE_SynchronizerCreated, "", true));
+//	//}
+//
+//	//return pSynchExt;
+//
+//	return nullptr;
+//}

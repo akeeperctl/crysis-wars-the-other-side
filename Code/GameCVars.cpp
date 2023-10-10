@@ -7,7 +7,7 @@
   
  -------------------------------------------------------------------------
   History:
-  - 11:8:2004   10:50 : Created by Márcio Martins
+  - 11:8:2004   10:50 : Created by MĞ±rcio Martins
 
 *************************************************************************/
 #include "StdAfx.h"
@@ -1185,6 +1185,17 @@ void CGame::CmdVehicleKill(IConsoleCmdArgs *pArgs)
 //------------------------------------------------------------------------
 void CGame::CmdRestart(IConsoleCmdArgs *pArgs)
 {
+	//TheOtherSide
+	if (gEnv->bServer)
+	{
+		CryLogAlways(" ");
+		CryLogAlways(" ////////////////// SERVER RESTARTING //////////////////");
+		CryLogAlways(" ////////////////// SERVER RESTARTING //////////////////");
+		CryLogAlways(" ////////////////// SERVER RESTARTING //////////////////");
+		CryLogAlways(" ");
+	}
+	//~TheOtherSide
+
 	if(g_pGame && g_pGame->GetGameRules())
 		g_pGame->GetGameRules()->Restart();
 }

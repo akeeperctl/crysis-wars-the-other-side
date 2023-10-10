@@ -240,7 +240,8 @@ void InitGameFactory(IGameFramework *pFramework)
 	// RegisterGameRules - регистрирует новый класс std с названием "SinglePlayer" и с extension "GameRules"
 
 	//	//REGISTER_FACTORY(pFramework, "TOSMasterSynchronizer", CTOSMasterSynchronizer, false); //is ok
-	REGISTER_GAME_OBJECT_EXTENSION(pFramework, TOSMasterSynchronizer); //is ok
+	//	REGISTER_GAME_OBJECT_EXTENSION(pFramework, TOSMasterSynchronizer); //is ok
+	REGISTER_GAME_OBJECT(pFramework, TOSMasterSynchronizer, "Scripts/Entities/TOS/TOSMasterSynchronizer.lua"); //is ok
 	//~TheOtherSide
 
 
