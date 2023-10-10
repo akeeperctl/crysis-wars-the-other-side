@@ -15,6 +15,7 @@ void CTOSEntitySpawnModule::InitCCommands(IConsole* pConsole)
 	pConsole->AddCommand("spawnentity", CmdSpawnEntity);
 	pConsole->AddCommand("removeentity", CmdRemoveEntityById);
 	pConsole->AddCommand("removeentityforced", CmdRemoveEntityByIdForced);
+	pConsole->AddCommand("getlistsavedentites", CmdGetListEntities);
 }
 
 void CTOSEntitySpawnModule::ReleaseCVars()
@@ -30,6 +31,7 @@ void CTOSEntitySpawnModule::ReleaseCCommands()
 	pConsole->RemoveCommand("spawnentity");
 	pConsole->RemoveCommand("removeentitybyid");
 	pConsole->RemoveCommand("removeentitybyidforced");
+	pConsole->RemoveCommand("getlistsavedentites");
 }
 
 void CTOSEntitySpawnModule::CmdSpawnEntity(IConsoleCmdArgs* pArgs)
@@ -92,4 +94,40 @@ void CTOSEntitySpawnModule::CmdRemoveEntityByIdForced(IConsoleCmdArgs* pArgs)
 	}
 
 	RemoveEntityForced(id);
+}
+
+void CTOSEntitySpawnModule::CmdGetListEntities(IConsoleCmdArgs* pArgs)
+{
+	ONLY_SERVER_CMD;
+
+	const auto pModule = g_pTOSGame->GetEntitySpawnModule();
+	assert(pModule);
+
+	CryLogAlways("Result: ");
+	CryLogAlways("	saved: ");
+	for (const auto& savedPair : pModule->m_savedParams)
+	{
+		const auto savedName = savedPair.second->savedName;
+		const auto savedAuthPlayer = savedPair.second->authorityPlayerName;
+		const auto savedBeSlave = savedPair.second->willBeSlave;
+
+		CryLogAlways("		--- name: %s, authName: %s, willSlave: %i", 
+			savedName.c_str(), 
+			savedAuthPlayer.c_str(), 
+			savedBeSlave);
+	}
+
+	CryLogAlways("	marked for recreation: ");
+	for (const auto markedId : pModule->s_markedForRecreation)
+	{
+		auto pEntity = gEnv->pEntitySystem->GetEntity(markedId);
+		if (!pEntity)
+			continue;
+
+		const auto markedName = pEntity->GetName();
+
+		CryLogAlways("		--- name: %s, id: %i", markedName, markedId);
+	}
+
+
 }

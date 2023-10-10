@@ -35,6 +35,9 @@ History:
 
 #include <StlUtils.h>
 
+// TheOtherSide
+#include "TheOtherSideMP/Game/TOSGameEventRecorder.h"
+// ~TheOtherSide
 
 //------------------------------------------------------------------------
 void CGameRules::ValidateShot(EntityId playerId, EntityId weaponId, uint16 seq, uint8 seqr)
@@ -1203,8 +1206,13 @@ IMPLEMENT_RMI(CGameRules, ClEnteredGame)
 			m_pGameplayRecorder->Event(pActor->GetEntity(), GameplayEvent(eGE_Connected, 0, 0, (void*)status));
 
 			//TheOtherSide
-			CryLogAlways("[C++][%s][%s][ClEnteredGame] LocalPlayerNick = %s",
-				TOS_Debug::GetEnv(), TOS_Debug::GetAct(3), pActor->GetEntity()->GetName());
+			//CryLogAlways("[C++][%s][%s][ClEnteredGame] LocalPlayerNick = %s",
+				//TOS_Debug::GetEnv(), TOS_Debug::GetAct(3), pActor->GetEntity()->GetName());
+
+
+			TOS_RECORD_EVENT(pActor->GetEntityId(), STOSGameEvent(eEGE_ClientEnteredGame, "", true));
+
+
 			//~TheOtherSide
 		}
 	}

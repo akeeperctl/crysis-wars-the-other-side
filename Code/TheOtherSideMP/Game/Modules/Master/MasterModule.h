@@ -11,9 +11,28 @@ class CTOSMasterSynchronizer;
 class CTOSGenericSynchronizer;
 
 /**
+ * \brief хранит информацию о канале мастера во время перезапуска игры.
+   \n Нужен для фикса бага: https://github.com/akeeperctl/crysis-wars-the-other-side/issues/9
+ */
+struct STOSScheduledMasterInfo final : STOSSmartStruct  // NOLINT(cppcoreguidelines-special-member-functions)
+{
+	STOSScheduledMasterInfo()
+		: masterChannelId(0),
+		inGameDelay(0) {}
+
+	explicit STOSScheduledMasterInfo(const uint channelId, const float _delay) :
+		masterChannelId(channelId),
+		inGameDelay(_delay)
+	{}
+
+	uint masterChannelId;
+	float inGameDelay; ///< Задержка, которая начинает свой отсчёт (от x до 0) после того как \n канал мастера пребудет в состояние eCVS_InGame
+};
+
+/**
  * \brief хранит информацию о работе одного мастера
  */
-struct STOSMasterInfo : STOSSmartStruct  // NOLINT(cppcoreguidelines-special-member-functions)
+struct STOSMasterInfo final : STOSSmartStruct  // NOLINT(cppcoreguidelines-special-member-functions)
 {
 	STOSMasterInfo() :
 		slaveId(0)
@@ -31,14 +50,17 @@ struct STOSStartControlInfo
 {
 	STOSStartControlInfo()
 		: slaveId(0),
-		masterChannelId(0) {}
+		masterChannelId(0),
+		startDelay(0) {}
 
-	explicit STOSStartControlInfo(const EntityId _slaveId, const uint _masterChannelId)
+	explicit STOSStartControlInfo(const EntityId _slaveId, const uint _masterChannelId, const float _delay)
 		: slaveId(_slaveId),
-		masterChannelId(_masterChannelId) {}
+		masterChannelId(_masterChannelId),
+		startDelay(_delay) {}
 
 	EntityId slaveId;
 	uint masterChannelId;
+	float startDelay; ///< задержка в секундах перед передачей мастеру управления рабом \n посмотри CTOSMasterModule::ScheduleMasterStartControl
 };
 
 /**
@@ -94,7 +116,7 @@ public:
 	void     GetMasters(std::map<EntityId, STOSMasterInfo>& masters) const;
 	bool     SetMasterDesiredSlaveCls(const IEntity* pEntity, const char* slaveDesiredClass);
 	IEntity* GetSlave(const IEntity* pMasterEntity);
-	void     SetSlave(const IEntity* pMasterEntity, IEntity* pSlaveEntity);
+	void     SetSlave(const IEntity* pMasterEntity, const IEntity* pSlaveEntity);
 	void     ClearSlave(const IEntity* pMasterEntity);
 	bool     IsSlave(const IEntity* pEntity) const;
 	void     DebugDraw(const Vec2& screenPos = {20,300}, float fontSize = 1.2f, float interval = 20.0f, int maxElemNum = 5);
@@ -117,15 +139,17 @@ private:
 	void ScheduleMasterStartControl(const STOSStartControlInfo& info);
 
 
+
 public:
 
 	//Console variables
-	int tos_cl_JoinAsMaster;
+	int    tos_cl_JoinAsMaster;
 	ICVar* tos_cl_SlaveEntityClass;
-	float tos_sv_SlaveSpawnDelay;
+	float  tos_sv_SlaveSpawnDelay;
+	float  tos_sv_MasterStartControlDelay;
 
 private:
 	std::map<EntityId, STOSMasterInfo> m_masters; //ключ - мастер, значение - структура, хранящая имя класса раба, который должен будет заспавниться
 	CTOSMasterClient* m_pLocalMasterClient;
-	std::map<EntityId, uint> m_scheduledTakeControls; ///< \b Что \b хранит: \n ключ - ID сущности раба \n значение - ID канала клиента через который подключен мастер
+	std::map<EntityId, STOSScheduledMasterInfo> m_scheduledTakeControls; ///< \b Что \b хранит: \n ключ - ID сущности раба \n значение - структуру канала клиента через который подключен мастер
 };

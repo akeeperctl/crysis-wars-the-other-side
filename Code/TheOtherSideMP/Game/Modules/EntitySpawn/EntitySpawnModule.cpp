@@ -181,6 +181,10 @@ void CTOSEntitySpawnModule::Update(float frametime)
 		EntityId scheduledId = schedPair.first;
 		IEntity* pScheduledEnt = gEnv->pEntitySystem->GetEntity(scheduledId);
 
+		// Как-то раз словил вылет при sv_restart во время перезапуска :)
+		if (!pScheduledEnt)
+			break;
+
 		const char* schedName = pScheduledEnt->GetName();
 		const char* playerName = schedPair.second.playerName.c_str();
 		const bool willBeSlave = schedPair.second.willBeSlave;
@@ -261,6 +265,20 @@ IEntity* CTOSEntitySpawnModule::SpawnEntity(STOSEntitySpawnParams& params, bool 
 	if (!pEntSys)
 		return nullptr;
 
+	for (auto& iter : g_pTOSGame->GetEntitySpawnModule()->m_savedParams)
+	{
+		// Недопустимо чтобы 1 игрок-мастер мог управлять сразу двумя рабами
+
+		bool alreadyHaveSaved = iter.second->authorityPlayerName == params.authorityPlayerName;
+		if (alreadyHaveSaved)
+		{
+			CryLogAlways("[C++][SpawnEntity] Slave entity spawn interrupted! The system already has a saved slave for player %s", params.authorityPlayerName);
+
+			return nullptr;
+		}
+	}
+
+
 	const auto pEntity = pEntSys->SpawnEntity(params.vanilla, false);
 	assert(pEntity);
 
@@ -275,6 +293,7 @@ IEntity* CTOSEntitySpawnModule::SpawnEntity(STOSEntitySpawnParams& params, bool 
 
 	if (params.tosFlags & TOS_ENTITY_FLAG_MUST_RECREATED)
 	{
+
 		auto alreadyInside = stl::find(s_markedForRecreation, entityId);
 		if (!alreadyInside)
 		{
@@ -308,6 +327,19 @@ bool CTOSEntitySpawnModule::SpawnEntityDelay(STOSEntityDelaySpawnParams& params,
 	if (!pEntSys)
 		return false;
 
+	for (auto& iter : g_pTOSGame->GetEntitySpawnModule()->m_savedParams)
+	{
+		// Недопустимо чтобы 1 игрок-мастер мог управлять сразу двумя рабами
+
+		bool alreadyHaveSaved = iter.second->authorityPlayerName == params.authorityPlayerName;
+		if (alreadyHaveSaved)
+		{
+			CryLogAlways("[C++][SpawnEntityDelay] Slave entity spawn interrupted! The system already has a saved slave for player %s", params.authorityPlayerName);
+
+			return false;
+		}
+	}
+
 	if (params.spawnDelay < 0.001f)
 	{
 		return SpawnEntity(params,sendTosEvent);
@@ -339,6 +371,8 @@ void CTOSEntitySpawnModule::RemoveEntityForced(EntityId id)
 
 	if (pSM->m_savedParams.find(id) != pSM->m_savedParams.end())
 		pSM->m_savedParams.erase(id);
+
+	TOS_RECORD_EVENT(id, STOSGameEvent(eEGE_EntityRemovedForced, "", true));
 
 	gEnv->pEntitySystem->RemoveEntity(id);
 }
@@ -441,9 +475,9 @@ void CTOSEntitySpawnModule::ScheduleRecreation(const IEntity* pEntity)
 
 	if (pSavedScript->Clone(pEntity->GetScriptTable()))
 	{
-		CryLogAlways("[%s] Script table successfully cloned", entName);
-		CryLogAlways("[%s] Script dump:", entName);
-		pSavedScript->Dump(g_pTOSGame);
+		//CryLogAlways("[%s] Script table successfully cloned", entName);
+		//CryLogAlways("[%s] Script dump:", entName);
+		//pSavedScript->Dump(g_pTOSGame);
 	}
 
 	pParams->pSavedScript = pSavedScript;

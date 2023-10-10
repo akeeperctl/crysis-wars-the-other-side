@@ -52,26 +52,57 @@ void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEven
 		break;
 	}
 	//case eEGE_ActorPostInit: no ok on client
-	case eEGE_SynchronizerCreated:	
+	case eEGE_SynchronizerCreated:
 	{
-		if (pEntity && gEnv->bClient)
+		if (pGO)
 		{
-			const int joinAsAlien = gEnv->pConsole->GetCVar("tos_cl_JoinAsMaster")->GetIVal();
-			if (joinAsAlien > 0)
+			m_pSynchonizer = dynamic_cast<CTOSMasterSynchronizer*>(pGO->AcquireExtension("TOSMasterSynchronizer"));
+			assert(m_pSynchonizer);
+		}
+
+		TOS_RECORD_EVENT(entId, STOSGameEvent(eEGE_SynchronizerRegistered, "For Master Module", true));
+
+		break;
+	}
+	//case eEGE_SynchronizerRegistered:
+	case eEGE_ClientEnteredGame:
+	{
+		if (pEntity)
+		{
+			if (gEnv->bServer)
 			{
-				const auto clientEntityId = g_pGame->GetIGameFramework()->GetClientActorId();
-				const auto pSlaveEntClsCvar = gEnv->pConsole->GetCVar("tos_cl_SlaveEntityClass");
-				assert(pSlaveEntClsCvar);
+				const auto pPlayer = dynamic_cast<CTOSPlayer*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(entId));
+				assert(pPlayer);
 
-				const auto params = MasterAddingParams(clientEntityId, pSlaveEntClsCvar->GetString());
+				const auto masterNeedSlave = pPlayer->GetSpectatorMode() == 0 && 
+					IsMaster(pPlayer->GetEntity()) && 
+					!GetSlave(pPlayer->GetEntity());
 
-				assert(m_pSynchonizer);
-				m_pSynchonizer->RMISend(CTOSMasterSynchronizer::SvRequestMasterAdd(), params, eRMI_ToServer);
+				if (masterNeedSlave)
+				{
+					TOS_RECORD_EVENT(entId, STOSGameEvent(eEGE_PlayerJoinedGame, "after sv_restart", true));
+				}
+			}
+			else if(gEnv->bClient)
+			{
+				const int joinAsAlien = gEnv->pConsole->GetCVar("tos_cl_JoinAsMaster")->GetIVal();
+				if (joinAsAlien > 0)
+				{
+					const auto clientEntityId = g_pGame->GetIGameFramework()->GetClientActorId();
+					const auto pSlaveEntClsCvar = gEnv->pConsole->GetCVar("tos_cl_SlaveEntityClass");
+					assert(pSlaveEntClsCvar);
+
+					const auto params = MasterAddingParams(clientEntityId, pSlaveEntClsCvar->GetString());
+
+					assert(m_pSynchonizer);
+					m_pSynchonizer->RMISend(CTOSMasterSynchronizer::SvRequestMasterAdd(), params, eRMI_ToServer);
+				}
 			}
 		}
 
 		break;
 	}
+	//case eEGE_PlayerJoinedGame:
 	case eEGE_PlayerJoinedGame:
 	{
 		if (gEnv->bServer)
@@ -232,7 +263,8 @@ void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEven
 
 		break;
 	}
-	case eEGE_ActorRelease:
+	//case eEGE_ActorRelease:
+	case eEGE_ClientDisconnect:
 	{
 		if (pEntity && gEnv->bServer)
 		{
@@ -245,6 +277,8 @@ void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEven
 				const auto pSlave = GetSlave(pEntity);
 				if (pSlave)
 				{
+					//Вызывало баг, когда в какой-то момент раб перестал появляться после sv_restart
+					//Вернул
 					TOS_Entity::RemoveEntityForced(pSlave->GetId());
 				}
 			}

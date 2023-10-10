@@ -124,6 +124,7 @@ public:
 	static void CmdSpawnEntity(IConsoleCmdArgs* pArgs);
 	static void CmdRemoveEntityById(IConsoleCmdArgs* pArgs);
 	static void CmdRemoveEntityByIdForced(IConsoleCmdArgs* pArgs);
+	static void CmdGetListEntities(IConsoleCmdArgs* pArgs);
 
 	/**
 	 * \brief Создаёт сущность по определенным параметрам

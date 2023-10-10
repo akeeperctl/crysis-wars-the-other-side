@@ -645,11 +645,6 @@ bool CGameRules::OnClientConnect(int channelId, bool isReset)
 //------------------------------------------------------------------------
 void CGameRules::OnClientDisconnect(int channelId, EDisconnectionCause cause, const char *desc, bool keepClient)
 {
-	//TheOtherSide
-	char buffer[256] = {};
-	sprintf(buffer, "ChannelId = %i, Keep Client = %i, Desc = %s", channelId, keepClient, desc);
-	TOS_RECORD_EVENT(0, STOSGameEvent(eEGE_ClientDisconnect, buffer, true));
-	//~TheOtherSide
 
 	if (m_pShotValidator)
 		m_pShotValidator->Disconnected(channelId);
@@ -666,6 +661,13 @@ void CGameRules::OnClientDisconnect(int channelId, EDisconnectionCause cause, co
 
 	if (pActor)
 		m_pGameplayRecorder->Event(pActor->GetEntity(), GameplayEvent(eGE_Disconnected,"",keepClient?1.0f:0.0f));
+
+	//TheOtherSide
+	char buffer[256] = {};
+	sprintf(buffer, "ChannelId = %i, Keep Client = %i, Desc = %s", channelId, keepClient, desc);
+	TOS_RECORD_EVENT(pActor->GetEntityId(), STOSGameEvent(eEGE_ClientDisconnect, buffer, true));
+	//~TheOtherSide
+
 
 	if (keepClient)
 	{
@@ -700,16 +702,21 @@ void CGameRules::OnClientDisconnect(int channelId, EDisconnectionCause cause, co
 //------------------------------------------------------------------------
 bool CGameRules::OnClientEnteredGame(int channelId, bool isReset)
 {
-	//TheOtherSide
-	char buffer[256] = {};
-	sprintf(buffer, "ChannelId = %i, Is Reset = %i", channelId, isReset);
-
-	TOS_RECORD_EVENT(0, STOSGameEvent(eEGE_ClientEnteredGame, buffer, true));
-	//~TheOtherSide
-
 	CActor *pActor=GetActorByChannelId(channelId);
 	if (!pActor)
 		return false;
+
+	//TheOtherSide
+	// излишняя проверка, т.к вызывается только на сервере
+	if (gEnv->bServer)
+	{
+		char buffer[256] = {};
+		sprintf(buffer, "ChannelId = %i, Is Reset = %i", channelId, isReset);
+
+		TOS_RECORD_EVENT(pActor->GetEntityId(), STOSGameEvent(eEGE_ClientEnteredGame, buffer, true));
+	}
+	//~TheOtherSide
+
 
 	if (g_pGame->GetServerSynchedStorage())
 		g_pGame->GetServerSynchedStorage()->OnClientEnteredGame(channelId);
