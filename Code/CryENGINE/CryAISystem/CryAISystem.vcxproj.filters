@@ -16,6 +16,18 @@
     <Filter Include="AISystem\Goals">
       <UniqueIdentifier>{730c6066-cde4-4ce2-b15a-dc77684ae20a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="AISystem\Navigation">
+      <UniqueIdentifier>{614acd7b-b808-4d2f-8eb0-a399f97e19f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AISystem\Graph">
+      <UniqueIdentifier>{544125e5-f4f7-45b0-8d5b-68c137e61699}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AISystem\AStarResolver">
+      <UniqueIdentifier>{fd9bcedb-574e-46a1-a9b0-dc310ab9ac62}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AISystem\SmartObjects">
+      <UniqueIdentifier>{a9d9e71e-d71d-4eec-befe-9b728f0fa173}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AISystem.cpp">
@@ -55,25 +67,22 @@
     <ClCompile Include="BuildingIDManager.cpp">
       <Filter>AISystem</Filter>
     </ClCompile>
-    <ClCompile Include="CTriangulator.cpp">
-      <Filter>AISystem</Filter>
-    </ClCompile>
     <ClCompile Include="Formation.cpp">
-      <Filter>AISystem</Filter>
-    </ClCompile>
-    <ClCompile Include="Graph.cpp">
-      <Filter>AISystem</Filter>
-    </ClCompile>
-    <ClCompile Include="GraphUtility.cpp">
-      <Filter>AISystem</Filter>
-    </ClCompile>
-    <ClCompile Include="Heuristic.cpp">
       <Filter>AISystem</Filter>
     </ClCompile>
     <ClCompile Include="VertexList.cpp">
       <Filter>AISystem</Filter>
     </ClCompile>
     <ClCompile Include="DllMain.cpp" />
+    <ClCompile Include="CTriangulator.cpp">
+      <Filter>AISystem</Filter>
+    </ClCompile>
+    <ClCompile Include="Graph.cpp">
+      <Filter>AISystem\Graph</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphUtility.cpp">
+      <Filter>AISystem\Graph</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AISystem.h">
@@ -106,16 +115,7 @@
     <ClInclude Include="Puppet.h">
       <Filter>AISystem\PipeUser</Filter>
     </ClInclude>
-    <ClInclude Include="Graph.h">
-      <Filter>AISystem</Filter>
-    </ClInclude>
     <ClInclude Include="Formation.h">
-      <Filter>AISystem</Filter>
-    </ClInclude>
-    <ClInclude Include="CTriangulator.h">
-      <Filter>AISystem</Filter>
-    </ClInclude>
-    <ClInclude Include="Heuristic.h">
       <Filter>AISystem</Filter>
     </ClInclude>
     <ClInclude Include="BuildingIDManager.h">
@@ -132,5 +132,60 @@
       <Filter>AISystem</Filter>
     </ClInclude>
     <ClInclude Include="DllMain.h" />
+    <ClInclude Include="NavRegion.h">
+      <Filter>AISystem\Navigation</Filter>
+    </ClInclude>
+    <ClInclude Include="CTriangulator.h">
+      <Filter>AISystem</Filter>
+    </ClInclude>
+    <ClInclude Include="NavPath.h">
+      <Filter>AISystem\Navigation</Filter>
+    </ClInclude>
+    <ClInclude Include="IPathfinder.h">
+      <Filter>AISystem\Navigation</Filter>
+    </ClInclude>
+    <ClInclude Include="INavigationSystem.h">
+      <Filter>AISystem\Navigation</Filter>
+    </ClInclude>
+    <ClInclude Include="IMNM.h" />
+    <ClInclude Include="PathObstacles.h">
+      <Filter>AISystem\Navigation</Filter>
+    </ClInclude>
+    <ClInclude Include="AILog.h">
+      <Filter>AISystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Graph.h">
+      <Filter>AISystem\Graph</Filter>
+    </ClInclude>
+    <ClInclude Include="AStarSolver.h">
+      <Filter>AISystem\AStarResolver</Filter>
+    </ClInclude>
+    <ClInclude Include="AStarOpenList.h">
+      <Filter>AISystem\AStarResolver</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphNodeManager.h">
+      <Filter>AISystem\Graph</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphStructures.h">
+      <Filter>AISystem\Graph</Filter>
+    </ClInclude>
+    <ClInclude Include="AutoTypeStructs.h">
+      <Filter>AISystem</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphLinkManager.h">
+      <Filter>AISystem\Graph</Filter>
+    </ClInclude>
+    <ClInclude Include="AIHash.h">
+      <Filter>AISystem</Filter>
+    </ClInclude>
+    <ClInclude Include="AllNodesContainer.h">
+      <Filter>AISystem\Graph</Filter>
+    </ClInclude>
+    <ClInclude Include="HashSpace.h">
+      <Filter>AISystem</Filter>
+    </ClInclude>
+    <ClInclude Include="SmartObjects.h">
+      <Filter>AISystem\SmartObjects</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

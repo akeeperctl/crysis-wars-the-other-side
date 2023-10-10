@@ -44,10 +44,6 @@
 
 class CAISystem; 
 
-
-
-CAISystem *GetAISystem();
-
 //////////////////////////////////////////////////////////////////////////
 // Report AI warnings to validator.
 //////////////////////////////////////////////////////////////////////////
@@ -59,5 +55,12 @@ void AIError( const char *format,... );
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
+
+/// This frees the memory allocation for a vector (or similar), rather than just erasing the contents
+template<typename T>
+void ClearVectorMemory(T& container)
+{
+	T().swap(container);
+}
 
 #endif // !defined(AFX_STDAFX_H__81DAABA0_0054_42BF_8696_D99BA6832D03__INCLUDED_)

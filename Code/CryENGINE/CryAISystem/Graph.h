@@ -1,315 +1,395 @@
-// Graph.h: interface for the CGraph class.
-//
-//////////////////////////////////////////////////////////////////////
+// Copyright 2001-2016 Crytek GmbH / Crytek Group. All rights reserved.
+
+/********************************************************************
+   -------------------------------------------------------------------------
+   File name:   Graph.h
+   $Id$
+   Description: interface for the CGraph class.
+
+   -------------------------------------------------------------------------
+   History:
+   - ?
+
+ *********************************************************************/
 
 #if !defined(AFX_GRAPH_H__6D059D2E_5A74_4352_B3BF_2C88D446A2E1__INCLUDED_)
 #define AFX_GRAPH_H__6D059D2E_5A74_4352_B3BF_2C88D446A2E1__INCLUDED_
 
 #if _MSC_VER > 1000
-#pragma once
+	#pragma once
 #endif // _MSC_VER > 1000
 
-#include "IAgent.h"
-#include "Heuristic.h"
+#include <IAISystem.h>
+#include <IAgent.h>
+#include "NavPath.h"
+//#include "AIHash.h"
+#include "AILog.h"
+#include "AllNodesContainer.h"
+#include "AutoTypeStructs.h"
+
 #include <list>
 #include <map>
+#include <set>
 #include <vector>
 
-#ifdef LINUX
-#include <winbase.h>
-#endif
+#include "CryUtils.h"
+#include "Reference.h"
+#include "VectorMap.h"
+//#include <CryCore/Containers/CryArray.h>
+//#include <CryCore/Containers/VectorMap.h>
 
-#define BAI_FILE_VERSION 30
-
-struct IRenderer;
 class CCryFile;
+class CGraphLinkManager;
 
-#define PATHFINDER_STILLTRACING				0
-#define PATHFINDER_WALKINGBACK				1
-#define PATHFINDER_BEAUTIFYINGPATH			2
-#define PATHFINDER_POPNEWREQUEST			3
-#define PATHFINDER_CLEANING_GRAPH			4
-
-#define PATHFINDER_PATHFOUND				10
-#define PATHFINDER_NOPATH					11
-
-
-#define PATHFINDER_ITERATIONS		 30
-
-
+enum EPathfinderResult
+{
+	PATHFINDER_STILLFINDING,
+	PATHFINDER_BEAUTIFYINGPATH,
+	PATHFINDER_POPNEWREQUEST,
+	PATHFINDER_PATHFOUND,
+	PATHFINDER_NOPATH,
+	PATHFINDER_ABORT,
+	PATHFINDER_MAXVALUE
+};
 class CAISystem;
 struct IStatObj;
 class ICrySizer;
 class CAIObject;
+class CVolumeNavRegion;
+class CFlightNavRegion;
+class CGraphNodeManager;
+
+class CSmartObject;
+struct CCondition;
 
 struct IVisArea;
 
-typedef struct NodeDescriptor
+inline int TypeIndexFromType(IAISystem::tNavCapMask type)
 {
-	int64        id; //AMD Port
-	bool         bCreated;
-	int          building;
-	GameNodeData data;
-	bool         bEntrance;
-	bool         bExit;
-	int          nObstacles;
-	int          obstacle[10];
-	int          pad; //padding to make it aligned to a multiple of 8 byte, be careful when changing it
-}                NodeDescriptor;
+	int typeIndex;
+	for (typeIndex = IAISystem::NAV_TYPE_COUNT - 1; typeIndex >= 0 && ((1 << typeIndex) & type) == 0; --typeIndex)
+		;
+	return typeIndex;
+}
 
-typedef std::list<GraphNode*>   ListNodes;
-typedef std::vector<GraphNode*> VectorNodes;
-
-typedef struct NodeWithHistory
+inline const char* StringFromTypeIndex(int typeIndex)
 {
-	GraphNode* pNode;
-	ListNodes  lstParents;
-}              NodeWithHistory;
+	static const char* navTypeStrings[] = {
+		"NAV_UNSET",
+		"NAV_TRIANGULAR",
+		"NAV_WAYPOINT_HUMAN",
+		"NAV_WAYPOINT_3DSURFACE",
+		"NAV_FLIGHT",
+		"NAV_VOLUME",
+		"NAV_ROAD",
+		"NAV_SMARTOBJECT",
+		"NAV_FREE_2D",
+	};
+	constexpr int STRING_COUNT = CRY_ARRAY_COUNT(navTypeStrings);
 
-typedef struct LinkDescriptor
+	COMPILE_TIME_ASSERT(STRING_COUNT == static_cast<int>(IAISystem::NAV_TYPE_COUNT));
+
+	if (typeIndex < 0)
+		return "<Invalid Nav Type>";
+
+	return navTypeStrings[typeIndex];
+}
+
+inline const char* StringFromType(IAISystem::ENavigationType type)
 {
-	int64 nSourceNode; //AMD Port
-	int64 nTargetNode;
-	float fMaxPassRadius;
-	char  nStartIndex, nEndIndex;
-	Vec3  vEdgeCenter;
-	Vec3  vWayOut;
-}         LinkDescriptor;
+	return StringFromTypeIndex(TypeIndexFromType(type));
+}
 
-
-class CHeuristic;
-typedef std::multimap<float, GraphNode*>      CandidateMap;
-typedef std::multimap<float, NodeWithHistory> CandidateHistoryMap;
-
-// NOTE: INT_PTR here avoids a tiny performance impact on 32-bit platform
-// for the cost of loss of full compatibility: 64-bit generated BAI files
-// can't be used on 32-bit platform safely. Change the key to int64 to 
-// make it fully compatible. The code that uses this map will be recompiled
-// to use the full 64-bit key on both 32-bit and 64-bit platforms.
-typedef std::multimap<INT_PTR, GraphNode*> EntranceMap;
-typedef std::list<Vec3>                    ListPositions;
-typedef std::list<ObstacleData>            ListObstacles;
-typedef std::list<GraphNode*>::iterator    graphnodeit;
-typedef std::vector<NodeDescriptor>        NodeBuffer;
-typedef std::vector<GraphNode>             NodeMemory;
-typedef std::vector<int>                   LinkBuffer;
-typedef std::vector<LinkDescriptor>        LinkDescBuffer;
-
-
-class CGraph : public IGraph
+//====================================================================
+// CObstacleRef
+//====================================================================
+class CObstacleRef
 {
 protected:
-	int        m_nAStarDistance;
-	GraphNode* m_pCurrent;
-	GraphNode* m_pPathfinderCurrent;
-	//	GraphNode *m_pFirst;
-	GraphNode*  m_pPathBegin;
-	GraphNode*  m_pWalkBackCurrent;
-	CHeuristic* m_pHeuristic;
-
-
-	CandidateHistoryMap m_mapCandidates; // used by pathfinder
-	CandidateMap        m_mapGreedyWalkCandidates; // used by get enclosing
-
-	VectorNodes m_lstTagTracker; // for quick cleaning of the tag
-	VectorNodes m_lstMarkTracker; // for quick cleaning of the mark
-
-	ListNodes m_lstDeleteStack; // for non-recursive deletion of the graph (stack emulator)
-	ListNodes m_lstNodeStack;
-
-	ListNodes m_lstLastPath;
-
-
-	NodeBuffer     m_vBuffer;
-	LinkBuffer     m_vLinks;
-	LinkDescBuffer m_vLinksDesc;
-	EntranceMap    m_mapReadNodes; // when the graph is read
-	NodeMemory     m_vNodes;
-
-	Vec3 m_vBBoxMin;
-	Vec3 m_vBBoxMax;
-
-
-	CAISystem* m_pAISystem;
-
-	ListNodes::iterator m_iFirst, m_iSecond, m_iThird;
-	Vec3                m_vBeautifierStart;
-	Vec3                m_vLastIntersection;
-	bool                m_bBeautifying;
-
-	CAIObject* m_pRequester; // the puppet which whant's the path
+	CWeakRef<CAIObject> m_refAnchor;   // designer defined hiding point
+	int                 m_vertexIndex; // index of vertex
+	unsigned            m_nodeIndex;   // for indoors nodes could be hide points
+	GraphNode*          m_pNode;
+	CSmartObject*       m_pSmartObject; // pointer to smart object to be used for hiding
+	CCondition*         m_pRule;        // pointer to smart object rule to be used for hiding
 
 public:
-	void SetRequester(CAIObject* rq)
+	CAIObject*        GetAnchor() const      { return m_refAnchor.GetAIObject(); }
+	int               GetVertex() const      { return m_vertexIndex; }
+	const unsigned    GetNodeIndex() const   { return m_nodeIndex; }
+	const GraphNode*  GetNode() const        { return m_pNode; }
+	CSmartObject*     GetSmartObject() const { return m_pSmartObject; }
+	const CCondition* GetRule() const        { return m_pRule; }
+
+	CObstacleRef() : m_vertexIndex(-1), m_nodeIndex(0), m_pNode(nullptr), m_pSmartObject(nullptr), m_pRule(nullptr) {}
+	CObstacleRef(const CObstacleRef& other) : m_refAnchor(other.m_refAnchor), m_vertexIndex(other.m_vertexIndex), m_nodeIndex(other.m_nodeIndex), m_pNode(other.m_pNode),
+		m_pSmartObject(other.m_pSmartObject), m_pRule(other.m_pRule) {}
+	CObstacleRef(CWeakRef<CAIObject> refAnchor) : m_refAnchor(refAnchor), m_vertexIndex(-1), m_nodeIndex(0), m_pNode(nullptr), m_pSmartObject(nullptr), m_pRule(nullptr) {}
+	CObstacleRef(int vertexIndex) : m_vertexIndex(vertexIndex), m_nodeIndex(0), m_pNode(nullptr), m_pSmartObject(nullptr), m_pRule(nullptr) {}
+	CObstacleRef(unsigned nodeIndex, GraphNode* pNode) : m_vertexIndex(-1), m_nodeIndex(nodeIndex), m_pNode(pNode), m_pSmartObject(nullptr), m_pRule(nullptr) {}
+	CObstacleRef(CSmartObject* pSmartObject, CCondition* pRule) : m_vertexIndex(-1), m_nodeIndex(0), m_pNode(nullptr)
+		, m_pSmartObject(pSmartObject), m_pRule(pRule) {}
+
+	Vec3                GetPos() const;
+	float               GetApproxRadius() const;
+	const CObstacleRef& operator=(const CObstacleRef& other)
 	{
-		m_pRequester = rq;
+		m_refAnchor = other.m_refAnchor;
+		m_vertexIndex = other.m_vertexIndex;
+		m_nodeIndex = other.m_nodeIndex;
+		m_pNode = other.m_pNode;
+		m_pSmartObject = other.m_pSmartObject;
+		m_pRule = other.m_pRule;
+		return *this;
 	}
 
-	CAIObject* GetRequester() const
+	bool operator==(const CObstacleRef& other) const
 	{
-		return m_pRequester;
+		return m_refAnchor == other.m_refAnchor && m_vertexIndex == other.m_vertexIndex && m_nodeIndex == other.m_nodeIndex
+		       && m_pNode == other.m_pNode && m_pSmartObject == other.m_pSmartObject && m_pRule == other.m_pRule;
 	}
-
-	bool       ClearTags();
-	GraphNode* CheckClosest(GraphNode* pCurrent, const Vec3& pos);
-	int        ContinueAStar(GraphNode* pEnd, int& nIterations);
-	int        WalkAStar(GraphNode* pBegin, GraphNode* pEnd, int& nIterations);
-	int        WalkBack(GraphNode* pBegin, GraphNode* pEnd, int& nIterations);
-	void       ClearDebugFlag(GraphNode* pNode) const;
-	void       DEBUG_DrawCenters(GraphNode* pNode, IRenderer* pRenderer, int dist) const;
-	void       DrawPath(IRenderer* pRenderer);
-	void       GetFieldCenter(Vec3& pos) const;
-
-	void WriteToFile(const char* pname);
-	void Connect(GraphNode* one, GraphNode* two);
-
-	void DisableInSphere(const Vec3& pos, float fRadius);
-	void EnableInSphere(const Vec3& pos, float fRadius);
-
-
-	CGraph(CAISystem*);
-	~CGraph() override;
-
-	CandidateMap  m_lstVisited; // debug map... remove later
-	EntranceMap   m_mapEntrances;
-	EntranceMap   m_mapExits;
-	GraphNode*    m_pFirst;
-	GraphNode*    m_pSafeFirst;
-	ListPositions m_lstPath;
-
-	ListNodes m_lstTrapNodes;
-
-	ListNodes m_lstSaveStack;
-	ListNodes m_lstCurrentHistory;
-
-	int   nNodes;
-	float m_fDistance;
-	Vec3  m_vRealPathfinderEnd;
-
-	ListNodes     m_lstNodesInsideSphere;
-	ListObstacles m_lstSelected;
-
-	GraphNode*         GetCurrent() const;
-	virtual GraphNode* GetEnclosing(const Vec3& pos, GraphNode* pStart = nullptr, bool bOutsideOnly = false);
-
-protected:
-	int  GetNodesInSphere(const Vec3& pos, float fRadius);
-	void DeleteGraph(GraphNode*, int depth);
-	void ClearPath();
-	void EvaluateNode(GraphNode* pNode, GraphNode* pEnd, GraphNode* pParent);
-
-	GraphNode* ASTARStep(GraphNode* pBegin, GraphNode* pEnd);
-	void       DebugWalk(GraphNode* pNode, const Vec3& pos);
-
-
-#ifndef __MWERKS__
-	GraphNode* WriteLine(GraphNode* pNode);
-#endif
+	bool operator!=(const CObstacleRef& other) const
+	{
+		return m_refAnchor != other.m_refAnchor || m_vertexIndex != other.m_vertexIndex || m_nodeIndex != other.m_nodeIndex
+		       || m_pNode != other.m_pNode || m_pSmartObject != other.m_pSmartObject || m_pRule != other.m_pRule;
+	}
+	bool operator<(const CObstacleRef& other) const
+	{
+		return
+		  m_nodeIndex < other.m_nodeIndex || m_nodeIndex == other.m_nodeIndex &&
+		  (m_refAnchor < other.m_refAnchor || m_refAnchor == other.m_refAnchor &&
+		   (m_vertexIndex < other.m_vertexIndex || m_vertexIndex == other.m_vertexIndex &&
+		    (m_pSmartObject < other.m_pSmartObject || m_pSmartObject < other.m_pSmartObject &&
+		     m_pRule < other.m_pRule)));
+	}
+	operator bool() const
+	{
+		return m_refAnchor.IsValid() || m_vertexIndex >= 0 || m_nodeIndex || m_pSmartObject && m_pRule;
+	}
+	bool operator!() const
+	{
+		return !m_refAnchor.IsValid() && m_vertexIndex < 0 && !m_nodeIndex && (!m_pSmartObject || !m_pRule);
+	}
 
 private:
-	int m_nTagged;
+	operator int() const
+	{
+		// it is illegal to cast CObstacleRef to an int!!!
+		// are you still using old code?
+		AIAssert(0);
+		return 0;
+	}
+};
 
+// NOTE: int64 here avoids a tiny performance impact on 32-bit platform
+// for the cost of loss of full compatibility: 64-bit generated BAI files
+// can't be used on 32-bit platform safely. Change the key to int64 to
+// make it fully compatible. The code that uses this map will be recompiled
+// to use the full 64-bit key on both 32-bit and 64-bit platforms.
+typedef std::multimap<int64, unsigned>                EntranceMap;
+typedef std::vector<Vec3>                             ListPositions;
+typedef std::vector<ObstacleData>                     ListObstacles;
+typedef std::multimap<float, ObstacleData>            MultimapRangeObstacles;
+typedef std::vector<NodeDescriptor>                   NodeDescBuffer;
+typedef std::vector<LinkDescriptor>                   LinkDescBuffer;
+typedef std::list<unsigned>                           ListNodeIds;
+typedef std::set<GraphNode*>                          SetNodes;
+typedef std::set<const GraphNode*>                    SetConstNodes;
+typedef std::list<const GraphNode*>                   ListConstNodes;
+typedef std::vector<const GraphNode*>                 VectorConstNodes;
+typedef std::vector<unsigned>                         VectorConstNodeIndices;
+typedef std::multimap<float, GraphNode*>              CandidateMap;
+typedef std::multimap<float, unsigned>                CandidateIdMap;
+typedef std::set<CObstacleRef>                        SetObstacleRefs;
+typedef VectorMap<unsigned, SCachedPassabilityResult> PassabilityCache;
+
+// [Mikko] Note: The Vector map is faster when traversing, and the normal map with pool allocator seems
+// to be a little faster in CGraph.GetNodesInRange. Both are faster than normal std::map.
+//typedef stl::STLPoolAllocator< std::pair<const GraphNode*, float> > NodeMapAllocator;
+//typedef std::map<const GraphNode*, float, std::less<const GraphNode*>, NodeMapAllocator> MapConstNodesDistance;
+typedef VectorMap<const GraphNode*, float> MapConstNodesDistance;
+
+//====================================================================
+// CGraph
+//====================================================================
+class CGraph
+{
 public:
-	void TagNode(GraphNode* pNode);
-	void Disconnect(GraphNode* pDisconnected, bool bDelete = true);
-	// walk that will always produce a result, for indoors
-	void IndoorDebugWalk(GraphNode* pNode, const Vec3& pos, IVisArea* pArea = nullptr);
-	// Clears the tags of the graph without time-slicing the operation
-	void ClearTagsNow(void);
+	CGraph();
+	~CGraph();
 
-	// Check whether a position is within a node's triangle
-	bool PointInTriangle(const Vec3& pos, GraphNode* pNode);
+	CGraphLinkManager&       GetLinkManager()       { return *m_pGraphLinkManager; }
+	const CGraphLinkManager& GetLinkManager() const { return *m_pGraphLinkManager; }
 
-	// uses mark for internal graph operation without disturbing the pathfinder
-	void MarkNode(GraphNode* pNode);
+	CGraphNodeManager&       GetNodeManager()       { return *m_pGraphNodeManager; }
+	const CGraphNodeManager& GetNodeManager() const { return *m_pGraphNodeManager; }
 
-public:
-	// clears the marked nodes
-	void ClearMarks(bool bJustClear = false);
+	/// Restores the graph to the initial state (i.e. restores pass radii etc).
+	void Reset();
 
-protected:
-	// iterative function to quickly converge on the target position in the graph
-	GraphNode* GREEDYStep(GraphNode* pBegin, const Vec3& pos, bool bIndoor = false);
+	/// Calls CGraphNode::ResetIDs() with the correct arguments for this graph
+	void ResetIDs();
 
-public:
-	// adds an entrance for easy traversing later
-	void AddIndoorEntrance(int nBuildingID, GraphNode* pNode, bool bExitOnly = false);
-	// Reads the AI graph from a specified file
+	/// removes all nodes and stuff associated with navTypes matching the bitmask
+	void Clear(IAISystem::tNavCapMask navTypeMask);
+
+	/// Connects (two-way) two nodes, optionally returning pointers to the new links
+	void ConnectInCm(unsigned oneIndex, unsigned twoIndex, int16 radiusOneToTwoCm = 10000, int16 radiusTwoToOneCm = 10000,
+	                 unsigned* pLinkOneTwo = nullptr, unsigned* pLinkTwoOne = nullptr);
+
+	/// Connects (two-way) two nodes, optionally returning pointers to the new links
+	void Connect(unsigned oneIndex, unsigned twoIndex, float radiusOneToTwo = 100.0f, float radiusTwoToOne = 100.0f,
+	             unsigned* pLinkOneTwo = nullptr, unsigned* pLinkTwoOne = nullptr);
+
+	/// Disconnects a node from its neighbours. if bDelete then pNode will be deleted. Note that
+	/// the previously connected nodes will not be deleted, even if they
+	/// end up with no nodes.
+	void Disconnect(unsigned nodeIndex, bool bDelete = true);
+
+	/// Removes an individual link from a node (and removes the reciprocal link) -
+	/// doesn't delete it.
+	void Disconnect(unsigned nodeIndex, unsigned linkId);
+
+	/// Checks the graph is OK (as far as possible). Asserts if not, and then
+	/// returns true/false to indicate if it's OK
+	/// msg should indicate where this is being called from (for writing error msgs)
+	bool Validate(const char* msg, bool checkPassable) const;
+
+	/// Checks that a node exists (should be quick). If fullCheck is true it will do some further
+	/// checks which will be slower
+	bool ValidateNode(unsigned nodeIndex, bool fullCheck) const;
+	bool ValidateHashSpace() { return m_allNodes.ValidateHashSpace(); }
+
+	/// Restores all node/links
+	void RestoreAllNavigation();
+
+	/// Reads the AI graph from a specified file
 	bool ReadFromFile(const char* szName);
-	// reads all the nodes in a map
-	bool ReadNodes(CCryFile& file);
+
+	/// Returns all nodes that are in the graph - not all nodes will be
+	/// connected (even indirectly) to each other
+	CAllNodesContainer&       GetAllNodes()       { return m_allNodes; }
+	const CAllNodesContainer& GetAllNodes() const { return m_allNodes; }
+
+	/// Checks that the graph is empty. Pass in a bitmask of IAISystem::ENavigationType to
+	/// specify the types to check
+	bool CheckForEmpty(IAISystem::tNavCapMask navTypeMask = IAISystem::NAVMASK_ALL) const;
+
+	/// uses mark for internal graph operation without disturbing the pathfinder
+	void MarkNode(unsigned nodeIndex) const;
+	/// clears the marked nodes
+	void ClearMarks() const;
+
 	// defines bounding rectangle of this graph
 	void SetBBox(const Vec3& min, const Vec3& max);
 	// how is that for descriptive naming of functions ??
-	bool OutsideOfBBox(const Vec3& pos) const;
-	bool RemoveEntrance(int nBuildingID, GraphNode* pNode);
+	bool InsideOfBBox(const Vec3& pos) const;  // returns true if pos is inside of bbox (but not on boundaries)
 
+	/// Creates a new node of the specified type (which can't be subsequently changed). Note that
+	/// to delete the node use the disconnect function.
+	unsigned         CreateNewNode(IAISystem::tNavCapMask type, const Vec3& pos, unsigned ID = 0);
+	GraphNode*       GetNode(unsigned index);
+	const GraphNode* GetNode(unsigned index) const;
 
-	//GraphNode* CreateNewNode(bool bFromTriangulation = false);
-	GraphNode* CreateNewNode(bool bFromTriangulation = false) const;
-	unsigned   CreateNewNode(IAISystem::ENavigationType type, const Vec3& pos, unsigned ID = 0) override;
+	/// Moves a node, updating spatial structures
+	void MoveNode(unsigned nodeIndex, const Vec3& newPos);
 
+	/// finds all nodes within range of startPos and their distance from vStart.
+	/// pStart is just used as a hint.
+	/// returns a reference to the input/output so it's easy to use in a test.
+	/// traverseForbiddenHideLink should be true if you want to pass through
+	/// links between hide waypoints that have been marked as impassable
+	/// SmartObjects will only be considered if pRequester != 0
+	MapConstNodesDistance& GetNodesInRange(MapConstNodesDistance& result, const Vec3& startPos, float maxDist,
+	                                       IAISystem::tNavCapMask navCapMask, float passRadius, unsigned startNodeIndex = 0, const class CAIObject* pRequester = nullptr);
 
-	int        BeautifyPath(int& nIterations, const Vec3& start, const Vec3& end);
-	int        BeautifyPathCar(int& nIterations, const Vec3& start, const Vec3& end);
-	int        BeautifyPathCarOld(int& nIterations, const Vec3& start, const Vec3& end);
-	int        SelectNodesInSphere(const Vec3& vCenter, float fRadius, GraphNode* pStart = nullptr);
-	void       AddHidePoint(GraphNode* pOwner, const Vec3& pos, const Vec3& dir);
-	void       DeleteNode(GraphNode* pNode);
-	void       DisconnectLink(GraphNode* one, GraphNode* two, bool bOneWay = false);
-	void       DisconnectUnreachable(void);
-	void       FillGreedyMap(GraphNode* pNode, const Vec3& pos, IVisArea* pTargetArea, bool bStayInArea);
-	void       REC_RemoveNodes(GraphNode* pNode);
-	void       RemoveHidePoint(GraphNode* pOwner, const Vec3& pos, const Vec3& dir);
-	void       RemoveIndoorNodes(void);
-	void       ResolveLinkData(GraphNode* pOne, GraphNode* pTwo);
-	void       SelectNodeRecursive(GraphNode* pNode, const Vec3& vCenter, float fRadius);
-	void       SelectNodesRecursiveIndoors(GraphNode* pNode, const Vec3& vCenter, float fRadius, float fDistance);
-
-	// merging, optimization stuff
-	typedef std::multimap<float, GraphNode*> NodesList;
-
-	//******
-	typedef std::list<int> ObstacleIndexList;
-
-	int  Rearrange(ListNodes& nodesList, const Vec3& cutStart, const Vec3& cutEnd);
-	bool ProcessRearrange(GraphNode* node1, GraphNode* node2, ListNodes& nodesList);
-	int  ProcessRearrange(ListNodes& nodesList, const Vec3& cutStart, const Vec3& cutEnd);
-	//	bool				ProcessMerge( GraphNode	*curNode, ListNodes& nodesList );
-	int ProcessMegaMerge(ListNodes& nodesList, const Vec3& cutStart, const Vec3& cutEnd);
-	//	bool				CreateOutline( ListNodes& insideNodes, ListNodes& nodesList, ListPositions&	outline);
-	//******
-	bool CreateOutline(const ListNodes& insideNodes, ListNodes& nodesList, ObstacleIndexList& outline);
-	//******
-	void TriangulateOutline(ListNodes& nodesList, ObstacleIndexList& outline, bool orientation);
-
-	bool ProcessMerge(GraphNode* curNode, NodesList& ndList);
-
-	//	GraphNode*	CanMerge( GraphNode	*curNode, int& curIdxToDelete, int& curIdxToKeep, int& nbrIdxToDelete, int& nbrIdxToKeep );
-	//	bool				CanMergeNbr( GraphNode	*nbr1, GraphNode	*nbr2 );
-
-	//	GraphNode*	DoMerge( GraphNode	*node1, GraphNode	*node2, int curIdxToDelete, int curIdxToKeep, int nbrIdxToDelete, int nbrIdxToKeep );
-
-	void ConnectNodes(ListNodes& lstNodes);
-	void FillGraphNodeData(GraphNode* pNode);
-
+	// Returns memory usage not including nodes
 	size_t MemStats();
 
-	bool       DbgCheckList(ListNodes& nodesList) const;
-	void       SetCurrentHeuristic(unsigned int heuristic_type);
-	void       ResolveTotalLinkData(void);
-	bool       CanReuseLastPath(GraphNode* pBegin);
-	GraphNode* GetThirdNode(const Vec3& vFirst, const Vec3& vSecond, const Vec3& vThird);
+	// Returns the memory usage for nodes of the type passed in (bitmask)
+	size_t NodeMemStats(unsigned navTypeMask);
 
-	ListPositions m_DEBUG_outlineListL;
-	ListPositions m_DEBUG_outlineListR;
+	void   GetMemoryStatistics(ICrySizer* pSizer);
 
-	void       Reset(void);
-	void       FindTrapNodes(GraphNode* pNode, int recCount);
+	struct SBadGraphData
+	{
+		enum EType {BAD_PASSABLE, BAD_IMPASSABLE};
+		EType mType;
+		Vec3  mPos1, mPos2;
+	};
+	/// List of bad stuff we found during the last validation. mutable because it's
+	/// debug - Validate(...) should really be a const method, since it wouldn't change
+	/// any "real" data
+	mutable std::vector<SBadGraphData> mBadGraphData;
+
+	GraphNode*                         m_pSafeFirst;
+	unsigned                           m_safeFirstIndex;
+
+	CGraphNodeManager*                 m_pGraphNodeManager;
+
+private:
+
+	/// Finds nodes within a distance of pNode that can be accessed by something with
+	/// passRadius. If pRequester != 0 then smart object links will be checked as well.
+	void FindNodesWithinRange(MapConstNodesDistance& result, float curDist, float maxDist,
+	                          const GraphNode* pNode, float passRadius, const class CAIObject* pRequester) const;
+
+	bool DbgCheckList(ListNodeIds& nodesList) const;
+
+public:
+	/// deletes (disconnects too) all nodes with a type matching the bitmask
+	void DeleteGraph(IAISystem::tNavCapMask navTypeMask);
+
+private:
 	GraphNode* GetEntrance(int nBuildingID, const Vec3& pos);
-	void       RemoveDegenerateTriangle(GraphNode* pDegenerate, bool bRecurse = true);
-	void       FixDegenerateTriangles(void);
+	bool       GetEntrances(int nBuildingID, const Vec3& pos, std::vector<unsigned>& nodes);
+	// reads all the nodes in a map
+	bool       ReadNodes(CCryFile& file);
+	/// Deletes the node, which should have been disconnected first (warning if not)
+	void       DeleteNode(unsigned nodeIndex);
+
+	// helper called from ValidateNode only (to get ValidateNode to be inlined inside
+	// Graph.cpp)
+	bool ValidateNodeFullCheck(const GraphNode* pNode) const;
+
+	unsigned   m_currentIndex;
+	GraphNode* m_pCurrent;
+	unsigned   m_firstIndex;
+	GraphNode* m_pFirst;
+
+	/// All the nodes we've marked
+	mutable VectorConstNodeIndices m_markedNodes;
+	/// All the nodes we've tagged
+	mutable VectorConstNodeIndices m_taggedNodes;
+
+	/// nodes are allocated/deleted via a single interface, so keep track of them
+	/// all - for memory tracking and to allow quick iteration
+	CAllNodesContainer m_allNodes;
+
+	CGraphLinkManager* m_pGraphLinkManager;
+
+	/// Bounding box of the triangular area
+	AABB        m_triangularBBox;
+
+	EntranceMap m_mapEntrances;
+	EntranceMap m_mapExits;
+	friend class CFlightNavRegion;
+	friend class CVolumeNavRegion;
 };
 
+// Check whether a position is within a node's triangle
+bool PointInTriangle(const Vec3& pos, GraphNode* pNode);
+
+//====================================================================
+// SMarkClearer
+// Helper - the constructor and destructor clear marks
+//====================================================================
+struct SMarkClearer
+{
+	SMarkClearer(const CGraph* pGraph) : m_pGraph(pGraph) { m_pGraph->ClearMarks(); }
+	~SMarkClearer() { m_pGraph->ClearMarks(); }
+private:
+	const CGraph* m_pGraph;
+};
 
 #endif // !defined(AFX_GRAPH_H__6D059D2E_5A74_4352_B3BF_2C88D446A2E1__INCLUDED_)

@@ -285,7 +285,7 @@
       <OmitFramePointers>true</OmitFramePointers>
       <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
       <AdditionalIncludeDirectories>..\CryCommon;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;CRYAISYSTEM_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>CRY_PLATFORM_X32;CRY_PLATFORM_32BIT;WIN32;NDEBUG;_WINDOWS;_USRDLL;CRYAISYSTEM_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <BufferSecurityCheck>false</BufferSecurityCheck>
@@ -329,7 +329,7 @@
       <OmitFramePointers>true</OmitFramePointers>
       <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
       <AdditionalIncludeDirectories>..\CryCommon;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;CRYAISYSTEM_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>CRY_PLATFORM_X64;CRY_PLATFORM_64BIT;WIN64;NDEBUG;_WINDOWS;_USRDLL;CRYAISYSTEM_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <BufferSecurityCheck>false</BufferSecurityCheck>
@@ -367,7 +367,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>..\CryCommon;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;CRYAISYSTEM_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>CRY_PLATFORM_X32;CRY_PLATFORM_32BIT;WIN32;_DEBUG;_WINDOWS;_USRDLL;CRYAISYSTEM_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -406,7 +406,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>G:\Crysis Wars Extended\Code\CryEngine\CryCommon;G:\Crysis Wars Extended\Code\CryEngine\CryAction;.\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN64;_DEBUG;_WINDOWS;_USRDLL;CRYAISYSTEM_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>CRY_PLATFORM_X64;CRY_PLATFORM_64BIT;WIN64;_DEBUG;_WINDOWS;_USRDLL;CRYAISYSTEM_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <BufferSecurityCheck>true</BufferSecurityCheck>
@@ -628,7 +628,6 @@
     <ClCompile Include="GoalPipe.cpp" />
     <ClCompile Include="Graph.cpp" />
     <ClCompile Include="GraphUtility.cpp" />
-    <ClCompile Include="Heuristic.cpp" />
     <ClCompile Include="PipeUser.cpp" />
     <ClCompile Include="Puppet.cpp" />
     <ClCompile Include="StdAfx.cpp">
@@ -648,10 +647,16 @@
   <ItemGroup>
     <ClInclude Include="AIAttribute.h" />
     <ClInclude Include="AIAutoBalance.h" />
+    <ClInclude Include="AIHash.h" />
+    <ClInclude Include="AILog.h" />
     <ClInclude Include="AIObject.h" />
     <ClInclude Include="AIPlayer.h" />
     <ClInclude Include="AISystemCVars.h" />
     <ClInclude Include="AIVehicle.h" />
+    <ClInclude Include="AllNodesContainer.h" />
+    <ClInclude Include="AStarOpenList.h" />
+    <ClInclude Include="AStarSolver.h" />
+    <ClInclude Include="AutoTypeStructs.h" />
     <ClInclude Include="BuildingIDManager.h" />
     <ClInclude Include="AISystem.h" />
     <ClInclude Include="DllMain.h" />
@@ -660,10 +665,20 @@
     <ClInclude Include="GoalOp.h" />
     <ClInclude Include="GoalPipe.h" />
     <ClInclude Include="Graph.h" />
-    <ClInclude Include="Heuristic.h" />
+    <ClInclude Include="GraphLinkManager.h" />
+    <ClInclude Include="GraphNodeManager.h" />
+    <ClInclude Include="GraphStructures.h" />
+    <ClInclude Include="HashSpace.h" />
+    <ClInclude Include="IMNM.h" />
+    <ClInclude Include="INavigationSystem.h" />
+    <ClInclude Include="IPathfinder.h" />
+    <ClInclude Include="NavPath.h" />
+    <ClInclude Include="NavRegion.h" />
+    <ClInclude Include="PathObstacles.h" />
     <ClInclude Include="PipeUser.h" />
     <ClInclude Include="pointer_container.h" />
     <ClInclude Include="Puppet.h" />
+    <ClInclude Include="SmartObjects.h" />
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="VertexList.h" />
   </ItemGroup>

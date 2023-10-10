@@ -3,8 +3,7 @@
 
 #include "stdafx.h"
 #include "DllMain.h"
-#include "caisystem.h"
-#include <ISystem.h>
+#include "aisystem.h"
 
 #if defined(WIN32) && defined(_DEBUG) 
 #include <crtdbg.h> 
@@ -19,13 +18,6 @@
 ////#endif//LINUX 
 //#endif //_XBOX
 // ~TheOtherSide
-
-CAISystem *g_pAISystem;
-
-CAISystem *GetAISystem()
-{
-	return g_pAISystem;
-}
 
 // TheOtherSide
 // Уже определен в ISystem
@@ -57,30 +49,30 @@ IAISystem *CreateAISystem( ISystem *pSystem)
 #endif
 {
 	//gISystem = pSystem;
-	return (g_pAISystem = new CAISystem(pSystem));
+	return (gEnv->pAISystem = new CAISystem(pSystem));
 }
 
 //! Reports an AI Warning to validator with WARNING severity.
-void AIWarning( const char *format,... )
-{
-	char buffer[MAX_WARNING_LENGTH];
-	va_list args;
-	va_start(args, format);
-	vsprintf(buffer, format, args);
-	va_end(args);
-	GetAISystem()->m_pSystem->Warning( VALIDATOR_MODULE_AI,VALIDATOR_WARNING,VALIDATOR_FLAG_AI,nullptr,"%s",buffer );
-}
-
-//! Reports an AI Warning to validator with ERROR severity.
-void AIError( const char *format,... )
-{
-	char buffer[MAX_WARNING_LENGTH];
-	va_list args;
-	va_start(args, format);
-	vsprintf(buffer, format, args);
-	va_end(args);
-	GetAISystem()->m_pSystem->Warning( VALIDATOR_MODULE_AI,VALIDATOR_ERROR,VALIDATOR_FLAG_AI,nullptr,"%s",buffer );
-}
+//void AIWarning( const char *format,... )
+//{
+//	char buffer[MAX_WARNING_LENGTH];
+//	va_list args;
+//	va_start(args, format);
+//	vsprintf(buffer, format, args);
+//	va_end(args);
+//	GetAISystem()->m_pSystem->Warning( VALIDATOR_MODULE_AI,VALIDATOR_WARNING,VALIDATOR_FLAG_AI,nullptr,"%s",buffer );
+//}
+//
+////! Reports an AI Warning to validator with ERROR severity.
+//void AIError( const char *format,... )
+//{
+//	char buffer[MAX_WARNING_LENGTH];
+//	va_list args;
+//	va_start(args, format);
+//	vsprintf(buffer, format, args);
+//	va_end(args);
+//	GetAISystem()->m_pSystem->Warning( VALIDATOR_MODULE_AI,VALIDATOR_ERROR,VALIDATOR_FLAG_AI,nullptr,"%s",buffer );
+//}
 //////////////////////////////////////////////////////////////////////////
 
 #include <CrtDebugStats.h>

@@ -1,2445 +1,1205 @@
-// Graph.cpp: implementation of the CGraph class.
-//
-//////////////////////////////////////////////////////////////////////
+// Copyright 2001-2016 Crytek GmbH / Crytek Group. All rights reserved.
 
-// ReSharper disable CppInconsistentNaming
-#include "stdafx.h"
-#include "Graph.h"
-#include "AISystem.h"
-#include "Heuristic.h"
-#include "IAgent.h"
+/********************************************************************
+   CryGame Source File.
+   -------------------------------------------------------------------------
+   File name:   Graph.cpp
+   Version:     v1.00
+   Description: Implementation of the CGraph class.
 
-#if !defined(LINUX)
-#include <assert.h>
-#endif
+   -------------------------------------------------------------------------
+   History:
+   - ?
+   - 4 May 2009  : Evgeny Adamenkov: Removed IRenderer
 
-#include <ISystem.h>
-#include "Cry_Math.h"
+ *********************************************************************/
+
+#include "StdAfx.h"
 
 #include <algorithm>
+
 #include <CryFile.h>
 #include <I3DEngine.h>
-#include <IConsole.h>
 #include <ILog.h>
-#include <IRenderer.h>
-#include "AIObject.h"
-#include "IPhysics.h"
-#include "VertexList.h"
+#include <ISystem.h>
+#include <ITimer.h>
 
-#if defined(WIN32) && defined(_DEBUG)
-#include <crtdbg.h>
-#define DEBUG_NEW_NORMAL_CLIENTBLOCK(file, line) new(_NORMAL_BLOCK, file, line)
-#define new DEBUG_NEW_NORMAL_CLIENTBLOCK( __FILE__, __LINE__)
-#endif
+#include "Graph.h"
+#include "AISystem.h"
+//#include "AILog.h"
+#include <Cry_Math.h>
+#include "AIObject.h"
+#include "NavRegion.h"
+
+#include "GraphLinkManager.h"
+#include "GraphNodeManager.h"
+#include "SmartObjects.h"
+
+#define BAI_TRI_FILE_VERSION 54
+
+// identifier so links can be marked as impassable, then restored
+//static const float RADIUS_FOR_BROKEN_LINKS = -121314.0f;
+
+const float AStarSearchNode::fInvalidCost = 999999.0f;
+
+Vec3 CObstacleRef::GetPos() const
+{
+	//CCCPOINT(CObstacleRef_GetPos);
+
+	if (m_refAnchor.IsValid())
+		return m_refAnchor.GetAIObject()->GetPos();
+	if (m_pNode)
+		return m_pNode->GetPos();
+	if (m_pSmartObject && m_pRule)
+	{
+		return m_pRule->pObjectHelper ? m_pSmartObject->GetHelperPos(m_pRule->pObjectHelper) : m_pSmartObject->GetPos();
+	}
+	assert(false);
+	return {ZERO};
+}
+
+float CObstacleRef::GetApproxRadius() const
+{
+	assert(false);
+	return 0.0f;
+}
+
+//====================================================================
+// ValidateNode
+//====================================================================
+inline bool CGraph::ValidateNode(unsigned nodeIndex, bool fullCheck) const
+{
+	const GraphNode* pNode = GetNodeManager().GetNode(nodeIndex);
+
+	if (!nodeIndex)
+		return false;
+	if (!m_allNodes.DoesNodeExist(nodeIndex))
+		return false;
+	if (!fullCheck)
+		return true;
+	return ValidateNodeFullCheck(pNode);
+}
+
+//====================================================================
+// ValidateNodeFullCheck
+//====================================================================
+bool CGraph::ValidateNodeFullCheck(const GraphNode* pNode) const
+{
+	bool result = true;
+	AIAssert(pNode);
+	int      nNonRoadLinks = 0;
+	unsigned nTriLinks = 0;
+	for (unsigned linkId = pNode->firstLinkIndex; linkId; linkId = GetLinkManager().GetNextLink(linkId))
+	{
+		unsigned         nextNodeIndex = GetLinkManager().GetNextNode(linkId);
+		const GraphNode* next = GetNodeManager().GetNode(nextNodeIndex);
+		if (!CGraph::ValidateNode(nextNodeIndex, false))
+			result = false;
+		if (next->navType != IAISystem::NAV_ROAD)
+			++nNonRoadLinks;
+		if (next->navType == IAISystem::NAV_TRIANGULAR)
+			++nTriLinks;
+	}
+	if (nNonRoadLinks > 50)
+		AIWarning("Too many non-road links (%d) from node %p type %d at (%5.2f, %5.2f, %5.2f)", nNonRoadLinks, pNode, pNode->navType, pNode->GetPos().x, pNode->GetPos().y, pNode->GetPos().z);
+	if (pNode->navType == IAISystem::NAV_TRIANGULAR && nTriLinks != 3)
+	{
+		// NAV_TRIANGULAR is replaced by MNM
+		assert(false);
+		result = false;
+	}
+	return result;
+}
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-CGraph::CGraph(CAISystem* pSystem)
+//====================================================================
+// CGraph
+//====================================================================
+CGraph::CGraph()
+	: m_pGraphLinkManager(new CGraphLinkManager),
+	m_pGraphNodeManager(new CGraphNodeManager),
+	m_allNodes(*m_pGraphNodeManager),
+	m_triangularBBox(AABB::RESET)
 {
-	m_pFirst = CreateNewNode(true); //new GraphNode;
+	m_safeFirstIndex = CreateNewNode(IAISystem::NAV_UNSET, Vec3(ZERO), 0);
+	m_firstIndex = m_safeFirstIndex;
+	m_pFirst = GetNodeManager().GetNode(m_safeFirstIndex);
 	m_pSafeFirst = m_pFirst;
 	m_pCurrent = m_pFirst;
-	m_pCurrent->data.Reset();
-	m_pCurrent->link.clear();
-
-	nNodes = 0;
-	m_pHeuristic = nullptr;
-	m_nTagged = 0;
-	m_pPathBegin = nullptr;
-	m_pPathfinderCurrent = nullptr;
-	m_pWalkBackCurrent = nullptr;
-	m_bBeautifying = true;
-
-	m_pAISystem = pSystem;
-	m_lstTagTracker.reserve(1000);
-	m_lstMarkTracker.reserve(1000);
+	m_currentIndex = m_firstIndex;
+	m_pCurrent->firstLinkIndex = 0;
 }
 
+//====================================================================
+// ~CGraph
+//====================================================================
 CGraph::~CGraph()
 {
-	m_vNodes.clear();
-	DeleteGraph(m_pSafeFirst, 0);
-	char str[255];
-	sprintf(str, "Released %d nodes\n", nNodes);
-	OutputDebugString(str);
-	m_mapEntrances.clear();
-	if (m_pHeuristic)
-	{
-		delete m_pHeuristic;
-		m_pHeuristic = nullptr;
-	}
+	//Takes a long time and shouldn't be needed
+	//Clear(IAISystem::NAVMASK_ALL);
+
+	delete m_pGraphNodeManager;
+	delete m_pGraphLinkManager;
+
+	GraphNode::ClearFreeIDs();
 }
 
-GraphNode* CGraph::GetCurrent() const
+//====================================================================
+// Clear
+//====================================================================
+void CGraph::Clear(IAISystem::tNavCapMask navTypeMask)
 {
-	return m_pCurrent;
-}
-
-GraphNode* CGraph::GetEnclosing(const Vec3& pos, GraphNode* pNode, bool bOutdoorOnly)
-{
-	if (bOutdoorOnly)
+	ClearMarks();
+	DeleteGraph(navTypeMask);
+	if (navTypeMask & (IAISystem::NAV_WAYPOINT_HUMAN | IAISystem::NAV_WAYPOINT_3DSURFACE))
 	{
-		if (!pNode)
-			DebugWalk(m_pFirst, pos);
-		else
-			DebugWalk(pNode, pos);
-
-		return m_pCurrent;
+		EntranceMap::iterator next;
+		for (EntranceMap::iterator it = m_mapEntrances.begin(); it != m_mapEntrances.end(); it = next)
+		{
+			next = it;
+			++next;
+			GraphNode* pNode = GetNodeManager().GetNode(it->second);
+			if (pNode->navType & navTypeMask)
+				m_mapEntrances.erase(it);
+		}
+		for (EntranceMap::iterator it = m_mapExits.begin(); it != m_mapExits.end(); it = next)
+		{
+			next = it;
+			++next;
+			GraphNode* pNode = GetNodeManager().GetNode(it->second);
+			if (pNode->navType & navTypeMask)
+				m_mapExits.erase(it);
+		}
 	}
 
-	IVisArea* pGoalArea;
-	int       nGoalBuilding;
-	if (!m_pAISystem->CheckInside(pos, nGoalBuilding, pGoalArea))
-	{
-		nGoalBuilding = -1;
-		pGoalArea = nullptr;
-	}
+	GetNodeManager().Clear(navTypeMask);
 
-	if (nGoalBuilding < 0)
+	if (m_pSafeFirst)
 	{
-		if (!pNode)
-			DebugWalk(m_pFirst, pos);
-		else
-			DebugWalk(pNode, pos);
-
-		m_pFirst = m_pCurrent;
-		return m_pCurrent;
-	}
-	GraphNode* pEntrance = GetEntrance(nGoalBuilding, pos);
-	if (!pEntrance)
-	{
-		if (!pGoalArea)
-			AIWarning("No entrance for navigation area nr %d. The position is (%.3f,%.3f,%.3f)", nGoalBuilding, pos.x, pos.y, pos.z);
-		else
-			AIWarning("No entrance into some indoors or some visareas not connected trough portals (NR:%d).(%3f,%3f,%3f)", nGoalBuilding, pos.x, pos.y, pos.z);
+		Disconnect(m_safeFirstIndex, false);
 	}
 	else
 	{
-		if (pGoalArea)
-			IndoorDebugWalk(pEntrance, pos, pGoalArea);
-		else
-			IndoorDebugWalk(pEntrance, pos);
+		m_safeFirstIndex = CreateNewNode(IAISystem::NAV_UNSET, Vec3(ZERO), 0);
+		m_pSafeFirst = GetNodeManager().GetNode(m_safeFirstIndex);
 	}
-
-	return m_pCurrent;
+	m_pFirst = m_pSafeFirst;
+	m_firstIndex = m_safeFirstIndex;
+	m_pCurrent = m_pFirst;
+	m_currentIndex = m_firstIndex;
 }
 
-void CGraph::Connect(GraphNode* one, GraphNode* two)
+//====================================================================
+// ConnectInCm
+//====================================================================
+void CGraph::ConnectInCm(unsigned oneNodeIndex, unsigned twoNodeIndex, int16 radiusOneToTwoCm, int16 radiusTwoToOneCm, unsigned* pLinkOneTwo, unsigned* pLinkTwoOne)
 {
+	GraphNode* one = GetNodeManager().GetNode(oneNodeIndex);
+	GraphNode* two = GetNodeManager().GetNode(twoNodeIndex);
+
+	if (pLinkOneTwo)
+		*pLinkOneTwo = 0;
+	if (pLinkTwoOne)
+		*pLinkTwoOne = 0;
+
 	if (one == two)
 		return;
 
 	if (!one || !two)
 		return;
 
-	for (auto vi = one->link.begin(); vi != one->link.end(); vi++)
+	if (!CGraph::ValidateNode(oneNodeIndex, false) || !CGraph::ValidateNode(twoNodeIndex, false))
 	{
-		if ((*vi).pLink == two)
-			return;
-	}
-
-	GraphLink newLink;
-	newLink.pLink = two;
-	if ((one == m_pSafeFirst) || (two == m_pSafeFirst))
-		newLink.fMaxRadius = -1.f; // do not EVER go to the safe first node while tracing
-	else
-		newLink.fMaxRadius = 100.f; // default big value
-	//	if (one->link.size()==3) 
-	//		int a=5;
-	one->link.push_back(newLink);
-	two->AddRef();
-
-	// connect two to one
-	Connect(two, one);
-
-	if (m_pCurrent == m_pSafeFirst)
-		// connect dummy first node to graph
-		if (one->nBuildingID == -1)
-		{
-			Connect(m_pSafeFirst, one);
-			m_pCurrent = one;
-			m_pFirst = m_pCurrent;
-		}
-}
-
-void CGraph::WriteToFile(const char* pname)
-{
-#ifdef __MWERKS__
-#warning Code not implemented under CodeWarrior
-#else
-
-	m_vLinks.clear();
-	m_vLinksDesc.clear();
-	m_vBuffer.clear();
-	m_lstSaveStack.clear();
-
-	m_vBuffer.reserve(100000);
-
-	GraphNode* pNext;
-	GraphNode* pCurrent = m_pSafeFirst;
-	while (pNext = WriteLine(pCurrent))
-	{
-		pCurrent = pNext;
-	}
-
-	CCryFile file;
-	if (false != file.Open(pname, "wb"))
-	{
-		int iNumber = m_vBuffer.size();
-		int nFileVersion = BAI_FILE_VERSION;
-		int nRandomNr = 0;
-
-		file.Write(&nFileVersion, sizeof(int));
-		file.Write(&m_vBBoxMin.x, sizeof(float));
-		file.Write(&m_vBBoxMin.y, sizeof(float));
-		file.Write(&m_vBBoxMin.z, sizeof(float));
-		file.Write(&m_vBBoxMax.x, sizeof(float));
-		file.Write(&m_vBBoxMax.y, sizeof(float));
-		file.Write(&m_vBBoxMax.z, sizeof(float));
-
-		// write the triangle descriptors
-		file.Write(&iNumber, sizeof(int));
-		file.Write(&m_vBuffer[0], iNumber * sizeof(NodeDescriptor));
-		//iNumber = m_vLinks.size();
-		//WriteFile(hf,&iNumber,sizeof(int),&written,NULL);
-		//WriteFile(hf,&m_vLinks[0],iNumber*sizeof(int),&written,NULL);
-
-		m_pAISystem->m_VertexList.WriteToFile(file);
-
-		iNumber = m_vLinksDesc.size();
-		file.Write(&iNumber, sizeof(int));
-		if (iNumber > 0)
-			file.Write(&m_vLinksDesc[0], iNumber * sizeof(LinkDescriptor));
-
-		file.Close();
-
-		m_vLinks.clear();
-		m_vLinksDesc.clear();
-		m_vNodes.clear();
-		m_vBuffer.clear();
-		//m_mapEntrances.clear();
-		ClearMarks();
-	}
-
-#endif
-}
-
-#ifdef __MWERKS__
-#warning Code not implemented under CodeWarrior
-#else
-
-GraphNode* CGraph::WriteLine(GraphNode* pNode)
-{
-	// write the id of the node
-	NodeDescriptor desc;
-	desc.id = reinterpret_cast<INT_PTR>(pNode); //AMD Port
-
-	if (pNode == m_pSafeFirst)
-		desc.id = 1;
-
-	///desc.pArea = pNode->pArea;
-	desc.building = pNode->nBuildingID;
-
-	desc.data = pNode->data;
-	desc.bEntrance = false;
-	desc.bExit = false;
-	desc.bCreated = pNode->bCreated;
-	// check if this node is an entrance;
-	auto ei = m_mapEntrances.find(desc.building);
-	if (ei != m_mapEntrances.end())
-	{
-		while ((ei != m_mapEntrances.end()) && (ei->first == desc.building))
-		{
-			if ((ei->second) == pNode)
-				desc.bEntrance = true;
-			++ei;
-		}
-	}
-	else
-	{
-		ei = m_mapExits.find(desc.building);
-		if (ei != m_mapExits.end())
-			while ((ei != m_mapExits.end()) && (ei->first == desc.building))
-			{
-				if ((ei->second) == pNode)
-					desc.bExit = true;
-				++ei;
-			}
-	}
-	//desc.bEntrance = (m_mapEntrances.find(desc.building) != m_mapEntrances.end());
-
-	MarkNode(pNode);
-
-	if (!pNode->vertex.empty())
-	{
-		desc.nObstacles = pNode->vertex.size();
-		if (desc.nObstacles > 10)
-			desc.nObstacles = 10;
-
-		int i = 0;
-		for (auto li = pNode->vertex.begin(); li != pNode->vertex.end() && i < 10; li++, i++)
-		{
-			desc.obstacle[i] = (*li);
-			//desc.obstacle[i].vPos = (*li).vPos;
-			//desc.obstacle[i].vDir = (*li).vDir;
-		}
-
-		if (i == 10)
-			m_pAISystem->m_pSystem->GetILog()->Log("\003FOUND INDOOR WAYPOINT WITH MORE THAN 10 HIDEPOINTS LINKED TO IT. SURPLUS HIDEPOINTS IGNORED");
-	}
-	else
-	{
-		desc.nObstacles = 0;
-	}
-
-	m_vBuffer.push_back(desc);
-
-
-	// now write the links
-	// first size
-	/*		int size = pNode->link.size();
-		
-		m_vLinks.push_back(desc.id);
-		m_vLinks.push_back(size);
-		
-		std::vector<GraphLink>::iterator vi;
-		for (vi=pNode->link.begin();vi!=pNode->link.end();vi++)
-		{
-			GraphNode *pToPush = (*vi).pLink;
-			if (pToPush == m_pSafeFirst)
-				m_vLinks.push_back(1);
-			else
-				m_vLinks.push_back((int) pToPush);
-	
-			m_lstSaveStack.remove(pToPush);
-	
-			if (pToPush->mark)
-				continue;
-	
-	
-			m_lstSaveStack.push_back(pToPush);
-		}*/
-
-	for (auto vi = pNode->link.begin(); vi != pNode->link.end(); vi++)
-	{
-		GraphNode* pToPush = (*vi).pLink;
-
-		LinkDescriptor ld;
-		ld.nSourceNode = desc.id;
-		if (pToPush == m_pSafeFirst)
-			ld.nTargetNode = 1;
-		else
-			ld.nTargetNode = static_cast<INT_PTR>(pToPush);
-		ld.fMaxPassRadius = (*vi).fMaxRadius;
-		ld.nStartIndex = (*vi).nStartIndex;
-		ld.nEndIndex = (*vi).nEndIndex;
-		ld.vEdgeCenter = (*vi).vEdgeCenter;
-		ld.vWayOut = (*vi).vWayOut;
-
-		m_vLinksDesc.push_back(ld);
-
-		if (pToPush->mark)
-		{
-			m_lstSaveStack.remove(pToPush);
-			continue;
-		}
-
-		if (std::find(m_lstSaveStack.begin(), m_lstSaveStack.end(), pToPush) == m_lstSaveStack.end())
-			m_lstSaveStack.push_back(pToPush);
-	}
-
-	//	Disconnect(pNode);
-	//	if (pNode == m_pFirst)
-	//		delete pNode;
-
-	if (m_lstSaveStack.empty())
-		return nullptr;
-	GraphNode* pNext = nullptr;
-	while (!m_lstSaveStack.empty())
-	{
-		pNext = m_lstSaveStack.front();
-		m_lstSaveStack.pop_front();
-
-		if (!pNext->mark)
-			break;
-	}
-
-	if (pNext->mark)
-		return nullptr;
-	return pNext;
-}
-#endif
-
-void CGraph::DebugWalk(GraphNode* pNode, const Vec3& pos)
-{
-	// get out of indoor
-	if (pNode->nBuildingID >= 0)
-	{
-		pNode = GetEntrance(pNode->nBuildingID, pos);
-
-		auto vli = pNode->link.begin();
-		auto iend = pNode->link.end();
-
-		for (; vli != iend; ++vli)
-		{
-			if ((*vli).pLink->nBuildingID < 0)
-			{
-				pNode = (*vli).pLink;
-				break;
-			}
-		}
-	}
-
-	ClearMarks();
-	GraphNode* pNextNode = pNode;
-	GraphNode* pPrevNode = nullptr;
-	int        iterations = 0;
-	while (pPrevNode != pNextNode)
-	{
-		iterations++;
-		pPrevNode = pNextNode;
-		pNextNode = GREEDYStep(pPrevNode, pos);
-	}
-
-	m_pAISystem->f7 += iterations;
-	m_pAISystem->f7 /= 2.f;
-
-	m_pCurrent = pNextNode; // or pPrevNode, they are the same
-	ClearMarks();
-	m_mapGreedyWalkCandidates.clear();
-
-	if (!m_pCurrent)
-		CryError("[AIERROR] located in NULL graph node... Try regenerating triangulation, or submit a bug report.");
-}
-
-void CGraph::DrawPath(IRenderer* pRenderer)
-{
-	//if (m_lstVisited.empty()) return;
-
-	ListNodes::iterator    i;
-	CandidateMap::iterator ci;
-	pRenderer->SetMaterialColor(1, 0, 0, 1);
-	//ci=m_lstVisited.begin();
-	//	for (ci++;ci!=m_lstVisited.end();ci++)
-	{
-		GraphNode* pStart = (ci->second);
-		GraphNode* pEnd = (ci->second);
-
-		Vec3 stpos = pStart->data.m_pos;
-		Vec3 endpos = pEnd->data.m_pos;
-		stpos.z += 1;
-		endpos.z += 1;
-
-		pRenderer->DrawLine(stpos, endpos);
-
-		pStart = pEnd;
-	}
-
-	if (m_lstPath.empty())
+		AIError("CGraph::Connect Attempt to connect nodes that aren't created [Code bug]");
 		return;
-
-
-	pRenderer->ResetToDefault();
-	ListPositions::iterator pi = m_lstPath.begin();
-	Vec3                    vStartPos = (*pi);
-	for (++pi; pi != m_lstPath.end(); ++pi)
-	{
-		//GraphNode *pEnd = (*i);
-		Vec3 vEndPos = (*pi);
-
-		//		Vec3 stpos = pStart->data.m_pos;
-		//		Vec3 endpos = pEnd->data.m_pos;
-		vStartPos.z += 1;
-		vEndPos.z += 1;
-
-		pRenderer->DrawLine(vStartPos, vEndPos);
-
-		vStartPos = vEndPos;
-	}
-}
-
-void CGraph::GetFieldCenter(Vec3& pos) const
-{
-	pos = m_pCurrent->data.m_pos;
-}
-
-void CGraph::DEBUG_DrawCenters(GraphNode* pNode, IRenderer* pRenderer, int dist) const
-{
-	//return;
-
-	//if (dist > 10)
-	//	return;
-	////if (pNode->bDebug) return;
-
-	////pNode->bDebug = true;
-	//pRenderer->ResetToDefault();
-	//if (pNode->data.bWater)
-	//	pRenderer->SetMaterialColor(0, 0, 1.0, 1.0);
-	//else
-	//	pRenderer->SetMaterialColor(pNode->data.fSlope, 1.0 - pNode->data.fSlope, 1.0 - pNode->data.fSlope, 1.0);
-
-	//pRenderer->DrawBall(pNode->data.m_pos, 1.5f);
-
-	//std::vector<GraphLink>::iterator vi;
-	//for (vi = pNode->link.begin(); vi != pNode->link.end(); vi++)
-	//{
-	//	Vec3 start, end;
-	//	start = pNode->data.m_pos;
-	//	start.x += 0.5f;
-	//	start.y += 0.5f;
-	//	end = (*vi).pLink->data.m_pos;
-	//	end.y += 0.5f;
-	//	end.x += 0.5f;
-	//	pRenderer->DrawLine(start, end);
-	//	DEBUG_DrawCenters((*vi).pLink, pRenderer, dist + 1);
-	//}
-}
-
-int CGraph::WalkAStar(GraphNode* pBegin, GraphNode* pEnd, int& nIterations)
-{
-	m_lstCurrentHistory.clear();
-	ClearPath(); // clear the previously generated path
-	//	m_lstVisited.clear();
-	if (!ClearTags()) // clear all the tags in the diagram
-		return PATHFINDER_CLEANING_GRAPH;
-
-
-	if ((!pBegin) || (!pEnd))
-		return PATHFINDER_NOPATH;
-
-	// lets check if last generated path was similar to this one
-	if (!m_lstLastPath.empty())
-		if (m_lstLastPath.back() == pEnd)
-			if (CanReuseLastPath(pBegin))
-				return PATHFINDER_BEAUTIFYINGPATH;
-
-
-	m_pPathfinderCurrent = pBegin;
-	m_pPathBegin = pBegin;
-
-	m_nAStarDistance = 0;
-	m_pPathfinderCurrent->fDistance = 0;
-
-	//m_fDistance = (pBegin->data.m_pos - pEnd->data.m_pos).GetLength();
-	m_mapCandidates.clear();
-	m_pPathfinderCurrent = ASTARStep(pBegin, pEnd);
-	while (m_pPathfinderCurrent && !m_mapCandidates.empty() && (m_pPathfinderCurrent != pEnd) && (nIterations--))
-	{
-		m_pPathfinderCurrent = ASTARStep(m_pPathfinderCurrent, pEnd);
 	}
 
-	if (!m_pPathfinderCurrent)
-		return PATHFINDER_NOPATH;
-	if (m_pPathfinderCurrent == pEnd)
-		return PATHFINDER_WALKINGBACK;
-
-	return PATHFINDER_STILLTRACING;
-}
-
-GraphNode* CGraph::ASTARStep(GraphNode* pBegin, GraphNode* pEnd)
-{
-	TagNode(pBegin);
-	if (pEnd == pBegin)
+	if ((one == m_pSafeFirst || two == m_pSafeFirst) && m_pSafeFirst->firstLinkIndex)
 	{
-		pEnd->fHeuristic = 10000 - static_cast<float>(m_nAStarDistance);
-		return pEnd; // reached the end
-	}
-
-	// this piece evaluates simple distance heuristic for backtracking----------
-	///float thisdist = (pBegin->data.m_pos - m_pPathBegin->data.m_pos).GetLength();
-	//pBegin->fHeuristic =  1.f - (thisdist / m_fDistance);
-	//--------------------------------------------------------------------------
-	pBegin->fHeuristic = 10000 - static_cast<float>(m_nAStarDistance);
-	m_nAStarDistance++;
-
-	std::vector<GraphLink>::iterator vi;
-	for (vi = pBegin->link.begin(); vi != pBegin->link.end(); vi++)
-	{
-		//		if ((*vi).fMaxRadius >= 1.f)
-		if ((*vi).fMaxRadius >= m_pRequester->m_fPassRadius)
-			EvaluateNode((*vi).pLink, pEnd, pBegin);
-	}
-
-
-
-	if (!m_mapCandidates.empty())
-	{
-		CandidateHistoryMap::reverse_iterator ci = m_mapCandidates.rbegin();
-
-		GraphNode* pNextNode = nullptr;
-		if (ci != m_mapCandidates.rend())
-		{
-			pNextNode = (ci->second).pNode;
-
-			while ((pNextNode == pBegin) || (pNextNode->tag))
-			{
-				m_mapCandidates.erase((++ci).base());
-				ci = m_mapCandidates.rbegin();
-				if (ci == m_mapCandidates.rend())
-					break;
-				pNextNode = (ci->second).pNode;
-			}
-		}
-
-		if (ci == m_mapCandidates.rend())
-			return nullptr;
-
-		m_lstCurrentHistory = (ci->second).lstParents;
-		float f = ci->first;
-		m_mapCandidates.erase((++ci).base());
-		if (GetAISystem()->m_cvDrawPath->GetIVal() == 2)
-			m_lstVisited.insert(CandidateMap::iterator::value_type(f, pNextNode));
-		return pNextNode;
-	}
-	return nullptr;
-}
-
-void CGraph::TagNode(GraphNode* pNode)
-{
-	pNode->tag = true;
-	m_lstTagTracker.push_back(pNode);
-}
-
-bool CGraph::ClearTags()
-{
-	int nIterations = PATHFINDER_ITERATIONS;
-
-	while (!m_lstTagTracker.empty() && (nIterations--))
-	{
-		GraphNode* pLastNode = m_lstTagTracker.back();
-		pLastNode->tag = false;
-		pLastNode->fHeuristic = -9999.f;
-		m_lstTagTracker.pop_back();
-	}
-
-	if (!m_lstTagTracker.empty())
-		return false; // we are still cleaning up
-
-	return true;
-}
-
-void CGraph::EvaluateNode(GraphNode* pNode, GraphNode* pEnd, GraphNode* pParent)
-{
-	if (!pNode)
+		AIWarning("Second link being made to safe/first node");
 		return;
-	if (pNode->tag)
+	}
+
+#ifdef CRYAISYSTEM_DEBUG
+	extern std::vector<const GraphNode*> g_DebugGraphNodesToDraw;
+	g_DebugGraphNodesToDraw.clear();
+#endif //CRYAISYSTEM_DEBUG
+
+	// handle case where they're already connected
+	unsigned linkIndexOne = one->GetLinkTo(GetNodeManager(), GetLinkManager(), two);
+	unsigned linkIndexTwo = two->GetLinkTo(GetNodeManager(), GetLinkManager(), one);
+
+	if ((linkIndexOne == 0) != (linkIndexTwo == 0))
+	{
+		AIWarning("Trying to connect links but one is already connected, other isn't");
 		return;
-	float thisdist = (pNode->data.m_pos - m_vRealPathfinderEnd).GetLength();
-
-	float desirability = 1.f - (thisdist / m_fDistance) * 0.5f;
-	desirability += m_pHeuristic->Estimate(pNode, this) * 0.5f;
-
-	NodeWithHistory nwh;
-	nwh.pNode = pNode;
-	if (m_lstCurrentHistory.size() > 1)
-		m_lstCurrentHistory.pop_back();
-	m_lstCurrentHistory.push_front(pParent);
-	nwh.lstParents = m_lstCurrentHistory;
-	m_mapCandidates.insert(CandidateHistoryMap::iterator::value_type(desirability, nwh));
-}
-
-int CGraph::ContinueAStar(GraphNode* pEnd, int& nIterations)
-{
-	if (!pEnd)
-		return PATHFINDER_NOPATH;
-	if (!m_pHeuristic)
-		return PATHFINDER_NOPATH;
-
-	//int nIterations = PATHFINDER_ITERATIONS;
-
-	m_pPathfinderCurrent = ASTARStep(m_pPathfinderCurrent, pEnd);
-	while (!m_mapCandidates.empty() && (m_pPathfinderCurrent != pEnd) && (nIterations--))
-	{
-		m_pPathfinderCurrent = ASTARStep(m_pPathfinderCurrent, pEnd);
 	}
 
-	if (!m_pPathfinderCurrent)
-		return PATHFINDER_NOPATH;
-	if (m_pPathfinderCurrent == pEnd)
-		return PATHFINDER_WALKINGBACK;
+	// Check that if both links have bidirectional data, then it is the same.
+	assert(linkIndexOne == 0 || linkIndexTwo == 0 || (linkIndexOne & ~1) == (linkIndexTwo & ~1));
 
-	return PATHFINDER_STILLTRACING;
-}
+	// Create new bidirectional data if necessary.
+	unsigned linkIndex = linkIndexOne;
+	if (!linkIndex && linkIndexTwo)
+		linkIndex = linkIndexTwo ^ 1;
+	if (!linkIndex)
+		linkIndex = m_pGraphLinkManager->CreateLink();
 
-int CGraph::WalkBack(GraphNode* pBegin, GraphNode* pEnd, int& nIterations)
-{
-	//int nIterations = PATHFINDER_ITERATIONS;
-	//GraphNode *pCurrent;
-	if (!m_pWalkBackCurrent)
+	Vec3 midPos = 0.5f * (one->GetPos() + two->GetPos());
+
+	if (!linkIndexOne)
 	{
-		m_lstNodeStack.clear();
-		m_lstPath.clear();
-		m_pWalkBackCurrent = pBegin;
-	}
-	//else
-	//m_pWalkBackCurrent = m_pWalkBackCurrent;
-
-	float maxHeur = m_pWalkBackCurrent->fHeuristic;
-	while (m_pWalkBackCurrent != pEnd && --nIterations)
-	{
-		m_lstPath.push_front(m_pWalkBackCurrent->data.m_pos); // push in path
-		m_lstNodeStack.push_front(m_pWalkBackCurrent); // push in nodestack
-
-		GraphNode*              pNext = nullptr;
-		float                   maxheur = m_pWalkBackCurrent->fHeuristic;
-		std::vector<GraphLink>::iterator vi;
-		for (vi = m_pWalkBackCurrent->link.begin(); vi != m_pWalkBackCurrent->link.end(); vi++)
+		// [1/3/2007 MichaelS] Should be possible to push link on front, but I don't want to run the risk
+		// of breaking code that relies on the link order being preserved, so we add it to the end.
+		//one->links.push_back(linkIndex);
+		if (!one->firstLinkIndex)
 		{
-			GraphNode* pLink = (*vi).pLink;
-			if (pLink->fHeuristic > maxheur && (*vi).fMaxRadius >= 1.f)
-			{
-				maxheur = pLink->fHeuristic;
-				pNext = pLink;
-			}
-		}
-
-		m_pWalkBackCurrent->fHeuristic = -9999.f;
-
-		if (pNext)
-		{
-			m_pWalkBackCurrent = pNext;
+			one->firstLinkIndex = linkIndex;
 		}
 		else
 		{
-			// dead end hit... retrace
-			// try to continue moving with a revised heuristic
-			for (vi = m_pWalkBackCurrent->link.begin(); vi != m_pWalkBackCurrent->link.end(); vi++)
-			{
-				GraphNode* pLink = (*vi).pLink;
-				if (pLink->fHeuristic > m_pWalkBackCurrent->fHeuristic)
-				{
-					maxheur = pLink->fHeuristic;
-					pNext = pLink;
-				}
-			}
-
-			if (pNext)
-			{
-				m_pWalkBackCurrent = pNext;
-			}
-			else
-			{
-				if (!m_lstPath.empty())
-					m_lstPath.pop_front();
-				if (!m_lstNodeStack.empty())
-					m_lstNodeStack.pop_front();
-				if (m_lstNodeStack.empty())
-					return PATHFINDER_NOPATH;
-				m_pWalkBackCurrent = m_lstNodeStack.front();
-				if (!m_lstNodeStack.empty())
-					m_lstNodeStack.pop_front();
-				if (!m_lstPath.empty())
-					m_lstPath.pop_front();
-			}
+			unsigned lastLink, nextLink;
+			for (lastLink = one->firstLinkIndex; nextLink = m_pGraphLinkManager->GetNextLink(lastLink); lastLink = nextLink) { }
+			m_pGraphLinkManager->SetNextLink(lastLink, linkIndex);
 		}
 
-		//		if (std::find(m_lstNodeStack.begin(),m_lstNodeStack.end(),pCurrent) != m_lstNodeStack.end())
-		//			DEBUG_BREAK;
+		linkIndexOne = linkIndex;
+		GetLinkManager().SetNextNode(linkIndex, twoNodeIndex);
+		GetLinkManager().SetRadiusInCm(linkIndex, two == m_pSafeFirst ? -100 : radiusOneToTwoCm);
+		GetLinkManager().GetEdgeCenter(linkIndex) = midPos;
+		two->AddRef();
 	}
-
-	if (m_pWalkBackCurrent == pEnd)
+	else
 	{
-		m_pWalkBackCurrent = nullptr;
-		m_mapGreedyWalkCandidates.clear();
-		if (std::find(m_lstNodeStack.begin(), m_lstNodeStack.end(), pEnd) == m_lstNodeStack.end())
-		{
-			m_lstNodeStack.push_front(pEnd);
-			m_lstPath.push_front(pEnd->data.m_pos);
-		}
-		m_lstLastPath.clear();
-		m_lstLastPath.insert(m_lstLastPath.begin(), m_lstNodeStack.begin(), m_lstNodeStack.end());
-		return PATHFINDER_BEAUTIFYINGPATH;
+		if (radiusOneToTwoCm != 0)
+			GetLinkManager().ModifyRadiusInCm(linkIndexOne, radiusOneToTwoCm);
 	}
-	return PATHFINDER_WALKINGBACK;
-}
-
-void CGraph::ClearPath()
-{
-	m_lstPath.clear();
-}
-
-void CGraph::DeleteGraph(GraphNode* pNode, int depth)
-{
-	std::vector<GraphLink>::iterator vi;
-
-	m_lstDeleteStack.push_front(pNode);
-
-	while (!m_lstDeleteStack.empty())
+	if (!linkIndexTwo)
 	{
-		GraphNode* pCurrentNode = m_lstDeleteStack.front();
-		m_lstDeleteStack.pop_front();
-
-		// put all links into the node stack
-		for (vi = pCurrentNode->link.begin(); vi != pCurrentNode->link.end(); vi++)
+		// [1/3/2007 MichaelS] Should be possible to push link on front, but I don't want to run the risk
+		// of breaking code that relies on the link order being preserved, so we add it to the end.
+		//one->links.push_back(linkIndex);
+		if (!two->firstLinkIndex)
 		{
-			GraphNode* pLink = (*vi).pLink;
-			if (std::find(m_lstDeleteStack.begin(), m_lstDeleteStack.end(), pLink) == m_lstDeleteStack.end())
-				m_lstDeleteStack.push_front(pLink);
-		}
-
-		Disconnect(pCurrentNode);
-		/*if (!pCurrentNode->link.empty())
-		{
-				// delink this node from all his adjacent nodes
-				for (vi=pCurrentNode->link.begin();vi!=pCurrentNode->link.end();vi++)
-				{
-					GraphNode *pLink = (*vi);
-					if ((found = std::find(pLink->link.begin(),pLink->link.end(),pCurrentNode)) != pLink->link.end())
-					{
-						(*found)->Release();
-						pLink->link.erase(found);
-					}
-				}
-
-				
-				GraphNode *pNext= pCurrentNode->link.back();
-				m_lstNodeStack.push_front(pNext);
-				pCurrentNode->link.pop_back();
+			two->firstLinkIndex = linkIndex ^ 1;
 		}
 		else
 		{
-			if (pCurrentNode != m_pFirst)
-				DeleteNode(pCurrentNode);
-			else
-				delete m_pFirst;
-			//if (pCurrentNode->Release())
-			//{
-			//	delete pCurrentNode;
-			//	nNodes++;
-			//}
-			m_lstNodeStack.pop_front();
+			unsigned lastLink, nextLink;
+			for (lastLink = two->firstLinkIndex; nextLink = m_pGraphLinkManager->GetNextLink(lastLink); lastLink = nextLink) { }
+			m_pGraphLinkManager->SetNextLink(lastLink, linkIndex ^ 1);
 		}
-		*/
-		if (pCurrentNode == m_pSafeFirst)
+
+		linkIndexTwo = linkIndex ^ 1;
+		GetLinkManager().SetNextNode(linkIndex ^ 1, oneNodeIndex);
+		GetLinkManager().SetRadiusInCm(linkIndex ^ 1, one == m_pSafeFirst ? -100 : radiusTwoToOneCm);
+		GetLinkManager().GetEdgeCenter(linkIndex ^ 1) = midPos;
+		one->AddRef();
+	}
+	else
+	{
+		if (radiusTwoToOneCm != 0)
+			GetLinkManager().ModifyRadiusInCm(linkIndexTwo, radiusTwoToOneCm);
+	}
+
+	if (pLinkOneTwo && linkIndexOne)
+		*pLinkOneTwo = linkIndexOne;
+	if (pLinkTwoOne && linkIndexTwo)
+		*pLinkTwoOne = linkIndexTwo;
+
+	if (m_pSafeFirst->firstLinkIndex)
+		return;
+
+	if (one->navType == IAISystem::NAV_TRIANGULAR)
+	{
+		ConnectInCm(m_safeFirstIndex, oneNodeIndex, 10000, -100);
+		m_pFirst = one;
+		m_firstIndex = oneNodeIndex;
+	}
+	else if (two->navType == IAISystem::NAV_TRIANGULAR)
+	{
+		ConnectInCm(m_safeFirstIndex, twoNodeIndex, 10000, -100);
+		m_pFirst = two;
+		m_firstIndex = twoNodeIndex;
+	}
+	// may have incurred a reallocation
+	// [1/3/2007 MichaelS] Should no longer be necessary since we use indices instead of pointers, but leaving it here for now.
+	if (pLinkOneTwo && linkIndexOne)
+		*pLinkOneTwo = linkIndexOne;
+	if (pLinkTwoOne && linkIndexTwo)
+		*pLinkTwoOne = linkIndexTwo;
+}
+
+/// Connects (two-way) two nodes, optionally returning pointers to the new links
+void CGraph::Connect(unsigned oneIndex, unsigned twoIndex, float radiusOneToTwo, float radiusTwoToOne, unsigned* pLinkOneTwo, unsigned* pLinkTwoOne)
+{
+	int16 radiusOneToTwoInCm = NavGraphUtils::InCentimeters(radiusOneToTwo);
+	int16 radiusTwoToOneInCm = NavGraphUtils::InCentimeters(radiusTwoToOne);
+
+	ConnectInCm(oneIndex, twoIndex, radiusOneToTwoInCm, radiusTwoToOneInCm, pLinkOneTwo, pLinkTwoOne);
+}
+
+//====================================================================
+// DeleteGraph
+//====================================================================
+void CGraph::DeleteGraph(IAISystem::tNavCapMask navTypeMask)
+{
+	std::vector<unsigned>        nodesToDelete;
+	CAllNodesContainer::Iterator it(m_allNodes, navTypeMask);
+	while (unsigned nodeIndex = it.Increment())
+	{
+		GraphNode* pNode = GetNodeManager().GetNode(nodeIndex);
+		AIAssert(pNode->navType & navTypeMask);
+		nodesToDelete.push_back(nodeIndex);
+	}
+
+	for (unsigned i = 0; i < nodesToDelete.size(); ++i)
+	{
+		GraphNode* pNode = GetNodeManager().GetNode(nodesToDelete[i]);
+		Disconnect(nodesToDelete[i]);
+		if (pNode == m_pSafeFirst)
+		{
 			m_pSafeFirst = nullptr;
+			m_safeFirstIndex = 0;
+		}
 	}
+
+	m_allNodes.Compact();
 }
 
-void CGraph::ClearDebugFlag(GraphNode* pNode) const
+//====================================================================
+// Disconnect
+//====================================================================
+void CGraph::Disconnect(unsigned nodeIndex, unsigned linkId)
 {
-	//if (!pNode->bDebug) return;
+	GraphNode* pNode = m_pGraphNodeManager->GetNode(nodeIndex);
 
-	//	pNode->bDebug = false;
-
-	//std::vector<GraphLink>::iterator vi;
-	//for (vi=pNode->link.begin();vi!=pNode->link.end();vi++)
-	//	ClearDebugFlag((*vi).pLink);
-}
-
-GraphNode* CGraph::CheckClosest(GraphNode* pCurrent, const Vec3& pos)
-{
-	if (!pCurrent)
+	if (!CGraph::ValidateNode(nodeIndex, false))
 	{
-		DebugWalk(m_pCurrent, pos);
-		return m_pCurrent;
+		AIError("CGraph::Disconnect Attempt to disconnect link from node that isn't created [Code bug]");
+		return;
 	}
-	float      dist = (pCurrent->data.m_pos - pos).GetLength();
-	GraphNode* pReturnNode = pCurrent;
-
-	std::vector<GraphLink>::iterator si;
-	for (si = pCurrent->link.begin(); si != pCurrent->link.end(); si++)
+	AIAssert(linkId);
+	unsigned   otherNodeIndex = GetLinkManager().GetNextNode(linkId);
+	GraphNode* pOtherNode = GetNodeManager().GetNode(otherNodeIndex);
+	if (!CGraph::ValidateNode(otherNodeIndex, false))
 	{
-		GraphNode* pNode = (*si).pLink;
-		float      cmpdist = (pNode->data.m_pos - pos).GetLength();
-		if (cmpdist < dist)
-			pReturnNode = pNode;
+		AIError("CGraph::Disconnect Attempt to disconnect link from other node that isn't created [Code bug]");
+		return;
 	}
 
-	if (pReturnNode != pCurrent)
-		return CheckClosest(pReturnNode, pos);
-	return pReturnNode;
+	pNode->RemoveLinkTo(GetLinkManager(), otherNodeIndex);
+	pNode->Release();
+
+	pOtherNode->RemoveLinkTo(GetLinkManager(), nodeIndex);
+	pOtherNode->Release();
+
+	GetLinkManager().DestroyLink(linkId);
 }
 
-void CGraph::Disconnect(GraphNode* pDisconnected, bool bDelete)
+//====================================================================
+// Disconnect
+//====================================================================
+void CGraph::Disconnect(unsigned nodeIndex, bool bDelete)
 {
-	// if the node we are disconnecting is the current node, move the current 
+	GraphNode* pDisconnected = m_pGraphNodeManager->GetNode(nodeIndex);
+
+	if (!CGraph::ValidateNode(nodeIndex, false))
+	{
+		AIError("CGraph::Disconnect Attempt to disconnect node that isn't created [Code bug]");
+		return;
+	}
+
+#ifdef CRYAISYSTEM_DEBUG
+	extern std::vector<const GraphNode*> g_DebugGraphNodesToDraw;
+	g_DebugGraphNodesToDraw.clear();
+#endif //CRYAISYSTEM_DEBUG
+
+	// if the node we are disconnecting is the current node, move the current
 	// to one of his links, or the root if it has no links
-
-	if (m_pSafeFirst)
-		if (m_pSafeFirst->link.empty())
-			return;
-
-
 	if (pDisconnected == m_pCurrent)
 	{
-		if (!pDisconnected->link.empty())
-			m_pCurrent = pDisconnected->link.front().pLink;
+		if (pDisconnected->firstLinkIndex)
+		{
+			m_currentIndex = GetLinkManager().GetNextNode(pDisconnected->firstLinkIndex);
+			m_pCurrent = GetNodeManager().GetNode(m_currentIndex);
+		}
 		else
+		{
+			m_currentIndex = m_safeFirstIndex;
 			m_pCurrent = m_pSafeFirst;
+		}
 	}
-
-
 
 	// if its the root that is being disconnected, move it
 	if (m_pFirst == pDisconnected)
 	{
-		if (!pDisconnected->link.empty())
+		if (pDisconnected->firstLinkIndex)
 		{
-			m_pFirst = pDisconnected->link.front().pLink;
+			m_firstIndex = GetLinkManager().GetNextNode(pDisconnected->firstLinkIndex);
+			m_pFirst = GetNodeManager().GetNode(m_firstIndex);
 		}
 		else
 		{
 			if (m_pFirst != m_pSafeFirst)
+			{
 				m_pFirst = m_pSafeFirst;
+				m_firstIndex = m_safeFirstIndex;
+			}
 			else
+			{
 				m_pFirst = nullptr;
+				m_firstIndex = 0;
+			}
 		}
 	}
 
-
-
 	// now disconnect this node from its links
-	if (!pDisconnected->link.empty())
+	for (unsigned link = pDisconnected->firstLinkIndex, nextLink; link; link = nextLink)
 	{
-		std::vector<GraphLink>::iterator vi;
-		for (vi = pDisconnected->link.begin(); vi != pDisconnected->link.end(); vi++)
-		{
-			GraphNode* pLink = (*vi).pLink;
-			if (!pLink->link.empty())
-			{
-				std::vector<GraphLink>::iterator li;
-				for (li = pLink->link.begin(); li != pLink->link.end(); li++)
-				{
-					GraphNode* pBackLink = (*li).pLink;
-					if (pBackLink == pDisconnected)
-					{
-						pLink->link.erase(li);
-						pDisconnected->Release();
-						pLink->Release();
-						break;
-					}
-				} // li
-			}
-		} // vi
+		nextLink = GetLinkManager().GetNextLink(link);
+
+		unsigned   nextNodeIndex = GetLinkManager().GetNextNode(link);
+		GraphNode* pNextNode = GetNodeManager().GetNode(nextNodeIndex);
+		pNextNode->RemoveLinkTo(GetLinkManager(), nodeIndex);
+		pNextNode->Release();
+		pDisconnected->Release();
+		GetLinkManager().DestroyLink(link);
 	}
 
+	pDisconnected->firstLinkIndex = 0;
 
-	pDisconnected->link.clear();
+	if (pDisconnected->nRefCount != 1)
+		AIWarning("Node reference count is not 1 after disconnecting");
 
 	if (bDelete)
-		DeleteNode(pDisconnected);
+		DeleteNode(nodeIndex);
 
 	if (!m_pSafeFirst)
 		return;
 
-	if (pDisconnected != m_pSafeFirst && m_pSafeFirst->link.empty())
+	if (pDisconnected != m_pSafeFirst && !m_pSafeFirst->firstLinkIndex)
 	{
-		GraphNode* pFirst = m_pFirst;
+		unsigned firstIndex = m_firstIndex;
 		// we have disconnected the link to the dummy safe node - relink it to any outdoor node of the graph
-		if (pFirst == m_pSafeFirst)
+		if (firstIndex == m_safeFirstIndex)
 		{
-			if (m_pCurrent == m_pSafeFirst)
+			if (m_currentIndex == m_safeFirstIndex)
 			{
 				// try any entrance
 				if (!m_mapEntrances.empty())
-				{
-					pFirst = (m_mapEntrances.begin()->second);
-				}
+					firstIndex = (m_mapEntrances.begin()->second);
 				else
-				{
-					AIError("!Could not recover from deletion of Safe graph node. Try deleting .bai files and regenerating.");
-					return;
-				}
+					return; // m_pSafeFirst links will stay empty
 			}
 			else
 			{
-				pFirst = m_pCurrent;
+				firstIndex = m_currentIndex;
 			}
 		}
 
-		if (pFirst->nBuildingID == -1)
+		if (firstIndex)
 		{
-			Connect(m_pSafeFirst, pFirst);
-		}
-		else
-		{
-			GraphNode* pEntrance = GetEntrance(pFirst->nBuildingID, Vec3(0, 0, 0));
-			if (pEntrance)
+			GraphNode* pFirst = GetNodeManager().GetNode(firstIndex);
+			if (pFirst->navType == IAISystem::NAV_TRIANGULAR)
 			{
-				std::vector<GraphLink>::iterator vli, iend = pEntrance->link.end();
-				for (vli = pEntrance->link.begin(); vli != iend; ++vli)
-				{
-					if ((*vli).pLink->nBuildingID == -1)
+				ConnectInCm(m_safeFirstIndex, firstIndex, 10000, -100);
+			}
+			else if (pFirst->navType == IAISystem::NAV_WAYPOINT_HUMAN)
+			{
+				GraphNode* pEntrance = GetEntrance(pFirst->GetWaypointNavData()->nBuildingID, Vec3(0, 0, 0));
+				if (pEntrance)
+					for (unsigned link = pEntrance->firstLinkIndex; link; link = GetLinkManager().GetNextLink(link))
 					{
-						Connect(m_pSafeFirst, (*vli).pLink);
-						break;
+						unsigned   nextNodeIndex = GetLinkManager().GetNextNode(link);
+						GraphNode* pNextNode = GetNodeManager().GetNode(nextNodeIndex);
+						if (pNextNode->navType == IAISystem::NAV_WAYPOINT_HUMAN)
+						{
+							ConnectInCm(m_safeFirstIndex, nextNodeIndex, 10000, -100);
+							break;
+						}
 					}
-				}
 			}
 		}
 	}
 }
 
-// walk that will always produce a result, for indoors
-void CGraph::IndoorDebugWalk(GraphNode* pNode, const Vec3& pos, IVisArea* pTargetArea)
+bool operator<(const Vec3r& v1, const Vec3r& v2)
 {
-	if (pNode->pArea)
-	{
-		float this_dist = (pos - pNode->data.m_pos).GetLength();
-		m_mapGreedyWalkCandidates.insert(CandidateMap::iterator::value_type(this_dist, pNode));
-	}
-
-	FillGreedyMap(pNode, pos, pTargetArea, false);
-
-
-	if (m_mapGreedyWalkCandidates.empty())
-	{
-		AIWarning("No nodes found for this indoor or navigation modifier area apart from entrance!!");
-		m_pCurrent = pNode;
-	}
-	else
-	{
-		m_pCurrent = (m_mapGreedyWalkCandidates.begin())->second;
-		ClearMarks();
-		m_mapGreedyWalkCandidates.clear();
-	}
-
-	if (!m_pCurrent)
-		CryError("[AIERROR] located in NULL graph node... Try regenerating triangulation, or submit a bug report.");
-}
-
-// Clears the tags of the graph without time-slicing the operation
-void CGraph::ClearTagsNow(void)
-{
-	while (!ClearTags()) { }
-}
-
-// Check whether a position is within a node's triangle
-bool CGraph::PointInTriangle(const Vec3& pos, GraphNode* pNode)
-{
-	if (pNode->vertex.empty())
+	if (v1.x < v2.x)
+		return true;
+	if (v1.x > v2.y)
 		return false;
-
-	bool bSide = false;
-	// check first and last 
-	//Vec3 edge = (pNode->vertex.back()).vPos - (pNode->vertex.front()).vPos;
-	Vec3 vFront = m_pAISystem->m_VertexList.GetVertex(pNode->vertex.front()).vPos;
-	Vec3 edge = m_pAISystem->m_VertexList.GetVertex(pNode->vertex.back()).vPos - vFront;
-	Vec3 test = pos - vFront;
-
-	float cross = edge.x * test.y - edge.y * test.x;
-
-
-	if (cross > 0)
-		bSide = true;
-
-	for (unsigned int i = 1; i < pNode->vertex.size(); i++)
-	{
-		Vec3 vI = m_pAISystem->m_VertexList.GetVertex(pNode->vertex[i]).vPos;
-		edge = m_pAISystem->m_VertexList.GetVertex(pNode->vertex[i - 1]).vPos - vI;
-		test = pos - vI;
-		cross = edge.x * test.y - edge.y * test.x;
-
-		if ((cross < 0) && bSide)
-			return false;
-		if ((cross > 0) && !bSide)
-			return false;
-	}
-
-	return true;
+	if (v1.y < v2.y)
+		return true;
+	if (v1.y > v2.y)
+		return false;
+	if (v1.z < v2.z)
+		return true;
+	if (v1.z > v2.z)
+		return false;
+	return false;
 }
 
+//====================================================================
+// PointInTriangle
+// Check whether a position is within a node's triangle
+//====================================================================
+bool PointInTriangle(const Vec3& pos, GraphNode* pNode)
+{
+	// NAV_TRIANGULAR is replaced by MNM
+	assert(false);
+	return false;
+}
+
+//#define VALIDATEINMARK
+
+//====================================================================
+// MarkNode
 // uses mark for internal graph operation without disturbing the pathfinder
-void CGraph::MarkNode(GraphNode* pNode)
+//====================================================================
+void CGraph::MarkNode(unsigned nodeIndex) const
 {
-	pNode->mark = true;
-	m_lstMarkTracker.push_back(pNode);
-}
-
-// clears the marked nodes
-void CGraph::ClearMarks(bool bJustClear)
-{
-	if (bJustClear)
+#ifdef VALIDATEINMARK
+	if (!CGraph::ValidateNode(nodeIndex))
 	{
-		m_lstMarkTracker.resize(0);
+		AIError("CGraph::MarkNode Unable to validate/mark node %p [Code bug]", pNode);
 		return;
 	}
-
-	while (!m_lstMarkTracker.empty())
-	{
-		m_lstMarkTracker.back()->mark = false;
-		m_lstMarkTracker.pop_back();
-	}
+#endif
+	GetNodeManager().GetNode(nodeIndex)->mark = 1;
+	m_markedNodes.push_back(nodeIndex);
 }
 
-// iterative function to quickly converge on the target position in the graph
-GraphNode* CGraph::GREEDYStep(GraphNode* pBegin, const Vec3& pos, bool bIndoor)
+//====================================================================
+// ClearMarks
+// clears the marked nodes
+//====================================================================
+void CGraph::ClearMarks() const
 {
-	MarkNode(pBegin);
-
-	if (bIndoor)
+	while (!m_markedNodes.empty())
 	{
-		//indoor
-
-		float d_dist = (pos - pBegin->data.m_pos).GetLength();
-		if (d_dist < 1.f)
-			return pBegin;
-
-		std::vector<GraphLink>::iterator vi;
-		if (pBegin->link.empty())
-			return pBegin;
-		for (vi = pBegin->link.begin(); vi != pBegin->link.end(); vi++)
-		{
-			GraphNode* pLink = (*vi).pLink;
-			if ((pLink->mark) || (pLink->nBuildingID == -1)) // don't go outside
-				continue;
-			float this_dist = (pos - pLink->data.m_pos).GetLength();
-			m_mapGreedyWalkCandidates.insert(CandidateMap::iterator::value_type(this_dist, pLink));
-		}
-
-		if (!m_mapGreedyWalkCandidates.empty())
-		{
-			CandidateMap::iterator ci = m_mapGreedyWalkCandidates.end();
-			--ci;
-			GraphNode* pNextNode = (ci->second);
-			if (pNextNode == pBegin)
-			{
-				--ci;
-				pNextNode = (ci->second);
-			}
-			m_mapGreedyWalkCandidates.erase(ci);
-			return pNextNode;
-		}
-		return pBegin;
-	}
-	// outdoor
-	if (PointInTriangle(pos, pBegin))
-		return pBegin; // we have arrived
-
-	if (pBegin == m_pSafeFirst)
-	{
-		if (pBegin->link.empty())
-			return pBegin;
-		m_mapGreedyWalkCandidates.insert(CandidateMap::iterator::value_type(0, pBegin->link.front().pLink));
-	}
-	else
-	{
-		std::vector<GraphLink>::iterator vi;
-		if (pBegin != m_pSafeFirst || !pBegin->mark)
-			for (vi = pBegin->link.begin(); vi != pBegin->link.end(); vi++)
-			{
-				GraphNode* pLink = (*vi).pLink;
-				if (pLink->mark || (pLink->nBuildingID != -1)) // dont go in marked or indoors
-					continue;
-				//	float this_dist = (pos - pLink->data.m_pos).GetLength();
-				if (pBegin->vertex.empty())
-					continue;
-
-				Vec3 midpoint = (m_pAISystem->m_VertexList.GetVertex(pBegin->vertex[(*vi).nStartIndex]).vPos + m_pAISystem->m_VertexList.GetVertex(pBegin->vertex[(*vi).nEndIndex]).vPos) / 2.f;
-				midpoint.z = pos.z;
-				Vec3 dir1 = pos - midpoint;
-				Vec3 vWayOut = (*vi).vWayOut;
-				vWayOut.z = 0.f; //pos.z;
-				dir1.Normalize();
-
-				float this_dist = (1.f - dir1.Dot(vWayOut));
-				this_dist *= (pLink->data.m_pos - pos).GetLength() / 30.f;
-
-				m_mapGreedyWalkCandidates.insert(CandidateMap::iterator::value_type(this_dist, pLink));
-			}
-	}
-
-	if (!m_mapGreedyWalkCandidates.empty())
-	{
-		GraphNode* pNextNode;
-		do
-		{
-			if (m_mapGreedyWalkCandidates.empty())
-			{
-				AIWarning("Could not locate position (%.3f,%.3f,%.3f) in triangulation. Call Petar!", pos.x, pos.y, pos.z);
-				return pBegin;
-			}
-			pNextNode = (m_mapGreedyWalkCandidates.begin()->second);
-			m_mapGreedyWalkCandidates.erase(m_mapGreedyWalkCandidates.begin());
-		}
-		while (pNextNode == pBegin);
-
-		return pNextNode;
-	}
-	return pBegin;
-}
-
-// adds an entrance for easy traversing later
-void CGraph::AddIndoorEntrance(int nBuildingID, GraphNode* pNode, bool bExitOnly)
-{
-	if (m_pSafeFirst)
-		if (m_pSafeFirst->link.empty())
-			return;
-
-	if (bExitOnly)
-		m_mapExits.insert(EntranceMap::iterator::value_type(nBuildingID, pNode));
-	else
-		m_mapEntrances.insert(EntranceMap::iterator::value_type(nBuildingID, pNode));
-
-	if (pNode->link.empty())
-	{
-		// it has to be connected to the outside
-		GraphNode* pOutsideNode = GetEnclosing(pNode->data.m_pos, nullptr, true);
-		Connect(pNode, pOutsideNode);
-	}
-	else
-	{
-		std::vector<GraphLink>::iterator gi;
-		bool                    bOutsideLink = false;
-		for (gi = pNode->link.begin(); gi != pNode->link.end(); gi++)
-		{
-			if ((*gi).pLink->nBuildingID == -1)
-				bOutsideLink = true;
-		}
-
-		if (!bOutsideLink)
-		{
-			// it has to be connected to the outside
-			GraphNode* pOutsideNode = GetEnclosing(pNode->data.m_pos, nullptr, true);
-			Connect(pNode, pOutsideNode);
-		}
-	}
-
-	if (bExitOnly)
-	{
-		std::vector<GraphLink>::iterator gi;
-		for (gi = pNode->link.begin(); gi != pNode->link.end(); gi++)
-		{
-			if ((*gi).pLink->nBuildingID == -1)
-			{
-				GraphNode*              pOutNode = (*gi).pLink;
-				std::vector<GraphLink>::iterator ii;
-				for (ii = pOutNode->link.begin(); ii != pOutNode->link.end(); ii++)
-				{
-					if ((*ii).pLink == pNode)
-						(*ii).fMaxRadius = 0;
-				}
-			}
-		}
+#ifdef VALIDATEINMARK
+		if (!CGraph::ValidateNode(m_markedNodes.back()))
+			AIError("CGraph::ClearMarks Unable to validate/clear mark node %p [Code bug]", m_markedNodes.back());
+		else
+#endif
+		GetNodeManager().GetNode(m_markedNodes.back())->mark = 0;
+		m_markedNodes.pop_back();
 	}
 }
 
+//====================================================================
+// ReadFromFile
 // Reads the AI graph from a specified file
+//====================================================================
 bool CGraph::ReadFromFile(const char* szName)
 {
-#ifdef __MWERKS__
-#warning Code not implemented under CodeWarrior
-#else
-
 	CCryFile file;
 	if (file.Open(szName, "rb"))
-	{
-		ReadNodes(file);
-		return true;
-	}
-	//[Timur]
-	/*
-
-	HANDLE hf;
-	hf = CreateFile(szName,GENERIC_READ,0,NULL,OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0 );
-	
-	if (hf != INVALID_HANDLE_VALUE)
-	{
-		ReadNodes(hf);
-		CloseHandle(hf);
-		return true;
-	}
-	*/
-
+		return ReadNodes(file);
 	return false;
-
-#endif
 }
 
-#ifdef __MWERKS__
-#warning Code not implemented under CodeWarrior
-#else
+//====================================================================
+// ReadNodes
 // reads all the nodes in a map
+//====================================================================
 bool CGraph::ReadNodes(CCryFile& file)
 {
-	//assert(_heapchk()==_HEAPOK);
+	NodeDescBuffer nodeDescs;
 
-	//DWORD read;
+	//AIAssert(_heapchk()==_HEAPOK);
 	int  iNumber;
 	Vec3 mins, maxs;
 
-	m_pAISystem->m_pSystem->GetILog()->UpdateLoadingScreen("\003[AISYSTEM] Verifying BAI file version");
-	file.ReadRaw(&iNumber, sizeof(int));
-	if (iNumber != BAI_FILE_VERSION)
+	AILogLoading("Verifying BAI file version");
+	file.ReadType(&iNumber);
+	if (iNumber != BAI_TRI_FILE_VERSION)
 	{
-		m_pAISystem->m_pSystem->GetILog()->UpdateLoadingScreen("\002$3[AISYSTEM WARNING] Wrong BAI file version!! Delete them and regenerate them in the editor.");
+		AIError("CGraph::ReadNodes Wrong triangulation BAI file version - found %d expected %d: Regenerate triangulation in the editor [Design bug]", iNumber, BAI_TRI_FILE_VERSION);
 		return false;
 	}
 
-	m_pAISystem->m_pSystem->GetILog()->UpdateLoadingScreen("\003[AISYSTEM] Reading BBOX");
-	file.ReadRaw(&mins.x, sizeof(float));
-	file.ReadRaw(&mins.y, sizeof(float));
-	file.ReadRaw(&mins.z, sizeof(float));
-
-	file.ReadRaw(&maxs.x, sizeof(float));
-	file.ReadRaw(&maxs.y, sizeof(float));
-	file.ReadRaw(&maxs.z, sizeof(float));
+	AILogLoading("Reading BBOX");
+	file.ReadType(&mins);
+	file.ReadType(&maxs);
 
 	SetBBox(mins, maxs);
 
-	m_pAISystem->m_pSystem->GetILog()->UpdateLoadingScreen("\003[AISYSTEM] Reading node descriptors");
+	AILogLoading("Reading node descriptors");
 
-	file.ReadRaw(&iNumber, sizeof(int));
+	file.ReadType(&iNumber);
 
 	if (iNumber > 0)
 	{
-		m_vBuffer.resize(iNumber);
-		file.ReadRaw(&m_vBuffer[0], iNumber * sizeof(NodeDescriptor));
+		nodeDescs.resize(iNumber);
+		file.ReadType(&nodeDescs[0], iNumber);
 	}
 
-	m_vNodes.clear();
-	//	m_vNodes.resize(iNumber);
+	AILogLoading("Verifying graph nodes");
+	bool bFoundFirstNode = false;
 
-	m_pAISystem->m_pSystem->GetILog()->UpdateLoadingScreen("\003[AISYSTEM] Creating graph nodes");
-
-	I3DEngine* pEngine = m_pAISystem->m_pSystem->GetI3DEngine();
-	int        index = 0;
-	for (NodeBuffer::iterator ni = m_vBuffer.begin(); ni != m_vBuffer.end(); ++ni, index++)
+	for (NodeDescBuffer::const_iterator ni = nodeDescs.begin(), end = nodeDescs.end(); ni != end; ++ni)
 	{
-		NodeDescriptor buffer = (*ni);
-		GraphNode*     pNode = CreateNewNode(!buffer.bCreated); //new GraphNode;//&m_vNodes[index];
-
-		if (buffer.bCreated)
+		if (ni->ID == 1)
 		{
-			m_pAISystem->CheckInside(buffer.data.m_pos, pNode->nBuildingID, pNode->pArea);
+			bFoundFirstNode = true;
+			break;
 		}
-		else
-		{
-			pNode->nBuildingID = -1;
-			pNode->pArea = nullptr;
-		}
-
-		pNode->data = buffer.data;
-		pNode->vertex.clear();
-		if (buffer.nObstacles)
-		{
-			pNode->vertex.reserve(buffer.nObstacles);
-			for (int i = 0; i < buffer.nObstacles; i++)
-			{
-				int nVertexIndex = buffer.obstacle[i];
-				//ObstacleData od = buffer.obstacle[i];
-				pNode->vertex.push_back(nVertexIndex);
-				//pNode->vertex.push_back(buffer.obstacle[i]);
-			}
-		}
-		m_mapReadNodes.insert(EntranceMap::iterator::value_type(buffer.id, pNode));
-
-		if (buffer.bEntrance)
-			m_mapEntrances.insert(EntranceMap::iterator::value_type(pNode->nBuildingID, pNode));
-
-		if (buffer.bExit)
-			m_mapExits.insert(EntranceMap::iterator::value_type(pNode->nBuildingID, pNode));
-
-		//	if ((pNode->nBuildingID < 0) && (pNode->vertex.empty()) && buffer.id!=1)
-		//	AIWarning("![AIERROR] A node was found that had buildingid:%d during export, but now it has buildingid:-1 [pos:(x:%.3f,y:%.3f,z:%.3f)]. Please make sure that all your navigation modifiers are correctly exported.",
-		//			buffer.building,buffer.data.m_pos.x,buffer.data.m_pos.y,buffer.data.m_pos.z);
 	}
 
-	m_pAISystem->m_pSystem->GetILog()->UpdateLoadingScreen("\003[AISYSTEM] Reading vertex list");
-
-	m_pAISystem->m_VertexList.ReadFromFile(file);
-
-
-	m_pAISystem->m_pSystem->GetILog()->UpdateLoadingScreen("\003[AISYSTEM] Reading links");
-
-	/*	file.ReadRaw( &iNumber, sizeof(int) );
-		m_vLinks.resize(iNumber);
-		file.ReadRaw( &m_vLinks[0], iNumber * sizeof(int) );
-		*/
-
-	file.ReadRaw(&iNumber, sizeof(int));
-	if (iNumber > 0)
+	if (bFoundFirstNode)
 	{
-		m_vLinksDesc.resize(iNumber);
-		file.ReadRaw(&m_vLinksDesc[0], iNumber * sizeof(LinkDescriptor));
+		// m_pSafeFirstIndex overlaps an ID we've read in. We need to disconnect m_pSafeFirst
+		// before we create a node with the same ID to avoid accidentally reusing the ID.
+		if (m_pSafeFirst)
+			Disconnect(m_safeFirstIndex);
+		m_pSafeFirst = nullptr;
+		m_safeFirstIndex = 0;
 	}
-
-	EntranceMap::iterator ei = m_mapReadNodes.find(1);
-	if (ei == m_mapReadNodes.end())
+	else
 	{
-		m_pAISystem->m_pSystem->GetILog()->UpdateLoadingScreen("\001[AIERROR]   FIRST NODE NOT FOUND !!!!");
+		AIError("CGraph::ReadNodes First node not found - navigation loading failed [code bug]");
+		gEnv->pLog->UpdateLoadingScreen(" ");
 		return false;
 	}
-	Disconnect(m_pSafeFirst);
-	//delete m_pFirst;
-	m_pSafeFirst = (ei->second);
-	m_pFirst = m_pSafeFirst;
-	m_pCurrent = m_pSafeFirst;
 
-	m_pAISystem->m_pSystem->GetILog()->UpdateLoadingScreen("\003[AISYSTEM] Reconnecting links (might take some time:)");
+	AILogLoading("Creating graph nodes");
 
-	if (!m_vLinksDesc.empty())
+	typedef std::map<unsigned, unsigned> ReadNodesMap;
+	ReadNodesMap                         mapReadNodes;
+
+	I3DEngine*               pEngine = gEnv->p3DEngine;
+	NodeDescBuffer::iterator ni;
+	int                      index = 0;
+
+	if (/*!gEnv->IsEditor() && */ iNumber)
 	{
-		LinkDescBuffer::iterator iend = m_vLinksDesc.end();
-		for (LinkDescBuffer::iterator ldbi = m_vLinksDesc.begin(); ldbi != iend; ++ldbi)
+		//int nodeCounts[IAISystem::NAV_TYPE_COUNT] = {0};
+
+		NodeDescBuffer::iterator end = nodeDescs.end();
+		//for (ni=nodeDescs.begin();ni != end;++ni,++index)
+		//{
+		//	NodeDescriptor desc = (*ni);
+		//	IAISystem::ENavigationType type = (IAISystem::ENavigationType) desc.navType;
+
+		//	int typeIndex = TypeIndexFromType(type);
+
+		//	// in editor waypoint nodes get added by the editor
+		//	// MichaelS - removed check to improve stats consistency.
+		//	if (typeIndex < 0 ||
+		//		(/*type != IAISystem::NAV_TRIANGULAR || */type != IAISystem::NAV_UNSET && gEnv->IsEditor()))
+		//		continue;
+
+		//	++nodeCounts[typeIndex];
+		//}
+
+		for (ni = nodeDescs.begin(); ni != end; ++ni, ++index)
+		{
+			NodeDescriptor             desc = (*ni);
+			IAISystem::ENavigationType type = static_cast<IAISystem::ENavigationType>(desc.navType);
+
+			unsigned int nodeIndex = 0;
+			GraphNode*   pNode = nullptr;
+			nodeIndex = CreateNewNode(type, desc.pos, desc.ID);
+			pNode = GetNodeManager().GetNode(nodeIndex);
+
+			switch (type)
+			{
+			case IAISystem::NAV_UNSET:
+				break;
+			case IAISystem::NAV_TRIANGULAR:
+			{
+				// NAV_TRIANGULAR is replaced by MNM
+				assert(false);
+			}
+			break;
+			case IAISystem::NAV_WAYPOINT_3DSURFACE:
+			case IAISystem::NAV_WAYPOINT_HUMAN:
+			{
+				pNode->GetWaypointNavData()->type = static_cast<EWaypointNodeType>(desc.type);
+
+				// building id isn't preserved
+				pNode->GetWaypointNavData()->nBuildingID = -1;
+				pNode->GetWaypointNavData()->pArea = nullptr;
+
+				SpecialArea::EType areaType = pNode->navType == IAISystem::NAV_WAYPOINT_HUMAN ? SpecialArea::TYPE_WAYPOINT_HUMAN : SpecialArea::TYPE_WAYPOINT_3DSURFACE;
+				const SpecialArea* sa = gAIEnv.pNavigation->GetSpecialArea(pNode->GetPos(), areaType);
+				if (sa)
+				{
+					gEnv->pAISystem
+
+					pNode->GetWaypointNavData()->nBuildingID = sa->nBuildingID;
+					I3DEngine* p3dEngine = gEnv->p3DEngine;
+					pNode->GetWaypointNavData()->pArea = p3dEngine->GetVisAreaFromPos(pNode->GetPos());
+				}
+
+				if (desc.type == WNT_ENTRYEXIT)
+					m_mapEntrances.insert(EntranceMap::iterator::value_type(pNode->GetWaypointNavData()->nBuildingID, nodeIndex));
+
+				if (desc.type == WNT_ENTRYEXIT || desc.type == WNT_EXITONLY)
+					m_mapExits.insert(EntranceMap::iterator::value_type(pNode->GetWaypointNavData()->nBuildingID, nodeIndex));
+
+				// NOTE Oct 15, 2009: <pvl> removable nodes have been unused for
+				// a very long time now, removing support altogether
+				assert(!desc.bRemovable);
+
+				pNode->GetWaypointNavData()->dir = desc.dir;
+				pNode->GetWaypointNavData()->up = desc.up;
+			}
+			break;
+			case IAISystem::NAV_FLIGHT:AIAssert(!"flight nav should be loaded separately");
+				pNode->GetFlightNavData()->nSpanIdx = desc.index;
+				break;
+			case IAISystem::NAV_VOLUME:AIAssert(!"volume nav should be loaded separately");
+				pNode->GetVolumeNavData()->nVolimeIdx = desc.index;
+				break;
+			case IAISystem::NAV_ROAD:AIAssert(!"road nav should be loaded separately");
+				pNode->GetRoadNavData()->fRoadWidth = desc.dir.x;
+			/*pNode->GetRoadNavData()->fRoadOffset = desc.dir.y;*/
+				break;
+			case IAISystem::NAV_SMARTOBJECT:AIAssert(!"smart object nav should be loaded separately");
+				break;
+			default:AIError("CGraph::ReadNodes Unhandled nav type %d", pNode->navType);
+			}
+			mapReadNodes.insert(ReadNodesMap::value_type(desc.ID, nodeIndex));
+		}
+	}
+
+	AILogLoading("Reading links");
+
+	LinkDescBuffer linkDescs;
+
+	file.ReadType(&iNumber);
+	if (iNumber > 0)
+	{
+		linkDescs.resize(iNumber);
+		file.ReadType(&linkDescs[0], iNumber);
+	}
+
+	ReadNodesMap::iterator ei, link;
+
+	ei = mapReadNodes.find(1);
+	AIAssert(ei != mapReadNodes.end());
+	m_safeFirstIndex = (ei->second);
+	m_pSafeFirst = GetNodeManager().GetNode(m_safeFirstIndex);
+	m_pFirst = m_pSafeFirst;
+	m_firstIndex = m_safeFirstIndex;
+	m_pCurrent = m_pSafeFirst;
+	m_currentIndex = m_safeFirstIndex;
+
+	float fStartTime = gEnv->pTimer->GetAsyncCurTime();
+	AILogLoading("Reconnecting links");
+
+	if (!linkDescs.empty())
+	{
+		LinkDescBuffer::iterator iend = linkDescs.end();
+		for (LinkDescBuffer::iterator ldbi = linkDescs.begin(); ldbi != iend; ++ldbi)
 		{
 			LinkDescriptor& ldb = (*ldbi);
-			ei = m_mapReadNodes.find(ldb.nSourceNode);
-			GraphNode*            pNode = ei->second;
-			EntranceMap::iterator link = m_mapReadNodes.find(ldb.nTargetNode);
-			if (link == m_mapReadNodes.end() || ei == m_mapReadNodes.end())
+
+			ei = mapReadNodes.find(static_cast<unsigned>(ldb.nSourceNode));
+			if (ei == mapReadNodes.end())
 			{
-				AIError("!Read a link to a node which could not be found!");
+#if defined __GNUC__
+				AIWarning("NodeId %lld not found in node map", (long long)ldb.nSourceNode);
+#else
+				AIWarning("NodeId %I64d not found in node map", ldb.nSourceNode);
+#endif
 			}
 			else
 			{
-				Connect(pNode, link->second);
-
-				for (std::vector<GraphLink>::iterator vli = pNode->link.begin(); vli != pNode->link.end(); vli++)
+				unsigned   nodeIndex = ei->second;
+				GraphNode* pNode = GetNodeManager().GetNode(nodeIndex);
+				link = mapReadNodes.find(static_cast<unsigned int>(ldb.nTargetNode));
+				if (link == mapReadNodes.end() || ei == mapReadNodes.end())
 				{
-					if ((*vli).pLink == link->second)
-					{
-						(*vli).fMaxRadius = ldb.fMaxPassRadius;
-						(*vli).nStartIndex = ldb.nStartIndex;
-						(*vli).nEndIndex = ldb.nEndIndex;
-						(*vli).vWayOut = ldb.vWayOut;
-						(*vli).vEdgeCenter = ldb.vEdgeCenter;
-						break;
-					}
+					AIError("CGraph::ReadNodes Read a link to a node which could not be found [Code bug]");
 				}
-			}
-		}
-	}
-
-	/*int count = 0;
-	while (count < iNumber)
-	{
-		// get id of node
-		ei = m_mapReadNodes.find(m_vLinks[count++]);
-		GraphNode *pNode = (ei->second);
-    int nrlinks = m_vLinks[count++];
-		pNode->link.reserve(nrlinks);
-		while(nrlinks--)
-		{
-			link = m_mapReadNodes.find(m_vLinks[count++]);
-			Connect(pNode,(link->second));
-			ResolveLinkData(pNode,(link->second));
-		}
-	}
-	*/
-
-	m_vBuffer.clear();
-	m_mapReadNodes.clear();
-	m_vLinksDesc.clear();
-	//assert(_heapchk()==_HEAPOK);
-	return true;
-}
-#endif
-
-// defines bounding rectangle of this graph
-void CGraph::SetBBox(const Vec3& min, const Vec3& max)
-{
-	m_vBBoxMin = min;
-	m_vBBoxMax = max;
-}
-
-// how is that for descriptive naming of functions ??
-bool CGraph::OutsideOfBBox(const Vec3& pos) const
-{
-	if (pos.x < m_vBBoxMin.x)
-		return true;
-	if (pos.x > m_vBBoxMax.x)
-		return true;
-
-	if (pos.y < m_vBBoxMin.y)
-		return true;
-	if (pos.y > m_vBBoxMax.y)
-		return true;
-
-	return false;
-}
-
-void CGraph::FillGreedyMap(GraphNode* pNode, const Vec3& pos, IVisArea* pTargetArea, bool bStayInArea)
-{
-	MarkNode(pNode);
-
-	if (pNode->link.empty())
-		return;
-
-	GraphNode*              pNext = nullptr;
-	std::vector<GraphLink>::iterator pi, piend = pNode->link.end();
-	for (pi = pNode->link.begin(); pi != piend; ++pi)
-	{
-		GraphNode* pNow = (*pi).pLink;
-		if ((pNow->mark) || (pNow->nBuildingID != pNode->nBuildingID))
-			continue;
-		if (bStayInArea && (pNow->pArea != pTargetArea))
-			continue;
-
-		float thisdist = (pos - pNow->data.m_pos).GetLength();
-		m_mapGreedyWalkCandidates.insert(CandidateMap::iterator::value_type(thisdist, pNow));
-
-		// this snippet will make sure we only check all points inside the target area - not the whole building
-		if (pTargetArea && pNow->pArea == pTargetArea)
-			FillGreedyMap(pNow, pos, pTargetArea, true);
-		else
-			FillGreedyMap(pNow, pos, pTargetArea, false);
-	}
-}
-
-bool CGraph::RemoveEntrance(int nBuildingID, GraphNode* pNode)
-{
-	EntranceMap::iterator ei = m_mapEntrances.find(nBuildingID);
-	if (ei != m_mapEntrances.end())
-		while ((ei->first == nBuildingID) && ei != m_mapEntrances.end())
-		{
-			if (ei->second == pNode)
-			{
-				m_mapEntrances.erase(ei);
-				return true;
-			}
-			++ei;
-		}
-
-	ei = m_mapExits.find(nBuildingID);
-	if (ei != m_mapExits.end())
-		while ((ei->first == nBuildingID) && ei != m_mapExits.end())
-		{
-			if (ei->second == pNode)
-			{
-				m_mapExits.erase(ei);
-				return true;
-			}
-			++ei;
-		}
-	return false;
-}
-
-void CGraph::RemoveIndoorNodes(void)
-{
-	if (m_mapEntrances.empty())
-		return;
-
-	std::vector<GraphLink>::iterator vi;
-
-	m_lstDeleteStack.push_front((m_mapEntrances.begin())->second);
-
-	while (!m_lstDeleteStack.empty())
-	{
-		GraphNode* pCurrentNode = m_lstDeleteStack.front();
-		m_lstDeleteStack.pop_front();
-
-		// put all links into the node stack only if they are indoor nodes
-		for (vi = pCurrentNode->link.begin(); vi != pCurrentNode->link.end(); vi++)
-		{
-			GraphNode* pLink = (*vi).pLink;
-			if (pLink->nBuildingID >= 0)
-				if (std::find(m_lstDeleteStack.begin(), m_lstDeleteStack.end(), pLink) == m_lstDeleteStack.end())
-					m_lstDeleteStack.push_front(pLink);
-		}
-
-		Disconnect(pCurrentNode);
-	}
-
-	m_mapEntrances.clear();
-}
-
-void CGraph::REC_RemoveNodes(GraphNode* pNode)
-{
-	if (pNode->link.empty())
-		return;
-
-	if (pNode->nBuildingID == -1)
-		return;
-
-	MarkNode(pNode);
-
-	VectorOfLinks vecLinks;
-	vecLinks.insert(vecLinks.begin(), pNode->link.begin(), pNode->link.end());
-	std::vector<GraphLink>::iterator i;
-	for (i = vecLinks.begin(); i != vecLinks.end(); i++)
-	{
-		GraphNode* pLink = (*i).pLink;
-		if ((pLink->nBuildingID == pNode->nBuildingID) && (!pLink->mark))
-			REC_RemoveNodes(pLink);
-	}
-
-	Disconnect(pNode);
-}
-
-GraphNode* CGraph::CreateNewNode(bool bFromTriangulation) const
-{
-	//nNodes++;
-	//GraphNode* pRet = new GraphNode;
-	//if (bFromTriangulation)
-	//	pRet->bCreated = false;
-	//pRet->AddRef();
-	//return pRet;
-}
-
-unsigned CGraph::CreateNewNode(IAISystem::ENavigationType type, const Vec3& pos, unsigned ID)
-{
-	nNodes++;
-	GraphNode* pRet = new GraphNode;
-	if (bFromTriangulation)
-		pRet->bCreated = false;
-	pRet->AddRef();
-	return pRet;
-}
-
-void CGraph::DeleteNode(GraphNode* pNode)
-{
-	if (pNode->Release())
-	{
-		delete pNode;
-		nNodes--;
-	}
-}
-
-int CGraph::SelectNodesInSphere(const Vec3& vCenter, float fRadius, GraphNode* pStart)
-{
-	GraphNode* pNode = GetEnclosing(vCenter);
-	ClearMarks();
-	m_lstSelected.clear();
-
-	if (pNode->nBuildingID == -1)
-		SelectNodeRecursive(pNode, vCenter, fRadius);
-	else
-		SelectNodesRecursiveIndoors(pNode, vCenter, fRadius, 0);
-
-	ClearMarks();
-
-	return m_lstSelected.size();
-}
-
-void CGraph::SelectNodeRecursive(GraphNode* pNode, const Vec3& vCenter, float fRadius)
-{
-	if (pNode->vertex.empty())
-		return;
-
-	if (pNode->mark)
-		return;
-
-	MarkNode(pNode);
-
-
-	bool                          stillin = false;
-	ObstacleIndexVector::iterator oi;
-	for (oi = pNode->vertex.begin(); oi != pNode->vertex.end(); oi++)
-	{
-		ObstacleData od = m_pAISystem->m_VertexList.GetVertex((*oi));
-		float        flength = GetLengthSquared((od.vPos - vCenter));
-		if (flength < (fRadius * fRadius))
-		{
-			if (std::find(m_lstSelected.begin(), m_lstSelected.end(), od) == m_lstSelected.end())
-				m_lstSelected.push_back(od);
-			stillin = true;
-		}
-	}
-
-	if (!stillin)
-		return;
-
-	// go trough all the links of this one
-	std::vector<GraphLink>::iterator gi;
-	for (gi = pNode->link.begin(); gi != pNode->link.end(); gi++)
-	{
-		if ((*gi).pLink->nBuildingID < 0)
-			SelectNodeRecursive((*gi).pLink, vCenter, fRadius);
-	}
-}
-
-void CGraph::SelectNodesRecursiveIndoors(GraphNode* pNode, const Vec3& vCenter, float fRadius, float fDistance)
-{
-	if (pNode->nBuildingID == -1)
-		return; // DO NOT go outdoors
-
-	if (fDistance > fRadius)
-		return;
-
-	if (pNode->mark)
-		return;
-
-	MarkNode(pNode);
-
-
-	bool stillin = false;
-
-	if (GetLengthSquared((pNode->data.m_pos - vCenter)) < 2 * (fRadius * fRadius))
-		stillin = true;
-
-	ObstacleIndexVector::iterator oi;
-	for (oi = pNode->vertex.begin(); oi != pNode->vertex.end(); oi++)
-	{
-		ObstacleData od = m_pAISystem->m_VertexList.GetVertex((*oi));
-		float        flength = GetLengthSquared((od.vPos - vCenter));
-		//		float fPathLength = fDistance + (pNode->data.m_pos - od.vPos).GetLength();
-		//		if (fPathLength*fPathLength > flength*2.f)
-		//		continue;
-		if (flength < (fRadius * fRadius))
-		{
-			if (std::find(m_lstSelected.begin(), m_lstSelected.end(), od) == m_lstSelected.end())
-				m_lstSelected.push_back(od);
-			stillin = true;
-		}
-	}
-
-	if (!stillin)
-		return;
-
-	// go trough all the links of this one
-	std::vector<GraphLink>::iterator gi;
-	for (gi = pNode->link.begin(); gi != pNode->link.end(); gi++)
-	{
-		GraphNode* pNextNode = (*gi).pLink;
-		SelectNodesRecursiveIndoors(pNextNode, vCenter, fRadius, fDistance + (pNode->data.m_pos - pNextNode->data.m_pos).GetLength());
-	}
-}
-
-void CGraph::AddHidePoint(GraphNode* pOwner, const Vec3& pos, const Vec3& dir)
-{
-	if (!pOwner)
-		return;
-
-
-	ObstacleData od;
-	od.vPos = pos;
-	od.vDir = dir;
-
-	index_t i = m_pAISystem->m_VertexList.FindVertex(od);
-
-
-
-	if (i < 0)
-	{
-		//pOwner->vertex.push_back(od);
-		pOwner->vertex.push_back(m_pAISystem->m_VertexList.AddVertex(od));
-	}
-	else
-	{
-		ObstacleIndexVector::iterator oi = std::find(pOwner->vertex.begin(), pOwner->vertex.end(), i);
-		if (oi != pOwner->vertex.end())
-		{
-			m_pAISystem->m_VertexList.ModifyVertex(i).vPos = pos;
-			m_pAISystem->m_VertexList.ModifyVertex(i).vDir = dir;
-		}
-		else
-		{
-			pOwner->vertex.push_back(i);
-		}
-	}
-}
-
-void CGraph::RemoveHidePoint(GraphNode* pOwner, const Vec3& pos, const Vec3& dir)
-{
-	if (!pOwner)
-		return;
-
-	ObstacleIndexVector::iterator oi;
-	for (oi = pOwner->vertex.begin(); oi != pOwner->vertex.end(); oi++)
-	{
-		ObstacleData od = m_pAISystem->m_VertexList.GetVertex((*oi));
-		if (((od.vPos - pos).GetLength() < 0.0001))
-		{
-			pOwner->vertex.erase(oi);
-			break;
-		}
-	}
-}
-
-void CGraph::DisconnectUnreachable(void)
-{
-	GraphNode* pCurrent = m_pFirst;
-
-	m_lstNodeStack.clear();
-	ClearMarks();
-
-
-	m_lstNodeStack.push_back(pCurrent);
-	ray_hit rh;
-
-	while (!m_lstNodeStack.empty())
-	{
-		MarkNode(pCurrent);
-		vectorf start = pCurrent->data.m_pos;
-
-		VectorOfLinks linkVector;
-		linkVector = pCurrent->link;
-		std::vector<GraphLink>::iterator vi;
-		for (vi = linkVector.begin(); vi != linkVector.end(); vi++)
-		{
-			if (!(*vi).pLink->mark)
-				if (std::find(m_lstNodeStack.begin(), m_lstNodeStack.end(), (*vi).pLink) == m_lstNodeStack.end())
-					m_lstNodeStack.push_front((*vi).pLink);
-
-			// check connectivity
-
-			vectorf end = (*vi).pLink->data.m_pos;
-			int     cnt = m_pAISystem->GetPhysicalWorld()->RayWorldIntersection(start, end - start, ent_static, 0, &rh, 1);
-
-			if (cnt)
-				DisconnectLink(pCurrent, (*vi).pLink);
-		}
-
-		pCurrent = m_lstNodeStack.front();
-		m_lstNodeStack.pop_front();
-	}
-
-	ClearMarks();
-}
-
-void CGraph::DisconnectLink(GraphNode* one, GraphNode* two, bool bOneWay)
-{
-	if (!one || !two)
-		return;
-
-	std::vector<GraphLink>::iterator vi;
-	for (vi = one->link.begin(); vi != one->link.end(); vi++)
-	{
-		if ((*vi).pLink == two)
-		{
-			one->link.erase(vi);
-			DeleteNode(two); // this will lower the ref count... will delete if appropriate
-			break;
-		}
-	}
-
-	if (bOneWay)
-		return;
-
-	for (vi = two->link.begin(); vi != two->link.end(); vi++)
-	{
-		if ((*vi).pLink == one)
-		{
-			two->link.erase(vi);
-			DeleteNode(one); // this will lower the ref count... will delete if appropriate
-			break;
-		}
-	}
-}
-
-int CGraph::BeautifyPath(int& nIterations, const Vec3& start, const Vec3& end)
-{
-	//return PATHFINDER_PATHFOUND;
-	if (!m_pAISystem->m_cvBeautifyPath->GetIVal())
-		return PATHFINDER_PATHFOUND;
-
-	// try to skip unnecessary wiggling around
-	if (m_bBeautifying)
-	{
-		m_lstPath.clear();
-		if (m_lstNodeStack.size() == 1)
-		{
-			m_lstPath.push_back(end);
-			return PATHFINDER_PATHFOUND;
-		}
-
-		m_iFirst = m_lstNodeStack.begin();
-		m_iThird = m_lstNodeStack.end();
-		m_bBeautifying = false;
-		m_vBeautifierStart = start;
-
-		//CryLogAlways("Start BEAUTIFY PATH for: %s ",m_pRequester->GetName());
-		//CryLogAlways("From position (%.3f,%.3f,%.3f)",start.x,start.y,start.z);
-		//CryLogAlways("To position (%.3f,%.3f,%.3f)",end.x,end.y,end.z);
-	}
-	//else
-	//{
-	//	CryLogAlways("continuing beautification for: %s ",m_pRequester->GetName());
-	//}
-
-
-	while ((nIterations--) && (m_iFirst != m_lstNodeStack.end()))
-	{
-		ListNodes::iterator iNextFirst = m_lstNodeStack.end();
-		m_iSecond = m_iFirst;
-		++m_iSecond;
-
-		Vec3 vRealStart, vRealEnd;
-
-		bool bSkipEval = false;
-
-		if ((*m_iFirst)->nBuildingID < 0)
-		{
-			while (m_iSecond != m_lstNodeStack.end())
-			{
-				GraphNode* pFirst = (*m_iFirst);
-				GraphNode* pSecond = (*m_iSecond);
-
-				if (pSecond->nBuildingID >= 0)
+				else
 				{
-					if (!bSkipEval)
+					if (pNode != m_pSafeFirst && link->second != m_safeFirstIndex)
 					{
-						bSkipEval = true;
-						iNextFirst = m_lstNodeStack.end();
-					}
-					//	if (m_iThird!=m_lstNodeStack.end())
-					//	{
-					//		m_lstPath.push_back( (*m_iThird)->data.m_pos);
-					//		m_iFirst = m_iThird;
-					//	}
-					break;
-				}
+						unsigned linkOneTwo = 0;
+						unsigned linkTwoOne = 0;
+						// incoming link gets set when the other way is read
+						Connect(nodeIndex, link->second, ldb.fMaxPassRadius, 0.0f, &linkOneTwo, &linkTwoOne);
 
-
-
-				// traverse list from iFirst to iSecond testing edges as you go
-				bool                bPassable = true; // optimistic expectation
-				ListNodes::iterator iPairStart = m_iFirst;
-				for (; iPairStart != m_iSecond; ++iPairStart)
-				{
-					ListNodes::iterator iPairEnd = iPairStart;
-
-					++iPairEnd;
-
-					Vec3 EdgStart;
-					Vec3 EdgEnd;
-					Vec3 EdgDir;
-					Vec3 EdgCenter;
-
-
-					std::vector<GraphLink>::iterator vli;
-					for (vli = (*iPairStart)->link.begin(); vli != (*iPairStart)->link.end(); vli++)
-					{
-						if ((*vli).pLink == (*iPairEnd))
+						if (linkOneTwo)
 						{
-							if ((m_iFirst == m_lstNodeStack.begin()) || (m_lstPath.empty()))
-								vRealStart = start;
-							else
-								vRealStart = m_lstPath.back();
+							unsigned   nextNodeIndex = link->second;
+							GraphNode* pNextNode = GetNodeManager().GetNode(nextNodeIndex);
+							AIAssert(GetLinkManager().GetNextNode(linkOneTwo) == nextNodeIndex);
 
+							float radius = ldb.fMaxPassRadius;
 
-							if ((*m_iSecond) == (*m_lstNodeStack.rbegin()))
-								vRealEnd = end;
-							else
-								vRealEnd = (*m_iSecond)->data.m_pos;
-
-
-
-							EdgStart = m_pAISystem->m_VertexList.GetVertex((*iPairStart)->vertex[(*vli).nStartIndex]).vPos;
-
-							EdgEnd = m_pAISystem->m_VertexList.GetVertex((*iPairStart)->vertex[(*vli).nEndIndex]).vPos;
-							EdgDir = EdgEnd - EdgStart;
-							EdgCenter = (*vli).vEdgeCenter;
-							EdgCenter.z = 0;
-							vRealStart.z = 0;
-							vRealEnd.z = 0;
-							float s = -1, t = -1;
-
-
-
-							if (m_pAISystem->SegmentsIntersect(vRealStart, vRealEnd - vRealStart, EdgStart, EdgDir, s, t))
+							// Marcio: Hax for Crysis 2 Critters
+							// ... but only if the link is passable - hence condition (radius > 0.f) [2/1/2011 evgeny]
+							if ((radius > 0.f) && (pNode->navType == IAISystem::NAV_WAYPOINT_HUMAN) && (pNextNode->navType == IAISystem::NAV_WAYPOINT_HUMAN))
 							{
-								if (s > 0.f && s < 1.f && t > 0.f && t < 1.f)
+								const SpecialArea* sa1 = gAIEnv.pNavigation->GetSpecialArea(pNode->GetWaypointNavData()->nBuildingID);
+								if (sa1->bCritterOnly)
 								{
-									m_vLastIntersection = EdgStart + t * EdgDir;
-									float fCenterDist = (m_vLastIntersection - EdgCenter).GetLength();
-									//if (fCenterDist > ((*vli).fMaxRadius-1.f))
-									if (fCenterDist > ((*vli).fMaxRadius - m_pRequester->m_fPassRadius))
-										bPassable = false;
+									radius = 0.150001f;
 								}
 								else
 								{
-									bPassable = false;
+									const SpecialArea* sa2 = gAIEnv.pNavigation->GetSpecialArea(pNextNode->GetWaypointNavData()->nBuildingID);
+									if (sa2->bCritterOnly)
+										radius = 0.150001f;
 								}
 							}
-							else
+
+							if (GetLinkManager().GetNextNode(linkOneTwo) == link->second)
 							{
-								bPassable = false;
+								GetLinkManager().SetRadius(linkOneTwo, radius);
+								GetLinkManager().SetStartIndex(linkOneTwo, ldb.nStartIndex);
+								GetLinkManager().SetEndIndex(linkOneTwo, ldb.nEndIndex);
+								GetLinkManager().GetEdgeCenter(linkOneTwo) = ldb.vEdgeCenter; // TODO: Don't read shared value twice
+								GetLinkManager().SetExposure(linkOneTwo, ldb.fExposure); // TODO: Don't read shared value twice
+								GetLinkManager().SetMaxWaterDepth(linkOneTwo, ldb.fMaxWaterDepth);
+								GetLinkManager().SetMinWaterDepth(linkOneTwo, ldb.fMinWaterDepth);
+								GetLinkManager().SetSimple(linkOneTwo, ldb.bSimplePassabilityCheck);
 							}
+							if (linkTwoOne)
+								GetLinkManager().RestoreLink(linkTwoOne);
+						}
+					}
+				}
+			}
+		}
+	}
+
+	AILogLoading("Finished Reconnecting links in %6.3f sec", gEnv->pTimer->GetAsyncCurTime() - fStartTime);
+
+	mapReadNodes.clear();
+	//AIAssert(_heapchk()==_HEAPOK);
+
+	return true;
+}
+
+//====================================================================
+// SetBBox
+// defines bounding rectangle of this graph
+//====================================================================
+void CGraph::SetBBox(const Vec3& min, const Vec3& max)
+{
+	m_triangularBBox.min = min;
+	m_triangularBBox.max = max;
+}
+
+//====================================================================
+// InsideOfBBox
+//====================================================================
+bool CGraph::InsideOfBBox(const Vec3& pos) const
+{
+	return pos.x > m_triangularBBox.min.x && pos.x < m_triangularBBox.max.x && pos.y > m_triangularBBox.min.y && pos.y < m_triangularBBox.max.y;
+}
+
+unsigned CGraph::CreateNewNode(IAISystem::tNavCapMask type, const Vec3& pos, unsigned ID)
+{
+	MEMSTAT_CONTEXT_FMT(EMemStatContextTypes::MSC_Navigation, 0, "Graph Node (%s)", StringFromTypeIndex(TypeIndexFromType(type)));
+	//GraphNode *pNode = new GraphNode(type, pos, ID);
+	//GraphNode *pNode = NodesPool.AddGraphNode(type, pos, ID);
+	unsigned   nodeIndex = m_pGraphNodeManager->CreateNode(type, pos, ID);
+	GraphNode* pNode = m_pGraphNodeManager->GetNode(nodeIndex);
+	pNode->AddRef();
+	m_allNodes.AddNode(nodeIndex);
+
+	if (type != IAISystem::NAV_UNSET)
+	{
+		CNavRegion* pNavRegion = gAIEnv.pNavigation->GetNavRegion(pNode->navType, this);
+		if (pNavRegion)
+			pNavRegion->NodeCreated(nodeIndex);
+	}
+
+	return nodeIndex;
+}
+
+//====================================================================
+// GetNode
+//====================================================================
+GraphNode* CGraph::GetNode(unsigned index)
+{
+	return GetNodeManager().GetNode(index);
+}
+
+const GraphNode* CGraph::GetNode(unsigned index) const
+{
+	return GetNodeManager().GetNode(index);
+}
+
+//====================================================================
+// MoveNode
+//====================================================================
+void CGraph::MoveNode(unsigned nodeIndex, const Vec3& newPos)
+{
+	GraphNode* pNode = GetNodeManager().GetNode(nodeIndex);
+	if (pNode->GetPos().IsEquivalent(newPos))
+		return;
+	m_allNodes.RemoveNode(nodeIndex);
+	pNode->SetPos(newPos);
+	m_allNodes.AddNode(nodeIndex);
+
+	CNavRegion* pNavRegion = gAIEnv.pNavigation->GetNavRegion(pNode->navType, this);
+	if (pNavRegion)
+		pNavRegion->NodeMoved(nodeIndex);
+}
+
+struct SNodeFinder
+{
+	SNodeFinder(unsigned nodeIndex)
+		: nodeIndex(nodeIndex) {}
+
+	bool operator()(const EntranceMap::value_type& val) const
+	{
+		return val.second == nodeIndex;
+	}
+
+	unsigned nodeIndex;
+};
+
+//====================================================================
+// DeleteNode
+//====================================================================
+void CGraph::DeleteNode(unsigned nodeIndex)
+{
+	GraphNode* pNode = GetNodeManager().GetNode(nodeIndex);
+
+	if (!CGraph::ValidateNode(nodeIndex, false))
+	{
+		AIError("CGraph::DeleteNode Attempting to delete node that doesn't exist %p [Code bug]", pNode);
+		return;
+	}
+
+	if (pNode->firstLinkIndex)
+	{
+		AIWarning("Deleting node %p but it is still connected - disconnecting", pNode);
+		Disconnect(nodeIndex, false);
+	}
+
+	if (pNode->Release())
+	{
+		CNavRegion* pNavRegion = gAIEnv.pNavigation ? gAIEnv.pNavigation->GetNavRegion(pNode->navType, this) : NULL;
+		if (pNavRegion)
+			pNavRegion->NodeAboutToBeDeleted(pNode);
+
+		m_allNodes.RemoveNode(nodeIndex);
+
+		VectorConstNodeIndices::iterator it;
+		it = std::remove(m_taggedNodes.begin(), m_taggedNodes.end(), nodeIndex);
+		m_taggedNodes.erase(it, m_taggedNodes.end());
+		it = std::remove(m_markedNodes.begin(), m_markedNodes.end(), nodeIndex);
+		m_markedNodes.erase(it, m_markedNodes.end());
+
+		EntranceMap::iterator entranceIt;
+		entranceIt = std::find_if(m_mapEntrances.begin(), m_mapEntrances.end(), SNodeFinder(nodeIndex));
+		if (entranceIt != m_mapEntrances.end())
+			m_mapEntrances.erase(entranceIt);
+		entranceIt = std::find_if(m_mapExits.begin(), m_mapExits.end(), SNodeFinder(nodeIndex));
+		if (entranceIt != m_mapExits.end())
+			m_mapExits.erase(entranceIt);
+
+		m_pGraphNodeManager->DestroyNode(nodeIndex);
+	}
+}
+
+struct SVolumeHideSpotFinder
+{
+	SVolumeHideSpotFinder(ListObstacles& obs)
+		: obs(obs) {}
+
+	void operator()(const SVolumeHideSpot& hs, float)
+	{
+		obs.push_back(ObstacleData(hs.pos, hs.dir));
+	}
+
+private:
+	ListObstacles& obs;
+};
+
+//===================================================================
+// FindNodesWithinRange
+//===================================================================
+void CGraph::FindNodesWithinRange(MapConstNodesDistance& result, float curDistT, float maxDist, const GraphNode* pStartNode, float passRadius, const class CAIObject* pRequester) const
+{
+	FUNCTION_PROFILER(GetISystem(), PROFILE_AI);
+
+	bool  checkWaterDepth = false;
+	int16 minWaterDepthInCm = 0;
+	int16 maxWaterDepthInCm = 0;
+
+	if (pRequester && pRequester->CastToCAIActor())
+	{
+		const CAIActor* pActor = pRequester->CastToCAIActor();
+		if (pActor)
+		{
+			minWaterDepthInCm = NavGraphUtils::InCentimeters(pActor->m_movementAbility.pathfindingProperties.minWaterDepth);
+			maxWaterDepthInCm = NavGraphUtils::InCentimeters(pActor->m_movementAbility.pathfindingProperties.maxWaterDepth);
+			checkWaterDepth = true;
+		}
+	}
+
+	const CGraphLinkManager& linkManager = GetLinkManager();
+	const CGraphNodeManager& nodeManager = GetNodeManager();
+
+	typedef std::multimap<float, const GraphNode*, std::less<float>> OpenListMap;
+
+	static OpenListMap openList;
+	openList.clear();
+
+	pStartNode->mark = 1;
+	openList.insert(std::make_pair(0.0f, pStartNode));
+	//	openList[0.0f] = pStartNode;
+
+	result[pStartNode] = 0.0f;
+
+	while (!openList.empty())
+	{
+		OpenListMap::iterator front = openList.begin();
+		const GraphNode*      pNode = front->second;
+		float                 curDist = front->first;
+		openList.erase(front);
+		pNode->mark = 0;
+
+		for (unsigned link = pNode->firstLinkIndex; link; link = linkManager.GetNextLink(link))
+		{
+			float            fCostMultiplier = 1.0f;
+			unsigned int     nextNodeIndex = linkManager.GetNextNode(link);
+			const GraphNode* pNext = nodeManager.GetNode(nextNodeIndex);
+
+			if (!(pNext->navType & (IAISystem::NAV_SMARTOBJECT | IAISystem::NAV_WAYPOINT_HUMAN | IAISystem::NAV_WAYPOINT_3DSURFACE | IAISystem::NAV_TRIANGULAR | IAISystem::NAV_VOLUME)))
+				continue;
+
+			if (pRequester && pNode->navType == IAISystem::NAV_SMARTOBJECT && pNext->navType == IAISystem::NAV_SMARTOBJECT)
+			{
+				const GraphNode* nodes[2] = {pNode, pNext};
+				float            resFactor = gAIEnv.pSmartObjectManager->GetSmartObjectLinkCostFactor(nodes, pRequester, &fCostMultiplier);
+				if (resFactor < 0.0f)
+					continue;
+			}
+			else if (linkManager.GetRadius(link) < passRadius)
+			{
+				continue;
+			}
+			else if (checkWaterDepth)
+			{
+				int16 wd = linkManager.GetMaxWaterDepthInCm(link);
+				if (wd > maxWaterDepthInCm)
+					continue;
+
+				if (wd < minWaterDepthInCm)
+					continue;
+			}
+
+			float linkLen = 0.01f + fCostMultiplier * Distance::Point_Point(pNode->GetPos(), pNext->GetPos()); // bias to prevent loops
+
+			float totalDist = curDist + linkLen;
+			if (totalDist <= maxDist)
+			{
+				// If we've already processed pNext and had a lower range value before then don't continue
+				MapConstNodesDistance::iterator it = result.find(pNext);
+				if (it != result.end())
+				{
+					if (totalDist >= it->second)
+						continue;
+					// Smaller distance, update value.
+					it->second = totalDist;
+				}
+				else
+				{
+					result[pNext] = totalDist;
+				}
+
+				// Update open list.
+				OpenListMap::iterator found = openList.end();
+				if (pNext->mark == 1)
+					for (OpenListMap::iterator it2 = openList.begin(), end = openList.end(); it2 != end; ++it2)
+					{
+						if (it2->second == pNext)
+						{
+							found = it2;
 							break;
 						}
 					}
 
-					if (!bPassable)
-					{
-						float fEdgeLength = EdgDir.Length();
-						//float dist_from_obstacle = 0.6f;
-						float dist_from_obstacle = m_pRequester->m_fPassRadius;
-
-						// if we have more space, do not get too close to the obstacle
-						if ((m_pRequester->m_fPassRadius < 1.f) && ((*vli).fMaxRadius > 1.f))
-							dist_from_obstacle = 1.f;
-						if ((EdgStart - m_vLastIntersection).Length() < (EdgEnd - m_vLastIntersection).Length())
-						{
-							// closer to start edge
-							float fFullDistToCenter = (EdgStart - EdgCenter).Length();
-							float minT = fFullDistToCenter - (*vli).fMaxRadius + dist_from_obstacle;
-							minT /= fEdgeLength;
-							m_vBeautifierStart = EdgStart + minT * EdgDir;
-						}
-						else
-						{
-							// closer to end edge
-							float fFullDistToCenter = (EdgEnd - EdgCenter).Length();
-							float minT = fFullDistToCenter - (*vli).fMaxRadius + dist_from_obstacle;
-							minT /= fEdgeLength;
-							m_vBeautifierStart = EdgEnd - minT * EdgDir;
-						}
-
-						/*						float minT =  ((fEdgeLength/2.f)-((*vli).fMaxRadius-dist_from_obstacle)) / fEdgeLength;
-												// which edge is closer to the intersection point
-												if ((EdgStart-m_vLastIntersection).Length() < (EdgEnd-m_vLastIntersection).Length() )
-													m_vBeautifierStart = EdgStart+minT*EdgDir;
-												else
-													m_vBeautifierStart = EdgEnd-minT*EdgDir;*/
-						break;
-					}
-				}
-
-				if (bPassable)
+				if (found != openList.end())
 				{
-					m_iThird = m_iSecond;
-					if (bSkipEval)
+					// Replace value in open list.
+					if (totalDist < found->first)
 					{
-						iNextFirst = m_lstNodeStack.end();
-						bSkipEval = false;
+						openList.erase(found);
+						openList.insert(std::make_pair(totalDist, pNext));
 					}
 				}
 				else
 				{
-					if (!bSkipEval)
-					{
-						iNextFirst = iPairStart;
-						bSkipEval = true;
-					}
-				}
-
-				++m_iSecond;
-			}
-
-			if (!bSkipEval)
-			{
-				// if the third is not valid, then add midpoint od first and second, and then second
-				if (m_iThird == m_lstNodeStack.end())
-				{
-					m_iSecond = m_iFirst;
-					++m_iSecond;
-					if (m_iSecond != m_lstNodeStack.end() && ((*m_iSecond)->nBuildingID < 0))
-					{
-						///m_lstPath.push_back(vBestPass);
-						std::vector<GraphLink>::iterator vli;
-						for (vli = (*m_iSecond)->link.begin(); vli != (*m_iSecond)->link.end(); vli++)
-						{
-							if ((*vli).pLink == (*m_iFirst))
-								m_lstPath.push_back((*vli).vEdgeCenter);
-						}
-					}
-				}
-				else
-				{
-					m_iSecond = m_iFirst;
-					++m_iSecond;
-					if ((m_iSecond != m_iThird) && (m_iSecond != m_lstNodeStack.end()))
-						// there are some nodes to delete, so delete them
-						for (ListNodes::iterator li = m_iSecond; (li != m_iThird) && (li != m_lstNodeStack.end()); li = m_lstNodeStack.erase(li)) { }
-
-					//if (m_iThird == --m_lstNodeStack.end())
-					if ((*m_iThird) == (*m_lstNodeStack.rbegin()))
-						m_lstPath.push_back(end);
-					else
-						m_lstPath.push_back((*m_iThird)->data.m_pos);
-					//vBestPass.z = m_pAISystem->m_pSystem->GetI3DEngine()->GetTerrainElevation(vBestPass.x, vBestPass.y);
-					//m_lstPath.push_back( vBestPass);
-				}
-			}
-			else
-			{
-				if (iNextFirst != m_lstNodeStack.end())
-				{
-					I3DEngine* pEngine = m_pAISystem->m_pSystem->GetI3DEngine();
-					if (pEngine)
-						m_vBeautifierStart.z = pEngine->GetTerrainElevation(m_vBeautifierStart.x, m_vBeautifierStart.y);
-					m_lstPath.push_back(m_vBeautifierStart);
-					m_iFirst = iNextFirst;
+					// Add to the open list
+					pNext->mark = 1;
+					openList.insert(std::make_pair(totalDist, pNext));
 				}
 			}
 		}
-		else
-		{
-			m_lstPath.push_back((*m_iFirst)->data.m_pos);
-		}
-
-		m_iThird = m_lstNodeStack.end();
-		++m_iFirst;
 	}
-
-	if (m_iFirst == m_lstNodeStack.end())
-		m_lstPath.push_back(end);
-
-
-	if (m_iFirst == m_lstNodeStack.end())
-	{
-		m_bBeautifying = true;
-		m_lstNodeStack.clear();
-		if (m_lstPath.size() > 2)
-		{
-			int                     todel = 1;
-			ListPositions::iterator li = m_lstPath.begin();
-			Vec3                    firstpos = (*li++) - start;
-			Vec3                    secondpos = (*li) - start;
-			while ((*li) == m_lstPath.front())
-			{
-				secondpos = (*++li) - start;
-				todel++;
-			}
-
-			if (firstpos.Dot(secondpos) < 0)
-				while (todel--)
-				{
-					if (!m_lstPath.empty())
-						m_lstPath.pop_front();
-				}
-		}
-		return PATHFINDER_PATHFOUND;
-	}
-
-	//CryLogAlways("----Ran out of iterations(%.3f,%.3f,%.3f)",(*m_iFirst)->data.m_pos.x,(*m_iFirst)->data.m_pos.y,(*m_iFirst)->data.m_pos.z);
-	return PATHFINDER_BEAUTIFYINGPATH;
+	openList.clear();
 }
 
-void CGraph::ResolveLinkData(GraphNode* pOne, GraphNode* pTwo)
+//====================================================================
+// GetNodesInRange
+//====================================================================
+MapConstNodesDistance& CGraph::GetNodesInRange(MapConstNodesDistance& result, const Vec3& startPos, float maxDist, IAISystem::tNavCapMask navCapMask, float passRadius, unsigned startNodeIndex, const class CAIObject* pRequester)
 {
-	if (pOne->nBuildingID >= 0 || pTwo->nBuildingID >= 0)
-		return;
+	FUNCTION_PROFILER(GetISystem(), PROFILE_AI);
+	result.clear();
 
-	if (pOne->vertex.empty() || pTwo->vertex.empty())
-		return;
+	GraphNode* pStart = GetNodeManager().GetNode(startNodeIndex);
 
-	int iOneEdge1 = -1, iOneEdge2 = -1;
-	int iTwoEdge1 = -1, iTwoEdge2 = -1;
+	const CAllNodesContainer&          allNodes = GetAllNodes();
+	const CAllNodesContainer::Iterator it(allNodes, IAISystem::NAV_TRIANGULAR | IAISystem::NAV_VOLUME);
+	if (!it.GetNode())
+		return result; // no navigation
 
-	for (unsigned int i = 0; i < pOne->vertex.size(); i++)
+	unsigned nodeIndex = 0;
+	if (pStart && !allNodes.DoesNodeExist(startNodeIndex))
 	{
-		for (unsigned int j = 0; j < pTwo->vertex.size(); j++)
-		{
-			/*		if ( (fabs(pOne->vertex[i].vPos.x - pTwo->vertex[j].vPos.x) < 0.0001f) &&
-					 (fabs(pOne->vertex[i].vPos.y - pTwo->vertex[j].vPos.y) < 0.0001f) &&
-					 (fabs(pOne->vertex[i].vPos.z - pTwo->vertex[j].vPos.z) < 0.0001f) )
-					 */
-			//  if (IsEquivalent(pOne->vertex[i].vPos,pTwo->vertex[j].vPos,0.001f))
-			//if (pOne->vertex[i].vPos==pTwo->vertex[j].vPos )
-			if (pOne->vertex[i] == pTwo->vertex[j])
-			{
-				if (iOneEdge1 < 0)
-					iOneEdge1 = i;
-				else
-					iOneEdge2 = i;
-
-				if (iTwoEdge1 < 0)
-					iTwoEdge1 = j;
-				else
-					iTwoEdge2 = j;
-			}
-		}
+		startNodeIndex = 0;
+		pStart = nullptr;
 	}
 
-	// find triangle normal for one
+	if (pStart)
+		if ((pStart->navType & navCapMask) && startPos.IsEquivalent(pStart->GetPos(), 0.01f))
+			nodeIndex = startNodeIndex;
 
-	Vec3 OneNormal = (m_pAISystem->m_VertexList.GetVertex(pOne->vertex[0]).vPos - m_pAISystem->m_VertexList.GetVertex(pOne->vertex[1]).vPos).Cross(m_pAISystem->m_VertexList.GetVertex(pOne->vertex[2]).vPos - m_pAISystem->m_VertexList.GetVertex(pOne->vertex[1]).vPos);
-	Vec3 TwoNormal = (m_pAISystem->m_VertexList.GetVertex(pTwo->vertex[0]).vPos - m_pAISystem->m_VertexList.GetVertex(pTwo->vertex[1]).vPos).Cross(m_pAISystem->m_VertexList.GetVertex(pTwo->vertex[2]).vPos - m_pAISystem->m_VertexList.GetVertex(pTwo->vertex[1]).vPos);
+	if (!nodeIndex)
+		return result;
 
-	if (iOneEdge1 * iOneEdge2 < 0)
-		int a = 5;
-
-	if (iTwoEdge1 * iTwoEdge2 < 0)
-		int a = 5;
-
-	int iNoOne = 3 - (iOneEdge1 + iOneEdge2);
-	int iNoTwo = 3 - (iTwoEdge1 + iTwoEdge2);
-
-	// find which link from one goes to two
-	std::vector<GraphLink>::iterator vi;
-	for (vi = pOne->link.begin(); vi != pOne->link.end(); vi++)
-	{
-		if ((*vi).pLink == pTwo)
-		{
-			(*vi).nStartIndex = iOneEdge1;
-			(*vi).nEndIndex = iOneEdge2;
-
-			Vec3 edge = m_pAISystem->m_VertexList.GetVertex(pOne->vertex[iOneEdge1]).vPos - m_pAISystem->m_VertexList.GetVertex(pOne->vertex[iOneEdge2]).vPos;
-
-			///	if (pOne->vertex[iOneEdge1].bOccupied && pOne->vertex[iOneEdge2].bOccupied)
-			//		(*vi).fMaxRadius = -1;
-
-			Vec3  vCross(edge.Cross(TwoNormal));
-			float fLen = vCross.GetLength();
-			Vec3  normal = fLen > 0 ? vCross / fLen : Vec3(0, 0, 0);
-			float fdot = normal.Dot(m_pAISystem->m_VertexList.GetVertex(pTwo->vertex[iNoTwo]).vPos - (m_pAISystem->m_VertexList.GetVertex(pTwo->vertex[iTwoEdge1]).vPos + edge / 2.f));
-
-			(*vi).vWayOut = normal;
-			if (fdot > 0)
-				(*vi).vWayOut *= -1.f;
-		}
-	}
-
-	for (vi = pTwo->link.begin(); vi != pTwo->link.end(); vi++)
-	{
-		if ((*vi).pLink == pOne)
-		{
-			(*vi).nStartIndex = iTwoEdge1;
-			(*vi).nEndIndex = iTwoEdge2;
-
-			Vec3 edge = m_pAISystem->m_VertexList.GetVertex(pTwo->vertex[iTwoEdge1]).vPos - m_pAISystem->m_VertexList.GetVertex(pTwo->vertex[iTwoEdge2]).vPos;
-
-			//if (pTwo->vertex[iTwoEdge1].bOccupied && pTwo->vertex[iTwoEdge2].bOccupied)
-			//	(*vi).fMaxRadius = -1;
-
-			Vec3  vCross(edge.Cross(TwoNormal));
-			float fLen = vCross.GetLength();
-			Vec3  normal = fLen > 0 ? vCross / fLen : Vec3(0, 0, 0);
-			float fdot = normal.Dot(m_pAISystem->m_VertexList.GetVertex(pTwo->vertex[iNoTwo]).vPos - (m_pAISystem->m_VertexList.GetVertex(pTwo->vertex[iTwoEdge1]).vPos + edge / 2.f));
-
-			(*vi).vWayOut = normal;
-			if (fdot > 0)
-				(*vi).vWayOut *= -1.f;
-		}
-	}
+	// don't add the distance to the current node since that
+	float curDist = 0.0f; //Distance::Point_Point(startPos, pNode->GetPos());
+	FindNodesWithinRange(result, curDist, maxDist, GetNodeManager().GetNode(nodeIndex), passRadius, pRequester);
+	return result;
 }
 
-void CGraph::ConnectNodes(ListNodes& lstNodes)
+//====================================================================
+// Reset
+//====================================================================
+void CGraph::Reset()
 {
-	// clear degenerate triangles
-	for (ListNodes::iterator it = lstNodes.begin(); it != lstNodes.end();)
-	{
-		GraphNode*                    pCurrent = (*it);
-		ObstacleIndexVector::iterator obi, obi2;
-		bool                          bRemoved = false;
-
-		for (obi = pCurrent->vertex.begin(); obi != pCurrent->vertex.end(); obi++)
-		{
-			for (obi2 = pCurrent->vertex.begin(); obi2 != pCurrent->vertex.end(); obi2++)
-			{
-				if (obi == obi2)
-					continue;
-				if ((*obi) == (*obi2))
-				{
-					it = lstNodes.erase(it);
-					bRemoved = true;
-					break;
-				}
-			}
-			if (bRemoved)
-				break;
-		}
-		if (!bRemoved)
-			++it;
-	}
-
-
-	// reconnect triangles in nodes list
-	ListNodes::iterator it1;
-	for (it1 = lstNodes.begin(); it1 != lstNodes.end(); ++it1)
-	{
-		GraphNode* pCurrent = (*it1);
-		for (ListNodes::iterator it2 = lstNodes.begin(); it2 != lstNodes.end(); ++it2)
-		{
-			GraphNode*                    pCandidate = (*it2);
-			ObstacleIndexVector::iterator obCur, obNext;
-			for (obCur = pCurrent->vertex.begin(); obCur != pCurrent->vertex.end(); obCur++)
-			{
-				obNext = obCur;
-				obNext++;
-				if (obNext == pCurrent->vertex.end())
-					obNext = pCurrent->vertex.begin();
-
-				ObstacleIndexVector::iterator obCan, obNextCan;
-				for (obCan = pCandidate->vertex.begin(); obCan != pCandidate->vertex.end(); obCan++)
-				{
-					obNextCan = obCan;
-					obNextCan++;
-					if (obNextCan == pCandidate->vertex.end())
-						obNextCan = pCandidate->vertex.begin();
-
-					/*
-					if ( (fabs((*obCur).vPos.x - (*obCan).vPos.x) < 0.0001f) &&
-						 (fabs((*obCur).vPos.y - (*obCan).vPos.y) < 0.0001f) &&
-						 (fabs((*obCur).vPos.z - (*obCan).vPos.z) < 0.0001f) &&
-						 (fabs((*obNext).vPos.x - (*obNextCan).vPos.x) < 0.0001f) &&
-						 (fabs((*obNext).vPos.y - (*obNextCan).vPos.y) < 0.0001f) &&
-						 (fabs((*obNext).vPos.z - (*obNextCan).vPos.z) < 0.0001f) )
-						 */
-					if (((*obCur) == (*obCan)) && ((*obNext) == (*obNextCan)))
-						if (pCandidate != pCurrent)
-						{
-							Connect(pCurrent, pCandidate);
-							ResolveLinkData(pCurrent, pCandidate);
-						}
-
-					/*
-					if ( (fabs((*obCur).vPos.x - (*obNextCan).vPos.x) < 0.0001f) &&
-						 (fabs((*obCur).vPos.y - (*obNextCan).vPos.y) < 0.0001f) &&
-						 (fabs((*obCur).vPos.z - (*obNextCan).vPos.z) < 0.0001f) &&
-						 (fabs((*obNext).vPos.x - (*obCan).vPos.x) < 0.0001f) &&
-						 (fabs((*obNext).vPos.y - (*obCan).vPos.y) < 0.0001f) &&
-						 (fabs((*obNext).vPos.z - (*obCan).vPos.z) < 0.0001f) )
-						 */
-					if (((*obCur) == (*obNextCan)) && ((*obNext) == (*obCan)))
-						if (pCandidate != pCurrent)
-						{
-							Connect(pCurrent, pCandidate);
-							ResolveLinkData(pCurrent, pCandidate);
-						}
-				}
-			}
-		}
-	}
-
-	for (it1 = lstNodes.begin(); it1 != lstNodes.end(); ++it1)
-	{
-		GraphNode*              pCurrent = (*it1);
-		std::vector<GraphLink>::iterator vi;
-		for (vi = pCurrent->link.begin(); vi != pCurrent->link.end(); vi++)
-		{
-			ResolveLinkData(pCurrent, (*vi).pLink);
-		}
-	}
-}
-
-void CGraph::FillGraphNodeData(GraphNode* pNode)
-{
-	I3DEngine* pEngine = m_pAISystem->m_pSystem->GetI3DEngine();
-
-	//CheckClockness(pNode);
-
-	ObstacleIndexVector::iterator oi;
-	for (oi = pNode->vertex.begin(); oi != pNode->vertex.end(); oi++)
-	{
-		pNode->data.m_pos.x += m_pAISystem->m_VertexList.GetVertex((*oi)).vPos.x;
-		pNode->data.m_pos.y += m_pAISystem->m_VertexList.GetVertex((*oi)).vPos.y;
-		pNode->data.m_pos.z += m_pAISystem->m_VertexList.GetVertex((*oi)).vPos.z;
-	}
-
-	pNode->data.m_pos.x /= 3.f;
-	pNode->data.m_pos.y /= 3.f;
-	pNode->data.m_pos.z /= 3.f;
-
-	//	pNode->data.m_pos.x = (v1->x + v2->x + v3->x) / 3.f;
-	//	pNode->data.m_pos.y =	(v1->y + v2->y + v3->y) / 3.f;
-	float x = pNode->data.m_pos.x;
-	float y = pNode->data.m_pos.y;
-	// put it on the terrain
-	float z = pEngine->GetTerrainElevation(x, y);
-	pNode->data.m_pos.z = z + 0.2f; // elevate it a little bit
-
-	// calculate slope index		
-	float he = (pEngine->GetTerrainElevation(x + 1, y) - pEngine->GetTerrainElevation(x - 1, y)) / 2.f; // tg(alpha)
-	he = fabs(he);
-	if (he > 1.f)
-		he = 1.0f; //for now, no slopes beyond 45 degrees
-	float ve = (pEngine->GetTerrainElevation(x, y + 1) - pEngine->GetTerrainElevation(x, y - 1)) / 2.f; // tg(alpha)
-	ve = fabs(ve);
-	if (ve > 1.f)
-		ve = 1.0f; //for now, no slopes beyond 45 degrees
-	if (he > ve)
-		pNode->data.fSlope = he;
-	else
-		pNode->data.fSlope = ve;
-
-	//check if point in water
-	if (pEngine->IsPointInWater(Vec3(pNode->data.m_pos)))
-		pNode->data.bWater = true;
-
-	// check if point in shadow 
-	//	if (pEngine->IsPointInShadow(Vec3(pNode->data.m_pos)))
-	//		pNode->data.bShadow = true;
-}
-
-void CGraph::SetCurrentHeuristic(unsigned int heuristic_type)
-{
-	if (m_pHeuristic)
-	{
-		delete m_pHeuristic;
-		m_pHeuristic = nullptr;
-	}
-
-	switch (heuristic_type)
-	{
-	case AIHEURISTIC_DEFAULT:
-		m_pHeuristic = new CHeuristic;
-		break;
-	case AIHEURISTIC_STANDARD:
-		m_pHeuristic = new CStandardHeuristic;
-		break;
-	case AIHEURISTIC_VEHICLE:
-		m_pHeuristic = new CVehicleHeuristic;
-		break;
-	}
-}
-
-void CGraph::ResolveTotalLinkData(void)
-{
-	m_lstNodeStack.clear();
-	m_lstNodeStack.push_back(m_pSafeFirst);
-
-	while (!m_lstNodeStack.empty())
-	{
-		GraphNode* pCurrent = m_lstNodeStack.front();
-		m_lstNodeStack.pop_front();
-
-		MarkNode(pCurrent);
-
-		for (std::vector<GraphLink>::iterator vi = pCurrent->link.begin(); vi != pCurrent->link.end(); vi++)
-		{
-			ResolveLinkData(pCurrent, (*vi).pLink);
-
-			if (!vi->pLink->mark)
-				if (std::find(m_lstNodeStack.begin(), m_lstNodeStack.end(), vi->pLink) == m_lstNodeStack.end())
-					m_lstNodeStack.push_back(vi->pLink);
-		}
-	}
-
 	ClearMarks();
+	RestoreAllNavigation();
 }
 
-bool CGraph::CanReuseLastPath(GraphNode* pBegin)
+void CGraph::ResetIDs()
 {
-	ListNodes::iterator i = m_lstLastPath.begin();
-
-	while (i != m_lstLastPath.end())
-	{
-		if ((*i) == pBegin)
-		{
-			m_lstNodeStack.clear();
-			m_lstNodeStack.insert(m_lstNodeStack.begin(), i, m_lstLastPath.end());
-			m_lstPath.clear();
-			for (ListNodes::iterator fi = i; fi != m_lstLastPath.end(); ++fi)
-			{
-				m_lstPath.push_back((*fi)->data.m_pos);
-			}
-			return true;
-		}
-		++i;
-	}
-
-	return false;
+	GraphNode::ResetIDs(GetNodeManager(), m_allNodes, m_pSafeFirst);
 }
 
-GraphNode* CGraph::GetThirdNode(const Vec3& vFirst, const Vec3& vSecond, const Vec3& vThird)
-{
-	GraphNode* pFirst = GetEnclosing(vFirst);
-	GraphNode* pSecond = GetEnclosing(vSecond);
-	GraphNode* pThird = GetEnclosing(vThird);
-
-	std::vector<GraphLink>::iterator vli;
-	if (pFirst->link.size() > 2)
-		for (vli = pFirst->link.begin(); vli != pFirst->link.end(); vli++)
-		{
-			if (((*vli).pLink != pSecond) && ((*vli).pLink != pThird))
-				return (*vli).pLink;
-		}
-	else
-		for (vli = pFirst->link.begin(); vli != pFirst->link.end(); vli++)
-		{
-			if ((*vli).pLink != pSecond)
-				return (*vli).pLink;
-		}
-
-	return nullptr;
-}
-
-void CGraph::Reset(void)
-{
-	m_pWalkBackCurrent = nullptr;
-	m_pPathfinderCurrent = nullptr;
-	m_lstCurrentHistory.clear();
-	m_lstLastPath.clear();
-	m_lstNodeStack.clear();
-	m_bBeautifying = true;
-}
-
+//====================================================================
+// GetEntrance
+//====================================================================
 GraphNode* CGraph::GetEntrance(int nBuildingID, const Vec3& pos)
 {
 	GraphNode*            pEntrance = nullptr;
@@ -2447,18 +1207,18 @@ GraphNode* CGraph::GetEntrance(int nBuildingID, const Vec3& pos)
 	EntranceMap::iterator ei = m_mapEntrances.find(nBuildingID);
 	if (ei != m_mapEntrances.end())
 	{
-		pEntrance = ei->second;
+		pEntrance = GetNodeManager().GetNode(ei->second);
 		if (m_mapEntrances.count(nBuildingID) > 1)
 		{
-			mindist = GetLengthSquared((pEntrance->data.m_pos - pos));
+			mindist = (pEntrance->GetPos() - pos).GetLengthSquared();
 			for (; ei != m_mapEntrances.end(); ++ei)
 			{
 				if (ei->first != nBuildingID)
 					break;
-				float curr_dist = GetLengthSquared(((ei->second)->data.m_pos - pos));
+				float curr_dist = (GetNodeManager().GetNode(ei->second)->GetPos() - pos).GetLengthSquared();
 				if (curr_dist <= mindist)
 				{
-					pEntrance = ei->second;
+					pEntrance = GetNodeManager().GetNode(ei->second);
 					mindist = curr_dist;
 				}
 			}
@@ -2468,363 +1228,199 @@ GraphNode* CGraph::GetEntrance(int nBuildingID, const Vec3& pos)
 	ei = m_mapExits.find(nBuildingID);
 	if (ei != m_mapExits.end())
 	{
-		pEntrance = ei->second;
+		pEntrance = GetNodeManager().GetNode(ei->second);
 		if (m_mapExits.count(nBuildingID) > 1)
 		{
-			mindist = GetLengthSquared((pEntrance->data.m_pos - pos));
+			mindist = (pEntrance->GetPos() - pos).GetLengthSquared();
 			for (; ei != m_mapExits.end(); ++ei)
 			{
 				if (ei->first != nBuildingID)
 					break;
-				float curr_dist = GetLengthSquared(((ei->second)->data.m_pos - pos));
+				float curr_dist = (GetNodeManager().GetNode(ei->second)->GetPos() - pos).GetLengthSquared();
 				if (curr_dist <= mindist)
 				{
-					pEntrance = ei->second;
+					pEntrance = GetNodeManager().GetNode(ei->second);
 					mindist = curr_dist;
 				}
 			}
 		}
 	}
 
-
 	return pEntrance;
 }
 
-void CGraph::RemoveDegenerateTriangle(GraphNode* pDegenerate, bool bRecurse)
+//====================================================================
+// GetEntrances
+//====================================================================
+bool CGraph::GetEntrances(int nBuildingID, const Vec3& pos, std::vector<unsigned>& nodes)
 {
-	std::vector<GraphLink>::iterator li, liend = pDegenerate->link.end();
-	for (li = pDegenerate->link.begin(); li != liend; ++li)
+	EntranceMap::iterator it1 = m_mapEntrances.lower_bound(nBuildingID);
+	EntranceMap::iterator it2 = m_mapEntrances.upper_bound(nBuildingID);
+	for (EntranceMap::iterator it = it1; it != it2; ++it)
 	{
-		Vec3 vStart = m_pAISystem->m_VertexList.GetVertex(pDegenerate->vertex[(*li).nStartIndex]).vPos;
-		Vec3 vEnd = m_pAISystem->m_VertexList.GetVertex(pDegenerate->vertex[(*li).nEndIndex]).vPos;
-
-		if (IsEquivalent(vStart, vEnd, 0.1f))
-			break;
+		nodes.push_back(it->second);
 	}
-
-	if (li == liend)
-		return;
-
-	int noStartIndex = (*li).nStartIndex;
-	int noEndIndex = (*li).nEndIndex;
-
-	int                     noVertex = 3 - (noStartIndex + noEndIndex);
-	GraphNode *             pLink1 = nullptr, *pLink2 = nullptr;
-	std::vector<GraphLink>::iterator vol,               ivolend = pDegenerate->link.end();
-	for (vol = pDegenerate->link.begin(); vol != ivolend; ++vol)
+	it1 = m_mapExits.lower_bound(nBuildingID);
+	it2 = m_mapExits.upper_bound(nBuildingID);
+	for (EntranceMap::iterator it = it1; it != it2; ++it)
 	{
-		if (((*vol).nStartIndex == noVertex) || ((*vol).nEndIndex == noVertex))
-		{
-			// we have one of the other two links - supposedly correct
-			if ((*vol).nStartIndex == noStartIndex || (*vol).nEndIndex == noStartIndex)
-				pLink1 = (*vol).pLink;
-			else
-				pLink2 = (*vol).pLink;
-		}
+		nodes.push_back(it->second);
 	}
-
-	if (!pLink1 || !pLink2)
-		AIError("!Bad triangle found while trying to eliminate a degenerate triangle.");
-
-	if (bRecurse)
-		RemoveDegenerateTriangle((*li).pLink, false);
-
-	Disconnect(pDegenerate);
-	Connect(pLink1, pLink2);
-
-	if (pLink1->mark)
-		pLink1->mark = false;
-
-	if (pLink2->mark)
-		pLink2->mark = false;
+	return !nodes.empty();
 }
 
-void CGraph::FindTrapNodes(GraphNode* pNode, int recCount)
+//====================================================================
+// RestoreAllNavigation
+// for all removable nodes restore links passibility etc
+//====================================================================
+void CGraph::RestoreAllNavigation()
 {
-	if (recCount < 0)
-		return;
-	MarkNode(pNode);
-
-	if (pNode->nBuildingID >= 0) // no inside
-		return;
-
-	if (!pNode->link.empty())
+	CAllNodesContainer::Iterator it(m_allNodes, IAISystem::NAVMASK_ALL);
+	while (GraphNode* node = GetNodeManager().GetNode(it.Increment()))
 	{
-		bool                    bTrapped = true;
-		bool                    bCanHoldPlayer = false;
-		std::vector<GraphLink>::iterator vli, vliend = pNode->link.end();
-		for (vli = pNode->link.begin(); vli != vliend; ++vli)
+		for (unsigned link = node->firstLinkIndex; link; link = GetLinkManager().GetNextLink(link))
 		{
-			GraphLink glink = (*vli);
-			if (glink.fMaxRadius > 0.6f)
-				bTrapped = false;
-			Vec3 start = m_pAISystem->m_VertexList.GetVertex((*vli).nStartIndex).vPos;
-			Vec3 end = m_pAISystem->m_VertexList.GetVertex((*vli).nEndIndex).vPos;
-			if (GetLength(start - end) > 0.6)
-				bCanHoldPlayer = true;
-		}
-
-		if (bTrapped && bCanHoldPlayer)
-			m_lstTrapNodes.push_back(pNode);
-
-		for (vli = pNode->link.begin(); vli != vliend; ++vli)
-		{
-			GraphLink glink = (*vli);
-			FindTrapNodes(glink.pLink, recCount - 1);
+			GetLinkManager().RestoreLink(link);
 		}
 	}
 }
 
-void CGraph::FixDegenerateTriangles(void)
+//====================================================================
+// CheckForEmpty
+//====================================================================
+bool CGraph::CheckForEmpty(IAISystem::tNavCapMask navTypeMask) const
 {
-	m_lstNodeStack.clear();
-	m_lstNodeStack.push_back(m_pSafeFirst);
-
-	// traverse all the graph
-	while (!m_lstNodeStack.empty())
+	unsigned                     count = 0;
+	CAllNodesContainer::Iterator it(m_allNodes, navTypeMask);
+	while (const GraphNode* node = GetNodeManager().GetNode(it.Increment()))
 	{
-		GraphNode* pCurrent = m_lstNodeStack.front();
-		m_lstNodeStack.pop_front();
+		++count;
+		AILogEvent("Unexpected Node %p, type = %d, pos = (%5.2f %5.2f %5.2f)", node, node->navType, node->GetPos().x, node->GetPos().y, node->GetPos().z);
+	}
+	if (count)
+		AIWarning("Detected %d unexpected nodes whilst checking types %u", count, navTypeMask);
+	return (count == 0);
+}
 
-		MarkNode(pCurrent);
+//====================================================================
+// Validate
+//====================================================================
+bool CGraph::Validate(const char* msg, bool checkPassable) const
+{
+#ifdef _DEBUG
+	return true;
+#endif
 
+#ifdef CRYAISYSTEM_VERBOSITY
+	if (!AIGetWarningErrorsEnabled())
+	{
+		AILogEvent("CGraph::Validate Skipping: %s", msg);
+		return true;
+	}
 
+	AILogProgress("CGraph::Validate Starting: %s", msg);
 
-		// add neighbors to list
-		for (std::vector<GraphLink>::iterator vi = pCurrent->link.begin(); vi != pCurrent->link.end(); vi++)
+	// Danny todo tweak this so that if !checkPassable then we only clear
+	// errors that are not to do with the passable checks...
+	if (checkPassable)
+		mBadGraphData.clear();
+
+	if (!m_pFirst)
+		return false;
+
+	if (!m_pSafeFirst->firstLinkIndex)
+		return true;
+
+	// the first safe node is different - expect only one link
+	if (GetLinkManager().GetNextLink(m_pSafeFirst->firstLinkIndex) != 0)
+	{
+		AIWarning("CGraph::Validate Expect only 1 link to the first safe node");
+		return false;
+	}
+
+	int badOutdoorNodes = 0;
+	int badIndoorNodes = 0;
+	int badLinks = 0;
+	int badNumOutsideLinks = 0;
+	int badLinkPassability = 0;
+
+	static int maxBadImassabilityWarnings = 10;
+
+	// nodes containing vertices with identical indices
+	int indexDegenerates = 0;
+	// nodes containing vertices that have different indices, but essentially
+	// the same position.
+	int posDegenerates = 0;
+
+	CAllNodesContainer::Iterator it(m_allNodes, IAISystem::NAVMASK_ALL);
+	while (unsigned nodeIndex = it.Increment())
+	{
+		const GraphNode* node = GetNodeManager().GetNode(nodeIndex);
+		if (!CGraph::ValidateNode(nodeIndex, true))
+			AIWarning("CGraph::Validate Node validation failed: %p", node);
+
+		if (node->navType == IAISystem::NAV_WAYPOINT_HUMAN)
 		{
-			if (!vi->pLink->mark)
-				if (std::find(m_lstNodeStack.begin(), m_lstNodeStack.end(), vi->pLink) == m_lstNodeStack.end())
-					m_lstNodeStack.push_back(vi->pLink);
-		}
-
-		if (pCurrent == m_pSafeFirst)
-			continue;
-
-		// check for degeneracy
-		float fDegen = pCurrent->GetDegeneracyValue();
-		if (fDegen < 0.01f)
-		{
-			GraphNode*              pPair = nullptr;
-			float                   fTSize = static_cast<float>(GetAISystem()->m_pSystem->GetI3DEngine()->GetTerrainSize());
-			std::vector<GraphLink>::iterator vli = pCurrent->link.begin(), vliend = pCurrent->link.end();
-			for (; vli != vliend; ++vli)
+			if (node->GetWaypointNavData()->nBuildingID == -1)
 			{
-				if ((*vli).fMaxRadius > 0) // make sure you do not break forbidden areas
-				{
-					GraphNode* pCandidate = (*vli).pLink;
-					if (pCandidate == m_pSafeFirst)
-						continue;
-					// find the link in the candidate that leads to the current node
-					std::vector<GraphLink>::iterator vback = pCandidate->link.begin(), vbackend = pCandidate->link.end();
-					for (; vback != vbackend; ++vback)
-					{
-						if ((*vback).pLink == pCurrent)
-							break;
-					}
-
-					// create the two new nodes
-					GraphNode* p1 = CreateNewNode();
-					GraphNode* p2 = CreateNewNode();
-
-					p1->vertex.push_back(pCurrent->vertex[(*vli).nStartIndex]);
-					p1->vertex.push_back(pCurrent->vertex[3 - ((*vli).nEndIndex + (*vli).nStartIndex)]);
-					p1->vertex.push_back(pCandidate->vertex[3 - ((*vback).nEndIndex + (*vback).nStartIndex)]);
-					FillGraphNodeData(p1);
-
-					p2->vertex.push_back(pCurrent->vertex[(*vli).nEndIndex]);
-					p2->vertex.push_back(pCurrent->vertex[3 - ((*vli).nEndIndex + (*vli).nStartIndex)]);
-					p2->vertex.push_back(pCandidate->vertex[3 - ((*vback).nEndIndex + (*vback).nStartIndex)]);
-					FillGraphNodeData(p2);
-
-					float p1Deg = p1->GetDegeneracyValue();
-					float p2Deg = p2->GetDegeneracyValue();
-					if ((p1Deg > fDegen) && (p2Deg > fDegen))
-					{
-						fDegen = (p1Deg < p2Deg) ? p2Deg : p1Deg;
-						pPair = pCandidate;
-					}
-
-					Disconnect(p1);
-					Disconnect(p2);
-				}
-			}
-
-			if (pPair)
-			{
-				// find the link in the candidate that leads to the current node
-				vli = pCurrent->link.begin(), vliend = pCurrent->link.end();
-				for (; vli != vliend; ++vli)
-				{
-					if ((*vli).pLink == pPair)
-						break;
-				}
-
-				std::vector<GraphLink>::iterator vback = pPair->link.begin(), vbackend = pPair->link.end();
-				for (; vback != vbackend; ++vback)
-				{
-					if ((*vback).pLink == pCurrent)
-						break;
-				}
-
-				// create the two new nodes
-				GraphNode* p1 = CreateNewNode();
-				GraphNode* p2 = CreateNewNode();
-
-				ListNodes lstNewNodes;
-
-				p1->vertex.push_back(pCurrent->vertex[(*vli).nStartIndex]);
-				p1->vertex.push_back(pCurrent->vertex[3 - ((*vli).nEndIndex + (*vli).nStartIndex)]);
-				p1->vertex.push_back(pPair->vertex[3 - ((*vback).nEndIndex + (*vback).nStartIndex)]);
-				FillGraphNodeData(p1);
-
-				p2->vertex.push_back(pCurrent->vertex[(*vli).nEndIndex]);
-				p2->vertex.push_back(pCurrent->vertex[3 - ((*vli).nEndIndex + (*vli).nStartIndex)]);
-				p2->vertex.push_back(pPair->vertex[3 - ((*vback).nEndIndex + (*vback).nStartIndex)]);
-				FillGraphNodeData(p2);
-
-				lstNewNodes.push_back(p1);
-				lstNewNodes.push_back(p2);
-				// push all neighbors of existing 2 triangles
-				vback = pPair->link.begin(), vbackend = pPair->link.end();
-				for (; vback != vbackend; ++vback)
-				{
-					if (std::find(lstNewNodes.begin(), lstNewNodes.end(), (*vback).pLink) == lstNewNodes.end())
-						if (((*vback).pLink != m_pSafeFirst) && ((*vback).pLink != pCurrent))
-							lstNewNodes.push_back((*vback).pLink);
-				}
-				vback = pCurrent->link.begin(), vbackend = pCurrent->link.end();
-				for (; vback != vbackend; ++vback)
-				{
-					if (std::find(lstNewNodes.begin(), lstNewNodes.end(), (*vback).pLink) == lstNewNodes.end())
-						if (((*vback).pLink != m_pSafeFirst) && ((*vback).pLink != pPair))
-							lstNewNodes.push_back((*vback).pLink);
-				}
-
-
-				Disconnect(pPair);
-				Disconnect(pCurrent);
-
-				ListNodes::iterator lif = std::find(m_lstNodeStack.begin(), m_lstNodeStack.end(), pPair);
-				while (lif != m_lstNodeStack.end())
-				{
-					m_lstNodeStack.erase(lif);
-					lif = std::find(m_lstNodeStack.begin(), m_lstNodeStack.end(), pPair);
-				}
-				lif = std::find(m_lstNodeStack.begin(), m_lstNodeStack.end(), pCurrent);
-				while (lif != m_lstNodeStack.end())
-				{
-					m_lstNodeStack.erase(lif);
-					lif = std::find(m_lstNodeStack.begin(), m_lstNodeStack.end(), pCurrent);
-				}
-
-				ConnectNodes(lstNewNodes);
+				AIWarning("Node at (%5.2f, %5.2f, %5.2f) is not in a human waypoint nav modifier [design bug]",
+				          node->GetPos().x, node->GetPos().y, node->GetPos().z);
+				++badIndoorNodes;
 			}
 		}
-		// find optimal rearrangement
-		// rearrange
-	}
-
-	ClearMarks();
-}
-
-void CGraph::DisableInSphere(const Vec3& pos, float fRadius)
-{
-	GetNodesInSphere(pos, fRadius);
-	ListNodes::iterator li = m_lstNodesInsideSphere.begin(), liend = m_lstNodesInsideSphere.end();
-	for (; li != liend; ++li)
-	{
-		GraphNode* pNode = (*li);
-		if (pNode->nBuildingID < 0)
-			continue;
-
-		std::vector<GraphLink>::iterator vli = pNode->link.begin(), vliend = pNode->link.end();
-		for (; vli != vliend; ++vli)
+		else if (node->navType == IAISystem::NAV_WAYPOINT_3DSURFACE)
 		{
-			(*vli).fMaxRadius = -1; // forbid this link
-
-			GraphNode*              pLink = (*vli).pLink;
-			std::vector<GraphLink>::iterator bi = pLink->link.begin(), biend = pLink->link.end();
-			for (; bi != biend; ++bi)
+			if (node->GetWaypointNavData()->nBuildingID == -1)
 			{
-				if ((*bi).pLink == pNode)
-				{
-					(*bi).fMaxRadius = -1;
-					break;
-				}
+				AIWarning("Node at (%5.2f, %5.2f, %5.2f) is not in a 3d surface nav modifier [design bug]",
+				          node->GetPos().x, node->GetPos().y, node->GetPos().z);
+				++badIndoorNodes;
 			}
 		}
+		else if (node->navType == IAISystem::NAV_TRIANGULAR)
+		{
+			// NAV_TRIANGULAR is replaced by MNM
+			assert(false);
+		}
 	}
+
+	if (badOutdoorNodes + badIndoorNodes + badNumOutsideLinks + indexDegenerates + posDegenerates + badLinkPassability > 0)
+	{
+		AIError("CGraph::Validate AI graph contains invalid: %d outdoor, %d indoor, %d outdoor links, %d degenerate index, %d degenerate pos, %d passable: %s: Regenerate triangulation in editor [Design bug]",
+		        badOutdoorNodes, badIndoorNodes, badNumOutsideLinks, indexDegenerates, posDegenerates, badLinkPassability, msg);
+	}
+
+	AILogProgress("CGraph::Validate Finished graph validation: %s", msg);
+	return (0 == badOutdoorNodes + badIndoorNodes);
+#else
+	return true;
+#endif
 }
 
-void CGraph::EnableInSphere(const Vec3& pos, float fRadius)
+//===================================================================
+// ResetIDs
+//===================================================================
+void GraphNode::ResetIDs(CGraphNodeManager& nodeManager, class CAllNodesContainer& allNodes, GraphNode* pNodeForID1)
 {
-	GetNodesInSphere(pos, fRadius);
-	ListNodes::iterator li = m_lstNodesInsideSphere.begin(), liend = m_lstNodesInsideSphere.end();
-	for (; li != liend; ++li)
+	AIAssert(pNodeForID1);
+
+	CAllNodesContainer::Iterator itAll(allNodes, 0xffffffff);
+
+	freeIDs.clear();
+#ifdef DEBUG_GRAPHNODE_IDS
+	usedIds.clear();
+#endif
+
+	maxID = 1;
+	while (GraphNode* pCurrent = nodeManager.GetNode(itAll.Increment()))
 	{
-		GraphNode* pNode = (*li);
-		if (pNode->nBuildingID < 0)
-			continue;
+		if (pCurrent == pNodeForID1)
+			pCurrent->ID = 1;
+		else
+			pCurrent->ID = ++maxID;
 
-		std::vector<GraphLink>::iterator vli = pNode->link.begin(), vliend = pNode->link.end();
-		for (; vli != vliend; ++vli)
-		{
-			(*vli).fMaxRadius = 100; // allow this link
-
-			GraphNode*              pLink = (*vli).pLink;
-			std::vector<GraphLink>::iterator bi = pLink->link.begin(), biend = pLink->link.end();
-			for (; bi != biend; ++bi)
-			{
-				if ((*bi).pLink == pNode)
-				{
-					(*bi).fMaxRadius = 100;
-					break;
-				}
-			}
-		}
+#ifdef DEBUG_GRAPHNODE_IDS
+		usedIds.push_back(pCurrent->ID);
+#endif
 	}
-}
-
-int CGraph::GetNodesInSphere(const Vec3& pos, float fRadius)
-{
-	ClearTagsNow();
-	m_lstNodesInsideSphere.clear();
-	GraphNode* pNode = GetEnclosing(pos);
-
-	if (pNode->nBuildingID < 0)
-		return 0;
-
-
-	m_lstNodesInsideSphere.push_front(pNode);
-	while (m_lstNodesInsideSphere.front()->tag == false)
-	{
-		ListNodes::iterator li = m_lstNodesInsideSphere.begin(), liend = m_lstNodesInsideSphere.end();
-		for (; li != liend;)
-		{
-			ListNodes::iterator linext = li;
-			++linext;
-			if (linext != liend)
-				if ((*linext)->tag)
-					break;
-			++li;
-		}
-
-		if (li != liend)
-			pNode = (*li);
-		TagNode(pNode);
-
-		std::vector<GraphLink>::iterator vli = pNode->link.begin(), vliend = pNode->link.end();
-		for (; vli != vliend; ++vli)
-		{
-			GraphNode* pLink = (*vli).pLink;
-			if (pLink->tag)
-				continue;
-			if (GetLength(pLink->data.m_pos - pos) < fRadius)
-				m_lstNodesInsideSphere.push_front(pLink);
-		}
-	}
-
-	ClearTagsNow();
-	return m_lstNodesInsideSphere.size();
 }

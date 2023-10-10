@@ -82,17 +82,73 @@ typedef std::map<string,float> TimingMap;
 
 struct SpecialArea
 {
-	ListPositions	lstPolygon;
-	float fMinZ,fMaxZ;
-	float fHeight;
-	int	nBuildingID;
+	// (MATT) Note that this must correspond exactly to the enum in the Editor's Navigation.h {2009/06/17}
+	enum EType
+	{
+		TYPE_WAYPOINT_HUMAN,
+		TYPE_VOLUME,
+		TYPE_FLIGHT,
+		TYPE_WATER,
+		TYPE_WAYPOINT_3DSURFACE,
+		TYPE_FREE_2D,
+		TYPE_TRIANGULATION,
+		TYPE_LAYERED_NAV_MESH,
+		TYPE_FLIGHT2,
+	};
+
+	void SetPolygon(const ListPositions& polygon)
+	{
+		lstPolygon = polygon;
+		CalcAABB();
+	}
+	const ListPositions& GetPolygon() const
+	{
+		return lstPolygon;
+	}
+
+	const AABB& GetAABB() const
+	{
+		return aabb;
+	}
+
+	SpecialArea::EType   type : 6;
+	EWaypointConnections waypointConnections : 6;
+	EAILightLevel        lightLevel : 4;
+	int16                nBuildingID;
+
+	float                fMinZ;
+	float                fMaxZ;
+	float                fHeight;
+	float                fNodeAutoConnectDistance;
+
+	bool                 bAltered : 1;
+	bool                 bCritterOnly : 1;
 
 	SpecialArea()
-		: nBuildingID(0)
+		: type(SpecialArea::TYPE_WAYPOINT_HUMAN)
+		, waypointConnections(WPCON_DESIGNER_NONE)
+		, lightLevel(AILL_NONE)
+		, nBuildingID(-1)
+		, fNodeAutoConnectDistance(.0f)
+		, bAltered(false)
+		, bCritterOnly(false)
 	{
-		fMinZ = 9999.f;
-		fMaxZ = -9999.f;
-		fHeight = 0;
+		fMinZ = FLT_MAX;
+		fMaxZ = -FLT_MAX;
+		fHeight = 0.0f;
+
+		aabb.Reset();
+	}
+
+private:
+	ListPositions lstPolygon;
+	AABB          aabb;
+
+	void          CalcAABB()
+	{
+		aabb.Reset();
+		for (ListPositions::const_iterator it = lstPolygon.begin(); it != lstPolygon.end(); ++it)
+			aabb.Add(*it);
 	}
 };
 
