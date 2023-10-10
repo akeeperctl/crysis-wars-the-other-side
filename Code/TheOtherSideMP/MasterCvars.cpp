@@ -10,9 +10,21 @@ void CTOSMasterModule::InitCVars(IConsole* pConsole)
 	CTOSGenericModule::InitCVars(pConsole);
 
 	// консольные значения локального клиента
-	tos_cl_SlaveEntityClass = pConsole->RegisterString("tos_cl_SlaveEntityClass", "Trooper", VF_NOT_NET_SYNCED, "Class of entity that will be created as a slave for the client. \n Example: Trooper", CTOSMasterModule::CVarSetDesiredSlaveCls);
-	pConsole->Register("tos_cl_JoinAsMaster", &tos_cl_JoinAsMaster, 0, VF_NOT_NET_SYNCED, "When the client enters the game, he will control a slave.");
-	pConsole->Register("tos_sv_SlaveSpawnDelay", &tos_sv_SlaveSpawnDelay, 0.03f, VF_CHEAT, "Delay in seconds before slave spawns. It is necessary so that the slave cannot appear before the master respawns");
+	tos_cl_SlaveEntityClass = pConsole->RegisterString("tos_cl_SlaveEntityClass", "Trooper", VF_NOT_NET_SYNCED, 
+		"Class of entity that will be created as a slave for the client. "
+		"\n Example: Trooper", 
+		CTOSMasterModule::CVarSetDesiredSlaveCls);
+
+	pConsole->Register("tos_cl_JoinAsMaster", &tos_cl_JoinAsMaster, 0, VF_NOT_NET_SYNCED, 
+		"When the client enters the game,"
+		"he will control a slave.");
+
+	pConsole->Register("tos_sv_SlaveSpawnDelay", &tos_sv_SlaveSpawnDelay, 0.03f, VF_CHEAT, 
+		"Delay in seconds before slave spawns. \n" 
+		"It is necessary so that the slave cannot appear before the master respawns");
+
+	pConsole->Register("tos_sv_MasterStartControlDelay", &tos_sv_MasterStartControlDelay, 1.0f, VF_CHEAT,
+		"Delay in seconds before master starts control a slave.");
 }
 
 void CTOSMasterModule::InitCCommands(IConsole* pConsole)
@@ -34,6 +46,7 @@ void CTOSMasterModule::ReleaseCVars()
 	pConsole->UnregisterVariable("tos_cl_SlaveEntityClass", true);
 	pConsole->UnregisterVariable("tos_cl_JoinAsMaster", true);
 	pConsole->UnregisterVariable("tos_sv_SlaveSpawnDelay", true);
+	pConsole->UnregisterVariable("tos_sv_MasterStartControlDelay", true);
 }
 
 void CTOSMasterModule::ReleaseCCommands()
