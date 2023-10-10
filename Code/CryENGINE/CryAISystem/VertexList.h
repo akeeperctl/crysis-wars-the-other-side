@@ -15,12 +15,12 @@ public:
 	~CVertexList(void);
 	int AddVertex(const ObstacleData & od);
 
-	const ObstacleData GetVertex(int index);
-	ObstacleData &ModifyVertex(int index);
-	int FindVertex(const ObstacleData & od);
+	ObstacleData   GetVertex(int index) const;
+	ObstacleData & ModifyVertex(int index);
+	int            FindVertex(const ObstacleData & od);
 
-	void WriteToFile( CCryFile& file );
-	void ReadFromFile( class CCryFile &file );
+	void WriteToFile( CCryFile& file ) const;
+	void ReadFromFile( class CCryFile & file );
 
 	void Clear() {m_vList.clear();}
 	int GetSize() {return m_vList.size();}

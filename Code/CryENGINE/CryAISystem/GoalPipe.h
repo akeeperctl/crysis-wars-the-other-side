@@ -11,7 +11,6 @@
 
 #include "IAgent.h"
 #include <vector>
-#include <string>
 #include "pointer_container.h"
 
 
@@ -30,7 +29,7 @@ typedef struct QGoal
 
 	QGoal()
 	{
-		pGoalOp = 0;
+		pGoalOp = nullptr;
 		bBlocking = false;
 	}
 
@@ -55,7 +54,7 @@ public:
 	void Reset();
 	CGoalPipe * Clone();
 	CGoalPipe(const string &name, CAISystem *pAISystem);
-	virtual ~CGoalPipe();
+	~CGoalPipe() override;
 
 	// IGoalPipe
 	void PushGoal(const string &pName, bool bBlocking,GoalParameters &params);

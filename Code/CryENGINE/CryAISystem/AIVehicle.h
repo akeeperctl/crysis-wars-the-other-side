@@ -4,7 +4,7 @@
 //#include "aiobject.h"
 #include "Puppet.h"
 
-#include "CAISystem.h"
+#include "AISystem.h"
 #include "PipeUser.h"
 //#include "AgentParams.h"
 //#include "IAgent.h"
@@ -23,19 +23,19 @@ class CAIVehicle :
 {
 public:
 	CAIVehicle(void);
-	~CAIVehicle(void);
+	~CAIVehicle(void) override;
 
-	void Update();
-	void Steer(const Vec3d & vTargetPos, GraphNode * pNode);
+	void Update() override;
+	void Steer(const Vec3 & vTargetPos, GraphNode * pNode) override;
 //	void UpdateVehicleInternalState();
-	void Navigate(CAIObject *pTarget);
-	void Event(unsigned short eType, SAIEVENT *pEvent);
+	void Navigate(CAIObject * pTarget) override;
+	void Event(unsigned short eType, SAIEVENT * pEvent) override;
 
-	void Reset(void);
-	void ParseParameters(const AIObjectParameters &params);
-	void OnObjectRemoved(CAIObject *pObject);
+	void Reset(void) override;
+	void ParseParameters(const AIObjectParameters & params) override;
+	void OnObjectRemoved(CAIObject * pObject) override;
 
-	bool CanBeConvertedTo(unsigned short type, void **pConverted);
+	bool CanBeConvertedTo(unsigned short type, void **pConverted) override;
 
 	void	SetParameters(AgentParameters & sParams);
 	AgentParameters GetPuppetParameters() { return GetParameters();}
@@ -46,9 +46,10 @@ public:
 
 	void UpdateThread();
 
-	virtual IUnknownProxy* GetProxy() { return m_pProxy; };
-	void Bind(IAIObject* bind);
-	void Unbind( );
+	IUnknownProxy* GetProxy() override
+	{ return m_pProxy; };
+	void Bind(IAIObject* bind) override;
+	void Unbind( ) override;
 //	IAIObject* GetBound( )  { return m_Gunner; }
 //	void	SetGunner( IAIObject *pGunner );				//CPuppet	*gunner);
 //	void Event(unsigned short eType, SAIEVENT *pEvent);
@@ -65,8 +66,8 @@ private:
 
 public:
 	void AlertPuppets(void);
-	void Save(CStream & stm);
-	void Load(CStream & stm);
+	void Save(CStream & stm) override;
+	void Load(CStream & stm) override;
 };
 
 #endif

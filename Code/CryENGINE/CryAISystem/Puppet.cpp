@@ -4,7 +4,6 @@
 
 #include "stdafx.h"
 #include "Puppet.h"
-#include <algorithm>
 #include "GoalOp.h"
 #include "Graph.h"
 #include "AIPlayer.h"
@@ -13,7 +12,6 @@
 #include <IPhysics.h>
 //<<FIXME>> REMOVE LATER
 #include <ISystem.h>
-#include <ILog.h>
 #include <ITimer.h>
 #include "Cry_Math.h"
 #include <Cry_Camera.h>
@@ -33,21 +31,21 @@ CPuppet::CPuppet()
 	
 	m_nSampleFrequency = GetAISystem()->m_cvSampleFrequency->GetIVal();
 	m_bTargetDodge = false;
-	m_vLastTargetVector = Vec3d(0,0,0);
+	m_vLastTargetVector = Vec3(0,0,0);
 	m_fSuppressFiring = 0;
 	m_bOnceWithinAttackRange = false;
 	m_fMotionAddition = 0.f;
 	m_bAccurateDirectionFire = false;
 	m_bLastHideResult = false;
-	m_vLastHidePoint = Vec3d(0,0,0);
-	m_pDEBUGLastHideSpot = 0;
+	m_vLastHidePoint = Vec3(0,0,0);
+	m_pDEBUGLastHideSpot = nullptr;
 	m_fAIMTime = 0;
 	m_bHaveLiveTarget = false;
 	m_bInFire = false;
 	m_bMeasureAll = false;
-	m_pCurrentGoalPipe = 0;
-	m_pAttentionTarget = 0;
-	m_pPrevAttentionTarget = 0;
+	m_pCurrentGoalPipe = nullptr;
+	m_pAttentionTarget = nullptr;
+	m_pPrevAttentionTarget = nullptr;
 	m_bBlocked = false;
 	m_bAllowedToFire = false;
 	m_bRunning = false;
@@ -58,16 +56,16 @@ CPuppet::CPuppet()
 	m_bVisible = false;
 	m_fUrgency = 10.f;
 	m_bUpdateInternal = true;
-	m_pProxy = 0;
-	m_pLastOpResult = 0;
+	m_pProxy = nullptr;
+	m_pLastOpResult = nullptr;
 	m_fRespawnTime = 2; // seconds
 	m_vDEBUG_VECTOR(0,0,0);
 	m_bDEBUG_Unstuck=false;
 	m_fAccuracySupressor =0.f;
 	m_bLooseAttention = false;
-	m_pLooseAttentionTarget = 0;
-	m_pFormation = 0;
-	m_pMyObstacle = 0;
+	m_pLooseAttentionTarget = nullptr;
+	m_pFormation = nullptr;
+	m_pMyObstacle = nullptr;
 	m_vActiveGoals.reserve(20);
 	m_bSmartFire = true;
 	m_fLastUpdateTime = 0;
@@ -124,7 +122,7 @@ CPuppet::~CPuppet()
 	if (m_pProxy)
 	{
 		m_pProxy->Release();
-		m_pProxy = 0;
+		m_pProxy = nullptr;
 	}
 
 	if (m_pCurrentGoalPipe)
@@ -151,7 +149,7 @@ void CPuppet::ParseParameters(const AIObjectParameters &params)
 	if (params.pProxy->QueryProxy(AIPROXY_PUPPET, (void **) &pProxy))
 		m_pProxy = pProxy;
 	else
-		m_pProxy = NULL;
+		m_pProxy = nullptr;
 
 	//m_Parameters.m_fSpeciesHostility = 2.f;
 	//m_Parameters.m_fGroupHostility = 0.f;
@@ -271,7 +269,7 @@ void CPuppet::AddToVisibleList(CAIObject *pAIObject, bool bForce, float fAdditio
 	VisibilityMap::iterator vi = m_mapVisibleAgents.find(pAIObject);
 	MemoryMap::iterator mi = m_mapMemory.find(pAIObject);
 	bool bSpecial = false;
-	CPuppet *pPuppetTarget=0;
+	CPuppet *pPuppetTarget=nullptr;
 	if (pAIObject->CanBeConvertedTo(AIOBJECT_CPUPPET,(void**)&pPuppetTarget))
 		bSpecial = pPuppetTarget->GetParameters().m_bSpecial;
 
@@ -279,7 +277,7 @@ void CPuppet::AddToVisibleList(CAIObject *pAIObject, bool bForce, float fAdditio
 	if (vi== m_mapVisibleAgents.end() && (mi==m_mapMemory.end()))
 	{
 		// diminish visibility at far distance
-		Vec3d targetpos = pAIObject->GetPos();
+		Vec3 targetpos = pAIObject->GetPos();
 		float distance = (targetpos - m_vPosition).GetLength();
 		if (distance < (m_Parameters.m_fSightRange))
 		{
@@ -425,7 +423,7 @@ bool CPuppet::CanBeConvertedTo(unsigned short type, void **pConverted)
 		return true;
 	}
 
-	*pConverted = 0;
+	*pConverted = nullptr;
 	return false;
 }
 
@@ -437,7 +435,7 @@ void CPuppet::UpdatePuppetInternalState()
 	bool bSoundThreat = false;
 	bool bSoundInterest = false;
 	bool bVisualThreat = false;
-	CAIObject *pThreat = 0, *pInterest  =0;
+	CAIObject *pThreat = nullptr, *pInterest  =nullptr;
 
 	// assess threat for visible objects
 	VisibilityMap::iterator vi; 
@@ -453,7 +451,7 @@ void CPuppet::UpdatePuppetInternalState()
 		}
 		else
 		{
-			CAIPlayer *pPlayer = 0;
+			CAIPlayer *pPlayer = nullptr;
 			if ((vi->first)->CanBeConvertedTo(AIOBJECT_PLAYER,(void**) &pPlayer))
 			{
 				if (m_nObjectType==AIOBJECT_PUPPET && m_Parameters.m_bPerceivePlayer)
@@ -482,7 +480,7 @@ void CPuppet::UpdatePuppetInternalState()
 	for (mi=m_mapMemory.begin();mi!=m_mapMemory.end();)
 	{
 		//(mi->second).fIntensity-=0.01f;
-		CAIPlayer *pPlayer = 0;
+		CAIPlayer *pPlayer = nullptr;
 		if ((mi->first)->CanBeConvertedTo(AIOBJECT_PLAYER,(void**) &pPlayer))
 		{
 			if (m_nObjectType == AIOBJECT_PUPPET && m_Parameters.m_bPerceivePlayer)
@@ -582,7 +580,7 @@ void CPuppet::UpdatePuppetInternalState()
 			pInterest = pDummy;
 		}
 		if (fMaxInterest<0.01f)
-			SetAttentionTarget(0);
+			SetAttentionTarget(nullptr);
 	}
 
 	
@@ -750,7 +748,7 @@ void CPuppet::Event(unsigned short eType, SAIEVENT *pEvent)
 			{
 				m_vActiveGoals.clear();
 				GetAISystem()->FreeFormationPoint(m_Parameters.m_nGroup,this);
-				SetAttentionTarget(0);
+				SetAttentionTarget(nullptr);
 				m_bBlocked = false;
 				m_bUpdateInternal = true;
 				m_bCanReceiveSignals = true;
@@ -800,7 +798,7 @@ void CPuppet::Event(unsigned short eType, SAIEVENT *pEvent)
 				m_pProxy->Reset();
 			m_pAISystem->ReleaseFormationPoint(this);
 			m_pAISystem->CancelAnyPathsFor(this);
-			m_pReservedNavPoint = 0;
+			m_pReservedNavPoint = nullptr;
 			if (m_pFormation)
 				m_pAISystem->ReleaseFormation(m_Parameters.m_nGroup);
 			m_pAISystem->RemoveObjectFromAllOfType(AIOBJECT_PUPPET,this);
@@ -823,10 +821,10 @@ void CPuppet::HandleVisualStimulus(SAIEVENT *pEvent)
 
 
 
-bool CPuppet::PointVisible(const Vec3d &pos)
+bool CPuppet::PointVisible(const Vec3 &pos)
 {
 	
-	Vec3d direction = pos - m_vPosition;
+	Vec3 direction = pos - m_vPosition;
 
 	// lets see if it is outside of its vision range
 	if (direction.x > m_Parameters.m_fSightRange)
@@ -838,7 +836,7 @@ bool CPuppet::PointVisible(const Vec3d &pos)
 	if (direction.GetLength() > m_Parameters.m_fSightRange)
 		return false; 
 
-	Vec3d myorievector = m_vOrientation;
+	Vec3 myorievector = m_vOrientation;
 
 
 	myorievector=ConvertToRadAngles(myorievector);
@@ -873,7 +871,7 @@ void CPuppet::Navigate(CAIObject *pTarget)
 			return;
 	}
 
- 	Vec3d vDir, vAngles, vTargetPos;
+ 	Vec3 vDir, vAngles, vTargetPos;
 	float fTime = m_pAISystem->m_pSystem->GetITimer()->GetFrameTime();
 	int TargetType = AIOBJECT_NONE;
 
@@ -881,7 +879,7 @@ void CPuppet::Navigate(CAIObject *pTarget)
 	{
 		Matrix44 mat;
 		mat.SetIdentity();
-		Vec3d fwd(0.f,-1.f,0.f);
+		Vec3 fwd(0.f,-1.f,0.f);
 		// follow this attention target
 		vAngles = GetAngles();
 //		Ang3 puppetAngles;
@@ -922,7 +920,7 @@ void CPuppet::Navigate(CAIObject *pTarget)
 		if ( (TargetType == AIOBJECT_PLAYER) || (TargetType == AIOBJECT_PUPPET) || m_bLooseAttention ) 
 		//if ((TargetType != AIOBJECT_DUMMY) && (TargetType != AIOBJECT_HIDEPOINT) && (TargetType != AIOBJECT_WAYPOINT))
 		{
-			Vec3d vertCorrection = vDir;
+			Vec3 vertCorrection = vDir;
 		//	mat.Identity();
 			//mat.RotateMatrix(vertCorrection);
 			//vertCorrection = mat.TransformPoint(fwd);
@@ -948,7 +946,7 @@ void CPuppet::Navigate(CAIObject *pTarget)
 	{
 		Matrix44 mat;
 		mat.SetIdentity();
-		Vec3d fwd(0.f,-1.f,0.f);
+		Vec3 fwd(0.f,-1.f,0.f);
 
 		vDir = m_State.vMoveDir;
 		vAngles = GetAngles();
@@ -972,7 +970,7 @@ void CPuppet::Navigate(CAIObject *pTarget)
 			vDir = m_State.vMoveDir;
 		else
 			vDir.Set(0,-1,0);
-		Vec3d vertCorrection = vDir;
+		Vec3 vertCorrection = vDir;
 		//	mat.Identity();
 		//mat.RotateMatrix(vertCorrection);
 		//vertCorrection = mat.TransformPoint(fwd);
@@ -999,7 +997,7 @@ void CPuppet::Remember(CAIObject *pObject, VisionSD &data)
 
 	if ((pObject == m_pAttentionTarget) && m_bUpdateInternal)
 	{
-			SetAttentionTarget(0);
+			SetAttentionTarget(nullptr);
 		//	ResetCurrentPipe();
 	}
 	
@@ -1098,7 +1096,7 @@ void CPuppet::AssessThreat(CAIObject *pObject, VisionSD &data)
 	}
 
 	// scale the threat or the interest based on distance from puppet
-	Vec3d hispos=pObject->GetPos()-m_vPosition;
+	Vec3 hispos=pObject->GetPos()-m_vPosition;
 
 	float coeff = (2 - (hispos.GetLength() / (m_Parameters.m_fSightRange/2.f)));
 	data.fThreatIndex *= coeff;
@@ -1106,10 +1104,10 @@ void CPuppet::AssessThreat(CAIObject *pObject, VisionSD &data)
 }
 
 
-void CPuppet::RequestPathTo(const Vec3d &pos)
+void CPuppet::RequestPathTo(const Vec3 &pos)
 {
 	m_nPathDecision=PATHFINDER_STILLTRACING;
-	Vec3d myPos = m_vPosition;
+	Vec3 myPos = m_vPosition;
 	if (m_nObjectType == AIOBJECT_PUPPET)
 		myPos.z-=m_fEyeHeight;
 	m_pAISystem->TracePath(myPos,pos,this);
@@ -1166,7 +1164,7 @@ void CPuppet::Devalue(CAIObject *pObject, bool bDevaluePuppets)
 	}
 
 	if (pObject == m_pAttentionTarget)
-		SetAttentionTarget(0);
+		SetAttentionTarget(nullptr);
 
 	if ((di = m_mapDevaluedPoints.find(pObject)) == m_mapDevaluedPoints.end())
 		m_mapDevaluedPoints.insert(DevaluedMap::iterator::value_type(pObject,fAmount));
@@ -1245,13 +1243,13 @@ void CPuppet::OnObjectRemoved(CAIObject *pObject)
 
 	if (pObject == m_pAttentionTarget)
 	{
-		SetAttentionTarget(0);
+		SetAttentionTarget(nullptr);
 		//ResetCurrentPipe();
 	}
 
 	if (pObject == m_pPrevAttentionTarget)
 	{
-		m_pPrevAttentionTarget = 0;
+		m_pPrevAttentionTarget = nullptr;
 		//ResetCurrentPipe();
 	}
 
@@ -1259,9 +1257,9 @@ void CPuppet::OnObjectRemoved(CAIObject *pObject)
 
 
 	if (pObject == m_pLastOpResult && pObject->GetType()!=AIOBJECT_HIDEPOINT)
-		SetLastOpResult(0);
+		SetLastOpResult(nullptr);
 	else if (pObject->GetType()==AIOBJECT_HIDEPOINT)
-		m_pLastOpResult = 0;
+		m_pLastOpResult = nullptr;
 
 	// if its a dummy, remove it from the interesting dummies
 	ObjectObjectMap::iterator ooi;
@@ -1289,7 +1287,7 @@ void CPuppet::OnObjectRemoved(CAIObject *pObject)
 	}
 
 	if (pObject == m_pReservedNavPoint)
-		m_pReservedNavPoint = 0;
+		m_pReservedNavPoint = nullptr;
 
 	if (!m_State.vSignals.empty())
 	{
@@ -1382,7 +1380,7 @@ void CPuppet::HandleSoundEvent(SAIEVENT *pEvent)
 	
 }
 
-bool CPuppet::PointAudible(const Vec3d &pos, float fRadius)
+bool CPuppet::PointAudible(const Vec3 &pos, float fRadius)
 {
 	if (m_Parameters.m_fSoundRange < 0.00001)
 		return false;
@@ -1476,7 +1474,7 @@ float CPuppet::CalculateInterest(const AgentParameters & params)
 
 
 // Steers the puppet outdoors and makes it avoid the immediate obstacles
-void CPuppet::Steer(const Vec3d & vTargetPos, GraphNode * pNode)
+void CPuppet::Steer(const Vec3 & vTargetPos, GraphNode * pNode)
 {
 
 	IAIObject *obstVehicle=GetAISystem()->GetNearestObjectOfType( GetPos(), AIOBJECT_VEHICLE, 10 );
@@ -1484,14 +1482,14 @@ void CPuppet::Steer(const Vec3d & vTargetPos, GraphNode * pNode)
 	if(!obstVehicle)	// nothing to steer away from
 		return;
 
-	Vec3d	vObstDir = obstVehicle->GetPos() - GetPos();
-	Vec3d	vCurrDir = m_State.vMoveDir;
-//	Vec3d	vTargetPos;
+	Vec3	vObstDir = obstVehicle->GetPos() - GetPos();
+	Vec3	vCurrDir = m_State.vMoveDir;
+//	Vec3	vTargetPos;
 //	if(m_pAttentionTarget)
 //		vTargetPos = m_pAttentionTarget->GetPos();
 //	else
 //		vTargetPos = m_State.vTargetPos;
-	Vec3d	vObsTargetDir = vTargetPos - obstVehicle->GetPos();
+	Vec3	vObsTargetDir = vTargetPos - obstVehicle->GetPos();
 	vCurrDir.z=0;
 	vObstDir.z=0;
 	vObsTargetDir.z=0;
@@ -1509,15 +1507,15 @@ void CPuppet::Steer(const Vec3d & vTargetPos, GraphNode * pNode)
 		Matrix44 m;
 		m.SetIdentity();
 		if (zcross > 0) 
-			//m.RotateMatrix_fix(Vec3d(0,0,90));
-			m=Matrix44::CreateRotationZYX(-Vec3d(0,0,90)*gf_DEGTORAD )*m; //NOTE: anges in radians and negated 
+			//m.RotateMatrix_fix(Vec3(0,0,90));
+			m=Matrix44::CreateRotationZYX(-Vec3(0,0,90)*gf_DEGTORAD )*m; //NOTE: anges in radians and negated 
 		else
-			//m.RotateMatrix_fix(Vec3d(0,0,-90));
-			m=Matrix44::CreateRotationZYX(Vec3d(0,0,90)*gf_DEGTORAD )*m; //NOTE: anges in radians and negated 
+			//m.RotateMatrix_fix(Vec3(0,0,-90));
+			m=Matrix44::CreateRotationZYX(Vec3(0,0,90)*gf_DEGTORAD )*m; //NOTE: anges in radians and negated 
 
 			//POINT_CHANGED_BY_IVO
-			//Vec3d correction = m.TransformPoint(guypos);
-		Vec3d correction = GetTransposed44(m)*(vCurrDir) + m.GetTranslationOLD();
+			//Vec3 correction = m.TransformPoint(guypos);
+		Vec3 correction = GetTransposed44(m)*(vCurrDir) + m.GetTranslationOLD();
 			
 		//m_vDEBUG_VECTOR = vtx;
 		if (fObstDist < fObstRadius)
@@ -1554,7 +1552,7 @@ void CPuppet::CreateFormation(const char * szName)
 	{
 		if (m_pFormation)
 			m_pAISystem->ReleaseFormation(m_Parameters.m_nGroup);
-		m_pFormation = 0;
+		m_pFormation = nullptr;
 		return;
 	}
 
@@ -1572,7 +1570,7 @@ void CPuppet::CreateFormation(const char * szName)
 	{
 		if (m_pFormation)
 			m_pAISystem->ReleaseFormation(m_Parameters.m_nGroup);
-		m_pFormation = 0;
+		m_pFormation = nullptr;
 		m_pFormation = m_pAISystem->CreateFormation(m_Parameters.m_nGroup,szName);
 	}
 
@@ -1580,39 +1578,39 @@ void CPuppet::CreateFormation(const char * szName)
 
 void CPuppet::Reset(void)
 {
-		SetAttentionTarget(0);
+		SetAttentionTarget(nullptr);
 	ResetCurrentPipe();
 	m_lstPath.clear();
-	SetLastOpResult(0);
+	SetLastOpResult(nullptr);
 
 	m_mapVisibleAgents.clear();
 	m_mapMemory.clear();
 	m_mapSoundEvents.clear();
 	m_mapDevaluedPoints.clear();
 	m_mapPotentialTargets.clear();
-	m_pLastNode = 0;
+	m_pLastNode = nullptr;
 
 	if (m_pFormation)
 		m_pAISystem->ReleaseFormation(m_Parameters.m_nGroup);
 
-	m_pFormation = 0;
+	m_pFormation = nullptr;
 }
 
 
 void CPuppet::ReleaseFormation(void)
 {
 	delete m_pFormation;
-	m_pFormation = 0;
+	m_pFormation = nullptr;
 	m_pAISystem->ReleaseFormation(m_Parameters.m_nGroup);
 }
 
-Vec3d CPuppet::GetIndoorHidePoint(int nMethod, float fSearchDistance, bool bSameOk)
+Vec3 CPuppet::GetIndoorHidePoint(int nMethod, float fSearchDistance, bool bSameOk)
 {
 	float maxValue = -1;
 	float maxDot = -1;
 	CGraph *pGraph = m_pAISystem->GetGraph();
 
-	Vec3d retPoint=m_vPosition;
+	Vec3 retPoint=m_vPosition;
 	
 
 	int rnd=0;
@@ -1626,8 +1624,8 @@ Vec3d CPuppet::GetIndoorHidePoint(int nMethod, float fSearchDistance, bool bSame
 	for (li=pGraph->m_lstSelected.begin();li!=pGraph->m_lstSelected.end();li++,rnd--)
 	{
 		ObstacleData od = (*li);
-		Vec3d pos = (*li).vPos;
-		Vec3d dir = (*li).vDir;
+		Vec3 pos = (*li).vPos;
+		Vec3 dir = (*li).vDir;
 		float fDot = -1;
 		if (m_pAttentionTarget) {
 			//fDot = ( (m_pAttentionTarget->GetPos()-pos  ).Normalized()).Dot(dir.Normalized());
@@ -1660,8 +1658,8 @@ Vec3d CPuppet::GetIndoorHidePoint(int nMethod, float fSearchDistance, bool bSame
 		case HM_NEAREST_TO_TARGET:
 			if (m_pAttentionTarget)
 			{
-				Vec3d one = m_pAttentionTarget->GetPos()-m_vPosition;
-				Vec3d	two = pos-m_vPosition;
+				Vec3 one = m_pAttentionTarget->GetPos()-m_vPosition;
+				Vec3	two = pos-m_vPosition;
 
 				float val = (pos-m_pAttentionTarget->GetPos()).GetLength();
 				//float val = 2000 - (pos-m_pAttentionTarget->GetPos()).GetLength();
@@ -1679,8 +1677,8 @@ Vec3d CPuppet::GetIndoorHidePoint(int nMethod, float fSearchDistance, bool bSame
 		case HM_FARTHEST_FROM_TARGET:
 			if (m_pAttentionTarget)
 			{
-				Vec3d one = m_pAttentionTarget->GetPos()-m_vPosition;
-				Vec3d	two = pos-m_vPosition;
+				Vec3 one = m_pAttentionTarget->GetPos()-m_vPosition;
+				Vec3	two = pos-m_vPosition;
 
 				float val = ( GetLengthSquared(pos-m_pAttentionTarget->GetPos()) );
 				if (one.Dot(two)<0)
@@ -1697,8 +1695,8 @@ Vec3d CPuppet::GetIndoorHidePoint(int nMethod, float fSearchDistance, bool bSame
 		case HM_LEFTMOST_FROM_TARGET:
 			if (m_pAttentionTarget)
 			{
-				Vec3d one = m_pAttentionTarget->GetPos()-m_vPosition;
-				Vec3d	two = pos-m_vPosition;
+				Vec3 one = m_pAttentionTarget->GetPos()-m_vPosition;
+				Vec3	two = pos-m_vPosition;
 
 				float zcross = one.x*two.y - one.y*two.x;
 
@@ -1714,8 +1712,8 @@ Vec3d CPuppet::GetIndoorHidePoint(int nMethod, float fSearchDistance, bool bSame
 		case HM_FRONTLEFTMOST_FROM_TARGET:
 			if (m_pAttentionTarget)
 			{
-				Vec3d one = m_pAttentionTarget->GetPos()-m_vPosition;
-				Vec3d	two = pos-m_vPosition;
+				Vec3 one = m_pAttentionTarget->GetPos()-m_vPosition;
+				Vec3	two = pos-m_vPosition;
 
 				float zcross = one.x*two.y - one.y*two.x;
 				one.Normalize();
@@ -1739,8 +1737,8 @@ Vec3d CPuppet::GetIndoorHidePoint(int nMethod, float fSearchDistance, bool bSame
 		case HM_RIGHTMOST_FROM_TARGET:
 			if (m_pAttentionTarget)
 			{
-				Vec3d one = m_pAttentionTarget->GetPos()-m_vPosition;
-				Vec3d	two = pos-m_vPosition;
+				Vec3 one = m_pAttentionTarget->GetPos()-m_vPosition;
+				Vec3	two = pos-m_vPosition;
 
 				float zcross = one.x*two.y - one.y*two.x;
 
@@ -1756,8 +1754,8 @@ Vec3d CPuppet::GetIndoorHidePoint(int nMethod, float fSearchDistance, bool bSame
 		case HM_FRONTRIGHTMOST_FROM_TARGET:
 			if (m_pAttentionTarget)
 			{
-				Vec3d one = m_pAttentionTarget->GetPos()-m_vPosition;
-				Vec3d	two = pos-m_vPosition;
+				Vec3 one = m_pAttentionTarget->GetPos()-m_vPosition;
+				Vec3	two = pos-m_vPosition;
 
 				float zcross = one.x*two.y - one.y*two.x;
 				one.Normalize();
@@ -1782,8 +1780,8 @@ Vec3d CPuppet::GetIndoorHidePoint(int nMethod, float fSearchDistance, bool bSame
 			if (m_pLastOpResult)
 			{
 
-				Vec3d one = m_pLastOpResult->GetPos()-m_vPosition;
-				Vec3d	two = pos-m_vPosition;
+				Vec3 one = m_pLastOpResult->GetPos()-m_vPosition;
+				Vec3	two = pos-m_vPosition;
 
 				float val = 2000 - (pos-m_pLastOpResult->GetPos()).GetLength();
 				if (one.Dot(two)>0)
@@ -1882,7 +1880,7 @@ void CPuppet::FireCommand(void)
 	if (!m_bAccurateDirectionFire)
 		return;
 
-	Vec3d vAngles, vTargetPos;
+	Vec3 vAngles, vTargetPos;
 
 	if (m_pAttentionTarget)
 	{
@@ -2006,23 +2004,23 @@ void CPuppet::FireCommand(void)
 							{
 								GraphNode *pTargetNode = m_pAISystem->GetGraph()->GetEnclosing(vTargetPos,m_pAttentionTarget->m_pLastNode);
 								m_pAttentionTarget->m_pLastNode = pTargetNode;
-								Vec3d targetang = m_pAttentionTarget->GetAngles();
+								Vec3 targetang = m_pAttentionTarget->GetAngles();
 
 								Matrix44 m;
 								m.SetIdentity();
 							//	m.RotateMatrix_fix(targetang);
 								m=Matrix44::CreateRotationZYX(-targetang*gf_DEGTORAD )*m; //NOTE: anges in radians and negated 
 							//POINT_CHANGED_BY_IVO
-							//targetang = m.TransformPoint(Vec3d(0,-1,0));
-								targetang = GetTransposed44(m) * Vec3d(0,-1,0);
+							//targetang = m.TransformPoint(Vec3(0,-1,0));
+								targetang = GetTransposed44(m) * Vec3(0,-1,0);
 
 								// find the obstacle that is infront of your target
 								float maxdot = -1.f;
-								Vec3d vUpdTargetPos = vTargetPos;
+								Vec3 vUpdTargetPos = vTargetPos;
 								ObstacleIndexVector::iterator oi;
 								for (oi=pTargetNode->vertex.begin();oi!=pTargetNode->vertex.end();oi++)
 								{
-										Vec3d obstacle_pos = m_pAISystem->m_VertexList.GetVertex((*oi)).vPos;
+										Vec3 obstacle_pos = m_pAISystem->m_VertexList.GetVertex((*oi)).vPos;
 										obstacle_pos= obstacle_pos - vTargetPos;
 										float fdot = targetang.Dot(GetNormalized(obstacle_pos));
 
@@ -2036,14 +2034,14 @@ void CPuppet::FireCommand(void)
 								}
 
 								// check whether the direction is ok
-								Vec3d accurateshot = GetNormalized(vTargetPos-m_vPosition);
+								Vec3 accurateshot = GetNormalized(vTargetPos-m_vPosition);
 								if (accurateshot.Dot( GetNormalized(vUpdTargetPos-m_vPosition)) > 0.9f)
 										vTargetPos = vUpdTargetPos;
 							
 								if (maxdot < 0.4f)
 								{
 									targetang.z = 0;
-									Vec3d targpos = m_pAttentionTarget->GetPos();
+									Vec3 targpos = m_pAttentionTarget->GetPos();
 									targpos.z -= m_pAttentionTarget->GetEyeHeight();
 									vTargetPos = targpos + targetang*4.f;
 									m_vDEBUG_VECTOR = vTargetPos;
@@ -2072,7 +2070,7 @@ void CPuppet::FireCommand(void)
 				GoalParameters params;
 				params.fValue = m_Parameters.m_fAttackRange;
 				pPipe->PushGoal(AIOP_APPROACH,true,params);
-				InsertSubPipe(0,"always_approach_to_attack_range",0);
+				InsertSubPipe(0,"always_approach_to_attack_range",nullptr);
 			}
 
 		}
@@ -2091,10 +2089,10 @@ void CPuppet::AddToMemory(CAIObject * pObject)
 }
 
 // finds hide point in graph based on specified search method
-Vec3d CPuppet::FindHidePoint(float fSearchDistance, int nMethod, bool bIndoors, bool bSameOk)
+Vec3 CPuppet::FindHidePoint(float fSearchDistance, int nMethod, bool bIndoors, bool bSameOk)
 {
 	// first get all hide points within the search distance
-	CGraph *pGraph=0;
+	CGraph *pGraph=nullptr;
 	if (bIndoors)
 		pGraph = m_pAISystem->GetGraph();
 	else
@@ -2136,9 +2134,9 @@ Vec3d CPuppet::FindHidePoint(float fSearchDistance, int nMethod, bool bIndoors, 
 	float maxValue = -1;
 	float maxValueNearest = -1;
 	
-	Vec3d retPoint=m_vPosition;
-	Vec3d retPointNearest=m_vPosition;
-	void *pPhysicalEntity = 0;
+	Vec3 retPoint=m_vPosition;
+	Vec3 retPointNearest=m_vPosition;
+	void *pPhysicalEntity = nullptr;
 
 	int rnd=0;
 	if (nMethod == HM_RANDOM)
@@ -2160,12 +2158,12 @@ Vec3d CPuppet::FindHidePoint(float fSearchDistance, int nMethod, bool bIndoors, 
 // Evaluates whether the chosen navigation point will expose us too much to the target
 bool CPuppet::Compromising(const ObstacleData &od, bool bIndoor)
 {
-	Vec3d vTarget = od.vPos;
+	Vec3 vTarget = od.vPos;
 	
 	if (!m_pAttentionTarget) 
 		return false;
 
-	Vec3d one,two;
+	Vec3 one,two;
 	
 	
 	if (!GetAISystem()->NoSameHidingPlace(this,vTarget))
@@ -2187,7 +2185,7 @@ bool CPuppet::Compromising(const ObstacleData &od, bool bIndoor)
 	else
 	{
 		one = m_pAttentionTarget->GetPos() - od.vPos;
-		Vec3d vLookAt = od.vDir;
+		Vec3 vLookAt = od.vDir;
 		one.Normalize();
 		float f = one.Dot(vLookAt);
 
@@ -2206,7 +2204,7 @@ bool CPuppet::Sees(CPuppet * pObject)
 //	if (m_mapVisibleAgents.find(pObject) == m_mapVisibleAgents.end())
 	//	return false;
 
-	Vec3d otherpos = pObject->GetPos();
+	Vec3 otherpos = pObject->GetPos();
 	
 
 	if (PointVisible(otherpos))
@@ -2257,13 +2255,13 @@ void CPuppet::SetParameters(AgentParameters & sParams)
 
 
 
-Vec3d CPuppet::GetOutdoorHidePoint(int nMethod, float fSearchDistance, bool bSameOk)
+Vec3 CPuppet::GetOutdoorHidePoint(int nMethod, float fSearchDistance, bool bSameOk)
 {
 
 	float maxValue = -1;
 	CGraph *pGraph = m_pAISystem->GetHideGraph();
 
-	Vec3d retPoint=m_vPosition;
+	Vec3 retPoint=m_vPosition;
 	
 	int rnd=0;
 	if (nMethod == HM_RANDOM)
@@ -2276,8 +2274,8 @@ Vec3d CPuppet::GetOutdoorHidePoint(int nMethod, float fSearchDistance, bool bSam
 	for (li=pGraph->m_lstSelected.begin();li!=pGraph->m_lstSelected.end();li++,rnd--)
 	{
 		ObstacleData od = (*li);
-		Vec3d pos = (*li).vPos;
-		Vec3d dir = (*li).vDir;
+		Vec3 pos = (*li).vPos;
+		Vec3 dir = (*li).vDir;
 
 		switch (nMethod)
 		{
@@ -2294,10 +2292,10 @@ Vec3d CPuppet::GetOutdoorHidePoint(int nMethod, float fSearchDistance, bool bSam
 			{
 //				if (m_pAttentionTarget)
 //				{
-					Vec3d angles = ConvertToRadAngles(m_vOrientation);
-					Vec3d att_pos = m_vPosition+10.f*angles;
-					Vec3d one = m_vPosition-att_pos;
-					Vec3d two = pos-att_pos;
+					Vec3 angles = ConvertToRadAngles(m_vOrientation);
+					Vec3 att_pos = m_vPosition+10.f*angles;
+					Vec3 one = m_vPosition-att_pos;
+					Vec3 two = pos-att_pos;
 
 					if (one.Dot(two)>0)
 					{
@@ -2314,11 +2312,11 @@ Vec3d CPuppet::GetOutdoorHidePoint(int nMethod, float fSearchDistance, bool bSam
 		case HM_NEAREST_TO_TARGET:
 			if (m_pAttentionTarget)
 			{
-				Vec3d att_pos = m_pAttentionTarget->GetPos();
-				//Vec3d one = m_pAttentionTarget->GetPos()-m_vPosition;
-				//Vec3d	two = pos-m_vPosition;
-				Vec3d one = m_vPosition-att_pos;
-				Vec3d two = pos-att_pos;
+				Vec3 att_pos = m_pAttentionTarget->GetPos();
+				//Vec3 one = m_pAttentionTarget->GetPos()-m_vPosition;
+				//Vec3	two = pos-m_vPosition;
+				Vec3 one = m_vPosition-att_pos;
+				Vec3 two = pos-att_pos;
 
 
 				float val = 2000 - GetLengthSquared(pos-att_pos);
@@ -2336,8 +2334,8 @@ Vec3d CPuppet::GetOutdoorHidePoint(int nMethod, float fSearchDistance, bool bSam
 			if (m_pAttentionTarget)
 			{
 				
-				Vec3d one = m_pAttentionTarget->GetPos()-m_vPosition;
-				Vec3d	two = pos-m_vPosition;
+				Vec3 one = m_pAttentionTarget->GetPos()-m_vPosition;
+				Vec3	two = pos-m_vPosition;
 
 				float val = GetLengthSquared( (pos-m_pAttentionTarget->GetPos()) );
 				if (one.Dot(two)<0)
@@ -2353,8 +2351,8 @@ Vec3d CPuppet::GetOutdoorHidePoint(int nMethod, float fSearchDistance, bool bSam
 		case HM_LEFTMOST_FROM_TARGET:
 			if (m_pAttentionTarget)
 			{
-				Vec3d one = m_pAttentionTarget->GetPos()-m_vPosition;
-				Vec3d	two = pos-m_vPosition;
+				Vec3 one = m_pAttentionTarget->GetPos()-m_vPosition;
+				Vec3	two = pos-m_vPosition;
 
 				float zcross = one.x*two.y - one.y*two.x;
 
@@ -2369,8 +2367,8 @@ Vec3d CPuppet::GetOutdoorHidePoint(int nMethod, float fSearchDistance, bool bSam
 		case HM_FRONTLEFTMOST_FROM_TARGET:
 			if (m_pAttentionTarget)
 			{
-				Vec3d one = m_pAttentionTarget->GetPos()-m_vPosition;
-				Vec3d	two = pos-m_vPosition;
+				Vec3 one = m_pAttentionTarget->GetPos()-m_vPosition;
+				Vec3	two = pos-m_vPosition;
 
 				float zcross = one.x*two.y - one.y*two.x;
 				one.Normalize();
@@ -2393,8 +2391,8 @@ Vec3d CPuppet::GetOutdoorHidePoint(int nMethod, float fSearchDistance, bool bSam
 		case HM_RIGHTMOST_FROM_TARGET:
 			if (m_pAttentionTarget)
 			{
-				Vec3d one = m_pAttentionTarget->GetPos()-m_vPosition;
-				Vec3d	two = pos-m_vPosition;
+				Vec3 one = m_pAttentionTarget->GetPos()-m_vPosition;
+				Vec3	two = pos-m_vPosition;
 
 				float zcross = one.x*two.y - one.y*two.x;
 
@@ -2409,8 +2407,8 @@ Vec3d CPuppet::GetOutdoorHidePoint(int nMethod, float fSearchDistance, bool bSam
 		case HM_FRONTRIGHTMOST_FROM_TARGET:
 			if (m_pAttentionTarget)
 			{
-				Vec3d one = m_pAttentionTarget->GetPos()-m_vPosition;
-				Vec3d	two = pos-m_vPosition;
+				Vec3 one = m_pAttentionTarget->GetPos()-m_vPosition;
+				Vec3	two = pos-m_vPosition;
 
 				float zcross = one.x*two.y - one.y*two.x;
 				one.Normalize();
@@ -2433,11 +2431,11 @@ Vec3d CPuppet::GetOutdoorHidePoint(int nMethod, float fSearchDistance, bool bSam
 		case HM_NEAREST_TO_LASTOPRESULT_NOSAME:
 			if (m_pLastOpResult)
 			{
-				Vec3d att_pos = m_pLastOpResult->GetPos();
-				//Vec3d one = m_pAttentionTarget->GetPos()-m_vPosition;
-				//Vec3d	two = pos-m_vPosition;
-				Vec3d one = m_vPosition-att_pos;
-				//Vec3d two = pos-att_pos;
+				Vec3 att_pos = m_pLastOpResult->GetPos();
+				//Vec3 one = m_pAttentionTarget->GetPos()-m_vPosition;
+				//Vec3	two = pos-m_vPosition;
+				Vec3 one = m_vPosition-att_pos;
+				//Vec3 two = pos-att_pos;
 
 				float val = 2000 - GetLengthSquared(pos-att_pos);
 ///				if (one.Dot(two)>0)
@@ -2497,7 +2495,7 @@ Vec3d CPuppet::GetOutdoorHidePoint(int nMethod, float fSearchDistance, bool bSam
 void CPuppet::CrowdControl(void)
 {
 	float fPersonalSpaceRadius = m_fEyeHeight;
-	Vec3d radius_vector(fPersonalSpaceRadius,fPersonalSpaceRadius,fPersonalSpaceRadius);
+	Vec3 radius_vector(fPersonalSpaceRadius,fPersonalSpaceRadius,fPersonalSpaceRadius);
 
 	IPhysicalEntity **pSleepingRigids;
 	IPhysicalWorld *pWorld = GetAISystem()->GetPhysicalWorld();
@@ -2513,7 +2511,7 @@ void CPuppet::CrowdControl(void)
 
 			
 			ppos.pos.z = m_vPosition.z;
-			Vec3d guypos = ppos.pos-m_vPosition;
+			Vec3 guypos = ppos.pos-m_vPosition;
 			float poslength = guypos.GetLength();
 			guypos.Normalize();
 
@@ -2526,11 +2524,11 @@ void CPuppet::CrowdControl(void)
 				Matrix44 m;
 				m.SetIdentity();
 				if (zcross > 0) 
-					m=Matrix44::CreateRotationZYX(-Vec3d(0,0,90)*gf_DEGTORAD )*m; //NOTE: anges in radians and negated 
+					m=Matrix44::CreateRotationZYX(-Vec3(0,0,90)*gf_DEGTORAD )*m; //NOTE: anges in radians and negated 
 				else
-					m=Matrix44::CreateRotationZYX(-Vec3d(0,0,90)*gf_DEGTORAD )*m; //NOTE: anges in radians and negated 
+					m=Matrix44::CreateRotationZYX(-Vec3(0,0,90)*gf_DEGTORAD )*m; //NOTE: anges in radians and negated 
 
-				Vec3d correction = GetTransposed44(m)*(guypos) + m.GetTranslationOLD();
+				Vec3 correction = GetTransposed44(m)*(guypos) + m.GetTranslationOLD();
 
 				if (poslength < m_fEyeHeight)
 				{
@@ -2557,8 +2555,8 @@ void CPuppet::CheckPlayerTargeting(void)
 		return;
 
 
-	Vec3d lookDir = ConvertToRadAngles(pPlayer->GetAngles());
-	Vec3d relPos = GetNormalized(m_vPosition - pPlayer->GetPos());
+	Vec3 lookDir = ConvertToRadAngles(pPlayer->GetAngles());
+	Vec3 relPos = GetNormalized(m_vPosition - pPlayer->GetPos());
 
 	float fdot = lookDir.Dot(relPos);
 	if (fdot>0.98f)
@@ -2578,14 +2576,14 @@ void CPuppet::RemoveFromGoalPipe(CAIObject* pObject)
 			do
 			{
 				if (pPipe->m_pArgument == pObject)
-					pPipe->m_pArgument = 0;
+					pPipe->m_pArgument = nullptr;
 			}
 			while (pPipe = pPipe->GetSubpipe());
 		}
 		else
 		{
 			if (m_pCurrentGoalPipe->m_pArgument == pObject)
-				m_pCurrentGoalPipe->m_pArgument = 0;
+				m_pCurrentGoalPipe->m_pArgument = nullptr;
 		}
 	}
 }
@@ -2605,7 +2603,7 @@ void CPuppet::CheckTargetLateralMovement()
 		m_vLastTargetVector = GetNormalized(m_pAttentionTarget->GetPos()-m_vPosition);
 	}
 
-	Vec3d currTargetVector = GetNormalized(m_pAttentionTarget->GetPos()-m_vPosition);
+	Vec3 currTargetVector = GetNormalized(m_pAttentionTarget->GetPos()-m_vPosition);
 	float fDot = m_vLastTargetVector.Dot(currTargetVector);
 	if (fDot<0.92)
 		m_bTargetDodge = true;
@@ -2627,7 +2625,7 @@ CAIObject * CPuppet::GetMemoryOwner(CAIObject * pMemoryRepresentation)
 				return mi->first;
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 
@@ -2871,7 +2869,7 @@ void CPuppet::Load(CStream &stm)
 		stm.Read(nPosition);
 		
 
-		CAIObject *pArgument = 0;
+		CAIObject *pArgument = nullptr;
 		int nHasArgument;
 		stm.Read(nHasArgument);
 		if (nHasArgument)
@@ -2900,7 +2898,7 @@ void CPuppet::Load(CStream &stm)
 			stm.Read(sName,255);
 			stm.Read(nPosition);
 			stm.Read(nHasArgument);
-			pArgument = 0;
+			pArgument = nullptr;
 			if (nHasArgument)
 			{
 				char szArgName[255];
@@ -3023,7 +3021,7 @@ void CPuppet::Load_PATCH_1(CStream &stm)
 		stm.Read(nPosition);
 
 
-		CAIObject *pArgument = 0;
+		CAIObject *pArgument = nullptr;
 		int nHasArgument;
 		stm.Read(nHasArgument);
 		if (nHasArgument)
@@ -3045,7 +3043,7 @@ void CPuppet::Load_PATCH_1(CStream &stm)
 			stm.Read(sName,255);
 			stm.Read(nPosition);
 			stm.Read(nHasArgument);
-			pArgument = 0;
+			pArgument = nullptr;
 			if (nHasArgument)
 			{
 				char szArgName[255];

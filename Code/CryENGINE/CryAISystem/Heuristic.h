@@ -25,13 +25,13 @@ public:
 class CStandardHeuristic : public CHeuristic
 {
 public:
-	float Estimate(GraphNode *pNode, CGraph* graph);
+	float Estimate(GraphNode *pNode, CGraph* graph) override;
 };
 
 class CVehicleHeuristic : public CHeuristic
 {
 public:
-	float Estimate(GraphNode *pNode, CGraph* graph);
+	float Estimate(GraphNode *pNode, CGraph* graph) override;
 };
 
 

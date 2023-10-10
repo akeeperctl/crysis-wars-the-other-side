@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "formation.h"
 #include "AIObject.h"
-#include "CAISystem.h"
+#include "AISystem.h"
 #include <Cry_Math.h>
 
 #if !defined(LINUX)
@@ -45,18 +45,18 @@ void CFormation::Create(FormationDescriptor & desc)
 
 	for (vi=desc.vOffsets.begin();vi!=desc.vOffsets.end();vi++)
 	{
-		Vec3d pos = (*vi);
+		Vec3 pos = (*vi);
 		CAIObject *pFormationDummy = m_pAISystem->CreateDummyObject();
 
 		pFormationDummy->SetPos(pos);
-		pFormationDummy->SetAngles(Vec3d(0,0,0));
+		pFormationDummy->SetAngles(Vec3(0,0,0));
 		char name[255];
 		sprintf(name,"FORMATION_%d",i++);
 		pFormationDummy->SetName(name);
 
 		m_vPoints.push_back(pos);
 		m_vWorldPoints.push_back(pFormationDummy);
-		m_vReservations.push_back(false);
+		m_vReservations.push_back(nullptr);
 	}
 
 }
@@ -71,7 +71,7 @@ void CFormation::Update(CAIObject *pOwner)
 
 	for (int i=0;i<count;i++)
 	{
-		Vec3d pos = m_vPoints[i];
+		Vec3 pos = m_vPoints[i];
 		CAIObject *pFormationDummy = m_vWorldPoints[i];
 
 
@@ -101,16 +101,16 @@ void CFormation::Update(CAIObject *pOwner)
 // returns an available formation point, if that exists right now by proximity
 CAIObject * CFormation::GetFormationPoint(CAIObject *pRequester)
 {
-	CAIObject *pPoint = NULL;
-	float mindist = 2000;
-	int size = m_vPoints.size();
-	int index = -1;
+	CAIObject * pPoint = nullptr;
+	float       mindist = 2000;
+	int         size = m_vPoints.size();
+	int         index = -1;
 
 		
 	for (int i=0;i<size;i++)
 	{
 			if (m_vReservations[i] == pRequester)
-				m_vReservations[i] = 0;
+				m_vReservations[i] = nullptr;
 
 			if (!m_vReservations[i])
 			{
@@ -132,7 +132,7 @@ CAIObject * CFormation::GetFormationPoint(CAIObject *pRequester)
 
 	if (pPoint)
 	{
-		//Vec3d pos = pPoint->GetPos();
+		//Vec3 pos = pPoint->GetPos();
 		//pos.z = pRequester->GetPos().z;
 		//pPoint->SetPos(pos);
 		pPoint->SetEyeHeight(1.4f);
@@ -149,7 +149,7 @@ void CFormation::Draw(IRenderer * pRenderer)
 
 	for (fi=m_vWorldPoints.begin();fi!=m_vWorldPoints.end();fi++)
 	{
-		Vec3d pos = (*fi)->GetPos();
+		Vec3 pos = (*fi)->GetPos();
 		pRenderer->SetMaterialColor(0,1.f,0,1.f);
 		pRenderer->DrawBall(pos,0.5f);
 	}
@@ -163,7 +163,7 @@ void CFormation::FreeFormationPoint(CAIObject * pCurrentHolder)
 	for (int i=0;i<size;i++)
 	{
 		if (m_vReservations[i] == pCurrentHolder)
-			m_vReservations[i] = 0;
+			m_vReservations[i] = nullptr;
 	}
 }
 

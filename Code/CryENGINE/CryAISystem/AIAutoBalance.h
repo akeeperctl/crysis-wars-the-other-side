@@ -36,22 +36,22 @@ class CAIAutoBalance : public IAutoBalance
 
 public:
 	CAIAutoBalance(void);
-	~CAIAutoBalance(void);
+	~CAIAutoBalance(void) override;
 
-	void RegisterPlayerDeath();
-	void RegisterEnemyLifetime(float fLifeInSeconds);
-	void SetAllowedDeathCount(int nDeaths);
-	void Checkpoint();
+	void RegisterPlayerDeath() override;
+	void RegisterEnemyLifetime(float fLifeInSeconds) override;
+	void SetAllowedDeathCount(int nDeaths) override;
+	void Checkpoint() override;
 	void DebugDraw(IRenderer * pRenderer);
-	void SetMultipliers(float fAccuracy, float fAggression, float fHealth);
-	void GetMultipliers(float & fAccuracy, float & fAggression, float & fHealth);
+	void SetMultipliers(float fAccuracy, float fAggression, float fHealth) override;
+	void GetMultipliers(float & fAccuracy, float & fAggression, float & fHealth) override;
 	void AdjustDifficulty(bool bCalcDeath=true);
 	void Clamp(float & fVal);
-	void RegisterPlayerFire(int nShots);
-	void RegisterPlayerHit();
+	void RegisterPlayerFire(int nShots) override;
+	void RegisterPlayerHit() override;
 	void CalcMinimum(void);
-	void GetAutobalanceStats(AIBalanceStats & stats);
-	void RegisterVehicleDestroyed(void);
+	void GetAutobalanceStats(AIBalanceStats & stats) override;
+	void RegisterVehicleDestroyed(void) override;
 };
 
 #endif //#ifndef _AI_AUTOBALANCE_

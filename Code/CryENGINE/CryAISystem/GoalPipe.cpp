@@ -3,7 +3,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
-#include "CAISystem.h"
+#include "AISystem.h"
 #include "GoalPipe.h"
 #include "GoalOp.h"
 #include "PipeUser.h"
@@ -27,8 +27,8 @@ CGoalPipe::CGoalPipe(const string &name, CAISystem *pAISystem)
 	m_sName = name;
 	m_pAISystem = pAISystem;
 	m_nPosition = 0;
-	m_pSubPipe = 0; 
-	m_pArgument = 0;
+	m_pSubPipe = nullptr; 
+	m_pArgument = nullptr;
 }
 
 CGoalPipe::~CGoalPipe()
@@ -49,7 +49,7 @@ CGoalPipe::~CGoalPipe()
 	if (m_pSubPipe)
 	{
 		delete m_pSubPipe;
-		m_pSubPipe = 0;
+		m_pSubPipe = nullptr;
 	}
 }
 
@@ -191,7 +191,7 @@ GoalPointer CGoalPipe::PopGoal(bool &blocking, string &name, GoalParameters &par
 			if (m_pSubPipe)
 				delete m_pSubPipe;
 			
-			m_pSubPipe = 0; // this subpipe is finished
+			m_pSubPipe = nullptr; // this subpipe is finished
 
 			if (m_pArgument)
 				pOperand->SetLastOpResult(m_pArgument);
@@ -227,7 +227,7 @@ GoalPointer CGoalPipe::PopGoal(bool &blocking, string &name, GoalParameters &par
 	// we have reached the end of this goal pipe
 	// reset position and let the world know we are done
 	Reset();
-	return 0;
+	return nullptr;
 }
 
 CGoalPipe * CGoalPipe::Clone()
@@ -252,7 +252,7 @@ void CGoalPipe::Reset()
 	m_nPosition = 0;
 	if (m_pSubPipe)
 		delete m_pSubPipe;
-	m_pSubPipe = 0;
+	m_pSubPipe = nullptr;
 }
 
 // Makes the IP of this pipe jump to the desired position
@@ -266,7 +266,7 @@ void CGoalPipe::Jump(int position)
 
 bool CGoalPipe::IsInSubpipe(void)
 {
-	return (m_pSubPipe != 0);
+	return (m_pSubPipe != nullptr);
 }
 
 CGoalPipe * CGoalPipe::GetSubpipe(void)

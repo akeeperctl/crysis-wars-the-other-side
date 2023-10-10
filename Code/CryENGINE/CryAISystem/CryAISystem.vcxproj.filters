@@ -1,147 +1,136 @@
 п»ї<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{896f5b03-a119-4a94-a4bf-991ef3edfc6d}</UniqueIdentifier>
-      <Extensions>cpp;c;cxx;rc;def;r;odl;idl;hpj;bat</Extensions>
+    <Filter Include="AISystem">
+      <UniqueIdentifier>{ca6eb70e-f710-4341-aca5-acea703a29ae}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{d8698457-8e76-44f3-b601-2e0ea0be20b7}</UniqueIdentifier>
-      <Extensions>h;hpp;hxx;hm;inl</Extensions>
+    <Filter Include="AISystem\AIObject">
+      <UniqueIdentifier>{db42821f-0d76-4729-95be-89a856fdefe2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{285dbe3b-dc58-4b0b-b0e7-d065498c4ef8}</UniqueIdentifier>
-      <Extensions>ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe</Extensions>
+    <Filter Include="AISystem\PipeUser">
+      <UniqueIdentifier>{34d0d8b7-cc90-4e46-892a-87c2e836613b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AISystem\AutoBalance">
+      <UniqueIdentifier>{001449d5-4942-468b-ad8c-5754afa38829}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AISystem\Goals">
+      <UniqueIdentifier>{730c6066-cde4-4ce2-b15a-dc77684ae20a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="AIAttribute.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="AIAutoBalance.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="AIMemStats.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="AISystem.cpp">
+      <Filter>AISystem</Filter>
     </ClCompile>
     <ClCompile Include="AIObject.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>AISystem\AIObject</Filter>
     </ClCompile>
     <ClCompile Include="AIPlayer.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>AISystem\AIObject</Filter>
     </ClCompile>
     <ClCompile Include="AIVehicle.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>AISystem\AIObject</Filter>
     </ClCompile>
-    <ClCompile Include="BuildingIDManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CAISystem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CryAISystem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CTriangulator.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Formation.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GoalOp.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GoalPipe.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Graph.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GraphUtility.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Heuristic.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="IAgent.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="AIAttribute.cpp">
+      <Filter>AISystem\AIObject</Filter>
     </ClCompile>
     <ClCompile Include="PipeUser.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>AISystem\PipeUser</Filter>
+    </ClCompile>
+    <ClCompile Include="AIAutoBalance.cpp">
+      <Filter>AISystem\AutoBalance</Filter>
+    </ClCompile>
+    <ClCompile Include="GoalOp.cpp">
+      <Filter>AISystem\Goals</Filter>
+    </ClCompile>
+    <ClCompile Include="GoalPipe.cpp">
+      <Filter>AISystem\Goals</Filter>
     </ClCompile>
     <ClCompile Include="Puppet.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>AISystem\PipeUser</Filter>
     </ClCompile>
-    <ClCompile Include="StdAfx.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="AIMemStats.cpp">
+      <Filter>AISystem</Filter>
+    </ClCompile>
+    <ClCompile Include="StdAfx.cpp" />
+    <ClCompile Include="BuildingIDManager.cpp">
+      <Filter>AISystem</Filter>
+    </ClCompile>
+    <ClCompile Include="CTriangulator.cpp">
+      <Filter>AISystem</Filter>
+    </ClCompile>
+    <ClCompile Include="Formation.cpp">
+      <Filter>AISystem</Filter>
+    </ClCompile>
+    <ClCompile Include="Graph.cpp">
+      <Filter>AISystem</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphUtility.cpp">
+      <Filter>AISystem</Filter>
+    </ClCompile>
+    <ClCompile Include="Heuristic.cpp">
+      <Filter>AISystem</Filter>
     </ClCompile>
     <ClCompile Include="VertexList.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>AISystem</Filter>
     </ClCompile>
+    <ClCompile Include="DllMain.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AgentParams.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="AIAttribute.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="AIAutoBalance.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="AISystem.h">
+      <Filter>AISystem</Filter>
     </ClInclude>
     <ClInclude Include="AIObject.h">
-      <Filter>Header Files</Filter>
+      <Filter>AISystem\AIObject</Filter>
     </ClInclude>
     <ClInclude Include="AIPlayer.h">
-      <Filter>Header Files</Filter>
+      <Filter>AISystem\AIObject</Filter>
     </ClInclude>
     <ClInclude Include="AIVehicle.h">
-      <Filter>Header Files</Filter>
+      <Filter>AISystem\AIObject</Filter>
     </ClInclude>
-    <ClInclude Include="BuildingIDManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CAISystem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CryAISystem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CTriangulator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Formation.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GoalOp.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GoalPipe.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Graph.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Heuristic.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="AIAttribute.h">
+      <Filter>AISystem\AIObject</Filter>
     </ClInclude>
     <ClInclude Include="PipeUser.h">
-      <Filter>Header Files</Filter>
+      <Filter>AISystem\PipeUser</Filter>
     </ClInclude>
-    <ClInclude Include="pointer_container.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="AIAutoBalance.h">
+      <Filter>AISystem\AutoBalance</Filter>
+    </ClInclude>
+    <ClInclude Include="GoalOp.h">
+      <Filter>AISystem\Goals</Filter>
+    </ClInclude>
+    <ClInclude Include="GoalPipe.h">
+      <Filter>AISystem\Goals</Filter>
     </ClInclude>
     <ClInclude Include="Puppet.h">
-      <Filter>Header Files</Filter>
+      <Filter>AISystem\PipeUser</Filter>
     </ClInclude>
-    <ClInclude Include="StdAfx.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Graph.h">
+      <Filter>AISystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Formation.h">
+      <Filter>AISystem</Filter>
+    </ClInclude>
+    <ClInclude Include="CTriangulator.h">
+      <Filter>AISystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Heuristic.h">
+      <Filter>AISystem</Filter>
+    </ClInclude>
+    <ClInclude Include="BuildingIDManager.h">
+      <Filter>AISystem</Filter>
+    </ClInclude>
+    <ClInclude Include="AISystemCVars.h">
+      <Filter>AISystem</Filter>
+    </ClInclude>
+    <ClInclude Include="StdAfx.h" />
+    <ClInclude Include="pointer_container.h">
+      <Filter>AISystem</Filter>
     </ClInclude>
     <ClInclude Include="VertexList.h">
-      <Filter>Header Files</Filter>
+      <Filter>AISystem</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="ReadMe.txt" />
+    <ClInclude Include="DllMain.h" />
   </ItemGroup>
 </Project>

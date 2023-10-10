@@ -51,7 +51,7 @@ protected:
 
 public:
 
-	pointer_container(PtrClass *initial_content=0)
+	pointer_container(PtrClass *initial_content=nullptr)
 	{
 		init(initial_content);
 	}
@@ -59,7 +59,7 @@ public:
 	// copy constructor
 	pointer_container(const pointer_container &copy)
 	{
-		init(0);
+		init(nullptr);
 		operator=(copy);
 	}
 

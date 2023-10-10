@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include <crysizer.h>
-#include "CAISystem.h"
+#include "AISystem.h"
 #include "Puppet.h"
 #include "AIVehicle.h"
 #include "AIPlayer.h"
@@ -118,7 +118,7 @@ void CAISystem::GetMemoryStatistics(ICrySizer *pSizer)
 	for(DesignerPathMap::iterator itr=m_mapDesignerPaths.begin(); itr!=m_mapDesignerPaths.end(); itr++)
 	{
 		size += (itr->first).capacity();
-		size += (itr->second).size()*sizeof(Vec3d);
+		size += (itr->second).size()*sizeof(Vec3);
 	}
 	pSizer->AddObject( &m_mapDesignerPaths, size);
 
@@ -126,7 +126,7 @@ void CAISystem::GetMemoryStatistics(ICrySizer *pSizer)
 	for(DesignerPathMap::iterator itr=m_mapForbiddenAreas.begin(); itr!=m_mapForbiddenAreas.end(); itr++)
 	{
 		size += (itr->first).capacity();
-		size += (itr->second).size()*sizeof(Vec3d);
+		size += (itr->second).size()*sizeof(Vec3);
 	}
 	pSizer->AddObject( &m_mapForbiddenAreas, size);
 

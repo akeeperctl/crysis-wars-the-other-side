@@ -1,16 +1,19 @@
 #ifndef _CAISYSTEM_H_
 #define _CAISYSTEM_H_
 
-#include <IAISystem.h>
+#include <map>
+
+#include "buildingidmanager.h"
 #include "CTriangulator.h"
 #include "Formation.h"
 #include "Graph.h"
-#include <map>
-#include <string>
-#include "buildingidmanager.h"
+#include "IAgent.h"
+#include "IAISystem.h"
 #include "vertexlist.h"
 
-
+// TheOtherSide
+#include "AISystemCVars.h"
+// ~TheOtherSide
 
 
 class CGraph;
@@ -30,7 +33,7 @@ class CAIAutoBalance;
 struct IAgentProxy;
 struct IEntity;
 class CGoalPipe;
-class IPhysicalEntity;
+struct IPhysicalEntity;
 
 
 const float cm_epsilon = 0.01f;
@@ -49,8 +52,8 @@ typedef struct BeaconStruct
 
 	BeaconStruct() 
 	{
-		pBeacon = 0;
-		pOwner = 0;
+		pBeacon = nullptr;
+		pOwner = nullptr;
 	}
 } BeaconStruct;
 
@@ -77,7 +80,7 @@ typedef std::map<string,float> TimingMap;
 #define AI_THINKINTERVAL 0.1f
 #define AISYSTEM_PUPPETRESPAWNTIME 2.f
 
-typedef struct SpecialArea
+struct SpecialArea
 {
 	ListPositions	lstPolygon;
 	float fMinZ,fMaxZ;
@@ -85,18 +88,18 @@ typedef struct SpecialArea
 	int	nBuildingID;
 
 	SpecialArea()
+		: nBuildingID(0)
 	{
 		fMinZ = 9999.f;
 		fMaxZ = -9999.f;
 		fHeight = 0;
 	}
-
-} SpecialArea;
+};
 
 typedef std::map<string, SpecialArea> SpecialAreaMap;
 
 
-typedef struct PathFindRequest
+struct PathFindRequest
 {
 	GraphNode *pStart;
 	GraphNode *pEnd;
@@ -107,13 +110,13 @@ typedef struct PathFindRequest
 	unsigned int	m_nSelectedHeuristic;
 
 	PathFindRequest()
+		: bSuccess(false)
 	{
 		m_nSelectedHeuristic = AIHEURISTIC_STANDARD;
-		pStart = pEnd = 0; 
-		pRequester = 0;
+		pStart = pEnd = nullptr;
+		pRequester = nullptr;
 	}
-
-} PathFindRequest;
+};
 
 typedef std::list<PathFindRequest *> PathQueue;
 struct IVisArea;
@@ -217,17 +220,17 @@ class CAISystem : public IAISystem
 
 public:
 	
-	void SupressSoundEvent(const Vec3 &pos,float &fAffectedRadius);
-	void SoundEvent(int soundid, const Vec3 &pos,float fRadius, float fThreat, float fInterest,IAIObject *pObject);
-	void RemoveObject(IAIObject *pObject);
+	void        SupressSoundEvent(const Vec3 & pos,float & fAffectedRadius);
+	void        SoundEvent(int soundid, const Vec3 & pos,float fRadius, float fThreat, float fInterest,IAIObject * pObject);
+	void        RemoveObject(IAIObject * pObject) override;
 	CAIObject * CreateDummyObject();
-	void RemoveDummyObject(CAIObject *pObject);
-	CAIObject * GetAIObjectByName(const char *pName);
-	void TracePath(const Vec3 &start, const Vec3 &end, CAIObject *pRequester);
-	IAIObject * GetAIObjectByName(unsigned short type, const char *pName);
+	void        RemoveDummyObject(CAIObject * pObject);
+	CAIObject * GetAIObjectByName(const char * pName);
+	void        TracePath(const Vec3 & start, const Vec3 & end, CAIObject * pRequester);
+	IAIObject * GetAIObjectByName(unsigned short type, const char * pName);
 	CAIObject * GetPlayer();
-	IAIObject * CreateAIObject(unsigned short type, void *pAssociation);
-	int RayOcclusionPlaneIntersection(const Vec3d &start,const Vec3d &end);
+	IAIObject * CreateAIObject(unsigned short type, void * pAssociation);
+	int         RayOcclusionPlaneIntersection(const Vec3 & start,const Vec3 & end);
 	
 
 	ISystem *m_pSystem;
@@ -249,28 +252,29 @@ public:
 
 	CVertexList m_VertexList;
 
-	CGraph * GetGraph();
-	IPhysicalWorld * GetPhysicalWorld();
+	CGraph *         GetGraph() const;
+	IPhysicalWorld * GetPhysicalWorld() const;
 
 		
 	CAISystem(ISystem *pSystem);
-	~CAISystem();
+	~CAISystem() override;
 
-	void Release() {delete this;}
+	void Release() override
+	{delete this;}
 
-	IGoalPipe *CreateGoalPipe(const char *pName);
+	IGoalPipe *CreateGoalPipe(const char *pName) override;
 
-	IGoalPipe *OpenGoalPipe(const char *pName);
+	IGoalPipe *OpenGoalPipe(const char *pName) override;
 
 	
 	bool Init(ISystem *pSystem,const char *szLevel, const char *szMission);
 	void Update();
-	void ShutDown();
+	void ShutDown() override;
 
-	void DebugDraw(IRenderer *pRenderer);
-	void DebugDrawAlter(IRenderer *pRenderer);
-	void DebugDrawVehicle(IRenderer *pRenderer);
-	void DebugDrawDirections(IRenderer *pRenderer);
+	void DebugDraw(IRenderer * pRenderer) override;
+	void DebugDrawAlter(IRenderer * pRenderer);
+	void DebugDrawVehicle(IRenderer * pRenderer);
+	void DebugDrawDirections(IRenderer * pRenderer);
 	// for inter dll use
 
 	float f1,f2,f3,f4,f5,f6,f7,f8;
@@ -326,7 +330,7 @@ protected:
 	void	PathFind(const PathFindRequest &request);
 
 	// tells if the sound is hearable by the puppet
-	bool	IsSoundHearable(CPuppet *pPuppet,const Vec3 &vSoundPos,float fSoundRadius);
+	bool IsSoundHearable(const CPuppet * pPuppet,const Vec3 & vSoundPos,float fSoundRadius);
 
 public:
 	// Sends a signal using the desired filter to the desired agents
@@ -346,35 +350,35 @@ public:
 	// adds a point to a designer path specified by the name.. If path non existant, one is created 
 	void AddPointToPath(const Vec3 & pos, const char * szPathName, EnumAreaType aAreaType = AREATYPE_PATH);
 	// gets how many agents are in a specified group
-	int GetGroupCount(int nGroupID);
+	int GetGroupCount(int nGroupID) const;
 	// removes specified object from group
-	void RemoveFromGroup(int nGroupID, CAIObject * pObject);
+	void RemoveFromGroup(int nGroupID, const CAIObject * pObject);
 	// parses ai information into file
 	void ParseIntoFile(const char * szFileName, CGraph *pGraph, bool bForbidden = false);
-	CGraph * GetHideGraph(void);
+	CGraph * GetHideGraph(void) override;
 	// // loads the triangulation for this level and mission
 	void LoadTriangulation(const char * szLevel, const char * szMission);
 	// deletes designer created path
-	void DeletePath(const char * szName);
-	void ReleaseFormation(int nGroupID);
-	void FreeFormationPoint(int nGroupID, CAIObject * pLastHolder);
-	bool NoFriendsInWay(CPuppet * pShooter, const Vec3 & vDirection);
-	IGraph * GetNodeGraph(void);
-	void FlushSystem(void);
-	float GetPerceptionValue(IAIObject * pObject);
-	int GetAITickCount(void);
+	void     DeletePath(const char * szName);
+	void     ReleaseFormation(int nGroupID);
+	void     FreeFormationPoint(int nGroupID, CAIObject * pLastHolder);
+	bool     NoFriendsInWay(CPuppet * pShooter, const Vec3 & vDirection);
+	IGraph * GetNodeGraph(void) override;
+	void     FlushSystem(void) override;
+	float    GetPerceptionValue(IAIObject * pObject) const;
+	int      GetAITickCount(void) override;
 protected:
 	unsigned int m_nNumPuppets;
 	IPhysicalEntity *m_pTheSkip;	// phys entity which will be skipped on raytracing when determinig visibility
 
 public:
-	void SendAnonimousSignal(int nSignalID, const char * szText, const Vec3 & vPos, float fRadius, IAIObject *pObject);
-	void ReleaseFormationPoint(CAIObject * pReserved);
-	IAIObject * GetNearestObjectOfType(const Vec3 &pos, unsigned int nTypeID,float fRadius=0, IAIObject* pSkip=NULL );
-	void UpdateBeacon(unsigned short nGroupID, const Vec3 & vPos, CAIObject *pOwner = 0);
-	CAIObject * GetBeacon(unsigned short nGroupID);
-	void CancelAnyPathsFor(CPuppet * pRequester);
-	void SetAssesmentMultiplier(unsigned short type, float fMultiplier);
+	void        SendAnonimousSignal(int nSignalID, const char * szText, const Vec3 & vPos, float fRadius, IAIObject * pObject);
+	void        ReleaseFormationPoint(CAIObject * pReserved) const;
+	IAIObject * GetNearestObjectOfType(const Vec3 & pos, unsigned int nTypeID,float fRadius=0, const IAIObject* pSkip= nullptr);
+	void        UpdateBeacon(unsigned short nGroupID, const Vec3 & vPos, CAIObject * pOwner = nullptr);
+	CAIObject * GetBeacon(unsigned short nGroupID) override;
+	void        CancelAnyPathsFor(const CPuppet * pRequester);
+	void        SetAssesmentMultiplier(unsigned short type, float fMultiplier) override;
 	IAIObject * GetNearestToObject(IAIObject * pRef, unsigned short nType, float fRadius);
 protected:
 	void AddForbiddenAreas(void);
@@ -385,52 +389,57 @@ public:
 	void CalculatePassRadiuses();
 	void CreateNewTriangle(const ObstacleData & od1, const ObstacleData & od2, const ObstacleData & od3, bool tag=false);
 
-	void GetMemoryStatistics(ICrySizer *pSizer);
+	void GetMemoryStatistics(ICrySizer *pSizer) override;
 
-	bool DEBUG_LISTCORRUPT(ListNodes & lstNodes);
-	bool IsForbidden(const Vec3 & start, const Vec3 & end);
-	bool CheckInside(const Vec3 & pos, int & nBuildingID, IVisArea *&pArea, bool bSkipSpecialAreas = false);
-	bool PointInsidePolygon(ListPositions & lstPolygon, const Vec3 & pos);
+	bool  DEBUG_LISTCORRUPT(ListNodes & lstNodes);
+	bool  IsForbidden(const Vec3 & start, const Vec3 & end) const;
+	bool  CheckInside(const Vec3 & pos, int & nBuildingID, IVisArea *& pArea, bool bSkipSpecialAreas = false);
+	bool  PointInsidePolygon(ListPositions & lstPolygon, const Vec3 & pos) const;
 	float PointLineDistance(const Vec3 & vLineStart, const Vec3 & vLineEnd, const Vec3 & vPoint);
-	bool PointsOnLine(const Vec3 & vLineStart, const Vec3 & vLineEnd, const Vec3 & vPoint1, const Vec3 & vPoint2);
-	bool PointOnLine(const Vec3 & vLineStart, const Vec3 & vLineEnd, const Vec3 & vPoint, float fPrecision=0);
-	bool SegmentsIntersect(const Vec3 & vSegmentAStart, const Vec3 & vSegmentADir, const Vec3 & vSegmentBStart, const Vec3 & vSegmentBDir, float & fCutA, float & fCutB);
-	bool TriangleLineIntersection(GraphNode * pNode, const Vec3 & vStart, const Vec3 & vEnd);
-	bool SegmentInTriangle(GraphNode * pNode, const Vec3 & vStart, const Vec3 & vEnd);
-	bool CreatePath(const char * szName,EnumAreaType eAreaType, float fHeight = 0);
-	bool BehindForbidden(const Vec3 & vStart, const Vec3 & vEnd,string &forb);
-	bool NoFriendInVicinity(const Vec3 & vPos, float fRadius , CPipeUser * pChecker);
-	bool NoSameHidingPlace(CPipeUser * pHider, const Vec3 & vPos);
-	bool CrowdControl(CPipeUser * pMain, const Vec3 &pos);
+	bool  PointsOnLine(const Vec3 & vLineStart, const Vec3 & vLineEnd, const Vec3 & vPoint1, const Vec3 & vPoint2) const;
+	bool  PointOnLine(const Vec3 & vLineStart, const Vec3 & vLineEnd, const Vec3 & vPoint, float fPrecision=0) const;
+	bool  SegmentsIntersect(const Vec3 & vSegmentAStart, const Vec3 & vSegmentADir, const Vec3 & vSegmentBStart, const Vec3 & vSegmentBDir, float & fCutA, float & fCutB) const;
+	bool  TriangleLineIntersection(GraphNode * pNode, const Vec3 & vStart, const Vec3 & vEnd);
+	bool  SegmentInTriangle(GraphNode * pNode, const Vec3 & vStart, const Vec3 & vEnd);
+	bool  CreatePath(const char * szName,EnumAreaType eAreaType, float fHeight = 0);
+	bool  BehindForbidden(const Vec3 & vStart, const Vec3 & vEnd,string & forb);
+	bool  NoFriendInVicinity(const Vec3 & vPos, float fRadius , CPipeUser * pChecker);
+	bool  NoSameHidingPlace(CPipeUser * pHider, const Vec3 & vPos);
+	bool  CrowdControl(CPipeUser * pMain, const Vec3 & pos);
 
-	void SingleDryUpdate(CPuppet * pObject);
+	void SingleDryUpdate(CPuppet * pObject) const;
 	bool SingleFullUpdate(CPuppet * pPuppet);
 	void CheckVisibility(CPuppet * pPuppet, unsigned short TypeToCheck);
-	Vec3 IntersectPolygon(const Vec3 & start, const Vec3 & end, ListPositions & lstPolygon);
+	Vec3 IntersectPolygon(const Vec3 & start, const Vec3 & end, ListPositions & lstPolygon) const;
 	bool BehindSpecialArea(const Vec3 & vStart, const Vec3 & vEnd, string & strSpecial);
 	bool IntersectsForbidden(const Vec3 & vStart, const Vec3 & vEnd, Vec3 & vClosestPoint);
 	bool IntersectsSpecialArea(const Vec3 & vStart, const Vec3 & vEnd, Vec3 & vClosestPoint);
 	bool ForbiddenAreasOverlap(void);
 
 
-	void AddTheCut( int vIdx1, int vIdx2 );
-	GraphNode* FindMarkNodeBy2Vertex( int vIdx1, int vIdx2, GraphNode* exclude );
-	void	CreatePossibleCutList( const Vec3 & vStart, const Vec3 & vEnd, ListNodes & lstNodes );
+	void       AddTheCut( int vIdx1, int vIdx2 );
+	GraphNode* FindMarkNodeBy2Vertex( int vIdx1, int vIdx2, const GraphNode* exclude );
+	void       CreatePossibleCutList( const Vec3 & vStart, const Vec3 & vEnd, ListNodes & lstNodes );
 
-	const ObstacleData GetObstacle(int nIndex);
+	const ObstacleData GetObstacle(int nIndex) override;
 	// it removes all references to this object from all objects of the specified type
 	void RemoveObjectFromAllOfType(int nType, CAIObject* pRemovedObject);
-	bool OnForbiddenEdge(const Vec3d & pos);
+	bool OnForbiddenEdge(const Vec3 & pos);
 
-	void SetTheSkip(IPhysicalEntity *pSkip) { m_pTheSkip=pSkip; }
-	IAutoBalance * GetAutoBalanceInterface(void);
-	int ApplyDifficulty(float fAccuracy, float fAggression, float fHealth);
-	bool ExitNodeImpossible(GraphNode * pNode, float fRadius);
-	void DrawPuppetAutobalanceValues(IRenderer * pRenderer);
-	void SetSpeciesThreatMultiplier(int nSpeciesID, float fMultiplier);
-	void DumpStateOf(IAIObject * pObject);
-	int GetNumberOfObjects(unsigned short type);
-	bool ThroughVehicle(const Vec3d & start, const Vec3d & end);
+	void           SetTheSkip(IPhysicalEntity * pSkip) { m_pTheSkip=pSkip; }
+	IAutoBalance * GetAutoBalanceInterface(void) override;
+	int            ApplyDifficulty(float fAccuracy, float fAggression, float fHealth);
+	bool           ExitNodeImpossible(GraphNode * pNode, float fRadius);
+	void           DrawPuppetAutobalanceValues(IRenderer * pRenderer);
+	void           SetSpeciesThreatMultiplier(int nSpeciesID, float fMultiplier) override;
+	void           DumpStateOf(IAIObject * pObject) override;
+	int            GetNumberOfObjects(unsigned short type) const;
+	bool           ThroughVehicle(const Vec3 & start, const Vec3 & end);
+
+	// TheOtherSide
+	SAISystemCVars m_CVars;
+	// TheOtherSide
+
 };
 
 #ifdef __MWERKS__

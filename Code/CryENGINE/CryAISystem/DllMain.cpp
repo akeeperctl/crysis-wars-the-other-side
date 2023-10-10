@@ -2,7 +2,7 @@
 //
 
 #include "stdafx.h"
-#include "cryaisystem.h"
+#include "DllMain.h"
 #include "caisystem.h"
 #include <ISystem.h>
 
@@ -12,12 +12,13 @@
 #define new DEBUG_NEW_NORMAL_CLIENTBLOCK( __FILE__, __LINE__) 
 #endif
 
-
-#ifndef _XBOX
-//#if !defined(LINUX)
-_ACCESS_POOL;
-//#endif//LINUX 
-#endif //_XBOX
+// TheOtherSide
+//#ifndef _XBOX
+////#if !defined(LINUX)
+//_ACCESS_POOL;
+////#endif//LINUX 
+//#endif //_XBOX
+// ~TheOtherSide
 
 CAISystem *g_pAISystem;
 
@@ -26,14 +27,17 @@ CAISystem *GetAISystem()
 	return g_pAISystem;
 }
 
+// TheOtherSide
+// Уже определен в ISystem
 //////////////////////////////////////////////////////////////////////////
 // Pointer to Global ISystem.
-static ISystem* gISystem = 0;
-ISystem* GetISystem()
-{
-	return gISystem;
-}
+//static ISystem* gISystem = nullptr;
+//ISystem* GetISystem()
+//{
+//	return gISystem;
+//}
 //////////////////////////////////////////////////////////////////////////
+// ~TheOtherSide
 
 #if !defined( _XBOX ) && !defined( PS2 ) && !defined( LINUX )
 BOOL APIENTRY DllMain( HANDLE hModule, 
@@ -52,7 +56,7 @@ CRYAIAPI IAISystem *CreateAISystem( ISystem *pSystem)
 IAISystem *CreateAISystem( ISystem *pSystem)
 #endif
 {
-	gISystem = pSystem;
+	//gISystem = pSystem;
 	return (g_pAISystem = new CAISystem(pSystem));
 }
 
@@ -64,7 +68,7 @@ void AIWarning( const char *format,... )
 	va_start(args, format);
 	vsprintf(buffer, format, args);
 	va_end(args);
-	GetAISystem()->m_pSystem->Warning( VALIDATOR_MODULE_AI,VALIDATOR_WARNING,VALIDATOR_FLAG_AI,0,"%s",buffer );
+	GetAISystem()->m_pSystem->Warning( VALIDATOR_MODULE_AI,VALIDATOR_WARNING,VALIDATOR_FLAG_AI,nullptr,"%s",buffer );
 }
 
 //! Reports an AI Warning to validator with ERROR severity.
@@ -75,7 +79,7 @@ void AIError( const char *format,... )
 	va_start(args, format);
 	vsprintf(buffer, format, args);
 	va_end(args);
-	GetAISystem()->m_pSystem->Warning( VALIDATOR_MODULE_AI,VALIDATOR_ERROR,VALIDATOR_FLAG_AI,0,"%s",buffer );
+	GetAISystem()->m_pSystem->Warning( VALIDATOR_MODULE_AI,VALIDATOR_ERROR,VALIDATOR_FLAG_AI,nullptr,"%s",buffer );
 }
 //////////////////////////////////////////////////////////////////////////
 

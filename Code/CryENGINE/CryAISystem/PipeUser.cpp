@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "CAISystem.h"
+#include "AISystem.h"
 #include <ISystem.h>
 #include <IConsole.h>
 #include <ITimer.h>
@@ -12,7 +12,7 @@ CPipeUser::CPipeUser(void)
 {
 	m_bMovementSupressed = false;
 	m_bDirectionalNavigation = false;
-	m_pReservedNavPoint = 0;
+	m_pReservedNavPoint = nullptr;
 	m_AvoidingCrowd = false;
 	m_bHiding = false;
 	m_bStartTiming = false;
@@ -59,7 +59,7 @@ void CPipeUser::GetStateFromActiveGoals(SOBJECTSTATE &state)
 				{
 					m_vActiveGoals.clear();
 					GetAISystem()->FreeFormationPoint(m_Parameters.m_nGroup,this);
-					SetAttentionTarget(0);
+					SetAttentionTarget(nullptr);
 					m_bBlocked = false;
 					m_bUpdateInternal = true;
 					return;
@@ -144,7 +144,7 @@ void CPipeUser::SetLastOpResult(CAIObject * pObject)
 
 void CPipeUser::SetAttentionTarget(CAIObject *pTarget)
 {
-	if (pTarget==0)
+	if (pTarget==nullptr)
 	{
 		m_bHaveLiveTarget = false;
 		if (m_pAttentionTarget && m_bCanReceiveSignals) // if I had a target previously I want to reevaluate
@@ -153,7 +153,7 @@ void CPipeUser::SetAttentionTarget(CAIObject *pTarget)
 	else if (m_pAttentionTarget!=pTarget)
 		m_State.bReevaluate = true;
 
-	if(m_pAttentionTarget!=0 && m_pAttentionTarget->GetType()!=AIOBJECT_DUMMY 
+	if(m_pAttentionTarget!=nullptr && m_pAttentionTarget->GetType()!=AIOBJECT_DUMMY 
 		&& m_pAttentionTarget->GetType()!=200)	//FIXME  not to remember grenades - not good, needs change
 		m_pPrevAttentionTarget = m_pAttentionTarget;
 	m_pAttentionTarget = pTarget;
@@ -175,10 +175,10 @@ return;
 
 
 
-void CPipeUser::RequestPathTo(const Vec3d &pos)
+void CPipeUser::RequestPathTo(const Vec3 &pos)
 {
 	m_nPathDecision=PATHFINDER_STILLTRACING;
-	Vec3d myPos = m_vPosition;
+	Vec3 myPos = m_vPosition;
 	if (m_nObjectType == AIOBJECT_PUPPET)
 		myPos.z-=m_fEyeHeight;
 	GetAISystem()->TracePath(myPos,pos,this);
@@ -191,7 +191,7 @@ CGoalPipe *CPipeUser::GetGoalPipe(const char *name)
 	if (pPipe)
 		return pPipe;
 	else
-		return 0;
+		return nullptr;
 }
 
 void CPipeUser::RemoveActiveGoal(int nOrder)
@@ -211,7 +211,7 @@ void CPipeUser::RemoveActiveGoal(int nOrder)
 		m_vActiveGoals[nOrder] = m_vActiveGoals[size-1];
 
 	if (m_vActiveGoals.back().name == AIOP_TRACE)
-		m_pReservedNavPoint = 0;
+		m_pReservedNavPoint = nullptr;
 
 	m_vActiveGoals.back().pGoalOp->Reset(this);
 	m_vActiveGoals.pop_back();
@@ -236,7 +236,7 @@ bool CPipeUser::SelectPipe(int id, const char *name, IAIObject *pArgument)
 	}
 
 	
-	CGoalPipe *pPipe = 0;
+	CGoalPipe *pPipe = nullptr;
 	if (pPipe=GetAISystem()->IsGoalPipe(name))
 	{
 		pPipe->m_pArgument = (CAIObject*) pArgument;
@@ -247,7 +247,7 @@ bool CPipeUser::SelectPipe(int id, const char *name, IAIObject *pArgument)
 	else 
 		return false;
 	
-	m_pReservedNavPoint = 0;
+	m_pReservedNavPoint = nullptr;
 	m_bDirectionalNavigation = false;
 
 /*	if (m_pMyObstacle) 
@@ -331,7 +331,7 @@ bool CPipeUser::InsertSubPipe(int id, const char * name, IAIObject * pArgument)
 		return false;
 
 	// first lets find the goalpipe
-	CGoalPipe *pPipe = 0;
+	CGoalPipe *pPipe = nullptr;
 	if (pPipe=GetAISystem()->IsGoalPipe(name))
 	{
 		// now find the innermost pipe
@@ -404,7 +404,7 @@ void CPipeUser::ResetCurrentPipe()
 	if (m_pCurrentGoalPipe)
 	{
 		delete m_pCurrentGoalPipe;
-		m_pCurrentGoalPipe = 0;
+		m_pCurrentGoalPipe = nullptr;
 	}
 
 	m_bBlocked = false;
@@ -412,7 +412,7 @@ void CPipeUser::ResetCurrentPipe()
 	m_bLooseAttention = false;
 	if (m_pLooseAttentionTarget) 
 		m_pAISystem->RemoveDummyObject(m_pLooseAttentionTarget);
-	m_pLooseAttentionTarget  = 0;
+	m_pLooseAttentionTarget  = nullptr;
 	m_State.left = m_State.right = false;
 }
 

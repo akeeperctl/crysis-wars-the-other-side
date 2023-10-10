@@ -2,11 +2,9 @@
 #include "aivehicle.h"
 
 //#include <algorithm>
-#include "GoalOp.h"
 //#include "Puppet.h"
 //#include "Graph.h"
 #include <Cry_Math.h>
-#include <Cry_Camera.h>
 
 #include <IPhysics.h>
 #include <ISystem.h>
@@ -22,26 +20,26 @@ CAIVehicle::CAIVehicle(void)
 	Reset();
 
 	m_bLastHideResult = false;
-	m_vLastHidePoint = Vec3d(0,0,0);
+	m_vLastHidePoint = Vec3(0,0,0);
 	m_bHaveLiveTarget = false;
-	m_pCurrentGoalPipe = 0;
-	m_pAttentionTarget = 0;
-	m_pPrevAttentionTarget = 0;
+	m_pCurrentGoalPipe = nullptr;
+	m_pAttentionTarget = nullptr;
+	m_pPrevAttentionTarget = nullptr;
 	m_bBlocked = false;
 	m_bAllowedToFire = false;
 	m_bEnabled = true;
 	m_bUpdateInternal = true;
-	m_pLastOpResult = 0;
+	m_pLastOpResult = nullptr;
 	m_vDEBUG_VECTOR(0,0,0);
 	m_bDEBUG_Unstuck=false;
 	m_bLooseAttention = false;
-	m_pLooseAttentionTarget = 0;
+	m_pLooseAttentionTarget = nullptr;
 	m_vActiveGoals.reserve(20);
 	m_bSmartFire = true;
 
-	m_Gunner = 0;
+	m_Gunner = nullptr;
 
-	m_Threat = 0;
+	m_Threat = nullptr;
 	m_fPassRadius = 3.0f;//4;
 
 }
@@ -206,7 +204,7 @@ void CAIVehicle::Event(unsigned short eType, SAIEVENT *pEvent)
 //
 //---------------------------------------------------------------------------------------------------------
 // Steers the hevicle outdoors and makes it avoid the immediate obstacles
-void CAIVehicle::Steer(const Vec3d & vTargetPos, GraphNode * pNode)
+void CAIVehicle::Steer(const Vec3 & vTargetPos, GraphNode * pNode)
 {
 float	frameTime = m_pAISystem->m_pSystem->GetITimer()->GetFrameTime();
 float	steerAmmount = .25f;
@@ -247,7 +245,7 @@ float	curVelocity;
 
 	if (pNode->nBuildingID!=-1) 
 	{
-//		Vec3d targetPos = (*m_lstPath.begin());
+//		Vec3 targetPos = (*m_lstPath.begin());
 		m_State.vMoveDir = m_State.vTargetPos - GetPos();
 
 		if(!m_lstPath.empty())
@@ -257,10 +255,10 @@ float	curVelocity;
 			if(dist2target<12.0f)
 			{
 
-			Vec3d	curSeg = m_State.vMoveDir;
-			Vec3d nextSeg = (*m_lstPath.begin()) - m_State.vTargetPos;
-			Vec3d vAngles = GetAngles();
-			Vec3d curFwd = Vec3d(0, -1, 0);
+			Vec3	curSeg = m_State.vMoveDir;
+			Vec3 nextSeg = (*m_lstPath.begin()) - m_State.vTargetPos;
+			Vec3 vAngles = GetAngles();
+			Vec3 curFwd = Vec3(0, -1, 0);
 			Matrix44 mat;
 				mat.SetIdentity();
 				mat=Matrix44::CreateRotationZYX(-gf_DEGTORAD*vAngles)*mat; //NOTE: angles in radians and negated 
@@ -303,17 +301,17 @@ float	curVelocity;
 	ObstacleIndexVector::iterator vi;
 
 	float maxlength = 2000;
-	Vec3d closest;
-	Vec3d curr_dir = m_State.vMoveDir;
+	Vec3 closest;
+	Vec3 curr_dir = m_State.vMoveDir;
 	curr_dir = dSt.v;	// take real velocity
 	curr_dir.z=0.0f;
 	curr_dir.Normalize();
 
 	for (vi=pNode->vertex.begin(); vi!=pNode->vertex.end(); vi++)
 	{
-		Vec3d vtx = m_pAISystem->m_VertexList.GetVertex((*vi)).vPos;
+		Vec3 vtx = m_pAISystem->m_VertexList.GetVertex((*vi)).vPos;
 		vtx.z = m_vPosition.z;
-		Vec3d guypos = vtx-m_vPosition;
+		Vec3 guypos = vtx-m_vPosition;
 		float poslength = guypos.GetLength();
 		guypos.Normalize();
 
@@ -345,14 +343,14 @@ float	curVelocity;
 			// only influence movement if puppet on any kind of collision course
 //			Matrix44 m;
 //			m.SetIdentity();
-			Vec3d correction;// = m.TransformPointOLD(guypos);
+			Vec3 correction;// = m.TransformPointOLD(guypos);
 			if (zcross > 0) 
-				//m.RotateMatrix_fix(Vec3d(0,0,90));
-//		    m=GetRotationZYX44(-gf_DEGTORAD*Vec3d(0,0,+90) )*m; //NOTE: anges in radians and negated 
+				//m.RotateMatrix_fix(Vec3(0,0,90));
+//		    m=GetRotationZYX44(-gf_DEGTORAD*Vec3(0,0,+90) )*m; //NOTE: anges in radians and negated 
 				correction.Set(-guypos.y, guypos.x, 0.0f);
 			else
-				//m.RotateMatrix_fix(Vec3d(0,0,-90));
-//			  m=GetRotationZYX44(-gf_DEGTORAD*Vec3d(0,0,-90) )*m; //NOTE: anges in radians and negated 
+				//m.RotateMatrix_fix(Vec3(0,0,-90));
+//			  m=GetRotationZYX44(-gf_DEGTORAD*Vec3(0,0,-90) )*m; //NOTE: anges in radians and negated 
 				correction.Set(guypos.y, -guypos.x, 0.0f);
 						
 			//m_vDEBUG_VECTOR = vtx;
@@ -431,7 +429,7 @@ bool CAIVehicle::CanBeConvertedTo(unsigned short type, void **pConverted)
 		return true;
 	}
 
-	*pConverted = 0;
+	*pConverted = nullptr;
 	return false;
 }
 
@@ -485,8 +483,8 @@ void CAIVehicle::UpdateVehicleInternalState()
 void CAIVehicle::Navigate(CAIObject *pTarget)
 {
 CAIObject *pNavigationTarget = pTarget;;
-CAIObject *pLookTarget = 0;
-Vec3d		gunnerAngles(0,0,0);
+CAIObject *pLookTarget = nullptr;
+Vec3		gunnerAngles(0,0,0);
 
 
 //	if(!m_bUpdateInternal)
@@ -499,16 +497,16 @@ Vec3d		gunnerAngles(0,0,0);
 			return;
 	}
 
- 	Vec3d vDir, vAngles, vTargetPos;
+ 	Vec3 vDir, vAngles, vTargetPos;
 
 	if (pNavigationTarget)
 	{
 		Matrix44 mat;
 		mat.SetIdentity();
-		Vec3d fwd(0.f,-1.f,0.f);
+		Vec3 fwd(0.f,-1.f,0.f);
 		// follow this attention target
 		vAngles = GetAngles();
-		Vec3d puppetAngles = vAngles;
+		Vec3 puppetAngles = vAngles;
 		vTargetPos = pNavigationTarget->GetPos();
 //		m_State.vTargetPos = vTargetPos;
 		vDir = m_State.vTargetPos - m_vPosition;
@@ -525,7 +523,7 @@ Vec3d		gunnerAngles(0,0,0);
 			return;
 	}
 
-	CAIObject *pGunnerTarget = 0;
+	CAIObject *pGunnerTarget = nullptr;
 //	if( 0 )
 //	if( m_Gunner && m_State.bodystate!=1 )
 //	if( m_Gunner && m_State.fStickDist > 1.0f )	// if has gunner and in attack mode - trun gunner side to target
@@ -537,12 +535,12 @@ Vec3d		gunnerAngles(0,0,0);
 		if(pGunnerTarget && pGunnerTarget->GetType() == AIOBJECT_PLAYER )
 		{
 			pLookTarget = pGunnerTarget;
-			gunnerAngles = Vec3d(0,0,50);
+			gunnerAngles = Vec3(0,0,50);
 		}
 		else
 		{
 			pLookTarget = pTarget;
-			gunnerAngles = Vec3d(0,0,40);
+			gunnerAngles = Vec3(0,0,40);
 		}
 	}
 	else
@@ -552,10 +550,10 @@ Vec3d		gunnerAngles(0,0,0);
 	{
 		Matrix44 mat;
 		mat.SetIdentity();
-		Vec3d fwd(0.f,-1.f,0.f);
+		Vec3 fwd(0.f,-1.f,0.f);
 		// follow this attention target
 		vAngles = GetAngles() + gunnerAngles;
-		Vec3d puppetAngles = vAngles;
+		Vec3 puppetAngles = vAngles;
 		vTargetPos = pLookTarget->GetPos();
 		vDir = vTargetPos - m_vPosition;
 //		float distance = vDir.GetLength();
@@ -602,7 +600,7 @@ Vec3d		gunnerAngles(0,0,0);
 		if ( (TargetType == AIOBJECT_PLAYER) || (TargetType == AIOBJECT_PUPPET) ) 
 		//if ((TargetType != AIOBJECT_DUMMY) && (TargetType != AIOBJECT_HIDEPOINT) && (TargetType != AIOBJECT_WAYPOINT))
 		{
-			Vec3d vertCorrection = vDir;
+			Vec3 vertCorrection = vDir;
 		//	mat.Identity();
 			//mat.RotateMatrix(vertCorrection);
 			//vertCorrection = mat.TransformPoint(fwd);
@@ -633,7 +631,7 @@ void CAIVehicle::Bind(IAIObject* bind)
 //---------------------------------------------------------------------------------------------------------
 void CAIVehicle::Unbind( )
 {
-	m_Gunner = 0;
+	m_Gunner = nullptr;
 }
 
 
@@ -664,10 +662,10 @@ void CAIVehicle::OnObjectRemoved(CAIObject *pObject)
 	CPuppet::OnObjectRemoved( pObject );
 
 	if( pObject == m_Gunner )
-		m_Gunner = 0;
+		m_Gunner = nullptr;
 
 	if( pObject == m_Threat )
-		m_Threat = 0;
+		m_Threat = nullptr;
 
 }
 
@@ -684,11 +682,11 @@ void CAIVehicle::UpdateThread()
 	if(!m_Threat)
 		return;
 
-	Vec3d correction = m_pProxy->UpdateThreat( m_Threat->GetAssociation() );
+	Vec3 correction = m_pProxy->UpdateThreat( m_Threat->GetAssociation() );
 
 	if( correction.x==0 && correction.y==0 && correction.z==0 )	// no thread
 	{
-		m_Threat = NULL;
+		m_Threat = nullptr;
 		return ; // its behind him 
 	}
 
@@ -738,7 +736,7 @@ void CAIVehicle::AlertPuppets(void)
 			break;
 	
 		CAIObject *pObject = pi->second;
-		Vec3d puppetDir = pObject->GetPos();
+		Vec3 puppetDir = pObject->GetPos();
 
 		if(pObject->GetProxy() && !pObject->GetProxy()->CheckStatus( AIPROXYSTATUS_INVEHICLE ))
 		{

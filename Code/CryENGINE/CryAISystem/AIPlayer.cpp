@@ -11,7 +11,7 @@ CAIPlayer::~CAIPlayer(void)
 	if (m_pProxy)
 	{
 		m_pProxy->Release();
-		m_pProxy = 0;
+		m_pProxy = nullptr;
 	}
 }
 
@@ -52,7 +52,7 @@ float CAIPlayer::GetPerception(void)
 	{
 		if (m_fLastPerceptionSnapshot < 0.01f)
 		{
-			SetSignal(1,"PERCEPTION_RESET",0);
+			SetSignal(1,"PERCEPTION_RESET",nullptr);
 			m_bSendPerceptionResetNotification = false;
 			m_pProxy->Update(&m_State);
 		}

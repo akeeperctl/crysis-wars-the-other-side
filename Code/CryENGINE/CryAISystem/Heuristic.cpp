@@ -50,7 +50,7 @@ float	estimation = 0.0f;
 
 	// calculate minimum distance from all tagged neighboors
 	float mindist = 1000.f;	// an arbitrary large value
-	GraphNode *pPrevious = 0;
+	GraphNode *pPrevious = nullptr;
 	VectorOfLinks::iterator vli;
 	for (vli=pNode->link.begin();vli!=pNode->link.end();vli++)
 	{
@@ -77,9 +77,9 @@ float	estimation = 0.0f;
 float CVehicleHeuristic::Estimate(GraphNode *pNode, CGraph* graph)
 {
 float	estimation = 0.0f;
-Vec3d candidateDir;
-Vec3d curDir;
-GraphNode *pPrev = 0;
+Vec3 candidateDir;
+Vec3 curDir;
+GraphNode *pPrev = nullptr;
 float maxheur=pNode->fHeuristic;
 //VectorOfLinks::iterator vi;
 bool	firstStep = false;
@@ -116,8 +116,8 @@ ListNodes::iterator prevPrev = prev;
 	}
 	else
 	{
-		Vec3d vAngles = graph->GetRequester()->GetAngles();
-		curDir = Vec3d(0, -1, 0);
+		Vec3 vAngles = graph->GetRequester()->GetAngles();
+		curDir = Vec3(0, -1, 0);
 		Matrix44 mat;
 		mat.SetIdentity();
 		mat=Matrix44::CreateRotationZYX(-gf_DEGTORAD*vAngles)*mat; //NOTE: angles in radians and negated

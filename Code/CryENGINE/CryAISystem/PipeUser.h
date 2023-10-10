@@ -29,13 +29,13 @@ protected:
 
 	CGoalPipe		*m_pCurrentGoalPipe;
 
-	Vec3d				m_vLastHidePoint;
+	Vec3				m_vLastHidePoint;
 	
 	
 
 public:
 	CPipeUser(void);
-	virtual ~CPipeUser(void);
+	~CPipeUser(void) override;
 
 	void GetStateFromActiveGoals(SOBJECTSTATE &state);
 	CGoalPipe *GetGoalPipe(const char *name);
@@ -44,22 +44,22 @@ public:
 	void RestoreAttentionTarget( );
 	void SetLastOpResult(CAIObject * pObject);
 
-	virtual void Steer(const Vec3d & vTargetPos, GraphNode * pNode) {}
-	virtual Vec3d FindHidePoint(float fSearchDistance, int nMethod, bool bIndoor = false, bool bSameOk=false) {return m_vPosition;}
-	virtual void RequestPathTo(const Vec3d &pos);
+	virtual void Steer(const Vec3 & vTargetPos, GraphNode * pNode) {}
+	virtual Vec3 FindHidePoint(float fSearchDistance, int nMethod, bool bIndoor = false, bool bSameOk=false) {return m_vPosition;}
+	virtual void RequestPathTo(const Vec3 &pos);
 	virtual void Devalue(CAIObject *pObject,bool bDevaluePuppets) {}
 	virtual void Forget(CAIObject *pDummyObject) {}
 	virtual void Navigate(CAIObject *pTarget) {}
 	virtual void CreateFormation(const char * szName) {}
 
-	CGoalPipe *GetCurrentGoalPipe() { return m_pCurrentGoalPipe;}
-	void ResetCurrentPipe();
-	void RegisterAttack(const char *name);
-	void RegisterRetreat(const char *name);
-	void RegisterWander(const char *name);
-	void RegisterIdle(const char *name);
-	bool SelectPipe(int id,const char *name, IAIObject *pArgument);
-	bool InsertSubPipe(int id, const char * name, IAIObject * pArgument);
+	CGoalPipe * GetCurrentGoalPipe() { return m_pCurrentGoalPipe;}
+	void        ResetCurrentPipe();
+	void        RegisterAttack(const char * name) override;
+	void        RegisterRetreat(const char * name) override;
+	void        RegisterWander(const char * name) override;
+	void        RegisterIdle(const char * name) override;
+	bool        SelectPipe(int id,const char * name, IAIObject * pArgument);
+	bool        InsertSubPipe(int id, const char * name, IAIObject * pArgument);
 
 	IAIObject *GetAttentionTarget(void) {	return m_pAttentionTarget; }
 
@@ -68,7 +68,7 @@ public:
 
 	// DEBUG MEMBERS
 	string m_sDEBUG_GOAL;
-	Vec3d m_vDEBUG_VECTOR;
+	Vec3 m_vDEBUG_VECTOR;
 	bool m_bDEBUG_Unstuck;
 	//-----------------------------------
 
@@ -96,13 +96,13 @@ public:
 	bool m_bUpdateInternal;
 
 	bool		m_bLastHideResult;
-	Vec3d		m_vLastHidePos;
+	Vec3		m_vLastHidePos;
 
 	int m_nPathDecision;
-	
 
-	virtual void Save(CStream & stm);
-	virtual void Load(CStream & stm);
+
+	void Save(CStream & stm) override;
+	void Load(CStream & stm) override;
 };
 
 #endif

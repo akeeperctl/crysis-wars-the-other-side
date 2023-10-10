@@ -3,7 +3,7 @@
 
 CAIAttribute::CAIAttribute(void)
 {
-	m_pPrincipalObject = 0;
+	m_pPrincipalObject = nullptr;
 }
 
 CAIAttribute::~CAIAttribute(void)
@@ -21,7 +21,7 @@ void CAIAttribute::Event(unsigned short eType, SAIEVENT *pEvent)
 void CAIAttribute::OnObjectRemoved(CAIObject *pObject)
 {
 	if (m_pPrincipalObject == pObject)
-		m_pPrincipalObject = 0;
+		m_pPrincipalObject = nullptr;
 }
 
 void CAIAttribute::Update()

@@ -405,7 +405,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\CryCommon;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>G:\Crysis Wars Extended\Code\CryEngine\CryCommon;G:\Crysis Wars Extended\Code\CryEngine\CryAction;.\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN64;_DEBUG;_WINDOWS;_USRDLL;CRYAISYSTEM_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -620,8 +620,8 @@
     <ClCompile Include="AIPlayer.cpp" />
     <ClCompile Include="AIVehicle.cpp" />
     <ClCompile Include="BuildingIDManager.cpp" />
-    <ClCompile Include="CAISystem.cpp" />
-    <ClCompile Include="CryAISystem.cpp" />
+    <ClCompile Include="AISystem.cpp" />
+    <ClCompile Include="DllMain.cpp" />
     <ClCompile Include="CTriangulator.cpp" />
     <ClCompile Include="Formation.cpp" />
     <ClCompile Include="GoalOp.cpp" />
@@ -629,7 +629,6 @@
     <ClCompile Include="Graph.cpp" />
     <ClCompile Include="GraphUtility.cpp" />
     <ClCompile Include="Heuristic.cpp" />
-    <ClCompile Include="IAgent.cpp" />
     <ClCompile Include="PipeUser.cpp" />
     <ClCompile Include="Puppet.cpp" />
     <ClCompile Include="StdAfx.cpp">
@@ -647,15 +646,15 @@
     <ClCompile Include="VertexList.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AgentParams.h" />
     <ClInclude Include="AIAttribute.h" />
     <ClInclude Include="AIAutoBalance.h" />
     <ClInclude Include="AIObject.h" />
     <ClInclude Include="AIPlayer.h" />
+    <ClInclude Include="AISystemCVars.h" />
     <ClInclude Include="AIVehicle.h" />
     <ClInclude Include="BuildingIDManager.h" />
-    <ClInclude Include="CAISystem.h" />
-    <ClInclude Include="CryAISystem.h" />
+    <ClInclude Include="AISystem.h" />
+    <ClInclude Include="DllMain.h" />
     <ClInclude Include="CTriangulator.h" />
     <ClInclude Include="Formation.h" />
     <ClInclude Include="GoalOp.h" />
@@ -667,9 +666,6 @@
     <ClInclude Include="Puppet.h" />
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="VertexList.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="ReadMe.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

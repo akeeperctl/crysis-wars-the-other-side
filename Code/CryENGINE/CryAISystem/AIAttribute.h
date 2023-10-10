@@ -11,17 +11,19 @@ class CAIAttribute : public CAIObject
 
 public:
 	CAIAttribute(void);
-	~CAIAttribute(void);
+	~CAIAttribute(void) override;
 
-	void ParseParameters( const AIObjectParameters &params);
-	void Update();
-	void Event(unsigned short eType, SAIEVENT *pEvent);
-	bool CanBeConvertedTo(unsigned short type, void **pConverted);
-	void OnObjectRemoved(CAIObject *pObject);
+	void        ParseParameters( const AIObjectParameters & params) override;
+	void        Update() override;
+	void        Event(unsigned short eType, SAIEVENT * pEvent) override;
+	bool        CanBeConvertedTo(unsigned short type, void ** pConverted) override;
+	void        OnObjectRemoved(CAIObject * pObject) override;
 	CAIObject * GetPrincipalObject(void);
 
-	void Bind(IAIObject* bind) { m_pPrincipalObject = (CAIObject*) bind; }
-	void Unbind() { m_pPrincipalObject = 0;	}
+	void Bind(IAIObject* bind) override
+	{ m_pPrincipalObject = (CAIObject*) bind; }
+	void Unbind() override
+	{ m_pPrincipalObject = nullptr;	}
 };
 
 #endif

@@ -11,8 +11,6 @@
 #include <ITimer.h>
 #include <IPhysics.h>
 #include <Cry_Math.h>
-#include <ILog.h>
-
 
 
 #include "PipeUser.h"
@@ -83,10 +81,10 @@ COPApproach::COPApproach(float distance, bool percent, bool useLastOpResalt)
 	m_bPercent = percent;
 	m_fInitialDistance = 0;
 	m_nTicks = 0;
-	m_pPathfindDirective = 0;
-	m_pTraceDirective = 0;
+	m_pPathfindDirective = nullptr;
+	m_pTraceDirective = nullptr;
 	m_fTime = 0.0f;
-	m_pTempTarget = 0;
+	m_pTempTarget = nullptr;
 	m_bUseLastOpResalt = useLastOpResalt;
 }
 
@@ -100,12 +98,12 @@ void COPApproach::Reset(CPipeUser *pOperand)
 	if (m_pPathfindDirective)
 		delete m_pPathfindDirective;
 
-	m_pPathfindDirective = 0;
+	m_pPathfindDirective = nullptr;
 
 	if (m_pTraceDirective) 
 		delete m_pTraceDirective;
 
-	m_pTraceDirective = 0;
+	m_pTraceDirective = nullptr;
 
 	m_fInitialDistance = 0;
 }
@@ -115,7 +113,7 @@ bool COPApproach::Execute(CPipeUser *pOperand)
 {
 	CAIObject *pTarget = pOperand->m_pAttentionTarget;
 	CAISystem *pSystem = GetAISystem();
-	Vec3d mypos,targetpos;
+	Vec3 mypos,targetpos;
  
 	if (!pTarget || m_bUseLastOpResalt) 
 	{
@@ -140,7 +138,7 @@ bool COPApproach::Execute(CPipeUser *pOperand)
 
 	mypos-=targetpos;
 
-	Vec3d	projectedDist = mypos;
+	Vec3	projectedDist = mypos;
 	projectedDist.z = 0;
 	float dist = projectedDist.GetLength();
 
@@ -281,9 +279,9 @@ bool COPApproach::Execute(CPipeUser *pOperand)
 								m_pTempTarget->SetPos(m_pTraceDirective->m_pNavTarget->GetPos());
 							}
 							delete m_pTraceDirective;
-							m_pTraceDirective = 0;
+							m_pTraceDirective = nullptr;
 							delete m_pPathfindDirective;
-							m_pPathfindDirective = 0;	
+							m_pPathfindDirective = nullptr;	
 
 							if (m_pTempTarget)
 							{
@@ -303,7 +301,7 @@ bool COPApproach::Execute(CPipeUser *pOperand)
 				if (m_pTempTarget)
 				{
 					GetAISystem()->RemoveDummyObject(m_pTempTarget);
-					m_pTempTarget = 0;
+					m_pTempTarget = nullptr;
 				}
 
 				bool bExact = false; //(pTarget->GetType()!=AIOBJECT_PUPPET) && (pTarget->GetType()!=AIOBJECT_PLAYER);
@@ -322,8 +320,8 @@ bool COPApproach::Execute(CPipeUser *pOperand)
 				if (pOperand->m_pAttentionTarget && (pOperand->m_pAttentionTarget->GetType()==AIOBJECT_PLAYER))
 				{
 						//2D-ize the check
-						Vec3d op_pos = pOperand->GetPos();
-						Vec3d tg_pos = pOperand->m_pAttentionTarget->GetPos();
+						Vec3 op_pos = pOperand->GetPos();
+						Vec3 tg_pos = pOperand->m_pAttentionTarget->GetPos();
 						op_pos.z = tg_pos.z;
 						if (GetLength(op_pos-tg_pos)>fDesiredDistance)
 						{
@@ -334,9 +332,9 @@ bool COPApproach::Execute(CPipeUser *pOperand)
 								m_pTempTarget->SetPos(pOperand->m_pAttentionTarget->GetPos());
 							}
 							delete m_pTraceDirective;
-							m_pTraceDirective = 0;
+							m_pTraceDirective = nullptr;
 							delete m_pPathfindDirective;
-							m_pPathfindDirective = 0;	
+							m_pPathfindDirective = nullptr;	
 
 							m_pPathfindDirective = new COPPathFind("",pTarget);
 							pOperand->m_nPathDecision = PATHFINDER_STILLTRACING;
@@ -405,7 +403,7 @@ bool COPApproach::Execute(CPipeUser *pOperand)
 	
 	CAIObject *pTarget = pOperand->m_pAttentionTarget;
 	CAISystem *pSystem = GetAISystem();
-	Vec3d mypos,targetpos;
+	Vec3 mypos,targetpos;
 
 
 
@@ -432,7 +430,7 @@ bool COPApproach::Execute(CPipeUser *pOperand)
 
 	mypos-=targetpos;
 
-	Vec3d	projectedDist = mypos;
+	Vec3	projectedDist = mypos;
 	projectedDist.z = 0;
 	float dist = projectedDist.GetLength();
 
@@ -492,7 +490,7 @@ bool COPApproach::Execute(CPipeUser *pOperand)
 			else
 			{
 				//pOperand->m_State.vMoveDir += (pThisNode->data.m_pos -pOperand->GetPos()).Normalized();
-				Vec3d normalized = targetpos -pOperand->GetPos();
+				Vec3 normalized = targetpos -pOperand->GetPos();
 				normalized.Normalize();
 				pOperand->m_State.vMoveDir +=  normalized;
 				pOperand->m_State.vMoveDir.Normalize();
@@ -557,8 +555,8 @@ bool COPBackoff::Execute(CPipeUser *pOperand)
 				return true;
 		}
 
-		Vec3d mypos = pOperand->GetPos();
-		Vec3d tgpos = pTarget->GetPos();
+		Vec3 mypos = pOperand->GetPos();
+		Vec3 tgpos = pTarget->GetPos();
 
 		if ( (mypos-tgpos).GetLength() >= m_fDistance )
 			return true;
@@ -575,13 +573,13 @@ bool COPBackoff::Execute(CPipeUser *pOperand)
 
 		if (!GetAISystem()->CheckInside(mypos,nBuildingId,pArea))
 		{
-			Vec3d vUpdPos;
+			Vec3 vUpdPos;
 			if (GetAISystem()->IntersectsForbidden(mypos,m_vSnapShot_of_Position,vUpdPos))
 				m_vSnapShot_of_Position = vUpdPos + GetNormalized(mypos-m_vSnapShot_of_Position);
 		}
 		else
 		{
-			Vec3d vUpdPos;
+			Vec3 vUpdPos;
 			if (GetAISystem()->IntersectsSpecialArea(mypos,m_vSnapShot_of_Position,vUpdPos))
 				m_vSnapShot_of_Position = vUpdPos + GetNormalized(mypos-m_vSnapShot_of_Position);
 		}
@@ -591,7 +589,7 @@ bool COPBackoff::Execute(CPipeUser *pOperand)
 	}
 //	else
 	{
-			Vec3d mypos,targetpos;
+			Vec3 mypos,targetpos;
 			mypos =	pOperand->GetPos();
 			targetpos = m_vSnapShot_of_Position;
 			targetpos.z = mypos.z;
@@ -736,7 +734,7 @@ bool COPStrafe::Execute(CPipeUser *pOperand)
 			m_bPositionSnapshotTaken = false;
 		}
 
-		Vec3d mypos = pOperand->GetPos();
+		Vec3 mypos = pOperand->GetPos();
 		
 		m_fRemainingDistance = (mypos-m_vTargetPos).GetLength();
 		if ( ((m_fLastRemainingDistance-m_fRemainingDistance) < 0.01f)
@@ -754,11 +752,11 @@ bool COPStrafe::Execute(CPipeUser *pOperand)
 	
 	{
 		
-		Vec3d mydir = pOperand->GetAngles();
-		Vec3d mypos = pOperand->GetPos();
+		Vec3 mydir = pOperand->GetAngles();
+		Vec3 mypos = pOperand->GetPos();
 		mydir = ConvertToRadAngles(mydir);
 		
-		Vec3d vStrafeDir;
+		Vec3 vStrafeDir;
 		if (m_fDistance>0)
 			vStrafeDir.Set(-mydir.y,mydir.x,mydir.z);
 		else
@@ -772,13 +770,13 @@ bool COPStrafe::Execute(CPipeUser *pOperand)
 
 		if (!GetAISystem()->CheckInside(mypos,nBuildingId,pArea))
 		{
-			Vec3d vUpdPos;
+			Vec3 vUpdPos;
 			if (GetAISystem()->IntersectsForbidden(mypos,mypos+m_fRemainingDistance*vStrafeDir,vUpdPos))
 				m_vTargetPos = vUpdPos - vStrafeDir;
 		}
 		else
 		{
-			Vec3d vUpdPos;
+			Vec3 vUpdPos;
 			if (GetAISystem()->IntersectsSpecialArea(mypos,mypos+m_fRemainingDistance*vStrafeDir,vUpdPos))
 				m_vTargetPos = vUpdPos - vStrafeDir;
 		}
@@ -864,16 +862,16 @@ bool COPJumpCmd::Execute(CPipeUser *pOperand)
 {
 	pOperand->m_State.jump = true;
 
-	Vec3d op_pos;
+	Vec3 op_pos;
 	if (pOperand->m_pLastOpResult)
 		op_pos = pOperand->m_pLastOpResult->GetPos();
 	else
 		op_pos = pOperand->m_vLastHidePos;
 
-	Vec3d vJump = op_pos - pOperand->GetPos();
+	Vec3 vJump = op_pos - pOperand->GetPos();
 	float d = vJump.GetLength();
 	vJump/=d;
-	pOperand->m_State.vJumpDirection = vJump+Vec3d(0,0,1);
+	pOperand->m_State.vJumpDirection = vJump+Vec3(0,0,1);
 	pOperand->m_State.vJumpDirection *= sqrt(9.81*d)*0.70710f;
 	pOperand->m_State.vMoveDir = vJump/d;
 	
@@ -891,16 +889,16 @@ int COPJumpCmd::XMLExport(const char *pBuffer)
 bool COPLookAt::Execute(CPipeUser *pOperand)
 {
 	//CAIObject *pObject = pOperand->m_pAttentionTarget;
-	Vec3d myDir;
-	Vec3d otherDir;
+	Vec3 myDir;
+	Vec3 otherDir;
 
 	if (!m_pDummyAttTarget)
 	{ 
 		// create a random new target to lookat
 		m_pDummyAttTarget = GetAISystem()->CreateDummyObject();
 
-		Vec3d mypos = pOperand->GetPos();
-		Vec3d myangles = pOperand->GetAngles();
+		Vec3 mypos = pOperand->GetPos();
+		Vec3 myangles = pOperand->GetAngles();
 
 		
 		if ( (m_fEndAngle == 0 ) && (m_fStartAngle==0) )
@@ -915,10 +913,10 @@ bool COPLookAt::Execute(CPipeUser *pOperand)
 				if (m_pDummyAttTarget)
 				{
 					GetAISystem()->RemoveDummyObject(m_pDummyAttTarget);
-					m_pDummyAttTarget = 0;
+					m_pDummyAttTarget = nullptr;
 				}
 				pOperand->m_bLooseAttention = false;
-				pOperand->m_pLooseAttentionTarget = 0;
+				pOperand->m_pLooseAttentionTarget = nullptr;
 				return true;	// sorry no target and no last operation target
 			}
 				
@@ -929,8 +927,8 @@ bool COPLookAt::Execute(CPipeUser *pOperand)
 			//m.RotateMatrix_fix(myangles);
 			m=Matrix44::CreateRotationZYX(-myangles*gf_DEGTORAD )*m; //NOTE: anges in radians and negated 
 			//POINT_CHANGED_BY_IVO 
-			//myangles = m.TransformPoint(Vec3d(0,-1,0));
-			myangles = GetTransposed44(m) * Vec3d(0,-1,0);
+			//myangles = m.TransformPoint(Vec3(0,-1,0));
+			myangles = GetTransposed44(m) * Vec3(0,-1,0);
 
 
 
@@ -949,8 +947,8 @@ bool COPLookAt::Execute(CPipeUser *pOperand)
 				
 			Matrix44 m;
 			m.SetIdentity();
-			//m.RotateMatrix_fix(Vec3d(0,0,fi));
-			m=Matrix44::CreateRotationZYX(-Vec3d(0,0,fi)*gf_DEGTORAD )*m; //NOTE: anges in radians and negated 
+			//m.RotateMatrix_fix(Vec3(0,0,fi));
+			m=Matrix44::CreateRotationZYX(-Vec3(0,0,fi)*gf_DEGTORAD )*m; //NOTE: anges in radians and negated 
 		
 			//POINT_CHANGED_BY_IVO 
 			//myangles = m.TransformPoint(myangles);
@@ -970,10 +968,10 @@ bool COPLookAt::Execute(CPipeUser *pOperand)
 	else
 	{
 
-		Vec3d mypos = pOperand->GetPos();
+		Vec3 mypos = pOperand->GetPos();
 		myDir = pOperand->GetAngles();
 		myDir=ConvertToRadAngles(myDir);
-		Vec3d otherpos = m_pDummyAttTarget->GetPos();
+		Vec3 otherpos = m_pDummyAttTarget->GetPos();
 		otherDir = m_pDummyAttTarget->GetPos();
 		otherDir-=mypos;
 		otherDir.Normalize();
@@ -986,10 +984,10 @@ bool COPLookAt::Execute(CPipeUser *pOperand)
 				if (m_pDummyAttTarget)
 				{
 					GetAISystem()->RemoveDummyObject(m_pDummyAttTarget);
-					m_pDummyAttTarget = 0;
+					m_pDummyAttTarget = nullptr;
 				}
 				pOperand->m_bLooseAttention = false;
-				pOperand->m_pLooseAttentionTarget = 0;
+				pOperand->m_pLooseAttentionTarget = nullptr;
 				return true;
 		}
 
@@ -1007,7 +1005,7 @@ bool COPLookAt::Execute(CPipeUser *pOperand)
 			pOperand->m_State.turnleft = true;
 
 
-		Vec3d vertCorrection = otherDir;
+		Vec3 vertCorrection = otherDir;
 		Ang3	ang;
 		ang=ConvertVectorToCameraAnglesSnap180( otherDir );
 		vertCorrection=ConvertVectorToCameraAngles(vertCorrection);
@@ -1034,8 +1032,8 @@ bool COPLookAround::Execute(CPipeUser *pOperand)
 {
 	
 	//CAIObject *pObject = pOperand->m_pAttentionTarget;
-	Vec3d myDir;
-	Vec3d otherDir;
+	Vec3 myDir;
+	Vec3 otherDir;
 
 	if (!m_pDummyAttTarget)
 	{
@@ -1043,9 +1041,9 @@ bool COPLookAround::Execute(CPipeUser *pOperand)
 		m_pDummyAttTarget = GetAISystem()->CreateDummyObject();
 		
 		// lets place it at a random spot around the operand
-		Vec3d mypos = pOperand->GetPos();;
-		Vec3d myangles = pOperand->GetAngles();
-		Vec3d offset;
+		Vec3 mypos = pOperand->GetPos();;
+		Vec3 myangles = pOperand->GetAngles();
+		Vec3 offset;
 		float rho, fi;
 		if (m_fMaximumAngle> 0)
 			fi = (((float)(rand() & 255)) / 255.f ) * m_fMaximumAngle; // random nr betwee 0 and maxangle
@@ -1072,7 +1070,7 @@ bool COPLookAround::Execute(CPipeUser *pOperand)
 	}
 	else
 	{
-		Vec3d mypos = pOperand->GetPos();
+		Vec3 mypos = pOperand->GetPos();
 		myDir = pOperand->GetAngles();
 		myDir=ConvertToRadAngles(myDir);
 		otherDir = m_pDummyAttTarget->GetPos();
@@ -1086,10 +1084,10 @@ bool COPLookAround::Execute(CPipeUser *pOperand)
 				if (m_pDummyAttTarget)
 				{
 					GetAISystem()->RemoveDummyObject(m_pDummyAttTarget);
-					m_pDummyAttTarget = 0;
+					m_pDummyAttTarget = nullptr;
 				}
 				pOperand->m_bLooseAttention = false;
-				pOperand->m_pLooseAttentionTarget = 0;
+				pOperand->m_pLooseAttentionTarget = nullptr;
 				return true;
 		}
 
@@ -1128,7 +1126,7 @@ int COPLookAround::XMLExport(const char *pBuffer)
 
 void COPLookAround::Reset(CPipeUser *pOperand)
 {
-	m_pDummyAttTarget = 0;
+	m_pDummyAttTarget = nullptr;
 	m_fLastDot = 0;
 }
 
@@ -1152,7 +1150,7 @@ bool COPPathFind::Execute(CPipeUser *pOperand)
 			if  (!pOperand->m_pLastOpResult)
 				return true;	// no last op result, return...
 
-			Vec3d oppos= pOperand->m_pLastOpResult->GetPos();
+			Vec3 oppos= pOperand->m_pLastOpResult->GetPos();
 			pOperand->RequestPathTo(oppos);
 			m_bWaitingForResult = true;
 
@@ -1164,7 +1162,7 @@ bool COPPathFind::Execute(CPipeUser *pOperand)
 		else
 		{
 			// else just issue request to pathfind to target
-			Vec3d oppos=m_pTarget->GetPos();;
+			Vec3 oppos=m_pTarget->GetPos();;
 			
 			pOperand->RequestPathTo(oppos);
 			m_bWaitingForResult = true;
@@ -1242,10 +1240,10 @@ bool COPLocate::Execute(CPipeUser *pOperand)
 		int nbid;
 		IVisArea *iva;
 
-		Vec3d pos = pOperand->FindHidePoint(20,HM_RANDOM,GetAISystem()->CheckInside(pOperand->GetPos(),nbid,iva));
+		Vec3 pos = pOperand->FindHidePoint(20,HM_RANDOM,GetAISystem()->CheckInside(pOperand->GetPos(),nbid,iva));
 		if (!IsEquivalent(pos,pOperand->GetPos(),0.01f))
 		{
-			CAIObject *pHidePoint = (CAIObject*) GetAISystem()->CreateAIObject(AIOBJECT_HIDEPOINT,0);
+			CAIObject *pHidePoint = (CAIObject*) GetAISystem()->CreateAIObject(AIOBJECT_HIDEPOINT,nullptr);
 			
 			pHidePoint->SetPos(pos);
 			pHidePoint->SetEyeHeight(pOperand->GetEyeHeight());
@@ -1286,7 +1284,7 @@ bool COPTrace::Execute(CPipeUser *pOperand)
 			return true;  // finished
 		}
 	
-		Vec3d vPos = (*pOperand->m_lstPath.begin());
+		Vec3 vPos = (*pOperand->m_lstPath.begin());
 		vPos.z+=0.3f;
 	
 
@@ -1348,7 +1346,7 @@ bool COPTrace::Execute(CPipeUser *pOperand)
 		pOperand->m_bDirectionalNavigation = true;
 
 	// unstuck the puppet if he didn't move in three updates
-	Vec3d OpPos = pOperand->GetPos();
+	Vec3 OpPos = pOperand->GetPos();
 	if (!pOperand->m_bMovementSupressed)
 	{
 		int nBuilding;
@@ -1382,10 +1380,10 @@ bool COPTrace::Execute(CPipeUser *pOperand)
 
 	// navigate puppet to the new navigation target
 	{
-		Vec3d mypos = OpPos;
-		Vec3d myang = pOperand->GetAngles();
+		Vec3 mypos = OpPos;
+		Vec3 myang = pOperand->GetAngles();
 		myang=ConvertToRadAngles(myang);
-		Vec3d navpos = m_pNavTarget->GetPos();
+		Vec3 navpos = m_pNavTarget->GetPos();
 
 
 
@@ -1410,7 +1408,7 @@ bool COPTrace::Execute(CPipeUser *pOperand)
 
 		float	fApproachDist=0.45f;
 		bool	bKeepGoing = (fCurrentDistance > fApproachDist);
-		Vec3d movement_dir = GetNormalized(navpos-mypos);
+		Vec3 movement_dir = GetNormalized(navpos-mypos);
 		if (movement_dir.Dot(m_vNextTarget) < 0)
 		{
 			bKeepGoing = false;
@@ -1432,7 +1430,7 @@ bool COPTrace::Execute(CPipeUser *pOperand)
 
 			// approach distance depends on current speed for vehicles - more speed - bigger distance
 			fApproachDist = 9.0f;
-			IVehicleProxy *proxy=NULL;
+			IVehicleProxy *proxy= nullptr;
 			if(pOperand->GetProxy()->QueryProxy(AIPROXY_VEHICLE, (void**)&proxy))
 			{
 				pe_status_dynamics  dSt;
@@ -1458,8 +1456,8 @@ bool COPTrace::Execute(CPipeUser *pOperand)
 //}
 			if(bKeepGoing && !pOperand->m_lstPath.empty() && fCurrentDistance<15.0f )
 			{
-				Vec3d vNextDir = (*pOperand->m_lstPath.begin())-mypos;
-				Vec3d vCurDir = navpos-mypos;
+				Vec3 vNextDir = (*pOperand->m_lstPath.begin())-mypos;
+				Vec3 vCurDir = navpos-mypos;
 				vCurDir.z = vNextDir.z = 0;
 //				float dotZ = vCurDir.x*vNextDir.x + vCurDir.y*vNextDir.y;
 //				if( dotZ<0 )
@@ -1510,10 +1508,10 @@ bool COPTrace::Execute(CPipeUser *pOperand)
 		{
 			// we reached this navpoint
 			if (pOperand->m_pAttentionTarget == m_pNavTarget)
-					pOperand->SetAttentionTarget(0);
+					pOperand->SetAttentionTarget(nullptr);
 			GetAISystem()->RemoveDummyObject(m_pNavTarget);
-			m_pNavTarget = 0;
-			pOperand->m_pReservedNavPoint = 0;
+			m_pNavTarget = nullptr;
+			pOperand->m_pReservedNavPoint = nullptr;
 			pOperand->m_bDirectionalNavigation = false;
 			if (m_bSingleStep)
 				return true;
@@ -1526,7 +1524,7 @@ bool COPTrace::Execute(CPipeUser *pOperand)
 	return false;
 }
 
-void COPTrace::CreateDummyFromNode(const Vec3d &pos, CAISystem *pSystem)
+void COPTrace::CreateDummyFromNode(const Vec3 &pos, CAISystem *pSystem)
 {
 
 	m_pNavTarget = pSystem->CreateDummyObject();
@@ -1550,7 +1548,7 @@ int COPTrace::XMLExport(const char *pBuffer)
 void COPTrace::Reset(CPipeUser *pOperand)
 {
 	GetAISystem()->RemoveDummyObject(m_pNavTarget);
-	m_pNavTarget = 0;
+	m_pNavTarget = nullptr;
 }
 
 
@@ -1684,7 +1682,7 @@ bool COPHide::Execute(CPipeUser *pOperand)
 			//if (pNode->nBuildingID == -1)
 			{
 					
-					Vec3d vHidePos = pOperand->FindHidePoint(m_fSearchDistance, m_nEvaluationMethod,false);
+					Vec3 vHidePos = pOperand->FindHidePoint(m_fSearchDistance, m_nEvaluationMethod,false);
 					if (!pOperand->m_bLastHideResult || GetAISystem()->ThroughVehicle(pOperand->GetPos(),vHidePos))
 					{
 						pOperand->m_bHiding = false;
@@ -1692,7 +1690,7 @@ bool COPHide::Execute(CPipeUser *pOperand)
 					}
 
 					m_vHidePos = vHidePos;
-					Vec3d vHideDir;
+					Vec3 vHideDir;
 					if (m_bAttTarget)
 						vHideDir = vHidePos - pOperand->m_pAttentionTarget->GetPos();
 					else
@@ -1705,9 +1703,9 @@ bool COPHide::Execute(CPipeUser *pOperand)
 					int rayresult = pWorld->RayWorldIntersection(vectorf(m_vHidePos),vectorf(vHideDir*50.f),ent_static,rwi_stop_at_pierceable,&hit,1);
 					if (rayresult)					
 					{
-						Vec3d nml(hit.n.x,hit.n.y,hit.n.z);
+						Vec3 nml(hit.n.x,hit.n.y,hit.n.z);
 						if (nml.Dot(vHideDir) < 0)
-							vHidePos = Vec3d(hit.pt.x,hit.pt.y,hit.pt.z) + vHideDir;	
+							vHidePos = Vec3(hit.pt.x,hit.pt.y,hit.pt.z) + vHideDir;	
 						else
 							vHidePos = m_vHidePos + vHideDir*3.f;
 					}
@@ -1728,7 +1726,7 @@ bool COPHide::Execute(CPipeUser *pOperand)
 			else
 			{
 					// inside
-					Vec3d vHidePos = pOperand->FindHidePoint(m_fSearchDistance, m_nEvaluationMethod,true);
+					Vec3 vHidePos = pOperand->FindHidePoint(m_fSearchDistance, m_nEvaluationMethod,true);
 					if (!pOperand->m_bLastHideResult)
 					{
 						pOperand->m_bHiding = false;
@@ -1801,8 +1799,8 @@ bool COPHide::Execute(CPipeUser *pOperand)
 								if ( GetLengthSquared(pOperand->GetPos()-m_pHideTarget->GetPos()) < 9.f)
 								{
 									// you are less than 3 meters from your hide target
-									Vec3d vViewDir = ConvertToRadAngles(pOperand->GetAngles());
-									Vec3d vHideDir = GetNormalized(m_pHideTarget->GetPos() - pOperand->GetPos());
+									Vec3 vViewDir = ConvertToRadAngles(pOperand->GetAngles());
+									Vec3 vHideDir = GetNormalized(m_pHideTarget->GetPos() - pOperand->GetPos());
 									
 									if (vViewDir.Dot(vHideDir) > 0.8f) 
 									{
@@ -1832,8 +1830,8 @@ bool COPHide::IsBadHiding(CPipeUser *pOperand)
 
 	IPhysicalWorld *pWorld = GetAISystem()->GetPhysicalWorld();
 
-	Vec3d ai_pos = pOperand->GetPos();
-	Vec3d target_pos = pTarget->GetPos();
+	Vec3 ai_pos = pOperand->GetPos();
+	Vec3 target_pos = pTarget->GetPos();
 	ray_hit hit;
 	int rayresult = pWorld->RayWorldIntersection(target_pos,ai_pos-target_pos,ent_terrain|ent_static, rwi_stop_at_pierceable,&hit,1);
 	if (rayresult)
@@ -1841,7 +1839,7 @@ bool COPHide::IsBadHiding(CPipeUser *pOperand)
 		// check possible leaning direction
 		if (GetLengthSquared(hit.pt-ai_pos)<9.f)
 		{
-			Vec3d dir = ai_pos-target_pos;
+			Vec3 dir = ai_pos-target_pos;
 			float zcross =  dir.y*hit.n.x - dir.x*hit.n.y;
 			if (zcross < 0)
 				pOperand->SetSignal(1,"OnRightLean");
@@ -1872,17 +1870,17 @@ void COPHide::Reset(CPipeUser *pOperand)
   GetAISystem()->RemoveDummyObject(m_pHideTarget);
 
 	if (m_pHideTarget)
-		m_pHideTarget=0;
+		m_pHideTarget=nullptr;
 
 	if (m_pPathFindDirective)
 		delete m_pPathFindDirective;
 
-	m_pPathFindDirective = 0;
+	m_pPathFindDirective = nullptr;
 
 	if (m_pTraceDirective) 
 		delete m_pTraceDirective;
 
-	m_pTraceDirective = 0;
+	m_pTraceDirective = nullptr;
 
 	pOperand->m_bHiding = false;
 
@@ -1902,7 +1900,7 @@ bool COPStick::Execute(CPipeUser *pOperand)
 {
 	CAIObject *pTarget = pOperand->m_pAttentionTarget;
 	CAISystem *pSystem = GetAISystem();
-	Vec3d mypos,targetpos;
+	Vec3 mypos,targetpos;
 
 	pOperand->m_State.fStickDist = m_fDistance;
 	return true;
@@ -1992,9 +1990,9 @@ bool COPJumpCmd::Execute(CPipeUser *pOperand)
 	if (!m_pJumpTarget)
 	{
 			bool bAnticipate = false;
-			CAIObject *pAnticipationTarget = 0;
+			CAIObject *pAnticipationTarget = nullptr;
 			// lets create the place where we will jump
-			Vec3d vJumpPos;
+			Vec3 vJumpPos;
 
 			if (m_fSearchDistance<1.f)
 			{
@@ -2029,7 +2027,7 @@ bool COPJumpCmd::Execute(CPipeUser *pOperand)
 
 					IPhysicalWorld *pWorld = GetAISystem()->GetPhysicalWorld();
 					IPhysicalEntity **pColliders;
-					int colliders = pWorld->GetEntitiesInBox(vJumpPos-Vec3d(1.f,1.f,1.f),vJumpPos+Vec3d(1.f,1.f,1.f),pColliders,ent_static);
+					int colliders = pWorld->GetEntitiesInBox(vJumpPos-Vec3(1.f,1.f,1.f),vJumpPos+Vec3(1.f,1.f,1.f),pColliders,ent_static);
 					if (colliders)					
 					{
 						pe_status_pos ppos;
@@ -2055,20 +2053,20 @@ bool COPJumpCmd::Execute(CPipeUser *pOperand)
 			}
 
         
-		Vec3d op_pos = pOperand->GetPos();
+		Vec3 op_pos = pOperand->GetPos();
 		
 
 		if (bAnticipate)
 		{
 			if (pAnticipationTarget->m_bMoving)
 			{
-				Vec3d ant_dir = GetNormalized(pAnticipationTarget->GetPos()-pAnticipationTarget->m_vLastPosition);
+				Vec3 ant_dir = GetNormalized(pAnticipationTarget->GetPos()-pAnticipationTarget->m_vLastPosition);
 				vJumpPos+=(ant_dir*4.f); 
 			}
 		}
 
 
-		Vec3d jmpPos = vJumpPos;
+		Vec3 jmpPos = vJumpPos;
 
 		// shoot a ray to the jump position
 		IPhysicalWorld *pWorld = GetAISystem()->GetPhysicalWorld();
@@ -2081,7 +2079,7 @@ bool COPJumpCmd::Execute(CPipeUser *pOperand)
 		}
 
 		// land jump point on the nearest ground
-		Vec3d vVertical(0,0,-100);
+		Vec3 vVertical(0,0,-100);
 		rayresult = pWorld->RayWorldIntersection(jmpPos,vVertical,ent_all, rwi_stop_at_pierceable,&hit,1);
 		if (rayresult)
 			vJumpPos.z = hit.pt.z;
@@ -2095,9 +2093,9 @@ bool COPJumpCmd::Execute(CPipeUser *pOperand)
 		 
 		op_pos.z -=pOperand->GetEyeHeight();
 
-	    Vec3d vJump =vJumpPos - op_pos;
+	    Vec3 vJump =vJumpPos - op_pos;
 		float d = vJump.GetLength();
-		Vec3d vJumpProjected = vJump;
+		Vec3 vJumpProjected = vJump;
 		vJumpProjected.z = 0;
 		float dx = vJumpProjected.GetLength();
 		float dy = vJump.z;
@@ -2138,10 +2136,10 @@ bool COPJumpCmd::Execute(CPipeUser *pOperand)
 		if (!m_bJustCalculate)
 		{
 			
-			//pOperand->m_State.vJumpDirection = vJump+Vec3d(0,0,1);
-			Vec3d axis = vJump.Cross(Vec3d(0,0,1));
+			//pOperand->m_State.vJumpDirection = vJump+Vec3(0,0,1);
+			Vec3 axis = vJump.Cross(Vec3(0,0,1));
 			
-			//pOperand->m_State.vJumpDirection = Vec3d(0,-cgamma,sgamma);
+			//pOperand->m_State.vJumpDirection = Vec3(0,-cgamma,sgamma);
 			pOperand->m_State.vJumpDirection = vJump.rotated(axis,m_fJumpAngleInRadians);
 
 			//pOperand->m_State.vJumpDirection *= cry_sqrtf(fGravMult*9.81f*d)*0.70710f;
@@ -2159,12 +2157,12 @@ bool COPJumpCmd::Execute(CPipeUser *pOperand)
 		}                                
 
 		int nDirectionOfJump = 1;
-		Vec3d ang = pOperand->GetAngles();
+		Vec3 ang = pOperand->GetAngles();
 		ang=ConvertToRadAngles(ang);
 		ang.z = 0;
 		ang.normalize();
 
-		Vec3d normDir = vJumpPos-op_pos;
+		Vec3 normDir = vJumpPos-op_pos;
 		normDir.z = 0;
 		normDir.normalize(); 
 		float fForwBack = ang.Dot(normDir);
@@ -2193,7 +2191,7 @@ bool COPJumpCmd::Execute(CPipeUser *pOperand)
 	}
 	else
 	{
-		//Vec3d mypos = pOperand->GetPos();
+		//Vec3 mypos = pOperand->GetPos();
 		//mypos.z = m_pJumpTarget->GetPos().z;
 
 		float fCurrTime = pSystem->m_pSystem->GetITimer()->GetCurrTime();
@@ -2201,7 +2199,7 @@ bool COPJumpCmd::Execute(CPipeUser *pOperand)
 		if (m_fTimeLeft<0)
 		{
 			pSystem->RemoveDummyObject(m_pJumpTarget);
-			m_pJumpTarget = 0;
+			m_pJumpTarget = nullptr;
 			return true;
 		}
 
@@ -2215,7 +2213,7 @@ bool COPJumpCmd::Execute(CPipeUser *pOperand)
 void COPJumpCmd::Reset(CPipeUser *pOperand)
 { 
 	if (m_pJumpTarget)
-		m_pJumpTarget=0;
+		m_pJumpTarget=nullptr;
 }
 
 int COPJumpCmd::XMLExport(const char *pBuffer)
@@ -2242,10 +2240,10 @@ bool COPHeliAdv::Execute(CPipeUser *pOperand)
 
 	if(pOperand->GetType() != AIOBJECT_VEHICLE)		// only for heli
 		return true;
-	if( pOperand->m_pAttentionTarget == NULL)		// no attention target - no attack
+	if( pOperand->m_pAttentionTarget == nullptr)		// no attention target - no attack
 		return true;
 
-	IVehicleProxy *proxy=NULL;
+	IVehicleProxy *proxy= nullptr;
 
 	if(pOperand->GetProxy()->QueryProxy(AIPROXY_VEHICLE, (void**)&proxy))
 	{
@@ -2253,7 +2251,7 @@ bool COPHeliAdv::Execute(CPipeUser *pOperand)
 		pOperand->m_State.fValueAux = pOperand->GetEyeHeight();
 		Vec3 nextPos = proxy->HeliAttackAdvance( pOperand->m_State );
 
-		CAIObject *pHidePoint = (CAIObject*) GetAISystem()->CreateAIObject(AIOBJECT_HIDEPOINT,0);
+		CAIObject *pHidePoint = (CAIObject*) GetAISystem()->CreateAIObject(AIOBJECT_HIDEPOINT,nullptr);
 		pHidePoint->SetPos(nextPos);
 		pHidePoint->SetEyeHeight(pOperand->GetEyeHeight());
 
