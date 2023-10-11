@@ -47,7 +47,7 @@ struct STOSMasterInfo final : STOSSmartStruct  // NOLINT(cppcoreguidelines-speci
 
 	EntityId slaveId;
 	string desiredSlaveClassName;
-	MCSaved mcSavedParams;///< Сохраненные параметры, которые отправил мастер-клиент на сервер перед началом управления рабом. \n mc - мастер клиент
+	NetMCSaved mcSavedParams;///< Сохраненные параметры, которые отправил мастер-клиент на сервер перед началом управления рабом. \n mc - мастер клиент
 };
 
 struct STOSStartControlInfo

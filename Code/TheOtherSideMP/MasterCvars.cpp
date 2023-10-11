@@ -136,7 +136,7 @@ void CTOSMasterModule::CVarSetDesiredSlaveCls(ICVar* pVar)
 			return;
 		}
 
-		DesiredSlaveClsParams params;
+		NetDesiredSlaveClsParams params;
 		//id мастера
 		params.entityId = g_pGame->GetIGameFramework()->GetClientActorId();
 		params.desiredSlaveClassName = clsName;

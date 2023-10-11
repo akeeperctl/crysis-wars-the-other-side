@@ -31,7 +31,7 @@ struct NetMasterClientSavedParams
 	}
 };
 
-typedef NetMasterClientSavedParams MCSaved;
+typedef NetMasterClientSavedParams NetMCSaved;
 
 
 struct NetMasterAddingParams
@@ -83,7 +83,7 @@ struct NetMasterStopControlParams
 	}
 };
 
-typedef NetMasterAddingParams DesiredSlaveClsParams;
+typedef NetMasterAddingParams NetDesiredSlaveClsParams;
 typedef NetMasterStopControlParams NetMasterIdParams;
 
 /**
@@ -115,7 +115,7 @@ public:
 	//Reliable - надёжная доставка пакета
 
 	DECLARE_SERVER_RMI_NOATTACH(SvRequestMasterAdd, NetMasterAddingParams, eNRT_ReliableOrdered);
-	DECLARE_SERVER_RMI_NOATTACH(SvRequestSetDesiredSlaveCls, DesiredSlaveClsParams, eNRT_ReliableOrdered);
+	DECLARE_SERVER_RMI_NOATTACH(SvRequestSetDesiredSlaveCls, NetDesiredSlaveClsParams, eNRT_ReliableOrdered);
 
 	DECLARE_CLIENT_RMI_NOATTACH(ClMasterClientStartControl, NetMasterStartControlParams, eNRT_ReliableOrdered);
 	DECLARE_SERVER_RMI_NOATTACH(SvRequestMasterClientStartControl, NetMasterStartControlParams, eNRT_ReliableOrdered);
@@ -125,7 +125,7 @@ public:
 
 
 	//TODO: 10/11/2023, 09:25 Создать модуль для ИИ, когда наберется достаточно функций.
-	DECLARE_SERVER_RMI_NOATTACH(SvRequestSaveMCParams, NetMasterClientSavedParams, eNRT_ReliableOrdered);
+	DECLARE_SERVER_RMI_NOATTACH(SvRequestSaveMCParams, NetMasterIdParams, eNRT_ReliableOrdered);
 	DECLARE_SERVER_RMI_NOATTACH(SvRequestApplyMCSavedParams, NetMasterIdParams, eNRT_ReliableOrdered);
 
 
