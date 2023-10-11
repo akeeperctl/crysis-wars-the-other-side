@@ -19,15 +19,16 @@ struct NetMasterClientSavedParams
 		: masterId(0),
 		suitEnergy(0),
 		suitMode(0),
-		species(0) {};
+		species(-1) {};
 
-	void SerializeWith(TSerialize ser)	{
+	void SerializeWith(TSerialize ser)
+	{
 		ser.Value("masterId", masterId, 'eid');
 		ser.Value("pos", pos, 'wrld');
 		ser.Value("rot", rot, 'ori1');
 		ser.Value("suitEnergy", suitEnergy, 'nNRG'); // от 0 до 200
 		ser.Value("suitMode", suitMode, 'ui3');// от 0 до 7
-		ser.Value("species", species, 'ui5'); // от 0 до 31
+		ser.Value("species", species, 'i8'); // от -127 до 127
 	}
 };
 

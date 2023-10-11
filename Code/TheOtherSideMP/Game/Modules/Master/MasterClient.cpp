@@ -409,42 +409,55 @@ void CTOSMasterClient::PrepareDude(const bool toStartControl)
 	assert(m_pLocalDude);
 
 	CNanoSuit* pSuit = m_pLocalDude->GetNanoSuit();
+    assert(pSuit);
 
 	//Fix the non-resetted Dude player movement after controlling the actor;
 	if (m_pLocalDude->GetPlayerInput())
 		m_pLocalDude->GetPlayerInput()->Reset();
 
+	const auto pSynch = g_pTOSGame->GetMasterModule()->GetSynchronizer();
+    assert(pSynch);
+
 	if (toStartControl)
     {
+
+
         //m_dudeSavedParams.pos = m_pLocalDude->GetEntity()->GetWorldPos();
         //m_dudeSavedParams.viewRot = m_pLocalDude->GetViewRotation();
 
-        if (gEnv->bServer)
-        {
-            IAIObject* pAI = m_pLocalDude->GetEntity()->GetAI();
-            if (pAI)
-            {
-                if (pAI->CastToIAIActor())
-                {
-                    m_dudeSavedParams.aiSpecies = pAI->CastToIAIActor()->GetParameters().m_nSpecies;
-                    //CryLogAlways("SControlClient::PrepareDude -->> save player species");
-                }
+        //if (gEnv->bServer)
+        //{
+        //    IAIObject* pAI = m_pLocalDude->GetEntity()->GetAI();
+        //    if (pAI)
+        //    {
+        //        if (pAI->CastToIAIActor())
+        //        {
+        //            m_dudeSavedParams.aiSpecies = pAI->CastToIAIActor()->GetParameters().m_nSpecies;
+        //            //CryLogAlways("SControlClient::PrepareDude -->> save player species");
+        //        }
 
-                pAI->Event(AIEVENT_DISABLE, nullptr);
-            }
-        }
+        //        pAI->Event(AIEVENT_DISABLE, nullptr);
+        //    }
+        //}
+
+        pSynch->RMISend(
+            CTOSMasterSynchronizer::SvRequestSaveMCParams(), 
+            NetMasterIdParams(m_pLocalDude->GetEntityId()), 
+            eRMI_ToServer);
 
         m_pLocalDude->ResetScreenFX();
 
+        /*
         if (pSuit)
         {
-            m_dudeSavedParams.suitEnergy = pSuit->GetSuitEnergy();
-            m_dudeSavedParams.suitMode = pSuit->GetMode();
-            pSuit->SetMode(NANOMODE_DEFENSE);
-            pSuit->SetModeDefect(NANOMODE_CLOAK, true);
-            pSuit->SetModeDefect(NANOMODE_SPEED, true);
-            pSuit->SetModeDefect(NANOMODE_STRENGTH, true);
+			m_dudeSavedParams.suitEnergy = pSuit->GetSuitEnergy();
+			m_dudeSavedParams.suitMode = pSuit->GetMode();
+			pSuit->SetMode(NANOMODE_DEFENSE);
+			pSuit->SetModeDefect(NANOMODE_CLOAK, true);
+			pSuit->SetModeDefect(NANOMODE_SPEED, true);
+			pSuit->SetModeDefect(NANOMODE_STRENGTH, true);
         }
+        */
 
         // Turning off a Alien screen interference effects
         //lastInterferenceParams = m_pLocalDude->m_interferenceParams;
@@ -486,17 +499,22 @@ void CTOSMasterClient::PrepareDude(const bool toStartControl)
     {
         //after unlink
 
+		pSynch->RMISend(
+			CTOSMasterSynchronizer::SvRequestApplyMCSavedParams(),
+			NetMasterIdParams(m_pLocalDude->GetEntityId()),
+			eRMI_ToServer);
+
         //The Player after unlink
         {
             SActorParams* pParams = m_pLocalDude->GetActorParams();
 
-            if (m_pLocalDude->GetHealth() > 0)
-            {
-                m_pLocalDude->GetEntity()->SetPos(m_dudeSavedParams.pos);
+            //if (m_pLocalDude->GetHealth() > 0)
+            //{
+            //    m_pLocalDude->GetEntity()->SetPos(m_dudeSavedParams.pos);
 
-                //may be bugged, not checked at 19.12.2020 0:14
-                m_pLocalDude->SetViewRotation(m_dudeSavedParams.viewRot);
-            }
+            //    //may be bugged, not checked at 19.12.2020 0:14
+            //    m_pLocalDude->SetViewRotation(m_dudeSavedParams.viewRot);
+            //}
 
             //m_pLocalDude->SetSlaveId(NULL);
 
@@ -528,6 +546,7 @@ void CTOSMasterClient::PrepareDude(const bool toStartControl)
 
             if (pSuit)
             {
+                /*
                 if (m_pLocalDude->GetHealth() > 0)
                 {
                     pSuit->Reset(m_pLocalDude);
@@ -543,6 +562,7 @@ void CTOSMasterClient::PrepareDude(const bool toStartControl)
                     pSuit->SetSuitEnergy(m_dudeSavedParams.suitEnergy);
                     pSuit->SetMode(static_cast<ENanoMode>(m_dudeSavedParams.suitMode));
                 }
+                */
 
                 if (g_pGame->GetHUD())
                 {
@@ -583,17 +603,17 @@ void CTOSMasterClient::PrepareDude(const bool toStartControl)
             // Излишняя проверка на клиент
             if (gEnv->bClient)
             {
-                auto params = NetGenericSetSpeciesParams();
-                params.aiEntId = m_pLocalDude->GetEntityId();
-                params.species = m_dudeSavedParams.aiSpecies;
+                //auto params = NetGenericSetSpeciesParams();
+                //params.aiEntId = m_pLocalDude->GetEntityId();
+                //params.species = m_dudeSavedParams.aiSpecies;
 
-                g_pTOSGame->GetMasterModule()->GetSynchronizer()->RMISend(
-                    CTOSMasterSynchronizer::SvRequestSetAISpecies(), params, eRMI_ToServer);
+                //g_pTOSGame->GetMasterModule()->GetSynchronizer()->RMISend(
+                //    CTOSMasterSynchronizer::SvRequestSetAISpecies(), params, eRMI_ToServer);
             }
 
             //TODO: 10/11/2023, 10:59
-            // 1) Проверить что перемещено в ApplyMasterClientParams а что нет
-            // 2) Убрать из этой функции лишнее и внедрить вызов RMI: SvRequestSaveMCParams и SvRequestApplyMCSavedParams
+            // 1) вып Проверить что перемещено в ApplyMasterClientParams а что нет
+            // 2)  Убрать из этой функции лишнее и внедрить вызов RMI: SvRequestSaveMCParams и SvRequestApplyMCSavedParams
             // 3) Протестировать всё
         }
     }

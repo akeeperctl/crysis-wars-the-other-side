@@ -138,7 +138,11 @@ public:
 private:
 	bool GetMasterInfo(const IEntity* pMasterEntity, STOSMasterInfo& info);
 
-	void SaveMasterClientParams(const IEntity* pMasterEntity, const MCSaved& params);
+	/**
+	 * \brief Берёт параметры сущности с сервера и сохраняет их там-же на сервере
+	 * \param pMasterEntity - указатель на сущность мастера
+	 */
+	void SaveMasterClientParams(IEntity* pMasterEntity);
 	void ApplyMasterClientParams(IEntity* pMasterEntity);
 
 	/**

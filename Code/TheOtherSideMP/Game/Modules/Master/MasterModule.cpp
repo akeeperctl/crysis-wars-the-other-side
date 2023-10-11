@@ -493,13 +493,37 @@ bool CTOSMasterModule::GetMasterInfo(const IEntity* pMasterEntity, STOSMasterInf
 	return true;
 }
 
-void CTOSMasterModule::SaveMasterClientParams(const IEntity* pMasterEntity, const MCSaved& params)
+void CTOSMasterModule::SaveMasterClientParams(IEntity* pMasterEntity)
 {
 	assert(pMasterEntity);
 
 	if (IsMaster(pMasterEntity))
 	{
-		m_masters[pMasterEntity->GetId()].mcSavedParams = params;
+		auto &params = m_masters[pMasterEntity->GetId()].mcSavedParams;
+
+		params.pos = pMasterEntity->GetWorldPos();
+		params.rot = static_cast<Quat>(pMasterEntity->GetWorldAngles());
+
+		IAIObject* pAI = pMasterEntity->GetAI();
+		if (pAI)
+		{
+			pAI->Event(AIEVENT_DISABLE, nullptr);
+			params.species = TOS_AI::GetSpecies(pAI, false);
+		}
+
+		const auto pPlayer = dynamic_cast<CTOSPlayer*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pMasterEntity->GetId()));
+		assert(pPlayer);
+
+		const auto pSuit = pPlayer->GetNanoSuit();
+		assert(pSuit);
+
+		params.suitEnergy = pSuit->GetSuitEnergy();
+		params.suitMode = pSuit->GetMode();
+
+		pSuit->SetMode(NANOMODE_DEFENSE);
+		pSuit->SetModeDefect(NANOMODE_CLOAK, true);
+		pSuit->SetModeDefect(NANOMODE_SPEED, true);
+		pSuit->SetModeDefect(NANOMODE_STRENGTH, true);
 	}
 }
 
@@ -512,22 +536,36 @@ void CTOSMasterModule::ApplyMasterClientParams(IEntity* pMasterEntity)
 		STOSMasterInfo info;
 		GetMasterInfo(pMasterEntity, info);
 
-		const Vec3  pos = info.mcSavedParams.pos;
-		const Quat  rot = info.mcSavedParams.rot;
-		const int   species = info.mcSavedParams.species;
-		const float suitEnergy = info.mcSavedParams.suitEnergy;
-		uint        suitMode = info.mcSavedParams.suitMode;
-
-		pMasterEntity->SetWorldTM(Matrix34::Create(Vec3(1, 1, 1), rot, pos));
-
 		const auto pPlayer = dynamic_cast<CTOSPlayer*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pMasterEntity->GetId()));
 		assert(pPlayer);
 
 		const auto pSuit = pPlayer->GetNanoSuit();
 		assert(pSuit);
 
-		pSuit->SetSuitEnergy(suitEnergy);
-		pSuit->SetMode(static_cast<ENanoMode>(suitMode));
+		const Vec3  pos = info.mcSavedParams.pos;
+		const Quat  rot = info.mcSavedParams.rot;
+		const int   species = info.mcSavedParams.species;
+		const float suitEnergy = info.mcSavedParams.suitEnergy;
+		uint        suitMode = info.mcSavedParams.suitMode;
+
+		if (pPlayer->GetHealth() > 0)
+		{
+			pMasterEntity->SetWorldTM(Matrix34::Create(Vec3(1, 1, 1), rot, pos));
+
+			pSuit->Reset(pPlayer);
+
+			pSuit->SetModeDefect(NANOMODE_CLOAK, false);
+			pSuit->SetModeDefect(NANOMODE_SPEED, false);
+			pSuit->SetModeDefect(NANOMODE_STRENGTH, false);
+
+			pSuit->ActivateMode(NANOMODE_CLOAK, true);
+			pSuit->ActivateMode(NANOMODE_SPEED, true);
+			pSuit->ActivateMode(NANOMODE_STRENGTH, true);
+
+			pSuit->SetSuitEnergy(suitEnergy);
+			pSuit->SetMode(static_cast<ENanoMode>(suitMode));
+
+		}
 
 		IAIObject* pAI = pMasterEntity->GetAI();
 		if (!pAI)

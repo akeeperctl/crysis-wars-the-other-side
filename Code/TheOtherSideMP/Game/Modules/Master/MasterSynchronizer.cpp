@@ -192,7 +192,7 @@ IMPLEMENT_RMI(CTOSMasterSynchronizer, SvRequestSaveMCParams)
 		const auto pMM = g_pTOSGame->GetMasterModule();
 		assert(pMM);
 
-		pMM->SaveMasterClientParams(pMasterEntity, params);
+		pMM->SaveMasterClientParams(pMasterEntity);
 	}
 
 	return true;
