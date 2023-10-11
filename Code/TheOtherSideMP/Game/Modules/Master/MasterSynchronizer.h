@@ -6,15 +6,43 @@
 
 #include "../GenericSynchronizer.h"
 
-struct MasterAddingParams
+struct NetMasterClientSavedParams
+{
+	EntityId masterId;
+	Vec3 pos;
+	Quat rot;
+	float suitEnergy;
+	uint suitMode;
+	int species;
+
+	NetMasterClientSavedParams()
+		: masterId(0),
+		suitEnergy(0),
+		suitMode(0),
+		species(0) {};
+
+	void SerializeWith(TSerialize ser)	{
+		ser.Value("masterId", masterId, 'eid');
+		ser.Value("pos", pos, 'wrld');
+		ser.Value("rot", rot, 'ori1');
+		ser.Value("suitEnergy", suitEnergy, 'nNRG'); // от 0 до 200
+		ser.Value("suitMode", suitMode, 'ui3');// от 0 до 7
+		ser.Value("species", species, 'ui5'); // от 0 до 31
+	}
+};
+
+typedef NetMasterClientSavedParams MCSaved;
+
+
+struct NetMasterAddingParams
 {
 	EntityId entityId;
 	string desiredSlaveClassName;
 
-	MasterAddingParams() :
+	NetMasterAddingParams() :
 		entityId(0), desiredSlaveClassName(nullptr) {};
 
-	explicit MasterAddingParams(const EntityId entId, const char* slaveClsName) :
+	explicit NetMasterAddingParams(const EntityId entId, const char* slaveClsName) :
 		entityId(entId), desiredSlaveClassName(slaveClsName) {}
 
 	void SerializeWith(TSerialize ser)
@@ -24,12 +52,12 @@ struct MasterAddingParams
 	}
 };
 
-struct MasterStartControlParams
+struct NetMasterStartControlParams
 {
 	EntityId slaveId;
 	EntityId masterId;
 
-	MasterStartControlParams()
+	NetMasterStartControlParams()
 		: slaveId(0), masterId(0) {}
 
 	void SerializeWith(TSerialize ser)
@@ -39,14 +67,14 @@ struct MasterStartControlParams
 	}
 };
 
-struct MasterStopControlParams
+struct NetMasterStopControlParams
 {
 	EntityId masterId;
 
-	MasterStopControlParams()
+	NetMasterStopControlParams()
 		: masterId(0) {}
 
-	explicit MasterStopControlParams(const EntityId entId)
+	explicit NetMasterStopControlParams(const EntityId entId)
 		: masterId(entId) {}
 
 	void SerializeWith(TSerialize ser)
@@ -55,7 +83,8 @@ struct MasterStopControlParams
 	}
 };
 
-typedef MasterAddingParams DesiredSlaveClsParams;
+typedef NetMasterAddingParams DesiredSlaveClsParams;
+typedef NetMasterStopControlParams NetMasterIdParams;
 
 /**
  * \brief TOS Master Module сетевой синхронизатор
@@ -85,14 +114,19 @@ public:
 	//NOATTACH - Без привязки к данным сериализации
 	//Reliable - надёжная доставка пакета
 
-	DECLARE_SERVER_RMI_NOATTACH(SvRequestMasterAdd, MasterAddingParams, eNRT_ReliableOrdered);
+	DECLARE_SERVER_RMI_NOATTACH(SvRequestMasterAdd, NetMasterAddingParams, eNRT_ReliableOrdered);
 	DECLARE_SERVER_RMI_NOATTACH(SvRequestSetDesiredSlaveCls, DesiredSlaveClsParams, eNRT_ReliableOrdered);
 
-	DECLARE_CLIENT_RMI_NOATTACH(ClMasterClientStartControl, MasterStartControlParams, eNRT_ReliableOrdered);
-	DECLARE_SERVER_RMI_NOATTACH(SvRequestMasterClientStartControl, MasterStartControlParams, eNRT_ReliableOrdered);
+	DECLARE_CLIENT_RMI_NOATTACH(ClMasterClientStartControl, NetMasterStartControlParams, eNRT_ReliableOrdered);
+	DECLARE_SERVER_RMI_NOATTACH(SvRequestMasterClientStartControl, NetMasterStartControlParams, eNRT_ReliableOrdered);
 
-	DECLARE_CLIENT_RMI_NOATTACH(ClMasterClientStopControl, NoParams, eNRT_ReliableOrdered);
-	DECLARE_SERVER_RMI_NOATTACH(SvRequestMasterClientStopControl, MasterStopControlParams, eNRT_ReliableOrdered);
+	DECLARE_CLIENT_RMI_NOATTACH(ClMasterClientStopControl, NetGenericNoParams, eNRT_ReliableOrdered);
+	DECLARE_SERVER_RMI_NOATTACH(SvRequestMasterClientStopControl, NetMasterStopControlParams, eNRT_ReliableOrdered);
+
+
+	//TODO: 10/11/2023, 09:25 Создать модуль для ИИ, когда наберется достаточно функций.
+	DECLARE_SERVER_RMI_NOATTACH(SvRequestSaveMCParams, NetMasterClientSavedParams, eNRT_ReliableOrdered);
+	DECLARE_SERVER_RMI_NOATTACH(SvRequestApplyMCSavedParams, NetMasterIdParams, eNRT_ReliableOrdered);
 
 
 };

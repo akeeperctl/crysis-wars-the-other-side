@@ -13,9 +13,9 @@ Description:
 -------------------------------------------------------------------------
 History:
 - 07:11:2005: Created by Julien Darre
-- 01:02:2006: Modified by Jan Müller
+- 01:02:2006: Modified by Jan MГјller
 - 22:02:2006: Refactored for G04 by Matthew Jack
-- 2007: Refactored by Jan Müller
+- 2007: Refactored by Jan MГјller
 
 *************************************************************************/
 #include "StdAfx.h"
@@ -71,6 +71,12 @@ History:
 #include "Radio.h"
 
 #include "LCD/LCDWrapper.h"
+
+//TheOtherSide
+#include "TheOtherSideMP/Actors/Player/TOSPlayer.h"
+#include "TheOtherSideMP/Helpers/TOS_HUD.h"
+#include "TheOtherSideMP/HUD/TOSCrosshair.h"
+//~TheOtherSide
 
 static const float NIGHT_VISION_ENERGY = 30.0f;
 static const float SPAWN_WARNING_TIMER = 2.0f;
@@ -453,9 +459,16 @@ bool CHUD::Init()
 	m_pHUDTextArea->SetPos(Vec2(200.0f, 450.0f));
 
 	m_pHUDTweakMenu		= new CHUDTweakMenu( pScriptSystem );
-	m_pHUDCrosshair		= new CHUDCrosshair(this);
 	m_pHUDTagNames		= new CHUDTagNames;
 	m_pHUDSilhouettes	= new CHUDSilhouettes;
+
+	//TheOtherSide
+
+	//m_pHUDCrosshair = new CHUDCrosshair(this);
+	m_pHUDCrosshair = new CTOSHUDCrosshair(this);
+
+	//~TheOtherSide
+
 
 	if(gEnv->bMultiplayer)
 	{
@@ -4023,23 +4036,96 @@ void CHUD::SetTeamDisplay(const char* team)
 
 //-----------------------------------------------------------------------------------------------------
 
-void CHUD::UpdateHealth()
+void CHUD::TOSSetWeaponName(const char* text)
 {
-	CActor *pActor = static_cast<CActor *>(gEnv->pGame->GetIGameFramework()->GetClientActor());
-	if(pActor)
-	{
-		float fHealth = (pActor->GetHealth() / (float) pActor->GetMaxHealth()) * 100.0f + 1.0f;
+	if (m_animPlayerStats.IsLoaded())
+		m_animPlayerStats.Invoke("setWeaponName", text);
+}
 
-		if(m_fHealth != fHealth || m_bFirstFrame)
+void CHUD::TOSUpdateHealth()
+{
+	const auto pActor = g_pTOSGame->GetActualClientActor();
+
+	if (pActor)
+	{
+		const float fHealth = (pActor->GetHealth() / static_cast<float>(pActor->GetMaxHealth())) * 100.0f + 1.0f;  // NOLINT(clang-diagnostic-implicit-int-float-conversion)
+
+		if (m_fHealth != fHealth || m_bFirstFrame)
 		{
-			m_animPlayerStats.Invoke("setHealth", (int)fHealth);
+			m_animPlayerStats.Invoke("setHealth", static_cast<int>(fHealth));
 		}
 
-		if(m_bFirstFrame)
+		if (m_bFirstFrame)
 			m_fHealth = fHealth;
 
 		m_fHealth = fHealth;
 	}
+}
+
+void CHUD::TOSSetAmmoHealthHUD(IActor* pActor, const char* filePath)
+{
+	if (!g_pGame->GetHUD())
+		return;
+
+	//Health, Energy, Ammo
+	m_animPlayerStats.Unload();
+	m_animPlayerStats.Load(filePath, eFD_Right, eFAF_Visible | eFAF_ThisHandler);
+
+	const int iHealth = (pActor->GetHealth() / pActor->GetMaxHealth()) * 100 + 1;
+	float fEnergy = 0;
+
+	if (const auto pNewActor = dynamic_cast<CActor*>(pActor))
+	{
+		if (pNewActor->IsAlien())
+		{
+			//auto* pAlien = dynamic_cast<CAlien*>(pNewActor);
+			//fEnergy = (pAlien->GetAlienEnergy() / pAlien->GetMaxAlienEnergy()) * 100.0f + 1.0f;
+		}
+		else
+		{
+			const auto pPlayer = dynamic_cast<CTOSPlayer*>(pActor);
+			if (pPlayer->GetNanoSuit())
+				fEnergy = pPlayer->GetNanoSuit()->GetSuitEnergy() * 0.5f + 1.0f;
+		}
+	}
+
+	m_animPlayerStats.Invoke("setHealth", iHealth);
+	m_animPlayerStats.Invoke("setEnergy", static_cast<int>(fEnergy));
+}
+
+void CHUD::TOSSetInventoryHUD(IActor* pActor, const char* filePath) const
+{
+	const auto pHUD = g_pGame->GetHUD();
+	if (!pHUD || !pActor)
+		return;
+
+	pHUD->m_animWeaponSelection.Unload();
+	pHUD->m_animWeaponSelection.Load(filePath, eFD_Right, eFAF_Visible | eFAF_ThisHandler);
+
+	TOS_HUD::ShowInventory(pActor, "null", "null");
+}
+
+void CHUD::UpdateHealth()
+{
+	//TheOtherSide
+	//CActor* pActor = static_cast<CActor*>(gEnv->pGame->GetIGameFramework()->GetClientActor());
+	//if (pActor)
+	//{
+	//	float fHealth = (pActor->GetHealth() / (float)pActor->GetMaxHealth()) * 100.0f + 1.0f;
+
+	//	if (m_fHealth != fHealth || m_bFirstFrame)
+	//	{
+	//		m_animPlayerStats.Invoke("setHealth", (int)fHealth);
+	//	}
+
+	//	if (m_bFirstFrame)
+	//		m_fHealth = fHealth;
+
+	//	m_fHealth = fHealth;
+	//}
+
+	TOSUpdateHealth();
+	//~TheOtherSide
 }
 
 //-----------------------------------------------------------------------------------------------------

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "MasterSynchronizer.h"
+
 #include "../GenericModule.h"
 
 #include "../../TOSGame.h"
@@ -9,6 +11,7 @@
 class CTOSMasterClient;
 class CTOSMasterSynchronizer;
 class CTOSGenericSynchronizer;
+
 
 /**
  * \brief хранит информацию о канале мастера во время перезапуска игры.
@@ -44,6 +47,7 @@ struct STOSMasterInfo final : STOSSmartStruct  // NOLINT(cppcoreguidelines-speci
 
 	EntityId slaveId;
 	string desiredSlaveClassName;
+	MCSaved mcSavedParams;///< Сохраненные параметры, которые отправил мастер-клиент на сервер перед началом управления рабом. \n mc - мастер клиент
 };
 
 struct STOSStartControlInfo
@@ -73,6 +77,8 @@ struct STOSStartControlInfo
  */
 class CTOSMasterModule final : public CTOSGenericModule  // NOLINT(cppcoreguidelines-special-member-functions)
 {
+	friend class CTOSMasterSynchronizer;
+
 public:
 	CTOSMasterModule();
 	~CTOSMasterModule() override;
@@ -131,6 +137,9 @@ public:
 
 private:
 	bool GetMasterInfo(const IEntity* pMasterEntity, STOSMasterInfo& info);
+
+	void SaveMasterClientParams(const IEntity* pMasterEntity, const MCSaved& params);
+	void ApplyMasterClientParams(IEntity* pMasterEntity);
 
 	/**
 	 * \brief Функция предназначена дял конкретного случая на сервере. \n Она планирует отправку RMI'шку на клиент, \n когда тот будет полностью готов её принять.

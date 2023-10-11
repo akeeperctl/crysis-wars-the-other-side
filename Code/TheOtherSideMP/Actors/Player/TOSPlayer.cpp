@@ -100,9 +100,7 @@ void CTOSPlayer::InitLocalPlayer()
 	}
 
 	// Исправление бага https://github.com/akeeperctl/crysis-wars-the-other-side/issues/5
-	m_clientPostEffects.clear();
-	gEnv->pSystem->GetI3DEngine()->SetPostEffectParam("AlienInterference_Amount", 0.0f);
-	SAFE_HUD_FUNC(StartInterference(0, 0, 0, 0));
+	ClearInterference();
 }
 
 void CTOSPlayer::SetSpectatorMode(uint8 mode, EntityId targetId)
@@ -246,4 +244,11 @@ CTOSMasterClient* CTOSPlayer::GetMasterClient() const
 {
 	assert(m_pMasterClient);
 	return m_pMasterClient;
+}
+
+void CTOSPlayer::ClearInterference()
+{
+	m_clientPostEffects.clear();
+	gEnv->pSystem->GetI3DEngine()->SetPostEffectParam("AlienInterference_Amount", 0.0f);
+	SAFE_HUD_FUNC(StartInterference(0, 0, 0, 0));
 }

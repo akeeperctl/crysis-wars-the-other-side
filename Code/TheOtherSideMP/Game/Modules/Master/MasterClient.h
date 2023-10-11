@@ -9,7 +9,9 @@
 #include <TheOtherSideMP/Actors/player/TOSPlayer.h>
 #include <TheOtherSideMP/Game/Modules/ITOSGameModule.h>
 
+#include "MasterModule.h"
 
+class CTOSHUDCrosshair;
 class CTOSAIActionTracker;
 class CTOSMasterClient;
 class CSquadSystem;
@@ -21,12 +23,12 @@ class CVehicleMovementBase;
 struct IHardwareMouseEventListener;
 struct IHitListener;
 
-
  /**
  * TOS MasterClient
  * Класс описывает то, как будет происходить взаимодействие между Мастером и Рабом.
- * В частности перемещение, управление, угол обзора и т.д
- * Автоудаление: отсутствует.
+ * \n В частности перемещение, управление, угол обзора и т.д.
+ * \n Dude - это локальный персонаж.
+ * \n Автоудаление класса: отсутствует.
  */
 class CTOSMasterClient final  // NOLINT(cppcoreguidelines-special-member-functions)
 {
@@ -54,12 +56,12 @@ public:
 	IEntity* GetSlaveEntity() const
 	{
 		//assert(m_pControlledEntity);
-		return m_pControlledEntity;
+		return m_pSlaveEntity;
 	};
 
 	/**
 	 * \brief Изменяет указатель на контролируемую сущность раба
-	 * \param pEntity - указатель на новую сущность. Не передавать сюда пустой указатель!
+	 * \param pEntity - указатель на новую сущность. Это должен быть актёр, наследованный от IActor! Не передавать сюда пустой указатель!
 	 * \param cls - класс новой сущности
 	 * \return True, если сущность успешно изменена
 	 */
@@ -73,8 +75,16 @@ public:
 	void UpdateView(SViewParams& viewParams) const;
 
 private:
-	CTOSPlayer* m_pLocalDude;
-	IEntity* m_pControlledEntity;
+	/**
+	 * \brief Подготовить локального персонажа перед началом/прекращением управления рабом
+	 * \param toStartControl - Если true, то подготовка персонажа будет проходить как подготовка перед началом управления рабом
+	 */
+	void PrepareDude(bool toStartControl);
+
+	CTOSPlayer* m_pLocalDude; ///< Указатель на локального персонажа с именем \a Dude. \n Появляется в одиночной игре.
+	IEntity* m_pSlaveEntity; ///< Указатель на сущность раба, которую контролирует локальный персонаж.
+	//MCSaved m_dudeSavedParams; ///< Хранит сохраненные параметры лок. персонажа \n для их применения перед/после начала управления рабом
+	CTOSHUDCrosshair* m_pHUDCrosshair;
 
 public:
 	//static constexpr int INPUT_ASPECT = eEA_GameClientDynamic;

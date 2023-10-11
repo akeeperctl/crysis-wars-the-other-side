@@ -423,10 +423,10 @@ bool CGame::CompleteInit()
 	return true;
 }
 
-int CGame::Update(bool haveFocus, unsigned int updateFlags)
+int CGame::Update(bool haveFocus, const unsigned int updateFlags)
 {
-	bool bRun = m_pFramework->PreUpdate( true, updateFlags );
-	float frameTime = gEnv->pTimer->GetFrameTime();
+	const bool  bRun = m_pFramework->PreUpdate( true, updateFlags );
+	const float frameTime = gEnv->pTimer->GetFrameTime();
 
 	if (m_pFramework->IsGamePaused() == false)
 	{

@@ -10,6 +10,7 @@ class CTOSPlayer final : public CPlayer  // NOLINT(cppcoreguidelines-special-mem
 	friend class CPlayerInput;
 	friend class CPlayerView;
 	friend class CNetPlayerInput;
+	friend class CTOSMasterClient;
 
 public:
 	CTOSPlayer();
@@ -47,7 +48,10 @@ public:
 
 	CTOSMasterClient* GetMasterClient() const;
 
+
 protected:
+	void ClearInterference();
+
 private:
 
  /**

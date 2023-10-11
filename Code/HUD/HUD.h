@@ -10,9 +10,9 @@ Description:
 -------------------------------------------------------------------------
 History:
 - 07:11:2005: Created by Julien Darre
-- 01:02:2006: Modified by Jan M�ller
+- 01:02:2006: Modified by Jan Mьller
 - 22:02:2006: Refactored for G04 by Matthew Jack
-- 2007: Refactored by Jan M�ller
+- 2007: Refactored by Jan Mьller
 
 *************************************************************************/
 #ifndef __HUD_H__
@@ -39,6 +39,10 @@ History:
 #include "HUDMissionObjectiveSystem.h"
 
 //-----------------------------------------------------------------------------------------------------
+
+//TheOtherSide
+class CTOSHUDCrosshair;
+//~TheOtherSide
 
 struct ILevel;
 struct ILevelInfo;
@@ -401,9 +405,13 @@ public:
 	ILINE CHUDPowerStruggle* GetPowerStruggleHUD() { return m_pHUDPowerStruggle; }
 	ILINE CHUDTextChat* GetMPChat() {return m_pHUDTextChat;}
 	ILINE CHUDScopes* GetScopes() { return m_pHUDScopes; }
-	ILINE CHUDCrosshair* GetCrosshair() { return m_pHUDCrosshair; }
 	ILINE CHUDTagNames* GetTagNames() { return m_pHUDTagNames; }
 	ILINE CHUDSilhouettes* GetSilhouettes() { return m_pHUDSilhouettes; }
+
+	//TheOtherSide
+	//ILINE CHUDCrosshair* GetCrosshair() { return m_pHUDCrosshair; }
+	ILINE CTOSHUDCrosshair* GetCrosshair() { return m_pHUDCrosshair; }
+	//~TheOtherSide
 
 	//mission objectives
 	void UpdateMissionObjectiveIcon(EntityId objective, int friendly, FlashOnScreenIcon iconType, bool forceNoOffset = false, const Vec3 rotationTarget=Vec3(0, 0, 0), bool characterhead = false, bool forceshow=false);
@@ -553,8 +561,30 @@ public:
 	// marcok: I know it's bad to even have this in the HUD, but the way gamerulessystem is currently used I don't want to duplicate this elsewhere
 	EHUDGAMERULES GetCurrentGameRules()	{	return m_currentGameRules;	}
 
-private:
 
+
+	//TheOtherSide
+
+	/**
+	 * \brief Изменяет текст названия оружия под показателем здоровья
+	 * \param text - применяемое название. Может быть любой текст
+	 */
+	void TOSSetWeaponName(const char* text);
+	void TOSUpdateHealth();
+
+	/**
+	 * \brief Сменить интерфейс отображения здоровья и энергии
+	 * \param pActor - указатель на актёра, у которого будут добываться параметры энергии и здоровья
+	 * \param filePath - путь к файлу интерфейса. Может быть с расширением как .swf и как .gfx.
+		\n Пример: \a filePath = "Libs/UI/HUD_AmmoHealthEnergyAbilities.gfx"
+	 */
+	void TOSSetAmmoHealthHUD(IActor* pActor, const char* filePath);
+
+	void TOSSetInventoryHUD(IActor* pActor, const char* filePath) const;
+
+	//~TheOtherSide
+
+private:
 	//some Update functions
 	void UpdateHealth();
 	bool UpdateTimers(float frameTime);
@@ -610,9 +640,14 @@ private:
 	CHUDTeamInstantAction	*m_pHUDTeamInstantAction;
 	CHUDInstantAction			*m_pHUDInstantAction;
 	CHUDScopes						*m_pHUDScopes;
-	CHUDCrosshair					*m_pHUDCrosshair;
 	CHUDTagNames					*m_pHUDTagNames;
 	CHUDSilhouettes 			*m_pHUDSilhouettes;
+
+	//TheOtherSide
+	//CHUDCrosshair* m_pHUDCrosshair;
+	CTOSHUDCrosshair* m_pHUDCrosshair;
+
+	//~TheOtherSide
 
 	bool					m_forceScores;
 

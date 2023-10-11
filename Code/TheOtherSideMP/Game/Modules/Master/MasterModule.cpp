@@ -13,6 +13,7 @@
 #include "../../../Helpers/TOS_Debug.h"
 
 #include "TheOtherSideMP/Game/TOSGameCvars.h"
+#include "TheOtherSideMP/Helpers/TOS_AI.h"
 #include "TheOtherSideMP/Helpers/TOS_Cache.h"
 #include "TheOtherSideMP/Helpers/TOS_Entity.h"
 
@@ -92,7 +93,7 @@ void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEven
 					const auto pSlaveEntClsCvar = gEnv->pConsole->GetCVar("tos_cl_SlaveEntityClass");
 					assert(pSlaveEntClsCvar);
 
-					const auto params = MasterAddingParams(clientEntityId, pSlaveEntClsCvar->GetString());
+					const auto params = NetMasterAddingParams(clientEntityId, pSlaveEntClsCvar->GetString());
 
 					assert(m_pSynchonizer);
 					m_pSynchonizer->RMISend(CTOSMasterSynchronizer::SvRequestMasterAdd(), params, eRMI_ToServer);
@@ -174,7 +175,7 @@ void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEven
 				break;
 			}
 
-			MasterStartControlParams params;
+			NetMasterStartControlParams params;
 			params.slaveId = entId;
 
 			assert(m_pSynchonizer);
@@ -193,7 +194,7 @@ void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEven
 		// Излишняя проверка на клиента
 		if (gEnv->bClient)
 		{
-			MasterStartControlParams params;
+			NetMasterStartControlParams params;
 			params.slaveId = pEntity->GetId();
 			params.masterId = g_pGame->GetIGameFramework()->GetClientActorId();
 
@@ -211,7 +212,7 @@ void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEven
 		// Излишняя проверка на клиента
 		if (gEnv->bClient)
 		{
-			MasterStopControlParams params;
+			NetMasterStopControlParams params;
 			params.masterId = g_pGame->GetIGameFramework()->GetClientActorId();
 
 			assert(m_pSynchonizer);
@@ -240,7 +241,7 @@ void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEven
 					assert(m_pSynchonizer);
 					m_pSynchonizer->RMISend(
 						CTOSMasterSynchronizer::ClMasterClientStopControl(),
-						NoParams(),
+						NetGenericNoParams(),
 						eRMI_ToClientChannel,
 						playerChannelId
 					);
@@ -278,7 +279,7 @@ void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEven
 				if (pSlave)
 				{
 					//Вызывало баг, когда в какой-то момент раб перестал появляться после sv_restart
-					//Вернул
+					//Вернул, чтобы сущность удалялась после отключения клиента, а не когда актёр клиента вызвал Release
 					TOS_Entity::RemoveEntityForced(pSlave->GetId());
 				}
 			}
@@ -327,7 +328,7 @@ void CTOSMasterModule::Update(float frametime)
 
 		if (inGame && delay < 0.0f)
 		{
-			MasterStartControlParams params;
+			NetMasterStartControlParams params;
 			params.slaveId = slaveId;
 
 			assert(m_pSynchonizer);
@@ -490,6 +491,56 @@ bool CTOSMasterModule::GetMasterInfo(const IEntity* pMasterEntity, STOSMasterInf
 	info = m_masters[pMasterEntity->GetId()];
 
 	return true;
+}
+
+void CTOSMasterModule::SaveMasterClientParams(const IEntity* pMasterEntity, const MCSaved& params)
+{
+	assert(pMasterEntity);
+
+	if (IsMaster(pMasterEntity))
+	{
+		m_masters[pMasterEntity->GetId()].mcSavedParams = params;
+	}
+}
+
+void CTOSMasterModule::ApplyMasterClientParams(IEntity* pMasterEntity)
+{
+	assert(pMasterEntity);
+
+	if (IsMaster(pMasterEntity))
+	{
+		STOSMasterInfo info;
+		GetMasterInfo(pMasterEntity, info);
+
+		const Vec3  pos = info.mcSavedParams.pos;
+		const Quat  rot = info.mcSavedParams.rot;
+		const int   species = info.mcSavedParams.species;
+		const float suitEnergy = info.mcSavedParams.suitEnergy;
+		uint        suitMode = info.mcSavedParams.suitMode;
+
+		pMasterEntity->SetWorldTM(Matrix34::Create(Vec3(1, 1, 1), rot, pos));
+
+		const auto pPlayer = dynamic_cast<CTOSPlayer*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pMasterEntity->GetId()));
+		assert(pPlayer);
+
+		const auto pSuit = pPlayer->GetNanoSuit();
+		assert(pSuit);
+
+		pSuit->SetSuitEnergy(suitEnergy);
+		pSuit->SetMode(static_cast<ENanoMode>(suitMode));
+
+		IAIObject* pAI = pMasterEntity->GetAI();
+		if (!pAI)
+		{
+			CryLogAlways("[C++][%s][%s][ApplyMasterClientParams] Error: Entity AI pointer is NULL",
+				TOS_Debug::GetEnv(), TOS_Debug::GetAct(3));
+
+			return;
+		}
+
+		pAI->Event(AIEVENT_ENABLE, nullptr);
+		TOS_AI::SetSpecies(pAI, species);
+	}
 }
 
 void CTOSMasterModule::ScheduleMasterStartControl(const STOSStartControlInfo& info)

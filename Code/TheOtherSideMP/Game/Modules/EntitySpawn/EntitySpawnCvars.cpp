@@ -1,4 +1,6 @@
 #include "StdAfx.h"
+#include "IEntity.h"
+#include "IEntitySystem.h"
 #include "EntitySpawnModule.h"
 
 #include "TheOtherSideMP/Game/TOSGameCvars.h"
@@ -16,6 +18,7 @@ void CTOSEntitySpawnModule::InitCCommands(IConsole* pConsole)
 	pConsole->AddCommand("removeentity", CmdRemoveEntityById);
 	pConsole->AddCommand("removeentityforced", CmdRemoveEntityByIdForced);
 	pConsole->AddCommand("getlistsavedentites", CmdGetListEntities);
+	pConsole->AddCommand("getentrot", CmdGetEntityRot);
 }
 
 void CTOSEntitySpawnModule::ReleaseCVars()
@@ -32,6 +35,7 @@ void CTOSEntitySpawnModule::ReleaseCCommands()
 	pConsole->RemoveCommand("removeentitybyid");
 	pConsole->RemoveCommand("removeentitybyidforced");
 	pConsole->RemoveCommand("getlistsavedentites");
+	pConsole->RemoveCommand("getentrot");
 }
 
 void CTOSEntitySpawnModule::CmdSpawnEntity(IConsoleCmdArgs* pArgs)
@@ -130,4 +134,78 @@ void CTOSEntitySpawnModule::CmdGetListEntities(IConsoleCmdArgs* pArgs)
 	}
 
 
+}
+
+void CTOSEntitySpawnModule::CmdGetEntityRot(IConsoleCmdArgs* pArgs)
+{
+	const EntityId id = atoi(pArgs->GetArg(1));
+
+	const auto pEntity = gEnv->pEntitySystem->GetEntity(id);
+	if (!pEntity)
+	{
+		CryLogAlways("Failed: wrong 1 arg entityId");
+		return;
+	}
+
+	CryLogAlways("Result: ");
+
+	const auto angles = pEntity->GetWorldAngles();
+	const auto rot = pEntity->GetWorldRotation();
+	const auto inverted_rot = rot.GetInverted();
+	const auto norm_rot = rot.GetNormalized();
+
+	CryLogAlways("	pEntity->GetWorldAngles(Ang3)   = (%1.f, %1.f, %1.f)", 
+		angles.x, angles.y, angles.z);
+
+	CryLogAlways("	rot->GetWorldRotation(Quat): ");
+	CryLogAlways("		GetColumn0 = (%1.f, %1.f, %1.f)", 
+		rot.GetColumn0().x, rot.GetColumn0().y, rot.GetColumn0().z);
+	CryLogAlways("		GetColumn1 = (%1.f, %1.f, %1.f)",
+		rot.GetColumn1().x, rot.GetColumn1().y, rot.GetColumn1().z);
+	CryLogAlways("		GetColumn2 = (%1.f, %1.f, %1.f)",
+		rot.GetColumn2().x, rot.GetColumn2().y, rot.GetColumn2().z);
+	CryLogAlways("		GetRow0 = (%1.f, %1.f, %1.f)",
+		rot.GetRow0().x, rot.GetRow0().y, rot.GetRow0().z);
+	CryLogAlways("		GetRow1 = (%1.f, %1.f, %1.f)",
+		rot.GetRow1().x, rot.GetRow1().y, rot.GetRow1().z);
+	CryLogAlways("		GetRow2 = (%1.f, %1.f, %1.f)",
+		rot.GetRow2().x, rot.GetRow2().y, rot.GetRow2().z);
+	CryLogAlways("		GetFwd = (%1.f, %1.f, %1.f)",
+		rot.GetFwdX(), rot.GetFwdY(), rot.GetFwdZ());
+
+	CryLogAlways(" ");
+
+	CryLogAlways("	inverted_rot->GetWorldRotation(Quat): ");
+	CryLogAlways("		GetColumn0 = (%1.f, %1.f, %1.f)",
+		inverted_rot.GetColumn0().x, inverted_rot.GetColumn0().y, inverted_rot.GetColumn0().z);
+	CryLogAlways("		GetColumn1 = (%1.f, %1.f, %1.f)",
+		inverted_rot.GetColumn1().x, inverted_rot.GetColumn1().y, inverted_rot.GetColumn1().z);
+	CryLogAlways("		GetColumn2 = (%1.f, %1.f, %1.f)",
+		inverted_rot.GetColumn2().x, inverted_rot.GetColumn2().y, inverted_rot.GetColumn2().z);
+	CryLogAlways("		GetRow0 = (%1.f, %1.f, %1.f)",
+		inverted_rot.GetRow0().x, inverted_rot.GetRow0().y, inverted_rot.GetRow0().z);
+	CryLogAlways("		GetRow1 = (%1.f, %1.f, %1.f)",
+		inverted_rot.GetRow1().x, inverted_rot.GetRow1().y, inverted_rot.GetRow1().z);
+	CryLogAlways("		GetRow2 = (%1.f, %1.f, %1.f)",
+		inverted_rot.GetRow2().x, inverted_rot.GetRow2().y, inverted_rot.GetRow2().z);
+	CryLogAlways("		GetFwd = (%1.f, %1.f, %1.f)",
+		inverted_rot.GetFwdX(),   inverted_rot.GetFwdY(), inverted_rot.GetFwdZ());
+
+	CryLogAlways(" ");
+
+	CryLogAlways("	norm_rot->GetWorldRotation(Quat): ");
+	CryLogAlways("		GetColumn0 = (%1.f, %1.f, %1.f)",
+		norm_rot.GetColumn0().x, norm_rot.GetColumn0().y, norm_rot.GetColumn0().z);
+	CryLogAlways("		GetColumn1 = (%1.f, %1.f, %1.f)",
+		norm_rot.GetColumn1().x, norm_rot.GetColumn1().y, norm_rot.GetColumn1().z);
+	CryLogAlways("		GetColumn2 = (%1.f, %1.f, %1.f)",
+		norm_rot.GetColumn2().x, norm_rot.GetColumn2().y, norm_rot.GetColumn2().z);
+	CryLogAlways("		GetRow0 = (%1.f, %1.f, %1.f)",
+		norm_rot.GetRow0().x, norm_rot.GetRow0().y, norm_rot.GetRow0().z);
+	CryLogAlways("		GetRow1 = (%1.f, %1.f, %1.f)",
+		norm_rot.GetRow1().x, norm_rot.GetRow1().y, norm_rot.GetRow1().z);
+	CryLogAlways("		GetRow2 = (%1.f, %1.f, %1.f)",
+		norm_rot.GetRow2().x, norm_rot.GetRow2().y, norm_rot.GetRow2().z);
+	CryLogAlways("		GetFwd = (%1.f, %1.f, %1.f)",
+		norm_rot.GetFwdX(), norm_rot.GetFwdY(), norm_rot.GetFwdZ());
 }

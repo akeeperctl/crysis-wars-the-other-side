@@ -3,7 +3,7 @@
 #include <IGameObject.h>
 
 class CTOSGenericModule;
-struct PintestParams;
+struct NetGenericPintestParams;
 
 // Send pintest rmi to the server
 //Example: RMISENDER_SERVER_PINTEST("[CTOSGame::OnExtraGameplayEvent]");
@@ -23,19 +23,39 @@ struct PintestParams;
 	params.commentary = comment;\
 	pSender->RMISend(CTOSModuleSynchronizer::ClPintest(), params, eRMI_ToClientChannel, clientChannelId)\
 
-struct NoParams
+struct NetGenericNoParams
 {
-	NoParams() {};
+	NetGenericNoParams() {};
 
 	void SerializeWith(TSerialize ser) const {};
 };
 
-struct PintestParams
+struct NetGenericSetSpeciesParams
+{
+	EntityId aiEntId;
+	int species;
+	NetGenericSetSpeciesParams()
+		: aiEntId(0),
+		species(0) {} ;
+
+	explicit NetGenericSetSpeciesParams(int _species)
+		: aiEntId(0),
+		species(_species) { }
+
+	void SerializeWith(TSerialize ser)
+	{
+		//ui5 это от 0 до 31
+		ser.Value("species", species, 'ui5');
+		ser.Value("aiEntId", aiEntId, 'eid');
+	}
+};
+
+struct NetGenericPintestParams
 {
 	string commentary;
-	PintestParams() {};
+	NetGenericPintestParams() {};
 
-	explicit PintestParams(const char* _commentary)
+	explicit NetGenericPintestParams(const char* _commentary)
 		: commentary(_commentary)
 	{
 	}
@@ -125,8 +145,8 @@ public:
 	//NOATTACH - Без привязки к данным сериализации
 	//Reliable - надёжная доставка пакета
 
-	DECLARE_SERVER_RMI_NOATTACH(SvRequestPintest, PintestParams, eNRT_ReliableOrdered);
-	DECLARE_CLIENT_RMI_NOATTACH(ClPintest, PintestParams, eNRT_ReliableOrdered);
+	DECLARE_SERVER_RMI_NOATTACH(SvRequestPintest, NetGenericPintestParams, eNRT_ReliableOrdered);
+	DECLARE_CLIENT_RMI_NOATTACH(ClPintest, NetGenericPintestParams, eNRT_ReliableOrdered);
 
 protected:
 	//void SetModule(CTOSGenericModule* pModule);

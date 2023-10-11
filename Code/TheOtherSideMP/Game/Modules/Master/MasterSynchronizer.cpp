@@ -6,6 +6,8 @@
 
 #include "../../TOSGameEventRecorder.h"
 
+#include "TheOtherSideMP/Helpers/TOS_AI.h"
+
 CTOSMasterSynchronizer::CTOSMasterSynchronizer()
 {
 }
@@ -170,6 +172,49 @@ IMPLEMENT_RMI(CTOSMasterSynchronizer, ClMasterClientStopControl)
 			TOS_Debug::GetEnv(), TOS_Debug::GetAct(3));
 
 		g_pTOSGame->GetMasterModule()->GetMasterClient()->StopControl();
+	}
+
+	return true;
+}
+////------------------------------------------------------------------------
+IMPLEMENT_RMI(CTOSMasterSynchronizer, SvRequestSaveMCParams)
+{
+	// Здесь пишем всё, что должно выполниться на сервере
+
+	if (gEnv->bServer)
+	{
+		CryLogAlways("[C++][%s][%s][SvRequestSaveMCParams]",
+			TOS_Debug::GetEnv(), TOS_Debug::GetAct(3));
+
+		const auto pMasterEntity = gEnv->pEntitySystem->GetEntity(params.masterId);
+		assert(pMasterEntity);
+
+		const auto pMM = g_pTOSGame->GetMasterModule();
+		assert(pMM);
+
+		pMM->SaveMasterClientParams(pMasterEntity, params);
+	}
+
+	return true;
+}
+
+////------------------------------------------------------------------------
+IMPLEMENT_RMI(CTOSMasterSynchronizer, SvRequestApplyMCSavedParams)
+{
+	// Здесь пишем всё, что должно выполниться на сервере
+
+	if (gEnv->bServer)
+	{
+		CryLogAlways("[C++][%s][%s][SvRequestApplyMCSavedParams]",
+			TOS_Debug::GetEnv(), TOS_Debug::GetAct(3));
+
+		const auto pMasterEntity = gEnv->pEntitySystem->GetEntity(params.masterId);
+		assert(pMasterEntity);
+
+		const auto pMM = g_pTOSGame->GetMasterModule();
+		assert(pMM);
+
+		pMM->ApplyMasterClientParams(pMasterEntity);
 	}
 
 	return true;

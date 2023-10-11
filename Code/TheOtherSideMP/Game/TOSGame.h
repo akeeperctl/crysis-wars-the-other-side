@@ -109,6 +109,13 @@ public:
 
 	//~Events
 
+	/**
+	 * \brief Получить актуального актёра игрока. Это может быть как Dude(стандартный персонаж)
+		\n так и раб(контролируемый персонаж в модуле Master)
+	 * \return Указатель на актёра.
+	 */
+	IActor* GetActualClientActor() const;
+
 	CTOSGameEventRecorder* GetEventRecorder() const;
 	CTOSMasterModule* GetMasterModule() const;
 	CTOSEntitySpawnModule* GetEntitySpawnModule() const;

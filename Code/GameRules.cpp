@@ -206,7 +206,7 @@ bool CGameRules::Init( IGameObject * pGameObject )
 	}
 
 	//TheOtherSide
-	TOS_RECORD_EVENT(GetEntityId(), STOSGameEvent(eEGE_GamerulesInit, "", true));
+	TOS_RECORD_EVENT(GetEntityId(), STOSGameEvent(eEGE_GamerulesInit, "", false));
 	//~TheOtherSide
 
 	return true;
@@ -224,7 +224,7 @@ void CGameRules::PostInit( IGameObject * pGameObject )
 	RegisterConsoleVars(pConsole);
 
 	//TheOtherSide
-	TOS_RECORD_EVENT(GetEntityId(), STOSGameEvent(eEGE_GamerulesPostInit, "", true));
+	TOS_RECORD_EVENT(GetEntityId(), STOSGameEvent(eEGE_GamerulesPostInit, "", false));
 	//~TheOtherSide
 
 }
@@ -241,7 +241,7 @@ void CGameRules::PostInitClient(int channelId)
 	char buffer[256] = {};
 	sprintf(buffer, "ChannelId = %i", channelId);
 
-	TOS_RECORD_EVENT(0, STOSGameEvent(eEGE_GamerulesPostInitClient, buffer, true));
+	TOS_RECORD_EVENT(0, STOSGameEvent(eEGE_GamerulesPostInitClient, buffer, false));
 	//~TheOtherSide
 
 	// update the time
@@ -420,7 +420,7 @@ void CGameRules::ProcessEvent( SEntityEvent& event)
 		m_removals.clear();
 
 		//TheOtherSide
-		TOS_RECORD_EVENT(GetEntityId(), STOSGameEvent(eEGE_GamerulesReset, "", true));
+		TOS_RECORD_EVENT(GetEntityId(), STOSGameEvent(eEGE_GamerulesReset, "", false));
 		//~TheOtherSide
 
 		break;
@@ -437,7 +437,7 @@ void CGameRules::ProcessEvent( SEntityEvent& event)
 		}
 
 		//TheOtherSide
-		TOS_RECORD_EVENT(GetEntityId(), STOSGameEvent(eEGE_GamerulesStartGame, "", true));
+		TOS_RECORD_EVENT(GetEntityId(), STOSGameEvent(eEGE_GamerulesStartGame, "", false));
 		//~TheOtherSide
 
 		break;
@@ -445,7 +445,7 @@ void CGameRules::ProcessEvent( SEntityEvent& event)
 	//TheOtherSide
 
 	case ENTITY_EVENT_INIT:
-		TOS_RECORD_EVENT(GetEntityId(), STOSGameEvent(eEGE_GamerulesEventInit, "", true));
+		TOS_RECORD_EVENT(GetEntityId(), STOSGameEvent(eEGE_GamerulesEventInit, "", false));
 		break;
 
 	//~TheOtherSide

@@ -8,7 +8,7 @@ Description: Crosshair HUD object (refactored from old HUD code)
 
 -------------------------------------------------------------------------
 History:
-- 15:05:2007  11:00 : Created by Jan Müller
+- 15:05:2007  11:00 : Created by Jan MÑŒller
 
 *************************************************************************/
 
@@ -31,6 +31,10 @@ class CHUDCrosshair : public CHUDObject
 public:
 	CHUDCrosshair(CHUD* pHUD);
 	~CHUDCrosshair();
+
+	//TheOtherSide
+	friend class CTOSHUDCrosshair;
+	//~TheOtherSide
 
 	// CHUDObject
 	virtual void Update(float fDeltaTime);
@@ -57,8 +61,13 @@ public:
 
 private:
 
+	//TheOtherSide
+
 	//update function
-	void UpdateCrosshair();
+	//	void UpdateCrosshair();
+	virtual void UpdateCrosshair();
+
+	//~TheOtherSide
 
 	//the main HUD
 	CHUD	*g_pHUD;

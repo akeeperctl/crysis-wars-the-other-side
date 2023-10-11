@@ -145,6 +145,9 @@
     <Filter Include="TheOtherSideMP\Game\Modules\EntitySpawn">
       <UniqueIdentifier>{4dbf98cb-5bcc-44bd-a90a-53515600b9be}</UniqueIdentifier>
     </Filter>
+    <Filter Include="TheOtherSideMP\HUD">
+      <UniqueIdentifier>{8796b1bf-5bdf-49c1-91bc-f0959f038ad0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Actor.cpp">
@@ -806,6 +809,9 @@
     <ClCompile Include="TheOtherSideMP\Game\Modules\EntitySpawn\EntitySpawnCvars.cpp">
       <Filter>TheOtherSideMP\Game\Modules\EntitySpawn</Filter>
     </ClCompile>
+    <ClCompile Include="TheOtherSideMP\HUD\TOSCrosshair.cpp">
+      <Filter>TheOtherSideMP\HUD</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor.h">
@@ -1435,6 +1441,9 @@
     </ClInclude>
     <ClInclude Include="TheOtherSideMP\Actors\ITOSMasterControllable.h">
       <Filter>TheOtherSideMP\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="TheOtherSideMP\HUD\TOSCrosshair.h">
+      <Filter>TheOtherSideMP\HUD</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

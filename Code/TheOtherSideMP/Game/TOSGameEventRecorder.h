@@ -1,7 +1,9 @@
+// ReSharper disable CppInconsistentNaming
 #pragma once
 
-#include "IGameplayRecorder.h"
 #include "IEntity.h"
+#include "IGameplayRecorder.h"
+// ReSharper disable once CppUnusedIncludeDirective
 #include "TOSGame.h"
 
 // Example
@@ -17,9 +19,9 @@ if (g_pTOSGame)\
 #define TOS_INIT_EVENT_VALUES(pEntity, _event) \
 const string entName = (pEntity) ? (pEntity)->GetName() : "";\
 const EntityId entId = (pEntity) ? (pEntity)->GetId() : 0;\
-const string eventName = g_pTOSGame->GetEventRecorder()->GetStringFromEnum(_event.event);\
+const string eventName = g_pTOSGame->GetEventRecorder()->GetStringFromEnum((_event).event);\
 	  string eventDesc = (_event).description;\
-const auto pGO = (pEntity) ? g_pGame->GetIGameFramework()->GetGameObject(pEntity->GetId()) : nullptr\
+const auto pGO = (pEntity) ? g_pGame->GetIGameFramework()->GetGameObject((pEntity)->GetId()) : nullptr\
 
 
 enum EExtraGameplayEvent
@@ -54,12 +56,12 @@ enum EExtraGameplayEvent
 	eEGE_PlayerJoinedSpectator, // Игрок нажал кнопку "Зритель" и перешёл в режим зрителя
 	eEGE_PlayerJoinedCutscene,
 
-	eEGE_GamerulesReset,
-	eEGE_GamerulesStartGame,
-	eEGE_GamerulesEventInit,
-	eEGE_GamerulesPostInit,
-	eEGE_GamerulesPostInitClient,
-	eEGE_GamerulesInit,
+	eEGE_GamerulesReset, // log off
+	eEGE_GamerulesStartGame, // log off
+	eEGE_GamerulesEventInit, // log off
+	eEGE_GamerulesPostInit, // log off
+	eEGE_GamerulesPostInitClient, // log off
+	eEGE_GamerulesInit, // log off
 	eEGE_GamerulesDestroyed, //NOT USED
 
 	eEGE_GameModuleInit,
@@ -72,7 +74,6 @@ enum EExtraGameplayEvent
 	eEGE_TOSEntityOnRemove,
 	eEGE_TOSEntityMarkForRecreation,
 	eEGE_TOSEntityRecreated,
-
 
 	eEGE_TOSEntityScheduleDelegateAuthority,
 	eEGE_TOSEntityAuthorityDelegated,
@@ -121,7 +122,7 @@ struct STOSGameEvent
 		console_log(false),
 		vanilla_recorder(false)
 	{
-	};
+	}
 
 	explicit STOSGameEvent(const GameplayEvent& _event) :
 		event(_event.event),
@@ -132,7 +133,7 @@ struct STOSGameEvent
 		console_log(false),
 		vanilla_recorder(false)
 	{
-	};
+	}
 
 	explicit STOSGameEvent(const uint8 evt, const char* desc = nullptr, const bool log = false, const bool vanilla = false, void* xtra = nullptr, const float val = 0.0f, const int int_val = 0) :
 		event(evt),
@@ -141,7 +142,7 @@ struct STOSGameEvent
 		extra_data(xtra),
 		int_value(int_val),
 		console_log(log),
-		vanilla_recorder(vanilla) {};
+		vanilla_recorder(vanilla) {}
 
 	uint8 event;
 	const char* description;

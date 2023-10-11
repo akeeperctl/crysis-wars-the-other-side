@@ -13,16 +13,30 @@
 #include "MasterClient.h"
 
 #include "GameUtils.h"
+#include "IPlayerInput.h"
 #include "IViewSystem.h"
 #include "MasterSynchronizer.h"
 #include "Single.h"
 
+#include "HUD/HUD.h"
+#include "HUD/HUDCrosshair.h"
+
 #include "TheOtherSideMP/Actors/Aliens/TOSAlien.h"
+#include "TheOtherSideMP/HUD/TOSCrosshair.h"
+#include "TheOtherSideMP/Helpers/TOS_AI.h"
 
 CTOSMasterClient::CTOSMasterClient(CTOSPlayer* pPlayer)
 	: m_pLocalDude(pPlayer),
-	m_pControlledEntity(nullptr)
+	m_pSlaveEntity(nullptr),
+	m_pHUDCrosshair(nullptr)
 {
+    assert(pPlayer);
+
+    m_pHUDCrosshair = dynamic_cast<CTOSHUDCrosshair*>(g_pGame->GetHUD()->GetCrosshair());
+    assert(m_pHUDCrosshair);
+
+
+
 	if (gEnv->bClient)
 	{
 		//const char* clientChannelName = g_pGame->GetIGameFramework()->GetClientChannel()->GetName();
@@ -69,9 +83,11 @@ CTOSMasterClient::~CTOSMasterClient()
 void CTOSMasterClient::StartControl(IEntity* pEntity)
 {
 	assert(pEntity);
+
     SetSlaveEntity(pEntity, pEntity->GetClass()->GetName());
 
-	TOS_RECORD_EVENT(m_pControlledEntity->GetId(), STOSGameEvent(eEGE_MasterClientStartControl, "", true));
+
+	TOS_RECORD_EVENT(m_pSlaveEntity->GetId(), STOSGameEvent(eEGE_MasterClientStartControl, "", true));
 }
 
 void CTOSMasterClient::StopControl()
@@ -84,25 +100,25 @@ void CTOSMasterClient::StopControl()
 bool CTOSMasterClient::SetSlaveEntity(IEntity* pEntity, const char* cls)
 {
 	assert(pEntity);
-	m_pControlledEntity = pEntity;
+	m_pSlaveEntity = pEntity;
 
 
-	TOS_RECORD_EVENT(m_pControlledEntity->GetId(), STOSGameEvent(eEGE_MasterClientSetSlave, "", true));
+	TOS_RECORD_EVENT(m_pSlaveEntity->GetId(), STOSGameEvent(eEGE_MasterClientSetSlave, "", true));
 	return true;
 }
 
 void CTOSMasterClient::ClearSlaveEntity()
 {
-	m_pControlledEntity = nullptr;
+	m_pSlaveEntity = nullptr;
 
 	TOS_RECORD_EVENT(0, STOSGameEvent(eEGE_MasterClientClearSlave, "", true));
 }
 
 void CTOSMasterClient::UpdateView(SViewParams& viewParams) const
 {
-    assert(m_pControlledEntity);
+    assert(m_pSlaveEntity);
 
-    viewParams.position = m_pControlledEntity->GetWorldPos();
+    viewParams.position = m_pSlaveEntity->GetWorldPos();
 
     static float currentFov = -1.0f;
 
@@ -120,8 +136,8 @@ void CTOSMasterClient::UpdateView(SViewParams& viewParams) const
         Interpolate(current, target, 5.0f, viewParams.frameTime);
     }
 
-    const EntityId controlledId = m_pControlledEntity->GetId();
-	const string   controlledCls = m_pControlledEntity->GetClass()->GetName();
+    const EntityId controlledId = m_pSlaveEntity->GetId();
+	const string   controlledCls = m_pSlaveEntity->GetClass()->GetName();
 
 	const auto pControlledActor = dynamic_cast<CTOSActor*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(controlledId));
     if (pControlledActor)
@@ -160,6 +176,10 @@ void CTOSMasterClient::UpdateView(SViewParams& viewParams) const
      //   }
 
         pControlledActor->UpdateMasterView(viewParams, offsetX, offsetY, offsetZ, target, current, currentFov);
+
+
+
+        // Старт кода, который я скопипастил из ControlClient.cpp
 
     	//Get skip entities
 	    IPhysicalEntity* pSkipEntities[10];  // NOLINT(modernize-avoid-c-arrays)
@@ -201,6 +221,8 @@ void CTOSMasterClient::UpdateView(SViewParams& viewParams) const
 	    }
 
         viewParams.position += (offsetX + offsetY + offsetZ);
+
+        // Конец кода, который я скопипастил из ControlClient.cpp
     }
 
 
@@ -382,191 +404,198 @@ void CTOSMasterClient::UpdateView(SViewParams& viewParams) const
 	viewParams.rotation = m_pLocalDude->GetViewQuatFinal();
 }
 
-//void CMasterClient::InitDudeMaster(bool toStart)
-//{
-//    if (m_pLocalDude)
-//    {
-//        //CPlayer::TAlienInterferenceParams lastInterferenceParams;
-//
-//        CNanoSuit* pSuit = m_pLocalDude->GetNanoSuit();
-//
-//        //Fix the non-resetted Dude player movement after controlling the actor;
-//        if (m_pLocalDude->GetPlayerInput())
-//            m_pLocalDude->GetPlayerInput()->Reset();
-//
-//        //before link to the new actor
-//        if (toStart)
-//        {
-//            m_lastDudePosition = m_pLocalDude->GetEntity()->GetWorldPos();
-//            m_lastDudeRotation = m_pLocalDude->GetViewRotation();
-//
-//            if (gEnv->bServer)
-//            {
-//                IAIObject* pAI = m_pLocalDude->GetEntity()->GetAI();
-//                if (pAI)
-//                {
-//                    if (pAI->CastToIAIActor())
-//                    {
-//                        m_lastDudeSpecies = pAI->CastToIAIActor()->GetParameters().m_nSpecies;
-//                        //CryLogAlways("SControlClient::PrepareDude -->> save player species");
-//                    }
-//
-//                    pAI->Event(AIEVENT_DISABLE, nullptr);
-//                }
-//            }
-//
-//            //I dont know, it is work?
-//            m_pLocalDude->ResetScreenFX();
-//
-//            if (pSuit)
-//            {
-//                m_lastDudeSuitEnergy = pSuit->GetSuitEnergy();
-//                m_lastDudeNanoMode = pSuit->GetMode();
-//                pSuit->SetMode(NANOMODE_DEFENSE);
-//                pSuit->SetModeDefect(NANOMODE_CLOAK, true);
-//                pSuit->SetModeDefect(NANOMODE_SPEED, true);
-//                pSuit->SetModeDefect(NANOMODE_STRENGTH, true);
-//            }
-//
-//            // Turning off a Alien screen interference effects
-//            //lastInterferenceParams = m_pLocalDude->m_interferenceParams;
-//            m_pLocalDude->ClearInterference();
-//
-//            if (g_pGame->GetHUD())
-//            {
-//                //LoadHUD(true); deprecated
-//                //m_pAbilitiesSystem->InitHUD(true);			
-//                //m_pAbilitiesSystem->ShowHUD(true);
-//                //m_pAbilitiesSystem->UpdateHUD();
-//                //m_pAbilitiesSystem->ReloadHUD();
-//
-//                //SetAmmoHealthHUD();
-//
-//                //g_pGame->GetHUD()->UpdateHealth(m_pControlledActor);
-//                //g_pGame->GetHUD()->m_animPlayerStats.Reload(true);
-//
-//                CHUDCrosshair* pCrosshair = g_pGame->GetHUD()->GetCrosshair();
-//                if (pCrosshair)
-//                {
-//                    pCrosshair->SetOpacity(1.0f);
-//                    pCrosshair->SetCrosshair(g_pGameCVars->hud_crosshair);
-//                }
-//            }
-//
-//            if (!gEnv->bEditor)
-//            {
-//                //TODO: fix "Pure function error" 	
-//
-//                /*CGameRules* pGR = g_pGame->GetGameRules();
-//                if (pGR && !m_isHitListener)
-//                {
-//                    m_isHitListener = true;
-//                    pGR->AddHitListener(this);
-//                }*/
-//            }
-//        }
-//        else
-//        {
-//            //after unlink
-//
-//            //The Player after unlink
-//            {
-//                SActorParams* pParams = m_pLocalDude->GetActorParams();
-//
-//                if (m_pLocalDude->GetHealth() > 0)
-//                {
-//                    m_pLocalDude->GetEntity()->SetPos(m_lastDudePosition);
-//
-//                    //may be bugged, not checked at 19.12.2020 0:14
-//                    m_pLocalDude->SetViewRotation(m_lastDudeRotation);
-//                }
-//
-//
-//                m_pLocalDude->SetSlaveEntityId(0);
-//                //m_pLocalDude->m_interferenceParams = lastInterferenceParams;
-//                m_pLocalDude->InitInterference();
-//                m_pLocalDude->ResetScreenFX();
-//
-//                if (m_pLocalDude->IsThirdPerson())
-//                    m_pLocalDude->ToggleThirdPerson();
-//
-//                SAFE_HUD_FUNC(GetCrosshair()->ShowFriendCross(false))
-//                SAFE_HUD_FUNC(SetWeaponName(""))
-//
-//               // g_pControlSystem->GetSquadSystem()->AnySquadClientLeft();
-//
-//                //auto* pSquad = g_pControlSystem->GetSquadSystem()->GetSquadFromMember(m_pLocalDude, true);
-//                //if (pSquad && pSquad->GetLeader() != nullptr)
-//                //    pSquad->OnPlayerAdded();
-//
-//                //Clean the OnUseData from player .lua script
-//                IScriptTable* pTable = m_pLocalDude->GetEntity()->GetScriptTable();
-//                if (pTable)
-//                {
-//                    const ScriptAnyValue value = 0;
-//                    Script::CallMethod(pTable, "SetOnUseData", value, value);
-//                }
-//
-//                if (pSuit)
-//                {
-//                    if (m_pLocalDude->GetHealth() > 0)
-//                    {
-//                        pSuit->Reset(m_pLocalDude);
-//
-//                        pSuit->SetModeDefect(NANOMODE_CLOAK, false);
-//                        pSuit->SetModeDefect(NANOMODE_SPEED, false);
-//                        pSuit->SetModeDefect(NANOMODE_STRENGTH, false);
-//
-//                        pSuit->ActivateMode(NANOMODE_CLOAK, true);
-//                        pSuit->ActivateMode(NANOMODE_SPEED, true);
-//                        pSuit->ActivateMode(NANOMODE_STRENGTH, true);
-//
-//                        pSuit->SetSuitEnergy(m_lastDudeSuitEnergy);
-//                        pSuit->SetMode(m_lastDudeNanoMode);
-//                    }
-//
-//                    if (g_pGame->GetHUD())
-//                    {
-//                        SetAmmoHealthHUD(m_pLocalDude, "Libs/UI/HUD_AmmoHealthEnergySuit.gfx");
-//                        SetInventoryHUD(m_pLocalDude, "Libs/UI/HUD_WeaponSelection.gfx");
-//                        m_animScoutFlyInterface.Unload();
-//
-//                        switch (pSuit->GetMode())
-//                        {
-//                        case NANOMODE_DEFENSE:
-//                            g_pGame->GetHUD()->m_animPlayerStats.Invoke("setMode", "Armor");
-//                            break;
-//                        case NANOMODE_SPEED:
-//                            g_pGame->GetHUD()->m_animPlayerStats.Invoke("setMode", "Speed");
-//                            break;
-//                        case NANOMODE_STRENGTH:
-//                            g_pGame->GetHUD()->m_animPlayerStats.Invoke("setMode", "Strength");
-//                            break;
-//                        case NANOMODE_CLOAK:
-//                            g_pGame->GetHUD()->m_animPlayerStats.Invoke("setMode", "Cloak");
-//                            break;
-//                        case NANOMODE_INVULNERABILITY:
-//                        case NANOMODE_DEFENSE_HIT_REACTION:
-//                        case NANOMODE_LAST:
-//                            break;
-//                        }
-//                    }
-//
-//                    pParams->vLimitRangeH = 0;
-//                    pParams->vLimitRangeV = pParams->vLimitRangeVDown = pParams->vLimitRangeVUp = 0;
-//                }
-//
-//                if (gEnv->bServer)
-//                {
-//                    IAIObject* pAI = m_pLocalDude->GetEntity()->GetAI();
-//                    if (pAI)
-//                    {
-//                        pAI->Event(AIEVENT_ENABLE, nullptr);
-//                        SetDudeSpecies(m_lastDudeSpecies);
-//                    }
-//                }
-//            }
-//        }
-//    }
-//}
+void CTOSMasterClient::PrepareDude(const bool toStartControl)
+{
+	assert(m_pLocalDude);
 
+	CNanoSuit* pSuit = m_pLocalDude->GetNanoSuit();
+
+	//Fix the non-resetted Dude player movement after controlling the actor;
+	if (m_pLocalDude->GetPlayerInput())
+		m_pLocalDude->GetPlayerInput()->Reset();
+
+	if (toStartControl)
+    {
+        //m_dudeSavedParams.pos = m_pLocalDude->GetEntity()->GetWorldPos();
+        //m_dudeSavedParams.viewRot = m_pLocalDude->GetViewRotation();
+
+        if (gEnv->bServer)
+        {
+            IAIObject* pAI = m_pLocalDude->GetEntity()->GetAI();
+            if (pAI)
+            {
+                if (pAI->CastToIAIActor())
+                {
+                    m_dudeSavedParams.aiSpecies = pAI->CastToIAIActor()->GetParameters().m_nSpecies;
+                    //CryLogAlways("SControlClient::PrepareDude -->> save player species");
+                }
+
+                pAI->Event(AIEVENT_DISABLE, nullptr);
+            }
+        }
+
+        m_pLocalDude->ResetScreenFX();
+
+        if (pSuit)
+        {
+            m_dudeSavedParams.suitEnergy = pSuit->GetSuitEnergy();
+            m_dudeSavedParams.suitMode = pSuit->GetMode();
+            pSuit->SetMode(NANOMODE_DEFENSE);
+            pSuit->SetModeDefect(NANOMODE_CLOAK, true);
+            pSuit->SetModeDefect(NANOMODE_SPEED, true);
+            pSuit->SetModeDefect(NANOMODE_STRENGTH, true);
+        }
+
+        // Turning off a Alien screen interference effects
+        //lastInterferenceParams = m_pLocalDude->m_interferenceParams;
+        m_pLocalDude->ClearInterference();
+
+        if (g_pGame->GetHUD())
+        {
+            //LoadHUD(true); deprecated
+            //m_pAbilitiesSystem->InitHUD(true);			
+            //m_pAbilitiesSystem->ShowHUD(true);
+            //m_pAbilitiesSystem->UpdateHUD();
+            //m_pAbilitiesSystem->ReloadHUD();
+
+            //SetAmmoHealthHUD();
+
+            //g_pGame->GetHUD()->UpdateHealth(m_pControlledActor);
+            //g_pGame->GetHUD()->m_animPlayerStats.Reload(true);
+
+            if (m_pHUDCrosshair)
+            {
+                m_pHUDCrosshair->SetOpacity(1.0f);
+                m_pHUDCrosshair->SetCrosshair(g_pGameCVars->hud_crosshair);
+            }
+        }
+
+        if (!gEnv->bEditor)
+        {
+            // fix "Pure function error" 	
+
+            /*CGameRules* pGR = g_pGame->GetGameRules();
+            if (pGR && !m_isHitListener)
+            {
+                m_isHitListener = true;
+                pGR->AddHitListener(this);
+            }*/
+        }
+    }
+    else
+    {
+        //after unlink
+
+        //The Player after unlink
+        {
+            SActorParams* pParams = m_pLocalDude->GetActorParams();
+
+            if (m_pLocalDude->GetHealth() > 0)
+            {
+                m_pLocalDude->GetEntity()->SetPos(m_dudeSavedParams.pos);
+
+                //may be bugged, not checked at 19.12.2020 0:14
+                m_pLocalDude->SetViewRotation(m_dudeSavedParams.viewRot);
+            }
+
+            //m_pLocalDude->SetSlaveId(NULL);
+
+        	m_pLocalDude->InitInterference();
+            m_pLocalDude->ResetScreenFX();
+
+            if (m_pLocalDude->IsThirdPerson())
+                m_pLocalDude->ToggleThirdPerson();
+
+            // Выполнено - Нужно написать функцию для отображения дружественного перекрестия
+			// Выполнено - Нужно написать функцию для смены имени текущего оружия
+
+            m_pHUDCrosshair->ShowFriendCross(false);
+           SAFE_HUD_FUNC(TOSSetWeaponName(""))
+
+            //g_pControlSystem->GetSquadSystem()->AnySquadClientLeft();
+
+            //auto* pSquad = g_pControlSystem->GetSquadSystem()->GetSquadFromMember(m_pLocalDude, true);
+            //if (pSquad && pSquad->GetLeader() != nullptr)
+            //    pSquad->OnPlayerAdded();
+
+            //Clean the OnUseData from player .lua script
+            IScriptTable* pTable = m_pLocalDude->GetEntity()->GetScriptTable();
+            if (pTable)
+            {
+                const ScriptAnyValue value = 0;
+                Script::CallMethod(pTable, "SetOnUseData", value, value);
+            }
+
+            if (pSuit)
+            {
+                if (m_pLocalDude->GetHealth() > 0)
+                {
+                    pSuit->Reset(m_pLocalDude);
+
+                    pSuit->SetModeDefect(NANOMODE_CLOAK, false);
+                    pSuit->SetModeDefect(NANOMODE_SPEED, false);
+                    pSuit->SetModeDefect(NANOMODE_STRENGTH, false);
+
+                    pSuit->ActivateMode(NANOMODE_CLOAK, true);
+                    pSuit->ActivateMode(NANOMODE_SPEED, true);
+                    pSuit->ActivateMode(NANOMODE_STRENGTH, true);
+
+                    pSuit->SetSuitEnergy(m_dudeSavedParams.suitEnergy);
+                    pSuit->SetMode(static_cast<ENanoMode>(m_dudeSavedParams.suitMode));
+                }
+
+                if (g_pGame->GetHUD())
+                {
+                    //TODO: 10/11/2023, 07:35 Нужно написать функции, меняющие интерфейс жизней и инвентаря
+                    //SetAmmoHealthHUD(m_pLocalDude, "Libs/UI/HUD_AmmoHealthEnergySuit.gfx");
+                    //SetInventoryHUD(m_pLocalDude, "Libs/UI/HUD_WeaponSelection.gfx");
+
+					SAFE_HUD_FUNC(TOSSetAmmoHealthHUD(m_pLocalDude, "Libs/UI/HUD_AmmoHealthEnergySuit.gfx"));
+					SAFE_HUD_FUNC(TOSSetInventoryHUD(m_pLocalDude, "Libs/UI/HUD_WeaponSelection.gfx"));
+
+                    //m_animScoutFlyInterface.Unload();
+
+                    //switch (pSuit->GetMode())
+                    //{
+                    //case NANOMODE_DEFENSE:
+                    //    g_pGame->GetHUD()->m_animPlayerStats.Invoke("setMode", "Armor");
+                    //    break;
+                    //case NANOMODE_SPEED:
+                    //    g_pGame->GetHUD()->m_animPlayerStats.Invoke("setMode", "Speed");
+                    //    break;
+                    //case NANOMODE_STRENGTH:
+                    //    g_pGame->GetHUD()->m_animPlayerStats.Invoke("setMode", "Strength");
+                    //    break;
+                    //case NANOMODE_CLOAK:
+                    //    g_pGame->GetHUD()->m_animPlayerStats.Invoke("setMode", "Cloak");
+                    //    break;
+                    //case NANOMODE_INVULNERABILITY:
+                    //case NANOMODE_DEFENSE_HIT_REACTION:
+                    //case NANOMODE_LAST:
+                    //    break;
+                    //}
+                }
+
+                pParams->vLimitRangeH = 0;
+                pParams->vLimitRangeV = pParams->vLimitRangeVDown = pParams->vLimitRangeVUp = 0;
+            }
+
+            // Излишняя проверка на клиент
+            if (gEnv->bClient)
+            {
+                auto params = NetGenericSetSpeciesParams();
+                params.aiEntId = m_pLocalDude->GetEntityId();
+                params.species = m_dudeSavedParams.aiSpecies;
+
+                g_pTOSGame->GetMasterModule()->GetSynchronizer()->RMISend(
+                    CTOSMasterSynchronizer::SvRequestSetAISpecies(), params, eRMI_ToServer);
+            }
+
+            //TODO: 10/11/2023, 10:59
+            // 1) Проверить что перемещено в ApplyMasterClientParams а что нет
+            // 2) Убрать из этой функции лишнее и внедрить вызов RMI: SvRequestSaveMCParams и SvRequestApplyMCSavedParams
+            // 3) Протестировать всё
+        }
+    }
+
+}

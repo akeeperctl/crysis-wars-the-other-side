@@ -49,6 +49,7 @@
 
 //TheOtherSide
 #include "TheOtherSideMP/Helpers/TOS_Debug.h"
+#include "TheOtherSideMP/Game/TOSGame.h"
 //~TheOtherSide
 
 #ifndef GAMEDLL_EXPORTS

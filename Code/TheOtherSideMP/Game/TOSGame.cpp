@@ -7,6 +7,7 @@
 #include "Modules/ITOSGameModule.h"
 #include "Modules/Master/MasterModule.h"
 #include "Modules/EntitySpawn/EntitySpawnModule.h"
+#include "Modules/Master/MasterClient.h"
 
 CTOSGame::CTOSGame()
 	: m_pAIActionTracker(nullptr),
@@ -193,4 +194,16 @@ void CTOSGame::UpdateContextViewState()
 		TOS_RECORD_EVENT(0, STOSGameEvent(eEGE_UpdateContextViewState, state, true));
 	}
 
+}
+
+IActor* CTOSGame::GetActualClientActor() const
+{
+	const auto pSlaveEnt = m_pMasterModule->GetMasterClient()->GetSlaveEntity();
+	auto       pPlayer = g_pGame->GetIGameFramework()->GetClientActor();
+
+	if (pSlaveEnt != nullptr)
+		pPlayer = g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pSlaveEnt->GetId());
+
+	assert(pPlayer);
+	return pPlayer;
 }
