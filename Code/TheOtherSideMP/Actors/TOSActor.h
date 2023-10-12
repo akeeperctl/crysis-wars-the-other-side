@@ -16,6 +16,7 @@ public:
 	void Update(SEntityUpdateContext& ctx, int updateSlot) override;
 	void Release() override;
 	void Revive(bool fromInit = false) override;
+	void Kill() override;
 	// ~CActor
 
 	//ITOSMasterControllable

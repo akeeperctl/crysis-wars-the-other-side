@@ -65,6 +65,13 @@ void CTOSActor::Revive(const bool fromInit)
 	CActor::Revive(fromInit);
 }
 
+void CTOSActor::Kill()
+{
+	CActor::Kill();
+
+	TOS_RECORD_EVENT(GetEntityId(), STOSGameEvent(eEGE_ActorDead, "", true));
+}
+
 void CTOSActor::UpdateMasterView(SViewParams& viewParams, Vec3& offsetX, Vec3& offsetY, Vec3& offsetZ, Vec3& target, Vec3& current, float& currentFov)
 {
 

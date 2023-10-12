@@ -37,6 +37,8 @@ enum EExtraGameplayEvent
 	eEGE_ActorPostInit,
 	eEGE_ActorInitClient,
 	eEGE_ActorRelease,
+	eEGE_ActorDead,
+
 
 	//eEGE_MasterEnterSpectator, //NOT USED
 	eEGE_MasterAdd,
@@ -100,9 +102,8 @@ enum EExtraGameplayEvent
 	eEGE_UpdateContextViewState,
 	eEGE_UpdateChannelConnectionState,
 
+	eEGE_VehicleDestroyed,
 
-	eEGE_Example5,
-	eEGE_Example6,
 	eEGE_Example7,
 
 	//eEGE_TOSGame_Init,
@@ -257,6 +258,8 @@ public:
 			return "eEGE_ActorPostInit";
 		case eEGE_ActorInitClient:
 			return "eEGE_ActorInitClient";
+		case eEGE_ActorDead:
+			return "eEGE_ActorDead";
 		case eEGE_GamerulesReset:
 			return "eEGE_GamerulesReset";
 		case eEGE_MasterClientStartControl:
@@ -347,10 +350,8 @@ public:
 			return "eEGE_SynchronizerRegistered";
 		case eEGE_EntityRemovedForced:
 			return "eEGE_EntityRemovedForced";
-		case eEGE_Example5:
-			return "eEGE_Example5";
-		case eEGE_Example6:
-			return "eEGE_Example6";
+		case eEGE_VehicleDestroyed:
+			return "eEGE_VehicleDestroyed";
 		case eEGE_Example7:
 			return "eEGE_Example7";
 		case eEGE_Last:
