@@ -7,7 +7,7 @@ $DateTime$
 
 -------------------------------------------------------------------------
 History:
-- 22:8:2005   12:50 : Created by Márcio Martins
+- 22:8:2005   12:50 : Created by MÐ±rcio Martins
 
 *************************************************************************/
 #include "StdAfx.h"
@@ -42,6 +42,11 @@ History:
 
 #include "IPlayerInput.h"
 #include <IWorldQuery.h>
+
+
+//TheOtherSide
+#include "TheOtherSideMP/HUD/TOSCrosshair.h"
+//~TheOtherSide
 
 //------------------------------------------------------------------------
 CWeapon::CWeapon()

@@ -69,6 +69,10 @@ History:
 #include "Binocular.h"
 #include "SoundMoods.h"
 
+//TheOtherSide
+#include "TheOtherSideMP/HUD/TOSCrosshair.h"
+//~TheOtherSide
+
 // enable this to check nan's on position updates... useful for debugging some weird crashes
 #define ENABLE_NAN_CHECK
 

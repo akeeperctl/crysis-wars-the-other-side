@@ -7,7 +7,7 @@ $DateTime$
 
 -------------------------------------------------------------------------
 History:
-- 20:04:2006   13:02 : Created by Márcio Martins
+- 20:04:2006   13:02 : Created by MÐ±rcio Martins
 
 *************************************************************************/
 #include "StdAfx.h"
@@ -21,6 +21,10 @@ History:
 #include "HUD/HUDRadar.h"
 #include "HUD/HUDVehicleInterface.h"
 #include "GameCVars.h"
+
+//TheOtherSide
+#include "TheOtherSideMP/HUD/TOSCrosshair.h"
+//~TheOtherSide
 
 //------------------------------------------------------------------------
 CVehicleWeapon::CVehicleWeapon()

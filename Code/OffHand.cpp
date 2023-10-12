@@ -7,7 +7,7 @@ $DateTime$
 
 -------------------------------------------------------------------------
 History:
-- 12:04:2006   17:22 : Created by Márcio Martins
+- 12:04:2006   17:22 : Created by MÐ±rcio Martins
 - 18:02:2007	 13:30 : Refactored Offhand by Benito G.R.
 
 *************************************************************************/
@@ -26,6 +26,10 @@ History:
 #include "HUD/HUDCrosshair.h"
 #include "WeaponSystem.h"
 #include "Projectile.h"
+
+//TheOtherSide
+#include "TheOtherSideMP/HUD/TOSCrosshair.h"
+//~TheOtherSide
 
 #define KILL_NPC_TIMEOUT	7.25f
 #define TIME_TO_UPDATE_CH 0.25f

@@ -7,7 +7,7 @@
   
  -------------------------------------------------------------------------
   History:
-  - 27:10:2004   11:26 : Created by M·rcio Martins
+  - 27:10:2004   11:26 : Created by M–±rcio Martins
 
 *************************************************************************/
 #include "StdAfx.h"
@@ -33,8 +33,11 @@
 #include "OffHand.h"
 #include "WeaponAttachmentManager.h"
 
+//TheOtherSide
+#include "TheOtherSideMP/HUD/TOSCrosshair.h"
+//~TheOtherSide
 
-#pragma warning(disable: 4355)	// ¥this¥ used in base member initializer list
+#pragma warning(disable: 4355)	// “ëthis“ë used in base member initializer list
 
 #if defined(USER_alexll)
 #define ITEM_DEBUG_MEMALLOC

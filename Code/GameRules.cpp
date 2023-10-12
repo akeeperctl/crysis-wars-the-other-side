@@ -45,6 +45,7 @@
 
 //TheOtherSide
 #include "TheOtherSideMP/Game/TOSGameEventRecorder.h"
+#include "TheOtherSideMP/HUD/TOSCrosshair.h"
 //TheOtherSide
 
 DbgPlotter	g_dbgPlotter;

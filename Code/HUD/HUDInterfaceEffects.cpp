@@ -24,6 +24,10 @@
 #include "OffHand.h"
 #include "GameActions.h"
 
+//TheOtherSide
+#include "TheOtherSideMP/HUD/TOSCrosshair.h"
+//~TheOtherSide
+
 void CHUD::QuickMenuSnapToMode(ENanoMode mode)
 {
 	switch(mode)

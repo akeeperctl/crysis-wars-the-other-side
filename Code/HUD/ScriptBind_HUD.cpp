@@ -8,7 +8,7 @@
  -------------------------------------------------------------------------
   History:
   - 14:02:2006   11:29 : Created by AlexL
-	- 04:04:2006	 17:30 : Extended by Jan Müller
+	- 04:04:2006	 17:30 : Extended by Jan MÑŒller
 
 *************************************************************************/
 #include "StdAfx.h"
@@ -22,6 +22,10 @@
 #include "HUD/HUDCrosshair.h"
 #include "Menus/FlashMenuObject.h"
 #include "AmmoPickup.h"
+
+//TheOtherSide
+#include "TheOtherSideMP/HUD/TOSCrosshair.h"
+//~TheOtherSide
 
 //------------------------------------------------------------------------
 CScriptBind_HUD::CScriptBind_HUD(ISystem *pSystem, IGameFramework *pGameFramework)
