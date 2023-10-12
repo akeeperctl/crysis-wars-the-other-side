@@ -582,6 +582,8 @@ public:
 
 	void TOSSetInventoryHUD(IActor* pActor, const char* filePath) const;
 
+	void TOSShowInventoryOverview(IActor* pActor, const char* curCategory, const char* curItem, bool grenades);
+
 	//~TheOtherSide
 
 private:

@@ -1370,40 +1370,42 @@ void CHUD::HideInventoryOverview()
 
 void CHUD::ShowInventoryOverview(const char* curCategory, const char* curItem, bool grenades)
 {
-	if(!curCategory || !curItem)
+	//TheOtherSide
+	/*
+	if (!curCategory || !curItem)
 		return;
 
-	IActor *pActor = gEnv->pGame->GetIGameFramework()->GetClientActor();
-	if(!pActor)
+	IActor* pActor = gEnv->pGame->GetIGameFramework()->GetClientActor();
+	if (!pActor)
 		return;
 
-	IInventory *pInventory = pActor->GetInventory();
-	if(!pInventory)
+	IInventory* pInventory = pActor->GetInventory();
+	if (!pInventory)
 		return;
 
-	if(m_pModalHUD == &m_animBuyMenu || m_pModalHUD == &m_animPDA)
+	if (m_pModalHUD == &m_animBuyMenu || m_pModalHUD == &m_animPDA)
 		return;
 
 	HideInventoryOverview();
 
 	std::vector<IEntityClass*> classes;
 
-	if(grenades)
+	if (grenades)
 	{
-		CPlayer *pPlayer = static_cast<CPlayer*>(pActor);
-		if(pPlayer)
+		CPlayer* pPlayer = static_cast<CPlayer*>(pActor);
+		if (pPlayer)
 		{
 			COffHand* pOffHand = static_cast<COffHand*>(pPlayer->GetWeaponByClass(CItem::sOffHandClass));
-			if(pOffHand)
+			if (pOffHand)
 			{
 				std::vector<string> grenades;
 				pOffHand->GetAvailableGrenades(grenades);
 				std::vector<string>::const_iterator it = grenades.begin();
 				std::vector<string>::const_iterator end = grenades.end();
 				int count = sizeof(grenades);
-				for(; it!=end; ++it)
+				for (; it != end; ++it)
 				{
-					SFlashVarValue args[2] = {(*it).c_str(), !strcmp(*it, curItem)};
+					SFlashVarValue args[2] = { (*it).c_str(), !strcmp(*it, curItem) };
 					m_animWeaponSelection.Invoke("addLog", args, 2);
 				}
 			}
@@ -1413,20 +1415,20 @@ void CHUD::ShowInventoryOverview(const char* curCategory, const char* curItem, b
 	else
 	{
 		int count = pInventory->GetCount();
-		for(int i=0; i<count; ++i)
+		for (int i = 0; i < count; ++i)
 		{
-			IEntity *pItemEntity = gEnv->pEntitySystem->GetEntity(pInventory->GetItem(i));
-			IItem *pItemItem = g_pGame->GetIGameFramework()->GetIItemSystem()->GetItem(pInventory->GetItem(i));
-			if(pItemEntity && pItemEntity->GetClass() && pItemItem && pItemItem->CanSelect())
+			IEntity* pItemEntity = gEnv->pEntitySystem->GetEntity(pInventory->GetItem(i));
+			IItem* pItemItem = g_pGame->GetIGameFramework()->GetIItemSystem()->GetItem(pInventory->GetItem(i));
+			if (pItemEntity && pItemEntity->GetClass() && pItemItem && pItemItem->CanSelect())
 			{
-				const char *className = pItemEntity->GetClass()->GetName();
-				const char *categoryName = g_pGame->GetIGameFramework()->GetIItemSystem()->GetItemCategory(className);
+				const char* className = pItemEntity->GetClass()->GetName();
+				const char* categoryName = g_pGame->GetIGameFramework()->GetIItemSystem()->GetItemCategory(className);
 
-				if(!strcmp(categoryName, curCategory))
+				if (!strcmp(categoryName, curCategory))
 				{
-					if(!stl::find(classes, pItemEntity->GetClass()))
+					if (!stl::find(classes, pItemEntity->GetClass()))
 					{
-						SFlashVarValue args[2] = {className, !strcmp(className, curItem)};
+						SFlashVarValue args[2] = { className, !strcmp(className, curItem) };
 						m_animWeaponSelection.Invoke("addLog", args, 2);
 						classes.push_back(pItemEntity->GetClass());
 					}
@@ -1434,6 +1436,12 @@ void CHUD::ShowInventoryOverview(const char* curCategory, const char* curItem, b
 			}
 		}
 	}
+	*/
+
+	const auto pActor = g_pTOSGame->GetActualClientActor();
+	assert(pActor);
+	TOSShowInventoryOverview(pActor, curCategory, curItem, grenades);
+	//~TheOtherSide
 }
 
 //-----------------------------------------------------------------------------------------------------
@@ -4103,6 +4111,73 @@ void CHUD::TOSSetInventoryHUD(IActor* pActor, const char* filePath) const
 	pHUD->m_animWeaponSelection.Load(filePath, eFD_Right, eFAF_Visible | eFAF_ThisHandler);
 
 	TOS_HUD::ShowInventory(pActor, "null", "null");
+}
+
+void CHUD::TOSShowInventoryOverview(IActor* pActor, const char* curCategory, const char* curItem, bool grenades)
+{
+	if (!curCategory || !curItem)
+		return;
+
+	if (!pActor)
+		return;
+
+	const IInventory* pInventory = pActor->GetInventory();
+	if (!pInventory)
+		return;
+
+	if (m_pModalHUD == &m_animBuyMenu || m_pModalHUD == &m_animPDA)
+		return;
+
+	HideInventoryOverview();
+
+	std::vector<IEntityClass*> classes;
+
+	if (grenades)
+	{
+		const CTOSPlayer* pPlayer = dynamic_cast<CTOSPlayer*>(pActor);
+		if (pPlayer)
+		{
+			COffHand* pOffHand = dynamic_cast<COffHand*>(pPlayer->GetWeaponByClass(CItem::sOffHandClass));
+			if (pOffHand)
+			{
+				std::vector<string> grenades;
+				pOffHand->GetAvailableGrenades(grenades);
+				std::vector<string>::const_iterator it = grenades.begin();
+				const std::vector<string>::const_iterator end = grenades.end();
+				int count = sizeof(grenades);
+				for (; it != end; ++it)
+				{
+					const SFlashVarValue args[2] = { (*it).c_str(), !strcmp(*it, curItem) };
+					m_animWeaponSelection.Invoke("addLog", args, 2);
+				}
+			}
+		}
+		m_animPlayerStats.Invoke("switchGrenades");
+	}
+	else
+	{
+		const int count = pInventory->GetCount();
+		for (int i = 0; i < count; ++i)
+		{
+			const IEntity* pItemEntity = gEnv->pEntitySystem->GetEntity(pInventory->GetItem(i));
+			const IItem* pItemItem = g_pGame->GetIGameFramework()->GetIItemSystem()->GetItem(pInventory->GetItem(i));
+			if (pItemEntity && pItemEntity->GetClass() && pItemItem && pItemItem->CanSelect())
+			{
+				const char* className = pItemEntity->GetClass()->GetName();
+				const char* categoryName = g_pGame->GetIGameFramework()->GetIItemSystem()->GetItemCategory(className);
+
+				if (!strcmp(categoryName, curCategory))
+				{
+					if (!stl::find(classes, pItemEntity->GetClass()))
+					{
+						const SFlashVarValue args[2] = { className, !strcmp(className, curItem) };
+						m_animWeaponSelection.Invoke("addLog", args, 2);
+						classes.push_back(pItemEntity->GetClass());
+					}
+				}
+			}
+		}
+	}
 }
 
 void CHUD::UpdateHealth()

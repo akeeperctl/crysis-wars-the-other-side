@@ -1,15 +1,19 @@
 #include "StdAfx.h"
+#include "MasterSynchronizer.h"
+
 #include "MasterModule.h"
 
 #include "Game.h"
 #include "GameRules.h"
 #include "IEntitySystem.h"
 #include "MasterClient.h"
-#include "MasterSynchronizer.h"
+
 
 #include "../../TOSGame.h"
 #include "../../TOSGameEventRecorder.h"
+
 #include "../../../Actors/Player/TOSPlayer.h"
+
 #include "../../../Helpers/TOS_Debug.h"
 
 #include "TheOtherSideMP/Game/TOSGameCvars.h"
@@ -19,6 +23,11 @@
 
 
 CTOSMasterModule::CTOSMasterModule()
+	: tos_cl_JoinAsMaster(0),
+	tos_cl_SlaveEntityClass(nullptr),
+	tos_sv_SlaveSpawnDelay(0),
+	tos_sv_MasterStartControlDelay(0),
+	m_pLocalMasterClient(nullptr)
 {
 	m_masters.clear();
 	m_scheduledTakeControls.clear();
@@ -140,7 +149,12 @@ void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEven
 				params.vanilla.vPosition = pEntity->GetWorldPos();
 				params.willBeSlave = true;
 
-				TOS_Entity::SpawnDelay(params);
+				bool scheduled = TOS_Entity::SpawnDelay(params);
+				if (!scheduled)
+				{
+					auto pSavedSlave = g_pTOSGame->GetEntitySpawnModule()->GetSavedSlaveByAuthName(entName);
+					CRY_ASSERT_MESSAGE(!pSavedSlave, "The slave must not be created or saved before the player joins the game");
+				}
 			}
 
 		}
@@ -269,18 +283,24 @@ void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEven
 	{
 		if (pEntity && gEnv->bServer)
 		{
-			const auto pPlayer = dynamic_cast<CTOSPlayer*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pEntity->GetId()));
+			const auto pPlayer = dynamic_cast<CTOSPlayer*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(entId));
 			if (!pPlayer)
 				break;
 
 			if (IsMaster(pPlayer->GetEntity()))
 			{
-				const auto pSlave = GetSlave(pEntity);
+				const auto pSlave = GetSlave(pPlayer->GetEntity());
 				if (pSlave)
 				{
 					//Вызывало баг, когда в какой-то момент раб перестал появляться после sv_restart
 					//Вернул, чтобы сущность удалялась после отключения клиента, а не когда актёр клиента вызвал Release
 					TOS_Entity::RemoveEntityForced(pSlave->GetId());
+				}
+
+				const auto pSavedEnt = g_pTOSGame->GetEntitySpawnModule()->GetSavedSlaveByAuthName(pPlayer->GetEntity()->GetName());
+				if (pSavedEnt)
+				{
+					TOS_Entity::RemoveEntityForced(pSavedEnt->GetId());
 				}
 			}
 
@@ -345,6 +365,23 @@ void CTOSMasterModule::Update(float frametime)
 
 		delay -= gEnv->pTimer->GetFrameStartTime().GetSeconds();
 	}
+
+	if (gEnv->bServer)
+	{
+		// Очистим неактуальных мастеров.
+		for (const auto& masterPair : m_masters)
+		{
+			const EntityId id = masterPair.first;
+
+			const auto pMasterEntity = TOS_GET_ENTITY(id);
+			if (!pMasterEntity)
+			{
+				m_masters.erase(id);
+				break;
+			}
+		}
+	}
+
 }
 
 void CTOSMasterModule::Serialize(TSerialize ser)
@@ -521,9 +558,10 @@ void CTOSMasterModule::SaveMasterClientParams(IEntity* pMasterEntity)
 		params.suitMode = pSuit->GetMode();
 
 		pSuit->SetMode(NANOMODE_DEFENSE);
-		pSuit->SetModeDefect(NANOMODE_CLOAK, true);
-		pSuit->SetModeDefect(NANOMODE_SPEED, true);
-		pSuit->SetModeDefect(NANOMODE_STRENGTH, true);
+
+		//pSuit->SetModeDefect(NANOMODE_CLOAK, true);
+		//pSuit->SetModeDefect(NANOMODE_SPEED, true);
+		//pSuit->SetModeDefect(NANOMODE_STRENGTH, true);
 	}
 }
 
@@ -552,26 +590,15 @@ void CTOSMasterModule::ApplyMasterClientParams(IEntity* pMasterEntity)
 		{
 			pMasterEntity->SetWorldTM(Matrix34::Create(Vec3(1, 1, 1), rot, pos));
 
-			pSuit->Reset(pPlayer);
-
-			pSuit->SetModeDefect(NANOMODE_CLOAK, false);
-			pSuit->SetModeDefect(NANOMODE_SPEED, false);
-			pSuit->SetModeDefect(NANOMODE_STRENGTH, false);
-
-			pSuit->ActivateMode(NANOMODE_CLOAK, true);
-			pSuit->ActivateMode(NANOMODE_SPEED, true);
-			pSuit->ActivateMode(NANOMODE_STRENGTH, true);
-
 			pSuit->SetSuitEnergy(suitEnergy);
 			pSuit->SetMode(static_cast<ENanoMode>(suitMode));
-
 		}
 
 		IAIObject* pAI = pMasterEntity->GetAI();
 		if (!pAI)
 		{
 			CryLogAlways("[C++][%s][%s][ApplyMasterClientParams] Error: Entity AI pointer is NULL",
-				TOS_Debug::GetEnv(), TOS_Debug::GetAct(3));
+				TOS_Debug::GetEnv(), TOS_Debug::GetAct(1));
 
 			return;
 		}

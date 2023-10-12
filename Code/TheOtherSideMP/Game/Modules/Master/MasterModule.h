@@ -1,7 +1,5 @@
 #pragma once
 
-#include "MasterSynchronizer.h"
-
 #include "../GenericModule.h"
 
 #include "../../TOSGame.h"
@@ -11,6 +9,25 @@
 class CTOSMasterClient;
 class CTOSMasterSynchronizer;
 class CTOSGenericSynchronizer;
+
+/**
+ * \brief хранит информацию о мастер-клиенте на сервере
+ */
+struct STOSMasterClientSavedParams
+{
+	EntityId masterId;
+	Vec3 pos;
+	Quat rot;
+	float suitEnergy;
+	uint suitMode;
+	int species;
+
+	STOSMasterClientSavedParams()
+		: masterId(0),
+		suitEnergy(0),
+		suitMode(0),
+		species(-1) {};
+};
 
 
 /**
@@ -47,7 +64,7 @@ struct STOSMasterInfo final : STOSSmartStruct  // NOLINT(cppcoreguidelines-speci
 
 	EntityId slaveId;
 	string desiredSlaveClassName;
-	NetMCSaved mcSavedParams;///< Сохраненные параметры, которые отправил мастер-клиент на сервер перед началом управления рабом. \n mc - мастер клиент
+	STOSMasterClientSavedParams mcSavedParams;///< Сохраненные параметры, которые отправил мастер-клиент на сервер перед началом управления рабом. \n mc - мастер клиент
 };
 
 struct STOSStartControlInfo
@@ -101,7 +118,7 @@ public:
 	 */
 	CTOSMasterClient* GetMasterClient() const
 	{
-		assert(m_pLocalMasterClient);
+		//assert(m_pLocalMasterClient);
 		return m_pLocalMasterClient;
 	};
 
@@ -130,7 +147,7 @@ public:
 	//Console command's functions
 	static void CmdGetMastersList(IConsoleCmdArgs* pArgs);
 	static void CmdIsMaster(IConsoleCmdArgs* pArgs);
-	static void CmdStopControl(IConsoleCmdArgs* pArgs);
+	static void CmdMCStopControl(IConsoleCmdArgs* pArgs);
 
 	//Console variable's functions
 	static void CVarSetDesiredSlaveCls(ICVar* pVar);

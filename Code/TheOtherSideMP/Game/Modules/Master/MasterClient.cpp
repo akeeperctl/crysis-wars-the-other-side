@@ -84,6 +84,7 @@ void CTOSMasterClient::StartControl(IEntity* pEntity)
 {
 	assert(pEntity);
 
+    PrepareDude(true);
     SetSlaveEntity(pEntity, pEntity->GetClass()->GetName());
 
 
@@ -94,6 +95,7 @@ void CTOSMasterClient::StopControl()
 {
 	TOS_RECORD_EVENT(0, STOSGameEvent(eEGE_MasterClientStopControl, "", true));
 
+	PrepareDude(false);
     ClearSlaveEntity();
 }
 
@@ -404,7 +406,7 @@ void CTOSMasterClient::UpdateView(SViewParams& viewParams) const
 	viewParams.rotation = m_pLocalDude->GetViewQuatFinal();
 }
 
-void CTOSMasterClient::PrepareDude(const bool toStartControl)
+void CTOSMasterClient::PrepareDude(const bool toStartControl) const
 {
 	assert(m_pLocalDude);
 
@@ -420,26 +422,6 @@ void CTOSMasterClient::PrepareDude(const bool toStartControl)
 
 	if (toStartControl)
     {
-
-
-        //m_dudeSavedParams.pos = m_pLocalDude->GetEntity()->GetWorldPos();
-        //m_dudeSavedParams.viewRot = m_pLocalDude->GetViewRotation();
-
-        //if (gEnv->bServer)
-        //{
-        //    IAIObject* pAI = m_pLocalDude->GetEntity()->GetAI();
-        //    if (pAI)
-        //    {
-        //        if (pAI->CastToIAIActor())
-        //        {
-        //            m_dudeSavedParams.aiSpecies = pAI->CastToIAIActor()->GetParameters().m_nSpecies;
-        //            //CryLogAlways("SControlClient::PrepareDude -->> save player species");
-        //        }
-
-        //        pAI->Event(AIEVENT_DISABLE, nullptr);
-        //    }
-        //}
-
         pSynch->RMISend(
             CTOSMasterSynchronizer::SvRequestSaveMCParams(), 
             NetMasterIdParams(m_pLocalDude->GetEntityId()), 
@@ -447,20 +429,14 @@ void CTOSMasterClient::PrepareDude(const bool toStartControl)
 
         m_pLocalDude->ResetScreenFX();
 
-        /*
-        if (pSuit)
-        {
-			m_dudeSavedParams.suitEnergy = pSuit->GetSuitEnergy();
-			m_dudeSavedParams.suitMode = pSuit->GetMode();
+		if (pSuit)
+		{
 			pSuit->SetMode(NANOMODE_DEFENSE);
 			pSuit->SetModeDefect(NANOMODE_CLOAK, true);
 			pSuit->SetModeDefect(NANOMODE_SPEED, true);
 			pSuit->SetModeDefect(NANOMODE_STRENGTH, true);
-        }
-        */
+		}
 
-        // Turning off a Alien screen interference effects
-        //lastInterferenceParams = m_pLocalDude->m_interferenceParams;
         m_pLocalDude->ClearInterference();
 
         if (g_pGame->GetHUD())
@@ -497,125 +473,90 @@ void CTOSMasterClient::PrepareDude(const bool toStartControl)
     }
     else
     {
-        //after unlink
-
 		pSynch->RMISend(
 			CTOSMasterSynchronizer::SvRequestApplyMCSavedParams(),
 			NetMasterIdParams(m_pLocalDude->GetEntityId()),
 			eRMI_ToServer);
+        
+        SActorParams* pParams = m_pLocalDude->GetActorParams();
 
-        //The Player after unlink
+        m_pLocalDude->InitInterference();
+        m_pLocalDude->ResetScreenFX();
+
+        if (m_pLocalDude->IsThirdPerson())
+            m_pLocalDude->ToggleThirdPerson();
+
+        // Выполнено - Нужно написать функцию для отображения дружественного перекрестия
+		// Выполнено - Нужно написать функцию для смены имени текущего оружия
+
+        m_pHUDCrosshair->ShowFriendCross(false);
+       SAFE_HUD_FUNC(TOSSetWeaponName(""))
+
+        //g_pControlSystem->GetSquadSystem()->AnySquadClientLeft();
+
+        //auto* pSquad = g_pControlSystem->GetSquadSystem()->GetSquadFromMember(m_pLocalDude, true);
+        //if (pSquad && pSquad->GetLeader() != nullptr)
+        //    pSquad->OnPlayerAdded();
+
+        //Clean the OnUseData from player .lua script
+        IScriptTable* pTable = m_pLocalDude->GetEntity()->GetScriptTable();
+        if (pTable)
         {
-            SActorParams* pParams = m_pLocalDude->GetActorParams();
+            const ScriptAnyValue value = 0;
+            Script::CallMethod(pTable, "SetOnUseData", value, value);
+        }
 
-            //if (m_pLocalDude->GetHealth() > 0)
-            //{
-            //    m_pLocalDude->GetEntity()->SetPos(m_dudeSavedParams.pos);
+        if (pSuit)
+        {
 
-            //    //may be bugged, not checked at 19.12.2020 0:14
-            //    m_pLocalDude->SetViewRotation(m_dudeSavedParams.viewRot);
-            //}
+			if (m_pLocalDude->GetHealth() > 0)
+			{
+				pSuit->Reset(m_pLocalDude);
 
-            //m_pLocalDude->SetSlaveId(NULL);
+				pSuit->SetModeDefect(NANOMODE_CLOAK, false);
+				pSuit->SetModeDefect(NANOMODE_SPEED, false);
+				pSuit->SetModeDefect(NANOMODE_STRENGTH, false);
 
-        	m_pLocalDude->InitInterference();
-            m_pLocalDude->ResetScreenFX();
+				pSuit->ActivateMode(NANOMODE_CLOAK, true);
+				pSuit->ActivateMode(NANOMODE_SPEED, true);
+				pSuit->ActivateMode(NANOMODE_STRENGTH, true);
+			}
 
-            if (m_pLocalDude->IsThirdPerson())
-                m_pLocalDude->ToggleThirdPerson();
 
-            // Выполнено - Нужно написать функцию для отображения дружественного перекрестия
-			// Выполнено - Нужно написать функцию для смены имени текущего оружия
-
-            m_pHUDCrosshair->ShowFriendCross(false);
-           SAFE_HUD_FUNC(TOSSetWeaponName(""))
-
-            //g_pControlSystem->GetSquadSystem()->AnySquadClientLeft();
-
-            //auto* pSquad = g_pControlSystem->GetSquadSystem()->GetSquadFromMember(m_pLocalDude, true);
-            //if (pSquad && pSquad->GetLeader() != nullptr)
-            //    pSquad->OnPlayerAdded();
-
-            //Clean the OnUseData from player .lua script
-            IScriptTable* pTable = m_pLocalDude->GetEntity()->GetScriptTable();
-            if (pTable)
+            if (g_pGame->GetHUD())
             {
-                const ScriptAnyValue value = 0;
-                Script::CallMethod(pTable, "SetOnUseData", value, value);
+                //TODO: 10/11/2023, 07:35 Нужно написать функции, меняющие интерфейс жизней и инвентаря
+                //SetAmmoHealthHUD(m_pLocalDude, "Libs/UI/HUD_AmmoHealthEnergySuit.gfx");
+                //SetInventoryHUD(m_pLocalDude, "Libs/UI/HUD_WeaponSelection.gfx");
+
+				SAFE_HUD_FUNC(TOSSetAmmoHealthHUD(m_pLocalDude, "Libs/UI/HUD_AmmoHealthEnergySuit.gfx"));
+				SAFE_HUD_FUNC(TOSSetInventoryHUD(m_pLocalDude, "Libs/UI/HUD_WeaponSelection.gfx"));
+
+                //m_animScoutFlyInterface.Unload();
+
+                //switch (pSuit->GetMode())
+                //{
+                //case NANOMODE_DEFENSE:
+                //    g_pGame->GetHUD()->m_animPlayerStats.Invoke("setMode", "Armor");
+                //    break;
+                //case NANOMODE_SPEED:
+                //    g_pGame->GetHUD()->m_animPlayerStats.Invoke("setMode", "Speed");
+                //    break;
+                //case NANOMODE_STRENGTH:
+                //    g_pGame->GetHUD()->m_animPlayerStats.Invoke("setMode", "Strength");
+                //    break;
+                //case NANOMODE_CLOAK:
+                //    g_pGame->GetHUD()->m_animPlayerStats.Invoke("setMode", "Cloak");
+                //    break;
+                //case NANOMODE_INVULNERABILITY:
+                //case NANOMODE_DEFENSE_HIT_REACTION:
+                //case NANOMODE_LAST:
+                //    break;
+                //}
             }
 
-            if (pSuit)
-            {
-                /*
-                if (m_pLocalDude->GetHealth() > 0)
-                {
-                    pSuit->Reset(m_pLocalDude);
-
-                    pSuit->SetModeDefect(NANOMODE_CLOAK, false);
-                    pSuit->SetModeDefect(NANOMODE_SPEED, false);
-                    pSuit->SetModeDefect(NANOMODE_STRENGTH, false);
-
-                    pSuit->ActivateMode(NANOMODE_CLOAK, true);
-                    pSuit->ActivateMode(NANOMODE_SPEED, true);
-                    pSuit->ActivateMode(NANOMODE_STRENGTH, true);
-
-                    pSuit->SetSuitEnergy(m_dudeSavedParams.suitEnergy);
-                    pSuit->SetMode(static_cast<ENanoMode>(m_dudeSavedParams.suitMode));
-                }
-                */
-
-                if (g_pGame->GetHUD())
-                {
-                    //TODO: 10/11/2023, 07:35 Нужно написать функции, меняющие интерфейс жизней и инвентаря
-                    //SetAmmoHealthHUD(m_pLocalDude, "Libs/UI/HUD_AmmoHealthEnergySuit.gfx");
-                    //SetInventoryHUD(m_pLocalDude, "Libs/UI/HUD_WeaponSelection.gfx");
-
-					SAFE_HUD_FUNC(TOSSetAmmoHealthHUD(m_pLocalDude, "Libs/UI/HUD_AmmoHealthEnergySuit.gfx"));
-					SAFE_HUD_FUNC(TOSSetInventoryHUD(m_pLocalDude, "Libs/UI/HUD_WeaponSelection.gfx"));
-
-                    //m_animScoutFlyInterface.Unload();
-
-                    //switch (pSuit->GetMode())
-                    //{
-                    //case NANOMODE_DEFENSE:
-                    //    g_pGame->GetHUD()->m_animPlayerStats.Invoke("setMode", "Armor");
-                    //    break;
-                    //case NANOMODE_SPEED:
-                    //    g_pGame->GetHUD()->m_animPlayerStats.Invoke("setMode", "Speed");
-                    //    break;
-                    //case NANOMODE_STRENGTH:
-                    //    g_pGame->GetHUD()->m_animPlayerStats.Invoke("setMode", "Strength");
-                    //    break;
-                    //case NANOMODE_CLOAK:
-                    //    g_pGame->GetHUD()->m_animPlayerStats.Invoke("setMode", "Cloak");
-                    //    break;
-                    //case NANOMODE_INVULNERABILITY:
-                    //case NANOMODE_DEFENSE_HIT_REACTION:
-                    //case NANOMODE_LAST:
-                    //    break;
-                    //}
-                }
-
-                pParams->vLimitRangeH = 0;
-                pParams->vLimitRangeV = pParams->vLimitRangeVDown = pParams->vLimitRangeVUp = 0;
-            }
-
-            // Излишняя проверка на клиент
-            if (gEnv->bClient)
-            {
-                //auto params = NetGenericSetSpeciesParams();
-                //params.aiEntId = m_pLocalDude->GetEntityId();
-                //params.species = m_dudeSavedParams.aiSpecies;
-
-                //g_pTOSGame->GetMasterModule()->GetSynchronizer()->RMISend(
-                //    CTOSMasterSynchronizer::SvRequestSetAISpecies(), params, eRMI_ToServer);
-            }
-
-            //TODO: 10/11/2023, 10:59
-            // 1) вып Проверить что перемещено в ApplyMasterClientParams а что нет
-            // 2)  Убрать из этой функции лишнее и внедрить вызов RMI: SvRequestSaveMCParams и SvRequestApplyMCSavedParams
-            // 3) Протестировать всё
+            pParams->vLimitRangeH = 0;
+            pParams->vLimitRangeV = pParams->vLimitRangeVDown = pParams->vLimitRangeVUp = 0;
         }
     }
-
 }

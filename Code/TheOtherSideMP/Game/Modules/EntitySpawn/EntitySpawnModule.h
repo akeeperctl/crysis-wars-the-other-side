@@ -156,6 +156,13 @@ public:
 	 */
 	bool MustBeRecreated(const IEntity* pEntity) const;
 
+	/**
+	 * \brief Получить указатель на сохранённую от удаления сущность по имени авторизованного игрока.
+		\n \b Авторизованный \b игрок - игрок, которому передана власть управлять сущностью. (DelegateAuthority)
+	 * \return Указатель на сохранённую сущность
+	 */
+	IEntity* GetSavedSlaveByAuthName(const char* authorityPlayerName) const;
+
 private:
 
 	/**

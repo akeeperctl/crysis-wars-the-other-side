@@ -273,7 +273,7 @@ IEntity* CTOSEntitySpawnModule::SpawnEntity(STOSEntitySpawnParams& params, bool 
 		bool alreadyHaveSaved = iter.second->authorityPlayerName == params.authorityPlayerName;
 		if (alreadyHaveSaved)
 		{
-			CryLogAlways("[C++][SpawnEntity] Slave entity spawn interrupted! The system already has a saved slave for player %s", params.authorityPlayerName);
+			CryLogAlways("%s[C++][SpawnEntity] Slave entity spawn interrupted! The system already has a saved slave for player %s", STR_YELLOW, params.authorityPlayerName);
 
 			return nullptr;
 		}
@@ -335,7 +335,7 @@ bool CTOSEntitySpawnModule::SpawnEntityDelay(STOSEntityDelaySpawnParams& params,
 		bool alreadyHaveSaved = iter.second->authorityPlayerName == params.authorityPlayerName;
 		if (alreadyHaveSaved)
 		{
-			CryLogAlways("[C++][SpawnEntityDelay] Slave entity spawn interrupted! The system already has a saved slave for player %s", params.authorityPlayerName);
+			CryLogAlways("%s[C++][SpawnEntityDelay] Slave entity spawn interrupted! The system already has a saved slave for player %s", STR_YELLOW, params.authorityPlayerName);
 
 			return false;
 		}
@@ -388,6 +388,22 @@ bool CTOSEntitySpawnModule::MustBeRecreated(const IEntity* pEntity) const
 	auto result = stl::find(s_markedForRecreation, entId) && HaveSavedParams(pEntity);
 
 	return result;
+}
+
+IEntity* CTOSEntitySpawnModule::GetSavedSlaveByAuthName(const char* authorityPlayerName) const
+{
+	for (auto &savedPair : m_savedParams)
+	{
+		const auto &params = savedPair.second;
+		const bool find = params->authorityPlayerName == authorityPlayerName && params->willBeSlave;
+
+		if (find)
+		{
+			return TOS_GET_ENTITY(savedPair.first);
+		}
+	}
+
+	return nullptr;
 }
 
 bool CTOSEntitySpawnModule::HaveSavedParams(const IEntity* pEntity) const

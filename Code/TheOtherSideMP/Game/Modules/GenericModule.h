@@ -14,14 +14,14 @@ public:
 	~CTOSGenericModule() override;
 
 	//ITOSGameModule
-	bool OnInputEvent(const SInputEvent& event) override { return true; };
-	bool OnInputEventUI(const SInputEvent& event) override { return false; };
-	void OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event) override;
-	void GetMemoryStatistics(ICrySizer* s) override;
+	bool        OnInputEvent(const SInputEvent& event) override { return true; };
+	bool        OnInputEventUI(const SInputEvent& event) override { return false; };
+	void        OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event) override;
+	void        GetMemoryStatistics(ICrySizer* s) override;
 	const char* GetName() override { return "CTOSGenericModule"; };
-	void Init() override;
-	void Update(float frametime) override;
-	void Serialize(TSerialize ser) override;
+	void        Init() override;
+	void        Update(float frametime) override;
+	void        Serialize(TSerialize ser) override;
 
 	int GetDebugLog() override { return m_debugLogMode; }
 
@@ -46,10 +46,10 @@ protected:
 
 	CTOSGenericSynchronizer* m_pSynchonizer;
 
-private:
 	int m_debugLogMode; // режим отладки модуля (1 - вкл, 0 - выкл)
-};
 
+private:
+};
 
 // Not actual anymore
 //template <class CSynchType>

@@ -79,7 +79,7 @@ private:
 	 * \brief Подготовить локального персонажа перед началом/прекращением управления рабом
 	 * \param toStartControl - Если true, то подготовка персонажа будет проходить как подготовка перед началом управления рабом
 	 */
-	void PrepareDude(bool toStartControl);
+	void PrepareDude(bool toStartControl) const;
 
 	CTOSPlayer* m_pLocalDude; ///< Указатель на локального персонажа с именем \a Dude. \n Появляется в одиночной игре.
 	IEntity* m_pSlaveEntity; ///< Указатель на сущность раба, которую контролирует локальный персонаж.
