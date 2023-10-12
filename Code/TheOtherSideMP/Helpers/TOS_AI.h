@@ -7,8 +7,10 @@
 #include "GameCVars.h"
 
 #include "TOS_Script.h"
-#include "TheOtherSideMP/Control System/ControlSystem.h"
-#include "TheOtherSideMP/AI Files/AIActionTracker.h"
+//#include "TheOtherSideMP/Control System/ControlSystem.h"
+
+#include "TheOtherSideMP/Actors/TOSActor.h"
+#include "TheOtherSideMP/AI/AITrackerModule.h"
 
 namespace TOS_AI
 {
@@ -23,21 +25,19 @@ namespace TOS_AI
 	inline void PauseAction(IAIObject* pAI)
 	{
 		if (pAI)
-			g_pControlSystem->GetAIActionTracker()->SetPausedAction(pAI, true);
+			g_pTOSGame->GetAITrackerModule()->SetPausedAction(pAI, true);
 	}
 
 	inline void UnpauseAction(IAIObject* pAI)
 	{
 		if (pAI)
-			g_pControlSystem->GetAIActionTracker()->SetPausedAction(pAI, false);
+			g_pTOSGame->GetAITrackerModule()->SetPausedAction(pAI, false);
 	}
 
-	inline void SendSignal(IAIObject* pAI, int signalFilter, const char* signalName, IEntity* pSender, IAISignalExtraData* pData)
+	inline void SendSignal(IAIObject* pAI, const int signalFilter, const char* signalName, IEntity* pSender, IAISignalExtraData* pData)
 	{
 		if (gEnv->bServer && gEnv->pAISystem && pAI)
-		{
 			pAI->CastToIAIActor()->SetSignal(signalFilter, signalName, pSender, pData);
-		}
 	}
 
 	inline void AbortAIAction(IAIObject* pUser, int actionGoalPipeId, const char* solution)
@@ -46,36 +46,34 @@ namespace TOS_AI
 			return;
 
 		SAIActionInfo info;
-		g_pControlSystem->GetAIActionTracker()->GetActionInfo(pUser, info);
+		g_pTOSGame->GetAITrackerModule()->GetActionInfo(pUser, info);
 
 		//If goal pipe id is not defined on input
 		//Get it from a tracked action 
 		if (actionGoalPipeId == -1)
-		{
 			actionGoalPipeId = info.goalPipeId;
-		}
 
 		if (actionGoalPipeId == -1)
 		{
 			//CryLogAlways("%s[C++][WARNING][%s Abort AI Action: goalPipeid is -1][Solution: %s]",
-				//STR_YELLOW, pUser->GetName(), solution);
+			//STR_YELLOW, pUser->GetName(), solution);
 		}
 
 		gEnv->pAISystem->AbortAIAction(pUser->GetEntity(), actionGoalPipeId);
-		g_pControlSystem->GetAIActionTracker()->OnActionAborted(pUser);
-		g_pControlSystem->GetAIActionTracker()->StopTracking(pUser);
+		g_pTOSGame->GetAITrackerModule()->OnActionAborted(pUser);
+		g_pTOSGame->GetAITrackerModule()->StopTracking(pUser);
 
 		//CryLogAlways("%s[C++][Abort AI Action: (%i) %s][AI: %s][Solution: %s]",
-			//STR_PURPLE, actionGoalPipeId, info.name, pUser->GetName(), solution);
+		//STR_PURPLE, actionGoalPipeId, info.name, pUser->GetName(), solution);
 	}
-	
-	inline void AbortAIAction(IAIObject* pUser, int actionGoalPipeId, bool stopTracking, const char* solution)
+
+	inline void AbortAIAction(IAIObject* pUser, int actionGoalPipeId, const bool stopTracking, const char* solution)
 	{
 		if (!pUser)
 			return;
 
 		SAIActionInfo info;
-		g_pControlSystem->GetAIActionTracker()->GetActionInfo(pUser, info);
+		g_pTOSGame->GetAITrackerModule()->GetActionInfo(pUser, info);
 
 		//If goal pipe id is not defined on input
 		//Get it from a tracked action 
@@ -86,18 +84,15 @@ namespace TOS_AI
 
 		if (stopTracking)
 		{
-			g_pControlSystem->GetAIActionTracker()->OnActionAborted(pUser);
-			g_pControlSystem->GetAIActionTracker()->StopTracking(pUser);
+			g_pTOSGame->GetAITrackerModule()->OnActionAborted(pUser);
+			g_pTOSGame->GetAITrackerModule()->StopTracking(pUser);
 		}
 
-		if (g_pGameCVars->tos_debug_log_aiactiontracker)
-		{
-			CryLogAlways("%s[C++][Abort AI Action: (%i) %s][AI: %s][Solution: %s]",
-				STR_PURPLE, actionGoalPipeId, info.name, pUser->GetName(), solution);
-		}
+		if (g_pTOSGame->GetAITrackerModule()->GetDebugLog() > 0)
+			CryLogAlways("%s[C++][Abort AI Action: (%i) %s][AI: %s][Solution: %s]", STR_PURPLE, actionGoalPipeId, info.name, pUser->GetName(), solution);
 	}
 
-	inline void AbortPausedAIAction(IAIObject* pUser, int actionGoalPipeId, const char* solution)
+	inline void AbortPausedAIAction(IAIObject* pUser, const int actionGoalPipeId, const char* solution)
 	{
 		AbortAIAction(pUser, actionGoalPipeId, false, solution);
 
@@ -109,7 +104,7 @@ namespace TOS_AI
 		//if (actionGoalPipeId == -1)
 		//{
 		//	SAIActionInfo info;
-		//	g_pControlSystem->GetAIActionTracker()->GetActionInfo(pUser, info);
+		//	g_pTOSGame->GetAITrackerModule()->GetActionInfo(pUser, info);
 		//	actionGoalPipeId = info.goalPipeId;
 		//}
 
@@ -124,7 +119,7 @@ namespace TOS_AI
 	//Return allocated or used goal pipe id
 	inline int ContinuePausedAIAction(IAIObject* pUser, const char* solution)
 	{
-		const auto pTracker = g_pControlSystem->GetAIActionTracker();
+		const auto pTracker = g_pTOSGame->GetAITrackerModule();
 		if (!pTracker)
 			return -1;
 
@@ -133,90 +128,70 @@ namespace TOS_AI
 
 		if (!pTracker->IsTracking(pUser))
 		{
-			if (g_pGameCVars->tos_debug_log_aiactiontracker)
-			{
-				CryLogAlways("%s[C++][%s Continue AI Action %s FAILED][Cause: THE USER IS NOT TRACKED!][Solution: %s]",
-					STR_RED, pUser->GetName(), solution);
-			}
+			if (g_pTOSGame->GetAITrackerModule()->GetDebugLog() > 0)
+				CryLogAlways("%s[C++][%s Continue AI Action %s FAILED][Cause: THE USER IS NOT TRACKED!][Solution: %s]", STR_RED, pUser->GetName(), solution);
 
 			return -1;
 		}
 
 		if (!pUser->IsEnabled())
 		{
-			if (g_pGameCVars->tos_debug_log_aiactiontracker)
-			{
-
-				CryLogAlways("%s[C++][%s Continue AI Action %s FAILED][Cause: AI IS DISABLED][Solution: %s]",
-					STR_RED, pUser->GetName(), solution);
-			}
+			if (g_pTOSGame->GetAITrackerModule()->GetDebugLog() > 0)
+				CryLogAlways("%s[C++][%s Continue AI Action %s FAILED][Cause: AI IS DISABLED][Solution: %s]", STR_RED, pUser->GetName(), solution);
 
 			return -1;
 		}
 
 		SAIActionInfo actionInfo;
-		g_pControlSystem->GetAIActionTracker()->GetActionInfo(pUser, actionInfo);
+		g_pTOSGame->GetAITrackerModule()->GetActionInfo(pUser, actionInfo);
 
 		const auto pObjectEntity = gEnv->pEntitySystem->GetEntity(actionInfo.objectId);
 		if (!pObjectEntity)
 		{
-			if (g_pGameCVars->tos_debug_log_aiactiontracker)
-			{
-				CryLogAlways("%s[C++][%s Continue AI Action %s FAILED][Cause: OBJECT UNDEFINED!][Solution: %s]",
-					STR_RED, pUser->GetName(), solution);
-			}
+			if (g_pTOSGame->GetAITrackerModule()->GetDebugLog() > 0)
+				CryLogAlways("%s[C++][%s Continue AI Action %s FAILED][Cause: OBJECT UNDEFINED!][Solution: %s]", STR_RED, pUser->GetName(), solution);
 
 			return -1;
 		}
 
 		if (actionInfo.goalPipeId == -1)
 		{
-			if (g_pGameCVars->tos_debug_log_aiactiontracker)
-			{
-				CryLogAlways("%s[C++][%s Continue AI Action %s FAILED][Cause: GOAL PIPE ID UNDEFINED][Solution: %s]",
-					STR_RED, pUser->GetName(), actionInfo.name, solution);
-			}
+			if (g_pTOSGame->GetAITrackerModule()->GetDebugLog() > 0)
+				CryLogAlways("%s[C++][%s Continue AI Action %s FAILED][Cause: GOAL PIPE ID UNDEFINED][Solution: %s]", STR_RED, pUser->GetName(), actionInfo.name, solution);
 			return -1;
 		}
 
 		//Akeeper: I'm not sure what it could be
 		if (!gEnv->pAISystem->GetAIAction(actionInfo.name))
 		{
-			if (g_pGameCVars->tos_debug_log_aiactiontracker)
-			{
-				CryLogAlways("%s[C++][%s Continue AI Action %s FAILED][Cause: ACTION NOT DEFINED][Solution: %s]",
-					STR_RED, pUser->GetName(), actionInfo.name, solution);
-			}
+			if (g_pTOSGame->GetAITrackerModule()->GetDebugLog() > 0)
+				CryLogAlways("%s[C++][%s Continue AI Action %s FAILED][Cause: ACTION NOT DEFINED][Solution: %s]", STR_RED, pUser->GetName(), actionInfo.name, solution);
 			return -1;
 		}
 
 		const auto pData = gEnv->pAISystem->CreateSignalExtraData();
 		pData->SetObjectName(actionInfo.name);
-		pData->fValue = (float)actionInfo.maxAlertness;
+		pData->fValue = static_cast<float>(actionInfo.maxAlertness);
 		pData->iValue = actionInfo.goalPipeId;
 
-		const int method = 1;
+		constexpr int method = 1;
 
 		if (method == 0)
-			TOS_AI::SendSignal(pUser, SIGNALFILTER_SENDER, "ACT_EXECUTE", pObjectEntity, pData);
-		else if (method == 1)
+			SendSignal(pUser, SIGNALFILTER_SENDER, "ACT_EXECUTE", pObjectEntity, pData);
+		if (method == 1)
 			gEnv->pAISystem->ExecuteAIAction(actionInfo.name, pUser->GetEntity(), pObjectEntity, actionInfo.maxAlertness, actionInfo.goalPipeId);
 
 
-		if (g_pGameCVars->tos_debug_log_aiactiontracker)
-		{
-			CryLogAlways("%s[C++][%s Continue AI Action: %s][Solution: %s]",
-				STR_PURPLE, pUser->GetName(), actionInfo.name, solution);
-		}
+		if (g_pTOSGame->GetAITrackerModule()->GetDebugLog() > 0)
+			CryLogAlways("%s[C++][%s Continue AI Action: %s][Solution: %s]", STR_PURPLE, pUser->GetName(), actionInfo.name, solution);
 
 		return actionInfo.goalPipeId;
 	}
 
-
 	//Return allocated or used goal pipe id
-	inline int ExecuteAIAction(IAIObject* pUser, IEntity* pObject, const char* actionName, float maxAlertness, int actionGoalPipeId, EAAEFlag flag, const char* desiredGoalName, const char* solution)
+	inline int ExecuteAIAction(IAIObject* pUser, IEntity* pObject, const char* actionName, const float maxAlertness, int actionGoalPipeId, const EAAEFlag flag, const char* desiredGoalName, const char* solution)
 	{
-		const auto pTracker = g_pControlSystem->GetAIActionTracker();
+		const auto pTracker = g_pTOSGame->GetAITrackerModule();
 		if (!pTracker)
 			return -1;
 
@@ -224,25 +199,18 @@ namespace TOS_AI
 			return -1;
 
 		if (!pObject)
-		{
-			if (g_pGameCVars && g_pGameCVars->tos_debug_log_aiactiontracker)
-			{
-				CryLogAlways("%s[C++][Execute AI Action: %s][AI: %s][WARNING][Cause: OBJECT NOT DEFINED][Solution: %s]",
-					STR_YELLOW, actionName, pUser->GetName(), solution);
-			}
-		}
+			if (g_pGameCVars && g_pTOSGame->GetAITrackerModule()->GetDebugLog() > 0)
+				CryLogAlways("%s[C++][Execute AI Action: %s][AI: %s][WARNING][Cause: OBJECT NOT DEFINED][Solution: %s]", STR_YELLOW, actionName, pUser->GetName(), solution);
 
 		if (!gEnv->pAISystem->GetAIAction(actionName))
 		{
-			CryLogAlways("%s[C++][Execute AI Action: %s][AI: %s][FAILED][Cause: ACTION NOT DEFINED][Solution: %s]",
-				STR_RED, actionName, pUser->GetName(), solution);
+			CryLogAlways("%s[C++][Execute AI Action: %s][AI: %s][FAILED][Cause: ACTION NOT DEFINED][Solution: %s]", STR_RED, actionName, pUser->GetName(), solution);
 			return -1;
 		}
 
 		if (!pUser->IsEnabled())
 		{
-			CryLogAlways("%s[C++][Execute AI Action: %s][AI: %s][FAILED][Cause: AI IS DISABLED][Solution: %s]",
-				STR_RED, actionName, pUser->GetName(), solution);
+			CryLogAlways("%s[C++][Execute AI Action: %s][AI: %s][FAILED][Cause: AI IS DISABLED][Solution: %s]", STR_RED, actionName, pUser->GetName(), solution);
 
 			return -1;
 		}
@@ -256,34 +224,32 @@ namespace TOS_AI
 		}
 
 		if (flag == eAAEF_IgnoreCombatDuringAction)
-		{
-			TOS_AI::EnableCombat(pUser, false, true, "Flag of ignore combat set on true");
-		}
+			EnableCombat(pUser, false, true, "Flag of ignore combat set on true");
 
 		if (actionGoalPipeId == -1)
 			actionGoalPipeId = gEnv->pAISystem->AllocGoalPipeId();
 
 		const auto pData = gEnv->pAISystem->CreateSignalExtraData();
 		pData->SetObjectName(actionName);
-		pData->fValue = (float)maxAlertness;
+		pData->fValue = maxAlertness;
 		pData->iValue = actionGoalPipeId;
 
 		//method 0 may not trigger an action in the Update function
-		const int method = 1;
+		constexpr int method = 1;
 
 		if (method == 0)
-			TOS_AI::SendSignal(pUser, SIGNALFILTER_SENDER, "ACT_EXECUTE", pObject, pData);
-		else if (method == 1)
+			SendSignal(pUser, SIGNALFILTER_SENDER, "ACT_EXECUTE", pObject, pData);
+		if (method == 1)
 			gEnv->pAISystem->ExecuteAIAction(actionName, pUser->GetEntity(), pObject, maxAlertness, actionGoalPipeId);
 
 		SAIActionInfo info;
 		info.goalPipeId = actionGoalPipeId;
 		info.name = actionName;
 		info.flag = flag;
-		info.objectId = pObject ? pObject->GetId() : -1;//-1 is undefined
+		info.objectId = pObject ? pObject->GetId() : -1; //-1 is undefined
 		info.maxAlertness = maxAlertness;
 
-		if (desiredGoalName != 0 && strcmp(desiredGoalName, "") != 0)
+		if (desiredGoalName != nullptr && strcmp(desiredGoalName, "") != 0)
 			info.desiredGoalPipe = desiredGoalName;
 
 		//Akeeper: 
@@ -292,11 +258,8 @@ namespace TOS_AI
 
 		pTracker->StartTracking(pUser, info);
 
-		if (g_pGameCVars && g_pGameCVars->tos_debug_log_aiactiontracker)
-		{
-			CryLogAlways("%s[C++][Execute AI Action: (%i) %s][AI: %s][SUCCESS][Solution: %s]",
-				STR_GREEN, actionGoalPipeId, actionName, pUser->GetName(), solution);
-		}
+		if (g_pGameCVars && g_pTOSGame->GetAITrackerModule()->GetDebugLog() > 0)
+			CryLogAlways("%s[C++][Execute AI Action: (%i) %s][AI: %s][SUCCESS][Solution: %s]", STR_GREEN, actionGoalPipeId, actionName, pUser->GetName(), solution);
 
 		return actionGoalPipeId;
 	}
@@ -306,18 +269,18 @@ namespace TOS_AI
 		if (!pUser)
 			return false;
 
-		return g_pControlSystem->GetAIActionTracker()->IsExecuting(pUser, actionName);
+		return g_pTOSGame->GetAITrackerModule()->IsExecuting(pUser, actionName);
 	}
 
-	inline bool IsExecuting(const IAIObject* pUser, int goalPipeId)
+	inline bool IsExecuting(const IAIObject* pUser, const int goalPipeId)
 	{
 		if (!pUser)
 			return false;
 
-		return g_pControlSystem->GetAIActionTracker()->IsExecuting(pUser, goalPipeId);
+		return g_pTOSGame->GetAITrackerModule()->IsExecuting(pUser, goalPipeId);
 	}
 
-	inline void CancelSubpipe(IAIObject* pAI, int goalPipeId)
+	inline void CancelSubpipe(IAIObject* pAI, const int goalPipeId)
 	{
 		if (pAI && pAI->IsEnabled() && gEnv->bServer && gEnv->pAISystem->IsEnabled())
 		{
@@ -345,7 +308,7 @@ namespace TOS_AI
 		pAI->CastToIAIActor()->SetParameters(agentParams);
 	}
 
-	inline void SetForgetTime(IAIObject* pAI, const char* timeType, float value)
+	inline void SetForgetTime(IAIObject* pAI, const char* timeType, const float value)
 	{
 		if (!pAI)
 			return;
@@ -358,12 +321,9 @@ namespace TOS_AI
 			agentParams.m_PerceptionParams.forgetfulnessSeek = value;
 			agentParams.m_PerceptionParams.forgetfulnessMemory = value;
 		}
-		else if (strcmp(timeType, FORGETTIME_TARGET) == 0)
-			agentParams.m_PerceptionParams.forgetfulnessTarget = value;
-		else if (strcmp(timeType, FORGETTIME_SEEK) == 0)
-			agentParams.m_PerceptionParams.forgetfulnessSeek = value;
-		else if (strcmp(timeType, FORGETTIME_MEMORY) == 0)
-			agentParams.m_PerceptionParams.forgetfulnessMemory = value;
+		else if (strcmp(timeType, FORGETTIME_TARGET) == 0) { agentParams.m_PerceptionParams.forgetfulnessTarget = value; }
+		else if (strcmp(timeType, FORGETTIME_SEEK) == 0) { agentParams.m_PerceptionParams.forgetfulnessSeek = value; }
+		else if (strcmp(timeType, FORGETTIME_MEMORY) == 0) { agentParams.m_PerceptionParams.forgetfulnessMemory = value; }
 
 		pAI->CastToIAIActor()->SetParameters(agentParams);
 	}
@@ -378,7 +338,7 @@ namespace TOS_AI
 			return character;
 		}
 
-		return 0;
+		return nullptr;
 	}
 
 	inline const char* GetScriptAIBehaviour(const IAIObject* pAI)
@@ -391,7 +351,7 @@ namespace TOS_AI
 			return behav;
 		}
 
-		return 0;
+		return nullptr;
 	}
 
 	inline const char* GetCurrentAIBehaviour(const IAIObject* pAI)
@@ -451,14 +411,14 @@ namespace TOS_AI
 		}
 	}
 
-	inline bool InsertSubpipe(IAIObject* pAIObject, int goalFlag, int goalPipeId, const char* pipeName, const char* solution)
+	inline bool InsertSubpipe(IAIObject* pAIObject, const int goalFlag, const int goalPipeId, const char* pipeName, const char* solution)
 	{
 		if (pAIObject && gEnv->bServer && gEnv->pAISystem->IsEnabled())
 		{
 			const auto pUser = pAIObject->CastToIPipeUser();
 			if (pUser)
 			{
-				pUser->InsertSubPipe(goalFlag, pipeName, 0, goalPipeId);
+				pUser->InsertSubPipe(goalFlag, pipeName, nullptr, goalPipeId);
 
 				//CryLogAlways("%s[C++][%s Insert Pipe %s][Solution: %s]",
 				//	STR_PURPLE, pAIObject->GetName(), pipeName, solution);
@@ -471,14 +431,14 @@ namespace TOS_AI
 		return false;
 	}
 
-	inline bool SelectPipe(IAIObject* pAIObject, int goalPipeId, const char* pipeName, const char* solution)
+	inline bool SelectPipe(IAIObject* pAIObject, const int goalPipeId, const char* pipeName, const char* solution)
 	{
 		if (pAIObject && gEnv->bServer && gEnv->pAISystem->IsEnabled())
 		{
 			const auto pUser = pAIObject->CastToIPipeUser();
 			if (pUser)
 			{
-				pUser->SelectPipe(0, pipeName, 0, goalPipeId);
+				pUser->SelectPipe(0, pipeName, nullptr, goalPipeId);
 
 				//CryLogAlways("%s[C++][%s Select Pipe %s][Solution: %s]",
 				//	STR_PURPLE, pAIObject->GetName(), pipeName, solution);
@@ -491,7 +451,7 @@ namespace TOS_AI
 		return false;
 	}
 
-	inline bool SelectPipe(IActor* pActor, int goalPipeId, const char* pipeName, const char* solution)
+	inline bool SelectPipe(IActor* pActor, const int goalPipeId, const char* pipeName, const char* solution)
 	{
 		if (!pActor)
 			return false;
@@ -505,10 +465,9 @@ namespace TOS_AI
 			const auto pUser = pAIObject->CastToIPipeUser();
 			if (pUser)
 			{
-				pUser->SelectPipe(0, pipeName, 0, goalPipeId);
+				pUser->SelectPipe(0, pipeName, nullptr, goalPipeId);
 
-				CryLogAlways("%s[C++][%s Select Pipe %s][Solution: %s]", 
-					STR_PURPLE, pAIObject->GetName(), pipeName, solution);
+				CryLogAlways("%s[C++][%s Select Pipe %s][Solution: %s]", STR_PURPLE, pAIObject->GetName(), pipeName, solution);
 
 				if (pUser->IsUsingPipe(pipeName))
 					return true;
@@ -526,8 +485,8 @@ namespace TOS_AI
 			if (pUser)
 				pUser->SetRefPointPos(pos);
 		}
-	}	
-	
+	}
+
 	inline void SetRefPoint(IActor* pActor, const Vec3& pos)
 	{
 		if (!pActor)
@@ -599,7 +558,7 @@ namespace TOS_AI
 		return false;
 	}
 
-	inline bool IsInCombat(EntityId id)
+	inline bool IsInCombat(const EntityId id)
 	{
 		const auto pEntity = gEnv->pEntitySystem->GetEntity(id);
 		if (!pEntity)
@@ -612,13 +571,12 @@ namespace TOS_AI
 		return IsInCombat(pAI);
 	}
 
-	inline void SetStance(IAIObject* pAIObject, EStance stance)
+	inline void SetStance(IAIObject* pAIObject, const EStance stance)
 	{
 		if (pAIObject && gEnv->bServer && gEnv->pAISystem->IsEnabled())
 		{
 			const auto pUser = pAIObject->CastToIPipeUser();
 			if (pUser)
-			{
 				switch (stance)
 				{
 				case STANCE_STAND:
@@ -640,11 +598,10 @@ namespace TOS_AI
 					pUser->InsertSubPipe(0, "do_it_standing");
 					break;
 				}
-			}
 		}
 	}
 
-	inline void ReturnToFirst(IAIObject* pAI, int once, int resetStatic, bool saveStance)
+	inline void ReturnToFirst(IAIObject* pAI, const int once, const int resetStatic, bool saveStance)
 	{
 		if (!pAI)
 			return;
@@ -659,20 +616,17 @@ namespace TOS_AI
 			pAI->CastToIAIActor()->SetSignal(0, "RETURN_TO_FIRST", pAI->GetEntity());
 			sended = 1;
 		}
-		else if (!once)
-		{
-			pAI->CastToIAIActor()->SetSignal(0, "RETURN_TO_FIRST", pAI->GetEntity());
-		}
+		else if (!once) { pAI->CastToIAIActor()->SetSignal(0, "RETURN_TO_FIRST", pAI->GetEntity()); }
 	}
 
-	inline void ReturnToFirstSimple(IAIObject* pAI, bool saveStance)
+	inline void ReturnToFirstSimple(IAIObject* pAI, const bool saveStance)
 	{
 		if (!pAI)
 			return;
 
 		static auto savedStance = STANCE_NULL;
 
-		const auto pActor = saveStance ? dynamic_cast<CActor*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pAI->GetEntity()->GetId())) : nullptr;
+		const auto pActor = saveStance ? dynamic_cast<CTOSActor*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pAI->GetEntity()->GetId())) : nullptr;
 		if (pActor)
 			savedStance = pActor->GetStance();
 
@@ -682,12 +636,12 @@ namespace TOS_AI
 
 		if (pActor)
 		{
-			TOS_AI::SetStance(pAI, savedStance);
+			SetStance(pAI, savedStance);
 			savedStance = STANCE_NULL;
 		}
 	}
 
-	inline void EnablePerception(IAIObject* pAI, bool enable)
+	inline void EnablePerception(IAIObject* pAI, const bool enable)
 	{
 		if (!pAI)
 			return;
@@ -720,13 +674,13 @@ namespace TOS_AI
 		return audioScale > 0 && visualScale > 0;
 	}
 
-	inline void EnableCombat(IAIObject* pAI, bool enable, bool toFirst, const char* solution)
+	inline void EnableCombat(IAIObject* pAI, const bool enable, const bool toFirst, const char* solution)
 	{
 		if (!pAI)
 			return;
 
 		//CryLogAlways("%s[C++][Enable Combat: %i][AI: %s][Solution: %s]",
-			//STR_PURPLE, enable, pAI->GetName(), solution);
+		//STR_PURPLE, enable, pAI->GetName(), solution);
 
 		const auto pVeh = g_pGame->GetIGameFramework()->GetIVehicleSystem()->GetVehicle(pAI->GetEntityID());
 
@@ -741,7 +695,7 @@ namespace TOS_AI
 
 				//Clean a behaviour in the lua
 				ReturnToFirst(pAI, 0, 0, true);
-				
+
 				//EStance stance = STANCE_STAND;
 				//auto pActor = static_cast<CActor*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pAI->GetEntityID()));
 				//if (pActor)
@@ -809,55 +763,46 @@ namespace TOS_AI
 
 					//Fix for a helicopter
 					//SendSignal(pAI, SIGNALFILTER_SENDER, "MAKE_ME_IGNORANT", pAI->GetEntity(), 0);
-				
-					SendSignal(pAI, SIGNALFILTER_SENDER, "TO_IDLE", pAI->GetEntity(), 0);
+
+					SendSignal(pAI, SIGNALFILTER_SENDER, "TO_IDLE", pAI->GetEntity(), nullptr);
 				}
 				else
 				{
 					//The aliens
-					if (strcmp(character, "Drone") == 0)
-						SendSignal(pAI, SIGNALFILTER_SENDER, "TO_SCOUTMOAC_IDLE", pAI->GetEntity(), 0);
-					else if (strcmp(character, "GuardNeue") == 0)
-						SendSignal(pAI, SIGNALFILTER_SENDER, "TO_IDLE", pAI->GetEntity(), 0);
-					else if (strcmp(character, "Hunter") == 0)
-						SendSignal(pAI, SIGNALFILTER_SENDER, "TO_IDLE", pAI->GetEntity(), 0);
-					else if (strcmp(character, "HunterNew") == 0)
-						SendSignal(pAI, SIGNALFILTER_SENDER, "TO_IDLE", pAI->GetEntity(), 0);
-					else if (strcmp(character, "ScoutMOAC") == 0)
-						SendSignal(pAI, SIGNALFILTER_SENDER, "TO_SCOUTMOAC_IDLE", pAI->GetEntity(), 0);
-					else if (strcmp(character, "Trooper") == 0)
-						SendSignal(pAI, SIGNALFILTER_SENDER, "GO_TO_IDLE", pAI->GetEntity(), 0);
-					else if (strcmp(character, "TrooperCloak") == 0)
-						SendSignal(pAI, SIGNALFILTER_SENDER, "GO_TO_IDLE", pAI->GetEntity(), 0);
-					else if (strcmp(character, "TrooperGuardian") == 0)
-						SendSignal(pAI, SIGNALFILTER_SENDER, "GO_TO_IDLE", pAI->GetEntity(), 0);
-					else if (strcmp(character, "TrooperLeader") == 0)
-						SendSignal(pAI, SIGNALFILTER_SENDER, "GO_TO_IDLE", pAI->GetEntity(), 0);
-					else if (strcmp(character, "TrooperLeaderMKII") == 0)
-						SendSignal(pAI, SIGNALFILTER_SENDER, "GO_TO_IDLE", pAI->GetEntity(), 0);
-					else if (strcmp(character, "TrooperMKII_Sneak") == 0)
-						SendSignal(pAI, SIGNALFILTER_SENDER, "GO_TO_IDLE", pAI->GetEntity(), 0);
-					else if (strcmp(character, "TrooperMKII") == 0)
-						SendSignal(pAI, SIGNALFILTER_SENDER, "GO_TO_IDLE", pAI->GetEntity(), 0);
+					if (strcmp(character, "Drone") == 0 || 
+						strcmp(character, "ScoutMOAC") == 0)
+						SendSignal(pAI, SIGNALFILTER_SENDER, "TO_SCOUTMOAC_IDLE", pAI->GetEntity(), nullptr);
+					else if (strcmp(character, "GuardNeue") == 0 || 
+							strcmp(character, "Hunter") == 0 || 
+							strcmp(character, "HunterNew") == 0)
+						SendSignal(pAI, SIGNALFILTER_SENDER, "TO_IDLE", pAI->GetEntity(), nullptr);
+					else if (strcmp(character, "Trooper") == 0 || 
+							strcmp(character, "TrooperCloak") == 0 ||
+							strcmp(character, "TrooperGuardian") == 0 ||
+							strcmp(character, "TrooperLeader") == 0 || 
+							strcmp(character, "TrooperLeaderMKII") == 0 ||
+							strcmp(character, "TrooperMKII_Sneak") == 0 ||
+							strcmp(character, "TrooperMKII") == 0)
+						SendSignal(pAI, SIGNALFILTER_SENDER, "GO_TO_IDLE", pAI->GetEntity(), nullptr);
 					else //The humans
-						SendSignal(pAI, SIGNALFILTER_SENDER, "GO_TO_IDLE", pAI->GetEntity(), 0);
+						SendSignal(pAI, SIGNALFILTER_SENDER, "GO_TO_IDLE", pAI->GetEntity(), nullptr);
 				}
 			}
 
-			TOS_AI::EnablePerception(pAI, false);
+			EnablePerception(pAI, false);
 		}
 		else
 		{
-			TOS_AI::EnablePerception(pAI, true);
-			TOS_AI::RestoreForgetTime(pAI);
+			EnablePerception(pAI, true);
+			RestoreForgetTime(pAI);
 
 			//Fix for a helicopter
 			//if (pVeh)
-				//SendSignal(pAI, SIGNALFILTER_SENDER, "MAKE_ME_UNIGNORANT", pAI->GetEntity(), 0);
+			//SendSignal(pAI, SIGNALFILTER_SENDER, "MAKE_ME_UNIGNORANT", pAI->GetEntity(), 0);
 		}
 	}
 
-	inline void EnableCombat(IActor* pActor, bool enable, bool toFirst, const char* solution)
+	inline void EnableCombat(IActor* pActor, const bool enable, const bool toFirst, const char* solution)
 	{
 		if (!pActor)
 			return;
@@ -865,7 +810,7 @@ namespace TOS_AI
 		const auto pAI = pActor->GetEntity()->GetAI();
 		if (!pAI)
 			return;
-		
+
 		EnableCombat(pAI, enable, toFirst, solution);
 	}
 
@@ -878,7 +823,7 @@ namespace TOS_AI
 		if (!pAI)
 			return false;
 
-		return TOS_AI::IsPerceptionEnabled(pAI);
+		return IsPerceptionEnabled(pAI);
 	}
 
 	inline bool IsCombatEnable(const IAIObject* pAI)
@@ -886,7 +831,7 @@ namespace TOS_AI
 		if (!pAI)
 			return false;
 
-		return TOS_AI::IsPerceptionEnabled(pAI);
+		return IsPerceptionEnabled(pAI);
 	}
 
 	inline void DrawPrimaryWeapon(const IAIObject* pAI)
@@ -907,7 +852,7 @@ namespace TOS_AI
 		}
 	}
 
-	inline void RegisterAI(IEntity* pEntity, bool player)
+	inline void RegisterAI(IEntity* pEntity, const bool player)
 	{
 		if (pEntity && gEnv->bServer && gEnv->pAISystem->IsEnabled())
 		{
@@ -922,7 +867,7 @@ namespace TOS_AI
 		}
 	}
 
-	inline void SetSpecies(IAIObject* pAI, int species)
+	inline void SetSpecies(IAIObject* pAI, const int species)
 	{
 		if (pAI && gEnv->bServer && gEnv->pAISystem->IsEnabled())
 		{
@@ -942,7 +887,7 @@ namespace TOS_AI
 		}
 	}
 
-	inline int GetSpecies(const IAIObject* pAI, bool fromLua)
+	inline int GetSpecies(const IAIObject* pAI, const bool fromLua)
 	{
 		int species = -1;
 
@@ -967,14 +912,14 @@ namespace TOS_AI
 	}
 
 	//object 1 is hostile to object 2?
-	inline bool IsHostile(IEntity* pEntity1, IEntity* pEntity2, bool luaMethod)
+	inline bool IsHostile(IEntity* pEntity1, IEntity* pEntity2, const bool luaMethod)
 	{
 		bool hostile = false;
 
 		if (pEntity1 && pEntity1->GetAI() && pEntity2 && pEntity2->GetAI() && gEnv->bServer && gEnv->pAISystem->IsEnabled())
 		{
-			const int species1 = TOS_AI::GetSpecies(pEntity1->GetAI(), luaMethod);
-			const int species2 = TOS_AI::GetSpecies(pEntity2->GetAI(), luaMethod);
+			const int species1 = GetSpecies(pEntity1->GetAI(), luaMethod);
+			const int species2 = GetSpecies(pEntity2->GetAI(), luaMethod);
 
 			const bool isNeutral = species1 == -1 || species2 == -1;
 
@@ -985,14 +930,14 @@ namespace TOS_AI
 	}
 
 	//object 1 is hostile to object 2?
-	inline bool IsHostile(const IAIObject* pAIObject1, const IAIObject* pAIObject2, bool luaMethod)
+	inline bool IsHostile(const IAIObject* pAIObject1, const IAIObject* pAIObject2, const bool luaMethod)
 	{
 		bool hostile = false;
 
 		if (pAIObject1 && pAIObject2 && gEnv->bServer && gEnv->pAISystem->IsEnabled())
 		{
-			const int species1 = TOS_AI::GetSpecies(pAIObject1, luaMethod);
-			const int species2 = TOS_AI::GetSpecies(pAIObject2, luaMethod);
+			const int species1 = GetSpecies(pAIObject1, luaMethod);
+			const int species2 = GetSpecies(pAIObject2, luaMethod);
 
 			const bool isNeutral = species1 == -1 || species2 == -1;
 
@@ -1009,7 +954,7 @@ namespace TOS_AI
 		if (gEnv->bServer && gEnv->pAISystem && pAnchorEntity)
 		{
 			SmartScriptTable props;
-			const auto pTable = pAnchorEntity->GetScriptTable();
+			const auto       pTable = pAnchorEntity->GetScriptTable();
 			pTable->GetValue("Properties", props);
 
 			props->GetValue("radius", radius);

@@ -408,10 +408,11 @@
     <ClCompile Include="TheOtherSideMP\Actors\Aliens\TOSTrooper.cpp" />
     <ClCompile Include="TheOtherSideMP\Actors\Player\TOSPlayer.cpp" />
     <ClCompile Include="TheOtherSideMP\Actors\TOSActor.cpp" />
-    <ClCompile Include="TheOtherSideMP\AI\AIActionTracker.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    <ClCompile Include="TheOtherSideMP\AI\AITrackerCvars.cpp" />
+    <ClCompile Include="TheOtherSideMP\AI\AITrackerModule.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="TheOtherSideMP\Control\ControlAction.cpp">
@@ -649,16 +650,16 @@
     <ClInclude Include="TheOtherSideMP\Actors\ITOSMasterControllable.h" />
     <ClInclude Include="TheOtherSideMP\Actors\Player\TOSPlayer.h" />
     <ClInclude Include="TheOtherSideMP\Actors\TOSActor.h" />
-    <ClInclude Include="TheOtherSideMP\AI\AIActionTracker.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    <ClInclude Include="TheOtherSideMP\AI\AITrackerModule.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">true</ExcludedFromBuild>
     </ClInclude>
-    <ClInclude Include="TheOtherSideMP\AI\IAIActionTrackerListener.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    <ClInclude Include="TheOtherSideMP\AI\IAITrackerModuleListener.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">true</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="TheOtherSideMP\Control\ControlSystem.h">

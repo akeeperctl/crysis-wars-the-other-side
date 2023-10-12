@@ -6,6 +6,7 @@
 #include <IGameplayRecorder.h>
 #include <IInput.h>
 
+class СTOSAIModule;
 class CControlClient;
 class CGameFlashAnimation;
 
@@ -117,19 +118,20 @@ public:
 	IActor* GetActualClientActor() const;
 
 	CTOSGameEventRecorder* GetEventRecorder() const;
-	CTOSMasterModule* GetMasterModule() const;
+	CTOSMasterModule*      GetMasterModule() const;
 	CTOSEntitySpawnModule* GetEntitySpawnModule() const;
+	СTOSAIModule*          GetAITrackerModule() const;
+
 
 	bool ModuleAdd(ITOSGameModule* pModule, bool flowGraph);
 	bool ModuleRemove(ITOSGameModule* pModule, bool flowGraph);
-
 
 private:
 
 	void UpdateChannelConnectionState();
 	void UpdateContextViewState();
 
-	CTOSAIActionTracker* m_pAIActionTracker;
+	СTOSAIModule* m_pAITrackerModule;
 	CControlClient* m_pLocalControlClient;
 
 	CTOSGameEventRecorder* m_pEventRecorder;

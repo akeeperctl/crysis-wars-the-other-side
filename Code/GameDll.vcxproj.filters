@@ -127,9 +127,6 @@
     <Filter Include="TheOtherSideMP\Actors\player">
       <UniqueIdentifier>{80f2a524-f64c-4877-b6d4-c9976bff1110}</UniqueIdentifier>
     </Filter>
-    <Filter Include="TheOtherSideMP\AI">
-      <UniqueIdentifier>{9819ac0e-82ff-477d-acc4-c0c0e819d9fc}</UniqueIdentifier>
-    </Filter>
     <Filter Include="TheOtherSideMP\Game">
       <UniqueIdentifier>{6a638ed2-5d3b-4d9e-9662-c6daf842ff8c}</UniqueIdentifier>
     </Filter>
@@ -147,6 +144,9 @@
     </Filter>
     <Filter Include="TheOtherSideMP\HUD">
       <UniqueIdentifier>{8796b1bf-5bdf-49c1-91bc-f0959f038ad0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TheOtherSideMP\Game\Modules\AI">
+      <UniqueIdentifier>{9819ac0e-82ff-477d-acc4-c0c0e819d9fc}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -788,8 +788,8 @@
     <ClCompile Include="TheOtherSideMP\Control\ControlSystem.cpp">
       <Filter>TheOtherSideMP\Control_Old</Filter>
     </ClCompile>
-    <ClCompile Include="TheOtherSideMP\AI\AIActionTracker.cpp">
-      <Filter>TheOtherSideMP\AI</Filter>
+    <ClCompile Include="TheOtherSideMP\AI\AITrackerModule.cpp">
+      <Filter>TheOtherSideMP\Game\Modules\AI</Filter>
     </ClCompile>
     <ClCompile Include="TheOtherSideMP\Game\Modules\Abilities\AbilitiesSystem.cpp">
       <Filter>TheOtherSideMP\Game\Modules\Abilities</Filter>
@@ -811,6 +811,9 @@
     </ClCompile>
     <ClCompile Include="TheOtherSideMP\HUD\TOSCrosshair.cpp">
       <Filter>TheOtherSideMP\HUD</Filter>
+    </ClCompile>
+    <ClCompile Include="TheOtherSideMP\AI\AITrackerCvars.cpp">
+      <Filter>TheOtherSideMP\Game\Modules\AI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1412,11 +1415,11 @@
     <ClInclude Include="TheOtherSideMP\Control\IControlSystemChild.h">
       <Filter>TheOtherSideMP\Control_Old</Filter>
     </ClInclude>
-    <ClInclude Include="TheOtherSideMP\AI\AIActionTracker.h">
-      <Filter>TheOtherSideMP\AI</Filter>
+    <ClInclude Include="TheOtherSideMP\AI\AITrackerModule.h">
+      <Filter>TheOtherSideMP\Game\Modules\AI</Filter>
     </ClInclude>
-    <ClInclude Include="TheOtherSideMP\AI\IAIActionTrackerListener.h">
-      <Filter>TheOtherSideMP\AI</Filter>
+    <ClInclude Include="TheOtherSideMP\AI\IAITrackerModuleListener.h">
+      <Filter>TheOtherSideMP\Game\Modules\AI</Filter>
     </ClInclude>
     <ClInclude Include="TheOtherSideMP\Game\Modules\Abilities\AbilitiesSystem.h">
       <Filter>TheOtherSideMP\Game\Modules\Abilities</Filter>
