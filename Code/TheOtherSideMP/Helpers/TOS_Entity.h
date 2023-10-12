@@ -4,6 +4,8 @@
 #include <IEntity.h>
 #include "TheOtherSideMP/Game/Modules/EntitySpawn/EntitySpawnModule.h"
 
+#define TOS_GET_ENTITY(entityId) gEnv->pEntitySystem->GetEntity(entityId)
+
 namespace TOS_Entity
 {
 	inline IEntity* Spawn(STOSEntitySpawnParams& params)

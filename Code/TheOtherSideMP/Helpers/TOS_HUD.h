@@ -35,6 +35,6 @@ namespace TOS_HUD
 	//Должен быть загружен m_animWeaponSelection
 	inline void ShowInventory(IActor* pActor, const char* category, const char* curClass)
 	{
-		SAFE_HUD_FUNC(ShowInventoryOverview(pActor, category, curClass, false));
+		SAFE_HUD_FUNC(TOSShowInventoryOverview(pActor, category, curClass, false));
 	}
 }

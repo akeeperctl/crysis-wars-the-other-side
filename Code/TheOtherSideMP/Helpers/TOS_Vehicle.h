@@ -1,12 +1,12 @@
 #pragma once
 #include "IActorSystem.h"
 #include "IVehicleSystem.h"
-#include "../Control System/ControlSystem.h"
+//#include "../Control System/ControlSystem.h"
 //#include "../Conqueror/ConquerorSystem.h"
 
 namespace TOS_Vehicle
 {
-	inline void Exit(const IActor* pActor, bool transitionEnabled, bool force, Vec3 exitPos = Vec3(0,0,0))
+	inline void Exit(const IActor* pActor, bool transitionEnabled, bool force, Vec3 exitPos = Vec3(0, 0, 0))
 	{
 		if (!pActor)
 			return;
@@ -22,14 +22,14 @@ namespace TOS_Vehicle
 		pSeat->Exit(transitionEnabled, force, exitPos);
 	}
 
-	inline int RequestFreeSeatIndex(IVehicle* pVehicle)
+	inline int RequestFreeSeatIndex(const IVehicle* pVehicle)
 	{
 		auto freeSeatIndex = -1;
 
 		if (pVehicle)
 		{
-			HSCRIPTFUNCTION RequestSeatFunc = 0;
-			const auto pTable = pVehicle->GetEntity()->GetScriptTable();
+			HSCRIPTFUNCTION RequestSeatFunc = nullptr;
+			const auto      pTable = pVehicle->GetEntity()->GetScriptTable();
 
 			if (pTable && pTable->GetValue("RequestSeat", RequestSeatFunc))
 			{
@@ -39,19 +39,19 @@ namespace TOS_Vehicle
 		}
 
 		//if (freeSeatIndex == -1)
-			//CryLogAlways("%s[C++][WARNING][RequestFreeSeatIndex return -1]", STR_YELLOW);
+		//CryLogAlways("%s[C++][WARNING][RequestFreeSeatIndex return -1]", STR_YELLOW);
 
 		return freeSeatIndex;
 	}
 
-	inline int RequestGunnerSeatIndex(IVehicle* pVehicle)
+	inline int RequestGunnerSeatIndex(const IVehicle* pVehicle)
 	{
 		int gunnerSeatIndex = -1;
 
 		if (pVehicle)
 		{
-			HSCRIPTFUNCTION RequestSeatFunc = 0;
-			const auto pTable = pVehicle->GetEntity()->GetScriptTable();
+			HSCRIPTFUNCTION RequestSeatFunc = nullptr;
+			const auto      pTable = pVehicle->GetEntity()->GetScriptTable();
 
 			if (pTable && pTable->GetValue("RequestGunnerSeat", RequestSeatFunc))
 			{
@@ -68,7 +68,7 @@ namespace TOS_Vehicle
 		return gunnerSeatIndex;
 	}
 
-	inline bool ActorIsPassenger(IActor* pActor)
+	inline bool ActorIsPassenger(const IActor* pActor)
 	{
 		if (pActor)
 		{
@@ -84,7 +84,7 @@ namespace TOS_Vehicle
 		return false;
 	}
 
-	inline bool ActorIsDriver(IActor* pActor)
+	inline bool ActorIsDriver(const IActor* pActor)
 	{
 		if (pActor)
 		{
@@ -100,7 +100,7 @@ namespace TOS_Vehicle
 		return false;
 	}
 
-	inline bool ActorIsGunner(IActor* pActor)
+	inline bool ActorIsGunner(const IActor* pActor)
 	{
 		if (pActor)
 		{
@@ -116,7 +116,7 @@ namespace TOS_Vehicle
 		return false;
 	}
 
-	inline bool ActorInVehicle(IActor* pActor)
+	inline bool ActorInVehicle(const IActor* pActor)
 	{
 		if (pActor)
 		{
@@ -132,7 +132,7 @@ namespace TOS_Vehicle
 		return false;
 	}
 
-	inline IVehicle* GetVehicle(IActor* pActor)
+	inline IVehicle* GetVehicle(const IActor* pActor)
 	{
 		if (pActor)
 		{
@@ -148,7 +148,7 @@ namespace TOS_Vehicle
 		return nullptr;
 	}
 
-	inline IVehicle* GetVehicle(IEntity* pEntity)
+	inline IVehicle* GetVehicle(const IEntity* pEntity)
 	{
 		if (pEntity)
 			return g_pGame->GetIGameFramework()->GetIVehicleSystem()->GetVehicle(pEntity->GetId());
@@ -156,12 +156,12 @@ namespace TOS_Vehicle
 		return nullptr;
 	}
 
-	inline void ChangeSeat(IActor* pActor, int seatIndex, bool isAnimationEnabled)
+	inline void ChangeSeat(const IActor* pActor, int seatIndex, bool isAnimationEnabled)
 	{
 		if (pActor && pActor->GetLinkedVehicle())
 		{
-			HSCRIPTFUNCTION ActorChangeSeat = 0;
-			const auto pTable = pActor->GetEntity()->GetScriptTable();
+			HSCRIPTFUNCTION ActorChangeSeat = nullptr;
+			const auto      pTable = pActor->GetEntity()->GetScriptTable();
 
 			if (pTable && pTable->GetValue("ActorChangeSeat", ActorChangeSeat))
 				Script::CallMethod(pTable, ActorChangeSeat, seatIndex, isAnimationEnabled);
@@ -172,14 +172,14 @@ namespace TOS_Vehicle
 	{
 		if (pVehicle)
 		{
-			const auto id = pVehicle->GetEntityId();
+			const auto  id = pVehicle->GetEntityId();
 			const auto& pos = pVehicle->GetEntity()->GetWorldPos();
 
 			pVehicle->OnHit(id, id, 18000, pos, 1, "normal", false);
 		}
 	}
 
-	inline IAIObject* GetAI(IVehicle* pVehicle)
+	inline IAIObject* GetAI(const IVehicle* pVehicle)
 	{
 		if (pVehicle)
 			return pVehicle->GetEntity()->GetAI();
@@ -192,7 +192,7 @@ namespace TOS_Vehicle
 		if (!pVehicle)
 			return false;
 
-		auto passengerCount = 0;
+		auto       passengerCount = 0;
 		const auto seats = pVehicle->GetSeatCount();
 
 		for (auto i = 0; i < seats; i++)
@@ -213,31 +213,29 @@ namespace TOS_Vehicle
 		return passengerCount != 0;
 	}
 
-	inline bool DriverSelectWeapon(IVehicle* pVehicle, int index)
+	inline bool DriverSelectWeapon(const IVehicle* pVehicle, int index)
 	{
 		if (!pVehicle)
 			return false;
 
-		HSCRIPTFUNCTION DriverSelectWeaponFunc = 0;
-		const auto pTable = pVehicle->GetEntity()->GetScriptTable();
+		HSCRIPTFUNCTION DriverSelectWeaponFunc = nullptr;
+		const auto      pTable = pVehicle->GetEntity()->GetScriptTable();
 
 		if (pTable && pTable->GetValue("DriverSelectWeaponByIndex", DriverSelectWeaponFunc))
-		{
 			return Script::CallMethod(pTable, DriverSelectWeaponFunc, index);
-		}
 
 		return false;
 	}
 
-	inline int GetSeatWeaponCount(IVehicle* pVehicle, const TVehicleSeatId seatId)
+	inline int GetSeatWeaponCount(const IVehicle* pVehicle, const TVehicleSeatId seatId)
 	{
 		if (!pVehicle)
 			return 0;
 
 		int count = 0;
 
-		HSCRIPTFUNCTION GetSeatWeaponCountFunc = 0;
-		const auto pTable = pVehicle->GetEntity()->GetScriptTable();
+		HSCRIPTFUNCTION GetSeatWeaponCountFunc = nullptr;
+		const auto      pTable = pVehicle->GetEntity()->GetScriptTable();
 
 		if (pTable && pTable->GetValue("GetSeatWeaponCount", GetSeatWeaponCountFunc))
 		{
@@ -248,7 +246,7 @@ namespace TOS_Vehicle
 		return count;
 	}
 
-	inline int GetSeatWeaponCount(IActor* pActor)
+	inline int GetSeatWeaponCount(const IActor* pActor)
 	{
 		if (!pActor)
 			return 0;
@@ -281,7 +279,7 @@ namespace TOS_Vehicle
 
 		return pVehicle->GetMovement()->GetMovementType() == IVehicleMovement::eVMT_Land;
 	}
-	
+
 	//inline bool IsPLV(IVehicle* pVehicle)
 	//{
 	//	const auto pConqueror = g_pControlSystem->GetConquerorSystem();
@@ -337,7 +335,7 @@ namespace TOS_Vehicle
 		if (!pVehicle)
 			return false;
 
-		const int seatsCount = pVehicle->GetSeatCount();
+		const unsigned seatsCount = pVehicle->GetSeatCount();
 		const int passengerCount = pVehicle->GetStatus().passengerCount;
 
 		return passengerCount < seatsCount;
@@ -354,11 +352,9 @@ namespace TOS_Vehicle
 		// rad < 4 --> rad = 4 or rad > 10 --> rad = 10
 
 		float maximum = 10.0f;
-		if (TOS_Vehicle::IsAir(pVehicle))
-		{
+		if (IsAir(pVehicle))
 			if (!pVehicle->GetMovement()->IsEngineDisabled())
 				maximum += 5.0f;
-		}
 
 		return min(max(4.0f, bounds.GetRadius()), maximum);
 	}

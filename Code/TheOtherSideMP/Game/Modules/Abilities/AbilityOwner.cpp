@@ -331,7 +331,7 @@ void CAbilityOwner::ToggleAbility(int index, EntityId targetId)
     if (!pOwnerTable)
         return;
 
-    auto pTargetEntity = GET_ENTITY(targetId);
+    auto pTargetEntity = TOS_GET_ENTITY(targetId);
     
     string abilityName = pAbility->GetName();
     string className = pOwnerActor->GetEntity()->GetClass()->GetName();
@@ -691,7 +691,7 @@ void CAbilityOwner::ToggleAbility(int index, EntityId targetId)
 
                 auto pLCC = g_pControlSystem->GetLocalControlClient();
 
-                auto pCrossEntity = pTargetEntity ? pTargetEntity : GET_ENTITY(pLCC->GetScoutAutoAimTargetId());
+                auto pCrossEntity = pTargetEntity ? pTargetEntity : TOS_GET_ENTITY(pLCC->GetScoutAutoAimTargetId());
                 if (pCrossEntity && pCrossEntity != pOwnerActor->GetEntity())
                 {
                     //Handle grab here
@@ -728,7 +728,7 @@ void CAbilityOwner::ToggleAbility(int index, EntityId targetId)
                         if (isVehicle)
                         {
                             //28.01.2023
-                            //Akeeper: Транспорт не поддаётся физике после броска, пока с ним не столкнешься  // NOLINT(clang-diagnostic-invalid-utf8)
+                            //Akeeper: РўСЂР°РЅСЃРїРѕСЂС‚ РЅРµ РїРѕРґРґР°С‘С‚СЃСЏ С„РёР·РёРєРµ РїРѕСЃР»Рµ Р±СЂРѕСЃРєР°, РїРѕРєР° СЃ РЅРёРј РЅРµ СЃС‚РѕР»РєРЅРµС€СЊСЃСЏ  // NOLINT(clang-diagnostic-invalid-utf8)
                             return;
                             //const auto isCar = TOS_Vehicle::IsCar(pCrossVehicle);
                             //if (!isCar)

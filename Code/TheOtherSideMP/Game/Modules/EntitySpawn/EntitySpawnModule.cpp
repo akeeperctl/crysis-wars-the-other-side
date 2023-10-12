@@ -8,6 +8,7 @@
 #include "../../TOSGame.h"
 #include "../../TOSGameEventRecorder.h"
 
+#include "TheOtherSideMP/Helpers/TOS_Entity.h"
 #include "TheOtherSideMP/Helpers/TOS_STL.h"
 
 TVecEntities CTOSEntitySpawnModule::s_markedForRecreation;
