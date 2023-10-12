@@ -34,7 +34,7 @@ void CTOSMasterModule::InitCCommands(IConsole* pConsole)
 
 	pConsole->AddCommand("getmasterslist", CmdGetMastersList);
 	pConsole->AddCommand("ismaster", CmdIsMaster);
-	pConsole->AddCommand("stopcontrol", CmdStopControl);
+	pConsole->AddCommand("mc_stopcontrol", CmdMCStopControl);
 
 }
 
@@ -106,8 +106,10 @@ void CTOSMasterModule::CmdIsMaster(IConsoleCmdArgs* pArgs)
 	CryLogAlways("Result: (%i|%s)", playerId, result);
 }
 
-void CTOSMasterModule::CmdStopControl(IConsoleCmdArgs* pArgs)
+void CTOSMasterModule::CmdMCStopControl(IConsoleCmdArgs* pArgs)
 {
+	ONLY_CLIENT_CMD;
+
 	const auto pLocalMC = g_pTOSGame->GetMasterModule()->GetMasterClient();
 	assert(pLocalMC);
 
