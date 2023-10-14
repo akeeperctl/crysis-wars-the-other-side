@@ -39,6 +39,8 @@ void CTOSMasterModule::InitCCommands(IConsole* pConsole)
 	pConsole->AddCommand("mc_stopcontrol", CmdMCStopControl);
 	pConsole->AddCommand("showdudeitems", CmdShowDudeItems);
 	pConsole->AddCommand("showactoritems", CmdShowActorItems);
+	pConsole->AddCommand("setactorhealth", CmdSetActorHealth);
+	pConsole->AddCommand("getactorhealth", CmdGetActorHealth);
 
 }
 
@@ -171,6 +173,33 @@ void CTOSMasterModule::CmdShowActorItems(IConsoleCmdArgs* pArgs)
 			CryLogAlways("	%i) %s", i, name);
 		}
 	}
+}
+
+void CTOSMasterModule::CmdSetActorHealth(IConsoleCmdArgs* pArgs)
+{
+	const char* strId = pArgs->GetArg(1);
+	const char* strHP = pArgs->GetArg(2);
+	const EntityId Id = atoi(strId);
+	const int HP = atoi(strHP);
+
+	const auto pActor = (g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(Id));
+	assert(pActor);
+	if (!pActor)
+		return;
+
+	pActor->SetHealth(HP);
+}
+
+void CTOSMasterModule::CmdGetActorHealth(IConsoleCmdArgs* pArgs)
+{
+	const char* strId = pArgs->GetArg(1);
+	const EntityId Id = atoi(strId);
+
+	const auto pActor = (g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(Id));
+	if (!pActor)
+		return;
+
+	CryLogAlways("Result: HP = %i", pActor->GetHealth());
 }
 
 void CTOSMasterModule::CVarSetDesiredSlaveCls(ICVar* pVar)

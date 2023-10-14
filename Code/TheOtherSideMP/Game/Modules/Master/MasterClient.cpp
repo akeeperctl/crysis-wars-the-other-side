@@ -34,8 +34,12 @@ CTOSMasterClient::CTOSMasterClient(CTOSPlayer* pPlayer)
 {
 	assert(pPlayer);
 
-	m_pHUDCrosshair = g_pGame->GetHUD()->GetCrosshair();
-	assert(m_pHUDCrosshair);
+    // в редакторе вылетает
+    if (!gEnv->bEditor)
+    {
+		m_pHUDCrosshair = g_pGame->GetHUD()->GetCrosshair();
+		assert(m_pHUDCrosshair);
+    }
 
 
 

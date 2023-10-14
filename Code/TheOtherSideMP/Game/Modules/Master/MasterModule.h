@@ -153,7 +153,9 @@ public:
 	static void CmdIsMaster(IConsoleCmdArgs* pArgs);
 	static void CmdMCStopControl(IConsoleCmdArgs* pArgs);
 	static void CmdShowDudeItems(IConsoleCmdArgs* pArgs);
-	static void CmdShowPlayerItems(IConsoleCmdArgs* pArgs);
+	static void CmdShowActorItems(IConsoleCmdArgs* pArgs);
+	static void CmdSetActorHealth(IConsoleCmdArgs* pArgs);
+	static void CmdGetActorHealth(IConsoleCmdArgs* pArgs);
 
 	//Console variable's functions
 	static void CVarSetDesiredSlaveCls(ICVar* pVar);

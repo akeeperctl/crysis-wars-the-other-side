@@ -21,8 +21,10 @@ void CTOSTrooper::Update(SEntityUpdateContext& ctx, int updateSlot)
 
 bool CTOSTrooper::NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int flags)
 {
-	CTrooper::NetSerialize(ser, aspect, profile, flags);
-	return false;
+	if (!CTrooper::NetSerialize(ser, aspect, profile, flags))
+		return false;
+
+	return true;
 }
 
 void CTOSTrooper::UpdateMasterView(SViewParams& viewParams, Vec3& offsetX, Vec3& offsetY, Vec3& offsetZ, Vec3& target, Vec3& current, float& currentFov)
