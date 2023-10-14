@@ -56,7 +56,7 @@ void CTOSGame::Init()
 
 	//~Modules
 
-
+	g_pGameCVars->hud_enableAlienInterference = 0;
 
 	for (ITOSGameModule* pModule : m_modules)
 	{

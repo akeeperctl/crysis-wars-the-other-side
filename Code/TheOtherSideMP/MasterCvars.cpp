@@ -15,7 +15,7 @@ void CTOSMasterModule::InitCVars(IConsole* pConsole)
 		"\n Usage: tos_cl_SlaveEntityClass Trooper", 
 		CTOSMasterModule::CVarSetDesiredSlaveCls);
 
-	pConsole->Register("tos_cl_JoinAsMaster", &tos_cl_JoinAsMaster, 0, VF_NOT_NET_SYNCED, 
+	pConsole->Register("tos_cl_JoinAsMaster", &tos_cl_JoinAsMaster, 1, VF_NOT_NET_SYNCED, 
 		"When the client enters the game,"
 		"he will control a slave.");
 

@@ -437,7 +437,10 @@ void CTOSMasterClient::PrepareDude(const bool toStartControl) const
 			pSuit->SetModeDefect(NANOMODE_STRENGTH, true);
 		}
 
-        m_pLocalDude->ClearInterference();
+		//g_pGameCVars->hud_enableAlienInterference = 0;
+        //m_pLocalDude->ClearInterference();
+        //gEnv->pConsole->GetCVar("hud_enableAlienInterference")->ForceSet("0");
+
 
         if (g_pGame->GetHUD())
         {
@@ -480,8 +483,12 @@ void CTOSMasterClient::PrepareDude(const bool toStartControl) const
         
         SActorParams* pParams = m_pLocalDude->GetActorParams();
 
-        m_pLocalDude->InitInterference();
-        m_pLocalDude->ResetScreenFX();
+        //m_pLocalDude->InitInterference();
+		//gEnv->pConsole->GetCVar("hud_enableAlienInterference")->ForceSet("1");
+        //g_pGameCVars->hud_enableAlienInterference = 1;
+		//m_pLocalDude->ResetScreenFX();
+		//gEnv->pSystem->GetI3DEngine()->SetPostEffectParam("AlienInterference_Amount", 0.0f);
+		//SAFE_HUD_FUNC(StartInterference(0, 0, 100.0f, 3.f));
 
         if (m_pLocalDude->IsThirdPerson())
             m_pLocalDude->ToggleThirdPerson();
