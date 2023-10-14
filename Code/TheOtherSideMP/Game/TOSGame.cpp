@@ -56,6 +56,7 @@ void CTOSGame::Init()
 
 	//~Modules
 
+	// Исправление бага https://github.com/akeeperctl/crysis-wars-the-other-side/issues/8
 	g_pGameCVars->hud_enableAlienInterference = 0;
 
 	for (ITOSGameModule* pModule : m_modules)

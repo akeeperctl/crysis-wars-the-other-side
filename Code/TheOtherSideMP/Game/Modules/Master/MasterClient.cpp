@@ -12,6 +12,7 @@
 
 #include "MasterClient.h"
 
+#include "GameActions.h"
 #include "GameUtils.h"
 #include "IPlayerInput.h"
 #include "IViewSystem.h"
@@ -437,6 +438,8 @@ void CTOSMasterClient::PrepareDude(const bool toStartControl) const
 			pSuit->SetModeDefect(NANOMODE_STRENGTH, true);
 		}
 
+        g_pGameActions->FilterMasterControlSlave()->Enable(true);
+
 		//g_pGameCVars->hud_enableAlienInterference = 0;
         //m_pLocalDude->ClearInterference();
         //gEnv->pConsole->GetCVar("hud_enableAlienInterference")->ForceSet("0");
@@ -480,7 +483,9 @@ void CTOSMasterClient::PrepareDude(const bool toStartControl) const
 			CTOSMasterSynchronizer::SvRequestApplyMCSavedParams(),
 			NetMasterIdParams(m_pLocalDude->GetEntityId()),
 			eRMI_ToServer);
-        
+
+		g_pGameActions->FilterMasterControlSlave()->Enable(false);
+
         SActorParams* pParams = m_pLocalDude->GetActorParams();
 
         //m_pLocalDude->InitInterference();

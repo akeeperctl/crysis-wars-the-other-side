@@ -39,6 +39,10 @@ void CGameActions::Init()
 	CreateFilterNoObjectivesOpen();
 	CreateFilterVehicleNoSeatChangeAndExit();
 	CreateFilterNoConnectivity();
+
+	//TheOtherSide
+	CreateFilterMasterControlSlave();
+	//~TheOtherSide
 }
 
 void CGameActions::CreateFilterNoMove()
@@ -342,4 +346,33 @@ void CGameActions::CreateFilterNoConnectivity()
 	m_pFilterNoConnectivity->Filter(hud_show_multiplayer_scoreboard);
 	m_pFilterNoConnectivity->Filter(hud_hide_multiplayer_scoreboard);
 	m_pFilterNoConnectivity->Filter(scores);
+}
+
+void CGameActions::CreateFilterMasterControlSlave()
+{
+	IActionMapManager* pActionMapMan = g_pGame->GetIGameFramework()->GetIActionMapManager();
+
+	m_pFilterMasterControlSlave = pActionMapMan->CreateActionFilter("master_control_slave", eAFT_ActionFail);
+
+	m_pFilterMasterControlSlave->Filter(prone);
+	m_pFilterMasterControlSlave->Filter(togglestance);
+	m_pFilterMasterControlSlave->Filter(leanleft);
+	m_pFilterMasterControlSlave->Filter(leanright);
+	m_pFilterMasterControlSlave->Filter(thirdperson);
+
+	m_pFilterMasterControlSlave->Filter(flymode);
+	m_pFilterMasterControlSlave->Filter(grenade);
+	m_pFilterMasterControlSlave->Filter(xi_grenade);
+
+	m_pFilterMasterControlSlave->Filter(speedmode);
+	m_pFilterMasterControlSlave->Filter(strengthmode);
+	m_pFilterMasterControlSlave->Filter(suitmode);
+	m_pFilterMasterControlSlave->Filter(suitcloak);
+	m_pFilterMasterControlSlave->Filter(suitsave);
+	m_pFilterMasterControlSlave->Filter(suitload);
+	m_pFilterMasterControlSlave->Filter(suitskin);
+
+	m_pFilterMasterControlSlave->Filter(hud_suit_menu);
+	m_pFilterMasterControlSlave->Filter(hud_suit_mod);
+	m_pFilterMasterControlSlave->Filter(hud_weapon_mod);
 }

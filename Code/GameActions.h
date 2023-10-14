@@ -30,11 +30,14 @@ public:
 	ILINE IActionFilter*	FilterVehicleNoSeatChangeAndExit() const {	return m_pFilterVehicleNoSeatChangeAndExit;	}
 	ILINE IActionFilter*	FilterNoConnectivity() const {	return m_pFilterNoConnectivity;	}
 
+	//TheOtherSide
+	ILINE IActionFilter*	FilterMasterControlSlave() const {	return m_pFilterMasterControlSlave;	}
+	//~TheOtherSide
 
 private:
 	void	CreateFilterNoMove();
 	void	CreateFilterNoMouse();
-	void  CreateFilterNoGrenades();
+	void	CreateFilterNoGrenades();
 	void	CreateFilterInVehicleSuitMenu();
 	void	CreateFilterSuitMenu();
 	void	CreateFilterFreezeTime();
@@ -46,6 +49,12 @@ private:
 	void	CreateFilterNoObjectivesOpen();
 	void	CreateFilterVehicleNoSeatChangeAndExit();
 	void	CreateFilterNoConnectivity();
+
+	//TheOtherSide
+	void	CreateFilterMasterControlSlave();
+	IActionFilter* m_pFilterMasterControlSlave;
+	//~TheOtherSide
+
 
 	IActionFilter*	m_pFilterNoMove;
 	IActionFilter*	m_pFilterNoMouse;
@@ -61,6 +70,7 @@ private:
 	IActionFilter*	m_pFilterNoObjectivesOpen;
 	IActionFilter*	m_pFilterVehicleNoSeatChangeAndExit;
 	IActionFilter*	m_pFilterNoConnectivity;
+
 };
 #undef DECL_ACTION
 
