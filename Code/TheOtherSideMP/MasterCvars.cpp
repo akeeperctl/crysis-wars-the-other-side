@@ -1,5 +1,7 @@
 #include "StdAfx.h"
 
+#include "Control/ControlSystem.h"
+
 #include "Game/TOSGameCvars.h"
 #include "Game/Modules/Master/MasterClient.h"
 #include "Game/Modules/Master/MasterModule.h"
@@ -35,6 +37,8 @@ void CTOSMasterModule::InitCCommands(IConsole* pConsole)
 	pConsole->AddCommand("getmasterslist", CmdGetMastersList);
 	pConsole->AddCommand("ismaster", CmdIsMaster);
 	pConsole->AddCommand("mc_stopcontrol", CmdMCStopControl);
+	pConsole->AddCommand("showdudeitems", CmdShowDudeItems);
+	pConsole->AddCommand("showactoritems", CmdShowActorItems);
 
 }
 
@@ -114,6 +118,59 @@ void CTOSMasterModule::CmdMCStopControl(IConsoleCmdArgs* pArgs)
 	assert(pLocalMC);
 
 	pLocalMC->StopControl();
+}
+
+void CTOSMasterModule::CmdShowDudeItems(IConsoleCmdArgs* pArgs)
+{
+	ONLY_CLIENT_CMD;
+
+	const auto pPlayer = dynamic_cast<CTOSPlayer*>(g_pGame->GetIGameFramework()->GetClientActor());
+	assert(pPlayer);
+	if (!pPlayer)
+		return;
+
+	CryLogAlways("Result: ");
+
+	const IInventory* pInventory = pPlayer->GetInventory();
+	if (pInventory)
+	{
+		for (int i = 0; i < pInventory->GetCount(); i++)
+		{
+			const auto itemId = pInventory->GetItem(i);
+			const auto pItemEnt = TOS_GET_ENTITY(itemId);
+			const char* name = pItemEnt ? pItemEnt->GetClass()->GetName() : "<UNDEFINED>";
+
+			CryLogAlways("	%i) %s", i, name);
+		}
+	}
+}
+
+void CTOSMasterModule::CmdShowActorItems(IConsoleCmdArgs* pArgs)
+{
+	ONLY_SERVER_CMD;
+
+	const char* strPlayerId = pArgs->GetArg(1);
+	const EntityId playerId = atoi(strPlayerId);
+
+	const auto pActor = (g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(playerId));
+	assert(pActor);
+	if (!pActor)
+		return;
+
+	CryLogAlways("Result: ");
+
+	const IInventory* pInventory = pActor->GetInventory();
+	if (pInventory)
+	{
+		for (int i = 0; i < pInventory->GetCount(); i++)
+		{
+			const auto itemId = pInventory->GetItem(i);
+			const auto pItemEnt = TOS_GET_ENTITY(itemId);
+			const char* name = pItemEnt ? pItemEnt->GetClass()->GetName() : "<UNDEFINED>";
+
+			CryLogAlways("	%i) %s", i, name);
+		}
+	}
 }
 
 void CTOSMasterModule::CVarSetDesiredSlaveCls(ICVar* pVar)

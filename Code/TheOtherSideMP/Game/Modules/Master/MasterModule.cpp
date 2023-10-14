@@ -559,6 +559,39 @@ void CTOSMasterModule::SaveMasterClientParams(IEntity* pMasterEntity)
 
 		pSuit->SetMode(NANOMODE_DEFENSE);
 
+		// Сохраняем инвентарь и очищаем
+		IInventory* pInventory = pPlayer->GetInventory();
+		if (pInventory)
+		{
+			params.inventoryItems.clear();
+
+			const auto itemsNum = pInventory->GetCount();
+
+			//Push items id values to massive
+			for (int slot = itemsNum; slot >= 0; slot--)
+			{
+				const EntityId itemId = pInventory->GetItem(slot);
+				const auto     pItemEnt = TOS_GET_ENTITY(itemId);
+				if (pItemEnt)
+				{
+					const char* name = pItemEnt->GetClass()->GetName();
+
+					params.inventoryItems[slot] = name;
+					//CryLogAlways("SAVE ITEM %s", name);
+				}
+
+			}
+
+			const auto curItemId = pInventory->GetCurrentItem();
+			const auto pCurEnt = TOS_GET_ENTITY(curItemId);
+			if (pCurEnt)
+			{
+				params.currentItemClass = pCurEnt->GetClass()->GetName();
+			}
+
+			pInventory->RemoveAllItems();
+		}
+
 		//pSuit->SetModeDefect(NANOMODE_CLOAK, true);
 		//pSuit->SetModeDefect(NANOMODE_SPEED, true);
 		//pSuit->SetModeDefect(NANOMODE_STRENGTH, true);
@@ -574,17 +607,19 @@ void CTOSMasterModule::ApplyMasterClientParams(IEntity* pMasterEntity)
 		STOSMasterInfo info;
 		GetMasterInfo(pMasterEntity, info);
 
+		const auto& saved = info.mcSavedParams;
+
 		const auto pPlayer = dynamic_cast<CTOSPlayer*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pMasterEntity->GetId()));
 		assert(pPlayer);
 
 		const auto pSuit = pPlayer->GetNanoSuit();
 		assert(pSuit);
 
-		const Vec3  pos = info.mcSavedParams.pos;
-		const Quat  rot = info.mcSavedParams.rot;
-		const int   species = info.mcSavedParams.species;
-		const float suitEnergy = info.mcSavedParams.suitEnergy;
-		uint        suitMode = info.mcSavedParams.suitMode;
+		const Vec3  pos = saved.pos;
+		const Quat  rot = saved.rot;
+		const int   species = saved.species;
+		const float suitEnergy = saved.suitEnergy;
+		uint        suitMode = saved.suitMode;
 
 		if (pPlayer->GetHealth() > 0)
 		{
@@ -595,16 +630,39 @@ void CTOSMasterModule::ApplyMasterClientParams(IEntity* pMasterEntity)
 		}
 
 		IAIObject* pAI = pMasterEntity->GetAI();
-		if (!pAI)
+		if (pAI)
 		{
-			CryLogAlways("[C++][%s][%s][ApplyMasterClientParams] Error: Entity AI pointer is NULL",
-				TOS_Debug::GetEnv(), TOS_Debug::GetAct(1));
-
-			return;
+			pAI->Event(AIEVENT_ENABLE, nullptr);
+			TOS_AI::SetSpecies(pAI, species);
 		}
 
-		pAI->Event(AIEVENT_ENABLE, nullptr);
-		TOS_AI::SetSpecies(pAI, species);
+		const IInventory* pInventory = pPlayer->GetInventory();
+		if (!pInventory)
+			return;
+
+		//Загружаем инвентарь
+		auto& items = saved.inventoryItems;
+
+		for (auto& itemPair : items)
+		{
+			string itemClass = itemPair.second;
+
+			const bool isItem = g_pGame->GetIGameFramework()->GetIItemSystem()->IsItemClass(itemClass.c_str());
+			if (isItem)
+			{
+				if (itemClass != saved.currentItemClass)
+				{
+					const auto itemId = g_pGame->GetIGameFramework()->GetIItemSystem()->GiveItem(pPlayer, itemClass, false, false, false);
+					//CryLogAlways("LOAD SEC ITEM %s:%i", itemClass, itemId);
+				}
+				else
+				{
+					const auto itemId = g_pGame->GetIGameFramework()->GetIItemSystem()->GiveItem(pPlayer, itemClass, false, true, false);
+					//CryLogAlways("LOAD PRIMARY ITEM %s:%i", itemClass, itemId);
+				}
+
+			}
+		}
 	}
 }
 

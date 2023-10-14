@@ -1,3 +1,4 @@
+// ReSharper disable CppInconsistentNaming
 #pragma once
 
 #include <IGameFramework.h>
@@ -10,6 +11,15 @@
 #include <TheOtherSideMP/Game/Modules/ITOSGameModule.h>
 
 #include "MasterModule.h"
+
+enum ETOSDudePrepareFlags
+{
+	TOS_DUDE_FLAG_HIDE_MODEL           = BIT(0),
+	TOS_DUDE_FLAG_BEAM_MODEL           = BIT(1),
+	//TOS_DUDE_FLAG_CLEAR_INVENTORY      = BIT(2),
+	TOS_DUDE_FLAG_DISABLE_SUIT         = BIT(2),
+	TOS_DUDE_FLAG_ENABLE_ACTION_FILTER = BIT(3)
+};
 
 class CTOSHUDCrosshair;
 class CTOSAIActionTracker;
@@ -46,7 +56,7 @@ public:
 	explicit CTOSMasterClient(CTOSPlayer* pPlayer);
 	~CTOSMasterClient();
 
-	void StartControl(IEntity* pEntity);
+	void StartControl(IEntity* pEntity, uint dudeFlags = 0);
 	void StopControl();
 
 	/**
@@ -78,13 +88,16 @@ private:
 	/**
 	 * \brief Подготовить локального персонажа перед началом/прекращением управления рабом
 	 * \param toStartControl - Если true, то подготовка персонажа будет проходить как подготовка перед началом управления рабом
+	 * \param dudeFlags - Битовые флаги, применяемые к персонажу локального игрока (Dude)
 	 */
-	void PrepareDude(bool toStartControl) const;
+	void PrepareDude(bool toStartControl, uint dudeFlags) const;
 
 	CTOSPlayer* m_pLocalDude; ///< Указатель на локального персонажа с именем \a Dude. \n Появляется в одиночной игре.
 	IEntity* m_pSlaveEntity; ///< Указатель на сущность раба, которую контролирует локальный персонаж.
 	//MCSaved m_dudeSavedParams; ///< Хранит сохраненные параметры лок. персонажа \n для их применения перед/после начала управления рабом
 	CTOSHUDCrosshair* m_pHUDCrosshair;
+
+	uint m_dudeFlags;
 
 public:
 	//static constexpr int INPUT_ASPECT = eEA_GameClientDynamic;

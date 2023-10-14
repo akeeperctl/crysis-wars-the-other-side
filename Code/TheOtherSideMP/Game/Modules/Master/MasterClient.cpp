@@ -29,12 +29,13 @@
 CTOSMasterClient::CTOSMasterClient(CTOSPlayer* pPlayer)
 	: m_pLocalDude(pPlayer),
 	m_pSlaveEntity(nullptr),
-	m_pHUDCrosshair(nullptr)
+	m_pHUDCrosshair(nullptr),
+	m_dudeFlags(0)
 {
-    assert(pPlayer);
+	assert(pPlayer);
 
-    m_pHUDCrosshair = dynamic_cast<CTOSHUDCrosshair*>(g_pGame->GetHUD()->GetCrosshair());
-    assert(m_pHUDCrosshair);
+	m_pHUDCrosshair = g_pGame->GetHUD()->GetCrosshair();
+	assert(m_pHUDCrosshair);
 
 
 
@@ -81,11 +82,12 @@ CTOSMasterClient::~CTOSMasterClient()
 	//}
 }
 
-void CTOSMasterClient::StartControl(IEntity* pEntity)
+void CTOSMasterClient::StartControl(IEntity* pEntity, uint dudeFlags /*= 0*/)
 {
 	assert(pEntity);
 
-    PrepareDude(true);
+    m_dudeFlags = dudeFlags;
+    PrepareDude(true, m_dudeFlags);
     SetSlaveEntity(pEntity, pEntity->GetClass()->GetName());
 
 
@@ -96,7 +98,7 @@ void CTOSMasterClient::StopControl()
 {
 	TOS_RECORD_EVENT(0, STOSGameEvent(eEGE_MasterClientStopControl, "", true));
 
-	PrepareDude(false);
+	PrepareDude(false, m_dudeFlags);
     ClearSlaveEntity();
 }
 
@@ -407,7 +409,7 @@ void CTOSMasterClient::UpdateView(SViewParams& viewParams) const
 	viewParams.rotation = m_pLocalDude->GetViewQuatFinal();
 }
 
-void CTOSMasterClient::PrepareDude(const bool toStartControl) const
+void CTOSMasterClient::PrepareDude(bool toStartControl, uint dudeFlags) const
 {
 	assert(m_pLocalDude);
 
@@ -430,15 +432,44 @@ void CTOSMasterClient::PrepareDude(const bool toStartControl) const
 
         m_pLocalDude->ResetScreenFX();
 
-		if (pSuit)
+        if (dudeFlags & TOS_DUDE_FLAG_DISABLE_SUIT)
+        {
+			if (pSuit)
+			{
+				pSuit->SetMode(NANOMODE_DEFENSE);
+				pSuit->SetModeDefect(NANOMODE_CLOAK, true);
+				pSuit->SetModeDefect(NANOMODE_SPEED, true);
+				pSuit->SetModeDefect(NANOMODE_STRENGTH, true);
+			}
+        }
+
+        if (dudeFlags & TOS_DUDE_FLAG_ENABLE_ACTION_FILTER)
+        {
+			g_pGameActions->FilterMasterControlSlave()->Enable(true);
+        }
+
+		IInventory* pInventory = m_pLocalDude->GetInventory();
+		if (pInventory)
 		{
-			pSuit->SetMode(NANOMODE_DEFENSE);
-			pSuit->SetModeDefect(NANOMODE_CLOAK, true);
-			pSuit->SetModeDefect(NANOMODE_SPEED, true);
-			pSuit->SetModeDefect(NANOMODE_STRENGTH, true);
+			pInventory->HolsterItem(true);
+			pInventory->RemoveAllItems();
+
+			//if (IEntityClassRegistry* pClassRegistry = gEnv->pEntitySystem->GetClassRegistry())
+			//{
+				//const string itemClassName = "Binoculars";
+
+				//pClassRegistry->IteratorMoveFirst();
+				//const IEntityClass* pEntityClass = pClassRegistry->FindClass(itemClassName);
+
+				//if (pEntityClass)
+					//g_pGame->GetIGameFramework()->GetIItemSystem()->GiveItem(pActor, itemClassName, false, false, false);
+			//}
 		}
 
-        g_pGameActions->FilterMasterControlSlave()->Enable(true);
+        //if (dudeFlags & TOS_DUDE_FLAG_CLEAR_INVENTORY)
+        //{
+        //    //TODO Сохранение инвентаря Dude
+        //}
 
 		//g_pGameCVars->hud_enableAlienInterference = 0;
         //m_pLocalDude->ClearInterference();
@@ -484,9 +515,10 @@ void CTOSMasterClient::PrepareDude(const bool toStartControl) const
 			NetMasterIdParams(m_pLocalDude->GetEntityId()),
 			eRMI_ToServer);
 
-		g_pGameActions->FilterMasterControlSlave()->Enable(false);
-
-        SActorParams* pParams = m_pLocalDude->GetActorParams();
+        if (dudeFlags & TOS_DUDE_FLAG_ENABLE_ACTION_FILTER)
+        {
+			g_pGameActions->FilterMasterControlSlave()->Enable(false);
+        }
 
         //m_pLocalDude->InitInterference();
 		//gEnv->pConsole->GetCVar("hud_enableAlienInterference")->ForceSet("1");
@@ -520,20 +552,27 @@ void CTOSMasterClient::PrepareDude(const bool toStartControl) const
 
         if (pSuit)
         {
+	        // ReSharper disable once CppInconsistentNaming
+	        const auto dudeHP = m_pLocalDude->GetHealth();
 
-			if (m_pLocalDude->GetHealth() > 0)
-			{
+            if (dudeHP > 0)
+            {
 				pSuit->Reset(m_pLocalDude);
+            }
 
-				pSuit->SetModeDefect(NANOMODE_CLOAK, false);
-				pSuit->SetModeDefect(NANOMODE_SPEED, false);
-				pSuit->SetModeDefect(NANOMODE_STRENGTH, false);
+            if (dudeFlags & TOS_DUDE_FLAG_DISABLE_SUIT)
+            {
+				if (dudeHP > 0)
+				{
+					pSuit->SetModeDefect(NANOMODE_CLOAK, false);
+					pSuit->SetModeDefect(NANOMODE_SPEED, false);
+					pSuit->SetModeDefect(NANOMODE_STRENGTH, false);
 
-				pSuit->ActivateMode(NANOMODE_CLOAK, true);
-				pSuit->ActivateMode(NANOMODE_SPEED, true);
-				pSuit->ActivateMode(NANOMODE_STRENGTH, true);
-			}
-
+					pSuit->ActivateMode(NANOMODE_CLOAK, true);
+					pSuit->ActivateMode(NANOMODE_SPEED, true);
+					pSuit->ActivateMode(NANOMODE_STRENGTH, true);
+				}
+            }
 
             if (g_pGame->GetHUD())
             {
@@ -567,8 +606,16 @@ void CTOSMasterClient::PrepareDude(const bool toStartControl) const
                 //}
             }
 
-            pParams->vLimitRangeH = 0;
-            pParams->vLimitRangeV = pParams->vLimitRangeVDown = pParams->vLimitRangeVUp = 0;
         }
+
+        //if (dudeFlags & TOS_DUDE_FLAG_CLEAR_INVENTORY)
+        //{
+        //    //TODO Загрузка инвентаря
+        //}
+
+		SActorParams* pParams = m_pLocalDude->GetActorParams();
+		pParams->vLimitRangeH = 0;
+		pParams->vLimitRangeV = pParams->vLimitRangeVDown = pParams->vLimitRangeVUp = 0;
+
     }
 }

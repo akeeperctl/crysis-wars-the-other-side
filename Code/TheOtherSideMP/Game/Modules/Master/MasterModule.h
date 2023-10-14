@@ -1,5 +1,7 @@
 #pragma once
 
+#include <unordered_map>
+
 #include "../GenericModule.h"
 
 #include "../../TOSGame.h"
@@ -15,12 +17,14 @@ class CTOSGenericSynchronizer;
  */
 struct STOSMasterClientSavedParams
 {
-	EntityId masterId;
-	Vec3 pos;
-	Quat rot;
-	float suitEnergy;
-	uint suitMode;
-	int species;
+	EntityId                                 masterId;
+	Vec3                                     pos;
+	Quat                                     rot;
+	float                                    suitEnergy;
+	uint                                     suitMode;
+	int                                      species;
+	std::unordered_map<unsigned int, string> inventoryItems;
+	string                                   currentItemClass;
 
 	STOSMasterClientSavedParams()
 		: masterId(0),
@@ -148,6 +152,8 @@ public:
 	static void CmdGetMastersList(IConsoleCmdArgs* pArgs);
 	static void CmdIsMaster(IConsoleCmdArgs* pArgs);
 	static void CmdMCStopControl(IConsoleCmdArgs* pArgs);
+	static void CmdShowDudeItems(IConsoleCmdArgs* pArgs);
+	static void CmdShowPlayerItems(IConsoleCmdArgs* pArgs);
 
 	//Console variable's functions
 	static void CVarSetDesiredSlaveCls(ICVar* pVar);
