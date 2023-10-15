@@ -3,8 +3,7 @@
 
 #include "Actor.h"
 
-#include "../Game/TOSGameEventRecorder.h"
-
+#include "TheOtherSideMP/Game/TOSGameEventRecorder.h"
 #include "TheOtherSideMP/Game/Modules/Master/MasterClient.h"
 #include "TheOtherSideMP/Game/Modules/Master/MasterModule.h"
 
@@ -63,11 +62,11 @@ void CTOSActor::Update(SEntityUpdateContext& ctx, const int updateSlot)
 {
 	CActor::Update(ctx, updateSlot);
 
-	const auto pMC = g_pTOSGame->GetMasterModule()->GetMasterClient();
-	if (pMC)
-	{
-		pMC->Update(GetEntity());
-	}
+	//const auto pMC = g_pTOSGame->GetMasterModule()->GetMasterClient();
+	//if (pMC)
+	//{
+	//	pMC->Update(GetEntity());
+	//}
 }
 
 void CTOSActor::Release()

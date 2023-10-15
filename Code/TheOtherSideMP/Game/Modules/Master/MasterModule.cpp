@@ -382,6 +382,11 @@ void CTOSMasterModule::Update(float frametime)
 		}
 	}
 
+	const auto pMC = GetMasterClient();
+	if (pMC)
+	{
+		pMC->Update(frametime);
+	}
 }
 
 void CTOSMasterModule::Serialize(TSerialize ser)

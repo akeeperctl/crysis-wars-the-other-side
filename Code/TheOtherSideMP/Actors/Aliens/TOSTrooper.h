@@ -14,6 +14,8 @@ public:
 	void PostInit(IGameObject* pGameObject) override;
 	void Update(SEntityUpdateContext& ctx, int updateSlot) override;
 	bool NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int flags) override;
+	void ProcessMovement(float frameTime) override;
+	void ProcessJumpFlyControl(const Vec3& move, float frameTime);
 	//~CTrooper
 
 	//ITOSMasterControllable

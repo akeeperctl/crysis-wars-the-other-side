@@ -3,9 +3,28 @@
 #include "Actor.h"
 #include "ITOSMasterControllable.h"
 
+struct STOSSlaveStats
+{
+	STOSSlaveStats()
+		: jumpCount(0) { }
+
+	//TODO: 10/15/2023, 20:26 нужно добавить механики
+	//CCoherentValue<bool> canShoot;
+	//CCoherentValue<bool> canMove;
+	//CCoherentValue<bool> canLookAtCamera;
+	//CCoherentValue<bool> isAiming;
+	//CCoherentValue<bool> isShooting;
+	//CCoherentValue<bool> isUsingBinocular;
+
+	uint jumpCount;
+};
+
 class CTOSActor: public CActor, ITOSMasterControllable  // NOLINT(cppcoreguidelines-special-member-functions)
 {
 public:
+	friend class CTOSMasterClient;
+	friend class CCompatibilityAlienMovementController;
+
 	CTOSActor();
 	~CTOSActor() override;
 
@@ -34,8 +53,13 @@ public:
 	void SetSlaveEntityId(EntityId id);
 	EntityId GetSlaveEntityId() const { return m_slaveEntityId;}
 
+	const STOSSlaveStats& ReadSlaveStats() const { return m_slaveStats; } ///< Считать статистику раба. Изменять нельзя.
+
 private:
+	STOSSlaveStats& GetSlaveStats() { return m_slaveStats; } ///< Получить статистику раба. Изменять можно.
+
 
 	EntityId m_slaveEntityId;
 	EntityId m_masterEntityId;
+	STOSSlaveStats m_slaveStats;
 };

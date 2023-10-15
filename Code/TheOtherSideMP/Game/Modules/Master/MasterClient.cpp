@@ -28,11 +28,17 @@
 #include "TheOtherSideMP/HUD/TOSCrosshair.h"
 #include "TheOtherSideMP/Helpers/TOS_AI.h"
 
+#define ASSING_ACTION(pActor, actionId, checkActionId, func)\
+if ((actionId) == (checkActionId))\
+	func((pActor), (actionId), activationMode, value)\
+
+
 CTOSMasterClient::CTOSMasterClient(CTOSPlayer* pPlayer)
 	: m_pLocalDude(pPlayer),
 	m_pSlaveEntity(nullptr),
 	m_pHUDCrosshair(nullptr),
-	m_dudeFlags(0)
+	m_dudeFlags(0),
+	m_pWorldCamera(&gEnv->pSystem->GetViewCamera())
 {
 	assert(pPlayer);
 
@@ -44,6 +50,7 @@ CTOSMasterClient::CTOSMasterClient(CTOSPlayer* pPlayer)
     }
 
     m_movementDir.zero();
+    m_viewDir.zero();
 
 	if (gEnv->bClient)
 	{
@@ -88,7 +95,7 @@ CTOSMasterClient::~CTOSMasterClient()
 	//}
 }
 
-void CTOSMasterClient::OnEntityEvent(IEntity* pEntity, const SEntityEvent& event)
+void CTOSMasterClient::OnEntityEvent(const IEntity* pEntity, const SEntityEvent& event)
 {
 	if (m_pSlaveEntity != nullptr && pEntity == m_pSlaveEntity)
 	{
@@ -118,18 +125,14 @@ void CTOSMasterClient::OnAction(const ActionId& action, const int activationMode
 	if (!pSlaveActor)
         return;
 
-    if (action == rGA.moveforward)
-        OnActionMoveForward(pSlaveActor, action, activationMode, value);
-	if (action == rGA.moveback)
-		OnActionMoveBack(pSlaveActor, action, activationMode, value);
-	if (action == rGA.moveleft)
-		OnActionMoveLeft(pSlaveActor, action, activationMode, value);
-	if (action == rGA.moveright)
-		OnActionMoveRight(pSlaveActor, action, activationMode, value);
-
+	ASSING_ACTION(pSlaveActor, action, rGA.moveforward, OnActionMoveForward);
+	ASSING_ACTION(pSlaveActor, action, rGA.moveback, OnActionMoveBack);
+	ASSING_ACTION(pSlaveActor, action, rGA.moveleft, OnActionMoveLeft);
+	ASSING_ACTION(pSlaveActor, action, rGA.moveright, OnActionMoveRight);
+	ASSING_ACTION(pSlaveActor, action, rGA.jump, OnActionJump);
 }
 
-bool CTOSMasterClient::OnActionMoveForward(CTOSActor* pActor, const ActionId& actionId, int activationMode, float value)
+bool CTOSMasterClient::OnActionMoveForward(CTOSActor* pActor, const ActionId& actionId, int activationMode, const float value)
 {
 	m_movementDir.x = m_movementDir.z = 0;
 	m_movementDir.y = value * 2.0f - 1.0f;
@@ -173,23 +176,54 @@ bool CTOSMasterClient::OnActionMoveRight(CTOSActor* pActor, const ActionId& acti
 	return true;
 }
 
+bool CTOSMasterClient::OnActionJump(CTOSActor* pActor, const ActionId& actionId, const int activationMode, const float value)
+{
+    if (activationMode == eAAM_OnPress && value > 0.0f)
+    {
+		m_movementRequest.SetJump();
+    }
+
+	return true;
+}
+
 void CTOSMasterClient::PrePhysicsUpdate()
 {
 	const auto pSlaveActor = GetSlaveActor();
 	if (!pSlaveActor)
 		return;
 
-	pSlaveActor->GetMovementController()->RequestMovement(m_movementRequest);
+	const auto pController = pSlaveActor->GetMovementController();
+    assert(pController);
+
+    SMovementState currentState;
+	pController->GetMovementState(currentState);
+
+    m_movementRequest.SetLookTarget(currentState.eyePosition + m_pWorldCamera->GetMatrix().GetColumn1() * 20.0f);
+
+	pController->RequestMovement(m_movementRequest);
 }
 
-void CTOSMasterClient::Update(IEntity* pEntity)
+void CTOSMasterClient::Update(float frametime)
 {
-	if (m_pSlaveEntity != nullptr && pEntity == m_pSlaveEntity)
-	{
-		//m_movementDir.zero();
-	}
-		
+	m_pWorldCamera = &gEnv->pSystem->GetViewCamera();
+    CRY_ASSERT_MESSAGE(m_pWorldCamera, "[CTOSMasterClient] m_pWorldCamera pointer is null");
+
+	const auto pSlaveActor = GetSlaveActor();
+    if (!pSlaveActor)
+        return;
+
+	//float color[] = { 1,1,1,1 };
+	//gEnv->pRenderer->Draw2dLabel(100, 100, 1.3f, color, false, "jumpCount = %i", pSlaveActor->GetSlaveStats().jumpCount);
 }
+
+//void CTOSMasterClient::Update(IEntity* pEntity)
+//{
+//	if (m_pSlaveEntity != nullptr && pEntity == m_pSlaveEntity)
+//	{
+//		//m_movementDir.zero();
+//	}
+//		
+//}
 
 void CTOSMasterClient::StartControl(IEntity* pEntity, const uint dudeFlags /*= 0*/)
 {

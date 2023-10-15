@@ -66,6 +66,7 @@ public:
 	bool OnActionMoveBack(CTOSActor* pActor,const ActionId& actionId, int activationMode, float value);
 	bool OnActionMoveLeft(CTOSActor* pActor,const ActionId& actionId, int activationMode, float value);
 	bool OnActionMoveRight(CTOSActor* pActor,const ActionId& actionId, int activationMode, float value);
+	bool OnActionJump(CTOSActor* pActor,const ActionId& actionId, int activationMode, float value);
 
 	void OnEntityEvent(IEntity* pEntity, const SEntityEvent& event);
 
@@ -78,6 +79,9 @@ public:
 	 */
 	CTOSActor* GetSlaveActor() const
 	{
+		if (!m_pSlaveEntity)
+			return nullptr;
+
 		return dynamic_cast<CTOSActor*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(m_pSlaveEntity->GetId()));
 	};
 
@@ -106,7 +110,8 @@ public:
 
 	void UpdateView(SViewParams& viewParams) const;
 	void PrePhysicsUpdate();
-	void Update(IEntity* pEntity);
+	void Update(float frametime);
+	//void Update(IEntity* pEntity);
 
 private:
 	/**
@@ -126,7 +131,10 @@ private:
 
 	uint m_dudeFlags;
 	CMovementRequest m_movementRequest;
-	Vec3 m_movementDir;
+
+	Vec3 m_movementDir;///< направление движения. От -1 до 1. Не сбрасывается до 0 когда действие не выполняется.
+
+	CCamera* m_pWorldCamera;
 
 public:
 	//static constexpr int INPUT_ASPECT = eEA_GameClientDynamic;

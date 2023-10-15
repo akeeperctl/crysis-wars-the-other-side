@@ -44,9 +44,9 @@ bool CTOSAlien::NetSerialize(TSerialize ser, const EEntityAspects aspect, const 
 	if (aspect == CLIENT_ASPECT_INPUT)
 	{
 		//m_input.Serialize(ser);
-		ser.Value("deltaMovement", m_input.deltaMovement, 'pMov'); //ok
+		ser.Value("deltaMovement", m_input.deltaMovement, 'pMov'); //tr ok
 		//ser.Value("movementVector", m_input.movementVector, 'pMov');
-		//ser.Value("viewDir", m_input.viewDir, 'dir0'); //не протестировано
+		ser.Value("viewDir", m_input.viewDir, 'dir0'); //tr ok 
 		//ser.Value("viewVector", m_input.viewVector, 'dir0'); //не протестировано
 		//ser.Value("deltaRotation", m_input.deltaRotation); //не протестировано
 		//ser.Value("posTarget", m_input.posTarget, 'wrld'); //не протестировано
@@ -54,11 +54,11 @@ bool CTOSAlien::NetSerialize(TSerialize ser, const EEntityAspects aspect, const 
 
 		if (ser.IsWriting())
 		{
-			CryLogAlways("[%s] WRITE INPUT (%1.f, %1.f, %1.f)", GetEntity()->GetName(),m_input.deltaMovement.x, m_input.deltaMovement.y, m_input.deltaMovement.z );
+			CryLogAlways("[%s] WRITE INPUT (%1.f, %1.f, %1.f)", GetEntity()->GetName(),m_input.viewDir.x, m_input.viewDir.y, m_input.viewDir.z );
 		}
 		else
 		{
-			CryLogAlways("[%s] READ INPUT (%1.f, %1.f, %1.f)", GetEntity()->GetName(), m_input.deltaMovement.x, m_input.deltaMovement.y, m_input.deltaMovement.z);
+			CryLogAlways("[%s] READ INPUT (%1.f, %1.f, %1.f)", GetEntity()->GetName(), m_input.viewDir.x, m_input.viewDir.y, m_input.viewDir.z);
 		}
 	}
 
