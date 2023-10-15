@@ -5,6 +5,9 @@
 
 #include "../Game/TOSGameEventRecorder.h"
 
+#include "TheOtherSideMP/Game/Modules/Master/MasterClient.h"
+#include "TheOtherSideMP/Game/Modules/Master/MasterModule.h"
+
 CTOSActor::CTOSActor() : 
 	m_slaveEntityId(0),
 	m_masterEntityId(0)
@@ -36,6 +39,17 @@ void CTOSActor::InitClient(const int channelId)
 	CActor::InitClient(channelId);
 }
 
+void CTOSActor::ProcessEvent(SEntityEvent& event)
+{
+	CActor::ProcessEvent(event);
+
+	const auto pMC = g_pTOSGame->GetMasterModule()->GetMasterClient();
+	if (pMC)
+	{
+		pMC->OnEntityEvent(GetEntity(), event);
+	}
+}
+
 // ReSharper disable once CppParameterMayBeConst
 bool CTOSActor::NetSerialize(TSerialize ser, const EEntityAspects aspect, const uint8 profile, const int flags)
 {
@@ -48,6 +62,12 @@ bool CTOSActor::NetSerialize(TSerialize ser, const EEntityAspects aspect, const 
 void CTOSActor::Update(SEntityUpdateContext& ctx, const int updateSlot)
 {
 	CActor::Update(ctx, updateSlot);
+
+	const auto pMC = g_pTOSGame->GetMasterModule()->GetMasterClient();
+	if (pMC)
+	{
+		pMC->Update(GetEntity());
+	}
 }
 
 void CTOSActor::Release()
@@ -70,11 +90,6 @@ void CTOSActor::Kill()
 	CActor::Kill();
 
 	TOS_RECORD_EVENT(GetEntityId(), STOSGameEvent(eEGE_ActorDead, "", true));
-}
-
-void CTOSActor::UpdateMasterView(SViewParams& viewParams, Vec3& offsetX, Vec3& offsetY, Vec3& offsetZ, Vec3& target, Vec3& current, float& currentFov)
-{
-
 }
 
 void CTOSActor::SetMasterEntityId(const EntityId id)

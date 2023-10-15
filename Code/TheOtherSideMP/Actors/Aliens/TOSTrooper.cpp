@@ -14,15 +14,17 @@ void CTOSTrooper::PostInit(IGameObject* pGameObject)
 	CTrooper::PostInit(pGameObject);
 }
 
-void CTOSTrooper::Update(SEntityUpdateContext& ctx, int updateSlot)
+void CTOSTrooper::Update(SEntityUpdateContext& ctx, const int updateSlot)
 {
 	CTrooper::Update(ctx,updateSlot);
 }
 
-bool CTOSTrooper::NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int flags)
+bool CTOSTrooper::NetSerialize(const TSerialize ser, const EEntityAspects aspect, const uint8 profile, const int flags)
 {
 	if (!CTrooper::NetSerialize(ser, aspect, profile, flags))
 		return false;
+
+
 
 	return true;
 }

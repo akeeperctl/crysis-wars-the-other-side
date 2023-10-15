@@ -354,6 +354,10 @@ CAlien::SMovementRequestParams::SMovementRequestParams(CMovementRequest& request
 			break;
 		}
 	}
+
+	//TheOtherSide
+	vDeltaMovement.zero();
+	//~TheOtherSide
 }
 
 // -------------------
@@ -434,7 +438,10 @@ void CAlien::ProcessEvent(SEntityEvent& event)
 		PrePhysicsUpdate();
 	}
 
-	CActor::ProcessEvent(event);
+	//TheOtherSide
+	//CActor::ProcessEvent(event);
+	CTOSActor::ProcessEvent(event);
+	//~TheOtherSide
 }
 
 bool CAlien::CreateCodeEvent(SmartScriptTable &rTable)
@@ -2201,6 +2208,10 @@ void CAlien::SetActorMovementCommon(SMovementRequestParams& control)
 		m_input.viewDir = GetEntity()->GetWorldRotation() * FORWARD_DIRECTION;
 	m_input.pathLength = control.fDistanceToPathEnd;
 
+	//TheOtherSide
+	ApplyMasterMovement(control.vDeltaMovement);
+	//~TheOtherSide
+
   // added bExactPos property for easier testing
   SmartScriptTable props;
   int bExactPos = 0;
@@ -2276,6 +2287,7 @@ void CAlien::SetActorMovement(SMovementRequestParams &control)
 		SetDesiredDirection(GetEntity()->GetWorldRotation() * FORWARD_DIRECTION);
 
 	SetDesiredSpeed(control.vMoveDir * control.fDesiredSpeed);
+
 
 //	m_input.actions = control.m_desiredActions;
 	int actions;

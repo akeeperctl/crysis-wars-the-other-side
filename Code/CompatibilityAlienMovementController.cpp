@@ -3,6 +3,7 @@
 #include "Alien.h"
 #include <IItemSystem.h>
 
+#include "TheOtherSideMP/Actors/Aliens/TOSAlien.h"
 
 CCompatibilityAlienMovementController::CCompatibilityAlienMovementController( CAlien * pAlien ) : m_pAlien(pAlien), m_atTarget(false)
 {
@@ -44,6 +45,13 @@ bool CCompatibilityAlienMovementController::RequestMovement( CMovementRequest& r
 		os.fDesiredSpeed = os.vMoveDir.GetLength();
 		os.vMoveDir.NormalizeSafe();
 	}
+
+	//TheOtherSide
+	if (request.HasDeltaMovement())
+	{
+		os.vDeltaMovement = request.GetDeltaMovement();
+	}
+	//~TheOtherSide
 
 	IAnimationGraphState *pAnimationGraphState = m_pAlien->GetAnimationGraphState();
 	//CRY_ASSERT(pAnimationGraphState); // Hey, we can't assume we get a state!
@@ -121,6 +129,10 @@ bool CCompatibilityAlienMovementController::RequestMovement( CMovementRequest& r
 	}
 
 	m_pAlien->SetActorMovement(os);
+
+	//TheOtherSide
+	m_pAlien->GetGameObject()->ChangedNetworkState(CTOSAlien::CLIENT_ASPECT_INPUT);
+	//~TheOtherSide
 
 	if(pAnimationGraphState)
 	{

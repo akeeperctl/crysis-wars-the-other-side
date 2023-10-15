@@ -338,6 +338,10 @@ public:
 		PATHPOINTVECTOR	remainingPath;
 		float	fDistanceToPathEnd;
 
+		//TheOtherSide
+		Vec3	vDeltaMovement;
+		//~TheOtherSide
+
 		/// Initializes SMovementRequestParams from CMovementRequest.
 		explicit SMovementRequestParams (CMovementRequest& );
 	};

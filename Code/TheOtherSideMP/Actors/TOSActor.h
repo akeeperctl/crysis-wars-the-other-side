@@ -12,6 +12,7 @@ public:
 	// CActor
 	void PostInit( IGameObject * pGameObject ) override;
 	void InitClient(int channelId ) override;
+	void ProcessEvent(SEntityEvent& event) override;
 	bool NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int flags) override;
 	void Update(SEntityUpdateContext& ctx, int updateSlot) override;
 	void Release() override;
@@ -20,7 +21,8 @@ public:
 	// ~CActor
 
 	//ITOSMasterControllable
-	void UpdateMasterView(SViewParams& viewParams, Vec3& offsetX, Vec3& offsetY, Vec3& offsetZ, Vec3& target, Vec3& current, float& currentFov) override;
+	void UpdateMasterView(SViewParams& viewParams, Vec3& offsetX, Vec3& offsetY, Vec3& offsetZ, Vec3& target, Vec3& current, float& currentFov) override {};
+	void ApplyMasterMovement(const Vec3& delta) override {};
 	//~ITOSMasterControllable
 
 	virtual Matrix33 GetViewMtx() { return {}; }

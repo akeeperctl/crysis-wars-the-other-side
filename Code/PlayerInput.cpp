@@ -16,6 +16,10 @@
 #include <IWorldQuery.h>
 #include <IInteractor.h>
 
+//TheOtherSide
+#include "TheOtherSideMP/Actors/Player/TOSPlayer.h"
+#include "TheOtherSideMP/Game/Modules/Master/MasterClient.h"
+//~TheOtherSide
 TActionHandler<CPlayerInput>	CPlayerInput::s_actionHandler;
 
 CPlayerInput::CPlayerInput( CPlayer * pPlayer ) : 
@@ -140,6 +144,20 @@ void CPlayerInput::ApplyMovement(Vec3 delta)
 
 void CPlayerInput::OnAction( const ActionId& actionId, int activationMode, float value )
 {
+	//TheOtherSide
+	const auto pTOSPlayer = dynamic_cast<CTOSPlayer*>(m_pPlayer);
+	assert(pTOSPlayer);
+	if (pTOSPlayer)
+	{
+		const auto pMC = pTOSPlayer->GetMasterClient();
+		assert(pMC);
+		if (pMC)
+		{
+			pMC->OnAction(actionId, activationMode, value);
+		}
+	}
+	//~TheOtherSide
+
 	FUNCTION_PROFILER(GetISystem(), PROFILE_GAME);
 
 	m_pPlayer->GetGameObject()->ChangedNetworkState( INPUT_ASPECT );
@@ -1101,7 +1119,7 @@ bool CPlayerInput::OnActionRotatePitch(EntityId entityId, const ActionId& action
 	{
 	SPlayerStats *stats = static_cast<SPlayerStats*> (m_pPlayer->GetActorStats());
 	float absAngle = fabsf(acos_tpl(stats->upVector.Dot(stats->zeroGUp)));
-	if(absAngle > 1.57f) //90°
+	if(absAngle > 1.57f) //90Â°
 	{
 	if(value > 0)
 	m_deltaRotation.x -= value;

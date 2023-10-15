@@ -1,3 +1,5 @@
+// ReSharper disable CppMsExtBindingRValueToLvalueReference
+// ReSharper disable CppInconsistentNaming
 #include "StdAfx.h"
 
 //#include "HUD/HUD.h"
@@ -41,7 +43,7 @@ CTOSMasterClient::CTOSMasterClient(CTOSPlayer* pPlayer)
 		assert(m_pHUDCrosshair);
     }
 
-
+    m_movementDir.zero();
 
 	if (gEnv->bClient)
 	{
@@ -86,7 +88,110 @@ CTOSMasterClient::~CTOSMasterClient()
 	//}
 }
 
-void CTOSMasterClient::StartControl(IEntity* pEntity, uint dudeFlags /*= 0*/)
+void CTOSMasterClient::OnEntityEvent(IEntity* pEntity, const SEntityEvent& event)
+{
+	if (m_pSlaveEntity != nullptr && pEntity == m_pSlaveEntity)
+	{
+		switch (event.event)
+		{
+		case ENTITY_EVENT_PREPHYSICSUPDATE:
+		{
+			PrePhysicsUpdate();
+			break;
+		}
+		default:
+			break;
+		}
+	}
+}
+
+void CTOSMasterClient::OnAction(const ActionId& action, const int activationMode, const float value)
+{
+	const CGameActions& rGA = g_pGame->Actions();
+
+    //CRY_ASSERT_MESSAGE(m_pSlaveEntity, "Pointer to slave entity is null");
+	if (!m_pSlaveEntity)
+        return;
+
+	const auto pSlaveActor = GetSlaveActor();
+	//CRY_ASSERT_MESSAGE(m_pSlaveEntity, "Pointer to slave actor is null");
+	if (!pSlaveActor)
+        return;
+
+    if (action == rGA.moveforward)
+        OnActionMoveForward(pSlaveActor, action, activationMode, value);
+	if (action == rGA.moveback)
+		OnActionMoveBack(pSlaveActor, action, activationMode, value);
+	if (action == rGA.moveleft)
+		OnActionMoveLeft(pSlaveActor, action, activationMode, value);
+	if (action == rGA.moveright)
+		OnActionMoveRight(pSlaveActor, action, activationMode, value);
+
+}
+
+bool CTOSMasterClient::OnActionMoveForward(CTOSActor* pActor, const ActionId& actionId, int activationMode, float value)
+{
+	m_movementDir.x = m_movementDir.z = 0;
+	m_movementDir.y = value * 2.0f - 1.0f;
+
+	//pActor->ApplyMasterMovement(delta);
+    m_movementRequest.AddDeltaMovement(m_movementDir);
+
+	return true;
+}
+
+bool CTOSMasterClient::OnActionMoveBack(CTOSActor* pActor, const ActionId& actionId, int activationMode, const float value)
+{
+	m_movementDir.x = m_movementDir.z = 0;
+    m_movementDir.y = -(value * 2.0f - 1.0f);
+
+	//pActor->ApplyMasterMovement(delta);
+	m_movementRequest.AddDeltaMovement(m_movementDir);
+
+	return true;
+}
+
+bool CTOSMasterClient::OnActionMoveLeft(CTOSActor* pActor, const ActionId& actionId, int activationMode, const float value)
+{
+	m_movementDir.x = -(value * 2.0f - 1.0f);
+    m_movementDir.y = m_movementDir.z = 0;
+
+	//pActor->ApplyMasterMovement(delta);
+	m_movementRequest.AddDeltaMovement(m_movementDir);
+
+    return true;
+}
+
+bool CTOSMasterClient::OnActionMoveRight(CTOSActor* pActor, const ActionId& actionId, int activationMode, const float value)
+{
+	m_movementDir.x = value * 2.0f - 1.0f;
+	m_movementDir.y = m_movementDir.z = 0;
+
+	//pActor->ApplyMasterMovement(delta);
+	m_movementRequest.AddDeltaMovement(m_movementDir);
+
+	return true;
+}
+
+void CTOSMasterClient::PrePhysicsUpdate()
+{
+	const auto pSlaveActor = GetSlaveActor();
+	if (!pSlaveActor)
+		return;
+
+	pSlaveActor->GetMovementController()->RequestMovement(m_movementRequest);
+}
+
+void CTOSMasterClient::Update(IEntity* pEntity)
+{
+	if (m_pSlaveEntity != nullptr && pEntity == m_pSlaveEntity)
+	{
+		//m_movementDir.zero();
+	}
+		
+}
+
+void CTOSMasterClient::StartControl(IEntity* pEntity, const uint dudeFlags /*= 0*/)
 {
 	assert(pEntity);
 
@@ -413,7 +518,7 @@ void CTOSMasterClient::UpdateView(SViewParams& viewParams) const
 	viewParams.rotation = m_pLocalDude->GetViewQuatFinal();
 }
 
-void CTOSMasterClient::PrepareDude(bool toStartControl, uint dudeFlags) const
+void CTOSMasterClient::PrepareDude(const bool toStartControl, const uint dudeFlags) const
 {
 	assert(m_pLocalDude);
 

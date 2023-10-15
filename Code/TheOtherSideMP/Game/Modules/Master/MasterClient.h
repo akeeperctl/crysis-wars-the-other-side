@@ -1,4 +1,5 @@
 // ReSharper disable CppInconsistentNaming
+// ReSharper disable CppPolymorphicClassWithNonVirtualPublicDestructor
 #pragma once
 
 #include <IGameFramework.h>
@@ -40,7 +41,7 @@ struct IHitListener;
  * \n Dude - это локальный персонаж.
  * \n Автоудаление класса: отсутствует.
  */
-class CTOSMasterClient final  // NOLINT(cppcoreguidelines-special-member-functions)
+class CTOSMasterClient final : public IActionListener
 {
 	//friend class CGameRules;
 	//friend class CControlSystem;
@@ -56,8 +57,29 @@ public:
 	explicit CTOSMasterClient(CTOSPlayer* pPlayer);
 	~CTOSMasterClient();
 
+	// IActionListener интерфейс используется только для декларации функции.
+	// Этот класс не слушает actions сам по себе, а работает через функцию в PlayerInput 
+	void OnAction(const ActionId& action, int activationMode, float value) override;
+	// ~IActionListener
+
+	bool OnActionMoveForward(CTOSActor* pActor, const ActionId& actionId, int activationMode, float value);
+	bool OnActionMoveBack(CTOSActor* pActor,const ActionId& actionId, int activationMode, float value);
+	bool OnActionMoveLeft(CTOSActor* pActor,const ActionId& actionId, int activationMode, float value);
+	bool OnActionMoveRight(CTOSActor* pActor,const ActionId& actionId, int activationMode, float value);
+
+	void OnEntityEvent(IEntity* pEntity, const SEntityEvent& event);
+
 	void StartControl(IEntity* pEntity, uint dudeFlags = 0);
 	void StopControl();
+
+	/**
+	 * \brief Получить указатель на актёра раба
+	 * \return Указатель на управляемого актёра раба
+	 */
+	CTOSActor* GetSlaveActor() const
+	{
+		return dynamic_cast<CTOSActor*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(m_pSlaveEntity->GetId()));
+	};
 
 	/**
 	 * \brief Получить указатель на сущность раба
@@ -83,6 +105,8 @@ public:
 	void ClearSlaveEntity();
 
 	void UpdateView(SViewParams& viewParams) const;
+	void PrePhysicsUpdate();
+	void Update(IEntity* pEntity);
 
 private:
 	/**
@@ -92,12 +116,17 @@ private:
 	 */
 	void PrepareDude(bool toStartControl, uint dudeFlags) const;
 
+public:
+
+private:
 	CTOSPlayer* m_pLocalDude; ///< Указатель на локального персонажа с именем \a Dude. \n Появляется в одиночной игре.
-	IEntity* m_pSlaveEntity; ///< Указатель на сущность раба, которую контролирует локальный персонаж.
+	IEntity*    m_pSlaveEntity; ///< Указатель на сущность раба, которую контролирует локальный персонаж.
 	//MCSaved m_dudeSavedParams; ///< Хранит сохраненные параметры лок. персонажа \n для их применения перед/после начала управления рабом
 	CTOSHUDCrosshair* m_pHUDCrosshair;
 
 	uint m_dudeFlags;
+	CMovementRequest m_movementRequest;
+	Vec3 m_movementDir;
 
 public:
 	//static constexpr int INPUT_ASPECT = eEA_GameClientDynamic;
