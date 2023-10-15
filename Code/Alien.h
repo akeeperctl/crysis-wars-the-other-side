@@ -304,11 +304,11 @@ public:
 	void Reset();
 	void Release() { delete this; }
 	void Serialize(TSerialize ser);
-	void Update(const float deltaTime);
+	void Update(const float deltaTime) const;
 	/// To be called once, when the Alien dies.
 	void OnKillEvent();
 
-	void GetMemoryStatistics(ICrySizer * s);
+	void GetMemoryStatistics(ICrySizer * s) const;
 
 private:
 	CAlien * m_pAlien;
@@ -343,7 +343,7 @@ public:
 		//~TheOtherSide
 
 		/// Initializes SMovementRequestParams from CMovementRequest.
-		explicit SMovementRequestParams (CMovementRequest& );
+		explicit SMovementRequestParams (const CMovementRequest& );
 	};
 
 	/// SAIBodyInfo was previously used in place of this struct.
@@ -447,7 +447,7 @@ public:
 	void SetTentacles(ICharacterInstance *pCharacter,float animStiffness,float mass = 0,float damping = 0,bool bRagdolize = false);
 	void PushCharacterTentacles(ICharacterInstance *pCharacter);
 
-	void DetachTentacle(ICharacterInstance *pCharacter,const char *tentacle);
+	void DetachTentacle(ICharacterInstance *pCharacter,const char *tentacle) const;
 
 	virtual void SetFiring(bool fire);
 
