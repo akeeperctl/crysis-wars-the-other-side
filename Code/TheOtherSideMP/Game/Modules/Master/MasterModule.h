@@ -185,6 +185,7 @@ public:
 	ICVar* tos_cl_SlaveEntityClass;
 	float  tos_sv_SlaveSpawnDelay;
 	float  tos_sv_MasterStartControlDelay;
+	float  tos_sv_pl_inputAccel;
 
 private:
 	std::map<EntityId, STOSMasterInfo> m_masters; //ключ - мастер, значение - структура, хранящая имя класса раба, который должен будет заспавниться

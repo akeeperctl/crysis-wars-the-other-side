@@ -709,6 +709,7 @@
     <ClInclude Include="TheOtherSideMP\Helpers\TOS_Enums.h" />
     <ClInclude Include="TheOtherSideMP\Helpers\TOS_HUD.h" />
     <ClInclude Include="TheOtherSideMP\Helpers\TOS_Inventory.h" />
+    <ClInclude Include="TheOtherSideMP\Helpers\TOS_NET.h" />
     <ClInclude Include="TheOtherSideMP\Helpers\TOS_Script.h" />
     <ClInclude Include="TheOtherSideMP\Helpers\TOS_Sounds.h" />
     <ClInclude Include="TheOtherSideMP\Helpers\TOS_STL.h" />

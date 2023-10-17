@@ -5,8 +5,8 @@
 #include <IItemSystem.h>
 
 //TheOtherSide
-#include "TheOtherSideMP/Actors/Aliens/TOSAlien.h"
 #include "TheOtherSideMP/Actors/Aliens/TOSTrooper.h"
+#include "TheOtherSideMP/Helpers/TOS_NET.h"
 //~TheOtherSide
 
 CCompatibilityAlienMovementController::CCompatibilityAlienMovementController( CAlien * pAlien ) : m_pAlien(pAlien), m_atTarget(false)
@@ -54,83 +54,19 @@ bool CCompatibilityAlienMovementController::RequestMovement( CMovementRequest& r
 	if (request.HasDeltaMovement())
 	{
 		os.vDeltaMovement = request.GetDeltaMovement();
+		//CryLogAlways("Controller: os.vDeltaMovement = (%f,%f,%f)", os.vDeltaMovement.x, os.vDeltaMovement.y, os.vDeltaMovement.z);
 	}
 
 	if (request.ShouldJump())
 	{
-		pe_action_impulse impulse;
-
-		const Vec3& upDir = m_pAlien->GetEntity()->GetWorldTM().GetColumn(2);
-		const Vec3& forwardDir = m_pAlien->GetEntity()->GetWorldTM().GetColumn(1);
-		const Vec3& rightDir = m_pAlien->GetEntity()->GetWorldTM().GetColumn(0);
-
-		auto* slaveStats = &m_pAlien->GetSlaveStats();
-		const auto pActorStats = m_pAlien->GetActorStats();
-
-		if (pActorStats)
+		auto pTrooper = dynamic_cast<CTOSTrooper*>(m_pAlien);
+		if (pTrooper)
 		{
-			//float jumpHeight = 2.0f;
-			//float gravity = pCurrentStats->gravity.len();
-			//float t = 0.0f;
-
-			//if (gravity > 0.0f)
-			//{
-			//	t = cry_sqrtf(2.0f * gravity * jumpHeight) / gravity - inAir;
-			//}
-
-			//os.vJumpDir += m_pAlien->GetBaseMtx().GetColumn2() * gravity * t;
-
-			const float inAir = pActorStats->inAir;
-			const float onGround = pActorStats->onGround;
-
-			if (onGround > 0.25f)
-			{
-				slaveStats->jumpCount++;
-				impulse.impulse.z = upDir.z * 400.f;
-				m_pAlien->GetEntity()->GetPhysics()->Action(&impulse);
-
-				//TODO
-				//NetPlayAnimAction("CTRL_JumpStart", false);
-			}
-			else if (slaveStats->jumpCount > 0 && pActorStats->inAir > 0.0f)
-			{
-				if (request.HasDeltaMovement() && !request.GetDeltaMovement().IsZero())
-				{
-					impulse.impulse += request.GetDeltaMovement().x * 300.f * rightDir / 1.5f;
-					impulse.impulse += request.GetDeltaMovement().y * 300.f * forwardDir / 1.5f;
-				}
-				else
-				{
-					impulse.impulse = forwardDir * 300.f;
-				}
-				impulse.impulse.z = upDir.z * 250.f;
-
-				//TODO
-				//NetSpawnParticleEffect("alien_special.Trooper.doubleJumpAttack");
-
-				//TODO
-				//SubEnergy(TROOPER_JUMP_ENERGY_COST);
-
-				m_pAlien->GetEntity()->GetPhysics()->Action(&impulse);
-				slaveStats->jumpCount = 0;
-
-				//TODO
-				//The controlled trooper cannot to do jump attack after double jump
-				//m_trooper.canJumpMelee = false;
-			}
-			else
-			{
-				//slaveStats->jumpCount = 0;
-			}
+			pTrooper->ProcessJump(request);
+			request.ClearJump();
 		}
 
-		//auto pTrooper = dynamic_cast<CTOSTrooper*>(m_pAlien);
-		//if (pTrooper)
-		//{
-		//	pTrooper->DoMasterJump(os.vJumpDir, false);
-		//}
-
-		request.ClearJump();
+		//TODO: обработать прыжок как движение вверх у Scout и Alien
 	}
 	//~TheOtherSide
 
@@ -212,7 +148,7 @@ bool CCompatibilityAlienMovementController::RequestMovement( CMovementRequest& r
 	m_pAlien->SetActorMovement(os);
 
 	//TheOtherSide
-	m_pAlien->GetGameObject()->ChangedNetworkState(CTOSAlien::CLIENT_ASPECT_INPUT);
+	m_pAlien->GetGameObject()->ChangedNetworkState(TOS_NET::CLIENT_ASPECT_INPUT);
 	//~TheOtherSide
 
 	if(pAnimationGraphState)

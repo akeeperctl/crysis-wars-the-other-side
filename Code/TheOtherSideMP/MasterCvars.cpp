@@ -28,6 +28,10 @@ void CTOSMasterModule::InitCVars(IConsole* pConsole)
 	// Не используется, да и как показала практика, что с 1.0, что с 0.0 отрицательного влияния не наблюдается
 	pConsole->Register("tos_sv_MasterStartControlDelay", &tos_sv_MasterStartControlDelay, 0.0f, VF_CHEAT,
 		"Delay in seconds before master starts control a slave.");
+
+	pConsole->Register("tos_sv_pl_inputAccel", &tos_sv_pl_inputAccel, 30.0f, VF_CHEAT,
+		"Movement input acceleration");
+
 }
 
 void CTOSMasterModule::InitCCommands(IConsole* pConsole)
@@ -54,6 +58,7 @@ void CTOSMasterModule::ReleaseCVars()
 	pConsole->UnregisterVariable("tos_cl_JoinAsMaster", true);
 	pConsole->UnregisterVariable("tos_sv_SlaveSpawnDelay", true);
 	pConsole->UnregisterVariable("tos_sv_MasterStartControlDelay", true);
+	pConsole->UnregisterVariable("tos_sv_pl_inputAccel", true);
 }
 
 void CTOSMasterModule::ReleaseCCommands()

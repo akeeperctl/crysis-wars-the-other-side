@@ -9,10 +9,7 @@ public:
 
 	CTOSAlien();
 	~CTOSAlien() override;
-
-	static constexpr int SERVER_ASPECT_HEALTH = eEA_GameServerStatic;
-	static constexpr int CLIENT_ASPECT_INPUT = eEA_GameClientDynamic;
-;
+	
 	//CTOSActor
 	void ProcessEvent(SEntityEvent& event) override;
 

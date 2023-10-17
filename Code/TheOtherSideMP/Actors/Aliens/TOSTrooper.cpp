@@ -26,8 +26,6 @@ bool CTOSTrooper::NetSerialize(const TSerialize ser, const EEntityAspects aspect
 	if (!CTrooper::NetSerialize(ser, aspect, profile, flags))
 		return false;
 
-
-
 	return true;
 }
 
@@ -86,7 +84,7 @@ void CTOSTrooper::UpdateMasterView(SViewParams& viewParams, Vec3& offsetX, Vec3&
 
 	//const Matrix33 alienWorldMtx(GetEntity()->GetWorldTM());
 
-	//if (!m_pAbilitiesSystem->trooper.isCeiling)
+	//if (esSystem->trooper.isCeiling)
 	//	target(g_pGameCVars->ctrl_trTargetx, g_pGameCVars->ctrl_trTargety, g_pGameCVars->ctrl_trTargetz);
 	//else
 	//{
@@ -102,4 +100,73 @@ void CTOSTrooper::UpdateMasterView(SViewParams& viewParams, Vec3& offsetX, Vec3&
 	offsetX = GetViewRotation().GetColumn0() * current.x;
 	offsetY = gEnv->pSystem->GetViewCamera().GetViewdir() * current.y;
 	offsetZ = GetViewRotation().GetColumn2() * current.z;
+}
+
+void CTOSTrooper::ProcessJump(const CMovementRequest& request)
+{
+	pe_action_impulse impulse;
+
+	const Vec3& upDir = GetEntity()->GetWorldTM().GetColumn(2);
+	const Vec3& forwardDir = GetEntity()->GetWorldTM().GetColumn(1);
+	const Vec3& rightDir = GetEntity()->GetWorldTM().GetColumn(0);
+
+	STOSSlaveStats* pSlaveStats = &GetSlaveStats();
+	const auto      pActorStats = GetActorStats();
+
+	if (pActorStats)
+	{
+		//float jumpHeight = 2.0f;
+		//float gravity = pCurrentStats->gravity.len();
+		//float t = 0.0f;
+
+		//if (gravity > 0.0f)
+		//{
+		//	t = cry_sqrtf(2.0f * gravity * jumpHeight) / gravity - inAir;
+		//}
+
+		//os.vJumpDir +=GetBaseMtx().GetColumn2() * gravity * t;
+
+		//const float inAir = pActorStats->inAir;
+		const float onGround = pActorStats->onGround;
+
+		if (onGround > 0.25f)
+		{
+			pSlaveStats->jumpCount++;
+			impulse.impulse.z = upDir.z * 400.f;
+			GetEntity()->GetPhysics()->Action(&impulse);
+
+			//TODO
+			//NetPlayAnimAction("CTRL_JumpStart", false);
+		}
+		else if (pSlaveStats->jumpCount > 0 && pActorStats->inAir > 0.0f)
+		{
+			if (request.HasDeltaMovement() && !request.GetDeltaMovement().IsZero())
+			{
+				impulse.impulse += request.GetDeltaMovement().x * 300.f * rightDir / 1.5f;
+				impulse.impulse += request.GetDeltaMovement().y * 300.f * forwardDir / 1.5f;
+			}
+			else
+			{
+				impulse.impulse = forwardDir * 300.f;
+			}
+			impulse.impulse.z = upDir.z * 250.f;
+
+			//TODO
+			//NetSpawnParticleEffect("alien_special.Trooper.doubleJumpAttack");
+
+			//TODO
+			//SubEnergy(TROOPER_JUMP_ENERGY_COST);
+
+			GetEntity()->GetPhysics()->Action(&impulse);
+			pSlaveStats->jumpCount = 0;
+
+			//TODO
+			//The controlled trooper cannot to do jump attack after double jump
+			//m_trooper.canJumpMelee = false;
+		}
+		else
+		{
+			//slaveStats->jumpCount = 0;
+		}
+	}
 }

@@ -1448,6 +1448,9 @@
     <ClInclude Include="TheOtherSideMP\HUD\TOSCrosshair.h">
       <Filter>TheOtherSideMP\HUD</Filter>
     </ClInclude>
+    <ClInclude Include="TheOtherSideMP\Helpers\TOS_NET.h">
+      <Filter>TheOtherSideMP\Helpers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="GameActions.actions">

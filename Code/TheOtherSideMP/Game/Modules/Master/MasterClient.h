@@ -121,18 +121,20 @@ private:
 	 */
 	void PrepareDude(bool toStartControl, uint dudeFlags) const;
 
+
 public:
 
 private:
 	CTOSPlayer* m_pLocalDude; ///< Указатель на локального персонажа с именем \a Dude. \n Появляется в одиночной игре.
 	IEntity*    m_pSlaveEntity; ///< Указатель на сущность раба, которую контролирует локальный персонаж.
 	//MCSaved m_dudeSavedParams; ///< Хранит сохраненные параметры лок. персонажа \n для их применения перед/после начала управления рабом
-	CTOSHUDCrosshair* m_pHUDCrosshair;
+	//CTOSHUDCrosshair* m_pHUDCrosshair;
 
 	uint m_dudeFlags;
 	CMovementRequest m_movementRequest;
 
-	Vec3 m_movementDir;///< направление движения. От -1 до 1. Не сбрасывается до 0 когда действие не выполняется.
+	Vec3 m_deltaMovement;///< направление движения. От -1 до 1. Не сбрасывается до 0 когда действие не выполняется.
+
 
 	CCamera* m_pWorldCamera;
 

@@ -1,5 +1,7 @@
 #pragma once
 
+
+
 struct ITOSMasterControllable
 {
 	virtual ~ITOSMasterControllable() = default;

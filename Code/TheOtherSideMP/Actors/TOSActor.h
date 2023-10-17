@@ -23,7 +23,6 @@ class CTOSActor: public CActor, ITOSMasterControllable  // NOLINT(cppcoreguideli
 {
 public:
 	friend class CTOSMasterClient;
-	friend class CCompatibilityAlienMovementController;
 
 	CTOSActor();
 	~CTOSActor() override;
@@ -53,13 +52,18 @@ public:
 	void SetSlaveEntityId(EntityId id);
 	EntityId GetSlaveEntityId() const { return m_slaveEntityId;}
 
+	//Новые функции сюда
+	const Vec3& FilterDeltaMovement(const Vec3& deltaMov);
+
 	const STOSSlaveStats& ReadSlaveStats() const { return m_slaveStats; } ///< Считать статистику раба. Изменять нельзя.
 
-private:
+protected:
 	STOSSlaveStats& GetSlaveStats() { return m_slaveStats; } ///< Получить статистику раба. Изменять можно.
 
+	STOSSlaveStats m_slaveStats;
+	Vec3 m_filteredDeltaMovement;
 
+private:
 	EntityId m_slaveEntityId;
 	EntityId m_masterEntityId;
-	STOSSlaveStats m_slaveStats;
 };

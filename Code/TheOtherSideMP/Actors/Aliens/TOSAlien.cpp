@@ -3,6 +3,10 @@
 
 #include "Player.h"
 
+#include "TheOtherSideMP/Game/Modules/Master/MasterClient.h"
+#include "TheOtherSideMP/Game/Modules/Master/MasterModule.h"
+#include "TheOtherSideMP/Helpers/TOS_NET.h"
+
 CTOSAlien::CTOSAlien()
 {
 }
@@ -27,21 +31,21 @@ bool CTOSAlien::NetSerialize(TSerialize ser, const EEntityAspects aspect, const 
 	if (!CAlien::NetSerialize(ser,aspect,profile,flags))
 		return false;
 
-	if (aspect == SERVER_ASPECT_HEALTH)
+	if (aspect == TOS_NET::SERVER_ASPECT_HEALTH)
 	{
 		ser.Value("health", m_health);
 
-		if (ser.IsWriting())
-		{
-			CryLogAlways("WRITE HEALTH %1.f", m_health);
-		}
-		else
-		{
-			CryLogAlways("READ HEALTH %1.f", m_health);
-		}
+		//if (ser.IsWriting())
+		//{
+		//	CryLogAlways("WRITE HEALTH %1.f", m_health);
+		//}
+		//else
+		//{
+		//	CryLogAlways("READ HEALTH %1.f", m_health);
+		//}
 	}
 
-	if (aspect == CLIENT_ASPECT_INPUT)
+	if (aspect == TOS_NET::CLIENT_ASPECT_INPUT)
 	{
 		//m_input.Serialize(ser);
 		ser.Value("deltaMovement", m_input.deltaMovement, 'pMov'); //tr ok
@@ -51,10 +55,11 @@ bool CTOSAlien::NetSerialize(TSerialize ser, const EEntityAspects aspect, const 
 		//ser.Value("deltaRotation", m_input.deltaRotation); //не протестировано
 		//ser.Value("posTarget", m_input.posTarget, 'wrld'); //не протестировано
 		//ser.Value("upTarget", m_input.upTarget, 'wrld'); //не протестировано
+		//ser.Value("basemtx", (Quat)m_baseMtx); //не протестировано
 
 		if (ser.IsWriting())
 		{
-			CryLogAlways("[%s] WRITE INPUT (%1.f, %1.f, %1.f)", GetEntity()->GetName(),m_input.viewDir.x, m_input.viewDir.y, m_input.viewDir.z );
+			CryLogAlways("[%s] WRITE INPUT (%1.f, %1.f, %1.f)", GetEntity()->GetName(), m_input.viewDir.x, m_input.viewDir.y, m_input.viewDir.z);
 		}
 		else
 		{
@@ -74,8 +79,10 @@ void CTOSAlien::ProcessEvent(SEntityEvent& event)
 	{
 		if (gEnv->bClient)
 		{
-			//GetGameObject()->ChangedNetworkState(CLIENT_ASPECT_INPUT);
-			//m_input.ResetDeltas();
+			float color[] = { 1,1,1,1 };
+			gEnv->pRenderer->Draw2dLabel(100, 160, 1.3f, color, false, "Slave: m_input.deltaMovement = (%f,%f,%f)", m_input.deltaMovement.x, m_input.deltaMovement.y, m_input.deltaMovement.z);
+			gEnv->pRenderer->Draw2dLabel(100, 100, 1.3f, color, false, "Slave: m_filteredDeltaMovement = (%f,%f,%f)", m_filteredDeltaMovement.x, m_filteredDeltaMovement.y, m_filteredDeltaMovement.z);
+
 		}
 	}
 }
@@ -86,7 +93,7 @@ void CTOSAlien::SetHealth(const int health)
 
 	if (gEnv->bServer)
 	{
-		GetGameObject()->ChangedNetworkState(SERVER_ASPECT_HEALTH);
+		GetGameObject()->ChangedNetworkState(TOS_NET::SERVER_ASPECT_HEALTH);
 	}
 }
 
@@ -106,6 +113,8 @@ Matrix33 CTOSAlien::GetEyeMtx()
 
 void CTOSAlien::ApplyMasterMovement(const Vec3& delta)
 {
+	//m_input.deltaMovement = FilterDeltaMovement(delta);
+
 	m_input.deltaMovement.x = clamp_tpl(m_input.deltaMovement.x + delta.x, -1.0f, 1.0f);
 	m_input.deltaMovement.y = clamp_tpl(m_input.deltaMovement.y + delta.y, -1.0f, 1.0f);
 	m_input.deltaMovement.z = clamp_tpl(m_input.deltaMovement.z + delta.z, -1.0f, 1.0f);

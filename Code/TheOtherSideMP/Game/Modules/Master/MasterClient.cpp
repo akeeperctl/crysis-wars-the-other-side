@@ -36,21 +36,19 @@ if ((actionId) == (checkActionId))\
 CTOSMasterClient::CTOSMasterClient(CTOSPlayer* pPlayer)
 	: m_pLocalDude(pPlayer),
 	m_pSlaveEntity(nullptr),
-	m_pHUDCrosshair(nullptr),
 	m_dudeFlags(0),
 	m_pWorldCamera(&gEnv->pSystem->GetViewCamera())
 {
 	assert(pPlayer);
 
     // в редакторе вылетает
-    if (!gEnv->bEditor)
-    {
-		m_pHUDCrosshair = g_pGame->GetHUD()->GetCrosshair();
-		assert(m_pHUDCrosshair);
-    }
+  //  if (!gEnv->bEditor)
+  //  {
+		//m_pHUDCrosshair = g_pGame->GetHUD()->GetCrosshair();
+		//assert(m_pHUDCrosshair);
+  //  }
 
-    m_movementDir.zero();
-    m_viewDir.zero();
+    m_deltaMovement.zero();
 
 	if (gEnv->bClient)
 	{
@@ -95,7 +93,7 @@ CTOSMasterClient::~CTOSMasterClient()
 	//}
 }
 
-void CTOSMasterClient::OnEntityEvent(const IEntity* pEntity, const SEntityEvent& event)
+void CTOSMasterClient::OnEntityEvent(IEntity* pEntity, const SEntityEvent& event)
 {
 	if (m_pSlaveEntity != nullptr && pEntity == m_pSlaveEntity)
 	{
@@ -134,44 +132,44 @@ void CTOSMasterClient::OnAction(const ActionId& action, const int activationMode
 
 bool CTOSMasterClient::OnActionMoveForward(CTOSActor* pActor, const ActionId& actionId, int activationMode, const float value)
 {
-	m_movementDir.x = m_movementDir.z = 0;
-	m_movementDir.y = value * 2.0f - 1.0f;
+	m_deltaMovement.x = m_deltaMovement.z = 0;
+	m_deltaMovement.y = value * 2.0f - 1.0f;
 
 	//pActor->ApplyMasterMovement(delta);
-    m_movementRequest.AddDeltaMovement(m_movementDir);
+    m_movementRequest.AddDeltaMovement(m_deltaMovement);
 
 	return true;
 }
 
 bool CTOSMasterClient::OnActionMoveBack(CTOSActor* pActor, const ActionId& actionId, int activationMode, const float value)
 {
-	m_movementDir.x = m_movementDir.z = 0;
-    m_movementDir.y = -(value * 2.0f - 1.0f);
+	m_deltaMovement.x = m_deltaMovement.z = 0;
+    m_deltaMovement.y = -(value * 2.0f - 1.0f);
 
 	//pActor->ApplyMasterMovement(delta);
-	m_movementRequest.AddDeltaMovement(m_movementDir);
+	m_movementRequest.AddDeltaMovement(m_deltaMovement);
 
 	return true;
 }
 
 bool CTOSMasterClient::OnActionMoveLeft(CTOSActor* pActor, const ActionId& actionId, int activationMode, const float value)
 {
-	m_movementDir.x = -(value * 2.0f - 1.0f);
-    m_movementDir.y = m_movementDir.z = 0;
+	m_deltaMovement.x = -(value * 2.0f - 1.0f);
+    m_deltaMovement.y = m_deltaMovement.z = 0;
 
 	//pActor->ApplyMasterMovement(delta);
-	m_movementRequest.AddDeltaMovement(m_movementDir);
+	m_movementRequest.AddDeltaMovement(m_deltaMovement);
 
     return true;
 }
 
 bool CTOSMasterClient::OnActionMoveRight(CTOSActor* pActor, const ActionId& actionId, int activationMode, const float value)
 {
-	m_movementDir.x = value * 2.0f - 1.0f;
-	m_movementDir.y = m_movementDir.z = 0;
+	m_deltaMovement.x = value * 2.0f - 1.0f;
+	m_deltaMovement.y = m_deltaMovement.z = 0;
 
 	//pActor->ApplyMasterMovement(delta);
-	m_movementRequest.AddDeltaMovement(m_movementDir);
+	m_movementRequest.AddDeltaMovement(m_deltaMovement);
 
 	return true;
 }
@@ -181,6 +179,13 @@ bool CTOSMasterClient::OnActionJump(CTOSActor* pActor, const ActionId& actionId,
     if (activationMode == eAAM_OnPress && value > 0.0f)
     {
 		m_movementRequest.SetJump();
+    }
+    else if (activationMode == eAAM_OnRelease)
+    {
+        if (m_movementRequest.ShouldJump())
+        {
+			m_movementRequest.ClearJump();
+        }
     }
 
 	return true;
@@ -220,7 +225,7 @@ void CTOSMasterClient::Update(float frametime)
 //{
 //	if (m_pSlaveEntity != nullptr && pEntity == m_pSlaveEntity)
 //	{
-//		//m_movementDir.zero();
+//		//m_deltaMovement.zero();
 //	}
 //		
 //}
@@ -559,6 +564,9 @@ void CTOSMasterClient::PrepareDude(const bool toStartControl, const uint dudeFla
 	CNanoSuit* pSuit = m_pLocalDude->GetNanoSuit();
     assert(pSuit);
 
+	const auto pHUDCrosshair = g_pGame->GetHUD()->GetCrosshair();
+    assert(pHUDCrosshair);
+
 	//Fix the non-resetted Dude player movement after controlling the actor;
 	if (m_pLocalDude->GetPlayerInput())
 		m_pLocalDude->GetPlayerInput()->Reset();
@@ -632,11 +640,8 @@ void CTOSMasterClient::PrepareDude(const bool toStartControl, const uint dudeFla
             //g_pGame->GetHUD()->UpdateHealth(m_pControlledActor);
             //g_pGame->GetHUD()->m_animPlayerStats.Reload(true);
 
-            if (m_pHUDCrosshair)
-            {
-                m_pHUDCrosshair->SetOpacity(1.0f);
-                m_pHUDCrosshair->SetCrosshair(g_pGameCVars->hud_crosshair);
-            }
+			pHUDCrosshair->SetOpacity(1.0f);
+			pHUDCrosshair->SetCrosshair(g_pGameCVars->hud_crosshair);
         }
 
         if (!gEnv->bEditor)
@@ -676,7 +681,7 @@ void CTOSMasterClient::PrepareDude(const bool toStartControl, const uint dudeFla
         // Выполнено - Нужно написать функцию для отображения дружественного перекрестия
 		// Выполнено - Нужно написать функцию для смены имени текущего оружия
 
-        m_pHUDCrosshair->ShowFriendCross(false);
+        pHUDCrosshair->ShowFriendCross(false);
        SAFE_HUD_FUNC(TOSSetWeaponName(""))
 
         //g_pControlSystem->GetSquadSystem()->AnySquadClientLeft();
