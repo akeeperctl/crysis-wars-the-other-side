@@ -12,6 +12,8 @@ public:
 	
 	//CTOSActor
 	void ProcessEvent(SEntityEvent& event) override;
+	void PrePhysicsUpdate() override;
+
 
 	void     SetHealth(int health) override;
 	Matrix33 GetViewMtx() override;

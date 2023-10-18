@@ -30,8 +30,8 @@ void CCompatibilityAlienMovementController::Release()
 
 bool CCompatibilityAlienMovementController::RequestMovement( CMovementRequest& request )
 {
-	SMovementState state;
-	GetMovementState(state);
+	//SMovementState state;
+	//GetMovementState(state);
 
 	//Vec3 currentEyePos = state.eyePosition;
 	Vec3 currentPos = m_pAlien->GetEntity()->GetWorldPos();
@@ -147,10 +147,6 @@ bool CCompatibilityAlienMovementController::RequestMovement( CMovementRequest& r
 
 	m_pAlien->SetActorMovement(os);
 
-	//TheOtherSide
-	m_pAlien->GetGameObject()->ChangedNetworkState(TOS_NET::CLIENT_ASPECT_INPUT);
-	//~TheOtherSide
-
 	if(pAnimationGraphState)
 	{
 		if (request.HasActorTarget())
@@ -222,7 +218,7 @@ void CCompatibilityAlienMovementController::UpdateCurMovementState(const SActorF
 	/*	if (IItem * pItem = gEnv->pGame->GetIGameFramework()->GetIItemSystem()->GetItem( itemEntity ))
 	if (const IWeapon * pWeapon = pItem->GetIWeapon())
 	state.weaponPosition = pWeapon->GetFiringPos(Vec3(0,0,0));*/
-
+	
 	if(m_currentMovementRequest.HasAimTarget())
 		state.aimDirection = (m_currentMovementRequest.GetAimTarget()-state.weaponPosition).GetNormalizedSafe();
 	else
@@ -235,10 +231,10 @@ void CCompatibilityAlienMovementController::UpdateCurMovementState(const SActorF
 
 	state.isAlive = (m_pAlien->GetHealth()>0);
 	// get weapon position -----------------------
-	IInventory * pInventory = m_pAlien->GetInventory();
-	if (!pInventory)
-		return;
-	EntityId itemEntity = pInventory->GetCurrentItem();
+	//IInventory * pInventory = m_pAlien->GetInventory();
+	//if (!pInventory)
+	//	return;
+	//EntityId itemEntity = pInventory->GetCurrentItem();
 
 
 	//---------------------------------------------

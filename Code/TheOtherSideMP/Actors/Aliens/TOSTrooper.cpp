@@ -3,6 +3,8 @@
 
 #include "GameUtils.h"
 
+#include "TheOtherSideMP/Helpers/TOS_NET.h"
+
 CTOSTrooper::CTOSTrooper()
 {
 }

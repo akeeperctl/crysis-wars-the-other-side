@@ -9,7 +9,7 @@
 #include "TheOtherSideMP/Helpers/TOS_NET.h"
 
 CTOSActor::CTOSActor() : 
-	m_filteredDeltaMovement(ZERO),
+	//m_filteredDeltaMovement(ZERO),
 	m_slaveEntityId(0),
 	m_masterEntityId(0)
 {
@@ -28,6 +28,8 @@ void CTOSActor::PostInit(IGameObject* pGameObject)
 	TOS_RECORD_EVENT(GetEntityId(), STOSGameEvent(eEGE_ActorPostInit, "", true));
 
 	CActor::PostInit(pGameObject);
+
+	m_netBodyInfo.Reset();
 }
 
 void CTOSActor::InitClient(const int channelId)
@@ -104,36 +106,36 @@ void CTOSActor::SetSlaveEntityId(const EntityId id)
 	m_slaveEntityId = id;
 }
 
-const Vec3& CTOSActor::FilterDeltaMovement(const Vec3& deltaMov)
-{
-	//Скопировано из PlayerInput.cpp
-
-	const float frameTimeCap(min(gEnv->pTimer->GetFrameTime(), 0.033f));
-	const float inputAccel(gEnv->pConsole->GetCVar("tos_sv_pl_inputAccel")->GetFVal());
-
-	//const Vec3 oldFilteredMovement = m_filteredDeltaMovement;
-
-	if (deltaMov.len2() < 0.01f)
-	{
-		m_filteredDeltaMovement = {0,0,0};
-	}
-	else if (inputAccel < 0.1f)
-	{
-		m_filteredDeltaMovement = deltaMov;
-	}
-	else
-	{
-		Vec3 delta(deltaMov - m_filteredDeltaMovement);
-
-		const float len(delta.len());
-		if (len <= 1.0f)
-			delta = delta * (1.0f - len * 0.55f);
-
-		m_filteredDeltaMovement += delta * min(frameTimeCap * inputAccel, 1.0f);
-	}
-
-	//if (oldFilteredMovement.GetDistance(m_filteredDeltaMovement) > 0.001f)
-	//	GetGameObject()->ChangedNetworkState(TOS_NET::CLIENT_ASPECT_INPUT);
-
-	return m_filteredDeltaMovement;
-}
+//const Vec3& CTOSActor::FilterDeltaMovement(const Vec3& deltaMov)
+//{
+//	//Скопировано из PlayerInput.cpp
+//
+//	const float frameTimeCap(min(gEnv->pTimer->GetFrameTime(), 0.033f));
+//	const float inputAccel(gEnv->pConsole->GetCVar("tos_sv_pl_inputAccel")->GetFVal());
+//
+//	//const Vec3 oldFilteredMovement = m_filteredDeltaMovement;
+//
+//	if (deltaMov.len2() < 0.01f)
+//	{
+//		m_filteredDeltaMovement = {0,0,0};
+//	}
+//	else if (inputAccel < 0.1f)
+//	{
+//		m_filteredDeltaMovement = deltaMov;
+//	}
+//	else
+//	{
+//		Vec3 delta(deltaMov - m_filteredDeltaMovement);
+//
+//		const float len(delta.len());
+//		if (len <= 1.0f)
+//			delta = delta * (1.0f - len * 0.55f);
+//
+//		m_filteredDeltaMovement += delta * min(frameTimeCap * inputAccel, 1.0f);
+//	}
+//
+//	//if (oldFilteredMovement.GetDistance(m_filteredDeltaMovement) > 0.001f)
+//	//	GetGameObject()->ChangedNetworkState(TOS_NET::CLIENT_ASPECT_INPUT);
+//
+//	return m_filteredDeltaMovement;
+//}

@@ -221,6 +221,8 @@ void CNetPlayerInput::DisableXI(bool disabled)
 
 void CNetPlayerInput::DoSetState(const SSerializedPlayerInput& input )
 {
+	// Функция используется при считывании сериализованных параметров
+
 	m_curInput = input;
 	m_pPlayer->GetGameObject()->ChangedNetworkState( INPUT_ASPECT );
 

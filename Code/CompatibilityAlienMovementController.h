@@ -33,6 +33,11 @@ public:
 
 	virtual void Serialize(TSerialize &ser) {}
 
+	//TheOtherSide
+	CMovementRequest& GetCurrentMovementRequest() { return m_currentMovementRequest; }
+	SMovementState&   GetCurrentMovementState() {return m_currentMovementState; }
+	//~TheOtherSide
+
 private:
 
 	void	UpdateCurMovementState(const SActorFrameMovementParams& params);
