@@ -40,7 +40,7 @@ void CTOSTrooper::ProcessMovement(const float frameTime)
 
 void CTOSTrooper::ProcessJumpFlyControl(const Vec3& move, const float frameTime)
 {
-	if (move.x > 0 || move.y > 0)
+	if (!move.IsZero())
 	{
 		Vec3 desiredVelocityClamped = m_input.deltaMovement;
 
@@ -65,7 +65,7 @@ void CTOSTrooper::ProcessJumpFlyControl(const Vec3& move, const float frameTime)
 
 		actionMove.dir = actual;
 
-		if (m_stats.speed <= 12.0f)
+		if (m_stats.speed <= 8.0f)
 			GetEntity()->GetPhysics()->Action(&actionMove);
 
 		//Matrix rotation debug
@@ -106,7 +106,13 @@ void CTOSTrooper::UpdateMasterView(SViewParams& viewParams, Vec3& offsetX, Vec3&
 
 void CTOSTrooper::ProcessJump(const CMovementRequest& request)
 {
-	pe_action_impulse impulse;
+	//pe_action_impulse impulse;
+
+	SCharacterMoveRequest animCharRequest;
+	animCharRequest.jumping = false;
+	animCharRequest.type = eCMT_JumpInstant; //eCMT_Impulse //eCMT_JumpAccumulate;
+
+	Vec3 jumpVec(0,0,0);
 
 	const Vec3& upDir = GetEntity()->GetWorldTM().GetColumn(2);
 	const Vec3& forwardDir = GetEntity()->GetWorldTM().GetColumn(1);
@@ -130,12 +136,16 @@ void CTOSTrooper::ProcessJump(const CMovementRequest& request)
 
 		//const float inAir = pActorStats->inAir;
 		const float onGround = pActorStats->onGround;
+		constexpr float jumpForce = 10.0f;
 
 		if (onGround > 0.25f)
 		{
 			pSlaveStats->jumpCount++;
-			impulse.impulse.z = upDir.z * 400.f;
-			GetEntity()->GetPhysics()->Action(&impulse);
+			jumpVec.z = upDir.z * jumpForce; //400.0f
+
+			//GetEntity()->GetPhysics()->Action(&impulse);
+			animCharRequest.velocity += jumpVec;
+			m_pAnimatedCharacter->AddMovement(animCharRequest);
 
 			//TODO
 			//NetPlayAnimAction("CTRL_JumpStart", false);
@@ -144,14 +154,17 @@ void CTOSTrooper::ProcessJump(const CMovementRequest& request)
 		{
 			if (request.HasDeltaMovement() && !request.GetDeltaMovement().IsZero())
 			{
-				impulse.impulse += request.GetDeltaMovement().x * 300.f * rightDir / 1.5f;
-				impulse.impulse += request.GetDeltaMovement().y * 300.f * forwardDir / 1.5f;
+				//jumpVec += request.GetDeltaMovement().x * 300.f * rightDir / 1.5f;
+				//jumpVec += request.GetDeltaMovement().y * 300.f * forwardDir / 1.5f;
+
+				jumpVec += request.GetDeltaMovement().x * jumpForce * rightDir / 1.5f;
+				jumpVec += request.GetDeltaMovement().y * jumpForce * forwardDir / 1.5f;
 			}
 			else
 			{
-				impulse.impulse = forwardDir * 300.f;
+				jumpVec = forwardDir * jumpForce; //300.f;
 			}
-			impulse.impulse.z = upDir.z * 250.f;
+			jumpVec.z = upDir.z * 2.5f;// 250.f;
 
 			//TODO
 			//NetSpawnParticleEffect("alien_special.Trooper.doubleJumpAttack");
@@ -159,7 +172,11 @@ void CTOSTrooper::ProcessJump(const CMovementRequest& request)
 			//TODO
 			//SubEnergy(TROOPER_JUMP_ENERGY_COST);
 
-			GetEntity()->GetPhysics()->Action(&impulse);
+			//GetEntity()->GetPhysics()->Action(&impulse);
+
+			animCharRequest.velocity += jumpVec;
+			m_pAnimatedCharacter->AddMovement(animCharRequest);
+
 			pSlaveStats->jumpCount = 0;
 
 			//TODO
