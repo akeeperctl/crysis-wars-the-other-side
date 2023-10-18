@@ -1445,16 +1445,19 @@ void CPlayerMovement::ProcessTurning()
 			m_request.rotation = inverseEntityRot * m_baseQuat; //(m_turnTarget * Quat::CreateRotationZ(turn));
 			m_request.rotation.Normalize();
 		}
-		else { m_request.rotation = inverseEntityRot * Quat::CreateRotationZ(gf_PI); }
+		else
+		{
+			m_request.rotation = inverseEntityRot * Quat::CreateRotationZ(gf_PI);
+		}
 	}
 
 	if (m_player.IsPlayer() && (g_pGameCVars->ca_GameControlledStrafingPtr->GetIVal() != 0) && (g_pGameCVars->ac_enableProceduralLeaning == 0.0f))
 	{
-		const float turningSpeed = m_frameTime > 0.0f ? (fabs(RAD2DEG(m_request.rotation.GetRotZ())) / m_frameTime) : 0.0f;
+		const float     turningSpeed = m_frameTime > 0.0f ? (fabs(RAD2DEG(m_request.rotation.GetRotZ())) / m_frameTime) : 0.0f;
 		constexpr float turningSpeedMin = 30.0f;
 		constexpr float turningSpeedMax = 180.0f;
-		const float turningSpeedFraction = CLAMP((turningSpeed - turningSpeedMin) / (turningSpeedMax - turningSpeedMin), 0.0f, 1.0f);
-		const float travelSpeedScale = LERP(1.0f, CLAMP(g_pGameCVars->pl_curvingSlowdownSpeedScale, 0.0f, 1.0f), turningSpeedFraction);
+		const float     turningSpeedFraction = CLAMP((turningSpeed - turningSpeedMin) / (turningSpeedMax - turningSpeedMin), 0.0f, 1.0f);
+		const float     travelSpeedScale = LERP(1.0f, CLAMP(g_pGameCVars->pl_curvingSlowdownSpeedScale, 0.0f, 1.0f), turningSpeedFraction);
 		m_request.velocity *= travelSpeedScale;
 	}
 
@@ -1497,7 +1500,7 @@ void CPlayerMovement::ProcessMovementOnLadder(CPlayer& player)
 	move.NormalizeSafe();
 
 	const float topDist = (m_stats.ladderTop - player.GetEntity()->GetWorldPos()).len();
-	float bottomDist = (m_stats.ladderBottom - player.GetEntity()->GetWorldPos()).len();
+	float       bottomDist = (m_stats.ladderBottom - player.GetEntity()->GetWorldPos()).len();
 
 	//Just another check
 	if (player.IsClient() && m_movement.desiredVelocity.y < -0.01f)
@@ -1525,12 +1528,12 @@ void CPlayerMovement::ProcessMovementOnLadder(CPlayer& player)
 		{
 			// check if player can move forward from top of ladder before getting off. If they can't,
 			//	they'll need to strafe / jump off.
-			ray_hit                   hit;
+			ray_hit                       hit;
 			static constexpr int          obj_types = ent_static | ent_terrain | ent_rigid | ent_sleeping_rigid;
 			static constexpr unsigned int flags = rwi_stop_at_pierceable | rwi_colltype_any;
-			static float              backDist = 0.15f;
-			Vec3                      currentPos = player.m_stats.ladderTop + backDist * player.m_stats.ladderOrientation;
-			Vec3                      newPos = player.m_stats.ladderTop - player.m_stats.ladderOrientation;
+			static float                  backDist = 0.15f;
+			Vec3                          currentPos = player.m_stats.ladderTop + backDist * player.m_stats.ladderOrientation;
+			Vec3                          newPos = player.m_stats.ladderTop - player.m_stats.ladderOrientation;
 			currentPos.z += 0.35f;
 			newPos.z += 0.35f;
 			if (g_pGameCVars->pl_debug_ladders != 0)

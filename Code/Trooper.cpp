@@ -174,9 +174,9 @@ void CTrooper::InitHeightVariance(SmartScriptTable& rTable)
 
 	if (rTable->GetValue("heightVarianceLow", m_heightVarianceLow) && rTable->GetValue("heightVarianceHigh", m_heightVarianceHigh))
 		m_heightVarianceRandomize = cry_rand() / static_cast<float>(RAND_MAX);
-		/*		float range = m_heightVarianceHigh - m_heightVarianceLow;
-		m_heightVarianceLow = m_heightVarianceLow-range/2;
-		m_heightVarianceHigh = m_heightVarianceLow+range/2;*/
+	/*		float range = m_heightVarianceHigh - m_heightVarianceLow;
+	m_heightVarianceLow = m_heightVarianceLow-range/2;
+	m_heightVarianceHigh = m_heightVarianceLow+range/2;*/
 	if (rTable->GetValue("heightVarianceOscMin", freqMin) && rTable->GetValue("heightVarianceOscMax", freqMax))
 		m_heightVarianceFreq = freqMin + (cry_rand() / static_cast<float>(RAND_MAX)) * (freqMax - freqMin);
 }
@@ -798,10 +798,8 @@ void CTrooper::ProcessMovement(float frameTime)
 		}
 
 		if (m_jumpParams.state == JS_JumpStart)
-		{
 			if ((!m_jumpParams.bUseStartAnim && !m_jumpParams.bUseAnimEvent) || (currTime - m_jumpParams.startTime).GetSeconds() > 0.9f)
 				Jump();
-		}
 
 		//TheOtherSide
 		//else if (m_jumpParams.state == JS_ApplyImpulse)
@@ -970,7 +968,7 @@ void CTrooper::ProcessMovement(float frameTime)
 					pData->iValue = 1;
 				}
 
-				//~TheOtherSide
+			//~TheOtherSide
 			// send land event/signal
 
 			//TheOtherSide
@@ -1349,7 +1347,7 @@ void CTrooper::ResetAnimations()
 	{
 		if (m_pAnimatedCharacter)
 			m_pAnimatedCharacter->ClearForcedStates();
-			//m_pAnimatedCharacter->GetAnimationGraphState()->Pause(true, eAGP_StartGame);
+		//m_pAnimatedCharacter->GetAnimationGraphState()->Pause(true, eAGP_StartGame);
 
 		character->GetISkeletonAnim()->StopAnimationsAllLayers();
 		character->GetISkeletonPose()->SetLookIK(false, gf_PI * 0.9f, m_stats.lookTargetSmooth); //,m_customLookIKBlends);
