@@ -62,6 +62,7 @@ public:
 	void OnAction(const ActionId& action, int activationMode, float value) override;
 	// ~IActionListener
 
+	bool OnActionAttack(const CTOSActor* pActor, const ActionId& actionId, int activationMode, float value);
 	bool OnActionMoveForward(CTOSActor* pActor, const ActionId& actionId, int activationMode, float value);
 	bool OnActionMoveBack(CTOSActor* pActor,const ActionId& actionId, int activationMode, float value);
 	bool OnActionMoveLeft(CTOSActor* pActor,const ActionId& actionId, int activationMode, float value);

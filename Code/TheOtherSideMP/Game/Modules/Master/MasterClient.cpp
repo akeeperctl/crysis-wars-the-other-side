@@ -123,11 +123,35 @@ void CTOSMasterClient::OnAction(const ActionId& action, const int activationMode
 	if (!pSlaveActor)
         return;
 
+	ASSING_ACTION(pSlaveActor, action, rGA.attack1, OnActionAttack);
 	ASSING_ACTION(pSlaveActor, action, rGA.moveforward, OnActionMoveForward);
 	ASSING_ACTION(pSlaveActor, action, rGA.moveback, OnActionMoveBack);
 	ASSING_ACTION(pSlaveActor, action, rGA.moveleft, OnActionMoveLeft);
 	ASSING_ACTION(pSlaveActor, action, rGA.moveright, OnActionMoveRight);
 	ASSING_ACTION(pSlaveActor, action, rGA.jump, OnActionJump);
+}
+
+// ReSharper disable once CppMemberFunctionMayBeConst
+bool CTOSMasterClient::OnActionAttack(const CTOSActor* pActor, const ActionId& actionId, int activationMode, float value)
+{
+	const auto pInventory = pActor->GetInventory();
+    CRY_ASSERT_MESSAGE(pInventory, "[OnActionAttack] pInventory pointer is NULL");
+	if (!pInventory)
+		return false;
+
+	const auto pCurItem = g_pGame->GetIGameFramework()->GetIItemSystem()->GetItem(pInventory->GetCurrentItem());
+	CRY_ASSERT_MESSAGE(pCurItem, "[OnActionAttack] pCurItem pointer is NULL");
+    if (!pCurItem)
+        return false;
+
+	IWeapon* pWeapon = pCurItem->GetIWeapon();  // NOLINT(clang-diagnostic-misleading-indentation)
+	CRY_ASSERT_MESSAGE(pWeapon, "[OnActionAttack] pWeapon pointer is NULL");
+    if (!pWeapon)
+        return false;
+
+    pWeapon->OnAction(pActor->GetEntityId(), actionId, activationMode, value);
+
+    return true;
 }
 
 bool CTOSMasterClient::OnActionMoveForward(CTOSActor* pActor, const ActionId& actionId, int activationMode, const float value)
@@ -203,7 +227,10 @@ void CTOSMasterClient::PrePhysicsUpdate()
     SMovementState currentState;
 	pController->GetMovementState(currentState);
 
-    m_movementRequest.SetLookTarget(currentState.eyePosition + m_pWorldCamera->GetMatrix().GetColumn1() * 20.0f);
+    const auto cameraDir = m_pWorldCamera->GetMatrix().GetColumn1() * 20.0f;
+
+    m_movementRequest.SetLookTarget(currentState.eyePosition + cameraDir);
+    m_movementRequest.SetFireTarget(currentState.weaponPosition + cameraDir);
 
 	pController->RequestMovement(m_movementRequest);
 }

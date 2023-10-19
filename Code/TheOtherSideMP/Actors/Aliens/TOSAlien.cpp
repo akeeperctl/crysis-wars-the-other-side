@@ -59,10 +59,11 @@ bool CTOSAlien::NetSerialize(TSerialize ser, const EEntityAspects aspect, const 
 			const auto pTrooper = dynamic_cast<CTOSTrooper*>(this);
 			if (pTrooper)
 			{
+				request.AddDeltaMovement(m_netBodyInfo.deltaMov);// ок
 				//request.SetBodyTarget(m_netBodyInfo.lookTarget); // вообще пришельцами не используется
 				request.SetLookTarget(m_netBodyInfo.lookTarget);// ок
 				//request.SetAimTarget(m_netBodyInfo.aimTarget);
-				request.AddDeltaMovement(m_netBodyInfo.deltaMov);// ок
+				request.SetFireTarget(m_netBodyInfo.fireTarget);// не проверено
 
 				//Заставляет тушу двигаться самостоятельно
 				//request.SetMoveTarget(m_netBodyInfo.moveTarget);
@@ -85,6 +86,8 @@ bool CTOSAlien::NetSerialize(TSerialize ser, const EEntityAspects aspect, const 
 
 			GetMovementController()->RequestMovement(request);
 		}
+
+		/*
 		if (ser.IsWriting())
 		{
 			CryLogAlways("[%s] WRITE INPUT:", GetEntity()->GetName());
@@ -97,6 +100,7 @@ bool CTOSAlien::NetSerialize(TSerialize ser, const EEntityAspects aspect, const 
 			CryLogAlways("	m_netBodyInfo.deltaMov = (%1.f, %1.f, %1.f)", m_netBodyInfo.deltaMov.x, m_netBodyInfo.deltaMov.y, m_netBodyInfo.deltaMov.z);
 			CryLogAlways("	m_netBodyInfo.lookTarget = (%1.f, %1.f, %1.f)", m_netBodyInfo.lookTarget.x, m_netBodyInfo.lookTarget.y, m_netBodyInfo.lookTarget.z);
 		}
+		*/
 	}
 
 
@@ -128,6 +132,7 @@ void CTOSAlien::PrePhysicsUpdate()
 		// Единственное что меня волнует это прыжок.
 		// Чуть дольше чем момент начала прыжка трупер у других клиентов немного дёргается.
 		const Vec3 eyePos = GetEntity()->GetSlotWorldTM(0) * m_eyeOffset; // ок
+		const Vec3 weaponPos = GetEntity()->GetSlotWorldTM(0) * m_weaponOffset; // ок
 
 		// Принцип работы: m_viewMtx.GetColumn1() на владеющем клиенте ->
 		// serialize направление вперед(forward) (от владеющего к другим клиентам и серверу) ->
@@ -135,6 +140,8 @@ void CTOSAlien::PrePhysicsUpdate()
 		const Vec3 eyeDir = m_viewMtx.GetColumn1(); // ок
 
 		m_netBodyInfo.lookTarget = eyePos + eyeDir * 10.0f;
+		m_netBodyInfo.fireTarget = weaponPos + eyeDir * 10.0f;
+
 		m_netBodyInfo.deltaMov = m_input.deltaMovement;
 
 		//m_netBodyInfo.aimTarget = currentState.eyePosition + currentState.eyeDirection; //ура я нашёл //currentState.aimDirection;
@@ -166,8 +173,9 @@ void CTOSAlien::PrePhysicsUpdate()
 		const Vec3 wp(GetEntity()->GetWorldPos() + Vec3(0, 0, 1));
 
 		pPD->Begin(string("master_input_pre_physics_") + GetEntity()->GetName(), true);
-		pPD->AddSphere(m_netBodyInfo.lookTarget, 0.5f, ColorF(1, 0, 1, 1), 1.0f);
-		pPD->AddSphere(m_netBodyInfo.aimTarget, 0.5f, ColorF(1, 1, 1, 1), 1.0f);
+		//pPD->AddSphere(m_netBodyInfo.lookTarget, 0.5f, ColorF(1, 0, 1, 1), 1.0f);
+		//pPD->AddSphere(m_netBodyInfo.aimTarget, 0.5f, ColorF(1, 1, 1, 1), 1.0f);
+		pPD->AddSphere(m_netBodyInfo.fireTarget, 0.5f, ColorF(1, 0, 0, 1), 1.0f);
 
 		//pPD->AddDirection(wp, 1.5f, m_input.deltaMovement, ColorF(1, 0, 0, 1), 1.0f);
 		//pPD->AddDirection(wp, 1.5f, currentState.aimDirection, ColorF(0, 1, 0, 1), 1.0f);
