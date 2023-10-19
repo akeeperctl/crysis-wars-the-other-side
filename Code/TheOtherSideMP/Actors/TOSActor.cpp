@@ -3,9 +3,12 @@
 
 #include "Actor.h"
 
+#include "Aliens/TOSTrooper.h"
+
 #include "TheOtherSideMP/Game/TOSGameEventRecorder.h"
 #include "TheOtherSideMP/Game/Modules/Master/MasterClient.h"
 #include "TheOtherSideMP/Game/Modules/Master/MasterModule.h"
+#include "TheOtherSideMP/Helpers/TOS_Inventory.h"
 #include "TheOtherSideMP/Helpers/TOS_NET.h"
 
 CTOSActor::CTOSActor() : 
@@ -30,6 +33,34 @@ void CTOSActor::PostInit(IGameObject* pGameObject)
 	CActor::PostInit(pGameObject);
 
 	m_netBodyInfo.Reset();
+
+
+	// Факт: если оружие выдаётся на сервере, оно выдаётся и на всех клиентах тоже.
+	if (gEnv->bServer && gEnv->bMultiplayer && !IsPlayer())
+	{
+		string       equipName;
+		const string actorClass = GetEntity()->GetClass()->GetName();
+
+		if (actorClass == "Trooper")
+		{
+			equipName = gEnv->pConsole->GetCVar("tos_sv_TrooperMPEquipPack")->GetString();
+		}
+		else if (actorClass == "Scout")
+		{
+			equipName = gEnv->pConsole->GetCVar("tos_sv_ScoutMPEquipPack")->GetString();
+		}
+		else if (actorClass == "Alien")
+		{
+			equipName = gEnv->pConsole->GetCVar("tos_sv_AlienMPEquipPack")->GetString();
+		}
+		else if (actorClass == "Hunter")
+		{
+			equipName = gEnv->pConsole->GetCVar("tos_sv_HunterMPEquipPack")->GetString();
+		}
+
+		TOS_Inventory::GiveEquipmentPack(this, equipName.c_str());
+		
+	}
 }
 
 void CTOSActor::InitClient(const int channelId)
