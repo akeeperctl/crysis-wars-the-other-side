@@ -23,6 +23,12 @@ void STOSCvars::InitCVars(IConsole* pConsole)
 
 	pConsole->Register("tos_any_EventRecorderLogVanilla", &tos_any_EventRecorderLogVanilla, 0, 0, "Log vanilla events to the console (eGE_ prefix) 1 - yes, 0 - no");
 
+	tos_sv_AlienMPEquipPack =  pConsole->RegisterString("tos_sv_AlienMPEquipPack",    "Alien_naked", 0, "");
+	tos_sv_HunterMPEquipPack = pConsole->RegisterString("tos_sv_HunterMPEquipPack",   "Alien_Hunter", 0, "");
+	tos_sv_ScoutMPEquipPack =  pConsole->RegisterString("tos_sv_ScoutMPEquipPack",    "Alien_Scout_Gunner", 0, "");
+	tos_sv_TrooperMPEquipPack = pConsole->RegisterString("tos_sv_TrooperMPEquipPack", "Alien_Trooper", 0, "");
+
+
 	for (const auto pModule : g_pTOSGame->m_modules)
 		pModule->InitCVars(pConsole);
 }
