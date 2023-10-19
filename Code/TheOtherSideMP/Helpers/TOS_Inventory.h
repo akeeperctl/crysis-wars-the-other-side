@@ -36,8 +36,6 @@ namespace TOS_Inventory
 		if (!pActor || name.empty())
 			return;
 
-		CActor* pAct = dynamic_cast<CActor*>(pActor);
-
 		const string filePath = "Game/Libs/EquipmentPacks/" + name + ".xml";
 		//CryLogAlways("[EquipManager][GiveEquipmentPack][filePath] %s", filePath);
 

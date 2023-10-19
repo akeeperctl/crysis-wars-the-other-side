@@ -152,8 +152,8 @@ public:
 	static void CmdGetMastersList(IConsoleCmdArgs* pArgs);
 	static void CmdIsMaster(IConsoleCmdArgs* pArgs);
 	static void CmdMCStopControl(IConsoleCmdArgs* pArgs);
-	static void CmdShowDudeItems(IConsoleCmdArgs* pArgs);
-	static void CmdShowActorItems(IConsoleCmdArgs* pArgs);
+	static void CmdGetDudeItems(IConsoleCmdArgs* pArgs);
+	static void CmdGetActorItems(IConsoleCmdArgs* pArgs);
 	static void CmdSetActorHealth(IConsoleCmdArgs* pArgs);
 	static void CmdGetActorHealth(IConsoleCmdArgs* pArgs);
 

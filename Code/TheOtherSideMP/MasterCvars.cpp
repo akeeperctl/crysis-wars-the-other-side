@@ -41,8 +41,8 @@ void CTOSMasterModule::InitCCommands(IConsole* pConsole)
 	pConsole->AddCommand("getmasterslist", CmdGetMastersList);
 	pConsole->AddCommand("ismaster", CmdIsMaster);
 	pConsole->AddCommand("mc_stopcontrol", CmdMCStopControl);
-	pConsole->AddCommand("showdudeitems", CmdShowDudeItems);
-	pConsole->AddCommand("showactoritems", CmdShowActorItems);
+	pConsole->AddCommand("getdudeitems", CmdGetDudeItems);
+	pConsole->AddCommand("getactoritems", CmdGetActorItems);
 	pConsole->AddCommand("setactorhealth", CmdSetActorHealth);
 	pConsole->AddCommand("getactorhealth", CmdGetActorHealth);
 
@@ -103,7 +103,7 @@ void CTOSMasterModule::CmdIsMaster(IConsoleCmdArgs* pArgs)
 	const EntityId playerId = atoi(strPlayerId);
 
 	const auto pEntity = gEnv->pEntitySystem->GetEntity(playerId);
-	assert(pEntity);
+	//assert(pEntity);
 	if (!pEntity)
 	{
 		CryLogAlways("IsMaster failed: not found entity with id (%i)", strPlayerId);
@@ -127,14 +127,17 @@ void CTOSMasterModule::CmdMCStopControl(IConsoleCmdArgs* pArgs)
 	pLocalMC->StopControl();
 }
 
-void CTOSMasterModule::CmdShowDudeItems(IConsoleCmdArgs* pArgs)
+void CTOSMasterModule::CmdGetDudeItems(IConsoleCmdArgs* pArgs)
 {
 	ONLY_CLIENT_CMD;
 
 	const auto pPlayer = dynamic_cast<CTOSPlayer*>(g_pGame->GetIGameFramework()->GetClientActor());
-	assert(pPlayer);
+	//assert(pPlayer);
 	if (!pPlayer)
+	{
+		CryLogAlways("Failed: not found actor");
 		return;
+	}
 
 	CryLogAlways("Result: ");
 
@@ -152,17 +155,20 @@ void CTOSMasterModule::CmdShowDudeItems(IConsoleCmdArgs* pArgs)
 	}
 }
 
-void CTOSMasterModule::CmdShowActorItems(IConsoleCmdArgs* pArgs)
+void CTOSMasterModule::CmdGetActorItems(IConsoleCmdArgs* pArgs)
 {
-	ONLY_SERVER_CMD;
+	//ONLY_SERVER_CMD;
 
 	const char* strPlayerId = pArgs->GetArg(1);
 	const EntityId playerId = atoi(strPlayerId);
 
 	const auto pActor = (g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(playerId));
-	assert(pActor);
+	//assert(pActor);
 	if (!pActor)
+	{
+		CryLogAlways("Failed: not found actor");
 		return;
+	}
 
 	CryLogAlways("Result: ");
 
@@ -188,9 +194,12 @@ void CTOSMasterModule::CmdSetActorHealth(IConsoleCmdArgs* pArgs)
 	const int HP = atoi(strHP);
 
 	const auto pActor = (g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(Id));
-	assert(pActor);
+	//assert(pActor);
 	if (!pActor)
+	{
+		CryLogAlways("Failed: not found actor");
 		return;
+	}
 
 	pActor->SetHealth(HP);
 }
@@ -202,7 +211,10 @@ void CTOSMasterModule::CmdGetActorHealth(IConsoleCmdArgs* pArgs)
 
 	const auto pActor = (g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(Id));
 	if (!pActor)
+	{
+		CryLogAlways("Failed: not found actor");
 		return;
+	}
 
 	CryLogAlways("Result: HP = %i", pActor->GetHealth());
 }
