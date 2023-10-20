@@ -261,7 +261,8 @@ bool CShotgun::Shoot(bool resetAnimation, bool autoreload/* =true */, bool noSou
 		}	
 		return false;
 	}
-	else if(m_pWeapon->IsWeaponLowered())
+
+	if(m_pWeapon->IsWeaponLowered())
 	{
 		m_pWeapon->PlayAction(m_actions.null_fire);
 		return false;
