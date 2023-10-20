@@ -101,10 +101,10 @@ struct STOSNetBodyInfo
 		deltaMov = {0,0,0};
 
 		//pseudoSpeed;
-		desiredSpeed;
+		desiredSpeed = 0;
 
 		//alertness;
-		stance;
+		stance = 0;
 		//suitMode;
 
 		hidden = false;
@@ -156,6 +156,8 @@ public:
 	void Revive(bool fromInit = false) override;
 	void Kill() override;
 	void PlayAction(const char* action, const char* extension, bool looping = false) override;
+	void AnimationEvent(ICharacterInstance* pCharacter, const AnimEventInstance& event) override;
+
 	// ~CActor
 
 	//ITOSMasterControllable

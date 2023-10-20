@@ -751,13 +751,16 @@ void CScout::FullSerialize(TSerialize ser)
 
 void CScout::AnimationEvent(ICharacterInstance *pCharacter, const AnimEventInstance &event)
 {
-	if (strcmp (event.m_EventName, "ObjectGrabbed") == 0) {
-		m_pGrabHandler->StartGrab ();
-	} else if (strcmp (event.m_EventName, "ObjectThrown") == 0) {
-		m_pGrabHandler->StartDrop ();
-	}	else if (strcmp (event.m_EventName, "StartIK") == 0) {
-		(static_cast <CAnimatedGrabHandler*> (m_pGrabHandler))->ActivateIK ();
-	}
+	if (strcmp(event.m_EventName, "ObjectGrabbed") == 0)
+		m_pGrabHandler->StartGrab();
+	else if (strcmp(event.m_EventName, "ObjectThrown") == 0)
+		m_pGrabHandler->StartDrop();
+	else if (strcmp(event.m_EventName, "StartIK") == 0)
+		dynamic_cast<CAnimatedGrabHandler*>(m_pGrabHandler)->ActivateIK();
+
+	//TheOtherSide
+	CTOSAlien::AnimationEvent(pCharacter, event);
+	//~TheOtherSide
 }
 
 void CScout::GetMemoryStatistics(ICrySizer * s)

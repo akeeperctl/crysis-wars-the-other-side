@@ -199,13 +199,13 @@ void CTOSAlien::PrePhysicsUpdate()
 		// Bool
 		//m_netBodyInfo.hasAimTarget = currentState.isAiming;
 
-		IPersistantDebug* pPD = gEnv->pGame->GetIGameFramework()->GetIPersistantDebug();
-		const Vec3 wp(GetEntity()->GetWorldPos() + Vec3(0, 0, 1));
+		//IPersistantDebug* pPD = gEnv->pGame->GetIGameFramework()->GetIPersistantDebug();
+		//const Vec3 wp(GetEntity()->GetWorldPos() + Vec3(0, 0, 1));
 
-		pPD->Begin(string("master_input_pre_physics_") + GetEntity()->GetName(), true);
+		//pPD->Begin(string("master_input_pre_physics_") + GetEntity()->GetName(), true);
 		//pPD->AddSphere(m_netBodyInfo.lookTarget, 0.5f, ColorF(1, 0, 1, 1), 1.0f);
 		//pPD->AddSphere(m_netBodyInfo.aimTarget, 0.5f, ColorF(1, 1, 1, 1), 1.0f);
-		pPD->AddSphere(m_netBodyInfo.fireTarget, 0.5f, ColorF(1, 0, 0, 1), 1.0f);
+		//pPD->AddSphere(m_netBodyInfo.fireTarget, 0.5f, ColorF(1, 0, 0, 1), 1.0f);
 
 		//pPD->AddDirection(wp, 1.5f, m_input.deltaMovement, ColorF(1, 0, 0, 1), 1.0f);
 		//pPD->AddDirection(wp, 1.5f, currentState.aimDirection, ColorF(0, 1, 0, 1), 1.0f);

@@ -6808,7 +6808,10 @@ void CPlayer::OnSoundSystemEvent(ESoundSystemCallbackEvent event,ISound *pSound)
 //--------------------------------------------------------
 void CPlayer::AnimationEvent(ICharacterInstance *pCharacter, const AnimEventInstance &event)
 {
-	CActor::AnimationEvent(pCharacter,event);
+	//TheOtherSide
+		//CActor::AnimationEvent(pCharacter,event);
+	CTOSActor::AnimationEvent(pCharacter,event);
+	//~TheOtherSide
 
 	//"sound_tp" are sounds that has to be only triggered in thirdperson, never for client
 	//Client is supposed to have its own FP sound

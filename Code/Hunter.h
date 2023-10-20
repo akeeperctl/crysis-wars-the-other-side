@@ -22,8 +22,13 @@
 
 #include <bitset>
 
+//TheOtherSide
+#include "TheOtherSideMP/Actors/Aliens/TOSAlien.h"
+
 class CHunter :
-	public CAlien
+	//public CAlien
+	public CTOSAlien
+//~TheOtherSide
 {
 public:
 

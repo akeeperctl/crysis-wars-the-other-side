@@ -20,8 +20,13 @@
 
 #include "Alien.h"
 
+//TheOtherSide
+#include "TheOtherSideMP/Actors/Aliens/TOSAlien.h"
+
 class CScout :
-	public CAlien
+	//public CAlien
+	public CTOSAlien
+	//~TheOtherSide
 {
 public:
 

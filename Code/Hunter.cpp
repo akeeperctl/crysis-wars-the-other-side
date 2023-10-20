@@ -11,19 +11,19 @@
 
 *************************************************************************/
 #include "StdAfx.h"
+#include "Hunter.h"
+
+#include <ICryAnimation.h>
+#include <IItemSystem.h>
+#include <IMaterialEffects.h>
+#include <IPhysics.h>
+#include <IRenderAuxGeom.h>
+#include <ISerialize.h>
+#include <IViewSystem.h>
+
 #include "Game.h"
 #include "GameCVars.h"
-#include "Hunter.h"
 #include "GameUtils.h"
-
-#include <IViewSystem.h>
-#include <IItemSystem.h>
-#include <IPhysics.h>
-#include <ICryAnimation.h>
-#include <ISerialize.h>
-#include <IRenderAuxGeom.h>
-#include <IMaterialEffects.h>
-
 
 const float CHunter::s_turnThreshIdling = cry_cosf (DEG2RAD (30.0f));
 const float CHunter::s_turnThreshTurning = cry_cosf (DEG2RAD (5.0f));
@@ -768,7 +768,7 @@ void CHunter::AnimationEvent(ICharacterInstance *pCharacter, const AnimEventInst
 	} else if (strcmp (event.m_EventName, "BackRightDown") == 0) {
 		m_walkEventFlags.set (BACK_RIGHT_DOWN);
 	} else
-		CActor::AnimationEvent (pCharacter,event);
+		CTOSAlien::AnimationEvent(pCharacter,event);
 }
 
 void CHunter::PlayAction( const char* action, const char* extension, bool looping )

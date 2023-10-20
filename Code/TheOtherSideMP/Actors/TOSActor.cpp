@@ -135,9 +135,9 @@ void CTOSActor::Update(SEntityUpdateContext& ctx, const int updateSlot)
 	CActor::Update(ctx, updateSlot);
 
 	//const auto pMC = g_pTOSGame->GetMasterModule()->GetMasterClient();
-	//if (pMC)
+	//if (pMC && pMC->GetSlaveActor() == this)
 	//{
-	//	pMC->Update(GetEntity());
+	//	
 	//}
 }
 
@@ -168,7 +168,7 @@ void CTOSActor::PlayAction(const char* action, const char* extension, const bool
 	CActor::PlayAction(action, extension, looping);
 
 	NetPlayAnimationParams params;
-	params.animation = extension;
+	params.animation = action;
 	params.mode = looping ? AIANIM_ACTION : AIANIM_SIGNAL;
 
 	if (gEnv->bClient)
@@ -180,6 +180,19 @@ void CTOSActor::PlayAction(const char* action, const char* extension, const bool
 		GetGameObject()->InvokeRMI(ClPlayAnimation(), params, eRMI_ToRemoteClients);
 	}
 }
+
+void CTOSActor::AnimationEvent(ICharacterInstance* pCharacter, const AnimEventInstance& event)
+{
+	if (!pCharacter)
+		return;
+
+	const auto pMC = g_pTOSGame->GetMasterModule()->GetMasterClient();
+	if (pMC)
+		pMC->AnimationEvent(GetEntity(), pCharacter, event);
+
+	CActor::AnimationEvent(pCharacter, event);
+}
+
 void CTOSActor::SetMasterEntityId(const EntityId id)
 {
 	//gEnv->pRenderer->GetFrameID();
@@ -334,11 +347,11 @@ IMPLEMENT_RMI(CTOSActor, ClPlayAnimation)
 		pGraphState->SetInput(mode.c_str(), params.animation.c_str());
 	}
 
-	CryLogAlways("[C++][%s][%s][%s] mode = %s, animation = %s", 
-		TOS_Debug::GetEnv(), 
-		TOS_Debug::GetAct(3), 
-		__FUNCTION__, 
-		mode.c_str(), params.animation.c_str());
+	//CryLogAlways("[C++][%s][%s][%s] mode = %s, animation = %s", 
+	//	TOS_Debug::GetEnv(), 
+	//	TOS_Debug::GetAct(3), 
+	//	__FUNCTION__, 
+	//	mode.c_str(), params.animation.c_str());
 
 	return true;
 }

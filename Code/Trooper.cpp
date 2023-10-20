@@ -1336,7 +1336,7 @@ void CTrooper::AnimationEvent(ICharacterInstance* pCharacter, const AnimEventIns
 	if (stricmp(event.m_EventName, "jump") == 0 && m_jumpParams.state != JS_Flying)
 		Jump();
 	//else
-	CAlien::AnimationEvent(pCharacter, event);
+	CTOSAlien::AnimationEvent(pCharacter, event);
 }
 
 void CTrooper::ResetAnimations()
