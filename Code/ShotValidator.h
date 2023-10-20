@@ -8,7 +8,7 @@ Description:
 
 -------------------------------------------------------------------------
 History:
-- 12:10:2007   14:58 : Created by Márcio Martins
+- 12:10:2007   14:58 : Created by MÐ±rcio Martins
 
 *************************************************************************/
 #ifndef __SHOTVALIDATOR_H__
@@ -69,7 +69,7 @@ public:
 	~CShotValidator();
 
 	void AddShot(EntityId playerId, EntityId weaponId, uint16 seq, uint8 seqr);
-	bool ProcessHit(const HitInfo &hit);
+	bool ProcessHit(const HitInfo &hitInfo);
 
 	void Reset();
 	void Update();
