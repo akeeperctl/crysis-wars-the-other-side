@@ -19,6 +19,25 @@ struct STOSSlaveStats
 	uint jumpCount;
 };
 
+struct NetPlayAnimationParams
+{
+	NetPlayAnimationParams()
+		: mode(0) {} ;
+	NetPlayAnimationParams(const uint _mode, const string& _animation) :
+		mode(_mode),
+		animation(_animation)
+	{};
+
+	uint mode;
+	string animation;
+
+	void SerializeWith(TSerialize ser)
+	{
+		ser.Value("mode", mode, 'ui2');
+		ser.Value("animation", animation, 'stab');
+	}
+};
+
 /**
  * \brief Информация о состоянии тела актёра, передеваемая по сети
 	\note Канал, владеющий сущностью будет записывать данные, а остальные в т.ч сервер, будут принимать данные.
@@ -82,10 +101,10 @@ struct STOSNetBodyInfo
 		deltaMov = {0,0,0};
 
 		//pseudoSpeed;
-		desiredSpeed = 0;
+		desiredSpeed;
 
 		//alertness;
-		stance = 0;
+		stance;
 		//suitMode;
 
 		hidden = false;
@@ -136,6 +155,7 @@ public:
 	void Release() override;
 	void Revive(bool fromInit = false) override;
 	void Kill() override;
+	void PlayAction(const char* action, const char* extension, bool looping = false) override;
 	// ~CActor
 
 	//ITOSMasterControllable
@@ -156,6 +176,10 @@ public:
 	//const Vec3& FilterDeltaMovement(const Vec3& deltaMov);
 
 	const STOSSlaveStats& ReadSlaveStats() const { return m_slaveStats; } ///< Считать статистику раба. Изменять нельзя.
+
+
+	DECLARE_SERVER_RMI_NOATTACH(SvRequestPlayAnimation, NetPlayAnimationParams, eNRT_ReliableOrdered);
+	DECLARE_CLIENT_RMI_NOATTACH(ClPlayAnimation, NetPlayAnimationParams, eNRT_ReliableOrdered);
 
 protected:
 	STOSSlaveStats& GetSlaveStats() { return m_slaveStats; } ///< Получить статистику раба. Изменять можно.

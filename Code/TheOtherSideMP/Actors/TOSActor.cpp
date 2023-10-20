@@ -35,7 +35,6 @@ void CTOSActor::PostInit(IGameObject* pGameObject)
 
 	m_netBodyInfo.Reset();
 
-
 	// Факт: если оружие выдаётся на сервере, оно выдаётся и на всех клиентах тоже.
 	if (gEnv->bServer && gEnv->bMultiplayer && !IsPlayer())
 	{
@@ -94,35 +93,35 @@ bool CTOSActor::NetSerialize(TSerialize ser, const EEntityAspects aspect, const 
 	return true;
 }
 
-void CTOSActor::SelectNextItem(int direction, bool keepHistory, const char* category)
+void CTOSActor::SelectNextItem(const int direction, const bool keepHistory, const char* category)
 {
 	CActor::SelectNextItem(direction, keepHistory, category);
 
 	GetGameObject()->ChangedNetworkState(TOS_NET::CLIENT_ASPECT_CURRENT_ITEM);
 }
 
-void CTOSActor::HolsterItem(bool holster)
+void CTOSActor::HolsterItem(const bool holster)
 {
 	CActor::HolsterItem(holster);
 
 	GetGameObject()->ChangedNetworkState(TOS_NET::CLIENT_ASPECT_CURRENT_ITEM);
 }
 
-void CTOSActor::SelectLastItem(bool keepHistory, bool forceNext /* = false */)
+void CTOSActor::SelectLastItem(const bool keepHistory, const bool forceNext /* = false */)
 {
 	CActor::SelectLastItem(keepHistory, forceNext);
 
 	GetGameObject()->ChangedNetworkState(TOS_NET::CLIENT_ASPECT_CURRENT_ITEM);
 }
 
-void CTOSActor::SelectItemByName(const char* name, bool keepHistory)
+void CTOSActor::SelectItemByName(const char* name, const bool keepHistory)
 {
 	CActor::SelectItemByName(name, keepHistory);
 
 	GetGameObject()->ChangedNetworkState(TOS_NET::CLIENT_ASPECT_CURRENT_ITEM);
 }
 
-void CTOSActor::SelectItem(EntityId itemId, bool keepHistory)
+void CTOSActor::SelectItem(const EntityId itemId, const bool keepHistory)
 {
 	CActor::SelectItem(itemId, keepHistory);
 
@@ -163,6 +162,23 @@ void CTOSActor::Kill()
 	TOS_RECORD_EVENT(GetEntityId(), STOSGameEvent(eEGE_ActorDead, "", true));
 }
 
+void CTOSActor::PlayAction(const char* action, const char* extension, const bool looping)
+{
+	CActor::PlayAction(action, extension, looping);
+
+	NetPlayAnimationParams params;
+	params.animation = extension;
+	params.mode = looping ? AIANIM_ACTION : AIANIM_SIGNAL;
+
+	if (gEnv->bClient)
+	{
+		GetGameObject()->InvokeRMI(SvRequestPlayAnimation(), params, eRMI_ToServer);
+	}
+	else
+	{
+		GetGameObject()->InvokeRMI(ClPlayAnimation(), params, eRMI_ToRemoteClients);
+	}
+}
 void CTOSActor::SetMasterEntityId(const EntityId id)
 {
 	//gEnv->pRenderer->GetFrameID();
@@ -207,3 +223,42 @@ void CTOSActor::SetSlaveEntityId(const EntityId id)
 //
 //	return m_filteredDeltaMovement;
 //}
+
+IMPLEMENT_RMI(CTOSActor, SvRequestPlayAnimation)
+{
+	// Описываем здесь всё, что будет выполняться на сервере
+
+	GetGameObject()->InvokeRMI(ClPlayAnimation(), params, eRMI_ToRemoteClients);
+
+	return true;
+}
+
+IMPLEMENT_RMI(CTOSActor, ClPlayAnimation)
+{
+	// Описываем здесь всё, что будет выполняться на клиенте
+
+	IAnimationGraphState* pGraphState = (GetAnimatedCharacter() ? GetAnimatedCharacter()->GetAnimationGraphState() : nullptr);
+	string mode;
+
+	if (pGraphState)
+	{
+		if (params.mode == AIANIM_SIGNAL)
+		{
+			mode = "Signal";
+		}
+		else if (params.mode == AIANIM_ACTION)
+		{
+			mode = "Action";
+		}
+
+		pGraphState->SetInput(mode.c_str(), params.animation.c_str());
+	}
+
+	CryLogAlways("[C++][%s][%s][%s] mode = %s, animation = %s", 
+		TOS_Debug::GetEnv(), 
+		TOS_Debug::GetAct(3), 
+		__FUNCTION__, 
+		mode.c_str(), params.animation.c_str());
+
+	return true;
+}
