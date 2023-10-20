@@ -1,3 +1,4 @@
+// ReSharper disable CppParameterMayBeConstPtrOrRef
 #include "StdAfx.h"
 
 #include "Control/ControlSystem.h"
@@ -45,6 +46,7 @@ void CTOSMasterModule::InitCCommands(IConsole* pConsole)
 	pConsole->AddCommand("getactoritems", CmdGetActorItems);
 	pConsole->AddCommand("setactorhealth", CmdSetActorHealth);
 	pConsole->AddCommand("getactorhealth", CmdGetActorHealth);
+	pConsole->AddCommand("getactorcurrentitem", CmdGetActorCurrentItem);
 
 }
 
@@ -217,6 +219,23 @@ void CTOSMasterModule::CmdGetActorHealth(IConsoleCmdArgs* pArgs)
 	}
 
 	CryLogAlways("Result: HP = %i", pActor->GetHealth());
+}
+
+void CTOSMasterModule::CmdGetActorCurrentItem(IConsoleCmdArgs* pArgs)
+{
+	const char* strId = pArgs->GetArg(1);
+	const EntityId Id = atoi(strId);
+
+	const auto pActor = (g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(Id));
+	if (!pActor)
+	{
+		CryLogAlways("Failed: not found actor");
+		return;
+	}
+
+	const auto pItem = pActor->GetCurrentItem();
+
+	CryLogAlways("Result: Item name = %s", pItem ? pItem->GetEntity()->GetClass()->GetName() : "<undefined>");
 }
 
 void CTOSMasterModule::CVarSetDesiredSlaveCls(ICVar* pVar)

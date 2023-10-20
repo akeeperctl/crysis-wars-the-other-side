@@ -103,6 +103,34 @@ bool CTOSAlien::NetSerialize(TSerialize ser, const EEntityAspects aspect, const 
 		*/
 	}
 
+	if (aspect == TOS_NET::CLIENT_ASPECT_CURRENT_ITEM)
+	{
+		//Блок скопирован из CPlayer::NetSerialize()
+
+		const bool writing = ser.IsWriting();
+		bool	   hasWeapon = false;
+
+		if (writing)
+			hasWeapon = NetGetCurrentItem() != 0;
+
+		ser.Value("hasWeapon", hasWeapon, 'bool');
+		ser.Value("currentItemId", static_cast<CActor*>(this), &CActor::NetGetCurrentItem, &CActor::NetSetCurrentItem, 'eid');
+
+		if (!writing && hasWeapon && NetGetCurrentItem() == 0)
+			ser.FlagPartialRead();
+
+		if (writing)
+		{
+			CryLogAlways("[%s] WRITE INPUT:", GetEntity()->GetName());
+			CryLogAlways("	hasWeapon = %i", hasWeapon);
+		}
+		else
+		{
+			CryLogAlways("[%s] READ INPUT:", GetEntity()->GetName());
+			CryLogAlways("	hasWeapon = %i", hasWeapon);
+		}
+	}
+
 
 	return true;
 }

@@ -156,6 +156,7 @@ public:
 	static void CmdGetActorItems(IConsoleCmdArgs* pArgs);
 	static void CmdSetActorHealth(IConsoleCmdArgs* pArgs);
 	static void CmdGetActorHealth(IConsoleCmdArgs* pArgs);
+	static void CmdGetActorCurrentItem(IConsoleCmdArgs* pArgs);
 
 	//Console variable's functions
 	static void CVarSetDesiredSlaveCls(ICVar* pVar);

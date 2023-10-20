@@ -41,6 +41,7 @@ bool CTOSMasterSynchronizer::NetSerialize(TSerialize ser, EEntityAspects aspect,
 
 void CTOSMasterSynchronizer::Update(SEntityUpdateContext& ctx, int updateSlot)
 {
+	CTOSGenericSynchronizer::Update(ctx,updateSlot);
 }
 
 void CTOSMasterSynchronizer::HandleEvent(const SGameObjectEvent& event)

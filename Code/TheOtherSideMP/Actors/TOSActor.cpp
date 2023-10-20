@@ -2,9 +2,9 @@
 #include "TOSActor.h"
 
 #include "Actor.h"
-#include "OffHand.h"
+//#include "OffHand.h"
 
-#include "Aliens/TOSTrooper.h"
+//#include "Aliens/TOSTrooper.h"
 
 #include "TheOtherSideMP/Game/TOSGameEventRecorder.h"
 #include "TheOtherSideMP/Game/Modules/Master/MasterClient.h"
