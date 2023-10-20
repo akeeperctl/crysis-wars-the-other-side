@@ -5,23 +5,25 @@
 class CTOSGenericModule;
 struct NetGenericPintestParams;
 
-// Send pintest rmi to the server
-//Example: RMISENDER_SERVER_PINTEST("[CTOSGame::OnExtraGameplayEvent]");
-#define SYNCHRONIZER_SERVER_PINTEST(comment)\
-	auto pSender = g_pTOSGame->GetMasterModule()->GetRMISender();\
-	assert(pSender);\
-	PintestParams params;\
-	params.commentary = comment;\
-	pSender->RMISend(CTOSModuleSynchronizer::SvRequestPintest(), params, eRMI_ToServer)\
+// Send rmi to the server from client
+// Example: INVOKETEST_RMI_TO_SERVER("[CTOSGame::OnExtraGameplayEvent]");
+#define INVOKETEST_RMI_TO_SERVER(pGameObject, comment)\
+	NetGenericPintestParams params;\
+	params.commentary = (comment);\
+	(pGameObject)->InvokeRMI(CTOSGenericSynchronizer::SvRequestPintest(), params, eRMI_ToServer)\
 
-// Send pintest rmi to the client
-//Example: RMISENDER_CLIENT_PINTEST("[CTOSGame::OnExtraGameplayEvent]", pGO->GetChannelId());
-#define SYNCHRONIZER_CLIENT_PINTEST(comment, clientChannelId)\
-	auto pSender = g_pTOSGame->GetMasterModule()->GetRMISender();\
-	assert(pSender);\
-	PintestParams params;\
-	params.commentary = comment;\
-	pSender->RMISend(CTOSModuleSynchronizer::ClPintest(), params, eRMI_ToClientChannel, clientChannelId)\
+// Send rmi to the client from server
+// Example: RMI_TO_CLIENT_PINTEST("[CTOSGame::OnExtraGameplayEvent]", pGO->GetChannelId());
+#define INVOKETEST_RMI_TO_CLIENT(pGameObject, comment, clientChannelId)\
+	NetGenericPintestParams params;\
+	params.commentary = (comment);\
+	(pGameObject)->InvokeRMI(CTOSGenericSynchronizer::ClPintest(), params, eRMI_ToClientChannel, (clientChannelId))\
+
+// Send rmi to the clients from server
+#define INVOKETEST_RMI_TO_REMOTE_CLIENTS(pGameObject, comment)\
+	NetGenericPintestParams params;\
+	params.commentary = (comment);\
+	(pGameObject)->InvokeRMI(CTOSGenericSynchronizer::ClPintest(), params, eRMI_ToRemoteClients)\
 
 struct NetGenericNoParams
 {

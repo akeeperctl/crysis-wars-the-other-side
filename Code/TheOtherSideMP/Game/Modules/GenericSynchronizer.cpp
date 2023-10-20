@@ -3,6 +3,8 @@
 //#include "GenericModule.h"
 #include "GenericSynchronizer.h"
 
+#include "Game.h"
+
 #include "../TOSGameEventRecorder.h"
 
 TSynches CTOSGenericSynchronizer::s_synchronizers;
@@ -39,6 +41,7 @@ void CTOSGenericSynchronizer::PostInit(IGameObject* pGameObject)
 	s_synchronizers[GetEntity()->GetName()] = GetEntityId();
 
 	TOS_RECORD_EVENT(GetEntityId(), STOSGameEvent(eEGE_SynchronizerCreated, "", true));
+
 }
 
 void CTOSGenericSynchronizer::InitClient(int channelId)
@@ -69,6 +72,7 @@ bool CTOSGenericSynchronizer::NetSerialize(TSerialize ser, EEntityAspects aspect
 
 void CTOSGenericSynchronizer::Update(SEntityUpdateContext& ctx, int updateSlot)
 {
+
 }
 
 void CTOSGenericSynchronizer::HandleEvent(const SGameObjectEvent& event)
@@ -120,11 +124,15 @@ void CTOSGenericSynchronizer::GetSynchonizers(TSynches& synches)
 //------------------------------------------------------------------------
 IMPLEMENT_RMI(CTOSGenericSynchronizer, SvRequestPintest)
 {
+	const uint16 channelId = g_pGame->GetIGameFramework()->GetGameChannelId(pNetChannel);
+
 	if (gEnv->bServer)
 	{
-		CryLogAlways("[C++][%s][%s][SvRequestPintest] from %s",
-			TOS_Debug::GetEnv(), TOS_Debug::GetAct(3), params.commentary.c_str());
+		CryLogAlways("[C++][%s][%s][SvRequestPintest] Game channel = %i, from %s",
+			TOS_Debug::GetEnv(), TOS_Debug::GetAct(3), channelId, params.commentary.c_str());
 	}
+
+	auto pActor = g_pGame->GetIGameFramework()->GetIActorSystem()->GetActorByChannelId(channelId);
 
 	return true;
 }
@@ -132,10 +140,12 @@ IMPLEMENT_RMI(CTOSGenericSynchronizer, SvRequestPintest)
 //------------------------------------------------------------------------
 IMPLEMENT_RMI(CTOSGenericSynchronizer, ClPintest)
 {
+	const uint16 channelId = g_pGame->GetIGameFramework()->GetGameChannelId(pNetChannel);
+
 	if (gEnv->bClient)
 	{
-		CryLogAlways("[C++][%s][%s][ClPintest] from %s",
-			TOS_Debug::GetEnv(), TOS_Debug::GetAct(3), params.commentary.c_str());
+		CryLogAlways("[C++][%s][%s][ClPintest] Game channel = %i, from %s",
+			TOS_Debug::GetEnv(), TOS_Debug::GetAct(3), channelId, params.commentary.c_str());
 	}
 
 	return true;
