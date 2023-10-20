@@ -22,6 +22,7 @@ void STOSCvars::InitCVars(IConsole* pConsole)
 	//pConsole->Register("tos_show_version", &tos_show_version, 1, 0, "");
 
 	pConsole->Register("tos_any_EventRecorderLogVanilla", &tos_any_EventRecorderLogVanilla, 0, 0, "Log vanilla events to the console (eGE_ prefix) 1 - yes, 0 - no");
+	pConsole->Register("tos_sv_EnableShotValidator", &tos_sv_EnableShotValidator, 1, 0, "Enable shot validator in multiplayer 1 - yes, 0 - no");
 
 	tos_sv_AlienMPEquipPack =  pConsole->RegisterString("tos_sv_AlienMPEquipPack",    "Alien_naked", 0, "");
 	tos_sv_HunterMPEquipPack = pConsole->RegisterString("tos_sv_HunterMPEquipPack",   "Alien_Hunter", 0, "");
@@ -76,6 +77,7 @@ void STOSCvars::ReleaseCVars() const
 	pConsole->UnregisterVariable("tos_cl_JoinAsMaster", true);
 
 	pConsole->UnregisterVariable("tos_any_EventRecorderLogVanilla", true);
+	pConsole->UnregisterVariable("tos_sv_EnableShotValidator", true);
 }
 
 void STOSCvars::CmdNetChName(IConsoleCmdArgs* pArgs)

@@ -58,6 +58,7 @@ struct STOSCvars  // NOLINT(cppcoreguidelines-special-member-functions)
 	ICVar* tos_sv_ScoutMPEquipPack;
 	ICVar* tos_sv_AlienMPEquipPack;
 	ICVar* tos_sv_HunterMPEquipPack;
+	int tos_sv_EnableShotValidator;
 
 	int tos_any_EventRecorderLogVanilla;
 

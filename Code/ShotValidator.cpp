@@ -7,7 +7,7 @@ $DateTime$
 
 -------------------------------------------------------------------------
 History:
-- 12:10:2007   15:00 : Created by Márcio Martins
+- 12:10:2007   15:00 : Created by MÐ±rcio Martins
 
 *************************************************************************/
 #include "StdAfx.h"
@@ -33,6 +33,12 @@ CShotValidator::~CShotValidator()
 //------------------------------------------------------------------------
 void CShotValidator::AddShot(EntityId playerId, EntityId weaponId, uint16 seq, uint8 seqr)
 {
+	//TheOtherSide
+	const int enable = gEnv->pConsole->GetCVar("tos_sv_EnableShotValidator")->GetIVal();
+	if (enable == 0)
+		return;
+	//~TheOtherSide
+
 	FUNCTION_PROFILER(GetISystem(), PROFILE_GAME);
 
 	if (!playerId || !weaponId)
@@ -95,6 +101,12 @@ void CShotValidator::AddShot(EntityId playerId, EntityId weaponId, uint16 seq, u
 //------------------------------------------------------------------------
 bool CShotValidator::ProcessHit(const HitInfo &hitInfo)
 {
+	//TheOtherSide
+	const int enable = gEnv->pConsole->GetCVar("tos_sv_EnableShotValidator")->GetIVal();
+	if (enable == 0)
+		return true;
+	//~TheOtherSide
+
 	FUNCTION_PROFILER(GetISystem(), PROFILE_GAME);
 
 	if (CanHit(hitInfo))
@@ -149,6 +161,12 @@ bool CShotValidator::ProcessHit(const HitInfo &hitInfo)
 //------------------------------------------------------------------------
 void CShotValidator::Connected(int channelId)
 {
+	//TheOtherSide
+	const int enable = gEnv->pConsole->GetCVar("tos_sv_EnableShotValidator")->GetIVal();
+	if (enable == 0)
+		return;
+	//~TheOtherSide
+
 	Disconnected(channelId); // make sure it's cleaned up
 
 	if(g_pGameCVars->g_debugShotValidator != 0)
@@ -161,6 +179,12 @@ void CShotValidator::Connected(int channelId)
 //------------------------------------------------------------------------
 void CShotValidator::Disconnected(int channelId)
 {
+	//TheOtherSide
+	const int enable = gEnv->pConsole->GetCVar("tos_sv_EnableShotValidator")->GetIVal();
+	if (enable == 0)
+		return;
+	//~TheOtherSide
+
 	if(g_pGameCVars->g_debugShotValidator != 0)
 		CryLogAlways("shot validator: channel %d disconnected", channelId);
 
@@ -193,6 +217,12 @@ void CShotValidator::Reset()
 void CShotValidator::Update()
 {
 	FUNCTION_PROFILER(GetISystem(), PROFILE_GAME);
+
+	//TheOtherSide
+	const int enable = gEnv->pConsole->GetCVar("tos_sv_EnableShotValidator")->GetIVal();
+	if (enable == 0)
+		return;
+	//~TheOtherSide
 
 	CTimeValue now=gEnv->pTimer->GetFrameStartTime();
 
