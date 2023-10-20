@@ -127,6 +127,11 @@ public:
 	void InitClient(int channelId ) override;
 	void ProcessEvent(SEntityEvent& event) override;
 	bool NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int flags) override;
+	void SelectNextItem(int direction, bool keepHistory, const char* category) override;
+	void HolsterItem(bool holster) override;
+	void SelectLastItem(bool keepHistory, bool forceNext) override;
+	void SelectItemByName(const char* name, bool keepHistory) override;
+	void SelectItem(EntityId itemId, bool keepHistory) override;
 	void Update(SEntityUpdateContext& ctx, int updateSlot) override;
 	void Release() override;
 	void Revive(bool fromInit = false) override;

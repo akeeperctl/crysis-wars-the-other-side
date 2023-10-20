@@ -2,6 +2,7 @@
 #include "TOSActor.h"
 
 #include "Actor.h"
+#include "OffHand.h"
 
 #include "Aliens/TOSTrooper.h"
 
@@ -92,6 +93,42 @@ bool CTOSActor::NetSerialize(TSerialize ser, const EEntityAspects aspect, const 
 
 	return true;
 }
+
+void CTOSActor::SelectNextItem(int direction, bool keepHistory, const char* category)
+{
+	CActor::SelectNextItem(direction, keepHistory, category);
+
+	GetGameObject()->ChangedNetworkState(TOS_NET::CLIENT_ASPECT_CURRENT_ITEM);
+}
+
+void CTOSActor::HolsterItem(bool holster)
+{
+	CActor::HolsterItem(holster);
+
+	GetGameObject()->ChangedNetworkState(TOS_NET::CLIENT_ASPECT_CURRENT_ITEM);
+}
+
+void CTOSActor::SelectLastItem(bool keepHistory, bool forceNext /* = false */)
+{
+	CActor::SelectLastItem(keepHistory, forceNext);
+
+	GetGameObject()->ChangedNetworkState(TOS_NET::CLIENT_ASPECT_CURRENT_ITEM);
+}
+
+void CTOSActor::SelectItemByName(const char* name, bool keepHistory)
+{
+	CActor::SelectItemByName(name, keepHistory);
+
+	GetGameObject()->ChangedNetworkState(TOS_NET::CLIENT_ASPECT_CURRENT_ITEM);
+}
+
+void CTOSActor::SelectItem(EntityId itemId, bool keepHistory)
+{
+	CActor::SelectItem(itemId, keepHistory);
+
+	GetGameObject()->ChangedNetworkState(TOS_NET::CLIENT_ASPECT_CURRENT_ITEM);
+}
+
 
 void CTOSActor::Update(SEntityUpdateContext& ctx, const int updateSlot)
 {

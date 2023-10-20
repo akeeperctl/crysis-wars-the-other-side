@@ -4101,7 +4101,10 @@ void CPlayer::SelectNextItem(int direction, bool keepHistory, const char *catego
 
 	EntityId oldItemId=GetCurrentItemId();
 
-	CActor::SelectNextItem(direction,keepHistory,category);
+	//TheOtherSide
+	//CActor::SelectNextItem(direction,keepHistory,category);
+	CTOSActor::SelectNextItem(direction, keepHistory, category);
+	//~TheOtherSide
 
 	if (GetCurrentItemId() && oldItemId!=GetCurrentItemId())
 		m_bSprinting=false; // force the weapon disabling code to be 
@@ -4111,28 +4114,40 @@ void CPlayer::SelectNextItem(int direction, bool keepHistory, const char *catego
 
 void CPlayer::HolsterItem(bool holster)
 {
-	CActor::HolsterItem(holster);
+	//TheOtherSide
+	//CActor::HolsterItem(holster);
+	CTOSActor::HolsterItem(holster);
+	//~TheOtherSide
 
 	GetGameObject()->ChangedNetworkState(ASPECT_CURRENT_ITEM);
 }
 
 void CPlayer::SelectLastItem(bool keepHistory, bool forceNext /* = false */)
 {
-	CActor::SelectLastItem(keepHistory, forceNext);
+	//TheOtherSide
+	//CActor::SelectLastItem(keepHistory, forceNext);
+	CTOSActor::SelectLastItem(keepHistory, forceNext);
+	//~TheOtherSide
 
 	GetGameObject()->ChangedNetworkState(ASPECT_CURRENT_ITEM);
 }
 
 void CPlayer::SelectItemByName(const char *name, bool keepHistory)
 {
-	CActor::SelectItemByName(name, keepHistory);
+	//TheOtherSide
+	//CActor::SelectItemByName(name, keepHistory);
+	CTOSActor::SelectItemByName(name, keepHistory);
+	//~TheOtherSide
 
 	GetGameObject()->ChangedNetworkState(ASPECT_CURRENT_ITEM);
 }
 
 void CPlayer::SelectItem(EntityId itemId, bool keepHistory)
 {
-	CActor::SelectItem(itemId, keepHistory);
+	//TheOtherSide
+	//CActor::SelectItem(itemId, keepHistory);
+	CTOSActor::SelectItem(itemId, keepHistory);
+	//~TheOtherSide
 
 	GetGameObject()->ChangedNetworkState(ASPECT_CURRENT_ITEM);
 }
