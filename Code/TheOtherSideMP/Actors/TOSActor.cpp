@@ -1,3 +1,4 @@
+// ReSharper disable CppInconsistentNaming
 #include "StdAfx.h"
 #include "TOSActor.h"
 
@@ -188,6 +189,85 @@ void CTOSActor::SetMasterEntityId(const EntityId id)
 void CTOSActor::SetSlaveEntityId(const EntityId id)
 {
 	m_slaveEntityId = id;
+}
+
+//void CTOSActor::QueueAnimationEvent(const SQueuedAnimEvent& sEvent)
+//{
+//	if (!gEnv->bServer || gEnv->bEditor)
+//		return;
+//
+//	//if (CCoopSystem::GetInstance()->GetDebugLog() > 1)
+//	CryLogAlways("[%s] Animation Event Queued %s", __FUNCTION__, sEvent.sAnimEventName.c_str());
+//
+//	m_AnimEventQueue.push_back(sEvent);
+//}
+
+//void CTOSActor::UpdateAnimEvents(const float fFrameTime)
+//{
+//	if (!gEnv->bServer)
+//		return;
+//
+//	for (auto iterator = m_AnimEventQueue.begin(); iterator != m_AnimEventQueue.end(); ++iterator)
+//	{
+//		SQueuedAnimEvent& animEvent = (*iterator);
+//
+//		animEvent.fElapsed += fFrameTime;
+//
+//		if (animEvent.fElapsed > animEvent.fEventTime)
+//		{
+//			//this->CreateScriptEvent("animationevent", 0.f, animEvent.sAnimEventName);
+//
+//			AnimEventInstance sEvent;
+//			sEvent.m_EventName = animEvent.sAnimEventName;
+//
+//			this->AnimationEvent(GetEntity()->GetCharacter(0), sEvent);
+//
+//			m_AnimEventQueue.erase(iterator);
+//
+//			//if (CCoopSystem::GetInstance()->GetDebugLog() > 1)
+//			CryLogAlways("[%s] Animation Event Played %s", __FUNCTION__, animEvent.sAnimEventName.c_str());
+//
+//			break;
+//		}
+//	}
+//}
+
+void CTOSActor::OnAGSetInput(bool bSucceeded, IAnimationGraphState::InputID id, float value, TAnimationGraphQueryID* pQueryID)
+{
+	
+}
+
+void CTOSActor::OnAGSetInput(bool bSucceeded, IAnimationGraphState::InputID id, int value, TAnimationGraphQueryID* pQueryID)
+{
+	
+}
+
+void CTOSActor::OnAGSetInput(const bool bSucceeded, const IAnimationGraphState::InputID id, const char* value, TAnimationGraphQueryID* pQueryID)
+{
+	//TODO: Не уверен, что это вообще работает
+
+	IAnimationGraphState* pState = m_pAnimatedCharacter ? m_pAnimatedCharacter->GetAnimationGraphState() : nullptr;
+	if (bSucceeded && gEnv->bServer && !this->IsPlayer())
+	{
+		if (strcmp(value, m_sLastNetworkedAnim) != 0)
+		{
+			if (pState->GetInputId("Action") == id)
+				GetGameObject()->InvokeRMI(ClPlayAnimation(), NetPlayAnimationParams(AIANIM_ACTION, value), eRMI_ToRemoteClients);
+			if (pState->GetInputId("Signal") == id)
+				GetGameObject()->InvokeRMI(ClPlayAnimation(), NetPlayAnimationParams(AIANIM_SIGNAL, value), eRMI_ToRemoteClients);
+
+			m_sLastNetworkedAnim = value;
+		}
+		//SQueuedAnimEvent sAnimEvent = SQueuedAnimEvent();
+
+		//if (this->IsAnimEvent(value, &sAnimEvent.sAnimEventName, &sAnimEvent.fEventTime))
+		//{
+		//	QueueAnimationEvent(sAnimEvent);
+		//}
+
+		//GetAnimationGraphState()->GetInputName(id);
+	}
+
 }
 
 //const Vec3& CTOSActor::FilterDeltaMovement(const Vec3& deltaMov)

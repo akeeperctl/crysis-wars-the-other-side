@@ -148,6 +148,9 @@
     <Filter Include="TheOtherSideMP\Game\Modules\AI">
       <UniqueIdentifier>{9819ac0e-82ff-477d-acc4-c0c0e819d9fc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="TheOtherSideMP\Actors\animation">
+      <UniqueIdentifier>{8839ffbb-fce8-4f95-9efa-942480b24ae1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Actor.cpp">
@@ -815,6 +818,9 @@
     <ClCompile Include="TheOtherSideMP\AI\AITrackerCvars.cpp">
       <Filter>TheOtherSideMP\Game\Modules\AI</Filter>
     </ClCompile>
+    <ClCompile Include="TheOtherSideMP\Actors\Animation\AnimationGraphState.cpp">
+      <Filter>TheOtherSideMP\Actors\animation</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor.h">
@@ -1450,6 +1456,9 @@
     </ClInclude>
     <ClInclude Include="TheOtherSideMP\Helpers\TOS_NET.h">
       <Filter>TheOtherSideMP\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="TheOtherSideMP\Actors\Animation\AnimationGraphState.h">
+      <Filter>TheOtherSideMP\Actors\animation</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

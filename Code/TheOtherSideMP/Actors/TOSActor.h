@@ -177,6 +177,35 @@ public:
 
 	const STOSSlaveStats& ReadSlaveStats() const { return m_slaveStats; } ///< Считать статистику раба. Изменять нельзя.
 
+	// Скопировано из CActor в Crysis Co-op
+	//struct SQueuedAnimEvent
+	//{
+	//	SQueuedAnimEvent() : sAnimEventName(""), fEventTime(0.f), fElapsed(0.f) {};
+	//	SQueuedAnimEvent(const string& name, const float eventTime) : sAnimEventName(name), fEventTime(eventTime), fElapsed(0.f) {};
+	//	string sAnimEventName;
+	//	float fEventTime;
+	//	float fElapsed;
+	//};
+
+	//virtual bool IsAnimEvent(const char* sAnimSignal, string* sAnimEventName, float* fEventTime)
+	//{
+	//	*sAnimEventName = "";
+	//	*fEventTime = 0.f;
+	//	return false;
+	//};
+
+	//void QueueAnimationEvent(const SQueuedAnimEvent& sEvent);
+	//void UpdateAnimEvents(float fFrameTime);
+
+	void OnAGSetInput(bool bSucceeded, IAnimationGraphState::InputID id, float value, TAnimationGraphQueryID* pQueryID);
+	void OnAGSetInput(bool bSucceeded, IAnimationGraphState::InputID id, int value, TAnimationGraphQueryID* pQueryID);
+	void OnAGSetInput(bool bSucceeded, IAnimationGraphState::InputID id, const char* value, TAnimationGraphQueryID* pQueryID);
+	// ~Скопировано из CActor в Crysis Co-op
+
+private:
+
+	//std::list<SQueuedAnimEvent> m_AnimEventQueue;
+	string m_sLastNetworkedAnim;
 
 	DECLARE_SERVER_RMI_NOATTACH(SvRequestPlayAnimation, NetPlayAnimationParams, eNRT_ReliableOrdered);
 	DECLARE_CLIENT_RMI_NOATTACH(ClPlayAnimation, NetPlayAnimationParams, eNRT_ReliableOrdered);

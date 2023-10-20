@@ -119,6 +119,7 @@ bool CTOSAlien::NetSerialize(TSerialize ser, const EEntityAspects aspect, const 
 		if (!writing && hasWeapon && NetGetCurrentItem() == 0)
 			ser.FlagPartialRead();
 
+		/*
 		if (writing)
 		{
 			CryLogAlways("[%s] WRITE INPUT:", GetEntity()->GetName());
@@ -129,6 +130,7 @@ bool CTOSAlien::NetSerialize(TSerialize ser, const EEntityAspects aspect, const 
 			CryLogAlways("[%s] READ INPUT:", GetEntity()->GetName());
 			CryLogAlways("	hasWeapon = %i", hasWeapon);
 		}
+		*/
 	}
 
 
