@@ -7,7 +7,7 @@ $DateTime$
 
 -------------------------------------------------------------------------
 History:
-- 30:8:2005   12:30 : Created by Márcio Martins
+- 30:8:2005   12:30 : Created by MÐ±rcio Martins
 
 *************************************************************************/
 #include "StdAfx.h"
@@ -649,7 +649,10 @@ tSoundID CItem::PlayAction(const ItemString& actionName, int layer, bool loop, u
 	TActionMap::iterator it = m_sharedparams->actions.find(CONST_TEMPITEM_STRING(actionName));
 	if (it == m_sharedparams->actions.end())
 	{
-//		GameWarning("Action '%s' not found on item '%s'!", actionName, GetEntity()->GetName());
+		//TheOtherSide
+		//GameWarning("Action '%s' not found on item '%s'!", actionName, GetEntity()->GetName());
+		//CryLogAlways("Action '%s' not found on item '%s'!", actionName, GetEntity()->GetName());
+		//~TheOtherSide
 
 		for (int i=0;i<eIGS_Last;i++)
 		{

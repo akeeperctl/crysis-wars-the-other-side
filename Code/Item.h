@@ -8,7 +8,7 @@
   
  -------------------------------------------------------------------------
   History:
-  - 27:10:2004   11:25 : Created by M�rcio Martins
+  - 27:10:2004   11:25 : Created by Mбrcio Martins
 
 *************************************************************************/
 #ifndef __ITEM_H__
@@ -1000,9 +1000,9 @@ public:
 	void StopLayer(const ItemString& name, int flags = eIPAF_Default, bool record=true);
 	void RestoreLayers();
 	void ResetAnimation(int layer=0, uint flags = eIPAF_Default);
-	uint GetCurrentAnimationTime(int slot);
-	uint GetCurrentAnimationEnd(int slot);
-	uint GetCurrentAnimationStart(int slot);
+	uint GetCurrentAnimationTime(int slot);///< функция актуальна только для анимаций оружия!!! \n См. PlayAnimation()
+	uint GetCurrentAnimationEnd(int slot);///< функция актуальна только для анимаций оружия!!! \n См. PlayAnimation()
+	uint GetCurrentAnimationStart(int slot);///< функция актуальна только для анимаций оружия!!! \n См. PlayAnimation()
 	void DrawSlot(int slot, bool draw, bool near=false);
 	Vec3 GetSlotHelperPos(int slot, const char *helper, bool worldSpace, bool relative=false);
 	const Matrix33 &GetSlotHelperRotation(int slot, const char *helper, bool worldSpace, bool relative=false);

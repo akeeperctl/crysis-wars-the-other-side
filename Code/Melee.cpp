@@ -7,7 +7,7 @@ $DateTime$
 
 -------------------------------------------------------------------------
 History:
-- 23:3:2006   13:05 : Created by M�rcio Martins
+- 23:3:2006   13:05 : Created by Mбrcio Martins
 
 *************************************************************************/
 #include "StdAfx.h"
@@ -24,8 +24,11 @@ History:
 
 
 #include "IRenderer.h"
-#include "IRenderAuxGeom.h"	
+#include "IRenderAuxGeom.h"
 
+//TheOtherSide
+#include "TheOtherSideMP/Actors/player/TOSPlayer.h"
+//~TheOtherSide
 
 //std::vector<Vec3> g_points;
 
@@ -92,7 +95,7 @@ void CMelee::Update(float frameTime, uint frameId)
 				float strength = 1.0f;//pActor->GetActorStrength();
 				if (pActor->GetActorClass() == CPlayer::GetActorClassType())
 				{
-					CPlayer *pPlayer = (CPlayer *)pActor;
+					CPlayer *pPlayer = static_cast<CPlayer*>(pActor);
 					if (CNanoSuit *pSuit = pPlayer->GetNanoSuit())
 					{
 						ENanoMode curMode = pSuit->GetMode();
@@ -196,18 +199,31 @@ void CMelee::StartFire()
 	if ((m_pWeapon->GetEntity()->GetClass() == CItem::sFistsClass) && m_pWeapon->IsBusy())
 		return;
 
-	CActor* pOwner = m_pWeapon->GetOwnerActor();
+	CTOSActor* pOwner = dynamic_cast<CTOSActor*>(m_pWeapon->GetOwnerActor());
 
 	if(pOwner)
 	{
 		if(pOwner->GetStance()==STANCE_PRONE)
 			return;
 
-		if(SPlayerStats* stats = static_cast<SPlayerStats*>(pOwner->GetActorStats()))
+		//TheOtherSide
+		//Здесь нигде не определяется что pOwner это игрок.
+		//Нужно это исправить.
+
+		if (pOwner->GetActorClass() == CPlayer::GetActorClassType())
 		{
-			if(stats->bLookingAtFriendlyAI)
-				return;
+			const SPlayerStats* pPlayerStats = static_cast<SPlayerStats*>(pOwner->GetActorStats());
+			if (pPlayerStats)
+			{
+				if (pPlayerStats->bLookingAtFriendlyAI)
+					return;
+			}
 		}
+
+		const auto slaveStats = pOwner->GetSlaveStats();
+		if (slaveStats.lookAtFriend)
+			return;
+		//~TheOtheSide
 	}
 
 	m_attacking = true;
@@ -215,7 +231,7 @@ void CMelee::StartFire()
 	m_pWeapon->RequireUpdate(eIUS_FireMode);
 	m_pWeapon->ExitZoom();
 
-	bool isClient = pOwner?pOwner->IsClient():false;
+	const bool isClient = pOwner ? pOwner->IsClient():false;
 
 	if (g_pGameCVars->bt_end_melee && isClient)
 		g_pGame->GetBulletTime()->Activate(false);
@@ -223,12 +239,14 @@ void CMelee::StartFire()
 
 	float speedOverride = -1.0f;
 
-	if(CActor* pOwner = m_pWeapon->GetOwnerActor())
+	//TheOtherSide
+	//Проблема: вылет при ударе в рукопашкую
+	const auto pPlayer = dynamic_cast<CPlayer*>(pOwner);
+	if(pPlayer)
 	{
-		CPlayer *pPlayer = (CPlayer *)pOwner;
 		if(CNanoSuit *pSuit = pPlayer->GetNanoSuit())
 		{
-			ENanoMode curMode = pSuit->GetMode();
+			const ENanoMode curMode = pSuit->GetMode();
 			if (curMode == NANOMODE_SPEED && pSuit->GetSuitEnergy() > NANOSUIT_ENERGY * 0.1f)
 				speedOverride = 1.5f;
 		}
@@ -236,18 +254,32 @@ void CMelee::StartFire()
 		pPlayer->PlaySound(CPlayer::ESound_Melee);
 	}
 
+	//~TheOtherSide
+
 	m_pWeapon->PlayAction(m_meleeactions.attack.c_str(), 0, false, CItem::eIPAF_Default|CItem::eIPAF_CleanBlending, speedOverride);
 	m_pWeapon->SetBusy(true);
+
+	//TheOtherSide
+
+	//m_beginPos = m_pWeapon->GetSlotHelperPos(CItem::eIGS_FirstPerson, m_meleeparams.helper.c_str(), true);
+	//m_pWeapon->GetScheduler()->TimerAction(m_pWeapon->GetCurrentAnimationTime(CItem::eIGS_FirstPerson), CSchedulerAction<StopAttackingAction>::Create(this), true);
+
+	uint time = m_pWeapon->GetCurrentAnimationTime(CItem::eIGS_FirstPerson);
+	m_durationTimer = m_meleeparams.duration;
+
+	if (pOwner && pOwner->IsSlave())
+		time = m_durationTimer * 1000;
+
+	m_pWeapon->GetScheduler()->TimerAction(time, CSchedulerAction<StopAttackingAction>::Create(this), true);
+
+	//~TheOtherSide
 	
-	m_beginPos = m_pWeapon->GetSlotHelperPos(CItem::eIGS_FirstPerson, m_meleeparams.helper.c_str(), true);
-	m_pWeapon->GetScheduler()->TimerAction(m_pWeapon->GetCurrentAnimationTime(CItem::eIGS_FirstPerson), CSchedulerAction<StopAttackingAction>::Create(this), true);
 
 	m_delayTimer = m_meleeparams.delay;
 	
 	if (g_pGameCVars->dt_enable && m_delayTimer < g_pGameCVars->dt_time)
 		m_delayTimer = g_pGameCVars->dt_time;
 
-	m_durationTimer = m_meleeparams.duration;
 
 	m_pWeapon->OnMelee(m_pWeapon->GetOwnerId());
 
@@ -266,16 +298,19 @@ void CMelee::NetStartFire()
 
 	float speedOverride = -1.0f;
 
-	if(CActor* pOwner = m_pWeapon->GetOwnerActor())
+	//TheOtherSide
+
+	const auto pPlayer = dynamic_cast<CPlayer*>(m_pWeapon->GetOwnerActor());
+	if(pPlayer)
 	{
-		CPlayer *pPlayer = (CPlayer *)pOwner;
-		if(CNanoSuit *pSuit = pPlayer->GetNanoSuit())
+		if(const CNanoSuit *pSuit = pPlayer->GetNanoSuit())
 		{
-			ENanoMode curMode = pSuit->GetMode();
+			const ENanoMode curMode = pSuit->GetMode();
 			if (curMode == NANOMODE_SPEED)
 				speedOverride = 1.5f;
 		}
 	}
+	//~TheOtherSide
 
 	m_pWeapon->PlayAction(m_meleeactions.attack.c_str(), 0, false, CItem::eIPAF_Default, speedOverride);
 }
@@ -328,7 +363,7 @@ int CMelee::GetDamage(float distance) const
 
 	if (pActor->GetActorClass() == CPlayer::GetActorClassType())
 	{
-		CPlayer *pPlayer = (CPlayer *)pActor;
+		CPlayer *pPlayer = static_cast<CPlayer*>(pActor);
 		if (CNanoSuit *pSuit = pPlayer->GetNanoSuit())
 		{
 			ENanoMode curMode = pSuit->GetMode();
@@ -403,7 +438,7 @@ bool CMelee::PerformCylinderTest(const Vec3 &pos, const Vec3 &dir, float strengt
 		ent_rigid|ent_sleeping_rigid|ent_independent|ent_static|ent_terrain|ent_water, &contacts, 0,
 		geom_colltype0|geom_colltype_foliage|geom_colltype_player, &params, 0, 0, &pIgnore, pIgnore?1:0);
 
-	int ret = (int)n;
+	int ret = static_cast<int>(n);
 
 	float closestdSq = 9999.0f;
 	geom_contact *closestc = 0;
@@ -469,15 +504,15 @@ void CMelee::Hit(const Vec3 &pt, const Vec3 &dir, const Vec3 &normal, IPhysicalE
 	CActor *pActor = m_pWeapon->GetOwnerActor();
 	if (pActor && pActor->GetActorClass() == CPlayer::GetActorClassType())
 	{
-		CPlayer *pPlayer = (CPlayer *)pActor;
+		auto pPlayer = dynamic_cast<CPlayer*>(pActor);
 		if (pPlayer && pPlayer->GetNanoSuit())
 		{
 			if (pPlayer->GetEntity() && pPlayer->GetEntity()->GetAI())
 			{
-				SAIEVENT AIevent;
-				AIevent.targetId = pTarget ? pTarget->GetId() : 0;
+				SAIEVENT aiEvent;
+				aiEvent.targetId = pTarget ? pTarget->GetId() : 0;
 				// pPlayer->GetNanoSuit()->GetMode() == NANOMODE_STRENGTH
-				pPlayer->GetEntity()->GetAI()->Event(AIEVENT_PLAYER_STUNT_PUNCH, &AIevent);
+				pPlayer->GetEntity()->GetAI()->Event(AIEVENT_PLAYER_STUNT_PUNCH, &aiEvent);
 			}
 		}
 	}
@@ -498,14 +533,26 @@ void CMelee::Hit(const Vec3 &pt, const Vec3 &dir, const Vec3 &normal, IPhysicalE
 		if(ok)
 		{
 			CGameRules *pGameRules = g_pGame->GetGameRules();
+			//TheOtherSide
+			// Закомментируем неиспользуемое
 
-			int damage = m_meleeparams.damage;
-			if(pActor && !pActor->IsPlayer())
-				damage = m_meleeparams.damageAI;
+			//int damage = m_meleeparams.damage;
+			//if(pActor && !pActor->IsPlayer())
+			//	damage = m_meleeparams.damageAI;
+			//~TheOtherSide
 
-			HitInfo info(m_pWeapon->GetOwnerId(), pTarget->GetId(), m_pWeapon->GetEntityId(),
-				m_pWeapon->GetFireModeIdx(GetName()), 0.0f, pGameRules->GetHitMaterialIdFromSurfaceId(surfaceIdx), partId,
-				pGameRules->GetHitTypeId(m_meleeparams.hit_type.c_str()), pt, dir, normal);
+			HitInfo info(
+				m_pWeapon->GetOwnerId(), 
+				pTarget->GetId(), 
+				m_pWeapon->GetEntityId(),
+				m_pWeapon->GetFireModeIdx(GetName()), 
+				0.0f, 
+				pGameRules->GetHitMaterialIdFromSurfaceId(surfaceIdx), 
+				partId,
+				pGameRules->GetHitTypeId(m_meleeparams.hit_type.c_str()), 
+				pt, 
+				dir, 
+				normal);
 
 			info.remote = remote;
 			if (!remote)
@@ -551,8 +598,11 @@ void CMelee::Impulse(const Vec3 &pt, const Vec3 &dir, const Vec3 &normal, IPhysi
 
 	if (pCollider && m_meleeparams.impulse>0.001f)
 	{
-		bool strengthMode = false;
-		CPlayer *pPlayer = (CPlayer *)m_pWeapon->GetOwnerActor();
+		bool  strengthMode = false;
+
+		//TheOtherSide
+		auto pPlayer = dynamic_cast<CTOSPlayer*>(m_pWeapon->GetOwnerActor());
+		//~TheOtherSide
 		if(pPlayer)
 		{
 			if (CNanoSuit *pSuit = pPlayer->GetNanoSuit())
@@ -573,9 +623,9 @@ void CMelee::Impulse(const Vec3 &pt, const Vec3 &dir, const Vec3 &normal, IPhysi
 		}
 		else
 		{
-			IEntity *pIEntity = (IEntity*)pCollider->GetForeignData(PHYS_FOREIGN_ID_ENTITY);
-			IPhysicalEntity *pMainPhys;
-			float mass0 = dyn.mass;
+			auto              pIEntity = static_cast<IEntity*>(pCollider->GetForeignData(PHYS_FOREIGN_ID_ENTITY));
+			IPhysicalEntity* pMainPhys;
+			float             mass0 = dyn.mass;
 			if (pIEntity && (pMainPhys=pIEntity->GetPhysics()) && pMainPhys!=pCollider && pMainPhys->GetStatus(&dyn))
 				auxScale = dyn.mass ? mass0/dyn.mass:0;
 			impulseScale *= clamp((dyn.mass * 0.01f), 1.0f, 15.0f);
@@ -583,7 +633,7 @@ void CMelee::Impulse(const Vec3 &pt, const Vec3 &dir, const Vec3 &normal, IPhysi
 		
 		//[kirill] add impulse to phys proxy - to make sure it's applied to cylinder as well (not only skeleton) - so that entity gets pushed
 		// if no pEntity - do it old way
-		IEntity * pEntity = (IEntity*) pCollider->GetForeignData(PHYS_FOREIGN_ID_ENTITY);
+		auto pEntity = static_cast<IEntity*>(pCollider->GetForeignData(PHYS_FOREIGN_ID_ENTITY));
 
 		if(gEnv->bMultiplayer && pEntity)
 		{
@@ -601,8 +651,8 @@ void CMelee::Impulse(const Vec3 &pt, const Vec3 &dir, const Vec3 &normal, IPhysi
 #endif //CRAPDOLLS
 			if (!crapDollFilter)
 			{
-				IEntityPhysicalProxy* pPhysicsProxy = (IEntityPhysicalProxy*)pEntity->GetProxy(ENTITY_PROXY_PHYSICS);
-				CActor* pActor = (CActor*)g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pEntity->GetId());
+				IEntityPhysicalProxy* pPhysicsProxy = static_cast<IEntityPhysicalProxy*>(pEntity->GetProxy(ENTITY_PROXY_PHYSICS));
+				CActor*               pActor = static_cast<CActor*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pEntity->GetId()));
 
 				if (pActor)
 				{
@@ -666,19 +716,23 @@ void CMelee::Impulse(const Vec3 &pt, const Vec3 &dir, const Vec3 &normal, IPhysi
 
 		// [marco] Check if an object. Should take lots of time to break stuff if not in nanosuit strength mode;
 		// and still creates a very low impulse for stuff that might depend on receiving an impulse.
-		IRenderNode *pBrush = (IRenderNode*)pCollider->GetForeignData(PHYS_FOREIGN_ID_STATIC);
+		auto pBrush = static_cast<IRenderNode*>(pCollider->GetForeignData(PHYS_FOREIGN_ID_STATIC));
 		if (pBrush)
 		{
 			CActor *pActor = m_pWeapon->GetOwnerActor();
 			if (pActor && (pActor->GetActorClass() == CPlayer::GetActorClassType()))
 			{
-				CPlayer *pPlayer = (CPlayer *)pActor;
-				if (CNanoSuit *pSuit = pPlayer->GetNanoSuit())
+				//TheOtherSide
+				if (pPlayer)
 				{
-					ENanoMode curMode = pSuit->GetMode();
-					if (curMode != NANOMODE_STRENGTH)
-						speed =0.003f;
+					if (CNanoSuit* pSuit = pPlayer->GetNanoSuit())
+					{
+						ENanoMode curMode = pSuit->GetMode();
+						if (curMode != NANOMODE_STRENGTH)
+							speed = 0.003f;
+					}
 				}
+				//~TheOtherSide
 			}
 		}
 
@@ -753,7 +807,13 @@ void CMelee::Hit(ray_hit *hit, const Vec3 &dir, float damageScale, bool remote)
 void CMelee::ApplyCameraShake(bool hit)
 {
 	// Add some camera shake for client even if not hitting
-	if(m_pWeapon->GetOwnerActor() && m_pWeapon->GetOwnerActor()->IsClient())
+	//TheOtherSide
+	const auto pOwner = dynamic_cast<CTOSActor*>(m_pWeapon->GetOwnerActor());
+	const auto cond = pOwner && 
+		(pOwner->IsClient() || pOwner->IsLocalSlave()) ;
+	//~TheOtherSide
+
+	if(cond)
 	{
 		if(CScreenEffects* pScreenEffects = m_pWeapon->GetOwnerActor()->GetScreenEffects())
 		{
@@ -774,25 +834,29 @@ void CMelee::ApplyCameraShake(bool hit)
 
 float CMelee::GetOwnerStrength() const
 {
+	float strength = 1.0f;
+
 	CActor *pActor = m_pWeapon->GetOwnerActor();
 	if(!pActor)
-		return 1.0f;
+		return strength;
 
-	IMovementController * pMC = pActor->GetMovementController();
+	const IMovementController * pMC = pActor->GetMovementController();
 	if (!pMC)
-		return 1.0f;
+		return strength;
 
-	float strength = 1.0f;//pActor->GetActorStrength();
-	if (pActor->GetActorClass() == CPlayer::GetActorClassType())
+	//TheOtherSide
+	const auto pPlayer = dynamic_cast<CTOSPlayer*>(pActor);
+	//~TheOtherSide
+
+	if (pPlayer)
 	{
-		CPlayer *pPlayer = (CPlayer *)pActor;
-		if (CNanoSuit *pSuit = pPlayer->GetNanoSuit())
+		if (const CNanoSuit* pSuit = pPlayer->GetNanoSuit())
 		{
-			ENanoMode curMode = pSuit->GetMode();
+			const ENanoMode curMode = pSuit->GetMode();
 			if (curMode == NANOMODE_STRENGTH)
 			{
 				strength = pActor->GetActorStrength();
-				strength = strength * (1.0f + 2.0f * pSuit->GetSlotValue(NANOSLOT_STRENGTH)*STRENGTH_MULT);
+				strength = strength * (1.0f + 2.0f * pSuit->GetSlotValue(NANOSLOT_STRENGTH) * STRENGTH_MULT);
 			}
 		}
 	}
