@@ -107,23 +107,29 @@ IMPLEMENT_RMI(CTOSMasterSynchronizer, ClMasterClientStartControl)
 
 	if (gEnv->bClient)
 	{
-		const auto localPlayerNick = g_pGame->GetIGameFramework()->GetClientActor()->GetEntity()->GetName();
+		const auto pSlaveActor = g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(params.slaveId);
+		assert(pSlaveActor);
 
-		CryLogAlways("[C++][%s][%s][ClMasterClientStartControl] LocalPlayerNick: %s", 
-			TOS_Debug::GetEnv(), TOS_Debug::GetAct(3), localPlayerNick);
+		const auto slaveIsPlayer = pSlaveActor->IsPlayer();
+		CRY_ASSERT_MESSAGE(!slaveIsPlayer, "[ClMasterClientStartControl] by design at 21/10/2023 the real player cannot be a slave");
 
-		const auto pSlaveEntity = gEnv->pEntitySystem->GetEntity(params.slaveId);
-		assert(pSlaveEntity);
+		if (slaveIsPlayer)
+			return true;
 
-		// В данном случае params.masterId равен 0, т.к. мы уже на локальном клиенте,
-		// который имеет мастер-клиент и локального игрока
-
-		constexpr uint flags = TOS_DUDE_FLAG_BEAM_MODEL | 
+		constexpr uint flags = 
+			TOS_DUDE_FLAG_BEAM_MODEL | 
 			TOS_DUDE_FLAG_DISABLE_SUIT | 
 			TOS_DUDE_FLAG_ENABLE_ACTION_FILTER | 
 			TOS_DUDE_FLAG_HIDE_MODEL;
 
-		g_pTOSGame->GetMasterModule()->GetMasterClient()->StartControl(pSlaveEntity, flags);
+		// В данном случае params.masterId равен 0, т.к. мы уже на локальной машине,
+		// который имеет мастер-клиент и локального игрока
+		g_pTOSGame->GetMasterModule()->GetMasterClient()->StartControl(pSlaveActor->GetEntity(), flags);
+
+		const auto localPlayerNick = g_pGame->GetIGameFramework()->GetClientActor()->GetEntity()->GetName();
+
+		CryLogAlways("[C++][%s][%s][ClMasterClientStartControl] LocalPlayerNick: %s",
+			TOS_Debug::GetEnv(), TOS_Debug::GetAct(3), localPlayerNick);
 	}
 
 	return true;
@@ -135,17 +141,31 @@ IMPLEMENT_RMI(CTOSMasterSynchronizer, SvRequestMasterClientStartControl)
 
 	if (gEnv->bServer)
 	{
-		CryLogAlways("[C++][%s][%s][SvRequestMasterClientStartControl]",
-			TOS_Debug::GetEnv(), TOS_Debug::GetAct(3));
+		const auto pSlaveActor = g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(params.slaveId);
+		const auto pMasterActor = g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(params.masterId);
 
-		const auto pSlaveEntity = gEnv->pEntitySystem->GetEntity(params.slaveId);
-		const auto pMasterEntity = gEnv->pEntitySystem->GetEntity(params.masterId);
-		assert(pSlaveEntity);
-		assert(pMasterEntity);
+		assert(pSlaveActor);
+		assert(pMasterActor);
+
+		if (!pSlaveActor || !pMasterActor)
+			return true;
+
+		// Защита от дурака :)
+		const auto slaveIsPlayer = pSlaveActor->IsPlayer();
+		const auto masterIsPlayer = pMasterActor->IsPlayer();
+
+		CRY_ASSERT_MESSAGE(!slaveIsPlayer, "[SvRequestMasterClientStartControl] by design at 21/10/2023 the real player cannot be a slave");
+		CRY_ASSERT_MESSAGE(masterIsPlayer, "[SvRequestMasterClientStartControl] by design at 21/10/2023 the master only can be a real player");
+
+		if (slaveIsPlayer || !masterIsPlayer)
+			return true;
 
 		// В данном случае сервер не знает какому мастеру нужно прописать полученного раба.
 		// Поэтому мы передаём серверу информацию как о рабе, так и о мастере.
-		g_pTOSGame->GetMasterModule()->SetSlave(pMasterEntity, pSlaveEntity);
+		g_pTOSGame->GetMasterModule()->SetSlave(pMasterActor->GetEntity(), pSlaveActor->GetEntity());
+
+		CryLogAlways("[C++][%s][%s][SvRequestMasterClientStartControl]",
+			TOS_Debug::GetEnv(), TOS_Debug::GetAct(3));
 	}
 
 	return true;

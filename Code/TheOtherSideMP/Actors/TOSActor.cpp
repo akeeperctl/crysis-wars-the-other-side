@@ -15,8 +15,7 @@
 
 CTOSActor::CTOSActor() : 
 	//m_filteredDeltaMovement(ZERO),
-	m_slaveEntityId(0),
-	m_masterEntityId(0)
+	m_isSlave(false)
 {
 }
 
@@ -35,6 +34,7 @@ void CTOSActor::PostInit(IGameObject* pGameObject)
 	CActor::PostInit(pGameObject);
 
 	m_netBodyInfo.Reset();
+	m_slaveStats = STOSSlaveStats();
 
 	// Факт: если оружие выдаётся на сервере, оно выдаётся и на всех клиентах тоже.
 	if (gEnv->bServer && gEnv->bMultiplayer && !IsPlayer())
@@ -98,35 +98,35 @@ void CTOSActor::SelectNextItem(const int direction, const bool keepHistory, cons
 {
 	CActor::SelectNextItem(direction, keepHistory, category);
 
-	GetGameObject()->ChangedNetworkState(TOS_NET::CLIENT_ASPECT_CURRENT_ITEM);
+	GetGameObject()->ChangedNetworkState(TOS_NET::CLIENT_ASPECT_STATIC);
 }
 
 void CTOSActor::HolsterItem(const bool holster)
 {
 	CActor::HolsterItem(holster);
 
-	GetGameObject()->ChangedNetworkState(TOS_NET::CLIENT_ASPECT_CURRENT_ITEM);
+	GetGameObject()->ChangedNetworkState(TOS_NET::CLIENT_ASPECT_STATIC);
 }
 
 void CTOSActor::SelectLastItem(const bool keepHistory, const bool forceNext /* = false */)
 {
 	CActor::SelectLastItem(keepHistory, forceNext);
 
-	GetGameObject()->ChangedNetworkState(TOS_NET::CLIENT_ASPECT_CURRENT_ITEM);
+	GetGameObject()->ChangedNetworkState(TOS_NET::CLIENT_ASPECT_STATIC);
 }
 
 void CTOSActor::SelectItemByName(const char* name, const bool keepHistory)
 {
 	CActor::SelectItemByName(name, keepHistory);
 
-	GetGameObject()->ChangedNetworkState(TOS_NET::CLIENT_ASPECT_CURRENT_ITEM);
+	GetGameObject()->ChangedNetworkState(TOS_NET::CLIENT_ASPECT_STATIC);
 }
 
 void CTOSActor::SelectItem(const EntityId itemId, const bool keepHistory)
 {
 	CActor::SelectItem(itemId, keepHistory);
 
-	GetGameObject()->ChangedNetworkState(TOS_NET::CLIENT_ASPECT_CURRENT_ITEM);
+	GetGameObject()->ChangedNetworkState(TOS_NET::CLIENT_ASPECT_STATIC);
 }
 
 
@@ -193,17 +193,6 @@ void CTOSActor::AnimationEvent(ICharacterInstance* pCharacter, const AnimEventIn
 	CActor::AnimationEvent(pCharacter, event);
 }
 
-void CTOSActor::SetMasterEntityId(const EntityId id)
-{
-	//gEnv->pRenderer->GetFrameID();
-	m_masterEntityId = id;
-}
-
-void CTOSActor::SetSlaveEntityId(const EntityId id)
-{
-	m_slaveEntityId = id;
-}
-
 //void CTOSActor::QueueAnimationEvent(const SQueuedAnimEvent& sEvent)
 //{
 //	if (!gEnv->bServer || gEnv->bEditor)
@@ -257,7 +246,9 @@ void CTOSActor::OnAGSetInput(bool bSucceeded, IAnimationGraphState::InputID id, 
 
 void CTOSActor::OnAGSetInput(const bool bSucceeded, const IAnimationGraphState::InputID id, const char* value, TAnimationGraphQueryID* pQueryID)
 {
-	//TODO: Не уверен, что это вообще работает
+	//TODO:
+	//20/10/2023 Не уверен, что это вообще работает
+	//21/10/2023 Брейкпоинты так и не вызывались
 
 	IAnimationGraphState* pState = m_pAnimatedCharacter ? m_pAnimatedCharacter->GetAnimationGraphState() : nullptr;
 	if (bSucceeded && gEnv->bServer && !this->IsPlayer())
@@ -281,6 +272,30 @@ void CTOSActor::OnAGSetInput(const bool bSucceeded, const IAnimationGraphState::
 		//GetAnimationGraphState()->GetInputName(id);
 	}
 
+}
+
+bool CTOSActor::IsLocalSlave() const
+{
+	const auto pMC = g_pTOSGame->GetMasterModule()->GetMasterClient();
+	if (!pMC)
+		return false;
+
+	return pMC->GetSlaveEntity() == GetEntity();
+}
+
+void CTOSActor::NetMarkMeSlave(const bool slave) const
+{
+	CRY_ASSERT_MESSAGE(!IsPlayer(), "[MarkMeSlave] by design at 21/10/2023 the player cannot be a slave");
+	if (IsPlayer())
+		return;
+
+	if (gEnv->bClient)
+	{
+		NetMarkMeAsSlaveParams params;
+		params.slave = true;
+
+		GetGameObject()->InvokeRMI(SvRequestMarkMeAsSlave(), params, eRMI_ToServer);
+	}
 }
 
 //const Vec3& CTOSActor::FilterDeltaMovement(const Vec3& deltaMov)
@@ -352,6 +367,37 @@ IMPLEMENT_RMI(CTOSActor, ClPlayAnimation)
 	//	TOS_Debug::GetAct(3), 
 	//	__FUNCTION__, 
 	//	mode.c_str(), params.animation.c_str());
+
+	return true;
+}
+
+IMPLEMENT_RMI(CTOSActor, SvRequestMarkMeAsSlave)
+{
+	// Описываем здесь всё, что будет выполняться на сервере
+
+	m_isSlave = params.slave;
+	GetGameObject()->InvokeRMI(ClMarkMeAsSlave(), params, eRMI_ToAllClients);
+
+	CryLogAlways("[C++][%s][%s][%s] mark as slave = %i",
+		TOS_Debug::GetEnv(),
+		TOS_Debug::GetAct(3),
+		__FUNCTION__,
+		params.slave);
+
+	return true;
+}
+
+IMPLEMENT_RMI(CTOSActor, ClMarkMeAsSlave)
+{
+	// Описываем здесь всё, что будет выполняться на клиенте
+
+	m_isSlave = params.slave;
+
+	CryLogAlways("[C++][%s][%s][%s] mark as slave = %i", 
+		TOS_Debug::GetEnv(), 
+		TOS_Debug::GetAct(3), 
+		__FUNCTION__, 
+		params.slave);
 
 	return true;
 }

@@ -88,10 +88,12 @@ public:
 	{
 		SMeleeInfo()
 			: targetId(0),
+			targetPos(ZERO),
 			rayHit(),
 			hitCount(0) {}
 
 		EntityId targetId;
+		Vec3 targetPos;
 		ray_hit rayHit;
 		int hitCount;
 	};
@@ -99,14 +101,14 @@ public:
 	struct SLookFireInfo
 	{
 		SLookFireInfo()
-			: fireTarget(ZERO),
+			: fireTargetPos(ZERO),
 			fireTargetId(ZERO),
-			lookTarget(ZERO),
+			lookTargetPos(ZERO),
 			rayHit() {}
 
-		Vec3 fireTarget;
+		Vec3 fireTargetPos;
 		EntityId fireTargetId;
-		Vec3 lookTarget;
+		Vec3 lookTargetPos;
 		ray_hit rayHit;
 	};
 
@@ -118,7 +120,7 @@ public:
 
 private:
 	bool OnActionAttack(const CTOSActor* pActor, const ActionId& actionId, int activationMode, float value);
-	bool OnActionMelee(CTOSActor* pActor, const ActionId& actionId, int activationMode, float value);
+	bool OnActionSpecial(CTOSActor* pActor, const ActionId& actionId, int activationMode, float value);
 	bool OnActionMoveForward(CTOSActor* pActor, const ActionId& actionId, int activationMode, float value);
 	bool OnActionMoveBack(CTOSActor* pActor,const ActionId& actionId, int activationMode, float value);
 	bool OnActionMoveLeft(CTOSActor* pActor,const ActionId& actionId, int activationMode, float value);
@@ -178,12 +180,12 @@ public:
 
 private:
 	void ProcessMeleeDamage() const;
-	void UpdateMeleeTarget(const IEntity* pSlaveEntity);
-	void UpdateCrosshair(const IEntity* pSlaveEntity, const IActor* pLocalDudeActor);
-	void UpdateLookFire(const IEntity* pSlaveEntity);
+	void UpdateMeleeTarget(const IEntity* pSlaveEntity, const int rayFlags, const unsigned entityFlags, const SMovementState& state);
+	void UpdateCrosshair(const IEntity* pSlaveEntity, const IActor* pLocalDudeActor, int rayFlags, unsigned entityFlags);
+	void UpdateLookFire(const IEntity* pSlaveEntity, const int rayFlags, const unsigned entityFlags, const SMovementState& state);
 
 	CWeapon* GetCurrentWeapon(const IActor* pActor) const;
-
+	bool     IsFriendlyEntity(IEntity* pEntity, IEntity* pTarget) const;
 
 	/**
 	 * \brief Подготовить локального персонажа перед началом/прекращением управления рабом

@@ -26,8 +26,10 @@
 #include "HUD/HUDCrosshair.h"
 
 #include "TheOtherSideMP/Actors/Aliens/TOSAlien.h"
+#include "TheOtherSideMP/Control/ControlSystem.h"
 #include "TheOtherSideMP/HUD/TOSCrosshair.h"
 #include "TheOtherSideMP/Helpers/TOS_AI.h"
+#include "TheOtherSideMP/Helpers/TOS_NET.h"
 
 #define ASSING_ACTION(pActor, actionId, checkActionId, func)\
 if ((actionId) == (checkActionId))\
@@ -124,7 +126,7 @@ void CTOSMasterClient::OnAction(const ActionId& action, const int activationMode
         return;
 
 	ASSING_ACTION(pSlaveActor, action, rGA.attack1, OnActionAttack);
-	ASSING_ACTION(pSlaveActor, action, rGA.special, OnActionMelee);
+	ASSING_ACTION(pSlaveActor, action, rGA.special, OnActionSpecial);// it is melee
 	ASSING_ACTION(pSlaveActor, action, rGA.moveforward, OnActionMoveForward);
 	ASSING_ACTION(pSlaveActor, action, rGA.moveback, OnActionMoveBack);
 	ASSING_ACTION(pSlaveActor, action, rGA.moveleft, OnActionMoveLeft);
@@ -155,9 +157,24 @@ bool CTOSMasterClient::OnActionAttack(const CTOSActor* pActor, const ActionId& a
     return true;
 }
 
-bool CTOSMasterClient::OnActionMelee(CTOSActor* pActor, const ActionId& actionId, int activationMode, float value)
+bool CTOSMasterClient::OnActionSpecial(CTOSActor* pActor, const ActionId& actionId, int activationMode, float value)
 {
-	pActor->PlayAction("meleeAttack", nullptr, false);
+	const auto pInventory = pActor->GetInventory();
+	CRY_ASSERT_MESSAGE(pInventory, "[OnActionSpecial] pInventory pointer is NULL");
+	if (!pInventory)
+		return false;
+
+	const auto pCurItem = g_pGame->GetIGameFramework()->GetIItemSystem()->GetItem(pInventory->GetCurrentItem());
+	CRY_ASSERT_MESSAGE(pCurItem, "[OnActionSpecial] pCurItem pointer is NULL");
+	if (!pCurItem)
+		return false;
+
+	IWeapon* pWeapon = pCurItem->GetIWeapon();  // NOLINT(clang-diagnostic-misleading-indentation)
+	CRY_ASSERT_MESSAGE(pWeapon, "[OnActionSpecial] pWeapon pointer is NULL");
+	if (!pWeapon)
+		return false;
+	
+	pWeapon->OnAction(m_pSlaveEntity->GetId(), actionId, activationMode, value);
 
     return true;
 }
@@ -236,8 +253,8 @@ void CTOSMasterClient::PrePhysicsUpdate()
     //m_movementRequest.SetLookTarget(currentState.eyePosition + m_cameraInfo.viewDir);
     //m_movementRequest.SetFireTarget(currentState.weaponPosition + m_cameraInfo.viewDir);
 
-	m_movementRequest.SetLookTarget(m_lookfireInfo.lookTarget);
-    m_movementRequest.SetFireTarget(m_lookfireInfo.fireTarget);
+	m_movementRequest.SetLookTarget(m_lookfireInfo.lookTargetPos);
+    m_movementRequest.SetFireTarget(m_lookfireInfo.fireTargetPos);
 
 	pController->RequestMovement(m_movementRequest);
 }
@@ -246,42 +263,70 @@ void CTOSMasterClient::Update(float frametime)
 {
 	//m_pWorldCamera = &gEnv->pSystem->GetViewCamera();
     //CRY_ASSERT_MESSAGE(m_pWorldCamera, "[CTOSMasterClient] m_pWorldCamera pointer is null");
+
 	const auto cam = gEnv->pSystem->GetViewCamera();
 	m_cameraInfo.viewDir = cam.GetMatrix().GetColumn1() * 1000.0f;
 	m_cameraInfo.worldPos = cam.GetMatrix().GetTranslation();
     m_cameraInfo.lookPointPos = m_cameraInfo.worldPos + m_cameraInfo.viewDir;
 
-	//red
-    UpdateCrosshair(m_pSlaveEntity, m_pLocalDude);
-	//green
-    UpdateMeleeTarget(m_pSlaveEntity);
-	//blue
-	UpdateLookFire(m_pSlaveEntity);///FIXME: там много хуйни
+	constexpr auto            rayFlags = (COLLISION_RAY_PIERCABILITY & rwi_pierceability_mask);
+	static constexpr unsigned entityFlags =
+		ent_living |
+		ent_rigid |
+		ent_static |
+		ent_terrain |
+		ent_sleeping_rigid |
+		ent_independent;
 
+    UpdateCrosshair(m_pSlaveEntity, m_pLocalDude, rayFlags, entityFlags);
+
+	const auto pSlaveActor = GetSlaveActor();
+	if (!pSlaveActor)
+		return;
+
+	const auto pMovementController = pSlaveActor->GetMovementController();
+	if (!pMovementController)
+		return;
+
+	SMovementState state;
+	pMovementController->GetMovementState(state);
+
+    UpdateMeleeTarget(m_pSlaveEntity, rayFlags, entityFlags, state);
+	UpdateLookFire(m_pSlaveEntity, rayFlags, entityFlags, state);///FIXME: там много хуйни
+
+	const auto pFireTargetEntity = TOS_GET_ENTITY(m_lookfireInfo.fireTargetId);
+	const auto pMeleeTargetEntity = TOS_GET_ENTITY(m_meleeInfo.targetId);
+	const auto pCrosshairTargetEntity = TOS_GET_ENTITY(m_crosshairInfo.targetId);
+
+	if (IsFriendlyEntity(pFireTargetEntity, m_pSlaveEntity) ||
+		IsFriendlyEntity(pMeleeTargetEntity, m_pSlaveEntity) ||
+		IsFriendlyEntity(pCrosshairTargetEntity, m_pSlaveEntity))
+	{
+		pSlaveActor->GetSlaveStats().lookAtFriend = true;
+	}
+	else
+	{
+		pSlaveActor->GetSlaveStats().lookAtFriend = false;
+	}
+
+	//Debug
 	IPersistantDebug* pPD = gEnv->pGame->GetIGameFramework()->GetIPersistantDebug();
 	pPD->Begin(string("MasterClient") + (m_pSlaveEntity ? m_pSlaveEntity->GetName() : "<undefined>"), true);
 
-	pPD->AddSphere(m_crosshairInfo.worldPos, 0.5f, ColorF(1, 0, 0, 1), 1.0f);
-	pPD->AddSphere(m_meleeInfo.rayHit.pt, 0.5f, ColorF(0, 1, 0, 1), 1.0f);
-	pPD->AddSphere(m_lookfireInfo.lookTarget, 0.5f, ColorF(0, 0, 1, 1), 1.0f);
+	auto red = ColorF(1, 0, 0, 1);
+	auto green = ColorF(0, 1, 0, 1);
+	auto blue = ColorF(0, 0, 1, 1);
 
+	pPD->AddSphere(m_crosshairInfo.worldPos, 0.25f, red, 1.0f);
+	pPD->AddSphere(m_meleeInfo.targetPos, 0.25f, green, 1.0f);
+	pPD->AddSphere(m_lookfireInfo.lookTargetPos, 0.25f, blue, 1.0f);
 
 	//float color[] = { 1,1,1,1 };
 	//gEnv->pRenderer->Draw2dLabel(100, 100, 1.3f, color, false, "jumpCount = %i", pSlaveActor->GetSlaveStats().jumpCount);
 }
 
-void CTOSMasterClient::UpdateCrosshair(const IEntity* pSlaveEntity, const IActor* pLocalDudeActor)
+void CTOSMasterClient::UpdateCrosshair(const IEntity* pSlaveEntity, const IActor* pLocalDudeActor, int rayFlags, unsigned entityFlags)
 {
-	// Get crosshair entity id
-	static constexpr int rayFlags = (COLLISION_RAY_PIERCABILITY & rwi_pierceability_mask);
-	static constexpr unsigned entityFlags = 
-        ent_living | 
-        ent_rigid | 
-        ent_static | 
-        ent_terrain | 
-        ent_sleeping_rigid |
-		ent_independent;
-
 	//Physics entity
 	IPhysicalEntity* pDudePhysics = pLocalDudeActor->GetEntity()->GetPhysics();
 	IPhysicalEntity* pPhys = (pSlaveEntity != nullptr) ? pSlaveEntity->GetPhysics() : pDudePhysics;
@@ -311,22 +356,8 @@ void CTOSMasterClient::UpdateCrosshair(const IEntity* pSlaveEntity, const IActor
 	}
 }
 
-void CTOSMasterClient::UpdateLookFire(const IEntity* pSlaveEntity)
+void CTOSMasterClient::UpdateLookFire(const IEntity* pSlaveEntity, const int rayFlags, const unsigned entityFlags, const SMovementState& state)
 {
-	constexpr int rayFlags = (COLLISION_RAY_PIERCABILITY & rwi_pierceability_mask);
-	static constexpr unsigned entityFlags = ent_living | ent_rigid | ent_static | ent_terrain | ent_sleeping_rigid |
-		ent_independent;
-
-	const auto pSlaveActor = GetSlaveActor();
-	if (!pSlaveActor)
-		return;
-
-	const auto pController = pSlaveActor->GetMovementController();
-	assert(pController);
-
-	SMovementState state;
-	pController->GetMovementState(state);
-
 	Vec3 crosshairDir(m_crosshairInfo.worldPos - state.weaponPosition);
 	crosshairDir = crosshairDir.GetNormalizedSafe() * 1000;
 
@@ -355,12 +386,44 @@ void CTOSMasterClient::UpdateLookFire(const IEntity* pSlaveEntity)
 		m_lookfireInfo.fireTargetId = NULL;
 
 	if (m_lookfireInfo.rayHit.dist > 8.50f || pTargetEntity)
-		m_lookfireInfo.fireTarget = m_crosshairInfo.rayHit.pt;
+		m_lookfireInfo.fireTargetPos = m_crosshairInfo.rayHit.pt;
 	else
-		m_lookfireInfo.fireTarget = m_cameraInfo.lookPointPos;
+		m_lookfireInfo.fireTargetPos = m_cameraInfo.lookPointPos;
 
 	// Пусть персонаж будет смотреть туда куда стреляет.
-	m_lookfireInfo.lookTarget = m_lookfireInfo.fireTarget;
+	m_lookfireInfo.lookTargetPos = m_lookfireInfo.fireTargetPos;
+}
+
+void CTOSMasterClient::UpdateMeleeTarget(const IEntity* pSlaveEntity, const int rayFlags, const unsigned entityFlags, const SMovementState& state)
+{
+	if (!pSlaveEntity)
+		return;
+
+	const Vec3 toCrosshairDir(m_crosshairInfo.worldPos - state.weaponPosition);
+
+	m_meleeInfo.hitCount = gEnv->pPhysicalWorld->RayWorldIntersection(state.weaponPosition, toCrosshairDir.GetNormalizedSafe() * 3, entityFlags, rayFlags, &m_meleeInfo.rayHit, 1, pSlaveEntity->GetPhysics());
+
+	if (m_meleeInfo.hitCount != 0)
+	{
+		m_meleeInfo.targetPos = m_meleeInfo.rayHit.pt;
+
+		if (m_meleeInfo.rayHit.pCollider)
+		{
+			const IEntity* pTargetEntity = gEnv->pEntitySystem->GetEntityFromPhysics(m_meleeInfo.rayHit.pCollider);
+			if (pTargetEntity)
+			{
+				m_meleeInfo.targetId = pTargetEntity->GetId();
+			}
+
+			if (m_meleeInfo.rayHit.bTerrain)
+				m_meleeInfo.targetId = 0;
+		}
+	}
+	else
+	{
+		m_meleeInfo.targetPos = m_cameraInfo.lookPointPos;
+		m_meleeInfo.targetId = 0;
+	}
 }
 
 CWeapon* CTOSMasterClient::GetCurrentWeapon(const IActor* pActor) const
@@ -388,43 +451,45 @@ CWeapon* CTOSMasterClient::GetCurrentWeapon(const IActor* pActor) const
 	return pWeapon;
 }
 
-void CTOSMasterClient::UpdateMeleeTarget(const IEntity* pSlaveEntity)
+bool CTOSMasterClient::IsFriendlyEntity(IEntity* pEntity, IEntity* pTarget) const
 {
-    if (!pSlaveEntity)
-        return;
+	//TODO: 10/21/2023, 08:55 Сделать общее хранилище, где и клиент и сервер будут знать фракцию ИИ объекта
 
-	constexpr auto            rayFlags = (COLLISION_RAY_PIERCABILITY & rwi_pierceability_mask);
-	static constexpr unsigned entityFlags = 
-        ent_living | 
-        ent_rigid | 
-        ent_static | 
-        ent_terrain | 
-        ent_sleeping_rigid |
-		ent_independent;
-
-	SMovementState state;
-	GetSlaveActor()->GetMovementController()->GetMovementState(state);
-
-	const Vec3 weaponDir(m_crosshairInfo.worldPos - state.weaponPosition);
-
-	m_meleeInfo.hitCount = gEnv->pPhysicalWorld->RayWorldIntersection(state.weaponPosition, weaponDir.GetNormalizedSafe() * 3, entityFlags, rayFlags, &m_meleeInfo.rayHit, 1,pSlaveEntity->GetPhysics());
-
-	if (m_meleeInfo.hitCount != 0)
+	//Only for actors (not vehicles)
+	if (pEntity && pEntity->GetAI() && pTarget)
 	{
-		if (m_meleeInfo.rayHit.pCollider)
-		{
-			const IEntity* pTargetEntity = gEnv->pEntitySystem->GetEntityFromPhysics(m_meleeInfo.rayHit.pCollider);
-			if (pTargetEntity)
-			{
-				m_meleeInfo.targetId = pTargetEntity->GetId();
-			}
+		if (!pEntity->GetAI()->IsHostile(pTarget->GetAI(), false))
+			return true;
+		return false;
+	}
 
-			if (m_meleeInfo.rayHit.bTerrain)
-				m_meleeInfo.targetId = 0;
+	//Special case (Animated objects), check for script table value "bFriendly"
+	//Check script table (maybe is not possible to grab)
+	if (pEntity)
+	{
+		SmartScriptTable props;
+		IScriptTable* pScriptTable = pEntity->GetScriptTable();
+		if (!pScriptTable || !pScriptTable->GetValue("Properties", props))
+			return false;
+
+		int isFriendly = 0;
+		if (props->GetValue("bNoFriendlyFire", isFriendly) && isFriendly != 0)
+			return true;
+	}
+
+	//for vehicles
+	if (pEntity && pEntity->GetId())
+	{
+		IVehicle* pVehicle = gEnv->pGame->GetIGameFramework()->GetIVehicleSystem()->GetVehicle(pEntity->GetId());
+		if (pVehicle)
+		{
+			if (pTarget && pVehicle->HasFriendlyPassenger(pTarget))
+				return true;
 		}
 	}
-	else
-		m_meleeInfo.targetId = 0;
+
+	return false;
+	
 }
 
 void CTOSMasterClient::AnimationEvent(IEntity* pEntity, ICharacterInstance* pCharacter, const AnimEventInstance& event)
@@ -439,7 +504,7 @@ void CTOSMasterClient::AnimationEvent(IEntity* pEntity, ICharacterInstance* pCha
 
     if (eventName == "MeleeDamage")
     {
-        ProcessMeleeDamage();
+        //ProcessMeleeDamage();
     }
 }
 
@@ -469,18 +534,11 @@ void CTOSMasterClient::ProcessMeleeDamage() const
 
 	if (slaveCls == "Trooper")
 	{
-		static Vec3 meleeTargetPos(0, 0, 0); // Trooper melee target position
-		if (m_meleeInfo.hitCount > 0)
-			meleeTargetPos = m_meleeInfo.rayHit.pt;
-		else
-			meleeTargetPos = m_cameraInfo.lookPointPos;
-
-
 		const Vec3 slavePos = m_pSlaveEntity->GetWorldPos();
-		const Vec3 targetDir(meleeTargetPos - slavePos);
+		const Vec3 toTargetDir(m_meleeInfo.targetPos - slavePos);
 		constexpr float attackRadius = 2.5f;
 
-		const float dist = targetDir.GetLength();
+		const float dist = toTargetDir.GetLength();
 		if (dist < attackRadius)
 		{
 			//Vec3 dirx = GetEntity()->GetWorldTM().GetColumn(0);
@@ -533,15 +591,16 @@ void CTOSMasterClient::ProcessMeleeDamage() const
 			//}
 
 			//For melee point impulse
-			IFireMode* meleeFM = pWeapon->GetMeleeFireMode();
-			if (meleeFM)
-				meleeFM->NetShootEx(meleeTargetPos, m_cameraInfo.viewDir, Vec3(0, 0, 0), Vec3(0, 0, 0), 0, 0);
+			//IFireMode* meleeFM = pWeapon->GetMeleeFireMode();
+			//if (meleeFM)
+				//meleeFM->NetShootEx(m_meleeInfo.targetPos, m_cameraInfo.viewDir, Vec3(0, 0, 0), Vec3(0, 0, 0), 0, 0);
 
 			//For dealing melee damage to target
 			//g_pGame->GetGameRules()->ClientHit(hit);
 
 			//Попробуем по-другому
-			pWeapon->MeleeAttack(); //TODO: недобавляется melee firemode у оружия трупера
+			//pWeapon->RequestMeleeAttack(true, m_meleeInfo.targetPos, m_cameraInfo.viewDir, 0); //TODO: не добавляется melee firemode у оружия трупера
+
 
 			//SNetCamShakeParams params;
 			//params.angle = 45;
@@ -579,6 +638,9 @@ void CTOSMasterClient::StartControl(IEntity* pEntity, const uint dudeFlags /*= 0
     SetSlaveEntity(pEntity, pEntity->GetClass()->GetName());
 
 
+
+	// Событие вызывает RMI, которая отправляется на сервер
+	// Смотреть CTOSMasterModule::OnExtraGameplayEvent()
 	TOS_RECORD_EVENT(m_pSlaveEntity->GetId(), STOSGameEvent(eEGE_MasterClientStartControl, "", true));
 }
 
@@ -595,6 +657,10 @@ bool CTOSMasterClient::SetSlaveEntity(IEntity* pEntity, const char* cls)
 	assert(pEntity);
 	m_pSlaveEntity = pEntity;
 
+	const auto pSlaveActor = GetSlaveActor();
+	assert(pSlaveActor);
+
+	pSlaveActor->NetMarkMeSlave(true);
 
 	TOS_RECORD_EVENT(m_pSlaveEntity->GetId(), STOSGameEvent(eEGE_MasterClientSetSlave, "", true));
 	return true;
@@ -605,6 +671,15 @@ void CTOSMasterClient::ClearSlaveEntity()
 	m_pSlaveEntity = nullptr;
 
 	TOS_RECORD_EVENT(0, STOSGameEvent(eEGE_MasterClientClearSlave, "", true));
+
+	const auto pSlaveActor = GetSlaveActor();
+	if (!pSlaveActor)
+		return;
+
+	// 21/10/2023, 14:40
+	// В сетевой игре раб будет удаляться только при переходе в режим зрителя или выходе мастера из игры.
+	// Во всех остальных случаях раб удаляться не будет.
+	pSlaveActor->NetMarkMeSlave(false);
 }
 
 void CTOSMasterClient::UpdateView(SViewParams& viewParams) const

@@ -3,10 +3,10 @@
 
 namespace TOS_NET
 {
-	static constexpr EEntityAspects CLIENT_ASPECT_CURRENT_ITEM = eEA_GameClientStatic;
-	static constexpr EEntityAspects CLIENT_ASPECT_INPUT = eEA_GameClientDynamic;
+	static constexpr EEntityAspects CLIENT_ASPECT_STATIC = eEA_GameClientStatic;
+	static constexpr EEntityAspects CLIENT_ASPECT_DYNAMIC = eEA_GameClientDynamic;
 
-	static constexpr EEntityAspects SERVER_ASPECT_AI_INPUT = eEA_GameServerDynamic; // AI
-	static constexpr EEntityAspects SERVER_ASPECT_HEALTH = eEA_GameServerStatic;
+	static constexpr EEntityAspects SERVER_ASPECT_DYNAMIC = eEA_GameServerDynamic; // AI
+	static constexpr EEntityAspects SERVER_ASPECT_STATIC = eEA_GameServerStatic;
 
 }

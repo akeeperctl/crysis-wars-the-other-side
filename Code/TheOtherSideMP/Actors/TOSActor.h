@@ -6,7 +6,9 @@
 struct STOSSlaveStats
 {
 	STOSSlaveStats()
-		: jumpCount(0) { }
+		: lookAtFriend(false),
+		jumpCount(0)
+	{ }
 
 	//TODO: 10/15/2023, 20:26 нужно добавить механики
 	//CCoherentValue<bool> canShoot;
@@ -15,6 +17,8 @@ struct STOSSlaveStats
 	//CCoherentValue<bool> isAiming;
 	//CCoherentValue<bool> isShooting;
 	//CCoherentValue<bool> isUsingBinocular;
+
+	CCoherentValue<bool> lookAtFriend;
 
 	uint jumpCount;
 };
@@ -35,6 +39,23 @@ struct NetPlayAnimationParams
 	{
 		ser.Value("mode", mode, 'ui2');
 		ser.Value("animation", animation, 'stab');
+	}
+};
+
+struct NetMarkMeAsSlaveParams
+{
+	NetMarkMeAsSlaveParams()
+		: slave(false) {};
+
+	explicit NetMarkMeAsSlaveParams(const bool _slave) :
+		slave(_slave)
+	{}
+
+	bool slave;
+
+	void SerializeWith(TSerialize ser)
+	{
+		ser.Value("slave", slave, 'bool');
 	}
 };
 
@@ -169,15 +190,12 @@ public:
 	virtual Matrix33 GetBaseMtx() { return {}; }
 	virtual Matrix33 GetEyeMtx() { return {}; }
 
-	void SetMasterEntityId(EntityId id);
-	EntityId GetMasterEntityId() const {return m_masterEntityId;}
-	void SetSlaveEntityId(EntityId id);
-	EntityId GetSlaveEntityId() const { return m_slaveEntityId;}
+
 
 	//Новые функции сюда
 	//const Vec3& FilterDeltaMovement(const Vec3& deltaMov);
 
-	const STOSSlaveStats& ReadSlaveStats() const { return m_slaveStats; } ///< Считать статистику раба. Изменять нельзя.
+	//const STOSSlaveStats& ReadSlaveStats() const { return m_slaveStats; } ///< Считать статистику раба. Изменять нельзя.
 
 	// Скопировано из CActor в Crysis Co-op
 	//struct SQueuedAnimEvent
@@ -204,22 +222,26 @@ public:
 	void OnAGSetInput(bool bSucceeded, IAnimationGraphState::InputID id, const char* value, TAnimationGraphQueryID* pQueryID);
 	// ~Скопировано из CActor в Crysis Co-op
 
+	STOSSlaveStats& GetSlaveStats() { return m_slaveStats; } ///< Получить статистику раба. Изменять можно.
+	bool IsSlave() const {return m_isSlave;}
+	bool IsLocalSlave() const; ///< проверка на локальной машине является ли актёр рабом 
 private:
 
 	//std::list<SQueuedAnimEvent> m_AnimEventQueue;
 	string m_sLastNetworkedAnim;
+	bool m_isSlave;///< сериализованное по сети через RMI значение, является ли актёр рабом
+
+	void NetMarkMeSlave(bool slave) const;///< Зафиксировать на всех клиентах и сервере, что данный актёр стал рабом. \n Вызывать только с клиента!
 
 	DECLARE_SERVER_RMI_NOATTACH(SvRequestPlayAnimation, NetPlayAnimationParams, eNRT_ReliableOrdered);
 	DECLARE_CLIENT_RMI_NOATTACH(ClPlayAnimation, NetPlayAnimationParams, eNRT_ReliableOrdered);
 
+	DECLARE_SERVER_RMI_NOATTACH(SvRequestMarkMeAsSlave, NetMarkMeAsSlaveParams, eNRT_ReliableOrdered);
+	DECLARE_CLIENT_RMI_NOATTACH(ClMarkMeAsSlave, NetMarkMeAsSlaveParams, eNRT_ReliableOrdered);
+
 protected:
-	STOSSlaveStats& GetSlaveStats() { return m_slaveStats; } ///< Получить статистику раба. Изменять можно.
 
 	STOSSlaveStats m_slaveStats;
 	//Vec3 m_filteredDeltaMovement;
 	STOSNetBodyInfo m_netBodyInfo;///< Информация о состоянии тела актёра, передаваемая по сети
-
-private:
-	EntityId m_slaveEntityId;
-	EntityId m_masterEntityId;
 };
