@@ -362,7 +362,10 @@ healthchecksdb
 /Code/TheOtherSideMP/Control/*
 /SPCode
 /Examples
-/Скриншоты логов
+/Log Screenshots
+/Gif
+
+!/Game/Scripts/
 
 
 #Bin trash files from code compiling
