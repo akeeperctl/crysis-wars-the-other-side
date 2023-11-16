@@ -27,11 +27,14 @@ void CTOSMasterModule::InitCVars(IConsole* pConsole)
 		"It is necessary so that the slave cannot appear before the master respawns");
 
 	// Не используется, да и как показала практика, что с 1.0, что с 0.0 отрицательного влияния не наблюдается
-	pConsole->Register("tos_sv_MasterStartControlDelay", &tos_sv_MasterStartControlDelay, 0.0f, VF_CHEAT,
+	pConsole->Register("tos_sv_mc_StartControlDelay", &tos_sv_mc_StartControlDelay, 0.0f, VF_CHEAT,
 		"Delay in seconds before master starts control a slave.");
 
 	pConsole->Register("tos_sv_pl_inputAccel", &tos_sv_pl_inputAccel, 30.0f, VF_CHEAT,
 		"Movement input acceleration");
+
+	pConsole->Register("tos_sv_mc_LookDebugDraw", &tos_sv_mc_LookDebugDraw, 1, VF_CHEAT,
+			"Display look debug of the controlled character");
 
 }
 

@@ -1,13 +1,11 @@
 #include "StdAfx.h"
-#include "MasterSynchronizer.h"
-
 #include "MasterModule.h"
 
 #include "Game.h"
 #include "GameRules.h"
 #include "IEntitySystem.h"
 #include "MasterClient.h"
-
+#include "MasterSynchronizer.h"
 
 #include "../../TOSGame.h"
 #include "../../TOSGameEventRecorder.h"
@@ -16,26 +14,24 @@
 
 #include "../../../Helpers/TOS_Debug.h"
 
-#include "TheOtherSideMP/Game/TOSGameCvars.h"
 #include "TheOtherSideMP/Helpers/TOS_AI.h"
 #include "TheOtherSideMP/Helpers/TOS_Cache.h"
 #include "TheOtherSideMP/Helpers/TOS_Entity.h"
 
-
 CTOSMasterModule::CTOSMasterModule()
-	: tos_cl_JoinAsMaster(0),
+	: tos_sv_mc_LookDebugDraw(0),
+	tos_cl_JoinAsMaster(0),
 	tos_cl_SlaveEntityClass(nullptr),
 	tos_sv_SlaveSpawnDelay(0),
-	tos_sv_MasterStartControlDelay(0),
+	tos_sv_mc_StartControlDelay(0),
+	tos_sv_pl_inputAccel(0),
 	m_pLocalMasterClient(nullptr)
 {
 	m_masters.clear();
 	m_scheduledTakeControls.clear();
 }
 
-CTOSMasterModule::~CTOSMasterModule()
-{
-}
+CTOSMasterModule::~CTOSMasterModule() = default;
 
 void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event)
 {

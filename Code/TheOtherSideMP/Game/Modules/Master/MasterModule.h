@@ -183,10 +183,16 @@ private:
 public:
 
 	//Console variables
+	// cl - client
+	// sv - server
+	// mc - master client
+	// pl - player
+
+	int    tos_sv_mc_LookDebugDraw;
 	int    tos_cl_JoinAsMaster;
 	ICVar* tos_cl_SlaveEntityClass;
 	float  tos_sv_SlaveSpawnDelay;
-	float  tos_sv_MasterStartControlDelay;
+	float  tos_sv_mc_StartControlDelay;
 	float  tos_sv_pl_inputAccel;
 
 private:

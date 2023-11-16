@@ -292,7 +292,7 @@ void CTOSMasterClient::Update(float frametime)
 	pMovementController->GetMovementState(state);
 
     UpdateMeleeTarget(m_pSlaveEntity, rayFlags, entityFlags, state);
-	UpdateLookFire(m_pSlaveEntity, rayFlags, entityFlags, state);///FIXME: там много хуйни
+	UpdateLookFire(m_pSlaveEntity, rayFlags, entityFlags, state);
 
 	const auto pFireTargetEntity = TOS_GET_ENTITY(m_lookfireInfo.fireTargetId);
 	const auto pMeleeTargetEntity = TOS_GET_ENTITY(m_meleeInfo.targetId);
@@ -310,19 +310,22 @@ void CTOSMasterClient::Update(float frametime)
 	}
 
 	//Debug
-	IPersistantDebug* pPD = gEnv->pGame->GetIGameFramework()->GetIPersistantDebug();
-	pPD->Begin(string("MasterClient") + (m_pSlaveEntity ? m_pSlaveEntity->GetName() : "<undefined>"), true);
+	if (gEnv->pConsole->GetCVar("tos_sv_mc_LookDebugDraw")->GetIVal() > 0)
+	{
+		IPersistantDebug* pPD = gEnv->pGame->GetIGameFramework()->GetIPersistantDebug();
+		pPD->Begin(string("MasterClient") + (m_pSlaveEntity ? m_pSlaveEntity->GetName() : "<undefined>"), true);
 
-	auto red = ColorF(1, 0, 0, 1);
-	auto green = ColorF(0, 1, 0, 1);
-	auto blue = ColorF(0, 0, 1, 1);
+		auto red = ColorF(1, 0, 0, 1);
+		auto green = ColorF(0, 1, 0, 1);
+		auto blue = ColorF(0, 0, 1, 1);
 
-	pPD->AddSphere(m_crosshairInfo.worldPos, 0.25f, red, 1.0f);
-	pPD->AddSphere(m_meleeInfo.targetPos, 0.25f, green, 1.0f);
-	pPD->AddSphere(m_lookfireInfo.lookTargetPos, 0.25f, blue, 1.0f);
+		pPD->AddSphere(m_crosshairInfo.worldPos, 0.25f, red, 1.0f);
+		pPD->AddSphere(m_meleeInfo.targetPos, 0.25f, green, 1.0f);
+		pPD->AddSphere(m_lookfireInfo.lookTargetPos, 0.25f, blue, 1.0f);
 
-	//float color[] = { 1,1,1,1 };
-	//gEnv->pRenderer->Draw2dLabel(100, 100, 1.3f, color, false, "jumpCount = %i", pSlaveActor->GetSlaveStats().jumpCount);
+		//float color[] = { 1,1,1,1 };
+		//gEnv->pRenderer->Draw2dLabel(100, 100, 1.3f, color, false, "jumpCount = %i", pSlaveActor->GetSlaveStats().jumpCount);
+	}
 }
 
 void CTOSMasterClient::UpdateCrosshair(const IEntity* pSlaveEntity, const IActor* pLocalDudeActor, int rayFlags, unsigned entityFlags)
