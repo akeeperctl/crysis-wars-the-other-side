@@ -1,4 +1,4 @@
-MasterSynchronizer = 
+TOSMasterSynchronizer = 
 {
 	Editor =
 	{
@@ -6,5 +6,5 @@ MasterSynchronizer =
 	},
 }
 
-function MasterSynchronizer:OnInit()
+function TOSMasterSynchronizer:OnInit()
 end
