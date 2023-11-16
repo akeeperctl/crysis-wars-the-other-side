@@ -157,6 +157,11 @@ struct STOSNetBodyInfo
 class CTOSActor: public CActor, ITOSMasterControllable  // NOLINT(cppcoreguidelines-special-member-functions)
 {
 public:
+	enum MPTimers
+	{
+		eMPTIMER_GIVEWEAPONDELAY = 0x110,
+	};
+
 	friend class CTOSMasterClient;
 
 	CTOSActor();

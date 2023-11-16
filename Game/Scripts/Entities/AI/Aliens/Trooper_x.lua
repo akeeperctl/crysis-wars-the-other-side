@@ -407,11 +407,12 @@ TROOPER_CONV_REQUESTING = 1;
 
 --TheOtherSide
 function Trooper_x:Expose()
-	Net.Expose{
+	Net.Expose
+	{
 		Class = self,
 		ClientMethods = 
 		{
-			
+
 		},
 		ServerMethods = 
 		{

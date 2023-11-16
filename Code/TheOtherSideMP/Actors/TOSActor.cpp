@@ -38,30 +38,7 @@ void CTOSActor::PostInit(IGameObject* pGameObject)
 
 	// Факт: если оружие выдаётся на сервере, оно выдаётся и на всех клиентах тоже.
 	if (gEnv->bServer && gEnv->bMultiplayer && !IsPlayer())
-	{
-		string       equipName;
-		const string actorClass = GetEntity()->GetClass()->GetName();
-
-		if (actorClass == "Trooper")
-		{
-			equipName = gEnv->pConsole->GetCVar("tos_sv_TrooperMPEquipPack")->GetString();
-		}
-		else if (actorClass == "Scout")
-		{
-			equipName = gEnv->pConsole->GetCVar("tos_sv_ScoutMPEquipPack")->GetString();
-		}
-		else if (actorClass == "Alien")
-		{
-			equipName = gEnv->pConsole->GetCVar("tos_sv_AlienMPEquipPack")->GetString();
-		}
-		else if (actorClass == "Hunter")
-		{
-			equipName = gEnv->pConsole->GetCVar("tos_sv_HunterMPEquipPack")->GetString();
-		}
-
-		TOS_Inventory::GiveEquipmentPack(this, equipName.c_str());
-		
-	}
+		GetEntity()->SetTimer(eMPTIMER_GIVEWEAPONDELAY, 1000);
 }
 
 void CTOSActor::InitClient(const int channelId)
@@ -80,8 +57,39 @@ void CTOSActor::ProcessEvent(SEntityEvent& event)
 
 	const auto pMC = g_pTOSGame->GetMasterModule()->GetMasterClient();
 	if (pMC)
-	{
 		pMC->OnEntityEvent(GetEntity(), event);
+
+	switch (event.event)
+	{
+	case ENTITY_EVENT_TIMER:
+	{
+		if (event.nParam[0] == eMPTIMER_GIVEWEAPONDELAY)
+		{
+			string       equipName;
+			const string actorClass = GetEntity()->GetClass()->GetName();
+
+			if (actorClass == "Trooper")
+			{
+				equipName = gEnv->pConsole->GetCVar("tos_sv_TrooperMPEquipPack")->GetString();
+			}
+			else if (actorClass == "Scout")
+			{
+				equipName = gEnv->pConsole->GetCVar("tos_sv_ScoutMPEquipPack")->GetString();
+			}
+			else if (actorClass == "Alien")
+			{
+				equipName = gEnv->pConsole->GetCVar("tos_sv_AlienMPEquipPack")->GetString();
+			}
+			else if (actorClass == "Hunter")
+			{
+				equipName = gEnv->pConsole->GetCVar("tos_sv_HunterMPEquipPack")->GetString();
+			}
+
+			TOS_Inventory::GiveEquipmentPack(this, equipName.c_str());
+		}
+	}
+	default: 
+		break;
 	}
 }
 
@@ -98,35 +106,50 @@ void CTOSActor::SelectNextItem(const int direction, const bool keepHistory, cons
 {
 	CActor::SelectNextItem(direction, keepHistory, category);
 
-	GetGameObject()->ChangedNetworkState(TOS_NET::CLIENT_ASPECT_STATIC);
+	if (gEnv->bClient)
+	{
+		GetGameObject()->ChangedNetworkState(TOS_NET::CLIENT_ASPECT_STATIC);
+	}
 }
 
 void CTOSActor::HolsterItem(const bool holster)
 {
 	CActor::HolsterItem(holster);
 
-	GetGameObject()->ChangedNetworkState(TOS_NET::CLIENT_ASPECT_STATIC);
+	if (gEnv->bClient)
+	{
+		GetGameObject()->ChangedNetworkState(TOS_NET::CLIENT_ASPECT_STATIC);
+	}
 }
 
 void CTOSActor::SelectLastItem(const bool keepHistory, const bool forceNext /* = false */)
 {
 	CActor::SelectLastItem(keepHistory, forceNext);
 
-	GetGameObject()->ChangedNetworkState(TOS_NET::CLIENT_ASPECT_STATIC);
+	if (gEnv->bClient)
+	{
+		GetGameObject()->ChangedNetworkState(TOS_NET::CLIENT_ASPECT_STATIC);
+	}
 }
 
 void CTOSActor::SelectItemByName(const char* name, const bool keepHistory)
 {
 	CActor::SelectItemByName(name, keepHistory);
 
-	GetGameObject()->ChangedNetworkState(TOS_NET::CLIENT_ASPECT_STATIC);
+	if (gEnv->bClient)
+	{
+		GetGameObject()->ChangedNetworkState(TOS_NET::CLIENT_ASPECT_STATIC);
+	}
 }
 
 void CTOSActor::SelectItem(const EntityId itemId, const bool keepHistory)
 {
 	CActor::SelectItem(itemId, keepHistory);
 
-	GetGameObject()->ChangedNetworkState(TOS_NET::CLIENT_ASPECT_STATIC);
+	if (gEnv->bClient)
+	{
+		GetGameObject()->ChangedNetworkState(TOS_NET::CLIENT_ASPECT_STATIC);
+	}
 }
 
 
