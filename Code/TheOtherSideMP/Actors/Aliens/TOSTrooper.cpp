@@ -3,11 +3,15 @@
 
 #include "GameUtils.h"
 
-#include "TheOtherSideMP/Helpers/TOS_NET.h"
+CTOSTrooper::CTOSTrooper()
+{
+	
+};
 
-CTOSTrooper::CTOSTrooper() = default;
-
-CTOSTrooper::~CTOSTrooper() = default;
+CTOSTrooper::~CTOSTrooper()
+{
+	
+};
 
 void CTOSTrooper::PostInit(IGameObject* pGameObject)
 {

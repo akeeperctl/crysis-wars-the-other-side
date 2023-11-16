@@ -395,7 +395,7 @@ CAlien::~CAlien()
 
 void CAlien::BindInputs(IAnimationGraphState* pAGState)
 {
-	CActor::BindInputs(pAGState);
+	CTOSActor::BindInputs(pAGState);
 
 	if (pAGState)
 	{
@@ -417,7 +417,7 @@ void CAlien::ProcessEvent(SEntityEvent& event)
 	else if (event.event == ENTITY_EVENT_PREPHYSICSUPDATE) { PrePhysicsUpdate(); }
 
 	//TheOtherSide
-	//CActor::ProcessEvent(event);
+	//CTOSActor::ProcessEvent(event);
 	CTOSActor::ProcessEvent(event);
 	//~TheOtherSide
 }
@@ -441,12 +441,12 @@ bool CAlien::CreateCodeEvent(SmartScriptTable& rTable)
 		m_pBeamEffect->Stop(GetEntity());
 	}
 	else*/
-	return CActor::CreateCodeEvent(rTable);
+	return CTOSActor::CreateCodeEvent(rTable);
 }
 
 bool CAlien::Init(IGameObject* pGameObject)
 {
-	if (!CActor::Init(pGameObject))
+	if (!CTOSActor::Init(pGameObject))
 		return false;
 
 	if (!pGameObject->CaptureActions(this))
@@ -465,12 +465,12 @@ void CAlien::Physicalize(EStance stance)
 	// make sure alien does not have NULL stance - default (null) stance is too different from all alien stances, possibly can stuck
 	if (m_stance == STANCE_NULL)
 		m_stance = STANCE_STAND;
-	CActor::Physicalize(m_stance);
+	CTOSActor::Physicalize(m_stance);
 }
 
 void CAlien::PostPhysicalize()
 {
-	CActor::PostPhysicalize();
+	CTOSActor::PostPhysicalize();
 
 	ICharacterInstance* pCharacter = GetEntity()->GetCharacter(0);
 
@@ -611,7 +611,7 @@ void CAlien::PushCharacterTentacles(ICharacterInstance* pCharacter)
 
 void CAlien::UpdateAnimGraph(IAnimationGraphState* pState)
 {
-	CActor::UpdateAnimGraph(pState);
+	CTOSActor::UpdateAnimGraph(pState);
 
 	if (pState)
 	{
@@ -883,7 +883,7 @@ void CAlien::UpdateView(SViewParams& viewParams)
 	viewParams.rotation = GetQuatFromMat33(viewMtx);
 }
 
-//FIXME:at some point, unify this with CPlayer via CActor
+//FIXME:at some point, unify this with CPlayer via CTOSActor
 void CAlien::UpdateStats(float frameTime)
 {
 	IPhysicalEntity* pPhysEnt = GetEntity()->GetPhysics();
@@ -1466,7 +1466,7 @@ void CAlien::ProcessAnimation(ICharacterInstance* pCharacter, float frameTime)
 
 void CAlien::ProcessBonesRotation(ICharacterInstance* pCharacter, const float frameTime)
 {
-	CActor::ProcessBonesRotation(pCharacter, frameTime);
+	CTOSActor::ProcessBonesRotation(pCharacter, frameTime);
 
 	//FIXME:testing
 	if (pCharacter)
@@ -1804,7 +1804,7 @@ void CAlien::RagDollize(const bool fallAndPlay)
 	if (pCharacter)
 		pCharacter->GetISkeletonPose()->SetRagdollDefaultPose();
 
-	CActor::RagDollize(fallAndPlay);
+	CTOSActor::RagDollize(fallAndPlay);
 
 	IPhysicalEntity* pPhysEnt = GetEntity()->GetPhysics();
 
@@ -1933,7 +1933,7 @@ void CAlien::OnAction(const ActionId& actionId, const int activationMode, const 
 	else if (actions.leanright == actionId) { m_input.actions |= ACTION_LEANRIGHT; }
 	else if (actions.thirdperson == actionId) { m_stats.isThirdPerson = !m_stats.isThirdPerson; }
 
-	//FIXME: this is duplicated from CPlayer.cpp, put it just once in CActor.
+	//FIXME: this is duplicated from CPlayer.cpp, put it just once in CTOSActor.
 	//send the onAction to scripts, after filter the range of actions. for now just use and hold
 	if (filterOut)
 	{
@@ -1970,13 +1970,13 @@ void CAlien::OnAction(const ActionId& actionId, const int activationMode, const 
 		}
 	}
 
-	CActor::OnAction(actionId, activationMode, value);
+	CTOSActor::OnAction(actionId, activationMode, value);
 }
 
-void CAlien::SetStats(SmartScriptTable& rTable) { CActor::SetStats(rTable); }
+void CAlien::SetStats(SmartScriptTable& rTable) { CTOSActor::SetStats(rTable); }
 
 //fill the status table for the scripts
-void CAlien::UpdateScriptStats(SmartScriptTable& rTable) { CActor::UpdateScriptStats(rTable); }
+void CAlien::UpdateScriptStats(SmartScriptTable& rTable) { CTOSActor::UpdateScriptStats(rTable); }
 
 void CAlien::SetParams(SmartScriptTable& rTable, const bool resetFirst)
 {
@@ -1984,7 +1984,7 @@ void CAlien::SetParams(SmartScriptTable& rTable, const bool resetFirst)
 	if (resetFirst)
 		m_params = SAlienParams();
 
-	CActor::SetParams(rTable, resetFirst);
+	CTOSActor::SetParams(rTable, resetFirst);
 
 	rTable->GetValue("speedInertia", m_params.speedInertia);
 	rTable->GetValue("rollAmount", m_params.rollAmount);
@@ -2396,7 +2396,7 @@ void CAlien::StanceChanged(const EStance last)
 
 void CAlien::FullSerialize(TSerialize ser)
 {
-	CActor::FullSerialize(ser);
+	CTOSActor::FullSerialize(ser);
 
 	ser.BeginGroup("CAlien"); //this serialization has to be redesigned to work properly in MP
 	ser.Value("modelQuat", m_modelQuat, 'ori1');
@@ -2427,7 +2427,7 @@ void CAlien::FullSerialize(TSerialize ser)
 
 void CAlien::PostSerialize()
 {
-	CActor::PostSerialize();
+	CTOSActor::PostSerialize();
 
 	//temporary fix for non-physicalized scouts in fleet
 	/*SActorStats *pStats = GetActorStats();
