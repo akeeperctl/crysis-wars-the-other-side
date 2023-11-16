@@ -37,6 +37,10 @@
 
 #include "IFacialAnimation.h"
 
+//TheOtherSide
+#include "TheOtherSideMP/Actors/player/TOSPlayer.h"
+//~TheOtherSide
+
 IItemSystem *CActor::m_pItemSystem=0;
 IGameFramework	*CActor::m_pGameFramework=0;
 IGameplayRecorder	*CActor::m_pGameplayRecorder=0;
@@ -3812,11 +3816,18 @@ IMPLEMENT_RMI(CActor, ClKill)
 {
 	NetKill(params.shooterId, params.weaponClassId, (int)params.damage, params.material, params.hit_type, params.healthOnKill);
 
-	CNanoSuit *pSuit = ((CPlayer*)this)->GetNanoSuit();
-	if (pSuit)
+	//TheOtherSide
+	//Problem: Вылетает, когда умер ИИ актёр
+	//Fix: Динамический каст на принадлежность к классу
+	const auto pPlayer = dynamic_cast<CTOSPlayer*>(this);
+	if (pPlayer)
 	{
-		pSuit->PlayerKilled();
+		CNanoSuit* pSuit = pPlayer->GetNanoSuit();
+		if (pSuit)
+			pSuit->PlayerKilled();
 	}
+
+	//~TheOtherSide
 	return true;
 }
 
