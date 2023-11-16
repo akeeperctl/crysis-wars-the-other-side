@@ -35,6 +35,7 @@ bool CTOSAlien::NetSerialize(TSerialize ser, const EEntityAspects aspect, const 
 	if (aspect == TOS_NET::SERVER_ASPECT_STATIC)
 	{
 		ser.Value("health", m_health);
+		ser.Value("maxHealth", m_maxHealth);
 
 		//if (ser.IsWriting())
 		//{
@@ -63,7 +64,7 @@ bool CTOSAlien::NetSerialize(TSerialize ser, const EEntityAspects aspect, const 
 				//request.SetBodyTarget(m_netBodyInfo.lookTarget); // вообще пришельцами не используется
 				request.SetLookTarget(m_netBodyInfo.lookTarget);// ок
 				//request.SetAimTarget(m_netBodyInfo.aimTarget);
-				request.SetFireTarget(m_netBodyInfo.fireTarget);// не проверено
+				//request.SetFireTarget(m_netBodyInfo.fireTarget);// не нужен вроде
 
 				//Заставляет тушу двигаться самостоятельно
 				//request.SetMoveTarget(m_netBodyInfo.moveTarget);

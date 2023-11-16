@@ -211,16 +211,15 @@ void CTOSGame::UpdateContextViewState()
 
 IActor* CTOSGame::GetActualClientActor() const
 {
-	auto pPlayer = g_pGame->GetIGameFramework()->GetClientActor();
-
 	const auto pMC = m_pMasterModule->GetMasterClient();
 	if (!pMC)
 		return nullptr;
 
-	const auto pSlaveEnt = m_pMasterModule->GetMasterClient()->GetSlaveEntity();
+	CTOSActor* pPlayer = dynamic_cast<CTOSActor*>(g_pGame->GetIGameFramework()->GetClientActor());
+	CTOSActor* pSlave = pMC->GetSlaveActor();
 
-	if (pSlaveEnt != nullptr)
-		pPlayer = g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pSlaveEnt->GetId());
+	if (pSlave != nullptr)
+		return pSlave;
 
 	//assert(pPlayer);
 	return pPlayer;

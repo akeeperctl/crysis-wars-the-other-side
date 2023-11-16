@@ -143,7 +143,10 @@ public:
 		if (!m_pSlaveEntity)
 			return nullptr;
 
-		return dynamic_cast<CTOSActor*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(m_pSlaveEntity->GetId()));
+		const auto pActor = dynamic_cast<CTOSActor*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(m_pSlaveEntity->GetId()));
+		assert(pActor);
+
+		return pActor;
 	};
 
 	/**
@@ -179,7 +182,7 @@ public:
 
 
 private:
-	void ProcessMeleeDamage() const;
+	//void ProcessMeleeDamage() const;
 	void UpdateMeleeTarget(const IEntity* pSlaveEntity, const int rayFlags, const unsigned entityFlags, const SMovementState& state);
 	void UpdateCrosshair(const IEntity* pSlaveEntity, const IActor* pLocalDudeActor, int rayFlags, unsigned entityFlags);
 	void UpdateLookFire(const IEntity* pSlaveEntity, const int rayFlags, const unsigned entityFlags, const SMovementState& state);

@@ -44,6 +44,7 @@
 #include <StringUtils.h>
 
 //TheOtherSide
+#include "TheOtherSideMP/Actors/player/TOSPlayer.h"
 #include "TheOtherSideMP/Game/TOSGameEventRecorder.h"
 #include "TheOtherSideMP/HUD/TOSCrosshair.h"
 //TheOtherSide
@@ -1167,12 +1168,18 @@ void CGameRules::KillPlayer(CActor *pActor, bool dropItem, bool ragdoll, EntityI
 			pActor->DropItem(itemId, 1.0f, false, true);
 	}
 
-	CNanoSuit *pSuit = ((CPlayer*)pActor)->GetNanoSuit();
-	if (pSuit)
+	//TheOtherSide
+	const auto pPlayer = dynamic_cast<CTOSPlayer*>(pActor);
+	if (pPlayer)
 	{
-		pSuit->SetMode(NANOMODE_DEFENSE, true, true);
-		pSuit->SetCloakLevel(CLOAKMODE_REFRACTION);
+		CNanoSuit* pSuit = pPlayer->GetNanoSuit();
+		if (pSuit)
+		{
+			pSuit->SetMode(NANOMODE_DEFENSE, true, true);
+			pSuit->SetCloakLevel(CLOAKMODE_REFRACTION);
+		}
 	}
+	//~TheOtherSide
 
 	uint16 weaponClassId=0;
 	const char *weaponClassName="";

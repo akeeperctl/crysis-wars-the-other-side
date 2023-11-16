@@ -507,7 +507,7 @@ void CTOSMasterClient::AnimationEvent(IEntity* pEntity, ICharacterInstance* pCha
         //ProcessMeleeDamage();
     }
 }
-
+/*
 void CTOSMasterClient::ProcessMeleeDamage() const
 {
     //TODO:
@@ -618,7 +618,7 @@ void CTOSMasterClient::ProcessMeleeDamage() const
 	}
 
 }
-
+*/
 
 //void CTOSMasterClient::Update(IEntity* pEntity)
 //{

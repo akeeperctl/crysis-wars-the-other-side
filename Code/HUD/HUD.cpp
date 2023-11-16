@@ -4056,9 +4056,13 @@ void CHUD::TOSUpdateHealth()
 
 	if (pActor)
 	{
-		const float fHealth = (pActor->GetHealth() / static_cast<float>(pActor->GetMaxHealth())) * 100.0f + 1.0f;  // NOLINT(clang-diagnostic-implicit-int-float-conversion)
+		float maxHealth = pActor->GetMaxHealth() == 0 ? 1.0f : pActor->GetMaxHealth();
 
-		if (m_fHealth != fHealth || m_bFirstFrame)
+		const float fHealth = pActor->GetHealth() / maxHealth * 100.0f + 1.0f;  // NOLINT(clang-diagnostic-implicit-int-float-conversion)
+
+		//CryLogAlways("[%s] GetHealth() = %i, GetMaxHealth() = %i", pActor->GetEntity()->GetName(), pActor->GetHealth(), pActor->GetMaxHealth());
+
+		if (m_fHealth < fHealth || m_fHealth > fHealth || m_bFirstFrame)
 		{
 			m_animPlayerStats.Invoke("setHealth", static_cast<int>(fHealth));
 		}
