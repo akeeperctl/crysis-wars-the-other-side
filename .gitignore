@@ -364,6 +364,8 @@ healthchecksdb
 /Examples
 /Log Screenshots
 /Gif
+.vscode/
+*.code-workspace
 
 !/Game/Scripts/
 
