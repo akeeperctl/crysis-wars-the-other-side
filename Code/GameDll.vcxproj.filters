@@ -151,6 +151,9 @@
     <Filter Include="TheOtherSideMP\Actors\animation">
       <UniqueIdentifier>{8839ffbb-fce8-4f95-9efa-942480b24ae1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="TheOtherSideMP\Extensions">
+      <UniqueIdentifier>{83e9fd62-7e52-4fe9-af82-99a15a584bba}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Actor.cpp">
@@ -821,6 +824,9 @@
     <ClCompile Include="TheOtherSideMP\Actors\Animation\AnimationGraphState.cpp">
       <Filter>TheOtherSideMP\Actors\animation</Filter>
     </ClCompile>
+    <ClCompile Include="TheOtherSideMP\Extensions\EnergyConsumer.cpp">
+      <Filter>TheOtherSideMP\Extensions</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor.h">
@@ -1459,6 +1465,9 @@
     </ClInclude>
     <ClInclude Include="TheOtherSideMP\Actors\Animation\AnimationGraphState.h">
       <Filter>TheOtherSideMP\Actors\animation</Filter>
+    </ClInclude>
+    <ClInclude Include="TheOtherSideMP\Extensions\EnergyРЎonsumer.h">
+      <Filter>TheOtherSideMP\Extensions</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

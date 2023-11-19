@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Player.h"
+class CTOSEnergyConsumer;
 class CTOSMasterClient;
 
 class CTOSPlayer final : public CPlayer  // NOLINT(cppcoreguidelines-special-member-functions)
@@ -22,6 +23,7 @@ public:
 	* Вызывается на сервере при создании объекта на сервере.
 	* Инициализирует текущий GameObjectExtension на клиенте по определенному каналу.
 	*/
+	bool Init(IGameObject* pGameObject) override;
 	void InitClient(int channelId ) override;
 
 
@@ -47,6 +49,7 @@ public:
 	//~CTOSActor
 
 	CTOSMasterClient* GetMasterClient() const;
+	CTOSEnergyConsumer* GetEnergyConsumer() const;
 
 
 protected:
@@ -61,4 +64,5 @@ private:
  * Будет доступен только внутри клиента.
  */
 	CTOSMasterClient* m_pMasterClient;
+	CTOSEnergyConsumer* m_pEnergyConsumer;
 };

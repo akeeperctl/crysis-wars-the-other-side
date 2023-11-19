@@ -84,6 +84,7 @@
 #include "TheOtherSideMP/Actors/player/TOSPlayer.h"
 #include "TheOtherSideMP/Actors/aliens/TOSAlien.h"
 #include "TheOtherSideMP/Actors/aliens/TOSTrooper.h"
+#include "TheOtherSideMP/Extensions/EnergyСonsumer.h"
 #include "TheOtherSideMP/Game/Modules/Master/MasterSynchronizer.h"
 //TheOtherSide
 
@@ -242,6 +243,7 @@ void InitGameFactory(IGameFramework *pFramework)
 	//	//REGISTER_FACTORY(pFramework, "TOSMasterSynchronizer", CTOSMasterSynchronizer, false); //is ok
 	//	REGISTER_GAME_OBJECT_EXTENSION(pFramework, TOSMasterSynchronizer); //is ok
 	REGISTER_GAME_OBJECT(pFramework, TOSMasterSynchronizer, "Scripts/Entities/TOS/TOSMasterSynchronizer.lua"); //is ok
+	REGISTER_GAME_OBJECT_EXTENSION(pFramework, TOSEnergyConsumer); //is ok
 	//~TheOtherSide
 
 
