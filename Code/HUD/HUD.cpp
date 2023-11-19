@@ -786,20 +786,20 @@ void CHUD::SetTACWeapon(bool hasTACWeapon)
 
 void CHUD::PlayerIdSet(EntityId playerId)
 {
-	CPlayer *pPlayer = static_cast<CPlayer *>(gEnv->pGame->GetIGameFramework()->GetIActorSystem()->GetActor(playerId));
-	if(pPlayer)
+	CPlayer* pPlayer = static_cast<CPlayer*>(gEnv->pGame->GetIGameFramework()->GetIActorSystem()->GetActor(playerId));
+	if (pPlayer)
 	{
 		m_pNanoSuit = pPlayer->GetNanoSuit();
 		assert(m_pNanoSuit); //the player requires to have a nanosuit!
 
-		if(m_pNanoSuit)
+		if (m_pNanoSuit)
 		{
 			m_fSuitEnergy = m_pNanoSuit->GetSuitEnergy();
 
 			pPlayer->RegisterPlayerEventListener(this);
 			m_pNanoSuit->AddListener(this);
 
-			switch(m_pNanoSuit->GetMode())
+			switch (m_pNanoSuit->GetMode())
 			{
 			case NANOMODE_DEFENSE:
 				m_animPlayerStats.Invoke("setMode", "Armor");
@@ -816,17 +816,18 @@ void CHUD::PlayerIdSet(EntityId playerId)
 			}
 		}
 
-		if (gEnv->pInput) gEnv->pInput->AddEventListener(this);
+		if (gEnv->pInput)
+			gEnv->pInput->AddEventListener(this);
 
 		GetMissionObjectiveSystem().DeactivateObjectives(true); //this should remove all "old" objectives
 	}
 	else
 	{
-		pPlayer = static_cast<CPlayer *>(gEnv->pGame->GetIGameFramework()->GetClientActor());
-		if(pPlayer)
+		pPlayer = static_cast<CPlayer*>(gEnv->pGame->GetIGameFramework()->GetClientActor());
+		if (pPlayer)
 		{
-      pPlayer->UnregisterPlayerEventListener(this);
-			if(CNanoSuit *pSuit=pPlayer->GetNanoSuit())
+			pPlayer->UnregisterPlayerEventListener(this);
+			if (CNanoSuit* pSuit = pPlayer->GetNanoSuit())
 				pSuit->RemoveListener(this);
 		}
 	}

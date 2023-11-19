@@ -174,11 +174,13 @@ void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEven
 			const auto inGame = g_pGame->GetGameRules()->IsChannelInGame(masterChannelId);
 			if (!inGame)
 			{
+				auto pCvar = gEnv->pConsole->GetCVar("tos_sv_mc_StartControlDelay");
+
 				//раб, клиент мастера
 				STOSStartControlInfo info;
 				info.masterChannelId = masterChannelId;
 				info.slaveId = entId;
-				info.startDelay = gEnv->pConsole->GetCVar("tos_sv_mc_StartControlDelay")->GetFVal();
+				info.startDelay = pCvar ? pCvar->GetFVal() : 0.0f;
 
 				ScheduleMasterStartControl(info);
 
