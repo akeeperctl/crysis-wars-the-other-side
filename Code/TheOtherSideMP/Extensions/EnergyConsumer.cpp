@@ -72,7 +72,7 @@ void CTOSEnergyConsumer::FullSerialize(TSerialize ser)
 	
 }
 
-bool CTOSEnergyConsumer::NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int flags)
+bool CTOSEnergyConsumer::NetSerialize(TSerialize ser, const EEntityAspects aspect, uint8 profile, int flags)
 {
 	if (aspect == TOS_NET::SERVER_ASPECT_STATIC)
 	{

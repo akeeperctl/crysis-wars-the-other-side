@@ -8,123 +8,118 @@
  -------------------------------------------------------------------------
   History:
   - 22:11:2005: Created by Filippo De Luca
-	- 31:01:2006: taken over by Jan Müller
+	- 31:01:2006: taken over by Jan MÑŒller
 
 *************************************************************************/
 #include "StdAfx.h"
+
+#include <IMaterialEffects.h>
+#include <ISerialize.h>
+#include <ISound.h>
+
+#include "BulletTime.h"
 #include "Game.h"
 #include "GameCVars.h"
-#include "Player.h" 
-#include "GameUtils.h"
-#include "HUD/HUD.h"
-#include "GameRules.h"
 #include "NetInputChainDebug.h"
-#include "BulletTime.h"
+#include "OffHand.h"
+#include "Player.h"
 #include "SoundMoods.h"
 #include "WeaponSystem.h"
-#include "OffHand.h"
 
-#include <ISound.h>
-#include <ISerialize.h>
-#include <IGameTokens.h>
-#include <IMaterialEffects.h>
+#include "HUD/HUD.h"
 
 CNanoSuit::SNanoMaterial g_USNanoMats[NANOMODE_LAST];
 CNanoSuit::SNanoMaterial g_AsianNanoMats[NANOMODE_LAST];
-static const float HIT_EFFECT_TIME = 0.5f;
 
-static void PrecacheMaterials(bool bCacheAsian)
+static void PrecacheMaterials(const bool bCacheAsian)
 {
 	// preload materials
 	IMaterialManager* matMan = gEnv->p3DEngine->GetMaterialManager();
 	if (!g_USNanoMats[NANOMODE_SPEED].body)
 	{
-		g_USNanoMats[NANOMODE_SPEED].body = matMan->LoadMaterial("objects/characters/human/us/nanosuit/nanosuit_us_speed.mtl");
-		g_USNanoMats[NANOMODE_SPEED].helmet = matMan->LoadMaterial("objects/characters/human/us/nanosuit/nanosuit_us_helmet_speed.mtl");
-		g_USNanoMats[NANOMODE_SPEED].arms = matMan->LoadMaterial( "objects/weapons/arms_global/arms_nanosuit_us_speed.mtl");
-		g_USNanoMats[NANOMODE_STRENGTH].body = matMan->LoadMaterial("objects/characters/human/us/nanosuit/nanosuit_us_strength.mtl");
-		g_USNanoMats[NANOMODE_STRENGTH].helmet = matMan->LoadMaterial("objects/characters/human/us/nanosuit/nanosuit_us_helmet_strength.mtl");
-		g_USNanoMats[NANOMODE_STRENGTH].arms = matMan->LoadMaterial( "objects/weapons/arms_global/arms_nanosuit_us_strength.mtl");
-		g_USNanoMats[NANOMODE_CLOAK].body = matMan->LoadMaterial("objects/characters/human/us/nanosuit/nanosuit_us_cloak.mtl");
-		g_USNanoMats[NANOMODE_CLOAK].helmet = matMan->LoadMaterial("objects/characters/human/us/nanosuit/nanosuit_us_helmet_cloak.mtl");
-		g_USNanoMats[NANOMODE_CLOAK].arms = matMan->LoadMaterial( "objects/weapons/arms_global/arms_nanosuit_us_cloak.mtl");
-		g_USNanoMats[NANOMODE_DEFENSE].body = matMan->LoadMaterial("objects/characters/human/us/nanosuit/nanosuit_us.mtl");
-		g_USNanoMats[NANOMODE_DEFENSE].helmet = matMan->LoadMaterial("objects/characters/human/us/nanosuit/nanosuit_us_helmet.mtl");
-		g_USNanoMats[NANOMODE_DEFENSE].arms = matMan->LoadMaterial( "objects/weapons/arms_global/arms_nanosuit_us.mtl");
-		g_USNanoMats[NANOMODE_INVULNERABILITY].body = matMan->LoadMaterial("objects/characters/human/us/nanosuit/nanosuit_us_invulnerability.mtl");
-		g_USNanoMats[NANOMODE_INVULNERABILITY].helmet = matMan->LoadMaterial("objects/characters/human/us/nanosuit/nanosuit_us_helmet_invulnerability.mtl");
-		g_USNanoMats[NANOMODE_INVULNERABILITY].arms = matMan->LoadMaterial( "objects/weapons/arms_global/arms_nanosuit_us_invulnerability.mtl");
-		g_USNanoMats[NANOMODE_DEFENSE_HIT_REACTION].body = matMan->LoadMaterial("objects/characters/human/us/nanosuit/nanosuit_us_invulnerability.mtl");
+		g_USNanoMats[NANOMODE_SPEED].body                  = matMan->LoadMaterial("objects/characters/human/us/nanosuit/nanosuit_us_speed.mtl");
+		g_USNanoMats[NANOMODE_SPEED].helmet                = matMan->LoadMaterial("objects/characters/human/us/nanosuit/nanosuit_us_helmet_speed.mtl");
+		g_USNanoMats[NANOMODE_SPEED].arms                  = matMan->LoadMaterial("objects/weapons/arms_global/arms_nanosuit_us_speed.mtl");
+		g_USNanoMats[NANOMODE_STRENGTH].body               = matMan->LoadMaterial("objects/characters/human/us/nanosuit/nanosuit_us_strength.mtl");
+		g_USNanoMats[NANOMODE_STRENGTH].helmet             = matMan->LoadMaterial("objects/characters/human/us/nanosuit/nanosuit_us_helmet_strength.mtl");
+		g_USNanoMats[NANOMODE_STRENGTH].arms               = matMan->LoadMaterial("objects/weapons/arms_global/arms_nanosuit_us_strength.mtl");
+		g_USNanoMats[NANOMODE_CLOAK].body                  = matMan->LoadMaterial("objects/characters/human/us/nanosuit/nanosuit_us_cloak.mtl");
+		g_USNanoMats[NANOMODE_CLOAK].helmet                = matMan->LoadMaterial("objects/characters/human/us/nanosuit/nanosuit_us_helmet_cloak.mtl");
+		g_USNanoMats[NANOMODE_CLOAK].arms                  = matMan->LoadMaterial("objects/weapons/arms_global/arms_nanosuit_us_cloak.mtl");
+		g_USNanoMats[NANOMODE_DEFENSE].body                = matMan->LoadMaterial("objects/characters/human/us/nanosuit/nanosuit_us.mtl");
+		g_USNanoMats[NANOMODE_DEFENSE].helmet              = matMan->LoadMaterial("objects/characters/human/us/nanosuit/nanosuit_us_helmet.mtl");
+		g_USNanoMats[NANOMODE_DEFENSE].arms                = matMan->LoadMaterial("objects/weapons/arms_global/arms_nanosuit_us.mtl");
+		g_USNanoMats[NANOMODE_INVULNERABILITY].body        = matMan->LoadMaterial("objects/characters/human/us/nanosuit/nanosuit_us_invulnerability.mtl");
+		g_USNanoMats[NANOMODE_INVULNERABILITY].helmet      = matMan->LoadMaterial("objects/characters/human/us/nanosuit/nanosuit_us_helmet_invulnerability.mtl");
+		g_USNanoMats[NANOMODE_INVULNERABILITY].arms        = matMan->LoadMaterial("objects/weapons/arms_global/arms_nanosuit_us_invulnerability.mtl");
+		g_USNanoMats[NANOMODE_DEFENSE_HIT_REACTION].body   = matMan->LoadMaterial("objects/characters/human/us/nanosuit/nanosuit_us_invulnerability.mtl");
 		g_USNanoMats[NANOMODE_DEFENSE_HIT_REACTION].helmet = matMan->LoadMaterial("objects/characters/human/us/nanosuit/nanosuit_us_helmet_invulnerability.mtl");
-		g_USNanoMats[NANOMODE_DEFENSE_HIT_REACTION].arms = matMan->LoadMaterial( "objects/weapons/arms_global/arms_nanosuit_us_invulnerability.mtl");
+		g_USNanoMats[NANOMODE_DEFENSE_HIT_REACTION].arms   = matMan->LoadMaterial("objects/weapons/arms_global/arms_nanosuit_us_invulnerability.mtl");
 		// strategically leak it
-		for (int i=0; i<NANOMODE_LAST; ++i)
+		for (const auto& g_USNanoMat : g_USNanoMats)
 		{
-			g_USNanoMats[i].body->AddRef();
-			g_USNanoMats[i].helmet->AddRef();
-			g_USNanoMats[i].arms->AddRef();
+			g_USNanoMat.body->AddRef();
+			g_USNanoMat.helmet->AddRef();
+			g_USNanoMat.arms->AddRef();
 		}
 	}
 
 	if (bCacheAsian && !g_AsianNanoMats[NANOMODE_SPEED].body)
 	{
-		g_AsianNanoMats[NANOMODE_SPEED].body = matMan->LoadMaterial("objects/characters/human/asian/nanosuit/nanosuit_asian_speed.mtl");
-		g_AsianNanoMats[NANOMODE_SPEED].helmet = matMan->LoadMaterial("objects/characters/human/asian/nanosuit/nanosuit_asian_helmet_speed.mtl");
-		g_AsianNanoMats[NANOMODE_SPEED].arms = matMan->LoadMaterial("objects/weapons/arms_global/arms_nanosuit_asian_speed.mtl");
-		g_AsianNanoMats[NANOMODE_STRENGTH].body = matMan->LoadMaterial("objects/characters/human/asian/nanosuit/nanosuit_asian_strength.mtl");
-		g_AsianNanoMats[NANOMODE_STRENGTH].helmet = matMan->LoadMaterial("objects/characters/human/asian/nanosuit/nanosuit_asian_helmet_strength.mtl");
-		g_AsianNanoMats[NANOMODE_STRENGTH].arms = matMan->LoadMaterial("objects/weapons/arms_global/arms_nanosuit_asian_strength.mtl");
-		g_AsianNanoMats[NANOMODE_CLOAK].body = matMan->LoadMaterial("objects/characters/human/asian/nanosuit/nanosuit_asian_cloak.mtl");
-		g_AsianNanoMats[NANOMODE_CLOAK].helmet = matMan->LoadMaterial("objects/characters/human/asian/nanosuit/nanosuit_asian_helmet_cloak.mtl");
-		g_AsianNanoMats[NANOMODE_CLOAK].arms = matMan->LoadMaterial("objects/weapons/arms_global/arms_nanosuit_asian_cloak.mtl");
-		g_AsianNanoMats[NANOMODE_DEFENSE].body = matMan->LoadMaterial("objects/characters/human/asian/nanosuit/nanosuit_asian.mtl");
-		g_AsianNanoMats[NANOMODE_DEFENSE].helmet = matMan->LoadMaterial("objects/characters/human/asian/nanosuit/nanosuit_asian_helmet.mtl");
-		g_AsianNanoMats[NANOMODE_DEFENSE].arms = matMan->LoadMaterial("objects/weapons/arms_global/arms_nanosuit_asian.mtl");
-		g_AsianNanoMats[NANOMODE_INVULNERABILITY].body = matMan->LoadMaterial("objects/characters/human/asian/nanosuit/nanosuit_asian_invulnerability.mtl");
-		g_AsianNanoMats[NANOMODE_INVULNERABILITY].helmet = matMan->LoadMaterial("objects/characters/human/asian/nanosuit/nanosuit_asian_helmet_invulnerability.mtl");
-		g_AsianNanoMats[NANOMODE_INVULNERABILITY].arms = matMan->LoadMaterial("objects/weapons/arms_global/arms_nanosuit_asian_invulnerability.mtl");
-		g_AsianNanoMats[NANOMODE_DEFENSE_HIT_REACTION].body = matMan->LoadMaterial("objects/characters/human/asian/nanosuit/nanosuit_asian_invulnerability.mtl");
+		g_AsianNanoMats[NANOMODE_SPEED].body                  = matMan->LoadMaterial("objects/characters/human/asian/nanosuit/nanosuit_asian_speed.mtl");
+		g_AsianNanoMats[NANOMODE_SPEED].helmet                = matMan->LoadMaterial("objects/characters/human/asian/nanosuit/nanosuit_asian_helmet_speed.mtl");
+		g_AsianNanoMats[NANOMODE_SPEED].arms                  = matMan->LoadMaterial("objects/weapons/arms_global/arms_nanosuit_asian_speed.mtl");
+		g_AsianNanoMats[NANOMODE_STRENGTH].body               = matMan->LoadMaterial("objects/characters/human/asian/nanosuit/nanosuit_asian_strength.mtl");
+		g_AsianNanoMats[NANOMODE_STRENGTH].helmet             = matMan->LoadMaterial("objects/characters/human/asian/nanosuit/nanosuit_asian_helmet_strength.mtl");
+		g_AsianNanoMats[NANOMODE_STRENGTH].arms               = matMan->LoadMaterial("objects/weapons/arms_global/arms_nanosuit_asian_strength.mtl");
+		g_AsianNanoMats[NANOMODE_CLOAK].body                  = matMan->LoadMaterial("objects/characters/human/asian/nanosuit/nanosuit_asian_cloak.mtl");
+		g_AsianNanoMats[NANOMODE_CLOAK].helmet                = matMan->LoadMaterial("objects/characters/human/asian/nanosuit/nanosuit_asian_helmet_cloak.mtl");
+		g_AsianNanoMats[NANOMODE_CLOAK].arms                  = matMan->LoadMaterial("objects/weapons/arms_global/arms_nanosuit_asian_cloak.mtl");
+		g_AsianNanoMats[NANOMODE_DEFENSE].body                = matMan->LoadMaterial("objects/characters/human/asian/nanosuit/nanosuit_asian.mtl");
+		g_AsianNanoMats[NANOMODE_DEFENSE].helmet              = matMan->LoadMaterial("objects/characters/human/asian/nanosuit/nanosuit_asian_helmet.mtl");
+		g_AsianNanoMats[NANOMODE_DEFENSE].arms                = matMan->LoadMaterial("objects/weapons/arms_global/arms_nanosuit_asian.mtl");
+		g_AsianNanoMats[NANOMODE_INVULNERABILITY].body        = matMan->LoadMaterial("objects/characters/human/asian/nanosuit/nanosuit_asian_invulnerability.mtl");
+		g_AsianNanoMats[NANOMODE_INVULNERABILITY].helmet      = matMan->LoadMaterial("objects/characters/human/asian/nanosuit/nanosuit_asian_helmet_invulnerability.mtl");
+		g_AsianNanoMats[NANOMODE_INVULNERABILITY].arms        = matMan->LoadMaterial("objects/weapons/arms_global/arms_nanosuit_asian_invulnerability.mtl");
+		g_AsianNanoMats[NANOMODE_DEFENSE_HIT_REACTION].body   = matMan->LoadMaterial("objects/characters/human/asian/nanosuit/nanosuit_asian_invulnerability.mtl");
 		g_AsianNanoMats[NANOMODE_DEFENSE_HIT_REACTION].helmet = matMan->LoadMaterial("objects/characters/human/asian/nanosuit/nanosuit_asian_helmet_invulnerability.mtl");
-		g_AsianNanoMats[NANOMODE_DEFENSE_HIT_REACTION].arms = matMan->LoadMaterial("objects/weapons/arms_global/arms_nanosuit_asian_invulnerability.mtl");
+		g_AsianNanoMats[NANOMODE_DEFENSE_HIT_REACTION].arms   = matMan->LoadMaterial("objects/weapons/arms_global/arms_nanosuit_asian_invulnerability.mtl");
 		// strategically leak it
-		for (int i=0; i<NANOMODE_LAST; ++i)
+		for (const auto& g_AsianNanoMat : g_AsianNanoMats)
 		{
-			g_AsianNanoMats[i].body->AddRef();
-			g_AsianNanoMats[i].helmet->AddRef();
-			g_AsianNanoMats[i].arms->AddRef();
+			g_AsianNanoMat.body->AddRef();
+			g_AsianNanoMat.helmet->AddRef();
+			g_AsianNanoMat.arms->AddRef();
 		}
 	}
 }
 
-CNanoSuit::SNanoMaterial* CNanoSuit::GetNanoMaterial(ENanoMode mode, bool bAsian)
+CNanoSuit::SNanoMaterial* CNanoSuit::GetNanoMaterial(const ENanoMode mode, const bool bAsian)
 {
 	const int nIndex = mode;
 	if (nIndex < 0 || nIndex >= NANOMODE_LAST)
-		return 0;
+		return nullptr;
 
 	PrecacheMaterials(bAsian);
 	if (bAsian == false)
 		return &g_USNanoMats[nIndex];
-	else
-		return &g_AsianNanoMats[nIndex];
+	return &g_AsianNanoMats[nIndex];
 }
 
-bool CNanoSuit::AssignNanoMaterialToEntity(IEntity* pEntity, CNanoSuit::SNanoMaterial* pNanoMat)
+bool CNanoSuit::AssignNanoMaterialToEntity(const IEntity* pEntity, const SNanoMaterial* pNanoMaterial)
 {
-	bool bSuccess = false;
+	bool            bSuccess = false;
+	bool            isClient = false;
 	SEntitySlotInfo slotInfo;
-	bool isClient = false;
 
-	CActor* pActor = static_cast<CActor*> (g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pEntity->GetId()));
-	if (pActor != 0 && pActor->IsClient())
-	{
+	const CActor* pActor = dynamic_cast<CActor*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pEntity->GetId()));
+	if (pActor != nullptr && pActor->IsClient())
 		isClient = true;
-	}
 
-	if(pNanoMat && pEntity->GetSlotInfo(0, slotInfo) && slotInfo.pCharacter!=0)
+	if (pNanoMaterial && pEntity->GetSlotInfo(0, slotInfo) && slotInfo.pCharacter != nullptr)
 	{
 		// this should be the legs of the character
-		slotInfo.pCharacter->SetMaterial(pNanoMat->body);
+		slotInfo.pCharacter->SetMaterial(pNanoMaterial->body);
 		IAttachmentManager* pMan = slotInfo.pCharacter->GetIAttachmentManager();
 
 		IAttachment* pAttachment = pMan->GetInterfaceByName("upper_body");
@@ -138,9 +133,9 @@ bool CNanoSuit::AssignNanoMaterialToEntity(IEntity* pEntity, CNanoSuit::SNanoMat
 				{
 					// needed to support "fp3p"
 					if (isClient)
-						pCharInstance->SetMaterial(pNanoMat->arms);
+						pCharInstance->SetMaterial(pNanoMaterial->arms);
 					else
-						pCharInstance->SetMaterial(pNanoMat->body);
+						pCharInstance->SetMaterial(pNanoMaterial->body);
 				}
 			}
 		}
@@ -154,55 +149,48 @@ bool CNanoSuit::AssignNanoMaterialToEntity(IEntity* pEntity, CNanoSuit::SNanoMat
 				// TODO: maybe reduce just to pAttachmentObj->SetMaterial...
 				ICharacterInstance* pCharInstance = pAttachmentObj->GetICharacterInstance();
 				if (pCharInstance)
-					pCharInstance->SetMaterial(pNanoMat->helmet);
+					pCharInstance->SetMaterial(pNanoMaterial->helmet);
 				else
-					pAttachmentObj->SetMaterial(pNanoMat->helmet);
+					pAttachmentObj->SetMaterial(pNanoMaterial->helmet);
 			}
 		}
 
 		// arms ... these indices are a bit workaround
-		if (pEntity->GetSlotInfo(3, slotInfo) && slotInfo.pCharacter!=0)
-		{
-			slotInfo.pCharacter->SetMaterial(pNanoMat->arms);
-		}
+		if (pEntity->GetSlotInfo(3, slotInfo) && slotInfo.pCharacter != nullptr)
+			slotInfo.pCharacter->SetMaterial(pNanoMaterial->arms);
 		// second set of arms for dual socom
-		if (pEntity->GetSlotInfo(4, slotInfo) && slotInfo.pCharacter!=0)
-		{
-			slotInfo.pCharacter->SetMaterial(pNanoMat->arms);
-		}
+		if (pEntity->GetSlotInfo(4, slotInfo) && slotInfo.pCharacter != nullptr)
+			slotInfo.pCharacter->SetMaterial(pNanoMaterial->arms);
 
 		bSuccess = true;
 	}
 	return bSuccess;
 }
 
-
-void SNanoCloak::Update(CNanoSuit *pNano)
+void SNanoCloak::Update(CNanoSuit* pNano) const
 {
 	if (!pNano || !pNano->GetOwner() || !pNano->GetOwner()->IsClient())
 		return;
 
-	CPlayer *pOwner = const_cast<CPlayer*>(pNano->GetOwner());
+	const CPlayer* pOwner = const_cast<CPlayer*>(pNano->GetOwner());
 
 	//disable cloaking if health is too low (for the temperature camo) or suit energy goes too low (for any camo type I suppose)
-	bool disableNormal(GetState() && pNano->GetSuitEnergy()<=0);
-	bool disableHeat(GetState()==3 && pOwner->GetHealth()<25);
-	
+	const bool disableNormal(GetState() && pNano->GetSuitEnergy() <= 0);
+	const bool disableHeat(GetState() == 3 && pOwner->GetHealth() < 25);
+
 	if (disableNormal || disableHeat)
 	{
-		CHUD *pHUD = g_pGame->GetHUD();
+		CHUD* pHUD = g_pGame->GetHUD();
 		if (pHUD)
 		{
 			string msg = "@" + m_HUDMessage;
 			msg.append("_disabled");
 
 			pHUD->TextMessage(msg);
-			
+
 			//FIXME:special message for the temperature cloak
 			if (disableHeat)
-			{
 				pHUD->TextMessage("temperature_health_low");
-			}
 		}
 
 		pNano->SetMode(NANOMODE_DEFENSE);
@@ -211,91 +199,91 @@ void SNanoCloak::Update(CNanoSuit *pNano)
 
 //
 CNanoSuit::CNanoSuit()
-: m_pGameFramework(0)
-, m_pNanoMaterial(0)
-, m_activationTime(0.0f)
-, m_invulnerabilityTimeout(0.0f)
-, m_invulnerable(false)
+	: m_pGameFramework(nullptr),
+	m_pNanoMaterial(nullptr),
+	m_activationTime(0.0f),
+	m_invulnerabilityTimeout(0.0f),
+	m_invulnerable(false)
 {
-	for(int i = 0; i < ESound_Suit_Last; ++i)
+	for (auto& m_sound : m_sounds)
 	{
-		m_sounds[i].ID = INVALID_SOUNDID;
-		m_sounds[i].bLooping = false;
-		m_sounds[i].b3D = false;
-		m_sounds[i].nMassIndex = -1;
-		m_sounds[i].nSpeedIndex = -1;
-		m_sounds[i].nStrengthIndex = -1;
+		m_sound.ID             = INVALID_SOUNDID;
+		m_sound.bLooping       = false;
+		m_sound.b3D            = false;
+		m_sound.nMassIndex     = -1;
+		m_sound.nSpeedIndex    = -1;
+		m_sound.nStrengthIndex = -1;
 	}
 
 	m_energy = NANOSUIT_ENERGY;
 
-	Reset(NULL);
+	Reset(nullptr);
 }
 
-CNanoSuit::~CNanoSuit()
-{
-}
+CNanoSuit::~CNanoSuit() = default;
 
-void CNanoSuit::Reset(CPlayer *owner)
+void CNanoSuit::Reset(CPlayer* owner)
 {
 	m_healTime = 0;
 
-	m_pOwner = owner;
-	m_lastTap = eNA_None;
-	m_pendingAction = eNA_None;
-	m_bWasSprinting = false;
+	m_pOwner            = owner;
+	m_lastTap           = eNA_None;
+	m_pendingAction     = eNA_None;
+	m_bWasSprinting     = false;
 	m_bSprintUnderwater = false;
-	m_energy = 0.0f;
+	m_energy            = 0.0f;
 
 	m_bNightVisionEnabled = false;
 
-	for(int k = 0; k < NANOSLOT_LAST; ++k)
-		m_slots[k].desiredVal = 50.0f;
+	for (auto& m_slot : m_slots)
+	{
+		m_slot.desiredVal = 50.0f;
+	}
 
 	ResetEnergy();
-	
-	m_energyRechargeRate = 0.0f;
-	m_healthRegenRate = 0.0f;
-	m_healthAccError = 0.0f;
-	m_fLastSoundPlayedMedical = 0;
-	m_startedSprinting = 0;
-	m_now = 0;
-	m_lastTimeUsedThruster = 0;
-	m_activationTime=0.0f;
-	m_invulnerabilityTimeout=0.0f;
-	m_invulnerable=false;
-	m_defenseHitTimer = 0.0f;
 
-	for(int i=0; i<ESound_Suit_Last; ++i)
+	m_energyRechargeRate      = 0.0f;
+	m_healthRegenRate         = 0.0f;
+	m_healthAccError          = 0.0f;
+	m_fLastSoundPlayedMedical = 0;
+	m_startedSprinting        = 0;
+	m_now                     = 0;
+	m_lastTimeUsedThruster    = 0;
+	m_activationTime          = 0.0f;
+	m_invulnerabilityTimeout  = 0.0f;
+	m_invulnerable            = false;
+	m_defenseHitTimer         = 0.0f;
+
+	for (auto& m_sound : m_sounds)
 	{
-		if(m_sounds[i].ID != INVALID_SOUNDID)
+		if (m_sound.ID != INVALID_SOUNDID)
 		{
-			if(gEnv->pSoundSystem)
-				if(ISound *pSound = gEnv->pSoundSystem->GetSound(m_sounds[i].ID))
+			if (gEnv->pSoundSystem)
+				if (ISound* pSound = gEnv->pSoundSystem->GetSound(m_sound.ID))
 					pSound->Stop();
-			
-			m_sounds[i].ID = INVALID_SOUNDID;
-			m_sounds[i].bLooping = false;
-			m_sounds[i].b3D = false;
-			m_sounds[i].nMassIndex = -1;
-			m_sounds[i].nSpeedIndex = -1;
-			m_sounds[i].nStrengthIndex = -1;
+
+			m_sound.ID             = INVALID_SOUNDID;
+			m_sound.bLooping       = false;
+			m_sound.b3D            = false;
+			m_sound.nMassIndex     = -1;
+			m_sound.nSpeedIndex    = -1;
+			m_sound.nStrengthIndex = -1;
 		}
 	}
 
-	m_healthRegenDelay = 0.0f;
+	m_healthRegenDelay    = 0.0f;
 	m_energyRechargeDelay = 0.0f;
 
 	m_disabledFlags.resize(NANODISABLE_NUMENTRIES);
-	for(int i = 0; i < NANODISABLE_NUMENTRIES; i++)
+	for (int i = 0; i < NANODISABLE_NUMENTRIES; i++)
 	{
-		m_disabledFlags[i]=false;
+		m_disabledFlags[i] = false;
 	}
 
 	m_disabledTimes.resize(NANODISABLE_NUMENTRIES);
-	for(int i = 0; i < NANODISABLE_NUMENTRIES; i++)
+	for (int i = 0; i < NANODISABLE_NUMENTRIES; i++)
 	{
-		m_disabledTimes[i]=0.0f;
+		m_disabledTimes[i] = 0.0f;
 	}
 
 	m_currentMode = NANOMODE_DEFENSE;
@@ -314,54 +302,54 @@ void CNanoSuit::Reset(CPlayer *owner)
 	Precache();
 }
 
-void CNanoSuit::SetParams(SmartScriptTable &rTable,bool resetFirst)
+void CNanoSuit::SetParams(const SmartScriptTable& rTable, bool resetFirst)
 {
 	//
 	int mode = 1;
 	rTable->GetValue("cloakType", mode);
-	m_cloak.m_mode = ENanoCloakMode(mode);	
-	rTable->GetValue("cloakEnergyCost",m_cloak.m_energyCost);
-	rTable->GetValue("cloakHealthCost",m_cloak.m_healthCost);
-	rTable->GetValue("cloakVisualDamp",m_cloak.m_visualDamp);
-	rTable->GetValue("cloakSoundDamp",m_cloak.m_soundDamp);
-	rTable->GetValue("cloakHeatDamp",m_cloak.m_heatDamp);
-	
-	const char *pHUDMessage;
-	if (rTable->GetValue("cloakHudMessage",pHUDMessage))
+	m_cloak.m_mode = static_cast<ENanoCloakMode>(mode);
+	rTable->GetValue("cloakEnergyCost", m_cloak.m_energyCost);
+	rTable->GetValue("cloakHealthCost", m_cloak.m_healthCost);
+	rTable->GetValue("cloakVisualDamp", m_cloak.m_visualDamp);
+	rTable->GetValue("cloakSoundDamp", m_cloak.m_soundDamp);
+	rTable->GetValue("cloakHeatDamp", m_cloak.m_heatDamp);
+
+	const char* pHUDMessage;
+	if (rTable->GetValue("cloakHudMessage", pHUDMessage))
 		m_cloak.m_HUDMessage = string(pHUDMessage);
 }
 
-void CNanoSuit::SetInvulnerability(bool invulnerable)
+void CNanoSuit::SetInvulnerability(const bool invulnerable)
 {
-	m_invulnerable=invulnerable;
-	m_invulnerabilityTimeout=0.0f;
+	m_invulnerable           = invulnerable;
+	m_invulnerabilityTimeout = 0.0f;
 	SelectSuitMaterial();
-	
+
 	if (m_pOwner)
 		m_pOwner->GetGameObject()->ChangedNetworkState(CPlayer::ASPECT_NANO_SUIT_INVULNERABLE);
 }
 
-void CNanoSuit::SetInvulnerabilityTimeout(float timeout)
+void CNanoSuit::SetInvulnerabilityTimeout(const float timeout)
 {
-	m_invulnerabilityTimeout=timeout;
+	m_invulnerabilityTimeout = timeout;
 }
 
-void CNanoSuit::SetCloakLevel(ENanoCloakMode mode)
+void CNanoSuit::SetCloakLevel(const ENanoCloakMode mode)
 {
 	// Currently only on/off supported!
-	ENanoCloakMode oldMode = m_cloak.GetType();
+	const ENanoCloakMode oldMode = m_cloak.GetType();
 	m_cloak.SetType(mode);
 
-	if(oldMode != mode && m_cloak.IsActive())
+	if (oldMode != mode && m_cloak.IsActive())
 	{
 		SetCloak(false, true);
 		SetCloak(true, true);
 	}
 }
 
-void CNanoSuit::Update(float frameTime)
+void CNanoSuit::Update(const float frameTime)
 {
-	if (!m_pOwner || m_pOwner->GetHealth()<=0)
+	if (!m_pOwner || m_pOwner->GetHealth() <= 0)
 		return;
 
 	// invulnerability effect works even with a powered down suit
@@ -370,14 +358,14 @@ void CNanoSuit::Update(float frameTime)
 	if (gEnv->bServer)
 	{
 		if (!m_invulnerable)
-			m_invulnerabilityTimeout=0.0f;
+			m_invulnerabilityTimeout = 0.0f;
 
-		if (m_invulnerable && m_invulnerabilityTimeout>0.0f)
+		if (m_invulnerable && m_invulnerabilityTimeout > 0.0f)
 		{
-			m_invulnerabilityTimeout-=frameTime;
-			if (m_invulnerabilityTimeout<=0.0f)
+			m_invulnerabilityTimeout -= frameTime;
+			if (m_invulnerabilityTimeout <= 0.0f)
 			{
-				m_invulnerabilityTimeout=0.0f;
+				m_invulnerabilityTimeout = 0.0f;
 
 				SetInvulnerability(false);
 			}
@@ -387,40 +375,35 @@ void CNanoSuit::Update(float frameTime)
 	// the suit can take some time to power up
 	if (!IsActive())
 	{
-		bool activate = true;
-		for(int i = 0; i < NANODISABLE_NUMENTRIES; i++)
+		for (int i = 0; i < NANODISABLE_NUMENTRIES; i++)
 		{
-			if(m_disabledTimes[i]>0.0f)
+			if (m_disabledTimes[i] > 0.0f)
 			{
-				m_disabledTimes[i]-=frameTime;
-			
-				if(m_disabledTimes[i]<=0.0f)
+				m_disabledTimes[i] -= frameTime;
+
+				if (m_disabledTimes[i] <= 0.0f)
 				{
-					m_disabledTimes[i]=0.0f;
-					m_disabledFlags[i]=false;
-					
-					if(i==NANODISABLE_EMP)
+					m_disabledTimes[i] = 0.0f;
+					m_disabledFlags[i] = false;
+
+					if (i == NANODISABLE_EMP)
 					{
 						CHUD* pHUD = g_pGame->GetHUD();
 						if (pHUD && pHUD->GetBreakHud())
 							pHUD->RebootHUD();
 					}
 				}
-				else
-				{
-					activate = false;
-				}
 			}
 		}
 	}
 
-	if(m_pOwner->IsFrozen())
+	if (m_pOwner->IsFrozen())
 		return;
 
-	if(m_defenseHitTimer > 0.0f)
+	if (m_defenseHitTimer > 0.0f)
 	{
 		m_defenseHitTimer -= frameTime;
-		if(m_defenseHitTimer <= 0.0f)
+		if (m_defenseHitTimer <= 0.0f)
 		{
 			m_defenseHitTimer = 0.0f;
 			SelectSuitMaterial();
@@ -432,39 +415,44 @@ void CNanoSuit::Update(float frameTime)
 	if (!IsActive())
 		return;
 
-	bool isServer=gEnv->bServer;
+	const bool isServer = gEnv->bServer;
 
-	bool isAI = !m_pOwner->IsPlayer();
+	const bool isAI = !m_pOwner->IsPlayer();
 
 	//update health
-	int32 currentHealth = m_pOwner->GetHealth();
-	int32 maxHealth(m_pOwner->GetMaxHealth());
-	float recharge = 0.0f;
-	float rechargeTime = 20.0f;
+	const int32 currentHealth = m_pOwner->GetHealth();
+	const int32 maxHealth(m_pOwner->GetMaxHealth());
+	float       rechargeTime = 20.0f;
 
 	const SPlayerStats stats = *(static_cast<SPlayerStats*>(m_pOwner->GetActorStats()));
 
 	if (isAI)
-		rechargeTime=g_pGameCVars->g_AiSuitEnergyRechargeTime;
+	{
+		rechargeTime = g_pGameCVars->g_AiSuitEnergyRechargeTime;
+	}
 	else
 	{
 		if (gEnv->bMultiplayer)
-			rechargeTime=g_pGameCVars->g_playerSuitEnergyRechargeTimeMultiplayer;
+		{
+			rechargeTime = g_pGameCVars->g_playerSuitEnergyRechargeTimeMultiplayer;
+		}
 		else
 		{
-			if(m_currentMode != NANOMODE_DEFENSE)
-				rechargeTime=g_pGameCVars->g_playerSuitEnergyRechargeTime;
+			if (m_currentMode != NANOMODE_DEFENSE)
+			{
+				rechargeTime = g_pGameCVars->g_playerSuitEnergyRechargeTime;
+			}
 			else
 			{
-				if(stats.speedFlat > 0.1f) //moving
-					rechargeTime=g_pGameCVars->g_playerSuitEnergyRechargeTimeArmorMoving;
+				if (stats.speedFlat > 0.1f) //moving
+					rechargeTime = g_pGameCVars->g_playerSuitEnergyRechargeTimeArmorMoving;
 				else
-					rechargeTime=g_pGameCVars->g_playerSuitEnergyRechargeTimeArmor;
+					rechargeTime = g_pGameCVars->g_playerSuitEnergyRechargeTimeArmor;
 			}
 		}
 	}
 
-	recharge = NANOSUIT_ENERGY / max(0.01f, rechargeTime);
+	float recharge = NANOSUIT_ENERGY / max(0.01f, rechargeTime);
 
 	m_energyRechargeRate = recharge;
 
@@ -473,22 +461,22 @@ void CNanoSuit::Update(float frameTime)
 	if (currentHealth < maxHealth || m_cloak.m_active)
 	{
 		//check for low health and play sound
-		if(currentHealth < maxHealth*0.9f && GetSlotValue(NANOSLOT_MEDICAL, true) > 50)
-		{
-			if(m_now - m_fLastSoundPlayedMedical > 30000.0f)
+		if (currentHealth < maxHealth * 0.9f && GetSlotValue(NANOSLOT_MEDICAL, true) > 50)
+			if (m_now - m_fLastSoundPlayedMedical > 30000.0f)
 			{
 				m_fLastSoundPlayedMedical = m_now;
 				PlaySound(MEDICAL_SOUND);
 			}
-		}
 
-		if(m_currentMode == NANOMODE_DEFENSE) //some additional energy in defense mode
+		if (m_currentMode == NANOMODE_DEFENSE) //some additional energy in defense mode
 		{
 			if (isAI)
+			{
 				m_healthRegenRate = maxHealth / max(0.01f, g_pGameCVars->g_AiSuitArmorModeHealthRegenTime);
+			}
 			else
 			{
-				if(stats.speedFlat > 0.1f)
+				if (stats.speedFlat > 0.1f)
 					m_healthRegenRate = maxHealth / max(0.01f, g_pGameCVars->g_playerSuitArmorModeHealthRegenTimeMoving);
 				else
 					m_healthRegenRate = maxHealth / max(0.01f, g_pGameCVars->g_playerSuitArmorModeHealthRegenTime);
@@ -497,10 +485,12 @@ void CNanoSuit::Update(float frameTime)
 		else
 		{
 			if (isAI)
+			{
 				m_healthRegenRate = maxHealth / max(0.01f, g_pGameCVars->g_AiSuitHealthRegenTime);
+			}
 			else
 			{
-				if(stats.speedFlat > 0.1f)
+				if (stats.speedFlat > 0.1f)
 					m_healthRegenRate = maxHealth / max(0.01f, g_pGameCVars->g_playerSuitHealthRegenTimeMoving);
 				else
 					m_healthRegenRate = maxHealth / max(0.01f, g_pGameCVars->g_playerSuitHealthRegenTime);
@@ -510,19 +500,19 @@ void CNanoSuit::Update(float frameTime)
 		//cap the health regeneration rate to a maximum (for AIs with lots of health)
 		m_healthRegenRate = min(m_healthRegenRate, NANOSUIT_MAXIMUM_HEALTH_REGEN);
 
-		m_healthRegenRate -= (m_cloak.m_active?m_cloak.m_healthCost:0.0f);
+		m_healthRegenRate -= (m_cloak.m_active ? m_cloak.m_healthCost : 0.0f);
 	}
-	
+
 	//subtract energy from suit for cloaking
-	if(m_cloak.m_active)
+	if (m_cloak.m_active)
 	{
-		float energyCost = m_cloak.m_energyCost * g_pGameCVars->g_suitCloakEnergyDrainAdjuster;
-		if(stats.inFreefall)
-			recharge = min(recharge-max(1.0f, energyCost*8.0f),-max(1.0f, energyCost*8.0f));
-		else if(stats.isOnLadder)
-			recharge = min(recharge-max(1.0f, energyCost*stats.speedFlat),-max(1.0f, energyCost*stats.speedFlat));
+		const float energyCost = m_cloak.m_energyCost * g_pGameCVars->g_suitCloakEnergyDrainAdjuster;
+		if (stats.inFreefall)
+			recharge = min(recharge - max(1.0f, energyCost * 8.0f), -max(1.0f, energyCost * 8.0f));
+		else if (stats.isOnLadder)
+			recharge = min(recharge - max(1.0f, energyCost * stats.speedFlat), -max(1.0f, energyCost * stats.speedFlat));
 		else
-			recharge = min(recharge-max(1.0f, energyCost*(stats.speedFlat * 0.5f)),-max(1.0f, energyCost*(stats.speedFlat * 0.5f)));
+			recharge = min(recharge - max(1.0f, energyCost * (stats.speedFlat * 0.5f)), -max(1.0f, energyCost * (stats.speedFlat * 0.5f)));
 	}
 
 	//this deals with sprinting
@@ -532,18 +522,14 @@ void CNanoSuit::Update(float frameTime)
 	NETINPUT_TRACE(m_pOwner->GetEntityId(), recharge);
 
 	if (isServer)
-	{
 		if (recharge < 0.0f || m_energyRechargeDelay <= 0.0f)
-		{
-			SetSuitEnergy(clamp(m_energy + recharge*frameTime, 0.0f, NANOSUIT_ENERGY));
-		}
-	}
+			SetSuitEnergy(clamp(m_energy + recharge * frameTime, 0.0f, NANOSUIT_ENERGY));
 
 	//CryLogAlways("%s Suit Energy: %.3f", m_pOwner->GetEntity()->GetName(), m_energy);
 
 	if (m_healthRegenDelay > 0.0f)
 	{
-		bool regenAfterFullEnergy = g_pGameCVars->g_playerSuitHealthRegenDelay < 0.0f;
+		const bool regenAfterFullEnergy = g_pGameCVars->g_playerSuitHealthRegenDelay < 0.0f;
 		if (!regenAfterFullEnergy || GetSuitEnergy() >= NANOSUIT_ENERGY)
 			m_healthRegenDelay = max(0.0f, m_healthRegenDelay - frameTime);
 	}
@@ -551,11 +537,12 @@ void CNanoSuit::Update(float frameTime)
 	if (m_energyRechargeDelay > 0.0f)
 		m_energyRechargeDelay = max(0.0f, m_energyRechargeDelay - frameTime);
 
-	for (int i=0;i<NANOSLOT_LAST;++i)
-		m_slots[i].realVal = m_slots[i].desiredVal;
+	for (auto& m_slot : m_slots)
+	{
+		m_slot.realVal = m_slot.desiredVal;
+	}
 
 	if (isServer)
-	{
 		//adjust the player health.
 		if (m_healthRegenDelay <= 0.0f)
 		{
@@ -565,20 +552,19 @@ void CNanoSuit::Update(float frameTime)
 				m_healTime += NANOSUIT_HEALTH_REGEN_INTERVAL;
 
 				// Calculate the new health increase
-				float healthInc = m_healthAccError + m_healthRegenRate * NANOSUIT_HEALTH_REGEN_INTERVAL;
-				int healthIncInt = (int32)healthInc;
+				const float healthInc    = m_healthAccError + m_healthRegenRate * NANOSUIT_HEALTH_REGEN_INTERVAL;
+				const int   healthIncInt = static_cast<int32>(healthInc);
 				// Since the health is measured as integer, carry on the fractions for the next addition
 				// to get more accurate result in the health regeneration rate.
 				m_healthAccError = healthInc - healthIncInt;
 
-				int newHealth = min(maxHealth,(int32)(currentHealth + healthIncInt));
+				const int newHealth = min(maxHealth, currentHealth + healthIncInt);
 				if (currentHealth != newHealth)
 					m_pOwner->SetHealth(newHealth);
 			}
 		}
-	}
 
-	if (m_energy!=m_lastEnergy)
+	if (m_energy != m_lastEnergy)
 	{
 		if (isServer)
 			m_pOwner->GetGameObject()->ChangedNetworkState(CPlayer::ASPECT_NANO_SUIT_ENERGY);
@@ -586,7 +572,7 @@ void CNanoSuit::Update(float frameTime)
 		// call listeners on nano energy change
 		if (m_listeners.empty() == false)
 		{
-			std::vector<INanoSuitListener*>::iterator iter = m_listeners.begin();
+			auto iter = m_listeners.begin();
 			while (iter != m_listeners.end())
 			{
 				(*iter)->EnergyChanged(m_energy);
@@ -607,18 +593,18 @@ void CNanoSuit::Update(float frameTime)
 	if (m_currentMode == NANOMODE_SPEED)
 		motionBlurAmt = 1.0f;
 
-	IEntityRenderProxy * pRenderProxy = (IEntityRenderProxy*)m_pOwner->GetEntity()->GetProxy(ENTITY_PROXY_RENDER);
+	auto pRenderProxy = dynamic_cast<IEntityRenderProxy*>(m_pOwner->GetEntity()->GetProxy(ENTITY_PROXY_RENDER));
 	if (pRenderProxy && stats.bSprinting)
-	{ 
+	{
 		float amt(pRenderProxy->GetMotionBlurAmount());
 		amt += (motionBlurAmt - amt) * frameTime * 3.3f;
 		pRenderProxy->SetMotionBlurAmount(amt);
 	}
-			
-	CItem *currentItem = (CItem *)gEnv->pGame->GetIGameFramework()->GetIItemSystem()->GetItem(m_pOwner->GetInventory()->GetCurrentItem());
+
+	const CItem* currentItem = dynamic_cast<CItem*>(gEnv->pGame->GetIGameFramework()->GetIItemSystem()->GetItem(m_pOwner->GetInventory()->GetCurrentItem()));
 	if (currentItem)
 	{
-		pRenderProxy = (IEntityRenderProxy*)currentItem->GetEntity()->GetProxy(ENTITY_PROXY_RENDER);
+		pRenderProxy = dynamic_cast<IEntityRenderProxy*>(currentItem->GetEntity()->GetProxy(ENTITY_PROXY_RENDER));
 		if (pRenderProxy)
 		{
 			float amt(pRenderProxy->GetMotionBlurAmount());
@@ -630,48 +616,41 @@ void CNanoSuit::Update(float frameTime)
 	m_lastEnergy = m_energy;
 }
 
-void CNanoSuit::Balance(float energy)
+void CNanoSuit::Balance(const float energy)
 {
-	for(int i = 0; i < NANOSLOT_LAST; i++)
+	for (auto& m_slot : m_slots)
 	{
-		float slotPerCent = m_slots[i].desiredVal / NANOSUIT_ENERGY; //computes percentage for NANOSUIT_ENERGY total ...
-			m_slots[i].realVal = energy * slotPerCent;
+		const float slotPerCent = m_slot.desiredVal / NANOSUIT_ENERGY; //computes percentage for NANOSUIT_ENERGY total ...
+		m_slot.realVal          = energy * slotPerCent;
 	}
 }
 
-void CNanoSuit::SetSuitEnergy(float value, bool playerInitiated /* = false */)
+void CNanoSuit::SetSuitEnergy(float value, const bool playerInitiated /* = false */)
 {
 	value = clamp(value, 0.0f, NANOSUIT_ENERGY);
-	if (m_pOwner && value!=m_energy && gEnv->bServer)
+	if (m_pOwner && value != m_energy && gEnv->bServer)
 		m_pOwner->GetGameObject()->ChangedNetworkState(CPlayer::ASPECT_NANO_SUIT_ENERGY);
 
 	if (!gEnv->bMultiplayer)
-	{
 		if (value < m_energy)
-		{
 			m_energyRechargeDelay = g_pGameCVars->g_playerSuitEnergyRechargeDelay;
-		}
-	}
 
 
 	if (value != m_energy)
-	{
 		// call listeners on nano energy change
 		if (m_listeners.empty() == false)
 		{
-			std::vector<INanoSuitListener*>::iterator iter = m_listeners.begin();
+			auto iter = m_listeners.begin();
 			while (iter != m_listeners.end())
 			{
 				(*iter)->EnergyChanged(value);
 				++iter;
 			}
 		}
-	}
 
 	if (value < m_energy)
 	{
 		if (!playerInitiated)
-		{
 			//armor mode hit fx (in armor mode energy is decreased by damage
 			/*if (m_energy-value>=NANOSUIT_ENERGY * 0.2f) //now always happening on hit
 			{
@@ -685,9 +664,8 @@ void CNanoSuit::SetSuitEnergy(float value, bool playerInitiated /* = false */)
 					pMaterialEffects->ExecuteEffect(id, params);
 				}
 			}*/
-			if (gEnv->bMultiplayer && ((value/NANOSUIT_ENERGY)<=0.2f) && (m_energy>value) && g_pGameCVars->g_mpSpeedRechargeDelay) // if we cross the 20% boundary we don't regenerate for 3secs
-				m_energyRechargeDelay=3.0f;
-		}
+			if (gEnv->bMultiplayer && ((value / NANOSUIT_ENERGY) <= 0.2f) && (m_energy > value) && g_pGameCVars->g_mpSpeedRechargeDelay) // if we cross the 20% boundary we don't regenerate for 3secs
+				m_energyRechargeDelay = 3.0f;
 
 		// spending energy cancels invulnerability
 		if (m_invulnerable && gEnv->bServer)
@@ -701,19 +679,19 @@ void CNanoSuit::Hit(int damage)
 {
 	//server only
 
- 	if (gEnv->bMultiplayer)
- 		m_energyRechargeDelay = MAX(m_energyRechargeDelay, 3.0f);
+	if (gEnv->bMultiplayer)
+		m_energyRechargeDelay = MAX(m_energyRechargeDelay, 3.0f);
 
 	// this should work in MP as well as SP now.
 	m_healthRegenDelay = fabsf(g_pGameCVars->g_playerSuitHealthRegenDelay);
 
-	if(m_pOwner && m_pOwner->IsClient())
+	if (m_pOwner && m_pOwner->IsClient())
 	{
-		IMaterialEffects* pMaterialEffects = gEnv->pGame->GetIGameFramework()->GetIMaterialEffects();
+		IMaterialEffects*       pMaterialEffects = gEnv->pGame->GetIGameFramework()->GetIMaterialEffects();
 		SMFXRunTimeEffectParams params;
-		params.pos = m_pOwner->GetEntity()->GetWorldPos();
-		params.soundSemantic = eSoundSemantic_HUD;
-		TMFXEffectId id = pMaterialEffects->GetEffectIdByName("player_fx", "player_damage_armormode");
+		params.pos            = m_pOwner->GetEntity()->GetWorldPos();
+		params.soundSemantic  = eSoundSemantic_HUD;
+		const TMFXEffectId id = pMaterialEffects->GetEffectIdByName("player_fx", "player_damage_armormode");
 		pMaterialEffects->ExecuteEffect(id, params);
 	}
 
@@ -726,33 +704,29 @@ void CNanoSuit::Hit(int damage)
 	}*/
 }
 
-bool CNanoSuit::SetAllSlots(float armor, float strength, float speed)
+bool CNanoSuit::SetAllSlots(const float armor, const float strength, const float speed)
 {
-	float energy = armor + strength + speed;
-	if(energy > NANOSUIT_ENERGY)
+	const float energy = armor + strength + speed;
+	if (energy > NANOSUIT_ENERGY)
 		return false;
-	m_slots[NANOSLOT_ARMOR].desiredVal = armor;
+	m_slots[NANOSLOT_ARMOR].desiredVal    = armor;
 	m_slots[NANOSLOT_STRENGTH].desiredVal = strength;
-	m_slots[NANOSLOT_SPEED].desiredVal = speed;
-	m_slots[NANOSLOT_MEDICAL].desiredVal = NANOSUIT_ENERGY - energy;
+	m_slots[NANOSLOT_SPEED].desiredVal    = speed;
+	m_slots[NANOSLOT_MEDICAL].desiredVal  = NANOSUIT_ENERGY - energy;
 
 	return true;
 }
 
 void CNanoSuit::PlayerKilled()
 {
-	if(GetMode()==NANOMODE_DEFENSE)
-	{
+	if (GetMode() == NANOMODE_DEFENSE)
 		SetSuitEnergy(0);
-	}
 	else
-	{
 		SetMode(NANOMODE_DEFENSE, true, true);
-	}
 	SetCloakLevel(CLOAKMODE_REFRACTION);
 }
 
-bool CNanoSuit::SetMode(ENanoMode mode, bool forceUpdate, bool keepInvul)
+bool CNanoSuit::SetMode(const ENanoMode mode, const bool forceUpdate, const bool keepInvul)
 {
 	if (!IsActive())
 		return false;
@@ -762,95 +736,84 @@ bool CNanoSuit::SetMode(ENanoMode mode, bool forceUpdate, bool keepInvul)
 		mode = NANOMODE_STRENGTH;
 	}*/
 
-	if(m_currentMode == mode && !forceUpdate)
+	if (m_currentMode == mode && !forceUpdate)
 		return false;
 
-	if(!(m_featureMask & (1<<mode)) && !forceUpdate)
+	if (!(m_featureMask & (1 << mode)) && !forceUpdate)
 		return false;
 
-	ENanoMode lastMode = m_currentMode;
-	m_currentMode = mode;
+	const ENanoMode lastMode = m_currentMode;
+	m_currentMode      = mode;
 
 	const char* effectName = "";
-	switch(mode)
+	switch (mode)
 	{
-		case NANOMODE_SPEED:
-			SetAllSlots(25.0f, 50.0f, 100.0f);
-			if(!forceUpdate)
-				PlaySound(ESound_SuitSpeedActivate);
-			SetCloak(false);
-			effectName = "suit_speedmode";
-			//marcok: don't touch please
-			if (g_pGameCVars->bt_speed)
-			{
-				IItem *pItem = m_pOwner->GetCurrentItem();
-				IWeapon *pWeapon = pItem ? pItem->GetIWeapon() : NULL;
-				if (!g_pGameCVars->bt_ironsight || (pWeapon && pWeapon->IsZoomed()))
-				{
-					g_pGame->GetBulletTime()->Activate(true);
-				}
-			}
-			break;
-		case NANOMODE_STRENGTH:
-			SetAllSlots(50.0f, 100.0f, 25.0f);
-			if(!forceUpdate)
-				PlaySound(ESound_SuitStrengthActivate);
-			SetCloak(false);
-			effectName = "suit_strengthmode";
-			break;
-		case NANOMODE_DEFENSE:
-			SetAllSlots(75.0f, 25.0f, 25.0f);
-			if(!forceUpdate)
-				PlaySound(ESound_SuitArmorActivate);
-			SetCloak(false);
-			effectName = "suit_armormode";
-			break;
-		case NANOMODE_CLOAK:
-			SetAllSlots(50.0f, 50.0f, 50.0f);
-			SetCloak(true, forceUpdate);
-			effectName = "suit_cloakmode";
-			break;
-		default:
-			assert(0);
-			GameWarning("Non existing NANOMODE selected: %d", mode);
-			return false;
+	case NANOMODE_SPEED:
+		SetAllSlots(25.0f, 50.0f, 100.0f);
+		if (!forceUpdate)
+			PlaySound(ESound_SuitSpeedActivate);
+		SetCloak(false);
+		effectName = "suit_speedmode";
+	//marcok: don't touch please
+		if (g_pGameCVars->bt_speed)
+		{
+			IItem*         pItem   = m_pOwner->GetCurrentItem();
+			const IWeapon* pWeapon = pItem ? pItem->GetIWeapon() : nullptr;
+			if (!g_pGameCVars->bt_ironsight || (pWeapon && pWeapon->IsZoomed()))
+				g_pGame->GetBulletTime()->Activate(true);
+		}
+		break;
+	case NANOMODE_STRENGTH:
+		SetAllSlots(50.0f, 100.0f, 25.0f);
+		if (!forceUpdate)
+			PlaySound(ESound_SuitStrengthActivate);
+		SetCloak(false);
+		effectName = "suit_strengthmode";
+		break;
+	case NANOMODE_DEFENSE:
+		SetAllSlots(75.0f, 25.0f, 25.0f);
+		if (!forceUpdate)
+			PlaySound(ESound_SuitArmorActivate);
+		SetCloak(false);
+		effectName = "suit_armormode";
+		break;
+	case NANOMODE_CLOAK:
+		SetAllSlots(50.0f, 50.0f, 50.0f);
+		SetCloak(true, forceUpdate);
+		effectName = "suit_cloakmode";
+		break;
+	default:assert(0);
+		GameWarning("Non existing NANOMODE selected: %d", mode);
+		return false;
 	}
 
 	//marcok: don't touch please
 	if (g_pGameCVars->bt_speed)
-	{
 		if (lastMode != m_currentMode)
-		{
 			if (lastMode == NANOMODE_SPEED)
-			{
 				g_pGame->GetBulletTime()->Activate(false);
-			}
-		}
-	}
 
-	if(m_pOwner)
+	if (m_pOwner)
 	{
-		if(mode != NANOMODE_CLOAK && !m_pOwner->IsPlayer())
+		if (mode != NANOMODE_CLOAK && !m_pOwner->IsPlayer())
 			PlaySound(ESound_AISuitHumming);
 		else
 			PlaySound(ESound_AISuitHumming, 0.0f, true);
 
-		m_pGameFramework->GetIGameplayRecorder()->Event(m_pOwner->GetEntity(), GameplayEvent(eGE_SuitModeChanged, 0, (float)mode));
+		m_pGameFramework->GetIGameplayRecorder()->Event(m_pOwner->GetEntity(), GameplayEvent(eGE_SuitModeChanged, nullptr, static_cast<float>(mode)));
 
 		if (gEnv->bServer && !keepInvul)
-		{
 			if (m_invulnerable)
 				SetInvulnerability(false);
-		}
 
 		//draw some screen effect
-		if(m_pOwner == m_pGameFramework->GetClientActor() && !m_pOwner->IsThirdPerson())
+		if (m_pOwner == m_pGameFramework->GetClientActor() && !m_pOwner->IsThirdPerson())
 		{
-			IMaterialEffects* pMaterialEffects = gEnv->pGame->GetIGameFramework()->GetIMaterialEffects();
+			IMaterialEffects*       pMaterialEffects = gEnv->pGame->GetIGameFramework()->GetIMaterialEffects();
 			SMFXRunTimeEffectParams params;
-			params.pos = m_pOwner->GetEntity()->GetWorldPos();
-			params.soundSemantic = eSoundSemantic_NanoSuit;
-			TMFXEffectId id = pMaterialEffects->GetEffectIdByName("player_fx", effectName);
+			params.pos            = m_pOwner->GetEntity()->GetWorldPos();
+			params.soundSemantic  = eSoundSemantic_NanoSuit;
+			const TMFXEffectId id = pMaterialEffects->GetEffectIdByName("player_fx", effectName);
 			pMaterialEffects->ExecuteEffect(id, params);
 		}
 	}
@@ -858,7 +821,7 @@ bool CNanoSuit::SetMode(ENanoMode mode, bool forceUpdate, bool keepInvul)
 	// call listeners on nano mode change
 	if (m_listeners.empty() == false)
 	{
-		std::vector<INanoSuitListener*>::iterator iter = m_listeners.begin();
+		auto iter = m_listeners.begin();
 		while (iter != m_listeners.end())
 		{
 			(*iter)->ModeChanged(mode);
@@ -869,7 +832,7 @@ bool CNanoSuit::SetMode(ENanoMode mode, bool forceUpdate, bool keepInvul)
 	SelectSuitMaterial();
 
 	//stop hit timer if active
-	if(m_currentMode != NANOMODE_DEFENSE)
+	if (m_currentMode != NANOMODE_DEFENSE)
 		m_defenseHitTimer = 0.0f;
 
 	if (m_pOwner)
@@ -878,36 +841,32 @@ bool CNanoSuit::SetMode(ENanoMode mode, bool forceUpdate, bool keepInvul)
 	// player's squadmates mimicking nanosuit modifications
 	if (gEnv->pAISystem && m_pOwner && m_pOwner->GetEntity()->GetAI())
 	{
-		IAISignalExtraData* pData = gEnv->pAISystem->CreateSignalExtraData();//AI System will be the owner of this data
-		pData->iValue = mode;
-		gEnv->pAISystem->SendSignal(SIGNALFILTER_SENDER,1,"OnNanoSuitMode",m_pOwner->GetEntity()->GetAI(),pData);
+		IAISignalExtraData* pData = gEnv->pAISystem->CreateSignalExtraData(); //AI System will be the owner of this data
+		pData->iValue             = mode;
+		gEnv->pAISystem->SendSignal(SIGNALFILTER_SENDER, 1, "OnNanoSuitMode", m_pOwner->GetEntity()->GetAI(), pData);
 	}
 
 	// Report cloak usage to AI system.
 	if (lastMode == NANOMODE_CLOAK && m_currentMode != NANOMODE_CLOAK)
-	{
 		if (GetOwner()->GetEntity() && GetOwner()->GetEntity()->GetAI())
-			GetOwner()->GetEntity()->GetAI()->Event(AIEVENT_PLAYER_STUNT_UNCLOAK, 0);
-	}
+			GetOwner()->GetEntity()->GetAI()->Event(AIEVENT_PLAYER_STUNT_UNCLOAK, nullptr);
 	if (lastMode != NANOMODE_CLOAK && m_currentMode == NANOMODE_CLOAK)
-	{
 		if (GetOwner()->GetEntity() && GetOwner()->GetEntity()->GetAI())
-			GetOwner()->GetEntity()->GetAI()->Event(AIEVENT_PLAYER_STUNT_CLOAK, 0);
-	}
+			GetOwner()->GetEntity()->GetAI()->Event(AIEVENT_PLAYER_STUNT_CLOAK, nullptr);
 
 	return true;
 }
 
-void CNanoSuit::SetCloak(bool on, bool force)
+void CNanoSuit::SetCloak(const bool on, const bool force)
 {
 	if (!m_pOwner)
 		return;
 
-	bool switched(m_cloak.m_active!=on);
+	const bool switched(m_cloak.m_active != on);
 
-	if(true && !m_pOwner->IsPlayer())
+	if (!m_pOwner->IsPlayer())
 	{
-		if(on)
+		if (on)
 			PlaySound(ESound_AISuitCloakFeedback);
 		else
 			PlaySound(ESound_AISuitCloakFeedback, 0.0f, true);
@@ -915,14 +874,15 @@ void CNanoSuit::SetCloak(bool on, bool force)
 
 	m_cloak.m_active = on;
 	if (switched || force)
-	{
 		if (m_pOwner)
 		{
-			if(!force && on)
+			if (!force && on)
 			{
 				PlaySound(ESound_SuitCloakActivate);
 				if (!m_pOwner->IsClient())
+				{
 					PlaySound(ESound_SuitCloakFeedback);
+				}
 				else
 				{
 					m_pOwner->SendMusicLogicEvent(eMUSICLOGICEVENT_CLOAKMODE_ENTER);
@@ -932,7 +892,9 @@ void CNanoSuit::SetCloak(bool on, bool force)
 			else if (!on)
 			{
 				if (!m_pOwner->IsClient())
+				{
 					PlaySound(ESound_SuitCloakFeedback, 1, true);
+				}
 				else
 				{
 					m_pOwner->SendMusicLogicEvent(eMUSICLOGICEVENT_CLOAKMODE_LEAVE);
@@ -940,82 +902,69 @@ void CNanoSuit::SetCloak(bool on, bool force)
 				}
 			}
 
-			ENanoCloakMode cloakMode = m_cloak.GetType();
+			const ENanoCloakMode cloakMode = m_cloak.GetType();
 
 			// new cloak effect
-			IEntityRenderProxy* pRenderProxy = (IEntityRenderProxy*)m_pOwner->GetEntity()->GetProxy(ENTITY_PROXY_RENDER);
-			if(pRenderProxy)
+			auto* pRenderProxy = dynamic_cast<IEntityRenderProxy*>(m_pOwner->GetEntity()->GetProxy(ENTITY_PROXY_RENDER));
+			if (pRenderProxy)
 			{
-				uint8 mask = pRenderProxy->GetMaterialLayersMask();
-				uint32 blend = pRenderProxy->GetMaterialLayersBlend();
-				mask = g_pGame->GetWeaponSystem()->IsFrozenEnvironment() ? mask|MTL_LAYER_DYNAMICFROZEN : mask&~MTL_LAYER_DYNAMICFROZEN;
-				pRenderProxy->SetMaterialLayersMask(on? mask|MTL_LAYER_CLOAK : mask&~MTL_LAYER_CLOAK);
-				pRenderProxy->SetMaterialLayersBlend((blend & 0xffffff00) | ((mask&MTL_LAYER_DYNAMICFROZEN) ?0xff : 0x00));
+				uint8        mask  = pRenderProxy->GetMaterialLayersMask();
+				const uint32 blend = pRenderProxy->GetMaterialLayersBlend();
+				mask               = g_pGame->GetWeaponSystem()->IsFrozenEnvironment() ? mask | MTL_LAYER_DYNAMICFROZEN : mask & ~MTL_LAYER_DYNAMICFROZEN;
+				pRenderProxy->SetMaterialLayersMask(on ? mask | MTL_LAYER_CLOAK : mask & ~MTL_LAYER_CLOAK);
+				pRenderProxy->SetMaterialLayersBlend((blend & 0xffffff00) | ((mask & MTL_LAYER_DYNAMICFROZEN) ? 0xff : 0x00));
 			}
-			if (CItem* pItem = static_cast<CItem*>(m_pOwner->GetCurrentItem(true)))
-			{
+			if (auto* pItem = dynamic_cast<CItem*>(m_pOwner->GetCurrentItem(true)))
 				pItem->CloakSync(!force);
-			}
-			if (COffHand* pOffHand = static_cast<COffHand*>(m_pOwner->GetItemByClass(CItem::sOffHandClass)))
-			{
+			if (auto* pOffHand = dynamic_cast<COffHand*>(m_pOwner->GetItemByClass(CItem::sOffHandClass)))
 				pOffHand->CloakSync(pOffHand->GetOffHandState() != eOHS_INIT_STATE);
-			}
 
 			// take care of the attachments on the back
-			if (ICharacterInstance *pOwnerCharacter = m_pOwner->GetEntity()->GetCharacter(0))
-			{
-				if (IAttachmentManager *pAttachmentManager = pOwnerCharacter->GetIAttachmentManager())
+			if (ICharacterInstance*     pOwnerCharacter    = m_pOwner->GetEntity()->GetCharacter(0))
+				if (IAttachmentManager* pAttachmentManager = pOwnerCharacter->GetIAttachmentManager())
 				{
-					int32 count = pAttachmentManager->GetAttachmentCount();
-					for (uint32 i=0; i<count; ++i)
+					const int32 count = pAttachmentManager->GetAttachmentCount();
+					for (uint32 i = 0; i < count; ++i)
 					{
-						if (IAttachment* pAttachment = pAttachmentManager->GetInterfaceByIndex(i))
-						{
-							if(IAttachmentObject *pAO = pAttachment->GetIAttachmentObject())
-							{
-								if(pAO->GetAttachmentType()==IAttachmentObject::eAttachment_Entity)
+						if (IAttachment*           pAttachment = pAttachmentManager->GetInterfaceByIndex(i))
+							if (IAttachmentObject* pAO         = pAttachment->GetIAttachmentObject())
+								if (pAO->GetAttachmentType() == IAttachmentObject::eAttachment_Entity)
 								{
-									CEntityAttachment* pEA = static_cast<CEntityAttachment*>(pAO);
-									if (CItem* pItem = static_cast<CItem*>(gEnv->pGame->GetIGameFramework()->GetIItemSystem()->GetItem(pEA->GetEntityId())))
-									{
+									auto* pEA = dynamic_cast<CEntityAttachment*>(pAO);
+									if (auto* pItem = dynamic_cast<CItem*>(gEnv->pGame->GetIGameFramework()->GetIItemSystem()->GetItem(pEA->GetEntityId())))
 										pItem->CloakSync(!force);
-									}
 								}
-							}
-						}
 					}
 				}
-			}
 
-			m_pOwner->CreateScriptEvent("cloaking",on?cloakMode:0);
-								
+			m_pOwner->CreateScriptEvent("cloaking", on ? cloakMode : 0);
+
 			// player's squadmates mimicking nanosuit modifications
 			if (m_pOwner->GetEntity()->GetAI())
-				gEnv->pAISystem->SendSignal(SIGNALFILTER_SENDER,1, (on?"OnNanoSuitCloak":"OnNanoSuitUnCloak"),m_pOwner->GetEntity()->GetAI());
+				gEnv->pAISystem->SendSignal(SIGNALFILTER_SENDER, 1, (on ? "OnNanoSuitCloak" : "OnNanoSuitUnCloak"), m_pOwner->GetEntity()->GetAI());
 		}
-	}
 }
 
-void CNanoSuit::SelectSuitMaterial()
+void CNanoSuit::SelectSuitMaterial() const
 {
-	if(!m_pOwner)
+	if (!m_pOwner)
 		return;
 
-	if(m_currentMode == NANOMODE_CLOAK && m_cloak.GetType() != CLOAKMODE_CHAMELEON)
+	if (m_currentMode == NANOMODE_CLOAK && m_cloak.GetType() != CLOAKMODE_CHAMELEON)
 		return;
 
-	IEntity* pEntity = m_pOwner->GetEntity();
-	if (pEntity == 0)
+	const IEntity* pEntity = m_pOwner->GetEntity();
+	if (pEntity == nullptr)
 		return;
 
-	int mode=m_currentMode;
- 	if (m_invulnerable)
-		mode=NANOMODE_INVULNERABILITY;
+	int mode = m_currentMode;
+	if (m_invulnerable)
+		mode = NANOMODE_INVULNERABILITY;
 
-	if(mode == NANOMODE_DEFENSE && m_defenseHitTimer > 0.0f)
+	if (mode == NANOMODE_DEFENSE && m_defenseHitTimer > 0.0f)
 		mode = NANOMODE_DEFENSE_HIT_REACTION;
 
-	SNanoMaterial* pNanoMat = &m_pNanoMaterial[mode];
+	const SNanoMaterial* pNanoMat = &m_pNanoMaterial[mode];
 	AssignNanoMaterialToEntity(pEntity, pNanoMat);
 }
 
@@ -1025,15 +974,15 @@ void CNanoSuit::Precache()
 	bool cacheAsian = false;
 
 	SEntitySlotInfo slotInfo;
-	if(m_pOwner && m_pOwner->GetEntity()->GetSlotInfo(0, slotInfo) && slotInfo.pCharacter!=0)
+	if (m_pOwner && m_pOwner->GetEntity()->GetSlotInfo(0, slotInfo) && slotInfo.pCharacter != nullptr)
 	{
 		// default are US suits
 		// have to do this workaround check, because we don't have "teams" in singleplayer
 		const char* filePath = slotInfo.pCharacter->GetICharacterModel()->GetModelFilePath();
-		if (strstr(filePath, "/us/") == NULL)
+		if (strstr(filePath, "/us/") == nullptr)
 		{
 			m_pNanoMaterial = g_AsianNanoMats;
-			cacheAsian = true;
+			cacheAsian      = true;
 		}
 	}
 
@@ -1041,23 +990,23 @@ void CNanoSuit::Precache()
 	PrecacheMaterials(cacheAsian);
 }
 
-float CNanoSuit::GetSlotValue(ENanoSlot slot,bool desired) const
+float CNanoSuit::GetSlotValue(const ENanoSlot slot, const bool desired) const
 {
-	if (IsActive() && slot>=0 && slot<NANOSLOT_LAST)
-		return (desired?m_slots[slot].desiredVal:m_slots[slot].realVal);
+	if (IsActive() && slot >= 0 && slot < NANOSLOT_LAST)
+		return (desired ? m_slots[slot].desiredVal : m_slots[slot].realVal);
 
 	return 0.0f;
 }
 
-bool CNanoSuit::GetSoundIsPlaying(ENanoSound sound) const
+bool CNanoSuit::GetSoundIsPlaying(const ENanoSound sound) const
 {
-	if(!IsActive() || !gEnv->pGame->GetIGameFramework()->IsGameStarted())
+	if (!IsActive() || !gEnv->pGame->GetIGameFramework()->IsGameStarted())
 		return false;
 
-	if(m_sounds[sound].ID != INVALID_SOUNDID && gEnv->pSoundSystem)
+	if (m_sounds[sound].ID != INVALID_SOUNDID && gEnv->pSoundSystem)
 	{
-		ISound *pSound = gEnv->pSoundSystem->GetSound(m_sounds[sound].ID);
-		if(pSound)
+		const ISound* pSound = gEnv->pSoundSystem->GetSound(m_sounds[sound].ID);
+		if (pSound)
 			return pSound->IsPlaying();
 	}
 	return false;
@@ -1068,33 +1017,34 @@ void CNanoSuit::DeactivateSuit(float time)
 	SetSuitEnergy(0);
 }
 
-void CNanoSuit::PlaySound(ENanoSound sound, float param, bool stopSound)
+void CNanoSuit::PlaySound(const ENanoSound sound, const float param, const bool stopSound)
 {
-	if(!gEnv->pSoundSystem || !m_pOwner || !IsActive())
+	if (!gEnv->pSoundSystem || !m_pOwner || !IsActive())
 		return;
 
-	int soundFlag = 0; //localActor will get 2D sounds
-	ESoundSemantic eSemantic = eSoundSemantic_None;
-	ISound *pSound = NULL;
-	bool	setParam = false;
-	bool	force3DSound = false;
-	bool	bAppendPostfix=true;
-	static string soundName;
-  soundName.resize(0);
+	ESoundSemantic eSemantic      = eSoundSemantic_None;
+	ISound*        pSound         = nullptr;
+	bool           setParam       = false;
+	bool           force3DSound   = false;
+	bool           bAppendPostfix = true;
+	static string  soundName;
+	soundName.resize(0);
 
-	switch(sound)
+	switch (sound)
 	{
 	case SPEED_SOUND:
 		soundName = "Sounds/interface:suit:suit_speed_use";
 		eSemantic = eSoundSemantic_NanoSuit;
-		if(m_pOwner->IsClient())
-			if (gEnv->pInput && !stopSound) gEnv->pInput->ForceFeedbackEvent( SFFOutputEvent(eDI_XI, eFF_Rumble_Basic, 0.05f, 0.0f, 0.6f) );
+		if (m_pOwner->IsClient())
+			if (gEnv->pInput && !stopSound)
+				gEnv->pInput->ForceFeedbackEvent(SFFOutputEvent(eDI_XI, eFF_Rumble_Basic, 0.05f, 0.0f, 0.6f));
 		break;
 	case SPEED_IN_WATER_SOUND:
 		soundName = "Sounds/interface:suit:suit_speed_use_underwater";
 		eSemantic = eSoundSemantic_NanoSuit;
-		if(m_pOwner->IsClient())
-			if (gEnv->pInput && !stopSound) gEnv->pInput->ForceFeedbackEvent( SFFOutputEvent(eDI_XI, eFF_Rumble_Basic, 0.05f, 0.0f, 0.9f) );
+		if (m_pOwner->IsClient())
+			if (gEnv->pInput && !stopSound)
+				gEnv->pInput->ForceFeedbackEvent(SFFOutputEvent(eDI_XI, eFF_Rumble_Basic, 0.05f, 0.0f, 0.9f));
 		break;
 	case SPEED_SOUND_STOP:
 		soundName = "Sounds/interface:suit:suit_speed_stop";
@@ -1107,41 +1057,46 @@ void CNanoSuit::PlaySound(ENanoSound sound, float param, bool stopSound)
 	case STRENGTH_SOUND:
 		soundName = "Sounds/interface:suit:suit_strength_use";
 		eSemantic = eSoundSemantic_NanoSuit;
-		setParam = true;
-		if(m_pOwner->IsClient())
-			if (gEnv->pInput && !stopSound) gEnv->pInput->ForceFeedbackEvent( SFFOutputEvent(eDI_XI, eFF_Rumble_Basic, 0.05f, 1.0f, 0.5f) );
+		setParam  = true;
+		if (m_pOwner->IsClient())
+			if (gEnv->pInput && !stopSound)
+				gEnv->pInput->ForceFeedbackEvent(SFFOutputEvent(eDI_XI, eFF_Rumble_Basic, 0.05f, 1.0f, 0.5f));
 		break;
 	case STRENGTH_LIFT_SOUND:
 		soundName = "Sounds/interface:suit:suit_strength_lift";
 		eSemantic = eSoundSemantic_NanoSuit;
-		setParam = true;
+		setParam  = true;
 		break;
 	case STRENGTH_THROW_SOUND:
 		soundName = "Sounds/interface:suit:suit_strength_use";
 		eSemantic = eSoundSemantic_NanoSuit;
-		if(m_pOwner->IsClient())
-			if (gEnv->pInput && !stopSound)  gEnv->pInput->ForceFeedbackEvent( SFFOutputEvent(eDI_XI, eFF_Rumble_Basic, 0.1f, 0.0f, 0.3f*param) );
+		if (m_pOwner->IsClient())
+			if (gEnv->pInput && !stopSound)
+				gEnv->pInput->ForceFeedbackEvent(SFFOutputEvent(eDI_XI, eFF_Rumble_Basic, 0.1f, 0.0f, 0.3f * param));
 		setParam = true;
 		break;
 	case STRENGTH_JUMP_SOUND:
 		soundName = "Sounds/interface:suit:suit_strength_jump";
 		eSemantic = eSoundSemantic_NanoSuit;
-		if(m_pOwner->IsClient())
-			if (gEnv->pInput && !stopSound)  gEnv->pInput->ForceFeedbackEvent( SFFOutputEvent(eDI_XI, eFF_Rumble_Basic, 0.10f, 0.2f*param, 0.1f*param) );
+		if (m_pOwner->IsClient())
+			if (gEnv->pInput && !stopSound)
+				gEnv->pInput->ForceFeedbackEvent(SFFOutputEvent(eDI_XI, eFF_Rumble_Basic, 0.10f, 0.2f * param, 0.1f * param));
 		setParam = true;
 		break;
 	case STRENGTH_MELEE_SOUND:
 		soundName = "Sounds/interface:suit:suit_strength_punch";
 		eSemantic = eSoundSemantic_NanoSuit;
-		if(m_pOwner->IsClient())
-			if (gEnv->pInput && !stopSound) gEnv->pInput->ForceFeedbackEvent( SFFOutputEvent(eDI_XI, eFF_Rumble_Basic, 0.05f, 1.0f*param, 0.5f*param) );
+		if (m_pOwner->IsClient())
+			if (gEnv->pInput && !stopSound)
+				gEnv->pInput->ForceFeedbackEvent(SFFOutputEvent(eDI_XI, eFF_Rumble_Basic, 0.05f, 1.0f * param, 0.5f * param));
 		setParam = true;
 		break;
 	case ARMOR_SOUND:
 		soundName = "Sounds/interface:suit:suit_armor_use";
 		eSemantic = eSoundSemantic_NanoSuit;
-		if(m_pOwner->IsClient())
-			if (gEnv->pInput && !stopSound) gEnv->pInput->ForceFeedbackEvent( SFFOutputEvent(eDI_XI, eFF_Rumble_Basic, 0.02f, 0.8f, 0.0f) );
+		if (m_pOwner->IsClient())
+			if (gEnv->pInput && !stopSound)
+				gEnv->pInput->ForceFeedbackEvent(SFFOutputEvent(eDI_XI, eFF_Rumble_Basic, 0.02f, 0.8f, 0.0f));
 		break;
 	case MEDICAL_SOUND:
 		soundName = "Sounds/interface:suit:suit_medical_repair";
@@ -1165,7 +1120,7 @@ void CNanoSuit::PlaySound(ENanoSound sound, float param, bool stopSound)
 		break;
 	case ESound_SuitCloakFeedback:
 		soundName = "sounds/interface:hud:cloak_feedback";
-		eSemantic = eSoundSemantic_NanoSuit;
+		eSemantic    = eSoundSemantic_NanoSuit;
 		force3DSound = true;
 		break;
 	case ESound_GBootsActivated:
@@ -1178,9 +1133,9 @@ void CNanoSuit::PlaySound(ENanoSound sound, float param, bool stopSound)
 		break;
 	case ESound_ZeroGThruster:
 		soundName = "Sounds/interface:suit:thrusters_1p";
-		eSemantic = eSoundSemantic_NanoSuit;
-		setParam = true;
-		force3DSound = true;	//the thruster sound is only as 3D version available
+		eSemantic    = eSoundSemantic_NanoSuit;
+		setParam     = true;
+		force3DSound = true; //the thruster sound is only as 3D version available
 		break;
 	case ESound_AISuitHumming:
 		soundName = "Sounds/interface:hud:nk_suit_feedback";
@@ -1192,79 +1147,78 @@ void CNanoSuit::PlaySound(ENanoSound sound, float param, bool stopSound)
 		break;
 	case ESound_GBootsLanded:
 		soundName = "Sounds/physics:player_foley:bodyfall_gravity_boots";
-		eSemantic = eSoundSemantic_Player_Foley;
+		eSemantic    = eSoundSemantic_Player_Foley;
 		force3DSound = true;
-		setParam = true;
+		setParam     = true;
 		break;
 	case ESound_FreeFall:
 		soundName = "Sounds/physics:player_foley:falling_deep_loop";
-		eSemantic = eSoundSemantic_Player_Foley;
-		bAppendPostfix=false;
+		eSemantic      = eSoundSemantic_Player_Foley;
+		bAppendPostfix = false;
 		break;
 	case ESound_ColdBreath:
 		soundName = "Sounds/physics:player_foley:cold_feedback";
-		eSemantic = eSoundSemantic_Player_Foley;
-		bAppendPostfix=false;
+		eSemantic      = eSoundSemantic_Player_Foley;
+		bAppendPostfix = false;
 		break;
 	case DROP_VS_THROW_SOUND:
 		soundName = "sounds/interface:suit:suit_grab_vs_throw";
-		eSemantic = eSoundSemantic_NanoSuit;
+		eSemantic      = eSoundSemantic_NanoSuit;
 		bAppendPostfix = false;
 	default:
 		break;
 	}
 
-	if(!force3DSound && m_pOwner == m_pGameFramework->GetClientActor() && !m_pOwner->IsThirdPerson() && soundName.size())
-	{
+	if (!force3DSound && m_pOwner == m_pGameFramework->GetClientActor() && !m_pOwner->IsThirdPerson() && !soundName.empty())
 		if (bAppendPostfix)
 			soundName.append("_fp");
-	}
-	
-	IEntitySoundProxy* pSoundProxy = (IEntitySoundProxy*)m_pOwner->GetEntity()->CreateProxy(ENTITY_PROXY_SOUND);
+
+	auto* pSoundProxy = dynamic_cast<IEntitySoundProxy*>(m_pOwner->GetEntity()->CreateProxy(ENTITY_PROXY_SOUND));
 	if (!pSoundProxy)
 		return;
 
-	if(soundName.size())		//get / create or stop sound
+	if (!soundName.empty()) //get / create or stop sound
 	{
-		if(m_sounds[sound].ID != INVALID_SOUNDID)
+		if (m_sounds[sound].ID != INVALID_SOUNDID)
 		{
 			pSound = pSoundProxy->GetSound(m_sounds[sound].ID);
-			if(stopSound)
+			if (stopSound)
 			{
-				if(pSound)
+				if (pSound)
 					pSound->Stop();
 
 				m_sounds[sound].ID = INVALID_SOUNDID;
 				return;
 			}
 		}
-		if(!pSound && !stopSound)
+		if (!pSound && !stopSound)
 		{
-			pSound = gEnv->pSoundSystem->CreateSound(soundName, soundFlag);
+			constexpr int soundFlag = 0;
+			pSound              = gEnv->pSoundSystem->CreateSound(soundName, soundFlag);
 
 			if (pSound)
 			{
 				pSound->SetSemantic(eSemantic);
-				float fTemp = 0.0f;
-				m_sounds[sound].ID = pSound->GetId();
-				m_sounds[sound].bLooping = (pSound->GetFlags() & FLAG_SOUND_LOOP) != 0;
-				m_sounds[sound].b3D = (pSound->GetFlags() & FLAG_SOUND_3D) != 0;
-				m_sounds[sound].nMassIndex = pSound->GetParam("mass", &fTemp, false);
-				m_sounds[sound].nSpeedIndex = pSound->GetParam("speed", &fTemp, false);
+				float fTemp                    = 0.0f;
+				m_sounds[sound].ID             = pSound->GetId();
+				m_sounds[sound].bLooping       = (pSound->GetFlags() & FLAG_SOUND_LOOP) != 0;
+				m_sounds[sound].b3D            = (pSound->GetFlags() & FLAG_SOUND_3D) != 0;
+				m_sounds[sound].nMassIndex     = pSound->GetParam("mass", &fTemp, false);
+				m_sounds[sound].nSpeedIndex    = pSound->GetParam("speed", &fTemp, false);
 				m_sounds[sound].nStrengthIndex = pSound->GetParam("strength", &fTemp, false);
 			}
 		}
 	}
 
-	if ( pSound )		//set params and play
+	if (pSound) //set params and play
 	{
 		//pSound->SetPosition(m_pOwner->GetEntity()->GetWorldPos());
 
-		if(setParam)
+		if (setParam)
 		{
 			if (m_sounds[sound].nMassIndex != -1)
 				pSound->SetParam(m_sounds[sound].nMassIndex, param);
-			
+
 			if (m_sounds[sound].nSpeedIndex != -1)
 				pSound->SetParam(m_sounds[sound].nSpeedIndex, param);
 
@@ -1272,15 +1226,12 @@ void CNanoSuit::PlaySound(ENanoSound sound, float param, bool stopSound)
 				pSound->SetParam(m_sounds[sound].nStrengthIndex, param);
 		}
 
-		if(!(m_sounds[sound].bLooping && pSound->IsPlaying()))
-		{
+		if (!(m_sounds[sound].bLooping && pSound->IsPlaying()))
 			pSoundProxy->PlaySound(pSound);
-		}
-
 	}
 }
 
-void CNanoSuit::Serialize(TSerialize ser, unsigned aspects)
+void CNanoSuit::Serialize(TSerialize ser, const unsigned aspects)
 {
 	if (ser.GetSerializationTarget() != eST_Network)
 	{
@@ -1295,40 +1246,34 @@ void CNanoSuit::Serialize(TSerialize ser, unsigned aspects)
 		ser.Value("m_featureMask", m_featureMask);
 		ser.Value("m_defenseHitTimer", m_defenseHitTimer);
 		ser.EnumValue("currentMode", m_currentMode, NANOMODE_SPEED, NANOMODE_LAST);
-		if(ser.IsReading())
-		{
+		if (ser.IsReading())
 			SetMode(m_currentMode, true);
-		}
 
 		char szID[64];
-		if(ser.IsReading())
-		{
+		if (ser.IsReading())
 			for (int i = 0; i < NANODISABLE_NUMENTRIES; i++)
 			{
-				sprintf(szID,"m_disabledFlags%d",i);
+				sprintf(szID, "m_disabledFlags%d", i);
 				bool disabled = false;
-				ser.Value(szID,disabled);
+				ser.Value(szID, disabled);
 				m_disabledFlags[i] = disabled;
 
-				sprintf(szID,"m_disabledTimes%d",i);
+				sprintf(szID, "m_disabledTimes%d", i);
 				float time = 0.0f;
-				ser.Value(szID,time);
+				ser.Value(szID, time);
 				m_disabledTimes[i] = time;
 			}
-		}
 		else
-		{
 			for (int i = 0; i < NANODISABLE_NUMENTRIES; i++)
 			{
-				sprintf(szID,"m_disabledFlags%d",i);
+				sprintf(szID, "m_disabledFlags%d", i);
 				bool disabled = m_disabledFlags[i];
-				ser.Value(szID,disabled);
+				ser.Value(szID, disabled);
 
-				sprintf(szID,"m_disabledTimes%d",i);
+				sprintf(szID, "m_disabledTimes%d", i);
 				float time = m_disabledTimes[i];
-				ser.Value(szID,time);
+				ser.Value(szID, time);
 			}
-		}
 		ser.EndGroup();
 
 		ser.BeginGroup("NanoCloak");
@@ -1344,10 +1289,10 @@ void CNanoSuit::Serialize(TSerialize ser, unsigned aspects)
 
 		ser.Value("m_bNightVisionEnabled", m_bNightVisionEnabled);
 
-		if(ser.IsReading())
+		if (ser.IsReading())
 		{
-			m_cloak.m_mode = ENanoCloakMode(mode);
-			if(m_cloak.IsActive())
+			m_cloak.m_mode = static_cast<ENanoCloakMode>(mode);
+			if (m_cloak.IsActive())
 			{
 				SetCloak(false, true);
 				SetCloak(true, true);
@@ -1355,106 +1300,102 @@ void CNanoSuit::Serialize(TSerialize ser, unsigned aspects)
 		}
 		ser.EndGroup();
 	}
-	else 
+	else
 	{
-		if (aspects&CPlayer::ASPECT_NANO_SUIT_SETTING)
+		if (aspects & CPlayer::ASPECT_NANO_SUIT_SETTING)
 		{
 			uint8 mode = m_currentMode;
 			ser.Value("mode", mode, 'ui3');
-			if(ser.IsReading() && (mode != m_currentMode))
-				SetMode((ENanoMode)mode);
+			if (ser.IsReading() && (mode != m_currentMode))
+				SetMode(static_cast<ENanoMode>(mode));
 		}
-		if (aspects&CPlayer::ASPECT_NANO_SUIT_ENERGY)
+		if (aspects & CPlayer::ASPECT_NANO_SUIT_ENERGY)
 		{
 			ser.Value("energy", m_energy, 'nNRG');
 			if (ser.IsReading())
 				Balance(m_energy);
 		}
-		if (aspects&CPlayer::ASPECT_NANO_SUIT_INVULNERABLE)
+		if (aspects & CPlayer::ASPECT_NANO_SUIT_INVULNERABLE)
 		{
-			bool invulnerable=m_invulnerable;
+			bool invulnerable = m_invulnerable;
 			ser.Value("invulnerable", invulnerable, 'bool');
-			if (ser.IsReading() && (invulnerable!=m_invulnerable))
+			if (ser.IsReading() && (invulnerable != m_invulnerable))
 				SetInvulnerability(invulnerable);
 		}
-		if(aspects&CPlayer::ASPECT_NANO_SUIT_DEFENSE_HIT)
+		if (aspects & CPlayer::ASPECT_NANO_SUIT_DEFENSE_HIT)
 		{
-			float oldTimer = m_defenseHitTimer;
+			const float oldTimer = m_defenseHitTimer;
 			ser.Value("m_defenseHitTimer", m_defenseHitTimer);
-			if(ser.IsReading())
-			{
-				if(oldTimer != m_defenseHitTimer)
+			if (ser.IsReading())
+				if (oldTimer != m_defenseHitTimer)
 					SelectSuitMaterial();
-			}
 		}
 	}
 }
 
-bool CNanoSuit::Tap(ENanoAction nanoAction)
+bool CNanoSuit::Tap(const ENanoAction nanoAction)
 {
-	if (!g_pGameCVars->dt_enable || !m_pOwner || m_pOwner->GetHealth()<=0)
+	if (!g_pGameCVars->dt_enable || !m_pOwner || m_pOwner->GetHealth() <= 0)
 		return false;
 
 	// double taps don't work when using a mounted weapon
-	CItem* pCurrentItem = static_cast<CItem*>(m_pOwner->GetCurrentItem());
+	const CItem* pCurrentItem = dynamic_cast<CItem*>(m_pOwner->GetCurrentItem());
 	if (nanoAction == eNA_Jump && pCurrentItem && pCurrentItem->IsMounted())
 		return false;
 
 	static float lastActivation = -1.0f;
 
-	float now = gEnv->pTimer->GetAsyncCurTime();
+	const float now  = gEnv->pTimer->GetAsyncCurTime();
 	float time = g_pGameCVars->dt_time;
 	if (m_lastTap == eNA_Melee)
-	{
 		time = g_pGameCVars->dt_meleeTime;
-	}
 	if ((now - lastActivation) > time || nanoAction != m_lastTap)
 	{
 		lastActivation = now;
-		m_lastTap = nanoAction;
+		m_lastTap      = nanoAction;
 		return false;
 	}
 	lastActivation = -1.0f;
 	return AttemptAction(nanoAction);
 }
 
-bool CNanoSuit::AttemptAction(ENanoAction nanoAction)
+bool CNanoSuit::AttemptAction(const ENanoAction nanoAction)
 {
 	m_pendingAction = eNA_None;
-	m_lastTap = eNA_None;
-	switch(nanoAction)
+	m_lastTap       = eNA_None;
+	switch (nanoAction)
 	{
 	case eNA_Jump:
-		{
-			SetMode(NANOMODE_STRENGTH);
-			m_pendingAction = eNA_Jump;
-		}
-		break;
+	{
+		SetMode(NANOMODE_STRENGTH);
+		m_pendingAction = eNA_Jump;
+	}
+	break;
 	case eNA_Forward:
-		{
-			SetMode(NANOMODE_SPEED);
-		}
-		break;
+	{
+		SetMode(NANOMODE_SPEED);
+	}
+	break;
 	case eNA_Backward:
-		{
-			SetMode(NANOMODE_DEFENSE);
-		}
-		break;
+	{
+		SetMode(NANOMODE_DEFENSE);
+	}
+	break;
 	case eNA_Crouch:
-		{
-			SetMode(NANOMODE_CLOAK);
-		}
-		break;
+	{
+		SetMode(NANOMODE_CLOAK);
+	}
+	break;
 	case eNA_Melee:
-		{
-			SetMode(NANOMODE_STRENGTH);
-		}
-		break;
+	{
+		SetMode(NANOMODE_STRENGTH);
+	}
+	break;
 	case eNA_Skin:
-		{
-			SetMode(NANOMODE_CLOAK);
-		}
-		break;
+	{
+		SetMode(NANOMODE_CLOAK);
+	}
+	break;
 	default:
 		return false;
 	}
@@ -1481,63 +1422,59 @@ void CNanoSuit::Death()
 			PlaySound(SPEED_SOUND_STOP);
 	}
 
-	if (m_currentMode==NANOMODE_CLOAK)
+	if (m_currentMode == NANOMODE_CLOAK)
 		SetCloak(false, true);
 
 	PlaySound(ESound_AISuitHumming, 0.0f, true);
 	PlaySound(ESound_AISuitCloakFeedback, 0.0f, true);
 
-	if(m_defenseHitTimer)
+	if (m_defenseHitTimer > 0.0f)
 	{
 		m_defenseHitTimer = 0.0f;
 		SelectSuitMaterial();
 	}
 }
 
-void CNanoSuit::AddListener(CNanoSuit::INanoSuitListener *pListener)
+void CNanoSuit::AddListener(INanoSuitListener* pListener)
 {
 	stl::push_back_unique(m_listeners, pListener);
 }
 
-void CNanoSuit::RemoveListener(CNanoSuit::INanoSuitListener *pListener)
+void CNanoSuit::RemoveListener(INanoSuitListener* pListener)
 {
 	stl::find_and_erase(m_listeners, pListener);
 }
 
-int CNanoSuit::GetButtonFromMode(ENanoMode mode)
+int CNanoSuit::GetButtonFromMode(const ENanoMode mode)
 {
-	switch(mode)
+	switch (mode)
 	{
 	case NANOMODE_SPEED:
 		return EQM_SPEED;
-		break;
 	case NANOMODE_STRENGTH:
 		return EQM_STRENGTH;
-		break;
 	case NANOMODE_CLOAK:
 		return EQM_CLOAK;
+	default: 
 		break;
 	}
 	return EQM_ARMOR;
 }
 
-
 bool CNanoSuit::IsActive() const
 {
-	return (std::find(m_disabledFlags.begin(),m_disabledFlags.end(),true)==m_disabledFlags.end());
+	return (std::find(m_disabledFlags.begin(), m_disabledFlags.end(), true) == m_disabledFlags.end());
 }
 
-void  CNanoSuit::Activate(bool activate, ENanoDisableFlag flag, float activationTime)
+void CNanoSuit::Activate(const bool activate, const ENanoDisableFlag flag, const float activationTime)
 {
-	if(flag>=NANODISABLE_NUMENTRIES)
+	if (flag >= NANODISABLE_NUMENTRIES)
 		return;
 
-	if(activationTime>0.01f || activate==false)
-	{
+	if (activationTime > 0.01f || activate == false)
 		SetMode(NANOMODE_DEFENSE, true, true);
-	}
 
-	if(activationTime>0.01f)
+	if (activationTime > 0.01f)
 	{
 		m_disabledFlags[flag] = true;
 		m_disabledTimes[flag] = activationTime;
@@ -1549,97 +1486,94 @@ void  CNanoSuit::Activate(bool activate, ENanoDisableFlag flag, float activation
 	}
 }
 
-
-void CNanoSuit::ActivateMode(ENanoMode mode, bool active)
+void CNanoSuit::ActivateMode(const ENanoMode mode, const bool active)
 {
-	if(!m_pOwner)
+	if (!m_pOwner)
 		return;
 
-	if(active)
+	if (active)
 	{
 		CHUD* pHUD = g_pGame->GetHUD();
-		if(pHUD && m_pOwner->IsClient() && !pHUD->IsQuickMenuButtonDefect(EQuickMenuButtons(GetButtonFromMode(mode))))
+		if (pHUD && m_pOwner->IsClient() && !pHUD->IsQuickMenuButtonDefect(static_cast<EQuickMenuButtons>(GetButtonFromMode(mode))))
 		{
-			m_featureMask |= 1<<mode;
-			pHUD->ActivateQuickMenuButton(EQuickMenuButtons(GetButtonFromMode(mode)), true);
+			m_featureMask |= 1 << mode;
+			pHUD->ActivateQuickMenuButton(static_cast<EQuickMenuButtons>(GetButtonFromMode(mode)), true);
 		}
 	}
 	else
 	{
-		m_featureMask &= ~(1<<mode);
+		m_featureMask &= ~(1 << mode);
 		CHUD* pHUD = g_pGame->GetHUD();
-		if(pHUD && m_pOwner->IsClient())
-			pHUD->ActivateQuickMenuButton(EQuickMenuButtons(GetButtonFromMode(mode)), false);
+		if (pHUD && m_pOwner->IsClient())
+			pHUD->ActivateQuickMenuButton(static_cast<EQuickMenuButtons>(GetButtonFromMode(mode)), false);
 	}
 }
 
-void CNanoSuit::SetModeDefect(ENanoMode mode, bool defect)
+void CNanoSuit::SetModeDefect(const ENanoMode mode, const bool defect)
 {
-
 	CHUD* pHUD = g_pGame->GetHUD();
-	if(pHUD && m_pOwner->IsClient())
-		pHUD->SetQuickMenuButtonDefect(EQuickMenuButtons(GetButtonFromMode(mode)), defect);
+	if (pHUD && m_pOwner->IsClient())
+		pHUD->SetQuickMenuButtonDefect(static_cast<EQuickMenuButtons>(GetButtonFromMode(mode)), defect);
 
-	if(defect)
+	if (defect)
 	{
-		if(IsModeActive(mode))
+		if (IsModeActive(mode))
 			ActivateMode(mode, false);
 	}
 	else
 	{
-		if(!IsModeActive(mode))
+		if (!IsModeActive(mode))
 			ActivateMode(mode, true);
 	}
 }
 
-float CNanoSuit::GetSprintMultiplier(bool strafing)
+float CNanoSuit::GetSprintMultiplier(const bool strafing) const
 {
-	if(m_pOwner && !m_pOwner->GetActorStats()->inZeroG && m_currentMode == NANOMODE_SPEED && m_startedSprinting)
+	if (m_pOwner && !m_pOwner->GetActorStats()->inZeroG && m_currentMode == NANOMODE_SPEED && m_startedSprinting > 0.0f)
 	{
 		if (gEnv->bMultiplayer)
 		{
-			if(m_energy >= 1.0f)
+			if (m_energy >= 1.0f)
 			{
-				float time = m_now - m_startedSprinting;
-				float speedMult = g_pGameCVars->g_suitSpeedMultMultiplayer;
-				float result = 1.0f + max(0.0f, speedMult*min(1.3f, time*0.001f));
+				const float time      = m_now - m_startedSprinting;
+				const float speedMult = g_pGameCVars->g_suitSpeedMultMultiplayer;
+				float       result    = 1.0f + max(0.0f, speedMult * min(1.3f, time * 0.001f));
 
 				if (strafing)
-					result=MAX(1.0f, result*0.35f);
+					result = MAX(1.0f, result*0.35f);
 
 				return result;
 			}
 		}
 		else
 		{
-			if(m_energy > NANOSUIT_ENERGY * 0.2f)
+			if (m_energy > NANOSUIT_ENERGY * 0.2f)
 			{
-				float time = m_now - m_startedSprinting;
-				return 1.0f + max(0.3f, g_pGameCVars->g_suitSpeedMult*min(1.0f, time*0.001f));
+				const float time = m_now - m_startedSprinting;
+				return 1.0f + max(0.3f, g_pGameCVars->g_suitSpeedMult * min(1.0f, time * 0.001f));
 			}
-			else if(m_energy > 0.0f)
+			if (m_energy > 0.0f)
 				return 1.4f;
-			else
-				return 1.3f;
+			return 1.3f;
 		}
 	}
 	return 1.0f;
 }
 
-void CNanoSuit::UpdateSprinting(float &recharge, const SPlayerStats &stats, float frametime)
+void CNanoSuit::UpdateSprinting(float& recharge, const SPlayerStats& stats, float frametime)
 {
-	if(!stats.inZeroG)
+	if (!stats.inZeroG)
 	{
 		if (m_currentMode == NANOMODE_SPEED && stats.bSprinting)
 		{
-			if(m_energy > NANOSUIT_ENERGY * 0.2f)
+			if (m_energy > NANOSUIT_ENERGY * 0.2f)
 			{
-				if(!m_bWasSprinting)
+				if (!m_bWasSprinting)
 				{
 					m_bWasSprinting = true;
-					if(stats.headUnderWaterTimer < 0.0f)
+					if (stats.headUnderWaterTimer < 0.0f)
 					{
-						if(m_pOwner->GetStance() != STANCE_PRONE)
+						if (m_pOwner->GetStance() != STANCE_PRONE)
 							PlaySound(SPEED_SOUND);
 
 						m_bSprintUnderwater = false;
@@ -1653,12 +1587,12 @@ void CNanoSuit::UpdateSprinting(float &recharge, const SPlayerStats &stats, floa
 				else
 				{
 					//when we sprinted into the water -> change sound
-					if((stats.headUnderWaterTimer > 0.0f) && m_bSprintUnderwater)
+					if ((stats.headUnderWaterTimer > 0.0f) && m_bSprintUnderwater)
 					{
 						PlaySound(SPEED_IN_WATER_SOUND, 0.0, true);
 						PlaySound(SPEED_SOUND);
 					}
-					else if((stats.headUnderWaterTimer > 0.0f) && !m_bSprintUnderwater)
+					else if ((stats.headUnderWaterTimer > 0.0f) && !m_bSprintUnderwater)
 					{
 						PlaySound(SPEED_SOUND, 0.0, true);
 						PlaySound(SPEED_IN_WATER_SOUND);
@@ -1666,20 +1600,20 @@ void CNanoSuit::UpdateSprinting(float &recharge, const SPlayerStats &stats, floa
 				}
 
 				//recharge -= std::max(1.0f, g_pGameCVars->g_suitSpeedEnergyConsumption*frametime);
-				float consumption=gEnv->bMultiplayer?g_pGameCVars->g_suitSpeedEnergyConsumptionMultiplayer:g_pGameCVars->g_suitSpeedEnergyConsumption;
-				recharge -= m_pOwner->ShouldSwim()?consumption*1.25f:consumption;
+				const float consumption = gEnv->bMultiplayer ? g_pGameCVars->g_suitSpeedEnergyConsumptionMultiplayer : g_pGameCVars->g_suitSpeedEnergyConsumption;
+				recharge -= m_pOwner->ShouldSwim() ? consumption * 1.25f : consumption;
 
 				// if player is not moving much, don't reduce energy
-				if(stats.speedFlat < 1.0f)
+				if (stats.speedFlat < 1.0f)
 					recharge = 0.0f;
 			}
 			else
 			{
-				if(m_bWasSprinting)
+				if (m_bWasSprinting)
 				{
 					PlaySound(SPEED_SOUND, 0.0f, true);
 					PlaySound(SPEED_IN_WATER_SOUND, 0.0f, true);
-					if(stats.headUnderWaterTimer < 0.0f)
+					if (stats.headUnderWaterTimer < 0.0f)
 						PlaySound(SPEED_SOUND_STOP);
 					else
 						PlaySound(SPEED_IN_WATER_SOUND_STOP);
@@ -1688,23 +1622,25 @@ void CNanoSuit::UpdateSprinting(float &recharge, const SPlayerStats &stats, floa
 				recharge -= 28.0f;
 			}
 
-			if(!m_startedSprinting)
+			if (m_startedSprinting <= 0.0f)
 				m_startedSprinting = m_now;
 		}
-		else if(m_bWasSprinting)
+		else if (m_bWasSprinting)
 		{
 			PlaySound(SPEED_SOUND, 0.0f, true);
 			PlaySound(SPEED_IN_WATER_SOUND, 0.0f, true);
-			if(stats.headUnderWaterTimer < 0.0f)
+			if (stats.headUnderWaterTimer < 0.0f)
 				PlaySound(SPEED_SOUND_STOP);
 			else
 				PlaySound(SPEED_IN_WATER_SOUND_STOP);
 
-			m_bWasSprinting = false;
+			m_bWasSprinting    = false;
 			m_startedSprinting = 0;
 		}
-		else if(gEnv->bMultiplayer)	//fix me : in mp the running loop apparently can get out of sync
+		else if (gEnv->bMultiplayer) //fix me : in mp the running loop apparently can get out of sync
+		{
 			PlaySound(SPEED_SOUND, 0.0f, true);
+		}
 	}
 }
 
@@ -1712,15 +1648,16 @@ void CNanoSuit::ResetEnergy()
 {
 	SetSuitEnergy(NANOSUIT_ENERGY);
 	m_energy = m_lastEnergy = NANOSUIT_ENERGY;
-	for(int i = 0; i < NANOSLOT_LAST; i++)
-		m_slots[i].realVal = m_slots[i].desiredVal;
+	for (auto& m_slot : m_slots)
+	{
+		m_slot.realVal = m_slot.desiredVal;
+	}
 
 	if (m_pOwner && gEnv->bServer)
 		m_pOwner->GetGameObject()->ChangedNetworkState(CPlayer::ASPECT_NANO_SUIT_ENERGY);
 }
 
-
-void CNanoSuit::GetMemoryStatistics(ICrySizer * s)
+void CNanoSuit::GetMemoryStatistics(ICrySizer* s)
 {
 	SIZER_COMPONENT_NAME(s, "NanoSuit");
 	s->Add(*this);
