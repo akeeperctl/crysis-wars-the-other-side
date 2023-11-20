@@ -490,7 +490,7 @@ bool CTOSMasterModule::IsSlave(const IEntity* pEntity) const
 void CTOSMasterModule::DebugDraw(const Vec2& screenPos, float fontSize, float interval, int maxElemNum)
 {
 	//Header
-	TOS_Debug::Draw2dText(
+	DRAW_2D_TEXT(
 		screenPos.x, 
 		screenPos.y - interval * 2,
 		fontSize + 0.2f,
@@ -514,7 +514,7 @@ void CTOSMasterModule::DebugDraw(const Vec2& screenPos, float fontSize, float in
 
 		const int channelId = pMasterActor->GetChannelId();
 
-		TOS_Debug::Draw2dText(
+		DRAW_2D_TEXT(
 			screenPos.x,
 			screenPos.y + channelId * interval, 
 			fontSize, 

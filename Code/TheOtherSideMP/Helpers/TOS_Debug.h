@@ -12,6 +12,13 @@
 #define STR_RED TOS_Debug::GetLogColor(ELogColor::red)
 #define STR_YELLOW TOS_Debug::GetLogColor(ELogColor::yellow)
 
+#define DRAW_2D_TEXT(x,y,size,format,...)\
+	if (gEnv && gEnv->pSystem)\
+	{\
+		float color[] = { 1,1,1,1 };\
+		gEnv->pRenderer->Draw2dLabel(x, y, size, color, false, format, __VA_ARGS__);\
+	}\
+
 enum class ELogColor
 {
 	blue = 2,
@@ -176,19 +183,6 @@ namespace TOS_Debug
 		}
 
 		return "ENV_NULL";
-	}
-
-	inline void Draw2dText(float x, float y, float size, const char* format, ...)
-	{
-		if (gEnv && gEnv->pSystem)
-		{
-			float color[] = { 1,1,1,1 };
-
-			va_list args;
-			va_start(args, format);
-			gEnv->pRenderer->Draw2dLabel(x, y, size, color,false ,format, args);
-			va_end(args);
-		}
 	}
 
 	inline const char* GetLogColor(ELogColor colorenum)

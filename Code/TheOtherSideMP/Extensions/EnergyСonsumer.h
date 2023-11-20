@@ -16,7 +16,7 @@ public:
 	bool NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int flags) override;
 	void PostSerialize() override {};
 	void SerializeSpawnInfo(TSerialize ser) override {}
-	ISerializableInfoPtr GetSpawnInfo() override { return 0; }
+	ISerializableInfoPtr GetSpawnInfo() override{return 0;}
 	void Update(SEntityUpdateContext& ctx, int updateSlot) override;
 	void PostUpdate(float frameTime) override {};
 	void PostRemoteSpawn() override {};
@@ -27,11 +27,18 @@ public:
 	void GetMemoryStatistics(ICrySizer* s) override;
 	//~IGameObjectExtension
 
-	bool SetEnergy(float value, bool initiated = false);
-	float GetEnergy() const;
-	bool   SetMaxEnergy(float value);
-	float GetMaxEnergy() const;
-	void EnableUpdate(bool enable);
+	bool        SetEnergy(float value, bool initiated = false);
+	float       GetEnergy() const;
+	bool        SetMaxEnergy(float value);
+	float       GetMaxEnergy() const;
+	bool        SetDrainValue(float value);
+	float       GetDrainValue() const;
+	void        EnableUpdate(bool enable);
+	bool        IsUpdating() const;
+	void        Reset();
+	static bool SetDebugEntityName(const char* name);
+
+	static string s_debugEntityName;
 
 private:
 	float m_energy;
@@ -40,6 +47,4 @@ private:
 	float m_drainValue; // единицы в секунду
 
 	bool m_enableUpdate;
-
-	
 };

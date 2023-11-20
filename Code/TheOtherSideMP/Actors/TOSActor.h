@@ -3,6 +3,8 @@
 #include "Actor.h"
 #include "ITOSMasterControllable.h"
 
+class CTOSEnergyConsumer;
+
 struct STOSSlaveStats
 {
 	STOSSlaveStats()
@@ -168,6 +170,7 @@ public:
 	~CTOSActor() override;
 
 	// CActor
+	bool Init(IGameObject* pGameObject) override;
 	void PostInit( IGameObject * pGameObject ) override;
 	void InitClient(int channelId ) override;
 	void ProcessEvent(SEntityEvent& event) override;
@@ -229,7 +232,10 @@ public:
 
 	STOSSlaveStats& GetSlaveStats() { return m_slaveStats; } ///< Получить статистику раба. Изменять можно.
 	bool IsSlave() const {return m_isSlave;}
-	bool IsLocalSlave() const; ///< проверка на локальной машине является ли актёр рабом 
+	bool IsLocalSlave() const; ///< проверка на локальной машине является ли актёр рабом
+
+	virtual CTOSEnergyConsumer* GetEnergyConsumer() const;
+
 private:
 
 	//std::list<SQueuedAnimEvent> m_AnimEventQueue;
@@ -249,4 +255,6 @@ protected:
 	STOSSlaveStats m_slaveStats;
 	//Vec3 m_filteredDeltaMovement;
 	STOSNetBodyInfo m_netBodyInfo;///< Информация о состоянии тела актёра, передаваемая по сети
+
+	CTOSEnergyConsumer* m_pEnergyConsumer;
 };

@@ -7,21 +7,33 @@
 
 //#include "Aliens/TOSTrooper.h"
 
+#include "TheOtherSideMP/Extensions/EnergyСonsumer.h"
 #include "TheOtherSideMP/Game/TOSGameEventRecorder.h"
 #include "TheOtherSideMP/Game/Modules/Master/MasterClient.h"
 #include "TheOtherSideMP/Game/Modules/Master/MasterModule.h"
 #include "TheOtherSideMP/Helpers/TOS_Inventory.h"
 #include "TheOtherSideMP/Helpers/TOS_NET.h"
 
-CTOSActor::CTOSActor() : 
+CTOSActor::CTOSActor()
+	:
 	//m_filteredDeltaMovement(ZERO),
-	m_isSlave(false)
+	m_isSlave(false),
+	m_pEnergyConsumer(nullptr)
 {
+	
 }
 
-CTOSActor::~CTOSActor()
-{
+CTOSActor::~CTOSActor() = default;
 
+bool CTOSActor::Init(IGameObject* pGameObject)
+{
+	if (!CActor::Init(pGameObject))
+		return false;
+
+	m_pEnergyConsumer = dynamic_cast<CTOSEnergyConsumer*>(GetGameObject()->AcquireExtension("TOSEnergyConsumer"));
+	assert(m_pEnergyConsumer);
+
+	return true;
 }
 
 void CTOSActor::PostInit(IGameObject* pGameObject)
@@ -99,6 +111,10 @@ bool CTOSActor::NetSerialize(TSerialize ser, const EEntityAspects aspect, const 
 	if (!CActor::NetSerialize(ser,aspect,profile,flags))
 		return false;
 
+	//if (m_pEnergyConsumer->NetSerialize(ser,aspect, profile, flags))
+	//{
+	//}
+
 	return true;
 }
 
@@ -157,11 +173,24 @@ void CTOSActor::Update(SEntityUpdateContext& ctx, const int updateSlot)
 {
 	CActor::Update(ctx, updateSlot);
 
-	//const auto pMC = g_pTOSGame->GetMasterModule()->GetMasterClient();
-	//if (pMC && pMC->GetSlaveActor() == this)
-	//{
-	//	
-	//}
+	//Отладка потребителя энергии в виде вывода инф. на экран
+	if (gEnv->bClient && IsClient())
+	{
+		const auto pDebugEntity = gEnv->pEntitySystem->FindEntityByName(CTOSEnergyConsumer::s_debugEntityName);
+		if (pDebugEntity)
+		{
+			const float energy = m_pEnergyConsumer->GetEnergy();
+			const float maxEnergy = m_pEnergyConsumer->GetMaxEnergy();
+			const float drain = m_pEnergyConsumer->GetDrainValue();
+			const bool updating = m_pEnergyConsumer->IsUpdating();
+
+			DRAW_2D_TEXT(40, 200, 1.3f, "--- Energy Consumer (%s) ---", pDebugEntity->GetName());
+			DRAW_2D_TEXT(40, 215, 1.3f, "Updating:   %i", updating);
+			DRAW_2D_TEXT(40, 230, 1.3f, "Energy:     %1.f", energy);
+			DRAW_2D_TEXT(40, 245, 1.3f, "MaxEnergy:  %1.f", maxEnergy);
+			DRAW_2D_TEXT(40, 260, 1.3f, "DrainValue: %1.f", drain);
+		}
+	}
 }
 
 void CTOSActor::Release()
@@ -304,6 +333,12 @@ bool CTOSActor::IsLocalSlave() const
 		return false;
 
 	return pMC->GetSlaveEntity() == GetEntity();
+}
+
+CTOSEnergyConsumer* CTOSActor::GetEnergyConsumer() const
+{
+	assert(m_pEnergyConsumer);
+	return m_pEnergyConsumer;
 }
 
 void CTOSActor::NetMarkMeSlave(const bool slave) const

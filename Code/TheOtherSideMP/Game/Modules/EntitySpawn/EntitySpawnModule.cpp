@@ -421,7 +421,7 @@ void CTOSEntitySpawnModule::DebugDraw(const Vec2& screenPos, float fontSize, flo
 		return;
 
 	//Header
-	TOS_Debug::Draw2dText(
+	DRAW_2D_TEXT(
 		screenPos.x,
 		screenPos.y - interval * 2,
 		fontSize + 0.2f,
@@ -451,7 +451,7 @@ void CTOSEntitySpawnModule::DebugDraw(const Vec2& screenPos, float fontSize, flo
 			"%i) %s:%s",
 			index, savedName, entName);
 
-		//TOS_Debug::Draw2dText(
+		//DRAW_2DTEXT(
 		//	screenPos.x,
 		//	screenPos.y + index * interval,
 		//	fontSize,

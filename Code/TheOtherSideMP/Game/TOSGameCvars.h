@@ -45,6 +45,11 @@ struct STOSCvars  // NOLINT(cppcoreguidelines-special-member-functions)
 	static void CmdGetEntitiesByClass(IConsoleCmdArgs* pArgs);
 	static void CmdGetSyncs(IConsoleCmdArgs* pArgs);
 
+	static void CmdConsumerSetEnergy(IConsoleCmdArgs* pArgs);
+	static void CmdConsumerSetDrain(IConsoleCmdArgs* pArgs);
+	static void CmdConsumerSetDebugEntityName(IConsoleCmdArgs* pArgs);
+
+
 	// CLIENT COMMANDS
 	static void CmdGetLocalName(IConsoleCmdArgs *pArgs);
 

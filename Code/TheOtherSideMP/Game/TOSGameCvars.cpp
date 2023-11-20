@@ -11,6 +11,8 @@
 #include "Modules/EntitySpawn/EntitySpawnModule.h"
 #include "Modules/Master/MasterModule.h"
 
+#include "TheOtherSideMP/Actors/TOSActor.h"
+#include "TheOtherSideMP/Extensions/EnergyСonsumer.h"
 #include "TheOtherSideMP/Helpers/TOS_Entity.h"
 
 void STOSCvars::InitCVars(IConsole* pConsole)
@@ -43,6 +45,11 @@ void STOSCvars::InitCCommands(IConsole* pConsole) const
 	pConsole->AddCommand("getentitybyid", CmdGetEntityById);
 	pConsole->AddCommand("getentityscriptvalue", CmdGetEntityScriptValue);
 
+	// Отладочные команды потребителя энергии
+	pConsole->AddCommand("consumersetenergy", CmdConsumerSetEnergy);
+	pConsole->AddCommand("consumersetdrain", CmdConsumerSetDrain);
+	pConsole->AddCommand("consumersetdebugentname", CmdConsumerSetDebugEntityName);
+
 	//CLIENT COMMANDS
 	pConsole->AddCommand("getlocalname", CmdGetLocalName);
 
@@ -59,6 +66,10 @@ void STOSCvars::ReleaseCCommands() const
 
 	pConsole->RemoveCommand("netchname");
 	pConsole->RemoveCommand("getlocalname");
+
+	pConsole->RemoveCommand("consumersetenergy");
+	pConsole->RemoveCommand("consumersetdrain");
+	pConsole->RemoveCommand("consumersetdebugentname");
 }
 
 void STOSCvars::ReleaseCVars() const
@@ -268,6 +279,68 @@ void STOSCvars::CmdGetSyncs(IConsoleCmdArgs* pArgs)
 
 		CryLogAlways("	%s|%i", name, id);
 	}
+}
+
+void STOSCvars::CmdConsumerSetEnergy(IConsoleCmdArgs* pArgs)
+{
+	ONLY_SERVER_CMD;
+
+	const EntityId id = atoi(pArgs->GetArg(1));
+	const int energyVal = atoi(pArgs->GetArg(2));
+
+	const auto pEntity = gEnv->pEntitySystem->GetEntity(id);
+	if (!pEntity)
+	{
+		CryLogAlways("Failed: wrong 1 arg entityId");
+		return;
+	}
+
+	const auto pActor = dynamic_cast<CTOSActor*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(id));
+	if (!pActor)
+	{
+		CryLogAlways("Failed: actor not found");
+		return;
+	}
+
+	pActor->GetEnergyConsumer()->SetEnergy(energyVal);
+}
+
+void STOSCvars::CmdConsumerSetDrain(IConsoleCmdArgs* pArgs)
+{
+	ONLY_SERVER_CMD;
+
+	const EntityId id = atoi(pArgs->GetArg(1));
+	const int energyVal = atoi(pArgs->GetArg(2));
+
+	const auto pEntity = gEnv->pEntitySystem->GetEntity(id);
+	if (!pEntity)
+	{
+		CryLogAlways("Failed: wrong 1 arg entityId");
+		return;
+	}
+
+	const auto pActor = dynamic_cast<CTOSActor*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(id));
+	if (!pActor)
+	{
+		CryLogAlways("Failed: actor not found");
+		return;
+	}
+
+	pActor->GetEnergyConsumer()->SetDrainValue(energyVal);
+}
+
+void STOSCvars::CmdConsumerSetDebugEntityName(IConsoleCmdArgs* pArgs)
+{
+	ONLY_CLIENT_CMD;
+
+	const auto pEntity = gEnv->pEntitySystem->FindEntityByName(pArgs->GetArg(1));
+	if (!pEntity)
+	{
+		CryLogAlways("Failed: wrong 1 arg name");
+		return;
+	}
+
+	CTOSEnergyConsumer::SetDebugEntityName(pEntity->GetName());
 }
 
 void STOSCvars::CmdGetLocalName(IConsoleCmdArgs* pArgs)

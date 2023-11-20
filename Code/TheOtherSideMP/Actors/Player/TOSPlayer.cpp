@@ -11,8 +11,7 @@
 #include "TheOtherSideMP/Game/TOSGameEventRecorder.h"
 
 CTOSPlayer::CTOSPlayer()
-	: m_pMasterClient(nullptr),
-	m_pEnergyConsumer(nullptr)
+	: m_pMasterClient(nullptr)
 {
 	
 }
@@ -30,9 +29,6 @@ bool CTOSPlayer::Init(IGameObject* pGameObject)
 {
 	if (!CPlayer::Init(pGameObject))
 		return false;
-
-	m_pEnergyConsumer = dynamic_cast<CTOSEnergyConsumer*>(GetGameObject()->AcquireExtension("TOSEnergyConsumer"));
-	assert(m_pEnergyConsumer);
 
 	return true;
 }
@@ -262,12 +258,6 @@ CTOSMasterClient* CTOSPlayer::GetMasterClient() const
 {
 	assert(m_pMasterClient);
 	return m_pMasterClient;
-}
-
-CTOSEnergyConsumer* CTOSPlayer::GetEnergyConsumer() const
-{
-	assert(m_pEnergyConsumer);
-	return m_pEnergyConsumer;
 }
 
 void CTOSPlayer::ClearInterference()

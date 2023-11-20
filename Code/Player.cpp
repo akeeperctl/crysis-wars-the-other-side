@@ -258,8 +258,12 @@ CPlayer::~CPlayer()
 
 bool CPlayer::Init(IGameObject * pGameObject)
 {
-	if (!CActor::Init(pGameObject))
+	//TheOtherSide
+	//if (!CActor::Init(pGameObject))
+	//	return false;
+	if (!CTOSActor::Init(pGameObject))
 		return false;
+	//~TheOtherSide
 
 	Revive(true);
 

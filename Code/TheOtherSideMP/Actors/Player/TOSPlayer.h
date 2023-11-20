@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Player.h"
-class CTOSEnergyConsumer;
 class CTOSMasterClient;
 
 class CTOSPlayer final : public CPlayer  // NOLINT(cppcoreguidelines-special-member-functions)
@@ -49,7 +48,6 @@ public:
 	//~CTOSActor
 
 	CTOSMasterClient* GetMasterClient() const;
-	CTOSEnergyConsumer* GetEnergyConsumer() const;
 
 
 protected:
@@ -64,5 +62,4 @@ private:
  * Будет доступен только внутри клиента.
  */
 	CTOSMasterClient* m_pMasterClient;
-	CTOSEnergyConsumer* m_pEnergyConsumer;
 };
