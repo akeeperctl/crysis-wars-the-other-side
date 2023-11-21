@@ -19,7 +19,11 @@
 # pragma once
 #endif
 
-static constexpr float NANOSUIT_ENERGY                = 200.0f;
+//TheOtherSide
+#include "TheOtherSideMP/Extensions/EnergyСonsumer.h"
+//TheOtherSide
+
+static constexpr float NANOSUIT_ENERGY                = CTOSEnergyConsumer::DEFAULT_ENERGY;
 static constexpr float NANOSUIT_HEALTH_REGEN_INTERVAL = 1.0f;
 static constexpr float NANOSUIT_MAXIMUM_HEALTH_REGEN  = 40.0f;
 
@@ -292,16 +296,10 @@ public:
 	float GetSlotValue(ENanoSlot slot, bool desired = false) const;
 	bool  GetSoundIsPlaying(ENanoSound sound) const;
 
-	bool OnComboSpot() const
-	{
-		return (m_energy > 0.1f * NANOSUIT_ENERGY && m_energy < 0.3f * NANOSUIT_ENERGY) ? true : false;
-	}
+	bool OnComboSpot() const;
 
 	void        DeactivateSuit(float time);
-	ILINE float GetSuitEnergy() const
-	{
-		return m_energy;
-	}
+	float		GetSuitEnergy() const;
 
 	ILINE float GetEnergyRechargeRate() const
 	{
@@ -368,7 +366,7 @@ private:
 	ENanoAction m_pendingAction;
 
 	// basic variables
-	float m_energy;
+	//float m_energy;
 	float m_lastEnergy;
 	float m_energyRechargeRate;
 	float m_healthAccError;
@@ -417,6 +415,16 @@ private:
 	SSuitSound m_sounds[ESound_Suit_Last];
 
 	std::vector<INanoSuitListener*> m_listeners;
+
+	//TheOtherSide
+public:
+	bool RegisterEnergyConsumer(CTOSEnergyConsumer* pConsumer);
+	void UnregisterEnergyConsumer();
+	//void ResetEnergy(float maxEnergy);
+
+private:
+	CTOSEnergyConsumer* m_pConsumer; // Указатель на потребитель энергии владельца нанокостюма
+	//~TheOtherSide
 };
 
 #endif //__NANOSUIT_H__

@@ -28,6 +28,7 @@ public:
 	//~IGameObjectExtension
 
 	bool        SetEnergy(float value, bool initiated = false);
+	bool        SetEnergyForced(float value);
 	float       GetEnergy() const;
 	bool        SetMaxEnergy(float value);
 	float       GetMaxEnergy() const;
@@ -39,6 +40,7 @@ public:
 	static bool SetDebugEntityName(const char* name);
 
 	static string s_debugEntityName;
+	static constexpr float DEFAULT_ENERGY = 200.0f;
 
 private:
 	float m_energy;

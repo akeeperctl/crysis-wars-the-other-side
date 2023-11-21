@@ -4084,11 +4084,15 @@ void CHUD::TOSSetAmmoHealthHUD(IActor* pActor, const char* filePath)
 	m_animPlayerStats.Unload();
 	m_animPlayerStats.Load(filePath, eFD_Right, eFAF_Visible | eFAF_ThisHandler);
 
-	const int iHealth = (pActor->GetHealth() / pActor->GetMaxHealth()) * 100 + 1;
-	float fEnergy = 0;
+	const int health = (pActor->GetHealth() / pActor->GetMaxHealth()) * 100 + 1;
+	int		  energy = 0;
 
-	if (const auto pNewActor = dynamic_cast<CActor*>(pActor))
+	if (const auto pNewActor = dynamic_cast<CTOSActor*>(pActor))
 	{
+		energy = pNewActor->GetEnergyConsumer()->GetEnergy() / pNewActor->GetEnergyConsumer()->GetMaxEnergy() * 100 + 1;
+
+		/*
+
 		if (pNewActor->IsAlien())
 		{
 			//auto* pAlien = dynamic_cast<CAlien*>(pNewActor);
@@ -4100,10 +4104,11 @@ void CHUD::TOSSetAmmoHealthHUD(IActor* pActor, const char* filePath)
 			if (pPlayer->GetNanoSuit())
 				fEnergy = pPlayer->GetNanoSuit()->GetSuitEnergy() * 0.5f + 1.0f;
 		}
+		*/
 	}
 
-	m_animPlayerStats.Invoke("setHealth", iHealth);
-	m_animPlayerStats.Invoke("setEnergy", static_cast<int>(fEnergy));
+	m_animPlayerStats.Invoke("setHealth", health);
+	m_animPlayerStats.Invoke("setEnergy", energy);
 }
 
 void CHUD::TOSSetInventoryHUD(IActor* pActor, const char* filePath) const

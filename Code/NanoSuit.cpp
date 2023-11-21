@@ -203,7 +203,10 @@ CNanoSuit::CNanoSuit()
 	m_pNanoMaterial(nullptr),
 	m_activationTime(0.0f),
 	m_invulnerabilityTimeout(0.0f),
-	m_invulnerable(false)
+	m_invulnerable(false),
+	//TheOtherSide
+	m_pConsumer(nullptr)
+	//~TheOtherSide
 {
 	for (auto& m_sound : m_sounds)
 	{
@@ -215,7 +218,7 @@ CNanoSuit::CNanoSuit()
 		m_sound.nStrengthIndex = -1;
 	}
 
-	m_energy = NANOSUIT_ENERGY;
+	//m_maxEnergy = m_energy = NANOSUIT_ENERGY;
 
 	Reset(nullptr);
 }
@@ -231,7 +234,7 @@ void CNanoSuit::Reset(CPlayer* owner)
 	m_pendingAction     = eNA_None;
 	m_bWasSprinting     = false;
 	m_bSprintUnderwater = false;
-	m_energy            = 0.0f;
+	//m_energy            = 0.0f;
 
 	m_bNightVisionEnabled = false;
 
@@ -240,7 +243,21 @@ void CNanoSuit::Reset(CPlayer* owner)
 		m_slot.desiredVal = 50.0f;
 	}
 
-	ResetEnergy();
+	//TheOtherSide
+	//ResetEnergy();
+
+	//if (!RegisterEnergyConsumer(m_pOwner->GetEnergyConsumer()))
+	//{
+		//ResetEnergy(m_maxEnergy);
+	//}
+
+	if (m_pOwner)
+	{
+		const bool registered = RegisterEnergyConsumer(m_pOwner->GetEnergyConsumer());
+		CRY_ASSERT_MESSAGE(registered, "Nanosuit not register the owner's energy consumer");
+	}
+
+	//~TheOtherSide
 
 	m_energyRechargeRate      = 0.0f;
 	m_healthRegenRate         = 0.0f;
@@ -352,6 +369,13 @@ void CNanoSuit::Update(const float frameTime)
 	if (!m_pOwner || m_pOwner->GetHealth() <= 0)
 		return;
 
+	assert(m_pConsumer);
+	if (!m_pConsumer)
+		return;
+
+	const float maxEnergy = m_pConsumer->GetMaxEnergy();
+	const float curEnergy = m_pConsumer->GetEnergy();
+
 	// invulnerability effect works even with a powered down suit
 	// it's a spawn protection mechanism, so we need to make sure
 	// nanogrenades don't disrupt this spawn protection
@@ -452,7 +476,10 @@ void CNanoSuit::Update(const float frameTime)
 		}
 	}
 
-	float recharge = NANOSUIT_ENERGY / max(0.01f, rechargeTime);
+	//TheOtherSide
+	//float recharge = NANOSUIT_ENERGY / max(0.01f, rechargeTime);
+	float recharge = maxEnergy / max(0.01f, rechargeTime);
+	//~TheOtherSide
 
 	m_energyRechargeRate = recharge;
 
@@ -518,20 +545,33 @@ void CNanoSuit::Update(const float frameTime)
 	//this deals with sprinting
 	UpdateSprinting(recharge, stats, frameTime);
 
-	NETINPUT_TRACE(m_pOwner->GetEntityId(), m_energy);
+	//TheOtherSide
+	//NETINPUT_TRACE(m_pOwner->GetEntityId(), m_energy);
+	NETINPUT_TRACE(m_pOwner->GetEntityId(), m_pConsumer->GetEnergy());
 	NETINPUT_TRACE(m_pOwner->GetEntityId(), recharge);
+	//~TheOtherSide
 
 	if (isServer)
 		if (recharge < 0.0f || m_energyRechargeDelay <= 0.0f)
-			SetSuitEnergy(clamp(m_energy + recharge * frameTime, 0.0f, NANOSUIT_ENERGY));
+		{
+			//TheOtherSide
+			//SetSuitEnergy(clamp(m_energy + recharge * frameTime, 0.0f, NANOSUIT_ENERGY));
+			SetSuitEnergy(clamp(curEnergy + recharge * frameTime, 0.0f, maxEnergy));
+
+			//~TheOtherSide
+		}
 
 	//CryLogAlways("%s Suit Energy: %.3f", m_pOwner->GetEntity()->GetName(), m_energy);
 
 	if (m_healthRegenDelay > 0.0f)
 	{
 		const bool regenAfterFullEnergy = g_pGameCVars->g_playerSuitHealthRegenDelay < 0.0f;
-		if (!regenAfterFullEnergy || GetSuitEnergy() >= NANOSUIT_ENERGY)
+
+		//TheOtherSide
+		//if (!regenAfterFullEnergy || GetSuitEnergy() >= NANOSUIT_ENERGY)
+		if (!regenAfterFullEnergy || GetSuitEnergy() >= maxEnergy)
 			m_healthRegenDelay = max(0.0f, m_healthRegenDelay - frameTime);
+		//~TheOtherSide
 	}
 
 	if (m_energyRechargeDelay > 0.0f)
@@ -564,7 +604,7 @@ void CNanoSuit::Update(const float frameTime)
 			}
 		}
 
-	if (m_energy != m_lastEnergy)
+	if (curEnergy != m_lastEnergy)
 	{
 		if (isServer)
 			m_pOwner->GetGameObject()->ChangedNetworkState(CPlayer::ASPECT_NANO_SUIT_ENERGY);
@@ -575,14 +615,14 @@ void CNanoSuit::Update(const float frameTime)
 			auto iter = m_listeners.begin();
 			while (iter != m_listeners.end())
 			{
-				(*iter)->EnergyChanged(m_energy);
+				(*iter)->EnergyChanged(curEnergy);
 				++iter;
 			}
 		}
 		//CryLogAlways("[nano]-- updating %s's nanosuit energy: %f", m_pOwner->GetEntity()->GetName(), m_energy);
 	}
 
-	Balance(m_energy);
+	Balance(curEnergy);
 	NETINPUT_TRACE(m_pOwner->GetEntityId(), m_slots[NANOSLOT_SPEED].realVal);
 	NETINPUT_TRACE(m_pOwner->GetEntityId(), m_slots[NANOSLOT_SPEED].desiredVal);
 
@@ -613,7 +653,7 @@ void CNanoSuit::Update(const float frameTime)
 		}
 	}
 
-	m_lastEnergy = m_energy;
+	m_lastEnergy = curEnergy;
 }
 
 void CNanoSuit::Balance(const float energy)
@@ -627,16 +667,25 @@ void CNanoSuit::Balance(const float energy)
 
 void CNanoSuit::SetSuitEnergy(float value, const bool playerInitiated /* = false */)
 {
-	value = clamp(value, 0.0f, NANOSUIT_ENERGY);
-	if (m_pOwner && value != m_energy && gEnv->bServer)
+	//TheOtherSide
+	assert(m_pConsumer);
+	if (!m_pConsumer)
+		return;
+
+	const float curEnergy = m_pConsumer->GetEnergy();
+	const float maxEnergy = m_pConsumer->GetMaxEnergy();
+	//~TheOtherSide
+
+	value = clamp(value, 0.0f, maxEnergy);
+	if (m_pOwner && value != curEnergy && gEnv->bServer)
 		m_pOwner->GetGameObject()->ChangedNetworkState(CPlayer::ASPECT_NANO_SUIT_ENERGY);
 
 	if (!gEnv->bMultiplayer)
-		if (value < m_energy)
+		if (value < curEnergy)
 			m_energyRechargeDelay = g_pGameCVars->g_playerSuitEnergyRechargeDelay;
 
 
-	if (value != m_energy)
+	if (value != curEnergy)
 		// call listeners on nano energy change
 		if (m_listeners.empty() == false)
 		{
@@ -648,7 +697,7 @@ void CNanoSuit::SetSuitEnergy(float value, const bool playerInitiated /* = false
 			}
 		}
 
-	if (value < m_energy)
+	if (value < curEnergy)
 	{
 		if (!playerInitiated)
 			//armor mode hit fx (in armor mode energy is decreased by damage
@@ -664,7 +713,7 @@ void CNanoSuit::SetSuitEnergy(float value, const bool playerInitiated /* = false
 					pMaterialEffects->ExecuteEffect(id, params);
 				}
 			}*/
-			if (gEnv->bMultiplayer && ((value / NANOSUIT_ENERGY) <= 0.2f) && (m_energy > value) && g_pGameCVars->g_mpSpeedRechargeDelay) // if we cross the 20% boundary we don't regenerate for 3secs
+			if (gEnv->bMultiplayer && ((value / maxEnergy) <= 0.2f) && (curEnergy > value) && g_pGameCVars->g_mpSpeedRechargeDelay) // if we cross the 20% boundary we don't regenerate for 3secs
 				m_energyRechargeDelay = 3.0f;
 
 		// spending energy cancels invulnerability
@@ -672,7 +721,8 @@ void CNanoSuit::SetSuitEnergy(float value, const bool playerInitiated /* = false
 			SetInvulnerability(false);
 	}
 
-	m_energy = value;
+	//m_energy = value;
+	m_pConsumer->SetEnergyForced(value);
 }
 
 void CNanoSuit::Hit(int damage)
@@ -706,13 +756,22 @@ void CNanoSuit::Hit(int damage)
 
 bool CNanoSuit::SetAllSlots(const float armor, const float strength, const float speed)
 {
+	//TheOtherSide
+	assert(m_pConsumer);
+	if (!m_pConsumer)
+		return false;
+
+	const float maxEnergy = m_pConsumer->GetMaxEnergy();
+	//~TheOtherSide
+
+
 	const float energy = armor + strength + speed;
-	if (energy > NANOSUIT_ENERGY)
+	if (energy > maxEnergy)
 		return false;
 	m_slots[NANOSLOT_ARMOR].desiredVal    = armor;
 	m_slots[NANOSLOT_STRENGTH].desiredVal = strength;
 	m_slots[NANOSLOT_SPEED].desiredVal    = speed;
-	m_slots[NANOSLOT_MEDICAL].desiredVal  = NANOSUIT_ENERGY - energy;
+	m_slots[NANOSLOT_MEDICAL].desiredVal  = maxEnergy - energy;
 
 	return true;
 }
@@ -1012,9 +1071,37 @@ bool CNanoSuit::GetSoundIsPlaying(const ENanoSound sound) const
 	return false;
 }
 
+bool CNanoSuit::OnComboSpot() const
+{
+	//TheOtherSide
+	assert(m_pConsumer);
+	if (!m_pConsumer)
+		return false;
+
+	const float curEnergy = m_pConsumer->GetEnergy();
+	const float maxEnergy = m_pConsumer->GetMaxEnergy();
+	//~TheOtherSide
+
+	return (curEnergy > 0.1f * maxEnergy && curEnergy < 0.3f * maxEnergy) ? true : false;
+}
+
+
 void CNanoSuit::DeactivateSuit(float time)
 {
 	SetSuitEnergy(0);
+}
+
+float CNanoSuit::GetSuitEnergy() const
+{
+	//TheOtherSide
+	assert(m_pConsumer);
+	if (!m_pConsumer)
+		return 0.0f;
+
+	const float curEnergy = m_pConsumer->GetEnergy();
+	//~TheOtherSide
+
+	return curEnergy;
 }
 
 void CNanoSuit::PlaySound(const ENanoSound sound, const float param, const bool stopSound)
@@ -1236,7 +1323,7 @@ void CNanoSuit::Serialize(TSerialize ser, const unsigned aspects)
 	if (ser.GetSerializationTarget() != eST_Network)
 	{
 		ser.BeginGroup("Nanosuit");
-		ser.Value("nanoSuitEnergy", m_energy);
+		//ser.Value("nanoSuitEnergy", m_energy);
 		ser.Value("m_energyRechargeRate", m_energyRechargeRate);
 		ser.Value("m_healthRegenRate", m_healthRegenRate);
 		ser.Value("m_healthAccError", m_healthAccError);
@@ -1311,9 +1398,15 @@ void CNanoSuit::Serialize(TSerialize ser, const unsigned aspects)
 		}
 		if (aspects & CPlayer::ASPECT_NANO_SUIT_ENERGY)
 		{
-			ser.Value("energy", m_energy, 'nNRG');
+			//ser.Value("energy", m_energy, 'nNRG');
+
+			//TheOtherSide
+			assert(m_pConsumer);
+			const float curEnergy = m_pConsumer->GetEnergy();
+			//~TheOtherSide
+
 			if (ser.IsReading())
-				Balance(m_energy);
+				Balance(curEnergy);
 		}
 		if (aspects & CPlayer::ASPECT_NANO_SUIT_INVULNERABLE)
 		{
@@ -1529,11 +1622,20 @@ void CNanoSuit::SetModeDefect(const ENanoMode mode, const bool defect)
 
 float CNanoSuit::GetSprintMultiplier(const bool strafing) const
 {
+	//TheOtherSide
+	assert(m_pConsumer);
+	if (!m_pConsumer)
+		return 1.0f;
+
+	const float curEnergy = m_pConsumer->GetEnergy();
+	const float maxEnergy = m_pConsumer->GetMaxEnergy();
+	//~TheOtherSide
+
 	if (m_pOwner && !m_pOwner->GetActorStats()->inZeroG && m_currentMode == NANOMODE_SPEED && m_startedSprinting > 0.0f)
 	{
 		if (gEnv->bMultiplayer)
 		{
-			if (m_energy >= 1.0f)
+			if (curEnergy >= 1.0f)
 			{
 				const float time      = m_now - m_startedSprinting;
 				const float speedMult = g_pGameCVars->g_suitSpeedMultMultiplayer;
@@ -1547,12 +1649,12 @@ float CNanoSuit::GetSprintMultiplier(const bool strafing) const
 		}
 		else
 		{
-			if (m_energy > NANOSUIT_ENERGY * 0.2f)
+			if (curEnergy > maxEnergy * 0.2f)
 			{
 				const float time = m_now - m_startedSprinting;
 				return 1.0f + max(0.3f, g_pGameCVars->g_suitSpeedMult * min(1.0f, time * 0.001f));
 			}
-			if (m_energy > 0.0f)
+			if (curEnergy > 0.0f)
 				return 1.4f;
 			return 1.3f;
 		}
@@ -1562,11 +1664,21 @@ float CNanoSuit::GetSprintMultiplier(const bool strafing) const
 
 void CNanoSuit::UpdateSprinting(float& recharge, const SPlayerStats& stats, float frametime)
 {
+	//TheOtherSide
+	assert(m_pConsumer);
+	if (!m_pConsumer)
+		return;
+
+	const float curEnergy = m_pConsumer->GetEnergy();
+	const float maxEnergy = m_pConsumer->GetMaxEnergy();
+	//~TheOtherSide
+
+
 	if (!stats.inZeroG)
 	{
 		if (m_currentMode == NANOMODE_SPEED && stats.bSprinting)
 		{
-			if (m_energy > NANOSUIT_ENERGY * 0.2f)
+			if (curEnergy > maxEnergy * 0.2f)
 			{
 				if (!m_bWasSprinting)
 				{
@@ -1644,10 +1756,55 @@ void CNanoSuit::UpdateSprinting(float& recharge, const SPlayerStats& stats, floa
 	}
 }
 
+//TheOtherSide
+bool CNanoSuit::RegisterEnergyConsumer(CTOSEnergyConsumer* pConsumer)
+{
+	assert(pConsumer);
+	if (!pConsumer)
+		return false;
+
+	m_pConsumer = pConsumer;
+
+	//Обновлять энергию будет нанокостюм
+	m_pConsumer->EnableUpdate(false);
+	ResetEnergy();
+
+	return true;
+}
+
+void CNanoSuit::UnregisterEnergyConsumer()
+{
+	m_pConsumer = nullptr;
+	ResetEnergy();
+}
+
+//void CNanoSuit::ResetEnergy(const float maxEnergy)
+//{
+//	SetSuitEnergy(maxEnergy);
+//	//m_energy = m_lastEnergy = maxEnergy;
+//	m_lastEnergy = maxEnergy;
+//	for (auto& m_slot : m_slots)
+//	{
+//		m_slot.realVal = m_slot.desiredVal;
+//	}
+//
+//	if (m_pOwner && gEnv->bServer)
+//		m_pOwner->GetGameObject()->ChangedNetworkState(CPlayer::ASPECT_NANO_SUIT_ENERGY);
+//
+//}
+
 void CNanoSuit::ResetEnergy()
 {
-	SetSuitEnergy(NANOSUIT_ENERGY);
-	m_energy = m_lastEnergy = NANOSUIT_ENERGY;
+	//TheOtherSide
+	assert(m_pConsumer);
+	if (!m_pConsumer)
+		return;
+
+	const float maxEnergy = m_pConsumer->GetMaxEnergy();
+	//~TheOtherSide
+
+	SetSuitEnergy(maxEnergy);
+	m_lastEnergy = maxEnergy;
 	for (auto& m_slot : m_slots)
 	{
 		m_slot.realVal = m_slot.desiredVal;
@@ -1656,6 +1813,7 @@ void CNanoSuit::ResetEnergy()
 	if (m_pOwner && gEnv->bServer)
 		m_pOwner->GetGameObject()->ChangedNetworkState(CPlayer::ASPECT_NANO_SUIT_ENERGY);
 }
+//~TheOtherSide
 
 void CNanoSuit::GetMemoryStatistics(ICrySizer* s)
 {
