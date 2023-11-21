@@ -8,7 +8,7 @@
   
  -------------------------------------------------------------------------
   History:
-  - 7:10:2004   14:19 : Created by Márcio Martins
+  - 7:10:2004   14:19 : Created by MÐ±rcio Martins
 
 *************************************************************************/
 #ifndef __SCRIPTBIND_ACTOR_H__
@@ -155,6 +155,12 @@ protected:
 
 	ISystem					*m_pSystem;
 	IGameFramework	*m_pGameFW;
+
+	//TheOtherSide
+public:
+	virtual int GetConsumerEnergy(IFunctionHandler* pH);
+	virtual int SetConsumerEnergy(IFunctionHandler* pH, int energy);
+	//~TheOtherSide
 };
 
 #endif //__SCRIPTBIND_ACTOR_H__

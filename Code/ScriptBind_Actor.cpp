@@ -7,7 +7,7 @@
   
  -------------------------------------------------------------------------
   History:
-  - 7:10:2004   14:19 : Created by Márcio Martins
+  - 7:10:2004   14:19 : Created by MÐ±rcio Martins
 
 *************************************************************************/
 #include "StdAfx.h"
@@ -176,6 +176,11 @@ CScriptBind_Actor::CScriptBind_Actor(ISystem *pSystem)
 
 	m_pSS->SetGlobalValue("CLIENT_SIDE", CLIENT_SIDE);
 	m_pSS->SetGlobalValue("SERVER_SIDE", SERVER_SIDE);
+
+	//TheOtherSide
+	SCRIPT_REG_FUNC(GetConsumerEnergy);
+	SCRIPT_REG_TEMPLFUNC(SetConsumerEnergy, "energy");
+	//~TheOtherSide
 }
 
 //------------------------------------------------------------------------
@@ -211,9 +216,36 @@ CActor *CScriptBind_Actor::GetActor(IFunctionHandler *pH)
 			return static_cast<CActor *>(pActor);
 	}
 
-	return 0;
+	return nullptr;
 }
 
+
+//TheOtherSide
+int CScriptBind_Actor::GetConsumerEnergy(IFunctionHandler* pH)
+{
+	const auto pActor = dynamic_cast<CTOSActor*>(GetActor(pH));
+	if (!pActor)
+		return pH->EndFunction();
+
+	const auto pConsumer = pActor->GetEnergyConsumer();
+	if (pConsumer)
+		return pH->EndFunction(pConsumer->GetEnergy());
+
+	return pH->EndFunction(0);
+}
+
+int CScriptBind_Actor::SetConsumerEnergy(IFunctionHandler* pH, int energy)
+{
+	const auto pActor = dynamic_cast<CTOSActor*>(GetActor(pH));
+	if (!pActor)
+		return pH->EndFunction();
+
+	if (pActor->GetEnergyConsumer())
+		pActor->GetEnergyConsumer()->SetEnergy(energy);
+
+	return pH->EndFunction();
+}
+//~TheOtherSide
 
 //------------------------------------------------------------------------
 int CScriptBind_Actor::DumpActorInfo(IFunctionHandler *pH)

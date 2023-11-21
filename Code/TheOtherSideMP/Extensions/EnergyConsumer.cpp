@@ -157,7 +157,7 @@ bool CTOSEnergyConsumer::SetEnergy(float value, const bool initiated)
 
 		if (!initiated)
 			// if we cross the 20% boundary we don't regenerate for 3secs
-			if (gEnv->bMultiplayer && value / m_maxEnergy <= 0.2f && m_energy > value && g_pGameCVars->g_mpSpeedRechargeDelay)
+			if (gEnv->bMultiplayer && value / m_maxEnergy <= 0.2f && value < m_energy && g_pGameCVars->g_mpSpeedRechargeDelay)
 				m_regenStartDelay = 3.0f;
 
 		// spending energy cancels invulnerability
