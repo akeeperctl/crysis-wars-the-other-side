@@ -3,15 +3,9 @@
 
 #include "GameUtils.h"
 
-CTOSTrooper::CTOSTrooper()
-{
-	
-};
+CTOSTrooper::CTOSTrooper() { };
 
-CTOSTrooper::~CTOSTrooper()
-{
-	
-};
+CTOSTrooper::~CTOSTrooper() { };
 
 void CTOSTrooper::PostInit(IGameObject* pGameObject)
 {
@@ -20,7 +14,7 @@ void CTOSTrooper::PostInit(IGameObject* pGameObject)
 
 void CTOSTrooper::Update(SEntityUpdateContext& ctx, const int updateSlot)
 {
-	CTrooper::Update(ctx,updateSlot);
+	CTrooper::Update(ctx, updateSlot);
 }
 
 bool CTOSTrooper::NetSerialize(const TSerialize ser, const EEntityAspects aspect, const uint8 profile, const int flags)
@@ -55,11 +49,11 @@ void CTOSTrooper::ProcessJumpFlyControl(const Vec3& move, const float frameTime)
 		//Для удобства работы с углами, специально для юзера они преобразуются в градусы/Degrees (0-360)  
 
 		const Ang3 angles(GetViewMtx());
-		Matrix33 baseMtxZ;
+		Matrix33   baseMtxZ;
 		baseMtxZ.SetRotationXYZ(angles);
 
 		Vec3       actual = baseMtxZ * Vec3(0, 0, 0);
-		const Vec3 goal = baseMtxZ * desiredVelocityClamped;
+		const Vec3 goal   = baseMtxZ * desiredVelocityClamped;
 
 		Interpolate(actual, goal, 5.0f, frameTime);
 
@@ -72,7 +66,7 @@ void CTOSTrooper::ProcessJumpFlyControl(const Vec3& move, const float frameTime)
 		constexpr bool isDebugEnabled = false;
 		if (isDebugEnabled)
 		{
-			static float c[] = { 1,1,1,1 };
+			static float c[] = {1, 1, 1, 1};
 			gEnv->pRenderer->GetIRenderAuxGeom()->DrawLine(GetEntity()->GetWorldPos(), ColorB(0, 0, 255, 255), GetEntity()->GetWorldPos() + baseMtxZ.GetColumn0(), ColorB(0, 0, 255, 255));
 			gEnv->pRenderer->GetIRenderAuxGeom()->DrawLine(GetEntity()->GetWorldPos(), ColorB(255, 0, 0, 255), GetEntity()->GetWorldPos() + baseMtxZ.GetColumn1(), ColorB(255, 0, 0, 255));
 			gEnv->pRenderer->GetIRenderAuxGeom()->DrawLine(GetEntity()->GetWorldPos(), ColorB(0, 255, 0, 255), GetEntity()->GetWorldPos() + baseMtxZ.GetColumn2(), ColorB(0, 255, 0, 255));
@@ -107,16 +101,15 @@ void CTOSTrooper::UpdateMasterView(SViewParams& viewParams, Vec3& offsetX, Vec3&
 void CTOSTrooper::ProcessJump(const CMovementRequest& request)
 {
 	//pe_action_impulse impulse;
-
 	SCharacterMoveRequest animCharRequest;
 	animCharRequest.jumping = false;
-	animCharRequest.type = eCMT_JumpInstant; //eCMT_Impulse //eCMT_JumpAccumulate;
+	animCharRequest.type    = eCMT_JumpInstant; //eCMT_Impulse //eCMT_JumpAccumulate;
 
-	Vec3 jumpVec(0,0,0);
+	Vec3 jumpVec(0, 0, 0);
 
-	const Vec3& upDir = GetEntity()->GetWorldTM().GetColumn(2);
+	const Vec3& upDir      = GetEntity()->GetWorldTM().GetColumn(2);
 	const Vec3& forwardDir = GetEntity()->GetWorldTM().GetColumn(1);
-	const Vec3& rightDir = GetEntity()->GetWorldTM().GetColumn(0);
+	const Vec3& rightDir   = GetEntity()->GetWorldTM().GetColumn(0);
 
 	STOSSlaveStats* pSlaveStats = &GetSlaveStats();
 	const auto      pActorStats = GetActorStats();
@@ -135,9 +128,10 @@ void CTOSTrooper::ProcessJump(const CMovementRequest& request)
 		//os.vJumpDir +=GetBaseMtx().GetColumn2() * gravity * t;
 
 		//const float inAir = pActorStats->inAir;
-		const float onGround = pActorStats->onGround;
+		const float     onGround  = pActorStats->onGround;
 		constexpr float jumpForce = 10.0f;
 
+		// Одиночный прыжок
 		if (onGround > 0.25f)
 		{
 			pSlaveStats->jumpCount++;
@@ -152,6 +146,8 @@ void CTOSTrooper::ProcessJump(const CMovementRequest& request)
 		}
 		else if (pSlaveStats->jumpCount > 0 && pActorStats->inAir > 0.0f)
 		{
+			// Двойной прыжок
+
 			if (request.HasDeltaMovement() && !request.GetDeltaMovement().IsZero())
 			{
 				//jumpVec += request.GetDeltaMovement().x * 300.f * rightDir / 1.5f;
@@ -164,15 +160,13 @@ void CTOSTrooper::ProcessJump(const CMovementRequest& request)
 			{
 				jumpVec = forwardDir * jumpForce; //300.f;
 			}
-			jumpVec.z = upDir.z * 2.5f;// 250.f;
+			jumpVec.z = upDir.z * 2.5f; // 250.f;
 
 			//TODO
 			//NetSpawnParticleEffect("alien_special.Trooper.doubleJumpAttack");
 
 			//TODO
 			//SubEnergy(TROOPER_JUMP_ENERGY_COST);
-
-			//GetEntity()->GetPhysics()->Action(&impulse);
 
 			animCharRequest.velocity += jumpVec;
 			m_pAnimatedCharacter->AddMovement(animCharRequest);
