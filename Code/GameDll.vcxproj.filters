@@ -1469,6 +1469,9 @@
     <ClInclude Include="TheOtherSideMP\Extensions\EnergyРЎonsumer.h">
       <Filter>TheOtherSideMP\Extensions</Filter>
     </ClInclude>
+    <ClInclude Include="TheOtherSideMP\Helpers\TOS_Console.h">
+      <Filter>TheOtherSideMP\Helpers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="GameActions.actions">

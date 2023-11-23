@@ -711,6 +711,7 @@
     <ClInclude Include="TheOtherSideMP\Game\TOSGameEventRecorder.h" />
     <ClInclude Include="TheOtherSideMP\Helpers\TOS_AI.h" />
     <ClInclude Include="TheOtherSideMP\Helpers\TOS_Cache.h" />
+    <ClInclude Include="TheOtherSideMP\Helpers\TOS_Console.h" />
     <ClInclude Include="TheOtherSideMP\Helpers\TOS_Debug.h" />
     <ClInclude Include="TheOtherSideMP\Helpers\TOS_Entity.h" />
     <ClInclude Include="TheOtherSideMP\Helpers\TOS_Enums.h" />
