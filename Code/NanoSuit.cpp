@@ -28,6 +28,12 @@
 
 #include "HUD/HUD.h"
 
+//TheOtherSide
+#include "TheOtherSideMP/Game/Modules/Master/MasterClient.h"
+#include "TheOtherSideMP/Game/Modules/Master/MasterModule.h"
+//~TheOtherSide
+
+
 CNanoSuit::SNanoMaterial g_USNanoMats[NANOMODE_LAST];
 CNanoSuit::SNanoMaterial g_AsianNanoMats[NANOMODE_LAST];
 
@@ -615,7 +621,21 @@ void CNanoSuit::Update(const float frameTime)
 			auto iter = m_listeners.begin();
 			while (iter != m_listeners.end())
 			{
-				(*iter)->EnergyChanged(curEnergy);
+				//TheOtherSide
+				bool callFunc = true;
+
+				const bool listenerIsHud = *iter == g_pGame->GetHUD();
+				const bool ownerIsLocalClient = m_pOwner->IsClient();
+				const bool haveSlave = g_pTOSGame->GetMasterModule()->GetMasterClient()->GetSlaveEntity() != nullptr;
+
+				if (listenerIsHud && ownerIsLocalClient && haveSlave)
+					callFunc = false;
+
+				//~TheOtherSide
+
+				if (callFunc)
+					(*iter)->EnergyChanged(curEnergy);
+
 				++iter;
 			}
 		}
@@ -692,7 +712,21 @@ void CNanoSuit::SetSuitEnergy(float value, const bool playerInitiated /* = false
 			auto iter = m_listeners.begin();
 			while (iter != m_listeners.end())
 			{
-				(*iter)->EnergyChanged(value);
+				//TheOtherSide
+				bool callFunc = true;
+
+				const bool listenerIsHud = *iter == g_pGame->GetHUD();
+				const bool ownerIsLocalClient = m_pOwner->IsClient();
+				const bool haveSlave = g_pTOSGame->GetMasterModule()->GetMasterClient()->GetSlaveEntity() != nullptr;
+
+				if (listenerIsHud && ownerIsLocalClient && haveSlave)
+					callFunc = false;
+
+				//~TheOtherSide
+
+				if (callFunc)
+					(*iter)->EnergyChanged(value);
+
 				++iter;
 			}
 		}

@@ -86,7 +86,11 @@
 #include "TheOtherSideMP/Actors/aliens/TOSTrooper.h"
 #include "TheOtherSideMP/Extensions/EnergyСonsumer.h"
 #include "TheOtherSideMP/Game/Modules/Master/MasterSynchronizer.h"
-//TheOtherSide
+
+#undef GetClassNameA
+//~TheOtherSide
+
+
 
 #define HIDE_FROM_EDITOR(className)																																				\
   { IEntityClass *pItemClass = gEnv->pEntitySystem->GetClassRegistry()->FindClass(className);\

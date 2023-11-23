@@ -296,6 +296,10 @@ CHUD::CHUD()
 
 	//the hud exists as long as the game exists
 	gEnv->pGame->GetIGameFramework()->RegisterListener(this, "hud", FRAMEWORKLISTENERPRIORITY_HUD);
+
+	//TheOtherSide
+	m_pEnergyConsumer = nullptr;
+	//~TheOtherSide
 }
 
 //-----------------------------------------------------------------------------------------------------
@@ -752,8 +756,12 @@ void CHUD::SetHUDColor()
 	//necessary in new hud design only
 	m_fHealth = -1.0f;
 	UpdateHealth();
-	if(CPlayer *pPlayer = static_cast<CPlayer *>(gEnv->pGame->GetIGameFramework()->GetClientActor()))
-		EnergyChanged(pPlayer->GetNanoSuit()->GetSuitEnergy());
+
+	//TheOtherSide
+	//if(CPlayer *pPlayer = static_cast<CPlayer *>(gEnv->pGame->GetIGameFramework()->GetClientActor()))
+		//EnergyChanged(pPlayer->GetNanoSuit()->GetSuitEnergy());
+	TOSUpdateEnergy();
+	//~TheOtherSide
 }
 
 //-----------------------------------------------------------------------------------------------------
@@ -792,9 +800,15 @@ void CHUD::PlayerIdSet(EntityId playerId)
 		m_pNanoSuit = pPlayer->GetNanoSuit();
 		assert(m_pNanoSuit); //the player requires to have a nanosuit!
 
+		//TheOtherSide
+
 		if (m_pNanoSuit)
 		{
-			m_fSuitEnergy = m_pNanoSuit->GetSuitEnergy();
+			//m_fSuitEnergy = m_pEnergyConsumer->GetEnergy();
+
+			TOSSetEnergyConsumer(pPlayer->GetEnergyConsumer());
+
+			//~TheOtherSide
 
 			pPlayer->RegisterPlayerEventListener(this);
 			m_pNanoSuit->AddListener(this);
@@ -1116,6 +1130,11 @@ void CHUD::ResetPostSerElements()
 	m_fPlayerDeathTime = 0.0f;
 	m_pHUDVehicleInterface->ChooseVehicleHUD(m_pHUDVehicleInterface->GetVehicle());
 	UpdateHealth();
+
+	//TheOtherSide
+	TOSUpdateEnergy();
+	//~TheOtherSide
+
 	m_fMiddleTextLineTimeout = 0.0f; //has to be reset sometimes after loading
 	m_fOverlayTextLineTimeout = 0.0f; //has to be reset sometimes after loading
 	DisplayFlashMessage("", 2);
@@ -1357,7 +1376,10 @@ void CHUD::ModeChanged(ENanoMode mode)
 
 void CHUD::EnergyChanged(float energy)
 {
-	m_animPlayerStats.Invoke("setEnergy", energy*0.5f+1.0f);
+	//TheOtherSide
+	// РЈСЃС‚Р°СЂРµР»Рѕ 23/11/2023
+	//m_animPlayerStats.Invoke("setEnergy", energy*0.5f+1.0f);
+	//~TheOtherSide
 }
 
 //-----------------------------------------------------------------------------------------------------
@@ -3555,6 +3577,10 @@ void CHUD::OnPostUpdate(float frameTime)
 		Targetting(0, false);
 
 		UpdateHealth();
+		//TheOtherSide
+		TOSUpdateEnergy();
+		//~TheOtherSide
+
 
 		// Grenade detector
 		TrackProjectiles(pPlayer);
@@ -3903,10 +3929,17 @@ void CHUD::OnPostUpdate(float frameTime)
 
 	if(m_bFirstFrame)
 	{
-		EnergyChanged(m_pNanoSuit->GetSuitEnergy());
+		//TheOtherSide
+		//EnergyChanged(m_pNanoSuit->GetSuitEnergy());
+		//EnergyChanged(m_pEnergyConsumer->GetEnergy());
+		TOSUpdateEnergy();
+
+
 		m_bFirstFrame = false;
 	}
-	m_fSuitEnergy = m_pNanoSuit->GetSuitEnergy();
+	//m_fSuitEnergy = m_pEnergyConsumer->GetEnergy();
+	//~TheOtherSide
+
 	m_iVoiceMode = g_pGameCVars->hud_voicemode;
 
 	if (m_delayedMessage.empty() == false)
@@ -4075,6 +4108,25 @@ void CHUD::TOSUpdateHealth()
 	}
 }
 
+void CHUD::TOSUpdateEnergy()
+{
+	//assert(m_pEnergyConsumer);
+	if (!m_pEnergyConsumer)
+		return;
+
+	const int energy = m_pEnergyConsumer->GetEnergy() / m_pEnergyConsumer->GetMaxEnergy() * 100 + 1;
+
+	if (m_fSuitEnergy < energy || m_fSuitEnergy > energy || m_bFirstFrame)
+	{
+		m_animPlayerStats.Invoke("setEnergy", energy);
+	}
+
+	if (m_bFirstFrame)
+		m_fSuitEnergy = energy;
+
+	m_fSuitEnergy = energy;
+}
+
 void CHUD::TOSSetAmmoHealthHUD(IActor* pActor, const char* filePath)
 {
 	if (!g_pGame->GetHUD())
@@ -4188,6 +4240,18 @@ void CHUD::TOSShowInventoryOverview(IActor* pActor, const char* curCategory, con
 			}
 		}
 	}
+}
+
+bool CHUD::TOSSetEnergyConsumer(CTOSEnergyConsumer* pConsumer)
+{
+	assert(pConsumer);
+	if (!pConsumer)
+		return false;
+
+	m_pEnergyConsumer = pConsumer;
+	m_fSuitEnergy = m_pEnergyConsumer->GetEnergy();
+
+	return true;
 }
 
 void CHUD::UpdateHealth()
@@ -4423,8 +4487,13 @@ bool CHUD::UpdateTimers(float frameTime)
 		}
 	}
 
+	//TheOtherSide
 	// FIXME: this should be moved to ::EnergyChanged
-	if(m_fSuitEnergy > (NANOSUIT_ENERGY*0.25f) && m_pNanoSuit->GetSuitEnergy() < (NANOSUIT_ENERGY*0.25f))
+	//if(m_fSuitEnergy > (NANOSUIT_ENERGY*0.25f) && m_pNanoSuit->GetSuitEnergy() < (NANOSUIT_ENERGY*0.25f))
+	const float energy = m_pEnergyConsumer->GetEnergy();
+	const float maxEnergy = m_pEnergyConsumer->GetMaxEnergy();
+
+	if(m_fSuitEnergy > (maxEnergy*0.25f) && energy < (maxEnergy*0.25f))
 	{
 		//DisplayFlashMessage("@energy_critical", 3, ColorF(1.0,0,0));
 		if(now.GetMilliSeconds() - m_fLastSoundPlayedCritical > 30000)
@@ -4433,6 +4502,7 @@ bool CHUD::UpdateTimers(float frameTime)
 			PlayStatusSound("energy_critical");
 		}
 	}
+	//~TheOtherSide
 
 	//check if airstrike has been done
 	if(m_fAirStrikeStarted>0.0f && now.GetSeconds()-m_fAirStrikeStarted > 5.0f)
@@ -4811,6 +4881,11 @@ void CHUD::TextMessage(const char* message)
 
 		m_iDeaths++;
 		m_pNanoSuit->ResetEnergy();
+
+		//TheOtherSide
+		m_pEnergyConsumer->Reset();
+		//~TheOtherSide
+
 		return;
 	}
 

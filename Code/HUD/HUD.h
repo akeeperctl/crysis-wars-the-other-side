@@ -408,11 +408,6 @@ public:
 	ILINE CHUDTagNames* GetTagNames() { return m_pHUDTagNames; }
 	ILINE CHUDSilhouettes* GetSilhouettes() { return m_pHUDSilhouettes; }
 
-	//TheOtherSide
-	//ILINE CHUDCrosshair* GetCrosshair() { return m_pHUDCrosshair; }
-	ILINE CTOSHUDCrosshair* GetCrosshair() { return m_pHUDCrosshair; }
-	//~TheOtherSide
-
 	//mission objectives
 	void UpdateMissionObjectiveIcon(EntityId objective, int friendly, FlashOnScreenIcon iconType, bool forceNoOffset = false, const Vec3 rotationTarget=Vec3(0, 0, 0), bool characterhead = false, bool forceshow=false);
 	void UpdateAllMissionObjectives();
@@ -562,30 +557,6 @@ public:
 	EHUDGAMERULES GetCurrentGameRules()	{	return m_currentGameRules;	}
 
 
-
-	//TheOtherSide
-
-	/**
-	 * \brief Изменяет текст названия оружия под показателем здоровья
-	 * \param text - применяемое название. Может быть любой текст
-	 */
-	void TOSSetWeaponName(const char* text);
-	void TOSUpdateHealth();
-
-	/**
-	 * \brief Сменить интерфейс отображения здоровья и энергии
-	 * \param pActor - указатель на актёра, у которого будут добываться параметры энергии и здоровья
-	 * \param filePath - путь к файлу интерфейса. Может быть с расширением как .swf и как .gfx.
-		\n Пример: \a filePath = "Libs/UI/HUD_AmmoHealthEnergyAbilities.gfx"
-	 */
-	void TOSSetAmmoHealthHUD(IActor* pActor, const char* filePath);
-
-	void TOSSetInventoryHUD(IActor* pActor, const char* filePath) const;
-
-	void TOSShowInventoryOverview(IActor* pActor, const char* curCategory, const char* curItem, bool grenades);
-
-	//~TheOtherSide
-
 private:
 	//some Update functions
 	void UpdateHealth();
@@ -676,6 +647,7 @@ private:
 	int						m_defectButtons;
 	bool					m_acceptNextWeaponCommand;
 
+	//
 	//NanoSuit-pointer for suit interaction
 	CNanoSuit    *m_pNanoSuit;
 	//NanoSuit
@@ -938,6 +910,37 @@ private:
 	std::list<string> m_listBoughtItems;
 
 	bool ToScreenCheck(const Vec3& src, Vec3& vScreenSpace) const;
+
+	//TheOtherSide
+public:
+	
+	//ILINE CHUDCrosshair* GetCrosshair() { return m_pHUDCrosshair; }
+	ILINE CTOSHUDCrosshair* GetCrosshair() { return m_pHUDCrosshair; }
+
+	/**
+	 * \brief Изменяет текст названия оружия под показателем здоровья
+	 * \param text - применяемое название. Может быть любой текст
+	 */
+	void TOSSetWeaponName(const char* text);
+	void TOSUpdateHealth();
+	void TOSUpdateEnergy();
+
+	/**
+	 * \brief Сменить интерфейс отображения здоровья и энергии
+	 * \param pActor - указатель на актёра, у которого будут добываться параметры энергии и здоровья
+	 * \param filePath - путь к файлу интерфейса. Может быть с расширением как .swf и как .gfx.
+		\n Пример: \a filePath = "Libs/UI/HUD_AmmoHealthEnergyAbilities.gfx"
+	 */
+	void TOSSetAmmoHealthHUD(IActor* pActor, const char* filePath);
+
+	void TOSSetInventoryHUD(IActor* pActor, const char* filePath) const;
+	void TOSShowInventoryOverview(IActor* pActor, const char* curCategory, const char* curItem, bool grenades);
+
+	bool TOSSetEnergyConsumer(CTOSEnergyConsumer* pConsumer);
+
+private:
+	CTOSEnergyConsumer* m_pEnergyConsumer;
+	//~TheOtherSide
 
 };
 

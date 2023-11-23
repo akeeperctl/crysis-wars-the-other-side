@@ -134,7 +134,7 @@ public:
 		pGP->InvokeRMIWithDependentObject(method, params, where, ent, channel);
 	}
 
-	virtual const char* GetClassName()
+	virtual const char* GetNameOfClass()
 	{
 		CRY_ASSERT_MESSAGE(0, "GetClassName called from CTOSGenericSynchronizer");
 		return "CTOSGenericSynchronizer";

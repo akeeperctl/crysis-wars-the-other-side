@@ -108,7 +108,7 @@ public:
 	void GetMemoryStatistics(ICrySizer* s) override;
 	//~IGameObjectExtension
 
-	const char* GetClassName() override {return "CTOSMasterSynchronizer";}
+	const char* GetNameOfClass() override {return "CTOSMasterSynchronizer";}
 
 	//CLIENT - Направленные на клиент
 	//SERVER - Направленные на сервер с клиента
