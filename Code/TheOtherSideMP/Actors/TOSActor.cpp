@@ -32,6 +32,7 @@ bool CTOSActor::Init(IGameObject* pGameObject)
 
 	m_pEnergyConsumer = dynamic_cast<CTOSEnergyConsumer*>(GetGameObject()->AcquireExtension("TOSEnergyConsumer"));
 	assert(m_pEnergyConsumer);
+	m_pEnergyConsumer->Reset();
 
 	return true;
 }
@@ -179,16 +180,20 @@ void CTOSActor::Update(SEntityUpdateContext& ctx, const int updateSlot)
 		const auto pDebugEntity = gEnv->pEntitySystem->FindEntityByName(CTOSEnergyConsumer::s_debugEntityName);
 		if (pDebugEntity)
 		{
-			const float energy = m_pEnergyConsumer->GetEnergy();
-			const float maxEnergy = m_pEnergyConsumer->GetMaxEnergy();
-			const float drain = m_pEnergyConsumer->GetDrainValue();
-			const bool updating = m_pEnergyConsumer->IsUpdating();
+			const auto pDebugActor = dynamic_cast<CTOSActor*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pDebugEntity->GetId()));
+			if (pDebugActor)
+			{
+				const float energy    = pDebugActor->m_pEnergyConsumer->GetEnergy();
+				const float maxEnergy = pDebugActor->m_pEnergyConsumer->GetMaxEnergy();
+				const float drain     = pDebugActor->m_pEnergyConsumer->GetDrainValue();
+				const bool  updating  = pDebugActor->m_pEnergyConsumer->IsUpdating();
 
-			DRAW_2D_TEXT(40, 200, 1.3f, "--- Energy Consumer (%s) ---", pDebugEntity->GetName());
-			DRAW_2D_TEXT(40, 215, 1.3f, "Updating:   %i", updating);
-			DRAW_2D_TEXT(40, 230, 1.3f, "Energy:     %1.f", energy);
-			DRAW_2D_TEXT(40, 245, 1.3f, "MaxEnergy:  %1.f", maxEnergy);
-			DRAW_2D_TEXT(40, 260, 1.3f, "DrainValue: %1.f", drain);
+				DRAW_2D_TEXT(40, 200, 1.3f, "--- Energy Consumer (%s) ---", pDebugEntity->GetName());
+				DRAW_2D_TEXT(40, 215, 1.3f, "Updating:   %i", updating);
+				DRAW_2D_TEXT(40, 230, 1.3f, "Energy:     %1.f", energy);
+				DRAW_2D_TEXT(40, 245, 1.3f, "MaxEnergy:  %1.f", maxEnergy);
+				DRAW_2D_TEXT(40, 260, 1.3f, "DrainValue: %1.f", drain);
+			}
 		}
 	}
 }
