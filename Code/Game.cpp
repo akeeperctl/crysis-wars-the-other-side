@@ -13,57 +13,56 @@
 *************************************************************************/
 #include "StdAfx.h"
 #include "Game.h"
-#include "GameCVars.h"
+
+#include <CryPath.h>
+#include <IActionMapManager.h>
+#include <ICryPak.h>
+#include <IItemSystem.h>
+#include <ILevelSystem.h>
+#include <IMovieSystem.h>
+#include <IPlayerProfiles.h>
+#include <IVehicleSystem.h>
+
+#include "BulletTime.h"
+#include "ClientSynchedStorage.h"
+#include "DownloadTask.h"
 #include "GameActions.h"
+#include "GameCVars.h"
+#include "GameFactory.h"
+#include "GameRules.h"
+#include "ILoadGame.h"
+#include "ISaveGame.h"
+#include "ItemSharedParams.h"
+#include "LaptopUtil.h"
+#include "ScriptBind_Actor.h"
+#include "ScriptBind_Game.h"
+#include "ScriptBind_GameRules.h"
+#include "ScriptBind_Item.h"
+#include "ScriptBind_Weapon.h"
+#include "ServerSynchedStorage.h"
+#include "SoundMoods.h"
+#include "SPAnalyst.h"
+#include "WeaponSystem.h"
+
+#include "HUD/HUD.h"
+#include "HUD/ScriptBind_HUD.h"
+
+#include "LCD/LCDWrapper.h"
+
 #include "Menus/FlashMenuObject.h"
 #include "Menus/OptionsManager.h"
 
-#include "GameRules.h"
-#include "BulletTime.h"
-#include "SoundMoods.h"
-#include "HUD/HUD.h"
-#include "WeaponSystem.h"
-
-#include <ICryPak.h>
-#include <CryPath.h>
-#include <IActionMapManager.h>
-#include <IViewSystem.h>
-#include <ILevelSystem.h>
-#include <IItemSystem.h>
-#include <IVehicleSystem.h>
-#include <IMovieSystem.h>
-#include <IPlayerProfiles.h>
-
-#include "ScriptBind_Actor.h"
-#include "ScriptBind_Item.h"
-#include "ScriptBind_Weapon.h"
-#include "ScriptBind_GameRules.h"
-#include "ScriptBind_Game.h"
-#include "HUD/ScriptBind_HUD.h"
-#include "LaptopUtil.h"
-#include "LCD/LCDWrapper.h"
-
-#include "GameFactory.h"
-
-#include "ItemSharedParams.h"
-
 #include "Nodes/G2FlowBaseNode.h"
 
-#include "ServerSynchedStorage.h"
-#include "ClientSynchedStorage.h"
-
-#include "SPAnalyst.h"
-
-#include "ISaveGame.h"
-#include "ILoadGame.h"
-
-#include "DownloadTask.h"
-
 //TheOtherSide
-#include "TheOtherSideMP\Game\TOSGameEventRecorder.h"
-#include "TheOtherSideMP\Game\TOSGameCvars.h"
-#include "TheOtherSideMP\Game\TOSGame.h"
-//TheOtherSide
+#include <windows.h>
+#include "resource.h"
+#include "TheOtherSideMP/Game/TOSGame.h"
+#include "TheOtherSideMP/Game/TOSGameCvars.h"
+#include "TheOtherSideMP/Game/TOSGameEventRecorder.h"
+
+#undef GetUserName
+//~TheOtherSide
 
 #define GAME_DEBUG_MEM  // debug memory usage
 #undef  GAME_DEBUG_MEM
@@ -392,6 +391,26 @@ bool CGame::Init(IGameFramework *pFramework)
 
 	if(!gEnv->pSystem->IsDedicated())
 		m_pDownloadTask = new CDownloadTask;
+
+	ICVar* pAISystemCVar = gEnv->pConsole->GetCVar("ai_systemUpdate");
+	if (pAISystemCVar)
+		pAISystemCVar->ForceSet("1");
+
+	//Cursor fix, thx to FGPS author)
+    const HCURSOR g_Cursor = LoadCursor(static_cast<HINSTANCE>(g_hInst), MAKEINTRESOURCE(IDC_CURSOR1));
+	SetCursor(g_Cursor);
+
+    const auto pLocalizationManager = gEnv->pSystem->GetLocalizationManager();
+	if (pLocalizationManager)
+	{
+		const string modDir = gEnv->pCryPak->GetModDir();
+		const string selectedLanguage = pLocalizationManager->GetLanguage();
+
+		gEnv->pCryPak->OpenPacks("game\\", modDir + "Game\\Localized\\" + selectedLanguage + ".pak");
+		pLocalizationManager->LoadExcelXmlSpreadsheet("languages\\game_text_messages.xml", true);
+		pLocalizationManager->LoadExcelXmlSpreadsheet("languages\\ai_dialog_recording_list.xml", true);
+		pLocalizationManager->LoadExcelXmlSpreadsheet("languages\\dialog_recording_list.xml", true);
+	}
 
 	return true;
 }
