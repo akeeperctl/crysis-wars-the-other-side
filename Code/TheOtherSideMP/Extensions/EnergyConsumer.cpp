@@ -11,11 +11,13 @@ CTOSEnergyConsumer::CTOSEnergyConsumer()
 	: m_energy(0),
 	m_maxEnergy(0),
 	m_regenStartDelay(0),
+	m_regenStartDelaySP(0),
+	m_regenStartDelayMP(0),
+	m_regenStartDelay20Boundary(0),
+	m_rechargeTimeSP(0),
+	m_rechargeTimeMP(0),
 	m_drainValue(0),
-	m_enableUpdate(true)
-{
-	
-}
+	m_enableUpdate(true) { }
 
 CTOSEnergyConsumer::~CTOSEnergyConsumer() { }
 
@@ -58,6 +60,8 @@ void CTOSEnergyConsumer::FullSerialize(TSerialize ser)
 	ser.Value("maxEnergy", m_maxEnergy);
 	ser.Value("drain", m_drainValue);
 	ser.Value("regenStartDelay", m_regenStartDelay);
+	ser.Value("regenStartDelayMP", m_regenStartDelayMP);
+	ser.Value("regenStartDelaySP", m_regenStartDelaySP);
 	ser.Value("enableUpdate", m_enableUpdate);
 	ser.EndGroup();
 }
@@ -69,6 +73,7 @@ bool CTOSEnergyConsumer::NetSerialize(TSerialize ser, const EEntityAspects aspec
 		ser.Value("energy", m_energy);
 		ser.Value("maxEnergy", m_maxEnergy);
 		ser.Value("drain", m_drainValue);
+		ser.Value("regenStartDelay", m_regenStartDelay);
 	}
 
 	return true;
@@ -79,7 +84,7 @@ void CTOSEnergyConsumer::Update(SEntityUpdateContext& ctx, int updateSlot)
 	if (!m_enableUpdate)
 		return;
 
-	constexpr float rechargeTime = 20.0f;
+	const float		rechargeTime = gEnv->bMultiplayer ? m_rechargeTimeMP : m_rechargeTimeSP;
 	const float     frameTime    = ctx.fFrameTime;
 	float           regenRate    = m_maxEnergy / max(0.01f, rechargeTime);
 
@@ -87,8 +92,10 @@ void CTOSEnergyConsumer::Update(SEntityUpdateContext& ctx, int updateSlot)
 		regenRate = min(regenRate - max(1.0f, m_drainValue), -max(1.0f, m_drainValue));
 
 	if (gEnv->bServer)
+	{
 		if (regenRate < 0.0f || m_regenStartDelay <= 0.0f)
 			SetEnergy(clamp(m_energy + regenRate * ctx.fFrameTime, 0.0f, m_maxEnergy));
+	}
 
 	if (m_regenStartDelay > 0.0f)
 		m_regenStartDelay = max(0.0f, m_regenStartDelay - frameTime);
@@ -103,82 +110,77 @@ void CTOSEnergyConsumer::GetMemoryStatistics(ICrySizer* s)
 	s->Add(*this);
 }
 
+bool CTOSEnergyConsumer::AddEnergy(const float value)
+{
+	if (gEnv->bServer)
+	{
+		SetEnergy(m_energy + value);
+		GetGameObject()->ChangedNetworkState(TOS_NET::SERVER_ASPECT_STATIC);
+	}
+	else if (gEnv->bClient)
+	{
+		NetEnergyParams params;
+		params.energy = m_energy + value;
+
+		GetGameObject()->InvokeRMI(SvRequestSetEnergy(), params, eRMI_ToServer);
+	}
+
+
+	return true;
+}
+
 bool CTOSEnergyConsumer::SetEnergy(float value, const bool initiated)
 {
 	value = clamp(value, 0.0f, m_maxEnergy);
-	//if (value != m_energy && gEnv->bServer)
-	//GetGameObject()->ChangedNetworkState(CPlayer::ASPECT_NANO_SUIT_ENERGY);
-
-	if (value != m_energy)
-	{
-		// call listeners on nano energy change
-		//if (m_listeners.empty() == false)
-		//{
-		//	std::vector<INanoSuitListener*>::iterator iter = m_listeners.begin();
-		//	while (iter != m_listeners.end())
-		//	{
-		//		(*iter)->EnergyChanged(value);
-		//		++iter;
-		//	}
-		//}
-	}
-
-	if (value < m_energy)
-	{
-		//if (!playerInitiated)
-		//{
-		//armor mode hit fx (in armor mode energy is decreased by damage
-		/*if (m_energy-value>=NANOSUIT_ENERGY * 0.2f) //now always happening on hit
-		{
-			if(m_pOwner && !m_pOwner->IsGod() && !m_pOwner->IsThirdPerson() && (m_currentMode == NANOMODE_DEFENSE))
-			{
-				IMaterialEffects* pMaterialEffects = gEnv->pGame->GetIGameFramework()->GetIMaterialEffects();
-				SMFXRunTimeEffectParams params;
-				params.pos = m_pOwner->GetEntity()->GetWorldPos();
-				params.soundSemantic = eSoundSemantic_NanoSuit;
-				TMFXEffectId id = pMaterialEffects->GetEffectIdByName("player_fx", "player_damage_armormode");
-				pMaterialEffects->ExecuteEffect(id, params);
-			}
-		}*/
-
-		// if we cross the 20% boundary we don't regenerate for 3secs
-		/*
-		if (gEnv->bMultiplayer && 
-			value/m_maxEnergy <= 0.2f && 
-			m_energy>value && 
-			g_pGameCVars->g_mpSpeedRechargeDelay)
-			m_regenStartDelay=3.0f;
-		*/
-		//}
-
-		if (!gEnv->bMultiplayer)
-			//m_regenStartDelay = g_pGameCVars->g_playerSuitEnergyRechargeDelay; == 1.0
-			m_regenStartDelay = 1.0f;
-
-		if (!initiated)
-			// if we cross the 20% boundary we don't regenerate for 3secs
-			if (gEnv->bMultiplayer && value / m_maxEnergy <= 0.2f && value < m_energy && g_pGameCVars->g_mpSpeedRechargeDelay)
-				m_regenStartDelay = 3.0f;
-
-		// spending energy cancels invulnerability
-		//if (m_invulnerable && gEnv->bServer)
-		//SetInvulnerability(false);
-	}
-
-	m_energy = value;
 
 	if (gEnv->bServer)
+	{
+		if (value < m_energy)
+		{
+			m_regenStartDelay = gEnv->bMultiplayer ? m_regenStartDelayMP : m_regenStartDelaySP;
+
+			if (!initiated)
+			{
+				// if we cross the 20% boundary we don't regenerate for 3secs
+				if (gEnv->bMultiplayer && value / m_maxEnergy <= 0.2f && value < m_energy && g_pGameCVars->g_mpSpeedRechargeDelay)
+					m_regenStartDelay = m_regenStartDelay20Boundary;
+			}
+		}
+
+		m_energy = value;
+
 		GetGameObject()->ChangedNetworkState(TOS_NET::SERVER_ASPECT_STATIC);
+	}
+	else if (gEnv->bClient)
+	{
+		NetEnergyParams params;
+		params.energy = value;
+		params.initiated = initiated;
+		params.forced = false;
+
+		GetGameObject()->InvokeRMI(SvRequestSetEnergy(), params, eRMI_ToServer);
+	}
 
 	return true;
 }
 
 bool CTOSEnergyConsumer::SetEnergyForced(const float value)
 {
-	m_energy = value;
-
 	if (gEnv->bServer)
+	{
+		m_energy = value;
 		GetGameObject()->ChangedNetworkState(TOS_NET::SERVER_ASPECT_STATIC);
+	}
+	else if (gEnv->bClient)
+	{
+		NetEnergyParams params;
+		params.energy = value;
+		params.initiated = false;
+		params.forced = true;
+
+		GetGameObject()->InvokeRMI(SvRequestSetEnergy(), params, eRMI_ToServer);
+	}
+
 
 	return true;
 }
@@ -222,16 +224,64 @@ bool CTOSEnergyConsumer::IsUpdating() const
 
 void CTOSEnergyConsumer::Reset()
 {
-	if (gEnv->bServer)
-	{
-		m_energy = m_maxEnergy = DEFAULT_ENERGY;
-		GetGameObject()->ChangedNetworkState(TOS_NET::SERVER_ASPECT_STATIC);
-	}
+	SetEnergy(DEFAULT_ENERGY);
+	SetMaxEnergy(DEFAULT_ENERGY);
+
+	m_regenStartDelayMP = 0.0f;
+	m_regenStartDelaySP = 1.0f;
+}
+
+bool CTOSEnergyConsumer::SetRegenStartDelaySP(const float val)
+{
+	m_regenStartDelaySP = val;
+	return true;
+}
+
+bool CTOSEnergyConsumer::SetRegenStartDelayMP(const float val)
+{
+	m_regenStartDelayMP = val;
+	return true;
+}
+
+bool CTOSEnergyConsumer::SetRegenStartDelay20Boundary(const float val)
+{
+	m_regenStartDelay20Boundary = val;
+	return true;
+}
+
+float CTOSEnergyConsumer::GetRegenStartDelay() const
+{
+	return m_regenStartDelay;
+}
+
+void CTOSEnergyConsumer::SetRechargeTimeSP(const float time)
+{
+	m_rechargeTimeSP = time;
+}
+
+void CTOSEnergyConsumer::SetRechargeTimeMP(const float time)
+{
+	m_rechargeTimeMP = time;
 }
 
 bool CTOSEnergyConsumer::SetDebugEntityName(const char* name)
 {
 	s_debugEntityName = name;
+
+	return true;
+}
+
+IMPLEMENT_RMI(CTOSEnergyConsumer, SvRequestSetEnergy)
+{
+	if (gEnv->bServer)
+	{
+		const float energy = params.energy;
+
+		if (params.forced)
+			SetEnergyForced(energy);
+		else
+			SetEnergy(energy, params.initiated);
+	}
 
 	return true;
 }

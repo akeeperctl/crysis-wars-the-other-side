@@ -2,7 +2,7 @@
 
 #include "Trooper.h"
 
-#include "../ITOSMasterControllable.h"
+
 
 class CTOSTrooper final : public CTrooper  // NOLINT(cppcoreguidelines-special-member-functions)
 {

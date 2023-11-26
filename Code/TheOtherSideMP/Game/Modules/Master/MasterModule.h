@@ -195,6 +195,17 @@ public:
 	float  tos_sv_mc_StartControlDelay;
 	float  tos_sv_pl_inputAccel;
 
+	//trooper server variables
+	float tos_tr_double_jump_energy_cost;
+	float tos_tr_double_jump_melee_energy_cost;
+	float tos_tr_double_jump_melee_rest_seconds;
+	float tos_tr_melee_energy_costs;
+	float tos_tr_regen_energy_start_delay_sp;
+	float tos_tr_regen_energy_start_delay_mp;
+	float tos_tr_regen_energy_start_delay_20boundary;
+	float tos_tr_regen_energy_recharge_time_sp;
+	float tos_tr_regen_energy_recharge_time_mp;
+
 private:
 	std::map<EntityId, STOSMasterInfo> m_masters; //ключ - мастер, значение - структура, хранящая имя класса раба, который должен будет заспавниться
 	CTOSMasterClient* m_pLocalMasterClient;

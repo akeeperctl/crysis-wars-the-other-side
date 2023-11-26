@@ -25,6 +25,10 @@ CTOSMasterModule::CTOSMasterModule()
 	tos_sv_SlaveSpawnDelay(0),
 	tos_sv_mc_StartControlDelay(0),
 	tos_sv_pl_inputAccel(0),
+	tos_tr_double_jump_energy_cost(0),
+	tos_tr_double_jump_melee_energy_cost(0),
+	tos_tr_double_jump_melee_rest_seconds(0),
+	tos_tr_melee_energy_costs(0),
 	m_pLocalMasterClient(nullptr)
 {
 	m_masters.clear();
@@ -216,6 +220,8 @@ void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEven
 				params,
 				eRMI_ToServer
 			);
+
+			
 		}
 		break;
 	}

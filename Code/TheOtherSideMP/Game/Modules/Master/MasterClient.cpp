@@ -640,7 +640,15 @@ void CTOSMasterClient::StartControl(IEntity* pEntity, const uint dudeFlags /*= 0
     PrepareDude(true, m_dudeFlags);
     SetSlaveEntity(pEntity, pEntity->GetClass()->GetName());
 
+	const auto pHUD = g_pGame->GetHUD();
+	if (pHUD)
+	{
+		const auto pSlaveActor = GetSlaveActor();
+		const auto pSlaveConsumer = pSlaveActor->GetEnergyConsumer();
 
+		if (pSlaveConsumer)
+			pHUD->TOSSetEnergyConsumer(pSlaveConsumer);
+	}
 
 	// Событие вызывает RMI, которая отправляется на сервер
 	// Смотреть CTOSMasterModule::OnExtraGameplayEvent()
@@ -650,6 +658,14 @@ void CTOSMasterClient::StartControl(IEntity* pEntity, const uint dudeFlags /*= 0
 void CTOSMasterClient::StopControl()
 {
 	TOS_RECORD_EVENT(0, STOSGameEvent(eEGE_MasterClientStopControl, "", true));
+
+	const auto pHUD = g_pGame->GetHUD();
+	if (pHUD)
+	{
+		const auto pDudeConsumer = m_pLocalDude->GetEnergyConsumer();
+		if (pDudeConsumer)
+			pHUD->TOSSetEnergyConsumer(pDudeConsumer);
+	}
 
 	PrepareDude(false, m_dudeFlags);
     ClearSlaveEntity();

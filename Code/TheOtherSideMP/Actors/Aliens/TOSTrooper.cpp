@@ -2,19 +2,36 @@
 #include "TOSTrooper.h"
 
 #include "GameUtils.h"
+#include "NetInputChainDebug.h"
 
-CTOSTrooper::CTOSTrooper() { };
+#include "TheOtherSideMP/Extensions/EnergyСonsumer.h"
+#include "TheOtherSideMP/Helpers/TOS_Console.h"
 
-CTOSTrooper::~CTOSTrooper() { };
+CTOSTrooper::CTOSTrooper() = default;
+
+CTOSTrooper::~CTOSTrooper() = default;
 
 void CTOSTrooper::PostInit(IGameObject* pGameObject)
 {
 	CTrooper::PostInit(pGameObject);
+
+	if (m_pEnergyConsumer)
+	{
+		m_pEnergyConsumer->SetRegenStartDelayMP(TOS_Console::GetSafeFloatVar("tos_tr_regen_energy_start_delay_mp"));
+		m_pEnergyConsumer->SetRegenStartDelaySP(TOS_Console::GetSafeFloatVar("tos_tr_regen_energy_start_delay_sp"));
+		m_pEnergyConsumer->SetRegenStartDelay20Boundary(TOS_Console::GetSafeFloatVar("tos_tr_regen_energy_start_delay_20boundary"));
+		m_pEnergyConsumer->SetRechargeTimeSP(TOS_Console::GetSafeFloatVar("tos_tr_regen_energy_recharge_time_sp"));
+		m_pEnergyConsumer->SetRechargeTimeMP(TOS_Console::GetSafeFloatVar("tos_tr_regen_energy_recharge_time_mp"));
+	}
 }
 
 void CTOSTrooper::Update(SEntityUpdateContext& ctx, const int updateSlot)
 {
 	CTrooper::Update(ctx, updateSlot);
+
+	const float regenStartDelay = m_pEnergyConsumer->GetRegenStartDelay();
+
+	NETINPUT_TRACE(GetEntityId(), regenStartDelay);
 }
 
 bool CTOSTrooper::NetSerialize(const TSerialize ser, const EEntityAspects aspect, const uint8 profile, const int flags)
@@ -100,6 +117,8 @@ void CTOSTrooper::UpdateMasterView(SViewParams& viewParams, Vec3& offsetX, Vec3&
 
 void CTOSTrooper::ProcessJump(const CMovementRequest& request)
 {
+	TOS_CHECK_CONSUMER_EXISTING(this);
+
 	//pe_action_impulse impulse;
 	SCharacterMoveRequest animCharRequest;
 	animCharRequest.jumping = false;
@@ -131,6 +150,9 @@ void CTOSTrooper::ProcessJump(const CMovementRequest& request)
 		const float     onGround  = pActorStats->onGround;
 		constexpr float jumpForce = 10.0f;
 
+		const float doubleJumpCost = TOS_Console::GetSafeFloatVar("tos_tr_double_jump_energy_cost");
+		const float energy = TOS_SAFE_GET_ENERGY(this);
+
 		// Одиночный прыжок
 		if (onGround > 0.25f)
 		{
@@ -144,7 +166,7 @@ void CTOSTrooper::ProcessJump(const CMovementRequest& request)
 			//TODO
 			//NetPlayAnimAction("CTRL_JumpStart", false);
 		}
-		else if (pSlaveStats->jumpCount > 0 && pActorStats->inAir > 0.0f)
+		else if (pSlaveStats->jumpCount > 0 && pActorStats->inAir > 0.0f && energy > doubleJumpCost)
 		{
 			// Двойной прыжок
 
@@ -170,6 +192,8 @@ void CTOSTrooper::ProcessJump(const CMovementRequest& request)
 
 			animCharRequest.velocity += jumpVec;
 			m_pAnimatedCharacter->AddMovement(animCharRequest);
+
+			TOS_SAFE_ADD_ENERGY(this, -doubleJumpCost);
 
 			pSlaveStats->jumpCount = 0;
 
