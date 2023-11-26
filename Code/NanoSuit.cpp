@@ -31,6 +31,7 @@
 //TheOtherSide
 #include "TheOtherSideMP/Game/Modules/Master/MasterClient.h"
 #include "TheOtherSideMP/Game/Modules/Master/MasterModule.h"
+#include "TheOtherSideMP/Helpers/TOS_Console.h"
 //~TheOtherSide
 
 
@@ -1151,148 +1152,324 @@ void CNanoSuit::PlaySound(const ENanoSound sound, const float param, const bool 
 	static string  soundName;
 	soundName.resize(0);
 
-	switch (sound)
-	{
-	case SPEED_SOUND:
-		soundName = "Sounds/interface:suit:suit_speed_use";
-		eSemantic = eSoundSemantic_NanoSuit;
-		if (m_pOwner->IsClient())
-			if (gEnv->pInput && !stopSound)
-				gEnv->pInput->ForceFeedbackEvent(SFFOutputEvent(eDI_XI, eFF_Rumble_Basic, 0.05f, 0.0f, 0.6f));
-		break;
-	case SPEED_IN_WATER_SOUND:
-		soundName = "Sounds/interface:suit:suit_speed_use_underwater";
-		eSemantic = eSoundSemantic_NanoSuit;
-		if (m_pOwner->IsClient())
-			if (gEnv->pInput && !stopSound)
-				gEnv->pInput->ForceFeedbackEvent(SFFOutputEvent(eDI_XI, eFF_Rumble_Basic, 0.05f, 0.0f, 0.9f));
-		break;
-	case SPEED_SOUND_STOP:
-		soundName = "Sounds/interface:suit:suit_speed_stop";
-		eSemantic = eSoundSemantic_NanoSuit;
-		break;
-	case SPEED_IN_WATER_SOUND_STOP:
-		soundName = "Sounds/interface:suit:suit_speed_stop_underwater";
-		eSemantic = eSoundSemantic_NanoSuit;
-		break;
-	case STRENGTH_SOUND:
-		soundName = "Sounds/interface:suit:suit_strength_use";
-		eSemantic = eSoundSemantic_NanoSuit;
-		setParam  = true;
-		if (m_pOwner->IsClient())
-			if (gEnv->pInput && !stopSound)
-				gEnv->pInput->ForceFeedbackEvent(SFFOutputEvent(eDI_XI, eFF_Rumble_Basic, 0.05f, 1.0f, 0.5f));
-		break;
-	case STRENGTH_LIFT_SOUND:
-		soundName = "Sounds/interface:suit:suit_strength_lift";
-		eSemantic = eSoundSemantic_NanoSuit;
-		setParam  = true;
-		break;
-	case STRENGTH_THROW_SOUND:
-		soundName = "Sounds/interface:suit:suit_strength_use";
-		eSemantic = eSoundSemantic_NanoSuit;
-		if (m_pOwner->IsClient())
-			if (gEnv->pInput && !stopSound)
-				gEnv->pInput->ForceFeedbackEvent(SFFOutputEvent(eDI_XI, eFF_Rumble_Basic, 0.1f, 0.0f, 0.3f * param));
-		setParam = true;
-		break;
-	case STRENGTH_JUMP_SOUND:
-		soundName = "Sounds/interface:suit:suit_strength_jump";
-		eSemantic = eSoundSemantic_NanoSuit;
-		if (m_pOwner->IsClient())
-			if (gEnv->pInput && !stopSound)
-				gEnv->pInput->ForceFeedbackEvent(SFFOutputEvent(eDI_XI, eFF_Rumble_Basic, 0.10f, 0.2f * param, 0.1f * param));
-		setParam = true;
-		break;
-	case STRENGTH_MELEE_SOUND:
-		soundName = "Sounds/interface:suit:suit_strength_punch";
-		eSemantic = eSoundSemantic_NanoSuit;
-		if (m_pOwner->IsClient())
-			if (gEnv->pInput && !stopSound)
-				gEnv->pInput->ForceFeedbackEvent(SFFOutputEvent(eDI_XI, eFF_Rumble_Basic, 0.05f, 1.0f * param, 0.5f * param));
-		setParam = true;
-		break;
-	case ARMOR_SOUND:
-		soundName = "Sounds/interface:suit:suit_armor_use";
-		eSemantic = eSoundSemantic_NanoSuit;
-		if (m_pOwner->IsClient())
-			if (gEnv->pInput && !stopSound)
-				gEnv->pInput->ForceFeedbackEvent(SFFOutputEvent(eDI_XI, eFF_Rumble_Basic, 0.02f, 0.8f, 0.0f));
-		break;
-	case MEDICAL_SOUND:
-		soundName = "Sounds/interface:suit:suit_medical_repair";
-		eSemantic = eSoundSemantic_NanoSuit;
-		break;
-	case ESound_SuitStrengthActivate:
-		soundName = "Sounds/interface:suit:suit_strength_activate";
-		eSemantic = eSoundSemantic_NanoSuit;
-		break;
-	case ESound_SuitSpeedActivate:
-		soundName = "Sounds/interface:suit:suit_speed_activate";
-		eSemantic = eSoundSemantic_NanoSuit;
-		break;
-	case ESound_SuitArmorActivate:
-		soundName = "Sounds/interface:suit:suit_armor_activate";
-		eSemantic = eSoundSemantic_NanoSuit;
-		break;
-	case ESound_SuitCloakActivate:
-		soundName = "Sounds/interface:suit:suit_cloak_activate";
-		eSemantic = eSoundSemantic_NanoSuit;
-		break;
-	case ESound_SuitCloakFeedback:
-		soundName = "sounds/interface:hud:cloak_feedback";
-		eSemantic    = eSoundSemantic_NanoSuit;
-		force3DSound = true;
-		break;
-	case ESound_GBootsActivated:
-		soundName = "Sounds/interface:suit:suit_gravity_boots_activate";
-		eSemantic = eSoundSemantic_NanoSuit;
-		break;
-	case ESound_GBootsDeactivated:
-		soundName = "Sounds/interface:suit:suit_gravity_boots_deactivate";
-		eSemantic = eSoundSemantic_NanoSuit;
-		break;
-	case ESound_ZeroGThruster:
-		soundName = "Sounds/interface:suit:thrusters_1p";
-		eSemantic    = eSoundSemantic_NanoSuit;
-		setParam     = true;
-		force3DSound = true; //the thruster sound is only as 3D version available
-		break;
-	case ESound_AISuitHumming:
-		soundName = "Sounds/interface:hud:nk_suit_feedback";
-		eSemantic = eSoundSemantic_NanoSuit;
-		break;
-	case ESound_AISuitCloakFeedback:
-		soundName = "Sounds/interface:hud:cloak_feedback";
-		eSemantic = eSoundSemantic_NanoSuit;
-		break;
-	case ESound_GBootsLanded:
-		soundName = "Sounds/physics:player_foley:bodyfall_gravity_boots";
-		eSemantic    = eSoundSemantic_Player_Foley;
-		force3DSound = true;
-		setParam     = true;
-		break;
-	case ESound_FreeFall:
-		soundName = "Sounds/physics:player_foley:falling_deep_loop";
-		eSemantic      = eSoundSemantic_Player_Foley;
-		bAppendPostfix = false;
-		break;
-	case ESound_ColdBreath:
-		soundName = "Sounds/physics:player_foley:cold_feedback";
-		eSemantic      = eSoundSemantic_Player_Foley;
-		bAppendPostfix = false;
-		break;
-	case DROP_VS_THROW_SOUND:
-		soundName = "sounds/interface:suit:suit_grab_vs_throw";
-		eSemantic      = eSoundSemantic_NanoSuit;
-		bAppendPostfix = false;
-	default:
-		break;
-	}
+	//TheOtherSide
+	const int soundsVersion = TOS_Console::GetSafeIntVar("tos_cl_nanosuitSoundsVersion");
+	assert(soundsVersion == 1 || soundsVersion == 2);
 
-	if (!force3DSound && m_pOwner == m_pGameFramework->GetClientActor() && !m_pOwner->IsThirdPerson() && !soundName.empty())
-		if (bAppendPostfix)
-			soundName.append("_fp");
+	auto get_random_sound
+	{
+		[](const string& inputsound, const int min, const int max)
+		{
+			int iRandomVal = min + Random(max);
+			char buffer[64];
+
+			sprintf(buffer, "%i", iRandomVal);
+
+			string final = inputsound + buffer + ".mp2";
+			return final.c_str();
+		}
+	};
+
+	if (soundsVersion == 1)
+	{
+		switch (sound)
+		{
+		case SPEED_SOUND:
+			soundName = "Sounds/interface:suit:suit_speed_use";
+			eSemantic = eSoundSemantic_NanoSuit;
+			if (m_pOwner->IsClient())
+				if (gEnv->pInput && !stopSound)
+					gEnv->pInput->ForceFeedbackEvent(SFFOutputEvent(eDI_XI, eFF_Rumble_Basic, 0.05f, 0.0f, 0.6f));
+			break;
+		case SPEED_IN_WATER_SOUND:
+			soundName = "Sounds/interface:suit:suit_speed_use_underwater";
+			eSemantic = eSoundSemantic_NanoSuit;
+			if (m_pOwner->IsClient())
+				if (gEnv->pInput && !stopSound)
+					gEnv->pInput->ForceFeedbackEvent(SFFOutputEvent(eDI_XI, eFF_Rumble_Basic, 0.05f, 0.0f, 0.9f));
+			break;
+		case SPEED_SOUND_STOP:
+			soundName = "Sounds/interface:suit:suit_speed_stop";
+			eSemantic = eSoundSemantic_NanoSuit;
+			break;
+		case SPEED_IN_WATER_SOUND_STOP:
+			soundName = "Sounds/interface:suit:suit_speed_stop_underwater";
+			eSemantic = eSoundSemantic_NanoSuit;
+			break;
+		case STRENGTH_SOUND:
+			soundName = "Sounds/interface:suit:suit_strength_use";
+			eSemantic = eSoundSemantic_NanoSuit;
+			setParam = true;
+			if (m_pOwner->IsClient())
+				if (gEnv->pInput && !stopSound)
+					gEnv->pInput->ForceFeedbackEvent(SFFOutputEvent(eDI_XI, eFF_Rumble_Basic, 0.05f, 1.0f, 0.5f));
+			break;
+		case STRENGTH_LIFT_SOUND:
+			soundName = "Sounds/interface:suit:suit_strength_lift";
+			eSemantic = eSoundSemantic_NanoSuit;
+			setParam = true;
+			break;
+		case STRENGTH_THROW_SOUND:
+			soundName = "Sounds/interface:suit:suit_strength_use";
+			eSemantic = eSoundSemantic_NanoSuit;
+			if (m_pOwner->IsClient())
+				if (gEnv->pInput && !stopSound)
+					gEnv->pInput->ForceFeedbackEvent(SFFOutputEvent(eDI_XI, eFF_Rumble_Basic, 0.1f, 0.0f, 0.3f * param));
+			setParam = true;
+			break;
+		case STRENGTH_JUMP_SOUND:
+			soundName = "Sounds/interface:suit:suit_strength_jump";
+			eSemantic = eSoundSemantic_NanoSuit;
+			if (m_pOwner->IsClient())
+				if (gEnv->pInput && !stopSound)
+					gEnv->pInput->ForceFeedbackEvent(SFFOutputEvent(eDI_XI, eFF_Rumble_Basic, 0.10f, 0.2f * param, 0.1f * param));
+			setParam = true;
+			break;
+		case STRENGTH_MELEE_SOUND:
+			soundName = "Sounds/interface:suit:suit_strength_punch";
+			eSemantic = eSoundSemantic_NanoSuit;
+			if (m_pOwner->IsClient())
+				if (gEnv->pInput && !stopSound)
+					gEnv->pInput->ForceFeedbackEvent(SFFOutputEvent(eDI_XI, eFF_Rumble_Basic, 0.05f, 1.0f * param, 0.5f * param));
+			setParam = true;
+			break;
+		case ARMOR_SOUND:
+			soundName = "Sounds/interface:suit:suit_armor_use";
+			eSemantic = eSoundSemantic_NanoSuit;
+			if (m_pOwner->IsClient())
+				if (gEnv->pInput && !stopSound)
+					gEnv->pInput->ForceFeedbackEvent(SFFOutputEvent(eDI_XI, eFF_Rumble_Basic, 0.02f, 0.8f, 0.0f));
+			break;
+		case MEDICAL_SOUND:
+			soundName = "Sounds/interface:suit:suit_medical_repair";
+			eSemantic = eSoundSemantic_NanoSuit;
+			break;
+		case ESound_SuitStrengthActivate:
+			soundName = "Sounds/interface:suit:suit_strength_activate";
+			eSemantic = eSoundSemantic_NanoSuit;
+			break;
+		case ESound_SuitSpeedActivate:
+			soundName = "Sounds/interface:suit:suit_speed_activate";
+			eSemantic = eSoundSemantic_NanoSuit;
+			break;
+		case ESound_SuitArmorActivate:
+			soundName = "Sounds/interface:suit:suit_armor_activate";
+			eSemantic = eSoundSemantic_NanoSuit;
+			break;
+		case ESound_SuitCloakActivate:
+			soundName = "Sounds/interface:suit:suit_cloak_activate";
+			eSemantic = eSoundSemantic_NanoSuit;
+			break;
+		case ESound_SuitCloakFeedback:
+			soundName = "sounds/interface:hud:cloak_feedback";
+			eSemantic = eSoundSemantic_NanoSuit;
+			force3DSound = true;
+			break;
+		case ESound_GBootsActivated:
+			soundName = "Sounds/interface:suit:suit_gravity_boots_activate";
+			eSemantic = eSoundSemantic_NanoSuit;
+			break;
+		case ESound_GBootsDeactivated:
+			soundName = "Sounds/interface:suit:suit_gravity_boots_deactivate";
+			eSemantic = eSoundSemantic_NanoSuit;
+			break;
+		case ESound_ZeroGThruster:
+			soundName = "Sounds/interface:suit:thrusters_1p";
+			eSemantic = eSoundSemantic_NanoSuit;
+			setParam = true;
+			force3DSound = true; //the thruster sound is only as 3D version available
+			break;
+		case ESound_AISuitHumming:
+			soundName = "Sounds/interface:hud:nk_suit_feedback";
+			eSemantic = eSoundSemantic_NanoSuit;
+			break;
+		case ESound_AISuitCloakFeedback:
+			soundName = "Sounds/interface:hud:cloak_feedback";
+			eSemantic = eSoundSemantic_NanoSuit;
+			break;
+		case ESound_GBootsLanded:
+			soundName = "Sounds/physics:player_foley:bodyfall_gravity_boots";
+			eSemantic = eSoundSemantic_Player_Foley;
+			force3DSound = true;
+			setParam = true;
+			break;
+		case ESound_FreeFall:
+			soundName = "Sounds/physics:player_foley:falling_deep_loop";
+			eSemantic = eSoundSemantic_Player_Foley;
+			bAppendPostfix = false;
+			break;
+		case ESound_ColdBreath:
+			soundName = "Sounds/physics:player_foley:cold_feedback";
+			eSemantic = eSoundSemantic_Player_Foley;
+			bAppendPostfix = false;
+			break;
+		case DROP_VS_THROW_SOUND:
+			soundName = "sounds/interface:suit:suit_grab_vs_throw";
+			eSemantic = eSoundSemantic_NanoSuit;
+			bAppendPostfix = false;
+		default:
+			break;
+		}
+
+		if (!force3DSound && m_pOwner == m_pGameFramework->GetClientActor() && !m_pOwner->IsThirdPerson() && !soundName.empty())
+			if (bAppendPostfix)
+				soundName.append("_fp");
+	}
+	else if (soundsVersion == 2)
+	{
+		switch (sound)
+		{
+		case SPEED_SOUND:
+			soundName = "Sounds/interface:suit:suit_speed_use";
+			eSemantic = eSoundSemantic_NanoSuit;
+			if (m_pOwner->IsClient())
+				if (gEnv->pInput && !stopSound)
+					gEnv->pInput->ForceFeedbackEvent(SFFOutputEvent(eDI_XI, eFF_Rumble_Basic, 0.05f, 0.0f, 0.6f));
+			break;
+		case SPEED_IN_WATER_SOUND:
+			soundName = "Sounds/interface:suit:suit_speed_use_underwater";
+			eSemantic = eSoundSemantic_NanoSuit;
+			if (m_pOwner->IsClient())
+				if (gEnv->pInput && !stopSound)
+					gEnv->pInput->ForceFeedbackEvent(SFFOutputEvent(eDI_XI, eFF_Rumble_Basic, 0.05f, 0.0f, 0.9f));
+			break;
+		case SPEED_SOUND_STOP:
+			soundName = "Sounds/interface:suit:suit_speed_stop";
+			eSemantic = eSoundSemantic_NanoSuit;
+			break;
+		case SPEED_IN_WATER_SOUND_STOP:
+			soundName = "Sounds/interface:suit:suit_speed_stop_underwater";
+			eSemantic = eSoundSemantic_NanoSuit;
+			break;
+		case STRENGTH_SOUND://not used, silenced
+			soundName = "Sounds/interface:suit:suit_strength_use";
+			eSemantic = eSoundSemantic_NanoSuit;
+			setParam = true;
+			if (m_pOwner->IsClient())
+				if (gEnv->pInput && !stopSound)
+					gEnv->pInput->ForceFeedbackEvent(SFFOutputEvent(eDI_XI, eFF_Rumble_Basic, 0.05f, 1.0f, 0.5f));
+			break;
+		case STRENGTH_LIFT_SOUND://not used, silenced
+			soundName = "Sounds/interface:suit:suit_strength_lift";
+			eSemantic = eSoundSemantic_NanoSuit;
+			setParam = true;
+			break;
+		case STRENGTH_THROW_SOUND:
+			soundName = get_random_sound("Sounds/interface/suitv2/suit_strength_use_fp_0", 1, 1);
+			eSemantic = eSoundSemantic_NanoSuit;
+			if (m_pOwner->IsClient())
+				if (gEnv->pInput && !stopSound)
+					gEnv->pInput->ForceFeedbackEvent(SFFOutputEvent(eDI_XI, eFF_Rumble_Basic, 0.1f, 0.0f, 0.3f * param));
+			setParam = true;
+			break;
+		case STRENGTH_JUMP_SOUND:
+			soundName = get_random_sound("Sounds/interface/suitv2/suit_strength_jump_0", 1, 1);
+			eSemantic = eSoundSemantic_NanoSuit;
+			if (m_pOwner->IsClient())
+				if (gEnv->pInput && !stopSound)
+					gEnv->pInput->ForceFeedbackEvent(SFFOutputEvent(eDI_XI, eFF_Rumble_Basic, 0.10f, 0.2f * param, 0.1f * param));
+			setParam = true;
+			break;
+		case STRENGTH_MELEE_SOUND:
+			soundName = get_random_sound("Sounds/interface/suitv2/suit_punch_strength_0", 1, 1);
+			eSemantic = eSoundSemantic_NanoSuit;
+			if (m_pOwner->IsClient())
+				if (gEnv->pInput && !stopSound)
+					gEnv->pInput->ForceFeedbackEvent(SFFOutputEvent(eDI_XI, eFF_Rumble_Basic, 0.05f, 1.0f * param, 0.5f * param));
+			setParam = true;
+			break;
+		case ARMOR_SOUND:
+			soundName = "Sounds/interface:suit:suit_armor_use";
+			eSemantic = eSoundSemantic_NanoSuit;
+			if (m_pOwner->IsClient())
+				if (gEnv->pInput && !stopSound)
+					gEnv->pInput->ForceFeedbackEvent(SFFOutputEvent(eDI_XI, eFF_Rumble_Basic, 0.02f, 0.8f, 0.0f));
+			break;
+		case MEDICAL_SOUND:
+			soundName = "Sounds/interface:suit:suit_medical_repair";
+			eSemantic = eSoundSemantic_NanoSuit;
+			break;
+		case ESound_SuitStrengthActivate:
+			soundName = "Sounds/interface:suit:suit_strength_activate";
+			eSemantic = eSoundSemantic_NanoSuit;
+			break;
+		case ESound_SuitSpeedActivate:
+			soundName = "Sounds/interface:suit:suit_speed_activate";
+			eSemantic = eSoundSemantic_NanoSuit;
+			break;
+		case ESound_SuitArmorActivate:
+			soundName = "Sounds/interface/suitv2/suit_armor_activate_01.mp2";
+			eSemantic = eSoundSemantic_NanoSuit;
+			break;
+		case ESound_SuitCloakActivate:
+			soundName = "Sounds/interface/suitv2/suit_cloak_activate_01.mp2";
+			eSemantic = eSoundSemantic_NanoSuit;
+			break;
+		case ESound_SuitCloakFeedback: //TODO 24/11/2023 убрать фидбек для нанокостюма 2.0
+			soundName = "sounds/interface:hud:cloak_feedback";
+			eSemantic = eSoundSemantic_NanoSuit;
+			force3DSound = true;
+			break;
+		case ESound_GBootsActivated:
+			soundName = "Sounds/interface:suit:suit_gravity_boots_activate";
+			eSemantic = eSoundSemantic_NanoSuit;
+			break;
+		case ESound_GBootsDeactivated:
+			soundName = "Sounds/interface:suit:suit_gravity_boots_deactivate";
+			eSemantic = eSoundSemantic_NanoSuit;
+			break;
+		case ESound_ZeroGThruster:
+			soundName = "Sounds/interface:suit:thrusters_1p";
+			eSemantic = eSoundSemantic_NanoSuit;
+			setParam = true;
+			force3DSound = true; //the thruster sound is only as 3D version available
+			break;
+		case ESound_AISuitHumming:
+			soundName = "Sounds/interface:hud:nk_suit_feedback";
+			eSemantic = eSoundSemantic_NanoSuit;
+			break;
+		case ESound_AISuitCloakFeedback:
+			soundName = "Sounds/interface:hud:cloak_feedback";
+			eSemantic = eSoundSemantic_NanoSuit;
+			break;
+		case ESound_GBootsLanded:
+			soundName = "Sounds/physics:player_foley:bodyfall_gravity_boots";
+			eSemantic = eSoundSemantic_Player_Foley;
+			force3DSound = true;
+			setParam = true;
+			break;
+		case ESound_FreeFall:
+			soundName = "Sounds/physics:player_foley:falling_deep_loop";
+			eSemantic = eSoundSemantic_Player_Foley;
+			bAppendPostfix = false;
+			break;
+		case ESound_ColdBreath:
+			soundName = "Sounds/physics:player_foley:cold_feedback";
+			eSemantic = eSoundSemantic_Player_Foley;
+			bAppendPostfix = false;
+			break;
+		case DROP_VS_THROW_SOUND:
+			soundName = "sounds/interface:suit:suit_grab_vs_throw";
+			eSemantic = eSoundSemantic_NanoSuit;
+			bAppendPostfix = false;
+		default:
+			break;
+		}
+
+		if (soundsVersion != 2)
+		{
+			if (!force3DSound && m_pOwner == m_pGameFramework->GetClientActor() && !m_pOwner->IsThirdPerson() && !soundName.empty())
+				if (bAppendPostfix)
+					soundName.append("_fp");
+		}
+		else if (soundsVersion == 2)
+		{
+
+		}
+
+	}
+	//~TheOtherSide
+
 
 	auto* pSoundProxy = dynamic_cast<IEntitySoundProxy*>(m_pOwner->GetEntity()->CreateProxy(ENTITY_PROXY_SOUND));
 	if (!pSoundProxy)

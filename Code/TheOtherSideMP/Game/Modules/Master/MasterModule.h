@@ -158,6 +158,7 @@ public:
 	static void CmdSetActorHealth(IConsoleCmdArgs* pArgs);
 	static void CmdGetActorHealth(IConsoleCmdArgs* pArgs);
 	static void CmdGetActorCurrentItem(IConsoleCmdArgs* pArgs);
+	static void CmdPlaySound2D(IConsoleCmdArgs* pArgs);
 
 	//Console variable's functions
 	static void CVarSetDesiredSlaveCls(ICVar* pVar);
@@ -188,11 +189,16 @@ public:
 	// mc - master client
 	// pl - player
 
-	int    tos_sv_mc_LookDebugDraw;
+	//client variables
 	int    tos_cl_JoinAsMaster;
 	ICVar* tos_cl_SlaveEntityClass;
+	int	   tos_cl_playerFeedbackSoundsVersion;
+	int	   tos_cl_nanosuitSoundsVersion;
+
+	//server variables
+	int    tos_sv_mc_LookDebugDraw;
 	float  tos_sv_SlaveSpawnDelay;
-	float  tos_sv_mc_StartControlDelay;
+	float  tos_sv_mc_StartControlDelay;// not used
 	float  tos_sv_pl_inputAccel;
 
 	//trooper server variables

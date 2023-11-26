@@ -71,6 +71,7 @@ History:
 
 //TheOtherSide
 #include "TheOtherSideMP/HUD/TOSCrosshair.h"
+#include "TheOtherSideMP/Helpers/TOS_Console.h"
 //~TheOtherSide
 
 // enable this to check nan's on position updates... useful for debugging some weird crashes
@@ -5397,117 +5398,255 @@ void CPlayer::PlaySound(EPlayerSounds sound, bool play, bool param /*= false*/, 
 
 	ESoundSemantic soundSemantic = eSoundSemantic_Player_Foley;
 
-	const char* soundName = NULL;
-	switch(sound)
-	{
-	case ESound_Run:
-		soundName = "sounds/physics:player_foley:run_feedback";
-		soundSemantic = eSoundSemantic_Player_Foley_Voice;
-		repeating = true;
-		break;
-	case ESound_StopRun:
-		soundName = "sounds/physics:player_foley:catch_breath_feedback";
-		soundSemantic = eSoundSemantic_Player_Foley_Voice;
-		break;
-	case ESound_Jump:
-		soundName = "Sounds/physics:player_foley:jump_feedback";
-		soundSemantic = eSoundSemantic_Player_Foley_Voice;
-		if (gEnv->pInput && play) gEnv->pInput->ForceFeedbackEvent( SFFOutputEvent(eDI_XI, eFF_Rumble_Basic, 0.05f, 0.05f, 0.1f) );
-		break;
-	case ESound_Fall_Drop:
-		soundName = "Sounds/physics:player_foley:bodyfall_feedback";
-		soundSemantic = eSoundSemantic_Player_Foley_Voice;
-		if (gEnv->pInput && play) gEnv->pInput->ForceFeedbackEvent( SFFOutputEvent(eDI_XI, eFF_Rumble_Basic, 0.2f, 0.3f, 0.2f) );
-		break;
-	case ESound_Melee:
-		soundName = "Sounds/physics:player_foley:melee_feedback";
-		soundSemantic = eSoundSemantic_Player_Foley_Voice;
-		if (gEnv->pInput && play) gEnv->pInput->ForceFeedbackEvent( SFFOutputEvent(eDI_XI, eFF_Rumble_Basic, 0.15f, 0.6f, 0.2f) );
-		break;
-	case ESound_Fear:
-		soundName = "Sounds/physics:player_foley:alien_feedback";
-		repeating = true;
-		break;
-	case ESound_Choking:
-		soundName = "Languages/dialog/ai_korean01/choking_01.wav";
-		repeating = true;
-		break;
-	case ESound_Hit_Wall:
-		soundName = "Sounds/physics:player_foley:body_hits_wall";
-		repeating = false;
-		param = true;
-		break;
-	case ESound_UnderwaterBreathing:
-		soundName = "sounds/physics:player_foley:underwater_feedback";
-		soundSemantic = eSoundSemantic_Player_Foley_Voice;
-		repeating = true; // fake that it's looping only here in game code, so that we keep a handle to stop it early when drowning.
-		break;
-	case ESound_Underwater:
-		soundName = "sounds/environment:amb_natural:ambience_underwater";
-		repeating = true;
-		break;
-	case ESound_Drowning:
-		soundName = "sounds/physics:player_foley:drown_feedback";
-		soundSemantic = eSoundSemantic_Player_Foley_Voice;
-		repeating = false;
-		break;
-	case ESound_DiveIn:
-		soundName = "Sounds/physics:player_foley:dive_in";
-		repeating = false;
-		break;
-	case ESound_DiveOut:
-		soundName = "Sounds/physics:player_foley:dive_out";
-		repeating = false;
-		break;
+	const char* soundName = nullptr;
 
-	case ESound_Thrusters:
-		soundName = "sounds/interface:suit:thrusters_1p";
-		if (!IsThirdPerson())
-			nFlags |= FLAG_SOUND_RELATIVE;
-		repeating = true;
-		break;
-	case ESound_ThrustersDash:
-		//soundName = "sounds/interface:suit:suit_deep_freeze";
-		soundName = "sounds/interface:suit:thrusters_boost_activate";
-		if (!IsThirdPerson())
-			nFlags |= FLAG_SOUND_RELATIVE;
-		repeating = true;
-		break;
-	case ESound_ThrustersDash02:
-		soundName = "sounds/interface:suit:suit_speed_activate";
-		if (!IsThirdPerson())
-			nFlags |= FLAG_SOUND_RELATIVE;
-		repeating = false;
-		break;
-	case ESound_ThrustersDashFail:
-		soundName = "sounds/interface:hud:key_error";
-		if (!IsThirdPerson())
-			nFlags |= FLAG_SOUND_RELATIVE;
-		repeating = false;
-		break;
-	case ESound_ThrustersDashRecharged:
-		//soundName = "sounds/interface:suit:suit_gravity_boots_deactivate";
-		soundName = "sounds/interface:suit:thrusters_boost_recharge";
-		if (!IsThirdPerson())
-			nFlags |= FLAG_SOUND_RELATIVE;
-		repeating = false;
-		break;
-	case ESound_ThrustersDashRecharged02:
-		soundName = "sounds/interface:suit:suit_speed_stop";
-		soundSemantic = eSoundSemantic_Player_Foley_Voice;
-		if (!IsThirdPerson())
-			nFlags |= FLAG_SOUND_RELATIVE;
-		repeating = false;
-		break;
-	case ESound_TacBulletFeedBack:
-		soundName = "sounds/physics:bullet_impact:tac_bullet_impact";
-		soundSemantic = eSoundSemantic_Player_Foley;
-		if (!IsThirdPerson())
-			nFlags |= FLAG_SOUND_RELATIVE;
-		repeating = false;
-	default:
-		break;
+	//TheOtherSide
+	const int feedbackVersion = TOS_Console::GetSafeIntVar("tos_cl_playerFeedbackSoundsVersion");
+	assert(feedbackVersion == 1 || feedbackVersion == 2);
+
+	auto get_random_sound
+	{
+		[](const string& inputsound, const int min, const int max)
+		{
+			int iRandomVal = min + Random(max);
+			char buffer[64];
+
+			sprintf(buffer, "%i", iRandomVal);
+
+			string final = inputsound + buffer + ".mp2";
+			return final.c_str();
+		}
+	};
+
+	if (feedbackVersion == 2)
+	{
+		switch (sound)
+		{
+		case ESound_Run:
+			soundName = get_random_sound("sounds/physics/c2_foleys_feedback_breath/feedback_run_0", 1, 5);
+			soundSemantic = eSoundSemantic_Player_Foley_Voice;
+			repeating = true;
+			break;
+		case ESound_StopRun:
+			soundName = get_random_sound("sounds/physics/c2_foleys_feedback_breath/feedback_catch_breath_0", 1, 2);
+			soundSemantic = eSoundSemantic_Player_Foley_Voice;
+			break;
+		case ESound_Jump:
+			soundName = get_random_sound("sounds/physics/c2_foleys_feedback_breath/feedback_jump_0", 3, 5);
+			soundSemantic = eSoundSemantic_Player_Foley_Voice;
+			if (gEnv->pInput && play) gEnv->pInput->ForceFeedbackEvent(SFFOutputEvent(eDI_XI, eFF_Rumble_Basic, 0.05f, 0.05f, 0.1f));
+			break;
+		case ESound_Fall_Drop:
+			soundName = "Sounds/physics:player_foley:bodyfall_feedback";
+			soundSemantic = eSoundSemantic_Player_Foley_Voice;
+			if (gEnv->pInput && play) gEnv->pInput->ForceFeedbackEvent(SFFOutputEvent(eDI_XI, eFF_Rumble_Basic, 0.2f, 0.3f, 0.2f));
+			break;
+		case ESound_Melee:
+			soundName = get_random_sound("sounds/physics/c2_foleys_feedback_breath/feedback_melee_0", 1, 3);
+			soundSemantic = eSoundSemantic_Player_Foley_Voice;
+			if (gEnv->pInput && play) gEnv->pInput->ForceFeedbackEvent(SFFOutputEvent(eDI_XI, eFF_Rumble_Basic, 0.15f, 0.6f, 0.2f));
+			break;
+		case ESound_Fear:
+			soundName = "Sounds/physics:player_foley:alien_feedback";
+			repeating = true;
+			break;
+		case ESound_Choking:
+			soundName = "Languages/dialog/ai_korean01/choking_01.wav";
+			repeating = true;
+			break;
+		case ESound_Hit_Wall:
+			soundName = "Sounds/physics:player_foley:body_hits_wall";
+			repeating = false;
+			param = true;
+			break;
+		case ESound_UnderwaterBreathing:
+			soundName = "sounds/physics:player_foley:underwater_feedback";
+			soundSemantic = eSoundSemantic_Player_Foley_Voice;
+			repeating = true; // fake that it's looping only here in game code, so that we keep a handle to stop it early when drowning.
+			break;
+		case ESound_Underwater:
+			soundName = "sounds/environment:amb_natural:ambience_underwater";
+			repeating = true;
+			break;
+		case ESound_Drowning:
+			soundName = "sounds/physics:player_foley:drown_feedback";
+			soundSemantic = eSoundSemantic_Player_Foley_Voice;
+			repeating = false;
+			break;
+		case ESound_DiveIn:
+			soundName = "Sounds/physics:player_foley:dive_in";
+			repeating = false;
+			break;
+		case ESound_DiveOut:
+			soundName = "Sounds/physics:player_foley:dive_out";
+			repeating = false;
+			break;
+
+		case ESound_Thrusters:
+			soundName = "sounds/interface:suit:thrusters_1p";
+			if (!IsThirdPerson())
+				nFlags |= FLAG_SOUND_RELATIVE;
+			repeating = true;
+			break;
+		case ESound_ThrustersDash:
+			//soundName = "sounds/interface:suit:suit_deep_freeze";
+			soundName = "sounds/interface:suit:thrusters_boost_activate";
+			if (!IsThirdPerson())
+				nFlags |= FLAG_SOUND_RELATIVE;
+			repeating = true;
+			break;
+		case ESound_ThrustersDash02:
+			soundName = "sounds/interface:suit:suit_speed_activate";
+			if (!IsThirdPerson())
+				nFlags |= FLAG_SOUND_RELATIVE;
+			repeating = false;
+			break;
+		case ESound_ThrustersDashFail:
+			soundName = "sounds/interface:hud:key_error";
+			if (!IsThirdPerson())
+				nFlags |= FLAG_SOUND_RELATIVE;
+			repeating = false;
+			break;
+		case ESound_ThrustersDashRecharged:
+			//soundName = "sounds/interface:suit:suit_gravity_boots_deactivate";
+			soundName = "sounds/interface:suit:thrusters_boost_recharge";
+			if (!IsThirdPerson())
+				nFlags |= FLAG_SOUND_RELATIVE;
+			repeating = false;
+			break;
+		case ESound_ThrustersDashRecharged02:
+			soundName = "sounds/interface:suit:suit_speed_stop";
+			soundSemantic = eSoundSemantic_Player_Foley_Voice;
+			if (!IsThirdPerson())
+				nFlags |= FLAG_SOUND_RELATIVE;
+			repeating = false;
+			break;
+		case ESound_TacBulletFeedBack:
+			soundName = "sounds/physics:bullet_impact:tac_bullet_impact";
+			soundSemantic = eSoundSemantic_Player_Foley;
+			if (!IsThirdPerson())
+				nFlags |= FLAG_SOUND_RELATIVE;
+			repeating = false;
+		default:
+			break;
+		}
 	}
+	else if (feedbackVersion == 1)
+	{
+		switch (sound)
+		{
+		case ESound_Run:
+			soundName = "sounds/physics:player_foley:run_feedback";
+			soundSemantic = eSoundSemantic_Player_Foley_Voice;
+			repeating = true;
+			break;
+		case ESound_StopRun:
+			soundName = "sounds/physics:player_foley:catch_breath_feedback";
+			soundSemantic = eSoundSemantic_Player_Foley_Voice;
+			break;
+		case ESound_Jump:
+			soundName = "Sounds/physics:player_foley:jump_feedback";
+			soundSemantic = eSoundSemantic_Player_Foley_Voice;
+			if (gEnv->pInput && play) gEnv->pInput->ForceFeedbackEvent(SFFOutputEvent(eDI_XI, eFF_Rumble_Basic, 0.05f, 0.05f, 0.1f));
+			break;
+		case ESound_Fall_Drop:
+			soundName = "Sounds/physics:player_foley:bodyfall_feedback";
+			soundSemantic = eSoundSemantic_Player_Foley_Voice;
+			if (gEnv->pInput && play) gEnv->pInput->ForceFeedbackEvent(SFFOutputEvent(eDI_XI, eFF_Rumble_Basic, 0.2f, 0.3f, 0.2f));
+			break;
+		case ESound_Melee:
+			soundName = "Sounds/physics:player_foley:melee_feedback";
+			soundSemantic = eSoundSemantic_Player_Foley_Voice;
+			if (gEnv->pInput && play) gEnv->pInput->ForceFeedbackEvent(SFFOutputEvent(eDI_XI, eFF_Rumble_Basic, 0.15f, 0.6f, 0.2f));
+			break;
+		case ESound_Fear:
+			soundName = "Sounds/physics:player_foley:alien_feedback";
+			repeating = true;
+			break;
+		case ESound_Choking:
+			soundName = "Languages/dialog/ai_korean01/choking_01.wav";
+			repeating = true;
+			break;
+		case ESound_Hit_Wall:
+			soundName = "Sounds/physics:player_foley:body_hits_wall";
+			repeating = false;
+			param = true;
+			break;
+		case ESound_UnderwaterBreathing:
+			soundName = "sounds/physics:player_foley:underwater_feedback";
+			soundSemantic = eSoundSemantic_Player_Foley_Voice;
+			repeating = true; // fake that it's looping only here in game code, so that we keep a handle to stop it early when drowning.
+			break;
+		case ESound_Underwater:
+			soundName = "sounds/environment:amb_natural:ambience_underwater";
+			repeating = true;
+			break;
+		case ESound_Drowning:
+			soundName = "sounds/physics:player_foley:drown_feedback";
+			soundSemantic = eSoundSemantic_Player_Foley_Voice;
+			repeating = false;
+			break;
+		case ESound_DiveIn:
+			soundName = "Sounds/physics:player_foley:dive_in";
+			repeating = false;
+			break;
+		case ESound_DiveOut:
+			soundName = "Sounds/physics:player_foley:dive_out";
+			repeating = false;
+			break;
+
+		case ESound_Thrusters:
+			soundName = "sounds/interface:suit:thrusters_1p";
+			if (!IsThirdPerson())
+				nFlags |= FLAG_SOUND_RELATIVE;
+			repeating = true;
+			break;
+		case ESound_ThrustersDash:
+			//soundName = "sounds/interface:suit:suit_deep_freeze";
+			soundName = "sounds/interface:suit:thrusters_boost_activate";
+			if (!IsThirdPerson())
+				nFlags |= FLAG_SOUND_RELATIVE;
+			repeating = true;
+			break;
+		case ESound_ThrustersDash02:
+			soundName = "sounds/interface:suit:suit_speed_activate";
+			if (!IsThirdPerson())
+				nFlags |= FLAG_SOUND_RELATIVE;
+			repeating = false;
+			break;
+		case ESound_ThrustersDashFail:
+			soundName = "sounds/interface:hud:key_error";
+			if (!IsThirdPerson())
+				nFlags |= FLAG_SOUND_RELATIVE;
+			repeating = false;
+			break;
+		case ESound_ThrustersDashRecharged:
+			//soundName = "sounds/interface:suit:suit_gravity_boots_deactivate";
+			soundName = "sounds/interface:suit:thrusters_boost_recharge";
+			if (!IsThirdPerson())
+				nFlags |= FLAG_SOUND_RELATIVE;
+			repeating = false;
+			break;
+		case ESound_ThrustersDashRecharged02:
+			soundName = "sounds/interface:suit:suit_speed_stop";
+			soundSemantic = eSoundSemantic_Player_Foley_Voice;
+			if (!IsThirdPerson())
+				nFlags |= FLAG_SOUND_RELATIVE;
+			repeating = false;
+			break;
+		case ESound_TacBulletFeedBack:
+			soundName = "sounds/physics:bullet_impact:tac_bullet_impact";
+			soundSemantic = eSoundSemantic_Player_Foley;
+			if (!IsThirdPerson())
+				nFlags |= FLAG_SOUND_RELATIVE;
+			repeating = false;
+		default:
+			break;
+		}
+
+	}
+	//~TheOtherSide
+
 
 	if(!soundName)
 		return;

@@ -22,6 +22,12 @@ void CTOSMasterModule::InitCVars(IConsole* pConsole)
 		"When the client enters the game,"
 		"he will control a slave.");
 
+	pConsole->Register("tos_cl_playerFeedbackSoundsVersion", &tos_cl_playerFeedbackSoundsVersion, 1, VF_NOT_NET_SYNCED,
+		"Version of player character feedback sounds. \n 1 - from Crysis 1, \n 2 - from Crysis 2");
+
+	pConsole->Register("tos_cl_nanosuitSoundsVersion", &tos_cl_nanosuitSoundsVersion, 1, VF_NOT_NET_SYNCED,
+		"Version of nanosuit sounds. \n 1 - from Crysis 1, \n 2 - from Crysis 2");
+
 	pConsole->Register("tos_sv_SlaveSpawnDelay", &tos_sv_SlaveSpawnDelay, 0.03f, VF_CHEAT, 
 		"Delay in seconds before slave spawns. \n" 
 		"It is necessary so that the slave cannot appear before the master respawns");
@@ -36,20 +42,48 @@ void CTOSMasterModule::InitCVars(IConsole* pConsole)
 	pConsole->Register("tos_sv_mc_LookDebugDraw", &tos_sv_mc_LookDebugDraw, 1, VF_CHEAT,
 			"Display look debug of the controlled character");
 
+	// Trooper консольные значения
+	pConsole->Register("tos_tr_melee_energy_costs", &tos_tr_melee_energy_costs, 15.0f, VF_CHEAT,
+		"The amount of energy a trooper spends when do melee attack on ground");
+
+	pConsole->Register("tos_tr_double_jump_energy_cost", &tos_tr_double_jump_energy_cost, 50.0f, VF_CHEAT,
+		"The amount of energy a trooper spends when double jumping");
+
+	pConsole->Register("tos_tr_double_jump_melee_energy_cost", &tos_tr_double_jump_melee_energy_cost, 65.0f, VF_CHEAT,
+		"The amount of energy a trooper spends when do melee attack in jumping state");
+
+	pConsole->Register("tos_tr_double_jump_melee_rest_seconds", &tos_tr_double_jump_melee_rest_seconds, 2.0f, VF_CHEAT,
+		"Time in seconds during which the trooper cannot jump after a jump");
+
+	pConsole->Register("tos_tr_regen_energy_start_delay_sp", &tos_tr_regen_energy_start_delay_sp, 6.0f, VF_CHEAT | VF_REQUIRE_LEVEL_RELOAD,
+			"Delay before starting to restore trooper energy after spend it singleplayer");
+
+	pConsole->Register("tos_tr_regen_energy_start_delay_mp", &tos_tr_regen_energy_start_delay_mp, 4.0f, VF_CHEAT | VF_REQUIRE_LEVEL_RELOAD,
+		"Delay before starting to restore trooper energy after spend it in multiplayer");
+
+	pConsole->Register("tos_tr_regen_energy_start_delay_20boundary", &tos_tr_regen_energy_start_delay_20boundary, 2.0f, VF_CHEAT | VF_REQUIRE_LEVEL_RELOAD,
+			"Delay before starting to restore trooper energy after spend");
+
+	pConsole->Register("tos_tr_regen_energy_recharge_time_mp", &tos_tr_regen_energy_recharge_time_mp, 1.0f, VF_CHEAT,
+		"Modify energy recharge for Trooper in multiplayer.");
+
+	pConsole->Register("tos_tr_regen_energy_recharge_time_sp", &tos_tr_regen_energy_recharge_time_sp, 1.0f, VF_CHEAT,
+		"Modify energy recharge for Trooper in singleplayer.");
 }
 
 void CTOSMasterModule::InitCCommands(IConsole* pConsole)
 {
 	CTOSGenericModule::InitCCommands(pConsole);
 
-	pConsole->AddCommand("getmasterslist", CmdGetMastersList);
-	pConsole->AddCommand("ismaster", CmdIsMaster);
-	pConsole->AddCommand("mc_stopcontrol", CmdMCStopControl);
-	pConsole->AddCommand("getdudeitems", CmdGetDudeItems);
-	pConsole->AddCommand("getactoritems", CmdGetActorItems);
-	pConsole->AddCommand("setactorhealth", CmdSetActorHealth);
-	pConsole->AddCommand("getactorhealth", CmdGetActorHealth);
-	pConsole->AddCommand("getactorcurrentitem", CmdGetActorCurrentItem);
+	pConsole->AddCommand("tos_cmd_getmasterslist", CmdGetMastersList);
+	pConsole->AddCommand("tos_cmd_ismaster", CmdIsMaster);
+	pConsole->AddCommand("tos_cmd_mc_stopcontrol", CmdMCStopControl);
+	pConsole->AddCommand("tos_cmd_getdudeitems", CmdGetDudeItems);
+	pConsole->AddCommand("tos_cmd_getactoritems", CmdGetActorItems);
+	pConsole->AddCommand("tos_cmd_setactorhealth", CmdSetActorHealth);
+	pConsole->AddCommand("tos_cmd_getactorhealth", CmdGetActorHealth);
+	pConsole->AddCommand("tos_cmd_getactorcurrentitem", CmdGetActorCurrentItem);
+	pConsole->AddCommand("tos_cmd_playsound2d", CmdPlaySound2D);
 
 }
 
@@ -72,8 +106,8 @@ void CTOSMasterModule::ReleaseCCommands()
 
 	const auto pConsole = gEnv->pConsole;
 
-	pConsole->RemoveCommand("getmasterslist");
-	pConsole->RemoveCommand("ismaster");
+	pConsole->RemoveCommand("tos_cmd_getmasterslist");
+	pConsole->RemoveCommand("tos_cmd_ismaster");
 }
 
 void CTOSMasterModule::CmdGetMastersList(IConsoleCmdArgs* pArgs)
@@ -239,6 +273,27 @@ void CTOSMasterModule::CmdGetActorCurrentItem(IConsoleCmdArgs* pArgs)
 	const auto pItem = pActor->GetCurrentItem();
 
 	CryLogAlways("Result: Item name = %s", pItem ? pItem->GetEntity()->GetClass()->GetName() : "<undefined>");
+}
+
+void CTOSMasterModule::CmdPlaySound2D(IConsoleCmdArgs* pArgs)
+{
+	ONLY_CLIENT_CMD;
+	const string soundPath = pArgs->GetArg(1);
+
+	if (soundPath.empty())
+	{
+		CryLogAlways("Usage 1: tos_cmd_play_sound_2d Localized/Languages/dialog/suit/v2/suit_voice_danger.mp2");
+		CryLogAlways("Usage 2: tos_cmd_play_sound_2d Sounds/interface:suit:suit_armor_use");
+		CryLogAlways("Usage 3: tos_cmd_play_sound_2d Sounds/<folder_name>:<event_group_name>:<event_name>");
+		return;
+	}
+
+	const _smart_ptr<ISound> pSound = gEnv->pSoundSystem->CreateSound(soundPath, FLAG_SOUND_2D | FLAG_SOUND_VOICE);
+	if (pSound)
+	{
+		pSound->SetPosition(g_pTOSGame->GetActualClientActor()->GetEntity()->GetWorldPos());
+		pSound->Play();
+	}
 }
 
 void CTOSMasterModule::CVarSetDesiredSlaveCls(ICVar* pVar)

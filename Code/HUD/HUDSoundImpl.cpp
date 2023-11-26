@@ -176,7 +176,6 @@ void CHUD::PlayStatusSound(const char* name, bool forceSuitSound)
 	if(!gEnv->pSoundSystem)
 		return;
 
-	//string strSound("languages/dialog/suit/");
 	string strSound;
 
 	//we don't want to play the suit sounds at once (because of quick mode change key)
@@ -201,6 +200,11 @@ void CHUD::PlayStatusSound(const char* name, bool forceSuitSound)
 	case 3: //michaelR
 		strSound.append("suit/mr/suit_");
 		break;
+		//TheOtherSide
+	case 4: //nanosuitV2
+		strSound.append("suit/v2/suit_voice_");
+		break;
+		//~TheOtherSide
 	default:
 		return;
 		break;
@@ -214,11 +218,28 @@ void CHUD::PlayStatusSound(const char* name, bool forceSuitSound)
 	else
 		strSound.append(name);
 
-	_smart_ptr<ISound> pSound = gEnv->pSoundSystem->CreateSound(strSound,FLAG_SOUND_3D|FLAG_SOUND_VOICE);
+
+	//TheOtherSide
+	//_smart_ptr<ISound> pSound = gEnv->pSoundSystem->CreateSound(strSound,FLAG_SOUND_3D|FLAG_SOUND_VOICE);
+
+	//Languages/dialog/suit/v2/suit_voice_danger.mp2 ok таблица+ pak+ mod+
+	//Languages/dialog/suit/v2/suit_voice_danger.mp2 fail таблица+ pak- mod+
+	//Localized/Languages/dialog/suit/v2/suit_voice_danger.mp2 ok таблица+ pak- mod+
+	//Mods/CrysisTheOtherSide/Game/Languages/dialog/suit/v2/suit_voice_danger.mp2 fail таблица+ pak- mod+
+	//suit/v2/suit_voice_danger ok таблица+ pak+ mod+
+	//suit/v2/suit_voice_danger ok таблица- pak+ mod+
+	//suit/v2/suit_voice_danger fail таблица+ pak- mod+
+	//suit/v2/suit_voice_danger fail таблица- pak- mod+
+	_smart_ptr<ISound> pSound = gEnv->pSoundSystem->CreateSound(strSound,FLAG_SOUND_2D|FLAG_SOUND_VOICE);
 	if ( pSound )
 	{
+		//pSound->SetSemantic(eSoundSemantic_NanoSuit);
 		pSound->SetSemantic(eSoundSemantic_NanoSuit);
-		pSound->SetPosition(g_pGame->GetIGameFramework()->GetClientActor()->GetEntity()->GetWorldPos());
+		
+		//pSound->SetPosition(g_pGame->GetIGameFramework()->GetClientActor()->GetEntity()->GetWorldPos());
+		pSound->SetPosition(g_pTOSGame->GetActualClientActor()->GetEntity()->GetWorldPos());
+
 		pSound->Play();
 	}
+	//~TheOtherSide
 }
