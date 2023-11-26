@@ -830,6 +830,10 @@ bool CNanoSuit::SetMode(const ENanoMode mode, const bool forceUpdate, const bool
 		mode = NANOMODE_STRENGTH;
 	}*/
 
+	//TheOtherSide
+	StopLoopSound();
+	//~TheOtherSide
+
 	if (m_currentMode == mode && !forceUpdate)
 		return false;
 
@@ -947,6 +951,22 @@ bool CNanoSuit::SetMode(const ENanoMode mode, const bool forceUpdate, const bool
 	if (lastMode != NANOMODE_CLOAK && m_currentMode == NANOMODE_CLOAK)
 		if (GetOwner()->GetEntity() && GetOwner()->GetEntity()->GetAI())
 			GetOwner()->GetEntity()->GetAI()->Event(AIEVENT_PLAYER_STUNT_CLOAK, nullptr);
+
+	//TheOtherSide
+	const int soundsVersion = TOS_Console::GetSafeIntVar("tos_cl_nanosuitSoundsVersion");
+
+	if (soundsVersion == 2)
+	{
+		if (lastMode == NANOMODE_DEFENSE && m_currentMode != NANOMODE_DEFENSE)
+		{
+			SAFE_SOUNDMOODS_FUNC(AddSoundMood(SOUNDMOOD_LEAVE_ARMOR));
+		}
+		else if (lastMode != NANOMODE_DEFENSE && m_currentMode == NANOMODE_DEFENSE)
+		{
+			SAFE_SOUNDMOODS_FUNC(AddSoundMood(SOUNDMOOD_ENTER_ARMOR));
+		}
+	}
+	//~TheOtherSide
 
 	return true;
 }
@@ -1153,22 +1173,11 @@ void CNanoSuit::PlaySound(const ENanoSound sound, const float param, const bool 
 	soundName.resize(0);
 
 	//TheOtherSide
+	bool playLoopModeSound = false;
+	ENanoMode loopMode = m_currentMode;
+
 	const int soundsVersion = TOS_Console::GetSafeIntVar("tos_cl_nanosuitSoundsVersion");
 	assert(soundsVersion == 1 || soundsVersion == 2);
-
-	auto get_random_sound
-	{
-		[](const string& inputsound, const int min, const int max)
-		{
-			int iRandomVal = min + Random(max);
-			char buffer[64];
-
-			sprintf(buffer, "%i", iRandomVal);
-
-			string final = inputsound + buffer + ".mp2";
-			return final.c_str();
-		}
-	};
 
 	if (soundsVersion == 1)
 	{
@@ -1355,7 +1364,7 @@ void CNanoSuit::PlaySound(const ENanoSound sound, const float param, const bool 
 			setParam = true;
 			break;
 		case STRENGTH_THROW_SOUND:
-			soundName = get_random_sound("Sounds/interface/suitv2/suit_strength_use_fp_0", 1, 1);
+			soundName = "Sounds/nanosuit2:strength:use";
 			eSemantic = eSoundSemantic_NanoSuit;
 			if (m_pOwner->IsClient())
 				if (gEnv->pInput && !stopSound)
@@ -1363,7 +1372,7 @@ void CNanoSuit::PlaySound(const ENanoSound sound, const float param, const bool 
 			setParam = true;
 			break;
 		case STRENGTH_JUMP_SOUND:
-			soundName = get_random_sound("Sounds/interface/suitv2/suit_strength_jump_0", 1, 1);
+			soundName = "Sounds/nanosuit2:strength:jump";
 			eSemantic = eSoundSemantic_NanoSuit;
 			if (m_pOwner->IsClient())
 				if (gEnv->pInput && !stopSound)
@@ -1371,7 +1380,7 @@ void CNanoSuit::PlaySound(const ENanoSound sound, const float param, const bool 
 			setParam = true;
 			break;
 		case STRENGTH_MELEE_SOUND:
-			soundName = get_random_sound("Sounds/interface/suitv2/suit_punch_strength_0", 1, 1);
+			soundName = "Sounds/nanosuit2:strength:punch";
 			eSemantic = eSoundSemantic_NanoSuit;
 			if (m_pOwner->IsClient())
 				if (gEnv->pInput && !stopSound)
@@ -1398,12 +1407,16 @@ void CNanoSuit::PlaySound(const ENanoSound sound, const float param, const bool 
 			eSemantic = eSoundSemantic_NanoSuit;
 			break;
 		case ESound_SuitArmorActivate:
-			soundName = "Sounds/interface/suitv2/suit_armor_activate_01.mp2";
+			soundName = "Sounds/nanosuit2:armor:activate";
 			eSemantic = eSoundSemantic_NanoSuit;
+			playLoopModeSound = true;
+			loopMode = NANOMODE_DEFENSE;
 			break;
 		case ESound_SuitCloakActivate:
-			soundName = "Sounds/interface/suitv2/suit_cloak_activate_01.mp2";
+			soundName = "Sounds/nanosuit2:cloak:activate";
 			eSemantic = eSoundSemantic_NanoSuit;
+			playLoopModeSound = true;
+			loopMode = NANOMODE_CLOAK;
 			break;
 		case ESound_SuitCloakFeedback: //TODO 24/11/2023 убрать фидбек для нанокостюма 2.0
 			soundName = "sounds/interface:hud:cloak_feedback";
@@ -1504,6 +1517,11 @@ void CNanoSuit::PlaySound(const ENanoSound sound, const float param, const bool 
 				m_sounds[sound].nMassIndex     = pSound->GetParam("mass", &fTemp, false);
 				m_sounds[sound].nSpeedIndex    = pSound->GetParam("speed", &fTemp, false);
 				m_sounds[sound].nStrengthIndex = pSound->GetParam("strength", &fTemp, false);
+
+				//TheOtherSide
+				if (playLoopModeSound)
+					PlayLoopSound(loopMode);
+				//~TheOtherSide
 			}
 		}
 	}
@@ -1987,6 +2005,74 @@ void CNanoSuit::UnregisterEnergyConsumer()
 {
 	m_pConsumer = nullptr;
 	ResetEnergy();
+}
+
+bool CNanoSuit::PlayLoopSound(const ENanoMode mode)
+{
+	bool ok = true;
+	StopLoopSound();
+
+	if (!(m_pOwner && m_pOwner->IsClient()))
+	{
+		ok = false;
+		return ok;
+	}
+
+	const int soundsVersion = TOS_Console::GetSafeIntVar("tos_cl_nanosuitSoundsVersion");
+	if (soundsVersion != 2)
+	{
+		ok = false;
+		return ok;
+	}
+
+	string strSound;
+
+	switch (mode)
+	{
+	case NANOMODE_CLOAK:
+		strSound = "Sounds/nanosuit2:cloak:loop";
+		break;
+	case NANOMODE_DEFENSE:
+		strSound = "Sounds/nanosuit2:armor:loop";
+		break;
+	case NANOMODE_SPEED:
+	case NANOMODE_STRENGTH:
+	case NANOMODE_INVULNERABILITY:
+	case NANOMODE_DEFENSE_HIT_REACTION:
+	case NANOMODE_LAST:
+	default:
+		break;
+	}
+
+	const _smart_ptr<ISound> pSound = gEnv->pSoundSystem->CreateSound(strSound, FLAG_SOUND_2D);
+	if (!pSound)
+	{
+		ok = false;
+	}
+	else
+	{
+		pSound->SetPosition(GetOwner()->GetEntity()->GetWorldPos());
+		pSound->Play();
+		m_modesLoopSounds[mode] = pSound;
+	}
+
+	return ok;
+}
+
+bool CNanoSuit::StopLoopSound()
+{
+	if (m_pOwner && m_pOwner->IsClient())
+	{
+		if (m_modesLoopSounds.find(m_currentMode) != m_modesLoopSounds.end() && m_modesLoopSounds[m_currentMode])
+		{
+			m_modesLoopSounds[m_currentMode]->Stop();
+			return true;
+		}
+
+	}
+
+
+	return false;
 }
 
 //void CNanoSuit::ResetEnergy(const float maxEnergy)

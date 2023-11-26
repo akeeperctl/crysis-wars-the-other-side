@@ -422,6 +422,16 @@ public:
 	void UnregisterEnergyConsumer();
 	//void ResetEnergy(float maxEnergy);
 
+	/**
+	 * \brief Играть звук состояния режима нанокостюма
+	 * \n <только для второй версии костюма!>
+	 * \param mode - режим
+	 * \return true - если играется 
+	 */
+	bool                                    PlayLoopSound(ENanoMode mode);
+	bool                                    StopLoopSound();
+	std::map<ENanoMode, _smart_ptr<ISound>> m_modesLoopSounds;
+
 private:
 	CTOSEnergyConsumer* m_pConsumer; // Указатель на потребитель энергии владельца нанокостюма
 	//~TheOtherSide

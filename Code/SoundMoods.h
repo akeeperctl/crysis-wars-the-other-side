@@ -33,7 +33,11 @@ enum ESOUNDMOOD
 	SOUNDMOOD_ENTER_FREEZE,
 	SOUNDMOOD_LEAVE_FREEZE,
 	SOUNDMOOD_EXPLOSION,
-	SOUNDMOOD_LOWHEALTH
+	SOUNDMOOD_LOWHEALTH,
+	//TheOtherSide
+	SOUNDMOOD_ENTER_ARMOR,
+	SOUNDMOOD_LEAVE_ARMOR,
+	//~TheOtherSide
 };
 
 //-----------------------------------------------------------------------------------------------------
