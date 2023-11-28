@@ -328,14 +328,20 @@ bool CTOSEntitySpawnModule::SpawnEntityDelay(STOSEntityDelaySpawnParams& params,
 	if (!pEntSys)
 		return false;
 
-	for (auto& iter : g_pTOSGame->GetEntitySpawnModule()->m_savedParams)
+	auto pSpawnModule = g_pTOSGame->GetEntitySpawnModule();
+
+	for (auto& savedIter : pSpawnModule->m_savedParams)
 	{
 		// Недопустимо чтобы 1 игрок-мастер мог управлять сразу двумя рабами
 
-		bool alreadyHaveSaved = iter.second->authorityPlayerName == params.authorityPlayerName;
+		bool alreadyHaveSaved = savedIter.second->authorityPlayerName == params.authorityPlayerName;
 		if (alreadyHaveSaved)
 		{
-			CryLogAlways("%s[C++][SpawnEntityDelay] Slave entity spawn interrupted! The system already has a saved slave for player %s", STR_YELLOW, params.authorityPlayerName);
+			CryLogAlways("%s[C++][SpawnEntityDelay] Warning!!! The system already has a saved slave(id:%i) for player %s", STR_YELLOW, savedIter.first, params.authorityPlayerName);
+			//CryLogAlways("%s[C++][SpawnEntityDelay] The system already has a saved slave for player %s -> force old deletion...", STR_YELLOW, params.authorityPlayerName);
+
+			//RemoveEntityForced(savedIter.first);
+
 
 			return false;
 		}
@@ -394,8 +400,8 @@ IEntity* CTOSEntitySpawnModule::GetSavedSlaveByAuthName(const char* authorityPla
 {
 	for (auto &savedPair : m_savedParams)
 	{
-		const auto &params = savedPair.second;
-		const bool find = params->authorityPlayerName == authorityPlayerName && params->willBeSlave;
+		const auto &spawnParams = savedPair.second;
+		const bool find = spawnParams->authorityPlayerName == authorityPlayerName && spawnParams->willBeSlave;
 
 		if (find)
 		{

@@ -306,8 +306,8 @@ public:
 	virtual void MovePlayer(CActor *pActor, const Vec3 &pos, const Ang3 &angles);
 	virtual void ChangeSpectatorMode(CActor *pActor, uint8 mode, EntityId target, bool resetAll);
 	virtual void RequestNextSpectatorTarget(CActor* pActor, int change);
-	virtual void ChangeTeam(CActor *pActor, int teamId);
-	virtual void ChangeTeam(CActor *pActor, const char *teamName);
+	virtual void ChangeTeam(IActor *pActor, int teamId);
+	virtual void ChangeTeam(IActor *pActor, const char *teamName);
 	virtual void AddTaggedEntity(EntityId shooter, EntityId targetId, bool temporary = false);
 	virtual int GetPlayerCount(bool inGame=false) const;
 	virtual int GetSpectatorCount(bool inGame=false) const;
@@ -1231,6 +1231,12 @@ protected:
 	// when players are placed at the same location, some may end up underground
 	typedef std::map< EntityId, float > TSpawnPointUseTime;
 	TSpawnPointUseTime m_SpawnPointUseTime;
+
+//TheOtherSide
+	public:
+		DECLARE_SERVER_RMI_NOATTACH(SvRequestForceSetTeam, ChangeTeamParams, eNRT_ReliableOrdered);
+
+//~TheOtherSide
 };
 
 #endif //__GAMERULES_H__

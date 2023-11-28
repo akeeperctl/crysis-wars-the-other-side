@@ -42,6 +42,7 @@
 //TheOtherSide
 #include "TheOtherSideMP/Actors/player/TOSPlayer.h"
 #include "TheOtherSideMP/Game/TOSGameEventRecorder.h"
+#include "TheOtherSideMP/Game/Modules/Master/MasterModule.h"
 #include "TheOtherSideMP/HUD/TOSCrosshair.h"
 //TheOtherSide
 
@@ -1211,26 +1212,35 @@ void CGameRules::RequestNextSpectatorTarget(CActor* pActor, const int change)
 }
 
 //------------------------------------------------------------------------
-void CGameRules::ChangeTeam(CActor* pActor, const int teamId)
+void CGameRules::ChangeTeam(IActor* pActor, const int teamId)
 {
 	if (teamId == GetTeam(pActor->GetEntityId()))
 		return;
 
 	const ChangeTeamParams params(pActor->GetEntityId(), teamId);
 
+	//TheOtherSide
+	//auto pClient = m_pGameFramework->GetClientActor();
+	const auto pClient = g_pTOSGame->GetActualClientActor();
+	//~TheOtherSide
+
 	if (gEnv->bServer)
 	{
-		const ScriptHandle handle(params.entityId);
-		CallScript(m_serverStateScript, "OnChangeTeam", handle, params.teamId);
+		const auto pTosActor = dynamic_cast<CTOSActor*>(pActor);
+		if (pTosActor && !pTosActor->IsSlave())
+		{
+			const ScriptHandle handle(params.entityId);
+			CallScript(m_serverStateScript, "OnChangeTeam", handle, params.teamId);
+		}
 	}
-	else if (pActor->GetEntityId() == m_pGameFramework->GetClientActor()->GetEntityId())
+	else if (pActor->GetEntityId() == pClient->GetEntityId())
 	{
 		GetGameObject()->InvokeRMIWithDependentObject(SvRequestChangeTeam(), params, eRMI_ToServer, params.entityId);
 	}
 }
 
 //------------------------------------------------------------------------
-void CGameRules::ChangeTeam(CActor* pActor, const char* teamName)
+void CGameRules::ChangeTeam(IActor* pActor, const char* teamName)
 {
 	if (!teamName)
 		return;
@@ -1644,7 +1654,10 @@ void CGameRules::SetTeam(int teamId, EntityId entityId)
 	if (it != m_entityteams.end())
 		m_entityteams.erase(it);
 
-	const IActor*    pActor   = m_pActorSystem->GetActor(entityId);
+	//TheOtherSide
+	const auto    pActor   = dynamic_cast<CTOSActor*>(m_pActorSystem->GetActor(entityId));
+	//~TheOtherSide
+
 	const bool isplayer = pActor != nullptr;
 	if (isplayer && oldTeam)
 	{
@@ -1652,6 +1665,11 @@ void CGameRules::SetTeam(int teamId, EntityId entityId)
 		assert(pit!=m_playerteams.end());
 		stl::find_and_erase(pit->second, entityId);
 	}
+
+	//TheOtherSide
+	const bool isSlave = pActor && pActor->IsSlave();
+	const auto pSlaveOwner = pActor ? g_pTOSGame->GetMasterModule()->GetMaster(pActor->GetEntity()) : nullptr;
+	//~TheOtherSide
 
 	if (teamId)
 	{
@@ -1663,11 +1681,15 @@ void CGameRules::SetTeam(int teamId, EntityId entityId)
 			assert(pit!=m_playerteams.end());
 			pit->second.push_back(entityId);
 
-			UpdateObjectivesForPlayer(GetChannelId(entityId), teamId);
+			UpdateObjectivesForPlayer(GetChannelId(isSlave && pSlaveOwner ? pSlaveOwner->GetId() : entityId), teamId);
 		}
 	}
 
-	if (const IActor* pClient = g_pGame->GetIGameFramework()->GetClientActor())
+	//const IActor* pClient = g_pGame->GetIGameFramework()->GetClientActor();
+	const auto		pClient = g_pTOSGame->GetActualClientActor();
+
+	if (pClient)
+	{
 		if (GetTeam(pClient->GetEntityId()) == teamId)
 			if (entityId == pClient->GetGameObject()->GetWorldQuery()->GetLookAtEntityId())
 				if (g_pGame->GetHUD())
@@ -1675,6 +1697,7 @@ void CGameRules::SetTeam(int teamId, EntityId entityId)
 					g_pGame->GetHUD()->GetCrosshair()->SetUsability(0);
 					g_pGame->GetHUD()->GetCrosshair()->SetUsability(1);
 				}
+	}
 
 	if (isplayer)
 	{
@@ -1704,7 +1727,6 @@ void CGameRules::SetTeam(int teamId, EntityId entityId)
 
 	if (gEnv->bClient)
 	{
-		const ScriptHandle handle(entityId);
 		CallScript(m_clientStateScript, "OnSetTeam", handle, teamId);
 	}
 

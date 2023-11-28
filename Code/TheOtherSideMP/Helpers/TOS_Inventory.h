@@ -31,10 +31,21 @@ namespace TOS_Inventory
 		return Script::CallMethod(pActor->GetEntity()->GetScriptTable(), "SelectSecondaryWeapon");
 	};
 
-	inline void GiveEquipmentPack(IActor* pActor, const string& name)
+	inline void GiveEquipmentPack(IActor* pActor, const string& name, bool resetInventory = false)
 	{
 		if (!pActor || name.empty())
 			return;
+
+		if (resetInventory)
+		{
+			IInventory* pInventory = pActor->GetInventory();
+			if (pInventory)
+			{
+				pInventory->HolsterItem(true); // не проверено (не уверен)
+				pInventory->RemoveAllItems(); // ок
+				pInventory->Clear(); // не проверено
+			}
+		}
 
 		const string filePath = "Game/Libs/EquipmentPacks/" + name + ".xml";
 		//CryLogAlways("[EquipManager][GiveEquipmentPack][filePath] %s", filePath);

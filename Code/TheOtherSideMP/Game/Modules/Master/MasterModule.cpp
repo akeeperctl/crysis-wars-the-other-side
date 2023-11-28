@@ -136,27 +136,25 @@ void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEven
 					break;
 				}
 
-				STOSEntityDelaySpawnParams params;
-				params.authorityPlayerName = entName;
-				params.savedName = slaveName;
-				params.scheduledTimeStamp = gEnv->pTimer->GetFrameStartTime().GetSeconds();
-				params.spawnDelay = tos_sv_SlaveSpawnDelay;
-				params.tosFlags |= TOS_ENTITY_FLAG_MUST_RECREATED;
-				params.vanilla.bStaticEntityId = true;
-				params.vanilla.nFlags |= ENTITY_FLAG_NEVER_NETWORK_STATIC | ENTITY_FLAG_TRIGGER_AREAS | ENTITY_FLAG_CASTSHADOW;
-				params.vanilla.pClass = pClass;
-				params.vanilla.qRotation = pEntity->GetWorldRotation();
-				params.vanilla.vPosition = pEntity->GetWorldPos();
-				params.willBeSlave = true;
-
-				bool scheduled = TOS_Entity::SpawnDelay(params);
-				if (!scheduled)
+				auto pSavedSlave = g_pTOSGame->GetEntitySpawnModule()->GetSavedSlaveByAuthName(entName);
+				if (!pSavedSlave)
 				{
-					auto pSavedSlave = g_pTOSGame->GetEntitySpawnModule()->GetSavedSlaveByAuthName(entName);
-					CRY_ASSERT_MESSAGE(!pSavedSlave, "The slave must not be created or saved before the player joins the game");
+					STOSEntityDelaySpawnParams params;
+					params.authorityPlayerName = entName;
+					params.savedName = slaveName;
+					params.scheduledTimeStamp = gEnv->pTimer->GetFrameStartTime().GetSeconds();
+					params.spawnDelay = tos_sv_SlaveSpawnDelay;
+					params.tosFlags |= TOS_ENTITY_FLAG_MUST_RECREATED;
+					params.vanilla.bStaticEntityId = true;
+					params.vanilla.nFlags |= ENTITY_FLAG_NEVER_NETWORK_STATIC | ENTITY_FLAG_TRIGGER_AREAS | ENTITY_FLAG_CASTSHADOW;
+					params.vanilla.pClass = pClass;
+					params.vanilla.qRotation = pEntity->GetWorldRotation();
+					params.vanilla.vPosition = pEntity->GetWorldPos();
+					params.willBeSlave = true;
+
+					TOS_Entity::SpawnDelay(params);
 				}
 			}
-
 		}
 
 		break;
@@ -688,6 +686,22 @@ void CTOSMasterModule::ScheduleMasterStartControl(const STOSStartControlInfo& in
 void CTOSMasterModule::GetMasters(std::map<EntityId, STOSMasterInfo>& masters) const
 {
 	masters = m_masters;
+}
+
+IEntity* CTOSMasterModule::GetMaster(const IEntity* pSlaveEntity) const
+{
+	if (!pSlaveEntity)
+		return nullptr;
+
+	for (const auto masterPair : m_masters)
+	{
+		if (masterPair.second.slaveId == pSlaveEntity->GetId())
+		{
+			return TOS_GET_ENTITY(masterPair.first);
+		}
+	}
+
+	return nullptr;
 }
 
 bool CTOSMasterModule::SetMasterDesiredSlaveCls(const IEntity* pEntity, const char* slaveDesiredClass)

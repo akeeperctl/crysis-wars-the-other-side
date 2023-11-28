@@ -1193,7 +1193,6 @@ IMPLEMENT_RMI(CGameRules, ClVotingStatus)
   return true;
 }
 
-
 IMPLEMENT_RMI(CGameRules, ClEnteredGame)
 {
 	if(!gEnv->bServer && m_pGameFramework->GetClientActor())
@@ -1219,3 +1218,12 @@ IMPLEMENT_RMI(CGameRules, ClEnteredGame)
 	}
 	return true;
 }
+
+//TheOtherSide
+IMPLEMENT_RMI(CGameRules, SvRequestForceSetTeam)
+{
+	if (gEnv->bServer)
+		SetTeam(params.teamId, params.entityId);
+	return true;
+}
+//~TheOtherSide

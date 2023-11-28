@@ -144,8 +144,8 @@ IMPLEMENT_RMI(CTOSMasterSynchronizer, SvRequestMasterClientStartControl)
 		const auto pSlaveActor = g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(params.slaveId);
 		const auto pMasterActor = g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(params.masterId);
 
-		assert(pSlaveActor);
-		assert(pMasterActor);
+		CRY_ASSERT_MESSAGE(pSlaveActor, "Slave actor pointer is NULL when try start controlling");
+		CRY_ASSERT_MESSAGE(pMasterActor, "Master actor pointer is NULL when try start controlling");
 
 		if (!pSlaveActor || !pMasterActor)
 			return true;

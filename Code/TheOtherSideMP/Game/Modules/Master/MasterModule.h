@@ -142,6 +142,7 @@ public:
 	void     MasterRemove(const IEntity* pMasterEntity);
 	bool     IsMaster(const IEntity* pMasterEntity);
 	void     GetMasters(std::map<EntityId, STOSMasterInfo>& masters) const;
+	IEntity* GetMaster(const IEntity* pSlaveEntity) const;
 	bool     SetMasterDesiredSlaveCls(const IEntity* pEntity, const char* slaveDesiredClass);
 	IEntity* GetSlave(const IEntity* pMasterEntity);
 	void     SetSlave(const IEntity* pMasterEntity, const IEntity* pSlaveEntity);
