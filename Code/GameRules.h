@@ -8,7 +8,7 @@
 
 	-------------------------------------------------------------------------
 	History:
-	- 7:2:2006   15:38 : Created by Márcio Martins
+	- 7:2:2006   15:38 : Created by MÐ±rcio Martins
 
 *************************************************************************/
 #ifndef __GAMERULES_H__
@@ -535,11 +535,10 @@ public:
 		g_pGame->GetSynchedStorage()->Reset();
 	}
 
-	void ForceSynchedStorageSynch(int channel);
+	static void ForceSynchedStorageSynch(int channel);
 
-
-	void PlayerPosForRespawn(CPlayer* pPlayer, bool save);
-	void SPNotifyPlayerKill(EntityId targetId, EntityId weaponId, bool bHeadShot);
+	static void PlayerPosForRespawn(const CPlayer* pPlayer, bool save);
+	void        SPNotifyPlayerKill(EntityId targetId, EntityId weaponId, bool bHeadShot) const;
 
 	void CreateRestrictedItemList(const char* restrictedItems);
 	bool IsItemAllowed(const char* itemName);
@@ -1064,19 +1063,19 @@ protected:
 	static void CmdDebugTeams(IConsoleCmdArgs *pArgs);
 	static void CmdDebugObjectives(IConsoleCmdArgs *pArgs);
 
-	void CreateScriptHitInfo(SmartScriptTable &scriptHitInfo, const HitInfo &hitInfo);
-	void CreateScriptExplosionInfo(SmartScriptTable &scriptExplosionInfo, const ExplosionInfo &explosionInfo);
-	void UpdateAffectedEntitiesSet(TExplosionAffectedEntities &affectedEnts, const pe_explosion *pExplosion);
-	void AddOrUpdateAffectedEntity(TExplosionAffectedEntities &affectedEnts, IEntity* pEntity, float affected);
-	void CommitAffectedEntitiesSet(SmartScriptTable &scriptExplosionInfo, TExplosionAffectedEntities &affectedEnts);
-	void ChatLog(EChatMessageType type, EntityId sourceId, EntityId targetId, const char *msg);
+	void        CreateScriptHitInfo(const SmartScriptTable & scriptHitInfo, const HitInfo & hitInfo) const;
+	void        CreateScriptExplosionInfo(const SmartScriptTable & scriptExplosionInfo, const ExplosionInfo & explosionInfo);
+	static void UpdateAffectedEntitiesSet(TExplosionAffectedEntities & affectedEnts, const pe_explosion * pExplosion);
+	static void AddOrUpdateAffectedEntity(TExplosionAffectedEntities & affectedEnts, IEntity* pEntity, float affected);
+	static void CommitAffectedEntitiesSet(const SmartScriptTable & scriptExplosionInfo, TExplosionAffectedEntities & affectedEnts);
+	void        ChatLog(EChatMessageType type, EntityId sourceId, EntityId targetId, const char * msg);
 
 	// Some explosion processing
 	void ProcessClientExplosionScreenFX(const ExplosionInfo &explosionInfo);
 	void ProcessExplosionMaterialFX(const ExplosionInfo &explosionInfo);
 
 	// fill source/target dependent params in m_collisionTable
-	void PrepCollision(int src, int trg, const SGameCollision& event, IEntity* pTarget);
+	void PrepCollision(int src, int trg, const SGameCollision& event, const IEntity* pTarget) const;
 
 	void CallScript(IScriptTable *pScript, const char *name)
 	{
