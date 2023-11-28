@@ -81,7 +81,11 @@ void CHUDCrosshair::Update(const float fDeltaTime)
 	if (m_bBroken)
 		return;
 
-	IActor*            pClientActor = g_pGame->GetIGameFramework()->GetClientActor();
+	//TheOtherSide
+	//IActor*   pClientActor = g_pGame->GetIGameFramework()->GetClientActor();
+	const auto	pClientActor = g_pTOSGame->GetActualClientActor();
+	//~TheOtherSide
+
 	const IItemSystem* pItemSystem  = g_pGame->GetIGameFramework()->GetIItemSystem();
 
 	if (!pClientActor || !pItemSystem)
@@ -170,11 +174,13 @@ void CHUDCrosshair::Update(const float fDeltaTime)
 		}
 
 		if (m_animInterActiveIcons.GetVisible()) //if the crosshair is invisible, the use icon should be too
+		{
 			if (!m_bHideUseIconTemp) //hides the icon, when something is already grabbed/being used
 			{
 				m_animInterActiveIcons.GetFlashPlayer()->Advance(fDeltaTime);
 				m_animInterActiveIcons.GetFlashPlayer()->Render();
 			}
+		}
 	}
 
 	if (m_animFriendCross.GetVisible())
@@ -296,7 +302,11 @@ void CHUDCrosshair::SetCrosshair(int iCrosshair)
 
 bool CHUDCrosshair::IsFriendlyEntity(const IEntity* pEntity)
 {
-	const IActor*     pClientActor = g_pGame->GetIGameFramework()->GetClientActor();
+	//TheOtherSide
+	//const IActor* pClientActor = g_pGame->GetIGameFramework()->GetClientActor()
+	const auto pClientActor = g_pTOSGame->GetActualClientActor();
+	//~TheOtherSide
+
 	const CGameRules* pGameRules   = g_pGame->GetGameRules();
 
 	if (!pEntity || !pClientActor || !pGameRules)
@@ -324,10 +334,6 @@ bool CHUDCrosshair::IsFriendlyEntity(const IEntity* pEntity)
 		if (pVehicle && pGameRules->GetTeam(pVehicle->GetEntityId()) == iClientTeam && pVehicle->GetStatus().passengerCount)
 		{
 			const IActor* pDriver = pVehicle->GetDriver();
-			/*if(pDriver && pGameRules->GetTeam(pDriver->GetEntityId()) == iClientTeam)
-				bFriendly = true;
-			else
-				bFriendly = false;*/
 
 			bFriendly = true;
 
@@ -344,7 +350,11 @@ bool CHUDCrosshair::IsFriendlyEntity(const IEntity* pEntity)
 
 void CHUDCrosshair::UpdateCrosshair()
 {
-	IActor* pClientActor = g_pGame->GetIGameFramework()->GetClientActor();
+	//TheOtherSide
+	//const IActor* pClientActor = g_pGame->GetIGameFramework()->GetClientActor()
+	const auto pClientActor = g_pTOSGame->GetActualClientActor();
+	//~TheOtherSide
+
 	if (!pClientActor)
 		return;
 
@@ -405,7 +415,6 @@ void CHUDCrosshair::UpdateCrosshair()
 	if (iNewFriendly != m_iFriendlyTarget)
 	{
 		m_iFriendlyTarget = iNewFriendly;
-		//m_animCrossHair.Invoke("setFriendly", m_iFriendlyTarget);
 		if (iNewFriendly)
 			m_animFriendCross.SetVisible(true);
 		else
@@ -458,11 +467,17 @@ void CHUDCrosshair::SelectCrosshair(IItem* pItem)
 {
 	//set special crosshairs design comes up with ...
 	bool bSpecialCrosshairSet = false;
-	if (const IActor* pActor = g_pGame->GetIGameFramework()->GetClientActor())
+
+	//TheOtherSide
+	//const IActor* pClientActor = g_pGame->GetIGameFramework()->GetClientActor()
+	const auto pClientActor = g_pTOSGame->GetActualClientActor();
+	//~TheOtherSide
+
+	if (pClientActor)
 		if (g_pGameCVars->hud_crosshair != 0)
 		{
 			if (!pItem)
-				pItem = pActor->GetCurrentItem();
+				pItem = pClientActor->GetCurrentItem();
 
 			if (!pItem || pItem->GetEntity()->GetClass() == CItem::sFistsClass || pItem->GetEntity()->GetClass() == CItem::sAlienCloak)
 			{
