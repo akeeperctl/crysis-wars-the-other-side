@@ -51,7 +51,9 @@ void CTOSActor::PostInit(IGameObject* pGameObject)
 
 	// Факт: если оружие выдаётся на сервере, оно выдаётся и на всех клиентах тоже.
 	if (gEnv->bServer && gEnv->bMultiplayer && !IsPlayer())
-		GetEntity()->SetTimer(eMPTIMER_GIVEWEAPONDELAY, 1000);
+	{
+		GetEntity()->SetTimer(eMPTIMER_REMOVEWEAPONSDELAY, 1000);
+	}
 }
 
 void CTOSActor::InitClient(const int channelId)
@@ -76,7 +78,23 @@ void CTOSActor::ProcessEvent(SEntityEvent& event)
 	{
 	case ENTITY_EVENT_TIMER:
 	{
-		if (event.nParam[0] == eMPTIMER_GIVEWEAPONDELAY)
+		// Фикс бага #29
+		if (event.nParam[0] == eMPTIMER_REMOVEWEAPONSDELAY)
+		{
+			const auto pInventory = GetInventory();
+			if (pInventory)
+			{
+				pInventory->HolsterItem(true);
+				pInventory->RemoveAllItems();
+				pInventory->Clear();
+
+				if (gEnv->bServer && gEnv->bMultiplayer && !IsPlayer())
+				{
+					GetEntity()->SetTimer(eMPTIMER_GIVEWEAPONDELAY, 1000);
+				}
+			}
+		}
+		else if (event.nParam[0] == eMPTIMER_GIVEWEAPONDELAY)
 		{
 			string       equipName;
 			const string actorClass = GetEntity()->GetClass()->GetName();
@@ -98,7 +116,7 @@ void CTOSActor::ProcessEvent(SEntityEvent& event)
 				equipName = gEnv->pConsole->GetCVar("tos_sv_HunterMPEquipPack")->GetString();
 			}
 
-			TOS_Inventory::GiveEquipmentPack(this, equipName.c_str());
+			TOS_Inventory::GiveEquipmentPack(this, equipName.c_str(), false);
 		}
 	}
 	default: 

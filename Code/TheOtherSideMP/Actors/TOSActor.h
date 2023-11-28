@@ -162,6 +162,7 @@ public:
 	enum MPTimers
 	{
 		eMPTIMER_GIVEWEAPONDELAY = 0x110,
+		eMPTIMER_REMOVEWEAPONSDELAY = 0x111,
 	};
 
 	friend class CTOSMasterClient;
