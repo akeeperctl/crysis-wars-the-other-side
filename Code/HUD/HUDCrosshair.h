@@ -51,8 +51,8 @@ public:
 	void SetOpacity(float opacity);
 	void SetCrosshair(int iCrosshair);
 	//get crosshair flash movie
-	CGameFlashAnimation *GetFlashAnim() {return &m_animCrossHair;}
-	bool IsFriendlyEntity(IEntity *pEntity);
+	CGameFlashAnimation * GetFlashAnim() {return &m_animCrossHair;}
+	static bool           IsFriendlyEntity(const IEntity * pEntity);
 
 	void Break(bool state);
 	ILINE int GetCrosshairType() const { return m_iCrosshair; }
