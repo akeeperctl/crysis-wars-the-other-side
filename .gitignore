@@ -366,7 +366,7 @@ healthchecksdb
 /Gif
 .vscode/
 *.code-workspace
-/assets from Crysis 2
+/assets*
 
 !/Game/Scripts/
 
