@@ -468,6 +468,7 @@
     <ClCompile Include="TheOtherSideMP\Game\TOSGameEventRecorder.cpp" />
     <ClCompile Include="TheOtherSideMP\HUD\TOSCrosshair.cpp" />
     <ClCompile Include="TheOtherSideMP\MasterCvars.cpp" />
+    <ClCompile Include="TheOtherSideMP\Nodes\FlowMasterClientNodes.cpp" />
     <ClCompile Include="Throw.cpp" />
     <ClCompile Include="ThrowableWeapon.cpp" />
     <ClCompile Include="TracerManager.cpp" />

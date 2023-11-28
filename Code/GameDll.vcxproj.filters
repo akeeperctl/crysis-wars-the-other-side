@@ -154,6 +154,9 @@
     <Filter Include="TheOtherSideMP\Extensions">
       <UniqueIdentifier>{83e9fd62-7e52-4fe9-af82-99a15a584bba}</UniqueIdentifier>
     </Filter>
+    <Filter Include="TheOtherSideMP\Nodes">
+      <UniqueIdentifier>{88c01848-c065-43da-a29d-5a4aa136ed7f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Actor.cpp">
@@ -826,6 +829,9 @@
     </ClCompile>
     <ClCompile Include="TheOtherSideMP\Extensions\EnergyConsumer.cpp">
       <Filter>TheOtherSideMP\Extensions</Filter>
+    </ClCompile>
+    <ClCompile Include="TheOtherSideMP\Nodes\FlowMasterClientNodes.cpp">
+      <Filter>TheOtherSideMP\Nodes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
