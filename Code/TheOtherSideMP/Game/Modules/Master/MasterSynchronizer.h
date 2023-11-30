@@ -84,6 +84,21 @@ struct NetMasterStopControlParams
 	}
 };
 
+struct NetDelegateAuthorityParams
+{
+	EntityId slaveId;
+	uint masterChannelId;
+
+	NetDelegateAuthorityParams()
+		: slaveId(0), masterChannelId(0) {}
+
+	void SerializeWith(TSerialize ser)
+	{
+		ser.Value("slaveId", slaveId, 'eid');
+		ser.Value("masterChannelId", masterChannelId);
+	}
+};
+
 typedef NetMasterAddingParams NetDesiredSlaveClsParams;
 typedef NetMasterStopControlParams NetMasterIdParams;
 
@@ -116,14 +131,16 @@ public:
 	//Reliable - надёжная доставка пакета
 
 	DECLARE_SERVER_RMI_NOATTACH(SvRequestMasterAdd, NetMasterAddingParams, eNRT_ReliableOrdered);
+	DECLARE_SERVER_RMI_NOATTACH(SvRequestMasterRemove, NetMasterAddingParams, eNRT_ReliableOrdered);
 	DECLARE_SERVER_RMI_NOATTACH(SvRequestSetDesiredSlaveCls, NetDesiredSlaveClsParams, eNRT_ReliableOrdered);
 
 	DECLARE_CLIENT_RMI_NOATTACH(ClMasterClientStartControl, NetMasterStartControlParams, eNRT_ReliableOrdered);
 	DECLARE_SERVER_RMI_NOATTACH(SvRequestMasterClientStartControl, NetMasterStartControlParams, eNRT_ReliableOrdered);
 
+	DECLARE_SERVER_RMI_NOATTACH(SvRequestDelegateAuthority, NetDelegateAuthorityParams, eNRT_ReliableOrdered);
+
 	DECLARE_CLIENT_RMI_NOATTACH(ClMasterClientStopControl, NetGenericNoParams, eNRT_ReliableOrdered);
 	DECLARE_SERVER_RMI_NOATTACH(SvRequestMasterClientStopControl, NetMasterStopControlParams, eNRT_ReliableOrdered);
-
 
 	//TODO: 10/11/2023, 09:25 Создать модуль для ИИ, когда наберется достаточно функций.
 	DECLARE_SERVER_RMI_NOATTACH(SvRequestSaveMCParams, NetMasterIdParams, eNRT_ReliableOrdered);

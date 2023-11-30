@@ -131,8 +131,8 @@ public:
 
 	void OnEntityEvent(IEntity* pEntity, const SEntityEvent& event);
 
-	void StartControl(IEntity* pEntity, uint dudeFlags = 0);
-	void StopControl();
+	void StartControl(IEntity* pEntity, uint dudeFlags = 0, bool callFromFG = false);
+	void StopControl(bool callFromFG = false);
 
 	/**
 	 * \brief Получить указатель на актёра раба
@@ -181,7 +181,10 @@ public:
 
 
 
+
 private:
+	void SendMovementRequest(IMovementController* pController);
+
 	//void ProcessMeleeDamage() const;
 	void UpdateMeleeTarget(const IEntity* pSlaveEntity, const int rayFlags, const unsigned entityFlags, const SMovementState& state);
 	void UpdateCrosshair(const IEntity* pSlaveEntity, const IActor* pLocalDudeActor, int rayFlags, unsigned entityFlags);

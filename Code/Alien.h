@@ -376,45 +376,50 @@ public:
 
 
 	CAlien();
-	virtual ~CAlien();
+	~CAlien() override;
 
 	// CActor
-	virtual void ProcessEvent(SEntityEvent& event);
-	virtual bool CreateCodeEvent(SmartScriptTable &rTable);
+	void ProcessEvent(SEntityEvent& event) override;
+	bool CreateCodeEvent(SmartScriptTable & rTable) override;
 
-	virtual bool Init( IGameObject * pGameObject );
-	virtual void Update(SEntityUpdateContext&, int updateSlot);
+	bool         Init( IGameObject * pGameObject ) override;
+	void         Update(SEntityUpdateContext&, int updateSlot) override;
 	virtual void PrePhysicsUpdate();
-	virtual void UpdateView(SViewParams &viewParams);
+	void         UpdateView(SViewParams & viewParams) override;
 
-	virtual void Kill();
-	virtual void Revive(bool fromInit = false);
-	virtual void RagDollize( bool fallAndPlay );
-	virtual void BindInputs( IAnimationGraphState * pAGState );
-  virtual void Reset(bool toGame);
+	void Kill() override;
+	void Revive(bool fromInit = false) override;
+	void RagDollize( bool fallAndPlay ) override;
+	void BindInputs( IAnimationGraphState * pAGState ) override;
+	void Reset(bool toGame) override;
 
-	virtual void OnAction(const ActionId& actionId, int activationMode, float value);
-	virtual void FullSerialize( TSerialize ser );
-	virtual void PostSerialize();
-	virtual void SerializeXML( XmlNodeRef& node, bool bLoading );
-	virtual void SetAuthority( bool auth );
+	void OnAction(const ActionId& actionId, int activationMode, float value) override;
+	void FullSerialize( TSerialize ser ) override;
+	void PostSerialize() override;
+	void SerializeXML( XmlNodeRef& node, bool bLoading ) override;
+	void SetAuthority( bool auth ) override;
 	//AI specific
 	virtual void SetActorMovement(SMovementRequestParams &control);
 	virtual void GetActorInfo( SBodyInfo& bodyInfo );
 	//retrieve actor status
-	virtual SActorStats *GetActorStats() { return &m_stats; };
-	virtual const SActorStats *GetActorStats() const { return &m_stats; };
-	virtual SActorParams *GetActorParams() { return &m_params; };
-	virtual void SetStats(SmartScriptTable &rTable);
-	virtual void UpdateScriptStats(SmartScriptTable &rTable);
+	SActorStats *               GetActorStats() override
+	{ return &m_stats; };
+	const SActorStats *    GetActorStats() const override
+	{ return &m_stats; };
+	SActorParams * GetActorParams() override
+	{ return &m_params; };
+	void SetStats(SmartScriptTable & rTable) override;
+	void UpdateScriptStats(SmartScriptTable & rTable) override;
 	//set actor params
-	virtual void SetParams(SmartScriptTable &rTable,bool resetFirst);
-	virtual void Physicalize(EStance stance=STANCE_STAND);
-	virtual void PostPhysicalize();
-	virtual void SetMovementTarget(const Vec3 &position,const Vec3 &looktarget,const Vec3 &up,float speed) {m_input.posTarget = position; m_input.dirTarget = looktarget; m_input.upTarget=up;m_input.speedTarget=speed;}
-	virtual void SetAngles(const Ang3 &angles);
-	virtual Ang3 GetAngles();
-	virtual void StanceChanged(EStance last);
+	void         SetParams(SmartScriptTable & rTable,bool resetFirst) override;
+	void         Physicalize(EStance stance =STANCE_STAND) override;
+	void         PostPhysicalize() override;
+	void         SetMovementTarget(const Vec3 & position,const Vec3 & looktarget,const Vec3 & up,float speed) override
+	{m_input.posTarget = position; m_input.dirTarget = looktarget; m_input.upTarget =up;m_input.speedTarget =speed;}
+
+	void SetAngles(const Ang3 & angles) override;
+	Ang3 GetAngles() override;
+	void StanceChanged(EStance last) override;
 //	virtual void SetRotation(const Quat &rot,int flags=0);
 	// ~CActor
 
@@ -423,8 +428,8 @@ public:
 	virtual void ProcessMovement2(float frameTime);
 	virtual void ProcessSwimming(float frameTime);
 	
-	virtual void ProcessAnimation(ICharacterInstance *pCharacter,float frameTime);
-	virtual void ProcessBonesRotation(ICharacterInstance *pCharacter,float frameTime);
+	virtual void ProcessAnimation(ICharacterInstance * pCharacter,float frameTime);
+	void         ProcessBonesRotation(ICharacterInstance * pCharacter,float frameTime) override;
 
 	//
 	virtual void SetDesiredSpeed(const Vec3 &desiredSpeed);
@@ -451,14 +456,16 @@ public:
 
 	virtual void SetFiring(bool fire);
 
-	virtual IActorMovementController * CreateMovementController();
+	IActorMovementController * CreateMovementController() override;
 
-	virtual void UpdateFootSteps(float frameTime) {};
+	void UpdateFootSteps(float frameTime) override {};
 
-	virtual bool IsAlien() {return true;}
+	bool IsAlien() override
+	{return true;}
 	
 	static  const char* GetActorClassType() { return "CAlien"; }
-	virtual const char* GetActorClass() const { return CAlien::GetActorClassType(); }
+	const char*         GetActorClass() const override
+	{ return CAlien::GetActorClassType(); }
 
 	ILINE const Vec3& GetWeaponOffset() const { return m_weaponOffset; }
 	ILINE const Vec3& GetEyeOffset() const { return m_eyeOffset; }
@@ -468,24 +475,26 @@ public:
   void SetSearchBeamQuat(const Quat& rot);
   void UpdateSearchBeam(float frameTime);
 
-	void GetMemoryStatistics(ICrySizer * s) 
+	void GetMemoryStatistics(ICrySizer * s) override
 	{ 
 		s->Add(*this);
 		GetAlienMemoryStatistics(s); 
 	}
 
-	virtual void SetAnimTentacleParams(pe_params_rope& rope, float animBlend);
+	void SetAnimTentacleParams(pe_params_rope& rope, float animBlend) override;
 
 	//Player can grab naked aliens
-	virtual int	 GetActorSpecies() { return eGCT_ALIEN; }
+	int	 GetActorSpecies() override
+	{ return eGCT_ALIEN; }
 
 protected:
-  virtual void OnCloaked(bool cloaked) { m_stats.cloaked = cloaked; }
+	void OnCloaked(bool cloaked) override
+	{ m_stats.cloaked = cloaked; }
 
 	void GetAlienMemoryStatistics(ICrySizer * s);
 	void GetMovementVector(Vec3& move, float& speed, float& maxSpeed);
-  void SetActorMovementCommon(SMovementRequestParams& control);
-	virtual void UpdateAnimGraph( IAnimationGraphState * pState );
+  void   SetActorMovementCommon(SMovementRequestParams& control);
+	void UpdateAnimGraph( IAnimationGraphState * pState ) override;
     
 	IItemSystem	*m_pItemSystem;
 	

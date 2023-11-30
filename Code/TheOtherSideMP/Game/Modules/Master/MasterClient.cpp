@@ -25,11 +25,10 @@
 #include "HUD/HUD.h"
 #include "HUD/HUDCrosshair.h"
 
-#include "TheOtherSideMP/Actors/Aliens/TOSAlien.h"
+#include "TheOtherSideMP/Actors/Aliens/TOSTrooper.h"
 #include "TheOtherSideMP/Control/ControlSystem.h"
-#include "TheOtherSideMP/HUD/TOSCrosshair.h"
 #include "TheOtherSideMP/Helpers/TOS_AI.h"
-#include "TheOtherSideMP/Helpers/TOS_NET.h"
+#include "TheOtherSideMP/HUD/TOSCrosshair.h"
 
 #define ASSING_ACTION(pActor, actionId, checkActionId, func)\
 if ((actionId) == (checkActionId))\
@@ -249,14 +248,9 @@ void CTOSMasterClient::PrePhysicsUpdate()
 	const auto pController = pSlaveActor->GetMovementController();
     assert(pController);
 
-
-    //m_movementRequest.SetLookTarget(currentState.eyePosition + m_cameraInfo.viewDir);
-    //m_movementRequest.SetFireTarget(currentState.weaponPosition + m_cameraInfo.viewDir);
-
-	m_movementRequest.SetLookTarget(m_lookfireInfo.lookTargetPos);
-    m_movementRequest.SetFireTarget(m_lookfireInfo.fireTargetPos);
-
-	pController->RequestMovement(m_movementRequest);
+	// В сетевой игре отправка запроса отсюда работает прекрасно
+	// В одиночной игре не отправка запроса не работает
+	SendMovementRequest(pController);
 }
 
 void CTOSMasterClient::Update(float frametime)
@@ -326,6 +320,13 @@ void CTOSMasterClient::Update(float frametime)
 		//float color[] = { 1,1,1,1 };
 		//gEnv->pRenderer->Draw2dLabel(100, 100, 1.3f, color, false, "jumpCount = %i", pSlaveActor->GetSlaveStats().jumpCount);
 	}
+
+	// В одиночной игре отправка запроса работает только отсюда
+	const auto pController = pSlaveActor->GetMovementController();
+	assert(pController);
+
+	if (!gEnv->bMultiplayer)
+		SendMovementRequest(pController);
 }
 
 void CTOSMasterClient::UpdateCrosshair(const IEntity* pSlaveEntity, const IActor* pLocalDudeActor, int rayFlags, unsigned entityFlags)
@@ -395,6 +396,18 @@ void CTOSMasterClient::UpdateLookFire(const IEntity* pSlaveEntity, const int ray
 
 	// Пусть персонаж будет смотреть туда куда стреляет.
 	m_lookfireInfo.lookTargetPos = m_lookfireInfo.fireTargetPos;
+}
+
+void CTOSMasterClient::SendMovementRequest(IMovementController* pController)
+{
+	assert(pController);
+	if (!pController)
+		return;
+
+	m_movementRequest.SetLookTarget(m_lookfireInfo.lookTargetPos);
+	m_movementRequest.SetFireTarget(m_lookfireInfo.fireTargetPos);
+
+	pController->RequestMovement(m_movementRequest);
 }
 
 void CTOSMasterClient::UpdateMeleeTarget(const IEntity* pSlaveEntity, const int rayFlags, const unsigned entityFlags, const SMovementState& state)
@@ -632,7 +645,7 @@ void CTOSMasterClient::ProcessMeleeDamage() const
 //		
 //}
 
-void CTOSMasterClient::StartControl(IEntity* pEntity, const uint dudeFlags /*= 0*/)
+void CTOSMasterClient::StartControl(IEntity* pEntity, uint dudeFlags /*= 0*/, bool callFromFG /*= false*/)
 {
 	assert(pEntity);
 
@@ -669,17 +682,42 @@ void CTOSMasterClient::StartControl(IEntity* pEntity, const uint dudeFlags /*= 0
 		{
 			//pGameRules->SetTeam(dudeTeam, m_pSlaveEntity->GetId());
 		}
+	}
 
+	// Запросить права на изменение сущности, если вызов функции был из Flow Graph
+	// Т.к. при вызове через FG не происходит передача прав мастеру на изменение контролируемого раба
+	if (callFromFG)
+	{
+		const auto pSynch = g_pTOSGame->GetMasterModule()->GetSynchronizer();
+		assert(pSynch);
+		if (pSynch)
+		{
+			NetDelegateAuthorityParams params1;
+			params1.masterChannelId = m_pLocalDude->GetChannelId();
+			params1.slaveId = m_pSlaveEntity->GetId();
+
+			pSynch->RMISend(CTOSMasterSynchronizer::SvRequestDelegateAuthority(), params1, eRMI_ToServer);
+
+
+			const auto pSlaveEntClsCvar = gEnv->pConsole->GetCVar("tos_cl_SlaveEntityClass");
+			assert(pSlaveEntClsCvar);
+
+			NetMasterAddingParams params2;
+			params2.entityId = m_pLocalDude->GetEntityId();
+			params2.desiredSlaveClassName = pSlaveEntClsCvar->GetString();
+
+			pSynch->RMISend(CTOSMasterSynchronizer::SvRequestMasterAdd(), params2, eRMI_ToServer);
+		}
 	}
 
 	// Событие вызывает RMI, которая отправляется на сервер
 	// Смотреть CTOSMasterModule::OnExtraGameplayEvent()
-	TOS_RECORD_EVENT(m_pSlaveEntity->GetId(), STOSGameEvent(eEGE_MasterClientStartControl, "", true));
+	TOS_RECORD_EVENT(m_pSlaveEntity->GetId(), STOSGameEvent(eEGE_MasterClientOnStartControl, "", true));
 }
 
-void CTOSMasterClient::StopControl()
+void CTOSMasterClient::StopControl(bool callFromFG /*= false*/)
 {
-	TOS_RECORD_EVENT(0, STOSGameEvent(eEGE_MasterClientStopControl, "", true));
+	TOS_RECORD_EVENT(0, STOSGameEvent(eEGE_MasterClientOnStopControl, "", true));
 
 	const auto pHUD = g_pGame->GetHUD();
 	if (pHUD)
@@ -691,6 +729,20 @@ void CTOSMasterClient::StopControl()
 
 	PrepareDude(false, m_dudeFlags);
     ClearSlaveEntity();
+
+	if (callFromFG)
+	{
+		const auto pSynch = g_pTOSGame->GetMasterModule()->GetSynchronizer();
+		assert(pSynch);
+		if (pSynch)
+		{
+			NetMasterAddingParams params2;
+			params2.entityId = m_pLocalDude->GetEntityId();
+			params2.desiredSlaveClassName = "<NOT_USED>";
+
+			pSynch->RMISend(CTOSMasterSynchronizer::SvRequestMasterRemove(), params2, eRMI_ToServer);
+		}
+	}
 }
 
 bool CTOSMasterClient::SetSlaveEntity(IEntity* pEntity, const char* cls)
@@ -703,16 +755,12 @@ bool CTOSMasterClient::SetSlaveEntity(IEntity* pEntity, const char* cls)
 
 	pSlaveActor->NetMarkMeSlave(true);
 
-	TOS_RECORD_EVENT(m_pSlaveEntity->GetId(), STOSGameEvent(eEGE_MasterClientSetSlave, "", true));
+	TOS_RECORD_EVENT(m_pSlaveEntity->GetId(), STOSGameEvent(eEGE_MasterClientOnSetSlave, "", true));
 	return true;
 }
 
 void CTOSMasterClient::ClearSlaveEntity()
 {
-	m_pSlaveEntity = nullptr;
-
-	TOS_RECORD_EVENT(0, STOSGameEvent(eEGE_MasterClientClearSlave, "", true));
-
 	const auto pSlaveActor = GetSlaveActor();
 	if (!pSlaveActor)
 		return;
@@ -721,6 +769,9 @@ void CTOSMasterClient::ClearSlaveEntity()
 	// В сетевой игре раб будет удаляться только при переходе в режим зрителя или выходе мастера из игры.
 	// Во всех остальных случаях раб удаляться не будет.
 	pSlaveActor->NetMarkMeSlave(false);
+
+	m_pSlaveEntity = nullptr;
+	TOS_RECORD_EVENT(0, STOSGameEvent(eEGE_MasterClientOnClearSlave, "", true));
 }
 
 void CTOSMasterClient::UpdateView(SViewParams& viewParams) const
@@ -847,8 +898,7 @@ void CTOSMasterClient::PrepareDude(const bool toStartControl, const uint dudeFla
 	CNanoSuit* pSuit = m_pLocalDude->GetNanoSuit();
     assert(pSuit);
 
-	const auto pHUDCrosshair = g_pGame->GetHUD()->GetCrosshair();
-    assert(pHUDCrosshair);
+	const auto pHUD = g_pGame->GetHUD();
 
 	//Fix the non-resetted Dude player movement after controlling the actor;
 	if (m_pLocalDude->GetPlayerInput())
@@ -909,8 +959,7 @@ void CTOSMasterClient::PrepareDude(const bool toStartControl, const uint dudeFla
         //m_pLocalDude->ClearInterference();
         //gEnv->pConsole->GetCVar("hud_enableAlienInterference")->ForceSet("0");
 
-
-        if (g_pGame->GetHUD())
+        if (pHUD)
         {
             //LoadHUD(true); deprecated
             //m_pAbilitiesSystem->InitHUD(true);			
@@ -923,6 +972,7 @@ void CTOSMasterClient::PrepareDude(const bool toStartControl, const uint dudeFla
             //g_pGame->GetHUD()->UpdateHealth(m_pControlledActor);
             //g_pGame->GetHUD()->m_animPlayerStats.Reload(true);
 
+			const auto pHUDCrosshair = pHUD->GetCrosshair();
 			pHUDCrosshair->SetOpacity(1.0f);
 			pHUDCrosshair->SetCrosshair(g_pGameCVars->hud_crosshair);
         }
@@ -964,8 +1014,12 @@ void CTOSMasterClient::PrepareDude(const bool toStartControl, const uint dudeFla
         // Выполнено - Нужно написать функцию для отображения дружественного перекрестия
 		// Выполнено - Нужно написать функцию для смены имени текущего оружия
 
-        pHUDCrosshair->ShowFriendCross(false);
-       SAFE_HUD_FUNC(TOSSetWeaponName(""))
+		if (pHUD)
+		{
+			const auto pHUDCrosshair = pHUD->GetCrosshair();
+			pHUDCrosshair->ShowFriendCross(false);
+		}
+        SAFE_HUD_FUNC(TOSSetWeaponName(""))
 
         //g_pControlSystem->GetSquadSystem()->AnySquadClientLeft();
 

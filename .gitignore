@@ -367,6 +367,7 @@ healthchecksdb
 .vscode/
 *.code-workspace
 /assets*
+/РїСЂРѕРјРѕ
 
 !/Game/Scripts/
 

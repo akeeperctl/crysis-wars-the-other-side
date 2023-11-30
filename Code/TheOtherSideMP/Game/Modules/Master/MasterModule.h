@@ -93,7 +93,7 @@ struct STOSStartControlInfo
  * \note Также модуль создаёт контролируемую сущность в такт геймплея.
  * \note Например: модуль создаст \a раба для управления, \n когда присоединившийся игрок переходит из зрителя в игру.
  * \note И наоборот: модуль удалит \a раба, когда контролирующий игрок покинет игру или перейдёт в режим зрителя. \n
- * \note \a Мастер - это игрок, способный контролировать \a раба (в частности пришельца). (консольная команда tos_cl_JoinAsAlien)
+ * \note \a Мастер - это игрок, контролирующий в данный момент \a раба (в частности пришельца). (консольная команда tos_cl_JoinAsAlien)
  * \note \a Раб - это сущность, которую контролирует \a мастер в данный момент.
  */
 class CTOSMasterModule final : public CTOSGenericModule  // NOLINT(cppcoreguidelines-special-member-functions)
@@ -144,10 +144,12 @@ public:
 	void     GetMasters(std::map<EntityId, STOSMasterInfo>& masters) const;
 	IEntity* GetMaster(const IEntity* pSlaveEntity) const;
 	bool     SetMasterDesiredSlaveCls(const IEntity* pEntity, const char* slaveDesiredClass);
-	IEntity* GetSlave(const IEntity* pMasterEntity);
-	void     SetSlave(const IEntity* pMasterEntity, const IEntity* pSlaveEntity);
-	void     ClearSlave(const IEntity* pMasterEntity);
-	bool     IsSlave(const IEntity* pEntity) const;
+
+	IEntity* GetCurrentSlave(const IEntity* pMasterEntity);
+	void     SetCurrentSlave(const IEntity* pMasterEntity, const IEntity* pSlaveEntity);
+	void     ClearCurrentSlave(const IEntity* pMasterEntity);
+	bool     IsSlave(const IEntity* pPotentialSlave) const;
+
 	void     DebugDraw(const Vec2& screenPos = {20,300}, float fontSize = 1.2f, float interval = 20.0f, int maxElemNum = 5);
 
 	//Console command's functions

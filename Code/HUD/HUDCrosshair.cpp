@@ -380,10 +380,19 @@ void CHUDCrosshair::UpdateCrosshair()
 			}
 			else
 			{
+
+				//TheOtherSide
+				// фикс вылета в одиночном режиме при попытке взять под контроль пришельца
 				//Two handed pickups need the red X as well
+				//const auto pPlayer = dynamic_cast<CTOSPlayer*>(pClientActor);
 				const auto pPlayer = dynamic_cast<CTOSPlayer*>(pClientActor);
-				if (const auto pOffHand = dynamic_cast<CWeapon*>(pPlayer->GetItemByClass(CItem::sOffHandClass)))
-					iNewFriendly = pOffHand->IsWeaponLowered();
+				if (pPlayer)
+				{
+					if (const auto pOffHand = dynamic_cast<CWeapon*>(pPlayer->GetItemByClass(CItem::sOffHandClass)))
+						iNewFriendly = pOffHand->IsWeaponLowered();
+				}
+
+				//~TheOtherSide
 			}
 		}
 		else

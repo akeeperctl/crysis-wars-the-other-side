@@ -17,10 +17,10 @@ enum ETOSEntityFlags
 struct STOSScheduleDelegateAuthorityParams
 {
 	STOSScheduleDelegateAuthorityParams()
-		: willBeSlave(false),
+		: forceStartControl(false),
 		scheduledTimeStamp(0) {}
 
-	bool willBeSlave;
+	bool forceStartControl;
 	string playerName; // имя игрока, который получит власть
 	float scheduledTimeStamp; // штамп времени, когда свершилось планирование
 };
@@ -29,7 +29,7 @@ struct STOSEntitySpawnParams : public STOSSmartStruct
 {
 	STOSEntitySpawnParams()
 		: pSavedScript(nullptr),
-		willBeSlave(false),
+		forceStartControl(false),
 		tosFlags(0)
 	{
 		m_refs = 0;
@@ -38,7 +38,7 @@ struct STOSEntitySpawnParams : public STOSSmartStruct
 
 	explicit STOSEntitySpawnParams(const SEntitySpawnParams& _vanillaParams)
 		: pSavedScript(nullptr),
-		willBeSlave(false),
+		forceStartControl(false),
 		tosFlags(0)
 	{
 		m_refs = 0;
@@ -54,7 +54,7 @@ struct STOSEntitySpawnParams : public STOSSmartStruct
 		this->pSavedScript = params.pSavedScript;
 		this->authorityPlayerName = params.authorityPlayerName;
 		this->savedName = params.savedName;
-		this->willBeSlave = params.willBeSlave;
+		this->forceStartControl = params.forceStartControl;
 	}
 
 	~STOSEntitySpawnParams() override { }
@@ -62,7 +62,7 @@ struct STOSEntitySpawnParams : public STOSSmartStruct
 	IScriptTable* pSavedScript;
 	SEntitySpawnParams vanilla; 
 
-	bool willBeSlave; ///< Если \a true, то при передаче власти игроку генерирует событие \a eEGE_SlaveReadyToObey \n Используется вместе с \a authorityPlayerName
+	bool forceStartControl; ///< Если \a true, то при передаче власти игроку генерирует событие \a eEGE_ForceStartControl \n Используется вместе с \a authorityPlayerName
 	string authorityPlayerName; ///< Имя персонажа игрока, которому будет передана власть над сущностью после её пересоздания 
 	string savedName; ///< Имя сущности, которая будет спавнится
 	uint32 tosFlags; ///< Флаги появления сущности. \n Смотреть \a ETOSEntityFlags
@@ -184,5 +184,5 @@ private:
 	static TMapDelayTOSParams s_scheduledSpawnsDelay;
 	TMapAuthorityParams m_scheduledAuthorities; ///< \b Что \b хранит: \n ключ - id сущности, \n значение - структура, где есть имя игрока, который получит власть над сущностью и штамп времени, когда случилось планирование
 	TMapTOSParams m_scheduledRecreations; 
-	TMapTOSParams m_savedParams; ///< \b Что \b хранит: \n ключ - id сущности, которая была заспавнена в этом модуле, \n значение - её \a STOSEntitySpawnParams, захваченные при спавне в этом модуле
+	TMapTOSParams m_savedSpawnParams; ///< \b Что \b хранит: \n ключ - id сущности, которая была заспавнена в этом модуле, \n значение - её \a STOSEntitySpawnParams, захваченные при спавне в этом модуле
 };

@@ -80,31 +80,30 @@ enum EExtraGameplayEvent
 	eEGE_TOSEntityScheduleDelegateAuthority,
 	eEGE_TOSEntityAuthorityDelegated,
 
-	eEGE_SlaveReadyToObey,
+	eEGE_ForceStartControl,
+	eEGE_Example1,
 
 	eEGE_EntitiesPreReset,
 	eEGE_EntitiesPostReset,
 
-	eEGE_MasterClientSetSlave, ///< Вызывается с локальной машины, когда у мастер-клиента изменяется указатель на контролируемого раб
-	eEGE_MasterClientClearSlave, ///< Вызывается с локальной машины, когда у мастер-клиента указатель на контролируемого раба становится равен 0
-	eEGE_MasterClientStartControl, ///< Вызывается с локальной машины, когда мастер-клиент начинает контролировать сущность раба
-	eEGE_MasterClientStopControl, ///< Вызывается с локальной машины, когда мастер-клиент завершает контролировать сущность раба
+	eEGE_MasterClientOnSetSlave, ///< Вызывается с локальной машины, когда у мастер-клиента изменяется указатель на контролируемого раб
+	eEGE_MasterClientOnClearSlave, ///< Вызывается с локальной машины, когда у мастер-клиента указатель на контролируемого раба становится равен 0
+	eEGE_MasterClientOnStartControl, ///< Вызывается с локальной машины, когда мастер-клиент начинает контролировать сущность раба
+	eEGE_MasterClientOnStopControl, ///< Вызывается с локальной машины, когда мастер-клиент завершает контролировать сущность раба
 
 	eEGE_SlaveEntityOnRemove,
 
 	eEGE_GameChannelDestroyed,
 	eEGE_ConfigureGameChannel,
 
-	eEGE_ClientConnect, // Вызывается только на сервере
-	eEGE_ClientDisconnect, // Вызывается только на сервере
+	eEGE_ClientConnect, // Вызывается только на сервере в мультиплеере
+	eEGE_ClientDisconnect, // Вызывается только на сервере в мультиплеере
 	eEGE_ClientEnteredGame, // Вызывается и на сервере и на клиенте
 
 	eEGE_UpdateContextViewState,
 	eEGE_UpdateChannelConnectionState,
 
 	eEGE_VehicleDestroyed,
-
-	eEGE_Example7,
 
 	//eEGE_TOSGame_Init,
 
@@ -262,10 +261,10 @@ public:
 			return "eEGE_ActorDead";
 		case eEGE_GamerulesReset:
 			return "eEGE_GamerulesReset";
-		case eEGE_MasterClientStartControl:
-			return "eEGE_MasterClientStartControl";
-		case eEGE_MasterClientStopControl:
-			return "eEGE_MasterClientStopControl";
+		case eEGE_MasterClientOnStartControl:
+			return "eEGE_MasterClientOnStartControl";
+		case eEGE_MasterClientOnStopControl:
+			return "eEGE_MasterClientOnStopControl";
 		//case eEGE_MasterEnterSpectator:
 		//	return "eEGE_MasterEnterSpectator";
 		case eEGE_SlaveStartObey:
@@ -316,16 +315,16 @@ public:
 			return "eEGE_TOSEntityScheduleDelegateAuthority";
 		case eEGE_TOSEntityAuthorityDelegated:
 			return "eEGE_TOSEntityAuthorityDelegated";
-		case eEGE_SlaveReadyToObey:
-			return "eEGE_SlaveReadyToObey";
+		case eEGE_ForceStartControl:
+			return "eEGE_ForceStartControl";
 		case eEGE_EntitiesPreReset:
 			return "eEGE_EntitiesPreReset";
 		case eEGE_EntitiesPostReset:
 			return "eEGE_EntitiesPostReset";
-		case eEGE_MasterClientSetSlave:
-			return "eEGE_MasterClientSetSlave";
-		case eEGE_MasterClientClearSlave:
-			return "eEGE_MasterClientClearSlave";
+		case eEGE_MasterClientOnSetSlave:
+			return "eEGE_MasterClientOnSetSlave";
+		case eEGE_MasterClientOnClearSlave:
+			return "eEGE_MasterClientOnClearSlave";
 		case eEGE_SlaveEntityOnRemove:
 			return "eEGE_SlaveEntityOnRemove";
 		case eEGE_PlayerJoinedCutscene:
@@ -352,8 +351,8 @@ public:
 			return "eEGE_EntityRemovedForced";
 		case eEGE_VehicleDestroyed:
 			return "eEGE_VehicleDestroyed";
-		case eEGE_Example7:
-			return "eEGE_Example7";
+		case eEGE_Example1:
+			return "eEGE_Example1";
 		case eEGE_Last:
 			return "eEGE_Last";
 		default:

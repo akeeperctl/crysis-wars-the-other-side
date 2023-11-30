@@ -77,6 +77,11 @@ void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEven
 	//case eEGE_SynchronizerRegistered:
 	case eEGE_ClientEnteredGame:
 	{
+		// В одиночной игре мастер будет задаваться по случаю
+		// Т.е в момент когда идёт запрос на взятие раба под контроль 
+		if (!gEnv->bMultiplayer)
+			break;
+
 		if (pEntity)
 		{
 			if (gEnv->bServer)
@@ -86,14 +91,15 @@ void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEven
 
 				const auto masterNeedSlave = pPlayer->GetSpectatorMode() == 0 && 
 					IsMaster(pPlayer->GetEntity()) && 
-					!GetSlave(pPlayer->GetEntity());
+					!GetCurrentSlave(pPlayer->GetEntity());
 
 				if (masterNeedSlave)
 				{
 					TOS_RECORD_EVENT(entId, STOSGameEvent(eEGE_PlayerJoinedGame, "after sv_restart", true));
 				}
 			}
-			else if(gEnv->bClient)
+
+			if(gEnv->bClient)
 			{
 				const int joinAsAlien = gEnv->pConsole->GetCVar("tos_cl_JoinAsMaster")->GetIVal();
 				if (joinAsAlien > 0)
@@ -150,7 +156,7 @@ void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEven
 					params.vanilla.pClass = pClass;
 					params.vanilla.qRotation = pEntity->GetWorldRotation();
 					params.vanilla.vPosition = pEntity->GetWorldPos();
-					params.willBeSlave = true;
+					params.forceStartControl = true;
 
 					TOS_Entity::SpawnDelay(params);
 				}
@@ -159,7 +165,7 @@ void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEven
 
 		break;
 	}
-	case eEGE_SlaveReadyToObey:
+	case eEGE_ForceStartControl:
 	{
 		if (gEnv->bServer && pEntity)
 		{
@@ -203,7 +209,7 @@ void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEven
 
 		break;
 	}
-	case eEGE_MasterClientStartControl:
+	case eEGE_MasterClientOnStartControl:
 	{
 		// Излишняя проверка на клиента
 		if (gEnv->bClient)
@@ -223,7 +229,7 @@ void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEven
 		}
 		break;
 	}
-	case eEGE_MasterClientStopControl:
+	case eEGE_MasterClientOnStopControl:
 	{
 		// Излишняя проверка на клиента
 		if (gEnv->bClient)
@@ -251,7 +257,7 @@ void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEven
 
 			if (IsMaster(pEntity))
 			{
-				const auto pSlave = GetSlave(pEntity);
+				const auto pSlave = GetCurrentSlave(pEntity);
 				if (pSlave)
 				{
 					assert(m_pSynchonizer);
@@ -291,7 +297,7 @@ void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEven
 
 			if (IsMaster(pPlayer->GetEntity()))
 			{
-				const auto pSlave = GetSlave(pPlayer->GetEntity());
+				const auto pSlave = GetCurrentSlave(pPlayer->GetEntity());
 				if (pSlave)
 				{
 					//Вызывало баг, когда в какой-то момент раб перестал появляться после sv_restart
@@ -439,7 +445,7 @@ bool CTOSMasterModule::IsMaster(const IEntity* pMasterEntity)
 	return false;
 }
 
-IEntity* CTOSMasterModule::GetSlave(const IEntity* pMasterEntity)
+IEntity* CTOSMasterModule::GetCurrentSlave(const IEntity* pMasterEntity)
 {
 	if (gEnv->bServer && pMasterEntity)
 	{
@@ -456,7 +462,7 @@ IEntity* CTOSMasterModule::GetSlave(const IEntity* pMasterEntity)
 	return nullptr;
 }
 
-void CTOSMasterModule::SetSlave(const IEntity* pMasterEntity, const IEntity* pSlaveEntity)
+void CTOSMasterModule::SetCurrentSlave(const IEntity* pMasterEntity, const IEntity* pSlaveEntity)
 {
 	assert(pMasterEntity);
 	assert(pSlaveEntity);
@@ -467,7 +473,7 @@ void CTOSMasterModule::SetSlave(const IEntity* pMasterEntity, const IEntity* pSl
 	m_masters[pMasterEntity->GetId()].slaveId = pSlaveEntity->GetId();
 }
 
-void CTOSMasterModule::ClearSlave(const IEntity* pMasterEntity)
+void CTOSMasterModule::ClearCurrentSlave(const IEntity* pMasterEntity)
 {
 	assert(pMasterEntity);
 
@@ -477,14 +483,14 @@ void CTOSMasterModule::ClearSlave(const IEntity* pMasterEntity)
 	m_masters[pMasterEntity->GetId()].slaveId = 0;
 }
 
-bool CTOSMasterModule::IsSlave(const IEntity* pEntity) const
+bool CTOSMasterModule::IsSlave(const IEntity* pPotentialSlave) const
 {
-	if (!pEntity)
+	if (!pPotentialSlave)
 		return false;
 
 	for (auto &masterPair : m_masters)
 	{
-		if (masterPair.second.slaveId == pEntity->GetId())
+		if (masterPair.second.slaveId == pPotentialSlave->GetId())
 			return true;
 	}
 
@@ -511,7 +517,7 @@ void CTOSMasterModule::DebugDraw(const Vec2& screenPos, float fontSize, float in
 		if (!pMasterEnt)
 			continue;
 
-		const auto pSlaveEntity = GetSlave(pMasterEnt);
+		const auto pSlaveEntity = GetCurrentSlave(pMasterEnt);
 
 		const char* masterName = pMasterEnt->GetName();
 		const char* slaveName = pSlaveEntity != nullptr ? pSlaveEntity->GetName() : "NULL";

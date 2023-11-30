@@ -7,6 +7,7 @@
 #include "../../TOSGameEventRecorder.h"
 
 #include "TheOtherSideMP/Helpers/TOS_AI.h"
+#include "TheOtherSideMP/Helpers/TOS_NET.h"
 
 CTOSMasterSynchronizer::CTOSMasterSynchronizer()
 {
@@ -75,6 +76,23 @@ IMPLEMENT_RMI(CTOSMasterSynchronizer, SvRequestMasterAdd)
 		assert(pEntity);
 
 		g_pTOSGame->GetMasterModule()->MasterAdd(pEntity, params.desiredSlaveClassName);
+	}
+
+	return true;
+}
+////------------------------------------------------------------------------
+IMPLEMENT_RMI(CTOSMasterSynchronizer, SvRequestMasterRemove)
+{
+	// Здесь пишем всё, что должно выполниться на сервере
+
+	if (gEnv->bServer)
+	{
+		CryLogAlways("[C++][%s][%s][SvRequestMasterRemove]", TOS_Debug::GetEnv(), TOS_Debug::GetAct(3));
+
+		const auto pEntity = gEnv->pEntitySystem->GetEntity(params.entityId);
+		assert(pEntity);
+
+		g_pTOSGame->GetMasterModule()->MasterRemove(pEntity);
 	}
 
 	return true;
@@ -162,7 +180,7 @@ IMPLEMENT_RMI(CTOSMasterSynchronizer, SvRequestMasterClientStartControl)
 
 		// В данном случае сервер не знает какому мастеру нужно прописать полученного раба.
 		// Поэтому мы передаём серверу информацию как о рабе, так и о мастере.
-		g_pTOSGame->GetMasterModule()->SetSlave(pMasterActor->GetEntity(), pSlaveActor->GetEntity());
+		g_pTOSGame->GetMasterModule()->SetCurrentSlave(pMasterActor->GetEntity(), pSlaveActor->GetEntity());
 
 		CryLogAlways("[C++][%s][%s][SvRequestMasterClientStartControl]",
 			TOS_Debug::GetEnv(), TOS_Debug::GetAct(3));
@@ -183,7 +201,28 @@ IMPLEMENT_RMI(CTOSMasterSynchronizer, SvRequestMasterClientStopControl)
 		const auto pMasterEntity = gEnv->pEntitySystem->GetEntity(params.masterId);
 		assert(pMasterEntity);
 
-		g_pTOSGame->GetMasterModule()->ClearSlave(pMasterEntity);
+		g_pTOSGame->GetMasterModule()->ClearCurrentSlave(pMasterEntity);
+	}
+
+	return true;
+}
+////------------------------------------------------------------------------
+IMPLEMENT_RMI(CTOSMasterSynchronizer, SvRequestDelegateAuthority)
+{
+	// Здесь пишем всё, что должно выполниться на сервере
+
+	if (gEnv->bServer)
+	{
+		CryLogAlways("[C++][%s][%s][SvRequestDelegateAuthority] ChannelId: %i, SlaveId: %i",
+			TOS_Debug::GetEnv(), TOS_Debug::GetAct(3), params.masterChannelId, params.slaveId);
+
+		const auto pSlaveEntity = gEnv->pEntitySystem->GetEntity(params.slaveId);
+		assert(pSlaveEntity);
+
+		const auto pPlayer = g_pGame->GetIGameFramework()->GetIActorSystem()->GetActorByChannelId(params.masterChannelId);
+		assert(pPlayer);
+
+		TOS_NET::DelegateAuthority(pPlayer->GetGameObject(), params.slaveId);
 	}
 
 	return true;

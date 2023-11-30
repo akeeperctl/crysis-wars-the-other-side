@@ -6,6 +6,7 @@
 
 #include "TheOtherSideMP/Game/Modules/Master/MasterClient.h"
 #include "TheOtherSideMP/Game/Modules/Master/MasterModule.h"
+#include "TheOtherSideMP/Helpers/TOS_NET.h"
 
 class CFlowMCStartControl final : public CFlowBaseNode
 {
@@ -63,7 +64,7 @@ public:
 				return;
 
 			if (pMC->GetSlaveEntity())
-				pMC->StopControl();
+				pMC->StopControl(true);
 		}
 		break;
 		case eFE_SetEntityId:
@@ -84,14 +85,14 @@ public:
 			if (IsPortActive(pActInfo, EIP_Start))
 			{
 				if (pMC->GetSlaveEntity())
-					pMC->StopControl();
+					pMC->StopControl(true);
 
-				pMC->StartControl(pInputEntity, TOS_DUDE_FLAG_DISABLE_SUIT | TOS_DUDE_FLAG_ENABLE_ACTION_FILTER);
+				pMC->StartControl(pInputEntity, TOS_DUDE_FLAG_DISABLE_SUIT | TOS_DUDE_FLAG_ENABLE_ACTION_FILTER, true);
 			}
 			else if (IsPortActive(pActInfo, EIP_Cancel))
 			{
 				if (pMC->GetSlaveEntity())
-					pMC->StopControl();
+					pMC->StopControl(true);
 			}
 
 		}

@@ -109,22 +109,22 @@ void CTOSEntitySpawnModule::CmdGetListEntities(IConsoleCmdArgs* pArgs)
 
 	CryLogAlways("Result: ");
 	CryLogAlways("	saved: ");
-	for (const auto& savedPair : pModule->m_savedParams)
+	for (const auto& savedPair : pModule->m_savedSpawnParams)
 	{
 		const auto savedName = savedPair.second->savedName;
 		const auto savedAuthPlayer = savedPair.second->authorityPlayerName;
-		const auto savedBeSlave = savedPair.second->willBeSlave;
+		const auto savedWillBeControlled = savedPair.second->forceStartControl;
 
-		CryLogAlways("		--- name: %s, authName: %s, willSlave: %i", 
+		CryLogAlways("		--- name: %s, authName: %s, willBeControlled: %i", 
 			savedName.c_str(), 
 			savedAuthPlayer.c_str(), 
-			savedBeSlave);
+			savedWillBeControlled);
 	}
 
 	CryLogAlways("	marked for recreation: ");
-	for (const auto markedId : pModule->s_markedForRecreation)
+	for (const auto markedId : CTOSEntitySpawnModule::s_markedForRecreation)
 	{
-		auto pEntity = gEnv->pEntitySystem->GetEntity(markedId);
+		const auto pEntity = gEnv->pEntitySystem->GetEntity(markedId);
 		if (!pEntity)
 			continue;
 
