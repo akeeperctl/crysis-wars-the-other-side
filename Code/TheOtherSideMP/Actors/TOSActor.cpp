@@ -54,6 +54,11 @@ void CTOSActor::PostInit(IGameObject* pGameObject)
 	{
 		GetEntity()->SetTimer(eMPTIMER_REMOVEWEAPONSDELAY, 1000);
 	}
+
+	// 30.11.2023 Akeeper: Это я оставлю здесь на всякий случай.
+	// Но к сожалению это не позволяет включить PrePhysicsUpdate в одиночной игре 
+	// отравки запроса на движение в MasterClient. 
+	GetGameObject()->EnablePrePhysicsUpdate(ePPU_Always);
 }
 
 void CTOSActor::InitClient(const int channelId)
@@ -114,6 +119,10 @@ void CTOSActor::ProcessEvent(SEntityEvent& event)
 			else if (actorClass == "Hunter")
 			{
 				equipName = gEnv->pConsole->GetCVar("tos_sv_HunterMPEquipPack")->GetString();
+			}
+			else if (actorClass == "Grunt")
+			{
+				equipName = gEnv->pConsole->GetCVar("tos_sv_HumanGruntMPEquipPack")->GetString();
 			}
 
 			TOS_Inventory::GiveEquipmentPack(this, equipName.c_str(), false);
@@ -373,7 +382,7 @@ void CTOSActor::NetMarkMeSlave(const bool slave) const
 	if (gEnv->bClient)
 	{
 		NetMarkMeAsSlaveParams params;
-		params.slave = true;
+		params.slave = slave;
 
 		GetGameObject()->InvokeRMI(SvRequestMarkMeAsSlave(), params, eRMI_ToServer);
 	}

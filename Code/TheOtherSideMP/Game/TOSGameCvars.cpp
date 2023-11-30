@@ -13,7 +13,6 @@
 
 #include "TheOtherSideMP/Actors/TOSActor.h"
 #include "TheOtherSideMP/Extensions/EnergyСonsumer.h"
-#include "TheOtherSideMP/Helpers/TOS_Entity.h"
 
 void STOSCvars::InitCVars(IConsole* pConsole)
 {
@@ -30,13 +29,14 @@ void STOSCvars::InitCVars(IConsole* pConsole)
 	tos_sv_HunterMPEquipPack = pConsole->RegisterString("tos_sv_HunterMPEquipPack",   "Alien_Hunter", 0, "");
 	tos_sv_ScoutMPEquipPack =  pConsole->RegisterString("tos_sv_ScoutMPEquipPack",    "Alien_Scout_Gunner", 0, "");
 	tos_sv_TrooperMPEquipPack = pConsole->RegisterString("tos_sv_TrooperMPEquipPack", "Alien_Trooper", 0, "");
+	tos_sv_HumanGruntMPEquipPack = pConsole->RegisterString("tos_sv_HumanGruntMPEquipPack", "NK_Pistol", 0, "");
 
 
 	for (const auto pModule : g_pTOSGame->m_modules)
 		pModule->InitCVars(pConsole);
 }
 
-void STOSCvars::InitCCommands(IConsole* pConsole) const
+void STOSCvars::InitCCommands(IConsole* pConsole)
 {
 	//SERVER COMMANDS
 	pConsole->AddCommand("netchname", CmdNetChName);
@@ -57,7 +57,7 @@ void STOSCvars::InitCCommands(IConsole* pConsole) const
 		pModule->InitCCommands(pConsole);
 }
 
-void STOSCvars::ReleaseCCommands() const
+void STOSCvars::ReleaseCCommands()
 {
 	for (const auto pModule : g_pTOSGame->m_modules)
 		pModule->ReleaseCCommands();
@@ -72,7 +72,7 @@ void STOSCvars::ReleaseCCommands() const
 	pConsole->RemoveCommand("consumersetdebugentname");
 }
 
-void STOSCvars::ReleaseCVars() const
+void STOSCvars::ReleaseCVars()
 {
 	for (const auto pModule : g_pTOSGame->m_modules)
 		pModule->ReleaseCVars();

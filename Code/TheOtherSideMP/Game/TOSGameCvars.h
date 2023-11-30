@@ -32,10 +32,10 @@ struct STOSCvars  // NOLINT(cppcoreguidelines-special-member-functions)
 		delete this;
 	}
 
-	void InitCVars(IConsole *pConsole);
-	void InitCCommands(IConsole *pConsole) const;
-	void ReleaseCVars() const;
-	void ReleaseCCommands() const;
+	void        InitCVars(IConsole * pConsole);
+	static void InitCCommands(IConsole * pConsole);
+	static void ReleaseCVars();
+	static void ReleaseCCommands();
 
 	// SERVER COMMANDS
 	static void CmdNetChName(IConsoleCmdArgs *pArgs);	
@@ -59,6 +59,7 @@ struct STOSCvars  // NOLINT(cppcoreguidelines-special-member-functions)
 	int tos_sv_AIActionTrackerDebugDraw;
 	int tos_sv_AIActionTrackerDebugLog;
 	int tos_sv_AllDebugLog;
+	ICVar* tos_sv_HumanGruntMPEquipPack;
 	ICVar* tos_sv_TrooperMPEquipPack;
 	ICVar* tos_sv_ScoutMPEquipPack;
 	ICVar* tos_sv_AlienMPEquipPack;
