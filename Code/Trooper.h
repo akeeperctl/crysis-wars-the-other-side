@@ -163,43 +163,45 @@ public:
 		m_modelQuat.SetIdentity();
 	}
 
-	virtual void Revive(bool fromInit = false);
+	void Revive(bool fromInit = false) override;
 
-	virtual void Update(SEntityUpdateContext&, int updateSlot);
+	void Update(SEntityUpdateContext&, int updateSlot) override;
 
-	virtual void SetActorMovement(SMovementRequestParams &control);
+	void SetActorMovement(SMovementRequestParams &control) override;
 
-	virtual void SetParams(SmartScriptTable &rTable,bool resetFirst);
+	void SetParams(SmartScriptTable &rTable,bool resetFirst) override;
 
-	virtual void ProcessRotation(float frameTime);
-	virtual void ProcessMovement(float frameTime);
+	void ProcessRotation(float frameTime) override;
+	void ProcessMovement(float frameTime) override;
 
-	virtual void ProcessAnimation(ICharacterInstance *pCharacter,float frameTime);
+	void ProcessAnimation(ICharacterInstance *pCharacter,float frameTime) override;
 
-	virtual void SetActorStance(SMovementRequestParams &control, int& actions);
+	void SetActorStance(SMovementRequestParams &control, int& actions) override;
 
 	//virtual bool UpdateStance();
 
-	virtual void ResetAnimations();
+	void ResetAnimations() override;
 
-	virtual void UpdateStats(float frameTime);
+	void UpdateStats(float frameTime) override;
 
-	virtual bool IsFlying(){return false;}
+	bool IsFlying() override
+	{return false;}
 
-	virtual void BindInputs( IAnimationGraphState * pAGState );
+	void BindInputs( IAnimationGraphState * pAGState ) override;
 
 	//Player can grab troopers
-	virtual int	 GetActorSpecies() { return eGCT_TROOPER; }
+	int	 GetActorSpecies() override
+	{ return eGCT_TROOPER; }
 
-	void GetMemoryStatistics(ICrySizer * s);
+	void GetMemoryStatistics(ICrySizer * s) override;
 
-	virtual void SetAnimTentacleParams(pe_params_rope& rope, float animBlend);
+	void SetAnimTentacleParams(pe_params_rope& rope, float animBlend) override;
 
-	virtual void AnimationEvent(ICharacterInstance *pCharacter, const AnimEventInstance &event);
+	void AnimationEvent(ICharacterInstance *pCharacter, const AnimEventInstance &event) override;
 
-	virtual void UpdateAnimGraph( IAnimationGraphState * pState );
+	void UpdateAnimGraph( IAnimationGraphState * pState ) override;
 
-	void FullSerialize( TSerialize ser );
+	void FullSerialize( TSerialize ser ) override;
 
 private:
 	void InitHeightVariance(SmartScriptTable &rTable);

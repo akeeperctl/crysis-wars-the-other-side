@@ -32,6 +32,11 @@ void CTOSTrooper::Update(SEntityUpdateContext& ctx, const int updateSlot)
 	const float regenStartDelay = m_pEnergyConsumer->GetRegenStartDelay();
 
 	NETINPUT_TRACE(GetEntityId(), regenStartDelay);
+	NETINPUT_TRACE(GetEntityId(), m_input.deltaMovement);
+	NETINPUT_TRACE(GetEntityId(), m_input.viewDir);
+	NETINPUT_TRACE(GetEntityId(), m_netBodyInfo.desiredSpeed);
+	NETINPUT_TRACE(GetEntityId(), m_netBodyInfo.deltaMov);
+	NETINPUT_TRACE(GetEntityId(), m_netBodyInfo.lookTarget);
 }
 
 bool CTOSTrooper::NetSerialize(const TSerialize ser, const EEntityAspects aspect, const uint8 profile, const int flags)

@@ -23,6 +23,7 @@ History:
 #include "Game.h"
 #include "GameCVars.h"
 #include "GameUtils.h"
+#include "NetInputChainDebug.h"
 
 const float CTrooper::CTentacle_maxTimeStep = 0.02f;
 const float CTrooper::CMaxHeadFOR = 0.5 * 3.14159f;
