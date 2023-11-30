@@ -15,7 +15,7 @@ namespace TOS_Inventory
 		return false;
 	};
 
-	inline bool SelectPrimary(IActor* pActor)
+	inline bool SelectPrimary(const IActor* pActor)
 	{
 		if (!pActor)
 			return false;
@@ -23,7 +23,7 @@ namespace TOS_Inventory
 		return Script::CallMethod(pActor->GetEntity()->GetScriptTable(), "SelectPrimaryWeapon");
 	};
 
-	inline bool SelectSecondary(IActor* pActor)
+	inline bool SelectSecondary(const IActor* pActor)
 	{
 		if (!pActor)
 			return false;
@@ -31,7 +31,7 @@ namespace TOS_Inventory
 		return Script::CallMethod(pActor->GetEntity()->GetScriptTable(), "SelectSecondaryWeapon");
 	};
 
-	inline void GiveEquipmentPack(IActor* pActor, const string& name, bool resetInventory = false)
+	inline void GiveEquipmentPack(IActor* pActor, const string& name, const bool resetInventory = false)
 	{
 		if (!pActor || name.empty())
 			return;
@@ -76,7 +76,6 @@ namespace TOS_Inventory
 					weaponNode->getAttr("type", type);
 
 					string weaponName = weaponNode->getTag();
-					bool isPrimary = false;
 
 					if (weaponName != primaryItemName)
 						g_pGame->GetIGameFramework()->GetIItemSystem()->GiveItem(pActor, weaponName, false, false, false);
