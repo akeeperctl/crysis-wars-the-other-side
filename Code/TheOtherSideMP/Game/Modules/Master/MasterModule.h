@@ -194,7 +194,7 @@ public:
 
 	//client variables
 	int    tos_cl_JoinAsMaster;
-	ICVar* tos_cl_SlaveEntityClass;
+	//ICVar* tos_cl_SlaveEntityClass;
 	int	   tos_cl_playerFeedbackSoundsVersion;
 	int	   tos_cl_nanosuitSoundsVersion;
 

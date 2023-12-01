@@ -19,9 +19,12 @@
 #include "TheOtherSideMP/Helpers/TOS_Entity.h"
 
 CTOSMasterModule::CTOSMasterModule()
-	: tos_sv_mc_LookDebugDraw(0),
-	tos_cl_JoinAsMaster(0),
-	tos_cl_SlaveEntityClass(nullptr),
+	: tos_cl_JoinAsMaster(0),
+	tos_cl_playerFeedbackSoundsVersion(0),
+	tos_cl_nanosuitSoundsVersion(0),
+	tos_sv_mc_LookDebugDraw(0),
+	//tos_cl_JoinAsMaster(0),
+	//tos_cl_SlaveEntityClass(nullptr),
 	tos_sv_SlaveSpawnDelay(0),
 	tos_sv_mc_StartControlDelay(0),
 	tos_sv_pl_inputAccel(0),
@@ -29,6 +32,11 @@ CTOSMasterModule::CTOSMasterModule()
 	tos_tr_double_jump_melee_energy_cost(0),
 	tos_tr_double_jump_melee_rest_seconds(0),
 	tos_tr_melee_energy_costs(0),
+	tos_tr_regen_energy_start_delay_sp(0),
+	tos_tr_regen_energy_start_delay_mp(0),
+	tos_tr_regen_energy_start_delay_20boundary(0),
+	tos_tr_regen_energy_recharge_time_sp(0),
+	tos_tr_regen_energy_recharge_time_mp(0),
 	m_pLocalMasterClient(nullptr)
 {
 	m_masters.clear();
@@ -99,21 +107,21 @@ void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEven
 				}
 			}
 
-			if(gEnv->bClient)
-			{
-				const int joinAsAlien = gEnv->pConsole->GetCVar("tos_cl_JoinAsMaster")->GetIVal();
-				if (joinAsAlien > 0)
-				{
-					const auto clientEntityId = g_pGame->GetIGameFramework()->GetClientActorId();
-					const auto pSlaveEntClsCvar = gEnv->pConsole->GetCVar("tos_cl_SlaveEntityClass");
-					assert(pSlaveEntClsCvar);
+			//if(gEnv->bClient)
+			//{
+				//const int joinAsAlien = gEnv->pConsole->GetCVar("tos_cl_JoinAsMaster")->GetIVal();
+				//if (joinAsAlien > 0)
+				//{
+					//const auto clientEntityId = g_pGame->GetIGameFramework()->GetClientActorId();
+					//const auto pSlaveEntClsCvar = gEnv->pConsole->GetCVar("tos_cl_SlaveEntityClass");
+					//assert(pSlaveEntClsCvar);
 
-					const auto params = NetMasterAddingParams(clientEntityId, pSlaveEntClsCvar->GetString());
+					//const auto params = NetMasterAddingParams(clientEntityId, pSlaveEntClsCvar->GetString());
 
-					assert(m_pSynchonizer);
-					m_pSynchonizer->RMISend(CTOSMasterSynchronizer::SvRequestMasterAdd(), params, eRMI_ToServer);
-				}
-			}
+					//assert(m_pSynchonizer);
+					//m_pSynchonizer->RMISend(CTOSMasterSynchronizer::SvRequestMasterAdd(), params, eRMI_ToServer);
+				//}
+			//}
 		}
 
 		break;
@@ -123,6 +131,14 @@ void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEven
 	{
 		if (gEnv->bServer)
 		{
+			const int    teamId =   g_pGame->GetGameRules()->GetTeam(pEntity->GetId());
+			const string teamName = g_pGame->GetGameRules()->GetTeamName(teamId);
+
+			if (!IsMaster(pEntity) && teamName == "aliens")
+			{
+				MasterAdd(pEntity, "Trooper");
+			}
+
 			if (IsMaster(pEntity))
 			{
 				STOSMasterInfo info;
@@ -170,6 +186,18 @@ void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEven
 		if (gEnv->bServer && pEntity)
 		{
 			const auto masterChannelId = event.int_value;
+			auto pPlayer = g_pGame->GetIGameFramework()->GetIActorSystem()->GetActorByChannelId(masterChannelId);
+			assert(pPlayer);
+
+			const int    teamId = g_pGame->GetGameRules()->GetTeam(pPlayer->GetEntityId());
+			const string teamName = g_pGame->GetGameRules()->GetTeamName(teamId);
+
+			// После sv_restart игрок начинает контролировать раба, но игрок не является мастером
+			// Поэтому нужно игрока добавить в ряды мастеров
+			if (!IsMaster(pPlayer->GetEntity()) && teamName == "aliens")
+			{
+				MasterAdd(pPlayer->GetEntity(), "Trooper");
+			}
 
 			//Обнаружен баг
 			//При sv_restart на сервере синхронизатор появляется раньше и раб тоже
@@ -270,6 +298,8 @@ void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEven
 
 					TOS_Entity::RemoveEntityForced(pSlave->GetId());
 				}
+
+				MasterRemove(pPlayer->GetEntity());
 			}
 		}
 

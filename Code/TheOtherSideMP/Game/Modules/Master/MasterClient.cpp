@@ -699,12 +699,13 @@ void CTOSMasterClient::StartControl(IEntity* pEntity, uint dudeFlags /*= 0*/, bo
 			pSynch->RMISend(CTOSMasterSynchronizer::SvRequestDelegateAuthority(), params1, eRMI_ToServer);
 
 
-			const auto pSlaveEntClsCvar = gEnv->pConsole->GetCVar("tos_cl_SlaveEntityClass");
-			assert(pSlaveEntClsCvar);
+			//const auto pSlaveEntClsCvar = gEnv->pConsole->GetCVar("tos_cl_SlaveEntityClass");
+			//assert(pSlaveEntClsCvar);
 
 			NetMasterAddingParams params2;
 			params2.entityId = m_pLocalDude->GetEntityId();
-			params2.desiredSlaveClassName = pSlaveEntClsCvar->GetString();
+			//params2.desiredSlaveClassName = pSlaveEntClsCvar->GetString();
+			params2.desiredSlaveClassName = "Trooper";
 
 			pSynch->RMISend(CTOSMasterSynchronizer::SvRequestMasterAdd(), params2, eRMI_ToServer);
 		}
@@ -1039,15 +1040,17 @@ void CTOSMasterClient::PrepareDude(const bool toStartControl, const uint dudeFla
         {
 	        // ReSharper disable once CppInconsistentNaming
 	        const auto dudeHP = m_pLocalDude->GetHealth();
-
-            if (dudeHP > 0)
+	        const auto spectatorMode = m_pLocalDude->GetSpectatorMode();
+			const auto inSpectatorMode = spectatorMode > CActor::eASM_None && spectatorMode < CActor::eASM_Cutscene;
+			
+            if (dudeHP > 0 || inSpectatorMode)
             {
 				pSuit->Reset(m_pLocalDude);
             }
 
             if (dudeFlags & TOS_DUDE_FLAG_DISABLE_SUIT)
             {
-				if (dudeHP > 0)
+				if (dudeHP > 0 || inSpectatorMode)
 				{
 					pSuit->SetModeDefect(NANOMODE_CLOAK, false);
 					pSuit->SetModeDefect(NANOMODE_SPEED, false);

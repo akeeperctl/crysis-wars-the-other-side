@@ -7,6 +7,9 @@
 
 //#include "Aliens/TOSTrooper.h"
 
+#include "GameRules.h"
+#include "NetInputChainDebug.h"
+
 #include "TheOtherSideMP/Extensions/EnergyСonsumer.h"
 #include "TheOtherSideMP/Game/TOSGameEventRecorder.h"
 #include "TheOtherSideMP/Game/Modules/Master/MasterClient.h"
@@ -223,6 +226,21 @@ void CTOSActor::Update(SEntityUpdateContext& ctx, const int updateSlot)
 			}
 		}
 	}
+
+	//int clTeamId = -1;
+	//int svTeamId = -1;
+
+	//if (gEnv->bClient)
+	//{
+	//	clTeamId = g_pGame->GetGameRules()->GetTeam(GetEntityId());
+	//}
+	//if (gEnv->bServer)
+	//{
+	//	svTeamId = g_pGame->GetGameRules()->GetTeam(GetEntityId());
+	//}
+
+	//NETINPUT_TRACE(GetEntityId(), clTeamId);
+	//NETINPUT_TRACE(GetEntityId(), svTeamId);
 }
 
 void CTOSActor::Release()

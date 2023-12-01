@@ -84,7 +84,7 @@ void STOSCvars::ReleaseCVars()
 	//pConsole->UnregisterVariable("tos_debug_log_aiactiontracker", true);
 	//pConsole->UnregisterVariable("tos_debug_log_all", true);
 	//pConsole->UnregisterVariable("tos_show_version", true);
-	pConsole->UnregisterVariable("tos_cl_SlaveEntityClass", true);
+	//pConsole->UnregisterVariable("tos_cl_SlaveEntityClass", true);
 	pConsole->UnregisterVariable("tos_cl_JoinAsMaster", true);
 
 	pConsole->UnregisterVariable("tos_any_EventRecorderLogVanilla", true);

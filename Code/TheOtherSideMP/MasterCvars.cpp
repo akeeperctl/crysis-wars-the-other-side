@@ -13,14 +13,14 @@ void CTOSMasterModule::InitCVars(IConsole* pConsole)
 	CTOSGenericModule::InitCVars(pConsole);
 
 	// консольные значения локального клиента
-	tos_cl_SlaveEntityClass = pConsole->RegisterString("tos_cl_SlaveEntityClass", "Trooper", VF_NOT_NET_SYNCED, 
-		"Class of entity that will be created as a slave for the client. "
-		"\n Usage: tos_cl_SlaveEntityClass Trooper", 
-		CTOSMasterModule::CVarSetDesiredSlaveCls);
+	//tos_cl_SlaveEntityClass = pConsole->RegisterString("tos_cl_SlaveEntityClass", "Trooper", VF_NOT_NET_SYNCED, 
+		//"Class of entity that will be created as a slave for the client. "
+		//"\n Usage: tos_cl_SlaveEntityClass Trooper", 
+		//CTOSMasterModule::CVarSetDesiredSlaveCls);
 
-	pConsole->Register("tos_cl_JoinAsMaster", &tos_cl_JoinAsMaster, 1, VF_NOT_NET_SYNCED, 
-		"When the client enters the game,"
-		"he will control a slave.");
+	//pConsole->Register("tos_cl_JoinAsMaster", &tos_cl_JoinAsMaster, 0, VF_NOT_NET_SYNCED, 
+		//"When the client enters the game,"
+		//"he will control a slave.");
 
 	pConsole->Register("tos_cl_playerFeedbackSoundsVersion", &tos_cl_playerFeedbackSoundsVersion, 1, VF_NOT_NET_SYNCED,
 		"Version of player character feedback sounds. \n 1 - from Crysis 1, \n 2 - from Crysis 2");
@@ -93,7 +93,7 @@ void CTOSMasterModule::ReleaseCVars()
 
 	const auto pConsole = gEnv->pConsole;
 
-	pConsole->UnregisterVariable("tos_cl_SlaveEntityClass", true);
+	//pConsole->UnregisterVariable("tos_cl_SlaveEntityClass", true);
 	pConsole->UnregisterVariable("tos_cl_JoinAsMaster", true);
 	pConsole->UnregisterVariable("tos_sv_SlaveSpawnDelay", true);
 	pConsole->UnregisterVariable("tos_sv_MasterStartControlDelay", true);
