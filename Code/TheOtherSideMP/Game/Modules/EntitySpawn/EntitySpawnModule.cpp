@@ -246,9 +246,25 @@ void CTOSEntitySpawnModule::Update(float frametime)
 			if (currentTime - schedPair.second.scheduledTimeStamp > 10.0f)
 			{
 				m_scheduledAuthorities.erase(scheduledId);
+				break;
 			}
 		}
 	}
+
+	// вызывает удаление раба после sv_restart
+	//for (auto& savedPair : m_savedSpawnParams)
+	//{
+	//	const EntityId savedId = savedPair.first;
+	//	const char* playerName = savedPair.second->authorityPlayerName.c_str();
+
+	//	const auto pPlayerEnt = gEnv->pEntitySystem->FindEntityByName(playerName);
+	//	if (!pPlayerEnt)
+	//	{
+	//		m_savedSpawnParams.erase(savedId);
+	//		RemoveEntityForced(savedId);
+	//		break;
+	//	}
+	//}
 }
 
 void CTOSEntitySpawnModule::Serialize(TSerialize ser)

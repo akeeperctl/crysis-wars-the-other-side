@@ -63,6 +63,9 @@ public:
 
 	void ProcessEvent(const EFlowEvent event, SActivationInfo* pActInfo) override
 	{
+		if (gEnv->bMultiplayer)
+			return;
+
 		switch (event)
 		{
 		case eFE_Initialize:

@@ -721,7 +721,7 @@ void CTOSMasterClient::StartControl(IEntity* pEntity, uint dudeFlags /*= 0*/, bo
 
 void CTOSMasterClient::StopControl(bool callFromFG /*= false*/)
 {
-	TOS_RECORD_EVENT(0, STOSGameEvent(eEGE_MasterClientOnStopControl, "", true));
+	TOS_RECORD_EVENT(0, STOSGameEvent(eEGE_MasterClientOnStopControl, callFromFG ? "from FG" : "", true));
 
 	const auto pHUD = g_pGame->GetHUD();
 	if (pHUD)
