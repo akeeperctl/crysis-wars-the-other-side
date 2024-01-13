@@ -61,6 +61,23 @@ struct NetMarkMeAsSlaveParams
 	}
 };
 
+struct NetHideMeParams
+{
+	NetHideMeParams()
+		: hide(false) {};
+
+	explicit NetHideMeParams(const bool _hide) :
+		hide(_hide)
+	{}
+
+	bool hide;
+
+	void SerializeWith(TSerialize ser)
+	{
+		ser.Value("hide", hide, 'bool');
+	}
+};
+
 /**
  * \brief Информация о состоянии тела актёра, передеваемая по сети
 	\note Канал, владеющий сущностью будет записывать данные, а остальные в т.ч сервер, будут принимать данные.
@@ -250,6 +267,9 @@ private:
 
 	DECLARE_SERVER_RMI_NOATTACH(SvRequestMarkMeAsSlave, NetMarkMeAsSlaveParams, eNRT_ReliableOrdered);
 	DECLARE_CLIENT_RMI_NOATTACH(ClMarkMeAsSlave, NetMarkMeAsSlaveParams, eNRT_ReliableOrdered);
+
+	DECLARE_SERVER_RMI_NOATTACH(SvRequestHideMe, NetHideMeParams, eNRT_ReliableOrdered);
+	DECLARE_CLIENT_RMI_NOATTACH(ClMarkHideMe, NetHideMeParams, eNRT_ReliableOrdered);
 
 protected:
 

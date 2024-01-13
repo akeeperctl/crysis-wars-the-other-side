@@ -1275,7 +1275,6 @@ function InstantAction:ProcessDeath(hit)
 	--TheOtherSide
 end
 
-
 ----------------------------------------------------------------------------------------------------
 function InstantAction:ResetScore(playerId)
 	self.game:SetSynchedEntityValue(playerId, self.SCORE_KILLS_KEY, 0);

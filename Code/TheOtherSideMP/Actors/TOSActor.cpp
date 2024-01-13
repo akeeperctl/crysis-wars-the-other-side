@@ -7,6 +7,7 @@
 
 //#include "Aliens/TOSTrooper.h"
 
+#include "Fists.h"
 #include "GameRules.h"
 #include "NetInputChainDebug.h"
 
@@ -506,6 +507,47 @@ IMPLEMENT_RMI(CTOSActor, ClMarkMeAsSlave)
 		TOS_Debug::GetAct(3), 
 		__FUNCTION__, 
 		params.slave);
+
+	return true;
+}
+
+IMPLEMENT_RMI(CTOSActor, SvRequestHideMe)
+{
+	// Описываем здесь всё, что будет выполняться на сервере
+
+	// 13.01.2024 Akeeper: Не уверен на счёт этих строк, но пусть они тут будут (519-521)
+	const auto* pFists = dynamic_cast<CFists*>(GetItemByClass(CItem::sFistsClass));
+	if (pFists)
+		g_pGame->GetIGameFramework()->GetIItemSystem()->SetActorItem(this, pFists->GetEntityId());
+
+	GetGameObject()->SetAspectProfile(eEA_Physics, params.hide ? eAP_Spectator : eAP_Alive);
+	GetGameObject()->InvokeRMI(ClMarkHideMe(), params, eRMI_ToAllClients);	
+
+	return true;
+}
+
+IMPLEMENT_RMI(CTOSActor, ClMarkHideMe)
+{
+	// Описываем здесь всё, что будет выполняться на клиенте
+
+	SActorStats* pActorStats = GetActorStats();
+	if (pActorStats)
+	{
+		//const auto* pFists = dynamic_cast<CFists*>(GetItemByClass(CItem::sFistsClass));
+		//if (pFists)
+		//	g_pGame->GetIGameFramework()->GetIItemSystem()->SetActorItem(this, pFists->GetEntityId());
+
+		pActorStats->isHidden = params.hide;
+
+		uint32 slotFlags = GetEntity()->GetSlotFlags(0);
+
+		if (params.hide)
+			slotFlags |= ENTITY_SLOT_RENDER;
+		else
+			slotFlags &= ~ENTITY_SLOT_RENDER;
+
+		GetEntity()->SetSlotFlags(0, slotFlags);
+	}
 
 	return true;
 }

@@ -650,8 +650,11 @@ void CTOSMasterClient::StartControl(IEntity* pEntity, uint dudeFlags /*= 0*/, bo
 	assert(pEntity);
 
     m_dudeFlags = dudeFlags;
-    PrepareDude(true, m_dudeFlags);
-    SetSlaveEntity(pEntity, pEntity->GetClass()->GetName());
+
+	// 13.01.2023 Akeeper: Я изменил порядок вызова функций.
+	// Подписанные номера это старая последовательность вызова по возрастанию
+    SetSlaveEntity(pEntity, pEntity->GetClass()->GetName());//2
+	PrepareDude(true, m_dudeFlags);//1
 
 	const auto pSlaveActor = GetSlaveActor();
 	const auto pHUD = g_pGame->GetHUD();
@@ -933,6 +936,25 @@ void CTOSMasterClient::PrepareDude(const bool toStartControl, const uint dudeFla
 			g_pGameActions->FilterMasterControlSlave()->Enable(true);
         }
 
+		if (dudeFlags & TOS_DUDE_FLAG_HIDE_MODEL)
+		{
+			// TODO: нужно вызывать RMI для выключения рендеринга на всех клиентах
+
+			m_pLocalDude->GetGameObject()->InvokeRMI(CTOSActor::SvRequestHideMe(), NetHideMeParams(true), eRMI_ToServer);
+		}
+
+		if (dudeFlags & TOS_DUDE_FLAG_BEAM_MODEL)
+		{
+			const Vec3 slavePos = m_pSlaveEntity->GetWorldPos();
+			const Quat slaveRot = m_pSlaveEntity->GetWorldRotation();
+
+			m_pLocalDude->GetEntity()->SetWorldTM(Matrix34::CreateTranslationMat(slavePos), 0);
+			m_pLocalDude->GetEntity()->SetRotation(slaveRot);
+
+			// Привязка работает от клиента к серверу без исп. RMI
+			m_pSlaveEntity->AttachChild(m_pLocalDude->GetEntity(), IEntity::ATTACHMENT_KEEP_TRANSFORMATION);
+		}
+
 		IInventory* pInventory = m_pLocalDude->GetInventory();
 		if (pInventory)
 		{
@@ -1001,6 +1023,16 @@ void CTOSMasterClient::PrepareDude(const bool toStartControl, const uint dudeFla
         {
 			g_pGameActions->FilterMasterControlSlave()->Enable(false);
         }
+
+		if (dudeFlags & TOS_DUDE_FLAG_HIDE_MODEL)
+		{
+			m_pLocalDude->GetGameObject()->InvokeRMI(CTOSActor::SvRequestHideMe(), NetHideMeParams(false), eRMI_ToServer);
+		}
+
+		if (dudeFlags & TOS_DUDE_FLAG_BEAM_MODEL)
+		{
+			m_pLocalDude->GetEntity()->DetachThis(IEntity::ATTACHMENT_KEEP_TRANSFORMATION, 0);
+		}
 
         //m_pLocalDude->InitInterference();
 		//gEnv->pConsole->GetCVar("hud_enableAlienInterference")->ForceSet("1");
