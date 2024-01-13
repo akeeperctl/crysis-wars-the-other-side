@@ -1,4 +1,4 @@
 echo off
 chdir ..
 chdir ..
-start Bin64\Crysis.exe -MOD TheOtherSide -devmode -dx9
+start Bin64\Crysis.exe -MOD CrysisTheOtherSide -devmode -dx9
