@@ -23,4 +23,11 @@ namespace TOS_Console
 		return gEnv->pConsole->GetCVar(varName)->GetIVal();
 	}
 
+	inline string GetSafeStringVar(const char* varName)
+	{
+		CHECK_CONSOLE_VAR_POINTER(varName, string());
+
+		return gEnv->pConsole->GetCVar(varName)->GetString();
+	}
+
 }

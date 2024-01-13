@@ -32,7 +32,9 @@ History:
 #include "HUD/HUDVehicleInterface.h"
 
 //TheOtherSide
+#include "NetInputChainDebug.h"
 #include "TheOtherSideMP/Actors/Player/TOSPlayer.h"
+#include "TheOtherSideMP/Helpers/TOS_Console.h"
 //TheOtherSide
 
 #define RANDOM() ((((float)cry_rand()/(float)RAND_MAX)*2.0f)-1.0f)
@@ -329,6 +331,8 @@ void CHUDRadar::Update(float fDeltaTime)
 	//auto pActor = dynamic_cast<CTOSActor*>(g_pTOSGame->GetActualClientActor());
 	if (!pActor)
 		return;
+
+	//NETINPUT_TRACE(pActor->GetEntityId(), m_iMultiplayerEnemyNear);
 	//TheOtherSide
 
 	if (pActor->GetHealth() <= 0)
@@ -975,29 +979,40 @@ void CHUDRadar::UpdateRadarEntities(CActor* pActor, float& fRadius, Matrix34& pl
 					bool scannedEnemy = false;
 					if (!mate && !unknownEnemyActor) //probably MP scanned enemy
 					{
-						friendly     = EEnemy;
+						friendly = EEnemy;
 						scannedEnemy = true;
 					}
 
 					if (unknownEnemyActor || scannedEnemy) //unknown or known enemy in MP !?
 					{
-						CPlayer* pPlayer = nullptr;
-						if (dynamic_cast<CActor*>(tempActor)->GetActorClass() == CPlayer::GetActorClassType())
-							pPlayer = dynamic_cast<CPlayer*>(tempActor);
+						//TheOtherSide
+						// if cloak enabled then disable mp threat
 
-						if (pPlayer && !(pPlayer->GetNanoSuit() && pPlayer->GetNanoSuit()->GetCloak()->GetState() != 0))
+						bool enableMPThreat = true;
+						auto pOtherPlayer = dynamic_cast<CTOSPlayer*>(tempActor);
+
+						if (pOtherPlayer)
+						{
+							enableMPThreat = pOtherPlayer->GetNanoSuit() && pOtherPlayer->GetNanoSuit()->GetCloak()->GetState() == 0;
+						}
+
+						if (enableMPThreat)
 						{
 							float length = vTransformed.GetLength();
 							if (length < 20.0f)
 							{
 								if (length < 0.1f)
 									length = 0.1f;
+
 								const int cLenThres = static_cast<int>(100.0f / length);
 								if (m_iMultiplayerEnemyNear < cLenThres)
 									m_iMultiplayerEnemyNear = cLenThres;
 							}
 						}
+
+						//~TheOtherSide
 					}
+
 					if (!scannedEnemy && !mate)
 						continue;
 				}
@@ -1049,6 +1064,17 @@ void CHUDRadar::UpdateCompassStealth(CActor* pActor, float fDeltaTime)
 	float fStealthValue       = 0;
 	float fStealthValueStatic = 0;
 
+	//TheOtherSide
+
+	// allowedTeamId - Команда игроков, у которой работает стелс бар в мультиплеере
+	// all - у всех команд игроков работает стелс бар в мультиплеере
+	const string allowedTeamName = TOS_Console::GetSafeStringVar("tos_sv_EnableMPStealthOMeterForTeam");
+
+	const int playerTeamId = g_pGame->GetGameRules()->GetTeam(pActor->GetEntityId());
+	const int allowedTeamId = g_pGame->GetGameRules()->GetTeamId(allowedTeamName.c_str());
+	const bool enableStealthOMeter = playerTeamId == allowedTeamId || allowedTeamName == "all";
+	//~TheOtherSide
+
 	if (!gEnv->bMultiplayer)
 	{
 		SAIDetectionLevels levels;
@@ -1068,7 +1094,7 @@ void CHUDRadar::UpdateCompassStealth(CActor* pActor, float fDeltaTime)
 			fStealthValueStatic = levels.puppetExposure * 100.0f;
 		}
 	}
-	else if (g_pGameCVars->g_enableMPStealthOMeter && m_iMultiplayerEnemyNear)
+	else if (g_pGameCVars->g_enableMPStealthOMeter && enableStealthOMeter && m_iMultiplayerEnemyNear)
 	{
 		fStealthValueStatic     = fStealthValue = m_iMultiplayerEnemyNear * 10.0f;
 		m_iMultiplayerEnemyNear = 0;

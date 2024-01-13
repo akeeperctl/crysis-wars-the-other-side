@@ -30,7 +30,8 @@ void STOSCvars::InitCVars(IConsole* pConsole)
 	tos_sv_ScoutMPEquipPack =  pConsole->RegisterString("tos_sv_ScoutMPEquipPack",    "Alien_Scout_Gunner", 0, "");
 	tos_sv_TrooperMPEquipPack = pConsole->RegisterString("tos_sv_TrooperMPEquipPack", "Alien_Trooper", 0, "");
 	tos_sv_HumanGruntMPEquipPack = pConsole->RegisterString("tos_sv_HumanGruntMPEquipPack", "NK_Pistol", 0, "");
-
+	tos_sv_HumanGruntMPEquipPack = pConsole->RegisterString("tos_sv_HumanGruntMPEquipPack", "NK_Pistol", 0, "");
+	tos_sv_EnableMPStealthOMeterForTeam = pConsole->RegisterString("tos_sv_EnableMPStealthOMeterForTeam", "aliens", 0, "Enable for only one Team. Teams: all, black, tan, aliens");
 
 	for (const auto pModule : g_pTOSGame->m_modules)
 		pModule->InitCVars(pConsole);
@@ -89,6 +90,7 @@ void STOSCvars::ReleaseCVars()
 
 	pConsole->UnregisterVariable("tos_any_EventRecorderLogVanilla", true);
 	pConsole->UnregisterVariable("tos_sv_EnableShotValidator", true);
+	pConsole->UnregisterVariable("tos_sv_EnableMPStealthOMeterForTeam", true);
 }
 
 void STOSCvars::CmdNetChName(IConsoleCmdArgs* pArgs)
