@@ -452,7 +452,11 @@ end
 
 ----------------------------------------------------------------------------------------------------
 function InstantAction.Server:OnClientConnect(channelId, reset, name)
-	local player = self:SpawnPlayer(channelId, name);
+	--TheOtherSide debug feature
+	--local player = self:SpawnPlayer(channelId, name);
+	local player = self:SpawnPlayer(channelId, "player"..channelId);
+	--TheOtherSide
+	
 
 	if (not reset) then
 		self.game:ChangeSpectatorMode(player.id, 2, NULL_ENTITY);
