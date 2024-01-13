@@ -26,6 +26,10 @@ public:
 	{
 		EIP_Start = 0,
 		EIP_Cancel,
+		EIP_BeamDude,
+		EIP_HideDude,
+		EIP_DisableSuit,
+		EIP_DisableActions,
 	};
 
 	enum EOutputPorts
@@ -39,6 +43,10 @@ public:
 		static const SInputPortConfig inputs[] = {
 			InputPortConfig_Void("Start", _HELP("Trigger to start controlling input actor")),
 			InputPortConfig_Void("Cancel", _HELP("Trigger to cancel controlling of input actor")),
+			InputPortConfig<bool>("BeamDude", _HELP("Beam dude to input actor position")),
+			InputPortConfig<bool>("HideDude", _HELP("Disable dude's model from rendering")),
+			InputPortConfig<bool>("DisableSuit", _HELP("Disable dude's nanosuit")),
+			InputPortConfig<bool>("DisableActions", _HELP("Disable dude's human actions")),
 			{nullptr}
 		};
 		static const SOutputPortConfig outputs[] = {
@@ -87,7 +95,20 @@ public:
 				if (pMC->GetSlaveEntity())
 					pMC->StopControl(true);
 
-				pMC->StartControl(pInputEntity, TOS_DUDE_FLAG_DISABLE_SUIT | TOS_DUDE_FLAG_ENABLE_ACTION_FILTER, true);
+				uint flags = 0;
+				if (GetPortBool(pActInfo, EIP_BeamDude))
+					flags |= TOS_DUDE_FLAG_BEAM_MODEL;
+
+				if (GetPortBool(pActInfo, EIP_HideDude))
+					flags |= TOS_DUDE_FLAG_HIDE_MODEL;
+
+				if (GetPortBool(pActInfo, EIP_DisableSuit))
+					flags |= TOS_DUDE_FLAG_DISABLE_SUIT;
+
+				if (GetPortBool(pActInfo, EIP_DisableActions))
+					flags |= TOS_DUDE_FLAG_ENABLE_ACTION_FILTER;
+
+				pMC->StartControl(pInputEntity, flags, true);
 			}
 			else if (IsPortActive(pActInfo, EIP_Cancel))
 			{
