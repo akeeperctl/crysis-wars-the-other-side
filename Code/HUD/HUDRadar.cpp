@@ -32,6 +32,10 @@ History:
 #include "HUD/HUDScopes.h"
 #include "HUD/HUDVehicleInterface.h"
 
+//TheOtherSide
+#include "TheOtherSideMP/Actors/Player/TOSPlayer.h"
+//TheOtherSide
+
 #define RANDOM() ((((float)cry_rand()/(float)RAND_MAX)*2.0f)-1.0f)
 
 const static float fRadarSizeOverTwo = 47.0f;
@@ -321,9 +325,13 @@ void CHUDRadar::Update(float fDeltaTime)
 	if(!m_flashRadar)
 		return; //we require the flash radar now
 
+	//TheOtherSide
 	CActor *pActor = static_cast<CActor *>(gEnv->pGame->GetIGameFramework()->GetClientActor());
+	//auto pActor = dynamic_cast<CTOSActor*>(g_pTOSGame->GetActualClientActor());
 	if (!pActor)
 		return;
+	//TheOtherSide
+
 	if(pActor->GetHealth() <= 0)
 	{
 		if(gEnv->bMultiplayer)
@@ -345,21 +353,30 @@ void CHUDRadar::Update(float fDeltaTime)
 	float now = gEnv->pTimer->GetFrameStartTime().GetSeconds();
 	float fRadius = fRadarDefaultRadius;
 	if(m_mapRadarRadius[m_mapId] > 2)
-		fRadius = (float)m_mapRadarRadius[m_mapId];
+		fRadius = static_cast<float>(m_mapRadarRadius[m_mapId]);
 
 	//check for a broadscan:
-	if(m_startBroadScanTime && now - m_startBroadScanTime > 1.5f)
+	if(m_startBroadScanTime > 0.0f && now - m_startBroadScanTime > 1.5f)
 		StartBroadScan();
 
 	m_fTime += fDeltaTime * 3.0f;
-	IRenderer *pRenderer = gEnv->pRenderer;
-	float fWidth43 = pRenderer->GetHeight()*1.333f;
 	float lowerBoundX = m_fX - fRadarSizeOverTwo;	//used for flash radar position computation
 
-	CPlayer *pPlayer = static_cast<CPlayer*> (pActor);
+	//TheOtherSide
+	//auto pPlayer = dynamic_cast<CTOSPlayer*>(pActor);
+	//auto pPlayer = dynamic_cast<CTOSPlayer*>(g_pGame->GetIGameFramework()->GetClientActor());
+	//auto pPlayer = dynamic_cast<CTOSActor*>(g_pGame->GetIGameFramework()->GetClientActor());
+	//Matrix34 playerViewMtxInverted = pPlayer->GetViewMatrix().GetInverted();
 
-	Matrix34	playerViewMtxInverted = pPlayer->GetViewMatrix().GetInverted();
-	Vec3			playerViewMtxTranslation = pPlayer->GetViewMatrix().GetTranslation();
+	// Главное изменение здесь
+	// Обманка для матрицы, чтобы ротация бралась с камеры,
+	// а позиция с игрока.
+	// Итог: иконки теперь отображаются как надо.
+	Matrix34 camMatrix = gEnv->pRenderer->GetCamera().GetMatrix();
+	camMatrix.SetTranslation(pActor->GetEntity()->GetWorldPos());
+
+	Matrix34 playerViewMtxInverted = camMatrix.GetInverted();
+	//TheOtherSide
 
 	//CompassStealth***************************************************************
 	UpdateCompassStealth(pActor, fDeltaTime);
@@ -407,7 +424,6 @@ void CHUDRadar::Update(float fDeltaTime)
 
 			FlashRadarFaction faction = ENeutral;
 			float fAngle = 0.0f;
-			float distSq = scaledX*scaledX+scaledY*scaledY;
 
 			float fX = m_fX + vTransformed.x;
 			float fY = m_fY - vTransformed.y;
@@ -432,13 +448,22 @@ void CHUDRadar::Update(float fDeltaTime)
 			}
 
 			if(it->second.secondaryObjective)
-				faction = (FlashRadarFaction)(int(faction)+2);	//yellow version
+				faction = static_cast<FlashRadarFaction>(static_cast<int>(faction) + 2);	//yellow version
 
 			//in flash
 			float lowerBoundY = m_fY - fRadarSizeOverTwo;
 			float dimX = (m_fX + fRadarSizeOverTwo) - lowerBoundX;
 			float dimY = (m_fY + fRadarSizeOverTwo) - lowerBoundY;
-			numOfValues += ::FillUpDoubleArray(&entityValues, pEntity->GetId(), 5 /* MO */, (fX - lowerBoundX) / dimX, (fY - lowerBoundY) / dimY, 180+RAD2DEG(fAngle), faction, 75.0f, fAlpha*100.0f);
+
+			numOfValues += ::FillUpDoubleArray(&entityValues, 
+				pEntity->GetId(), 
+				5 /* MO */, 
+				(fX - lowerBoundX) / dimX, 
+				(fY - lowerBoundY) / dimY, 
+				180+RAD2DEG(fAngle), 
+				faction, 
+				75.0f, 
+				fAlpha*100.0f);
 		}
 	}
 

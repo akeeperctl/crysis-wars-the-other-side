@@ -938,8 +938,6 @@ void CTOSMasterClient::PrepareDude(const bool toStartControl, const uint dudeFla
 
 		if (dudeFlags & TOS_DUDE_FLAG_HIDE_MODEL)
 		{
-			// TODO: нужно вызывать RMI для выключения рендеринга на всех клиентах
-
 			m_pLocalDude->GetGameObject()->InvokeRMI(CTOSActor::SvRequestHideMe(), NetHideMeParams(true), eRMI_ToServer);
 		}
 
