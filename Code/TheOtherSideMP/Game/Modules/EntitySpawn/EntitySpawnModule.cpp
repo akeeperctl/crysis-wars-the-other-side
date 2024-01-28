@@ -290,8 +290,7 @@ IEntity* CTOSEntitySpawnModule::SpawnEntity(STOSEntitySpawnParams& params, bool 
 		bool alreadyHaveSaved = iter.second->authorityPlayerName == params.authorityPlayerName;
 		if (alreadyHaveSaved)
 		{
-			if (gEnv->pSystem->IsDevMode())
-				CryLogAlways("%s[C++][SpawnEntity] Slave entity spawn interrupted! The system already has a saved slave for player %s", STR_YELLOW, params.authorityPlayerName);
+			CryLogAlwaysDev("%s[C++][SpawnEntity] Slave entity spawn interrupted! The system already has a saved slave for player %s", TOS_COLOR_YELLOW, params.authorityPlayerName);
 
 			return nullptr;
 		}
@@ -356,8 +355,8 @@ bool CTOSEntitySpawnModule::SpawnEntityDelay(STOSEntityDelaySpawnParams& params,
 		if (alreadyHaveSaved)
 		{
 			if (gEnv->pSystem->IsDevMode())
-				CryLogAlways("%s[C++][SpawnEntityDelay] Warning!!! The system already has a saved slave(id:%i) for player %s", STR_YELLOW, savedIter.first, params.authorityPlayerName);
-			//CryLogAlways("%s[C++][SpawnEntityDelay] The system already has a saved slave for player %s -> force old deletion...", STR_YELLOW, params.authorityPlayerName);
+				CryLogAlways("%s[C++][SpawnEntityDelay] Warning!!! The system already has a saved slave(id:%i) for player %s", TOS_COLOR_YELLOW, savedIter.first, params.authorityPlayerName);
+			//CryLogAlways("%s[C++][SpawnEntityDelay] The system already has a saved slave for player %s -> force old deletion...", TOS_COLOR_YELLOW, params.authorityPlayerName);
 
 			//RemoveEntityForced(savedIter.first);
 

@@ -39,7 +39,7 @@ namespace TOS_Vehicle
 		}
 
 		//if (freeSeatIndex == -1)
-		//CryLogAlways("%s[C++][WARNING][RequestFreeSeatIndex return -1]", STR_YELLOW);
+		//CryLogAlways("%s[C++][WARNING][RequestFreeSeatIndex return -1]", TOS_COLOR_YELLOW);
 
 		return freeSeatIndex;
 	}
@@ -63,7 +63,7 @@ namespace TOS_Vehicle
 		}
 
 		if (gunnerSeatIndex == -1)
-			CryLogAlways("%s[C++][WARNING][RequestGunnerSeatIndex return -1]", STR_YELLOW);
+			CryLogAlways("%s[C++][WARNING][RequestGunnerSeatIndex return -1]", TOS_COLOR_YELLOW);
 
 		return gunnerSeatIndex;
 	}
