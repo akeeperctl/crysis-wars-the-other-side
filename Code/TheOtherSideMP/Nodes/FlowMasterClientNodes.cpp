@@ -6,21 +6,27 @@
 
 #include "TheOtherSideMP/Game/Modules/Master/MasterClient.h"
 #include "TheOtherSideMP/Game/Modules/Master/MasterModule.h"
-#include "TheOtherSideMP/Helpers/TOS_NET.h"
 
-class CFlowMCStartControl final : public CFlowBaseNode
+class CFlowNode_MCStartControl final : public CFlowBaseNode
 {
+	int m_savedItemsCount;
+	EntityId m_currentDudeItemId;
+	std::map<unsigned int, EntityId> m_savedItems;
+
 public:
-	explicit CFlowMCStartControl(SActivationInfo* pActInfo)
+	explicit CFlowNode_MCStartControl(SActivationInfo* pActInfo)
 	{
+		m_savedItemsCount = 0;
+		m_currentDudeItemId = 0;
+		m_savedItems.clear();
 	}
 
-	~CFlowMCStartControl() override = default;
+	~CFlowNode_MCStartControl() override = default;
 
-	IFlowNodePtr Clone(SActivationInfo* pActInfo) override
-	{
-		return new CFlowMCStartControl(pActInfo);
-	}
+	//IFlowNodePtr Clone(SActivationInfo* pActInfo) override
+	//{
+	//	return new CFlowNode_MCStartControl(pActInfo);
+	//}
 
 	enum EInputPorts
 	{
@@ -30,6 +36,7 @@ public:
 		EIP_HideDude,
 		EIP_DisableSuit,
 		EIP_DisableActions,
+		EIP_SaveItems,
 	};
 
 	enum EOutputPorts
@@ -37,6 +44,53 @@ public:
 		EOP_Started = 0,
 		EOP_Done,
 	};
+
+	bool StoreInventoryItems(const IActor* pActor)
+	{
+		m_savedItemsCount = 0;
+		if (pActor)
+		{
+			const IInventory* pInventory = pActor->GetInventory();
+			if (pInventory)
+			{
+				m_savedItemsCount = pInventory->GetCount();
+
+				//Clean massive
+				m_savedItems.clear();
+
+				//Push items id values to massive
+				for (int slot = 0; slot <= m_savedItemsCount; slot++)
+				{
+					const EntityId itemId = pInventory->GetItem(slot);
+					m_savedItems[slot] = itemId;
+				}
+
+				m_currentDudeItemId = pInventory->GetCurrentItem();
+
+				return true;
+			}
+		}
+		return false;
+	}
+
+	void RestoreInventoryItems(IActor* pActor)
+	{
+		if (pActor)
+		{
+			IInventory* pInventory = pActor->GetInventory();
+			if (pInventory)
+			{
+				for (int slot = 0; slot <= m_savedItemsCount; slot++)
+				{
+					const EntityId itemId = m_savedItems[slot];
+					pInventory->AddItem(itemId);
+				}
+
+				const auto pPlayer = dynamic_cast<CTOSActor*>(pActor);
+				pPlayer->SelectItem(m_currentDudeItemId, true);
+			}
+		}
+	}
 
 	void GetConfiguration(SFlowNodeConfig& config) override
 	{
@@ -47,6 +101,7 @@ public:
 			InputPortConfig<bool>("HideDude", _HELP("Disable dude's model from rendering")),
 			InputPortConfig<bool>("DisableSuit", _HELP("Disable dude's nanosuit")),
 			InputPortConfig<bool>("DisableActions", _HELP("Disable dude's human actions")),
+			InputPortConfig<bool>("SaveItems", _HELP("Save/load dude's inventory items before/after start control")),
 			{nullptr}
 		};
 		static const SOutputPortConfig outputs[] = {
@@ -57,7 +112,7 @@ public:
 		config.nFlags |= EFLN_TARGET_ENTITY;
 		config.pInputPorts = inputs;
 		config.pOutputPorts = outputs;
-		config.sDescription = _HELP("Master Client Start/Stop");
+		config.sDescription = _HELP("*Work only in singleplayer gamerules* Master Client Start/Stop control slave");
 		config.SetCategory(EFLN_DEBUG);
 	}
 
@@ -93,10 +148,29 @@ public:
 			if (!pInputEntity)
 				return;
 
+			const auto pDudePlayer = dynamic_cast<CTOSPlayer*>(g_pGame->GetIGameFramework()->GetClientActor());
+			if (!pDudePlayer)
+				return;
+
+			if (pDudePlayer->GetLinkedVehicle())
+			{
+				CryLogAlwaysDev("%s[%s][%s] Player %s cannot start control Slave %s while in a vehicle", 
+					TOS_COLOR_YELLOW, 
+					TOS_Debug::GetEnv(), 
+					TOS_Debug::GetAct(1), 
+					pDudePlayer->GetEntity()->GetName(),
+					pInputEntity->GetName());
+
+				return;
+			}
+
 			if (IsPortActive(pActInfo, EIP_Start))
 			{
 				if (pMC->GetSlaveEntity())
 					pMC->StopControl(true);
+
+				if (GetPortBool(pActInfo, EIP_SaveItems))
+					StoreInventoryItems(pDudePlayer);
 
 				uint flags = 0;
 				if (GetPortBool(pActInfo, EIP_BeamDude))
@@ -112,11 +186,18 @@ public:
 					flags |= TOS_DUDE_FLAG_ENABLE_ACTION_FILTER;
 
 				pMC->StartControl(pInputEntity, flags, true);
+
+				ActivateOutput(pActInfo, EOP_Started, 1);
 			}
 			else if (IsPortActive(pActInfo, EIP_Cancel))
 			{
 				if (pMC->GetSlaveEntity())
 					pMC->StopControl(true);
+
+				if (GetPortBool(pActInfo, EIP_SaveItems))
+					RestoreInventoryItems(pDudePlayer);
+
+				ActivateOutput(pActInfo, EOP_Done, 1);
 			}
 
 		}
@@ -129,8 +210,15 @@ public:
 		s->Add(*this);
 	}
 
+	void Serialize(SActivationInfo* pActInfo, TSerialize ser) override
+	{
+		ser.BeginGroup("CFlowNode_MCStartControl");
+		//ser.Value("entityId", m_EntityId, 'eid');
+		ser.Value("m_savedItems", m_savedItems);
+		ser.EndGroup();
+	}
 	SActivationInfo m_actInfo;
 	//~INanoSuitListener
 };
 
-REGISTER_FLOW_NODE("TOSMasterClient:StartControl", CFlowMCStartControl);
+REGISTER_FLOW_NODE("TOSMasterClient:StartControl", CFlowNode_MCStartControl);

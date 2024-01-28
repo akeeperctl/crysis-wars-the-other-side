@@ -824,6 +824,8 @@ void CTOSMasterClient::StopControl(bool callFromFG /*= false*/)
 	PrepareDude(false, m_dudeFlags);
     ClearSlaveEntity();
 
+	m_movementRequest.RemoveDeltaMovement();
+
 	if (callFromFG)
 	{
 		const auto pSynch = g_pTOSGame->GetMasterModule()->GetSynchronizer();

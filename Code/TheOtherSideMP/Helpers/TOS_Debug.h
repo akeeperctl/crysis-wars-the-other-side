@@ -3,14 +3,14 @@
 #include "ISystem.h"
 #include "IRenderer.h"
 
-#define STR_BLUE TOS_Debug::GetLogColor(ELogColor::blue)
-#define STR_BROWN TOS_Debug::GetLogColor(ELogColor::brown)
-#define STR_CYAN TOS_Debug::GetLogColor(ELogColor::cyan)
-#define STR_GREEN TOS_Debug::GetLogColor(ELogColor::green)
-#define STR_GREY TOS_Debug::GetLogColor(ELogColor::grey)
-#define STR_PURPLE TOS_Debug::GetLogColor(ELogColor::purple)
-#define STR_RED TOS_Debug::GetLogColor(ELogColor::red)
-#define STR_YELLOW TOS_Debug::GetLogColor(ELogColor::yellow)
+#define TOS_COLOR_BLUE TOS_Debug::GetLogColor(ELogColor::blue)
+#define TOS_COLOR_BROWN TOS_Debug::GetLogColor(ELogColor::brown)
+#define TOS_COLOR_CYAN TOS_Debug::GetLogColor(ELogColor::cyan)
+#define TOS_COLOR_GREEN TOS_Debug::GetLogColor(ELogColor::green)
+#define TOS_COLOR_GREY TOS_Debug::GetLogColor(ELogColor::grey)
+#define TOS_COLOR_PURPLE TOS_Debug::GetLogColor(ELogColor::purple)
+#define TOS_COLOR_RED TOS_Debug::GetLogColor(ELogColor::red)
+#define TOS_COLOR_YELLOW TOS_Debug::GetLogColor(ELogColor::yellow)
 
 #define DRAW_2D_TEXT(x,y,size,format,...)\
 	if (gEnv && gEnv->pSystem)\
