@@ -488,11 +488,12 @@ IMPLEMENT_RMI(CTOSActor, SvRequestMarkMeAsSlave)
 	m_isSlave = params.slave;
 	GetGameObject()->InvokeRMI(ClMarkMeAsSlave(), params, eRMI_ToAllClients);
 
-	CryLogAlways("[C++][%s][%s][%s] mark as slave = %i",
+	CryLogAlwaysDev("[C++][%s][%s][%s] mark as slave = %i",
 		TOS_Debug::GetEnv(),
 		TOS_Debug::GetAct(3),
 		__FUNCTION__,
 		params.slave);
+	
 
 	return true;
 }
@@ -503,10 +504,10 @@ IMPLEMENT_RMI(CTOSActor, ClMarkMeAsSlave)
 
 	m_isSlave = params.slave;
 
-	CryLogAlways("[C++][%s][%s][%s] mark as slave = %i", 
-		TOS_Debug::GetEnv(), 
-		TOS_Debug::GetAct(3), 
-		__FUNCTION__, 
+	CryLogAlwaysDev("[C++][%s][%s][%s] mark as slave = %i",
+		TOS_Debug::GetEnv(),
+		TOS_Debug::GetAct(3),
+		__FUNCTION__,
 		params.slave);
 
 	return true;

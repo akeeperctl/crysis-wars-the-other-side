@@ -41,7 +41,7 @@ void CTOSEnergyConsumer::PostInit(IGameObject* pGameObject)
 	pGameObject->SetUpdateSlotEnableCondition(this, 0, eUEC_Always);
 	pGameObject->EnablePostUpdates(this);
 
-	CryLogAlways("[%s][%s][%s] for GameObject %s with energy %1.f", TOS_Debug::GetEnv(), TOS_Debug::GetAct(1), __FUNCTION__, pGameObject->GetEntity()->GetName(), m_maxEnergy);
+	CryLogAlwaysDev("[%s][%s][%s] for GameObject %s with energy %1.f", TOS_Debug::GetEnv(), TOS_Debug::GetAct(1), __FUNCTION__, pGameObject->GetEntity()->GetName(), m_maxEnergy);
 }
 
 void CTOSEnergyConsumer::InitClient(int channelId) { }
