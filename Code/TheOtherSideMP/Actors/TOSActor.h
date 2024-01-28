@@ -9,7 +9,8 @@ struct STOSSlaveStats
 {
 	STOSSlaveStats()
 		: lookAtFriend(false),
-		jumpCount(0)
+		jumpCount(0),
+		chargingJumpPressDur(0)
 	{ }
 
 	//TODO: 10/15/2023, 20:26 нужно добавить механики
@@ -23,6 +24,7 @@ struct STOSSlaveStats
 	CCoherentValue<bool> lookAtFriend;
 
 	uint jumpCount;
+	float chargingJumpPressDur;
 };
 
 struct NetPlayAnimationParams
@@ -253,6 +255,7 @@ public:
 	bool IsLocalSlave() const; ///< проверка на локальной машине является ли актёр рабом
 
 	virtual CTOSEnergyConsumer* GetEnergyConsumer() const;
+	bool IsHaveChargingJump() const {return m_chargingJump;}
 
 private:
 
@@ -272,6 +275,7 @@ private:
 	DECLARE_CLIENT_RMI_NOATTACH(ClMarkHideMe, NetHideMeParams, eNRT_ReliableOrdered);
 
 protected:
+	bool m_chargingJump;///< Если *true, то высота прыжка зависит от длительности нажатия на дейсвие прыжка [jump]
 
 	STOSSlaveStats m_slaveStats;
 	//Vec3 m_filteredDeltaMovement;

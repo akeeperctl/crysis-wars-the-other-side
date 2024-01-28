@@ -14,6 +14,7 @@ CTOSTrooper::~CTOSTrooper() = default;
 void CTOSTrooper::PostInit(IGameObject* pGameObject)
 {
 	CTrooper::PostInit(pGameObject);
+	m_chargingJump = true;
 
 	if (m_pEnergyConsumer)
 	{
@@ -153,7 +154,11 @@ void CTOSTrooper::ProcessJump(const CMovementRequest& request)
 
 		//const float inAir = pActorStats->inAir;
 		const float     onGround  = pActorStats->onGround;
-		constexpr float jumpForce = 10.0f;
+
+		const float		jumpPressDur = pSlaveStats->chargingJumpPressDur;
+		constexpr float jumpForce = 6.0f;
+		//const float		finalOnceJumpForce = clamp(jumpForce * (jumpPressDur * 2), 5, 15);
+		const float		finalOnceJumpForce = jumpPressDur > TOS_Console::GetSafeFloatVar("tos_sv_chargingJumpInputTime") ? jumpForce + 4.0f : jumpForce;
 
 		const float doubleJumpCost = TOS_Console::GetSafeFloatVar("tos_tr_double_jump_energy_cost");
 		const float energy = TOS_SAFE_GET_ENERGY(this);
@@ -162,11 +167,13 @@ void CTOSTrooper::ProcessJump(const CMovementRequest& request)
 		if (onGround > 0.25f)
 		{
 			pSlaveStats->jumpCount++;
-			jumpVec.z = upDir.z * jumpForce; //400.0f
+			jumpVec.z = upDir.z * finalOnceJumpForce; //400.0f
 
 			//GetEntity()->GetPhysics()->Action(&impulse);
 			animCharRequest.velocity += jumpVec;
 			m_pAnimatedCharacter->AddMovement(animCharRequest);
+
+			pSlaveStats->chargingJumpPressDur = 0.0f;
 
 			//TODO
 			//NetPlayAnimAction("CTRL_JumpStart", false);

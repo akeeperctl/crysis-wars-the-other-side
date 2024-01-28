@@ -71,6 +71,7 @@ struct STOSCvars  // NOLINT(cppcoreguidelines-special-member-functions)
 	int tos_any_EventRecorderLogVanilla;
 
 	int tos_cl_ShowModVersion;
+	float tos_sv_chargingJumpInputTime;
 };
 
 extern STOSCvars* g_pTOSGameCvars;

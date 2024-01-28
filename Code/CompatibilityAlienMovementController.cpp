@@ -51,6 +51,7 @@ bool CCompatibilityAlienMovementController::RequestMovement( CMovementRequest& r
 	}
 
 	//TheOtherSide
+
 	if (request.HasDeltaMovement())
 	{
 		os.vDeltaMovement = request.GetDeltaMovement();

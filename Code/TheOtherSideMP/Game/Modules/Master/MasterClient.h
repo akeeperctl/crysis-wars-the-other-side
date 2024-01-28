@@ -4,8 +4,6 @@
 
 #include <IGameFramework.h>
 #include <IGameRulesSystem.h>
-#include <IHardwareMouse.h>
-#include <ILevelSystem.h>
 #include <IVehicleSystem.h>
 
 #include <TheOtherSideMP/Actors/player/TOSPlayer.h>
@@ -20,6 +18,12 @@ enum ETOSDudePrepareFlags
 	//TOS_DUDE_FLAG_CLEAR_INVENTORY      = BIT(2),
 	TOS_DUDE_FLAG_DISABLE_SUIT         = BIT(2),
 	TOS_DUDE_FLAG_ENABLE_ACTION_FILTER = BIT(3)
+};
+
+enum ETOSActionFlags
+{
+	TOS_PRESSED = BIT(0),
+	TOS_HOLD = BIT(1),
 };
 
 class CTOSHUDCrosshair;
@@ -119,13 +123,14 @@ public:
 	// ~IActionListener
 
 private:
-	bool OnActionAttack(const CTOSActor* pActor, const ActionId& actionId, int activationMode, float value);
-	bool OnActionSpecial(CTOSActor* pActor, const ActionId& actionId, int activationMode, float value);
-	bool OnActionMoveForward(CTOSActor* pActor, const ActionId& actionId, int activationMode, float value);
-	bool OnActionMoveBack(CTOSActor* pActor,const ActionId& actionId, int activationMode, float value);
-	bool OnActionMoveLeft(CTOSActor* pActor,const ActionId& actionId, int activationMode, float value);
-	bool OnActionMoveRight(CTOSActor* pActor,const ActionId& actionId, int activationMode, float value);
-	bool OnActionJump(CTOSActor* pActor,const ActionId& actionId, int activationMode, float value);
+	bool OnActionAttack(const CTOSActor* pActor, const ActionId& actionId, int activationMode, float value, float pressedDur = 0);
+	bool OnActionSpecial(CTOSActor* pActor, const ActionId& actionId, int activationMode, float value, float pressedDur = 0);
+	bool OnActionMoveForward(CTOSActor* pActor, const ActionId& actionId, int activationMode, float value, float pressedDur = 0);
+	bool OnActionMoveBack(CTOSActor* pActor,const ActionId& actionId, int activationMode, float value, float pressedDur = 0);
+	bool OnActionMoveLeft(CTOSActor* pActor,const ActionId& actionId, int activationMode, float value, float pressedDur = 0);
+	bool OnActionMoveRight(CTOSActor* pActor,const ActionId& actionId, int activationMode, float value, float pressedDur = 0);
+	bool OnActionJump(CTOSActor* pActor,const ActionId& actionId, int activationMode, float value, float pressedDur = 0);
+	bool OnActionHoldTest(CTOSActor* pActor,const ActionId& actionId, int activationMode, float value, float pressedDur = 0);
 
 public:
 
@@ -183,6 +188,8 @@ public:
 
 
 private:
+	void OnActionDelayReleased(const ActionId action, float pressedTimeLen);
+
 	void SendMovementRequest(IMovementController* pController);
 
 	//void ProcessMeleeDamage() const;
@@ -217,6 +224,9 @@ private:
 	SCameraInfo m_cameraInfo;
 	SCrosshairInfo m_crosshairInfo;
 	SLookFireInfo m_lookfireInfo;
+	
+	std::map<ActionId, float> m_actionPressedDuration;
+	std::map<ActionId, uint> m_actionFlags;
 
 public:
 	//static constexpr int INPUT_ASPECT = eEA_GameClientDynamic;

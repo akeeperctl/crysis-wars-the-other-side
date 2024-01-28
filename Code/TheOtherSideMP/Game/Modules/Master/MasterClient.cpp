@@ -25,14 +25,18 @@
 #include "HUD/HUD.h"
 #include "HUD/HUDCrosshair.h"
 
-#include "TheOtherSideMP/Actors/Aliens/TOSTrooper.h"
 #include "TheOtherSideMP/Control/ControlSystem.h"
 #include "TheOtherSideMP/Helpers/TOS_AI.h"
+#include "TheOtherSideMP/Helpers/TOS_Console.h"
 #include "TheOtherSideMP/HUD/TOSCrosshair.h"
 
-#define ASSING_ACTION(pActor, actionId, checkActionId, func)\
-if ((actionId) == (checkActionId))\
-	func((pActor), (actionId), activationMode, value)\
+// Akeeper 28.01.2024:
+// Проблема: действия будут отпускаться 2 раза подряд. Может вызвать баги.
+// Решение: если режим активации - отпустить, то вызывать другую функцию, которая будет вызывать уже эту
+// с указанным временем нажатия.
+#define ASSING_ACTION(pActor, actionId, activationMode, pressedDuration, checkActionId, func)\
+if ( (actionId) == (checkActionId) )\
+	func( (pActor), (actionId), (activationMode), value, (pressedDuration))\
 
 CTOSMasterClient::CTOSMasterClient(CTOSPlayer* pPlayer)
 	: m_pLocalDude(pPlayer),
@@ -124,17 +128,43 @@ void CTOSMasterClient::OnAction(const ActionId& action, const int activationMode
 	if (!pSlaveActor)
         return;
 
-	ASSING_ACTION(pSlaveActor, action, rGA.attack1, OnActionAttack);
-	ASSING_ACTION(pSlaveActor, action, rGA.special, OnActionSpecial);// it is melee
-	ASSING_ACTION(pSlaveActor, action, rGA.moveforward, OnActionMoveForward);
-	ASSING_ACTION(pSlaveActor, action, rGA.moveback, OnActionMoveBack);
-	ASSING_ACTION(pSlaveActor, action, rGA.moveleft, OnActionMoveLeft);
-	ASSING_ACTION(pSlaveActor, action, rGA.moveright, OnActionMoveRight);
-	ASSING_ACTION(pSlaveActor, action, rGA.jump, OnActionJump);
+	float pressedDuration = 0.0f;
+
+	// Здесь описана логика удержания клавиши нажатой и как долго она была в таком состоянии
+	// Используется, когда высота прыжка зависит от длительности нажатия на действие прыжка [jump]
+	if (activationMode == eAAM_OnPress)
+	{
+		m_actionFlags[action] |= TOS_PRESSED;
+	}
+	else if (activationMode == eAAM_OnRelease)
+	{
+		if (m_actionFlags[action] & TOS_PRESSED)
+		{
+			pressedDuration = stl::find_in_map(m_actionPressedDuration, action, 0.0f);
+
+			OnActionDelayReleased(action, pressedDuration);
+		}
+
+		m_actionFlags[action] &= ~TOS_PRESSED;
+		m_actionFlags[action] &= ~TOS_HOLD;
+	}
+
+	if (activationMode == eAAM_OnHold)
+	{
+		m_actionFlags[action] |= TOS_HOLD;
+	}
+
+	ASSING_ACTION(pSlaveActor, action, activationMode, pressedDuration, rGA.attack1, OnActionAttack);
+	ASSING_ACTION(pSlaveActor, action, activationMode, pressedDuration, rGA.special, OnActionSpecial);// it is melee
+	ASSING_ACTION(pSlaveActor, action, activationMode, pressedDuration, rGA.moveforward, OnActionMoveForward);
+	ASSING_ACTION(pSlaveActor, action, activationMode, pressedDuration, rGA.moveback, OnActionMoveBack);
+	ASSING_ACTION(pSlaveActor, action, activationMode, pressedDuration, rGA.moveleft, OnActionMoveLeft);
+	ASSING_ACTION(pSlaveActor, action, activationMode, pressedDuration, rGA.moveright, OnActionMoveRight);
+	ASSING_ACTION(pSlaveActor, action, activationMode, pressedDuration, rGA.jump, OnActionJump);
 }
 
 // ReSharper disable once CppMemberFunctionMayBeConst
-bool CTOSMasterClient::OnActionAttack(const CTOSActor* pActor, const ActionId& actionId, int activationMode, float value)
+bool CTOSMasterClient::OnActionAttack(const CTOSActor* pActor, const ActionId& actionId, int activationMode, float value, float pressedDur)
 {
 	const auto pInventory = pActor->GetInventory();
     CRY_ASSERT_MESSAGE(pInventory, "[OnActionAttack] pInventory pointer is NULL");
@@ -156,7 +186,7 @@ bool CTOSMasterClient::OnActionAttack(const CTOSActor* pActor, const ActionId& a
     return true;
 }
 
-bool CTOSMasterClient::OnActionSpecial(CTOSActor* pActor, const ActionId& actionId, int activationMode, float value)
+bool CTOSMasterClient::OnActionSpecial(CTOSActor* pActor, const ActionId& actionId, int activationMode, float value, float pressedDur)
 {
 	const auto pInventory = pActor->GetInventory();
 	CRY_ASSERT_MESSAGE(pInventory, "[OnActionSpecial] pInventory pointer is NULL");
@@ -178,7 +208,7 @@ bool CTOSMasterClient::OnActionSpecial(CTOSActor* pActor, const ActionId& action
     return true;
 }
 
-bool CTOSMasterClient::OnActionMoveForward(CTOSActor* pActor, const ActionId& actionId, int activationMode, const float value)
+bool CTOSMasterClient::OnActionMoveForward(CTOSActor* pActor, const ActionId& actionId, int activationMode, const float value, float pressedDur)
 {
 	m_deltaMovement.x = m_deltaMovement.z = 0;
 	m_deltaMovement.y = value * 2.0f - 1.0f;
@@ -189,7 +219,7 @@ bool CTOSMasterClient::OnActionMoveForward(CTOSActor* pActor, const ActionId& ac
 	return true;
 }
 
-bool CTOSMasterClient::OnActionMoveBack(CTOSActor* pActor, const ActionId& actionId, int activationMode, const float value)
+bool CTOSMasterClient::OnActionMoveBack(CTOSActor* pActor, const ActionId& actionId, int activationMode, const float value, float pressedDur)
 {
 	m_deltaMovement.x = m_deltaMovement.z = 0;
     m_deltaMovement.y = -(value * 2.0f - 1.0f);
@@ -200,7 +230,7 @@ bool CTOSMasterClient::OnActionMoveBack(CTOSActor* pActor, const ActionId& actio
 	return true;
 }
 
-bool CTOSMasterClient::OnActionMoveLeft(CTOSActor* pActor, const ActionId& actionId, int activationMode, const float value)
+bool CTOSMasterClient::OnActionMoveLeft(CTOSActor* pActor, const ActionId& actionId, int activationMode, const float value, float pressedDur)
 {
 	m_deltaMovement.x = -(value * 2.0f - 1.0f);
     m_deltaMovement.y = m_deltaMovement.z = 0;
@@ -211,7 +241,7 @@ bool CTOSMasterClient::OnActionMoveLeft(CTOSActor* pActor, const ActionId& actio
     return true;
 }
 
-bool CTOSMasterClient::OnActionMoveRight(CTOSActor* pActor, const ActionId& actionId, int activationMode, const float value)
+bool CTOSMasterClient::OnActionMoveRight(CTOSActor* pActor, const ActionId& actionId, int activationMode, const float value, float pressedDur)
 {
 	m_deltaMovement.x = value * 2.0f - 1.0f;
 	m_deltaMovement.y = m_deltaMovement.z = 0;
@@ -222,19 +252,62 @@ bool CTOSMasterClient::OnActionMoveRight(CTOSActor* pActor, const ActionId& acti
 	return true;
 }
 
-bool CTOSMasterClient::OnActionJump(CTOSActor* pActor, const ActionId& actionId, const int activationMode, const float value)
+bool CTOSMasterClient::OnActionJump(CTOSActor* pActor, const ActionId& actionId, const int activationMode, const float value, float pressedDur)
 {
-    if (activationMode == eAAM_OnPress && value > 0.0f)
-    {
-		m_movementRequest.SetJump();
-    }
-    else if (activationMode == eAAM_OnRelease)
-    {
-        if (m_movementRequest.ShouldJump())
-        {
-			m_movementRequest.ClearJump();
-        }
-    }
+	//Akeeper 28/01/2024
+	//Пояснение: заряжаемый прыжок доступен ТОЛЬКО когда актёр на твердой поверхности,
+	// потому что сделать двойной прыжок за трупера при заряжаемом прыжке нужно быстро а не ждать,
+	// пока пройдет заряд.
+
+	if (pActor->IsHaveChargingJump() && pActor->GetActorStats()->onGround > 0.0f)
+	{
+		const float holdTime = stl::find_in_map(m_actionPressedDuration, actionId, 0.0f);
+		const float jumpDelay = TOS_Console::GetSafeFloatVar("tos_sv_chargingJumpInputTime");
+
+		if (activationMode == eAAM_OnHold && holdTime > jumpDelay)
+		{
+			// Akeeper 28/01/2024
+			// Напонимание: Чистка флагов должна происходит в *MovementController'ах, куда приходит m_movementRequest
+			// В этом блоке описан автопрыжок при зажатии клавиши прыжка
+
+			m_movementRequest.SetJump();
+			pActor->GetSlaveStats().chargingJumpPressDur = holdTime;
+
+			m_actionPressedDuration[actionId] = 0;
+		}
+		else if (activationMode == eAAM_OnRelease && holdTime <= jumpDelay)
+		{
+			m_movementRequest.SetJump();
+			pActor->GetSlaveStats().chargingJumpPressDur = 0;
+		}
+	}
+	else
+	{
+		if (activationMode == eAAM_OnPress && value > 0.0f)
+		{
+			m_movementRequest.SetJump();
+			pActor->GetSlaveStats().chargingJumpPressDur = 0;
+		}
+		else if (activationMode == eAAM_OnRelease)
+		{
+			if (m_movementRequest.ShouldJump())
+			{
+				m_movementRequest.ClearJump();
+			}
+		}
+	}
+
+	
+
+	return true;
+}
+
+bool CTOSMasterClient::OnActionHoldTest(CTOSActor* pActor, const ActionId& actionId, int activationMode, float value, float pressedDur)
+{
+	if (activationMode == eAAM_OnHold)
+	{
+		CryLogAlways("KEY HOLDING: VALUE = %f", value);
+	}
 
 	return true;
 }
@@ -249,7 +322,7 @@ void CTOSMasterClient::PrePhysicsUpdate()
     assert(pController);
 
 	// В сетевой игре отправка запроса отсюда работает прекрасно
-	// В одиночной игре не отправка запроса не работает
+	// В одиночной игре отправка запроса не работает
 	SendMovementRequest(pController);
 }
 
@@ -304,7 +377,7 @@ void CTOSMasterClient::Update(float frametime)
 	}
 
 	//Debug
-	if (gEnv->pConsole->GetCVar("tos_sv_mc_LookDebugDraw")->GetIVal() > 0)
+	if (gEnv->pSystem->IsDevMode() && gEnv->pConsole->GetCVar("tos_sv_mc_LookDebugDraw")->GetIVal() > 0)
 	{
 		IPersistantDebug* pPD = gEnv->pGame->GetIGameFramework()->GetIPersistantDebug();
 		pPD->Begin(string("MasterClient") + (m_pSlaveEntity ? m_pSlaveEntity->GetName() : "<undefined>"), true);
@@ -327,6 +400,18 @@ void CTOSMasterClient::Update(float frametime)
 
 	if (!gEnv->bMultiplayer)
 		SendMovementRequest(pController);
+
+	// Подсчет времени, сколько была нажата определенная клавиша в сек.
+	for (auto& it : m_actionFlags)
+	{
+		const ActionId action = it.first;
+		const bool pressed = it.second & TOS_PRESSED;
+
+		m_actionPressedDuration[action] += pressed ? frametime : 0.0f;
+
+		if (!pressed)
+			m_actionPressedDuration[action] = 0.0f;
+	}
 }
 
 void CTOSMasterClient::UpdateCrosshair(const IEntity* pSlaveEntity, const IActor* pLocalDudeActor, int rayFlags, unsigned entityFlags)
@@ -396,6 +481,11 @@ void CTOSMasterClient::UpdateLookFire(const IEntity* pSlaveEntity, const int ray
 
 	// Пусть персонаж будет смотреть туда куда стреляет.
 	m_lookfireInfo.lookTargetPos = m_lookfireInfo.fireTargetPos;
+}
+
+void CTOSMasterClient::OnActionDelayReleased(const ActionId action, float pressedTimeLen)
+{
+	CryLogAlwaysDev("[%s] is released with time %f", action, pressedTimeLen);
 }
 
 void CTOSMasterClient::SendMovementRequest(IMovementController* pController)

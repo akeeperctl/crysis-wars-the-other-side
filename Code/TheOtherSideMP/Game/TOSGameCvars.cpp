@@ -21,9 +21,11 @@ void STOSCvars::InitCVars(IConsole* pConsole)
 	//pConsole->Register("tos_debug_log_aiactiontracker", &tos_debug_log_aiactiontracker, 0, 0, "");
 	//pConsole->Register("tos_debug_log_all", &tos_debug_log_all, 0, 0, "");
 	//pConsole->Register("tos_show_version", &tos_show_version, 1, 0, "");
+	//VF_DUMPTODISK
 
 	pConsole->Register("tos_any_EventRecorderLogVanilla", &tos_any_EventRecorderLogVanilla, 0, 0, "Log vanilla events to the console (eGE_ prefix) 1 - yes, 0 - no");
 	pConsole->Register("tos_sv_EnableShotValidator", &tos_sv_EnableShotValidator, 1, 0, "Enable shot validator in multiplayer 1 - yes, 0 - no");
+	pConsole->Register("tos_sv_chargingJumpInputTime", &tos_sv_chargingJumpInputTime, 0.15f, 0, "Time between press jump and jump action confirm");
 
 	tos_sv_AlienMPEquipPack =  pConsole->RegisterString("tos_sv_AlienMPEquipPack",    "Alien_naked", 0, "");
 	tos_sv_HunterMPEquipPack = pConsole->RegisterString("tos_sv_HunterMPEquipPack",   "Alien_Hunter", 0, "");

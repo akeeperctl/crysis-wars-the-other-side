@@ -22,6 +22,7 @@ CTOSActor::CTOSActor()
 	:
 	//m_filteredDeltaMovement(ZERO),
 	m_isSlave(false),
+	m_chargingJump(false),
 	m_pEnergyConsumer(nullptr)
 {
 	
