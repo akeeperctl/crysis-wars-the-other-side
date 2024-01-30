@@ -8,7 +8,7 @@ Description: Single-shot Fire Mode Implementation
 
 -------------------------------------------------------------------------
 History:
-- 11:9:2004   15:00 : Created by Márcio Martins
+- 11:9:2004   15:00 : Created by MÐ±rcio Martins
 
 *************************************************************************/
 #ifndef __SINGLE_H__
@@ -28,10 +28,10 @@ History:
 #define ResetValueEx(name, var, defaultValue) if (defaultInit) var=defaultValue; reader.Read(name, var)
 
 
-#define WEAPON_HIT_RANGE				(2000.0f)
-#define WEAPON_HIT_MIN_DISTANCE	(1.5f)
+constexpr float WEAPON_HIT_RANGE		= 2000.0f;
+constexpr float WEAPON_HIT_MIN_DISTANCE	= 1.5f;
 
-#define AUTOAIM_TIME_OUT				(10.0f)
+constexpr float AUTOAIM_TIME_OUT		= 10.0f;
 
 
 class CSingle :

@@ -19,10 +19,10 @@ History:
 #include "HUD/HUDCrosshair.h"
 #include "GameRules.h"
 
-#define RL_LASER_RANGE 150.0f
-#define RL_LASER_TP_RANGE 8.0f
+constexpr float RL_LASER_RANGE = 150.0f;
+constexpr float RL_LASER_TP_RANGE = 8.0f;
 
-#define LASER_TIMEOUT 0.15f
+constexpr float LASER_TIMEOUT = 0.15f;
 
 CRocketLauncher::CRocketLauncher()
 {

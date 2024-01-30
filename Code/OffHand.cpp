@@ -31,32 +31,32 @@ History:
 #include "TheOtherSideMP/HUD/TOSCrosshair.h"
 //~TheOtherSide
 
-#define KILL_NPC_TIMEOUT	7.25f
-#define TIME_TO_UPDATE_CH 0.25f
+constexpr float KILL_NPC_TIMEOUT = 7.25f;
+constexpr float TIME_TO_UPDATE_CH = 0.25f;
 
-#define MAX_CHOKE_SOUNDS	5
+constexpr int MAX_CHOKE_SOUNDS	= 5;
 
-#define MAX_GRENADE_TYPES 4
+constexpr int MAX_GRENADE_TYPES = 4;
 
-#define INPUT_DEF     0
-#define INPUT_USE			1
-#define INPUT_LBM     2
-#define INPUT_RBM			3
+constexpr int INPUT_DEF     = 0;
+constexpr int INPUT_USE		= 1;
+constexpr int INPUT_LBM     = 2;
+constexpr int INPUT_RBM		= 3;
 
-#define GRAB_TYPE_ONE_HANDED	0
-#define GRAB_TYPE_TWO_HANDED  1
-#define GRAB_TYPE_NPC					2
+constexpr int GRAB_TYPE_ONE_HANDED	= 0;
+constexpr int GRAB_TYPE_TWO_HANDED  = 1;
+constexpr int GRAB_TYPE_NPC			= 2;
 
-#define ITEM_NO_EXCHANGE			0
-#define ITEM_CAN_PICKUP				1
-#define ITEM_CAN_EXCHANGE			2
+constexpr int ITEM_NO_EXCHANGE			= 0;
+constexpr int ITEM_CAN_PICKUP			= 1;
+constexpr int ITEM_CAN_EXCHANGE			= 2;
 
-#define OFFHAND_RANGE					2.5f
+constexpr float OFFHAND_RANGE					= 2.5f;
 
 //Sounds tables
 namespace 
 {
-	const char gChokeSoundsTable[MAX_CHOKE_SOUNDS][64] =
+	constexpr char gChokeSoundsTable[MAX_CHOKE_SOUNDS][64] =
 	{
 		"Languages/dialog/ai_korean_soldier_1/choke_01.mp3",
 		"Languages/dialog/ai_korean_soldier_2/choke_02.mp3",
@@ -64,7 +64,7 @@ namespace
 		"Languages/dialog/ai_korean_soldier_3/choke_04.mp3",
 		"Languages/dialog/ai_korean_soldier_1/choke_05.mp3"
 	};
-	const char gDeathSoundsTable[MAX_CHOKE_SOUNDS][64] =
+	constexpr char gDeathSoundsTable[MAX_CHOKE_SOUNDS][64] =
 	{
 		"Languages/dialog/ai_korean_soldier_1/choke_grab_00.mp3",
 		"Languages/dialog/ai_korean_soldier_1/choke_grab_01.mp3",

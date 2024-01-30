@@ -8,7 +8,7 @@ Description: Rock
 
 -------------------------------------------------------------------------
 History:
-- 5:5:2006   15:24 : Created by Márcio Martins
+- 5:5:2006   15:24 : Created by MÐ±rcio Martins
 
 *************************************************************************/
 #ifndef __ROCK_H__
@@ -22,7 +22,7 @@ History:
 #include "Projectile.h"
 #include "VectorSet.h"
 
-#define MAX_SPAWNED_ROCKS	10
+constexpr int MAX_SPAWNED_ROCKS = 10;
 
 class CRock : public CProjectile
 {

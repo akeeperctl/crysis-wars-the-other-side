@@ -20,9 +20,9 @@ History:
 
 #include <IMaterialEffects.h>
 
-#define  CAMERA_DISTANCE_SQR	100
-#define  LASER_UPDATE_TIME		0.1f
-#define  LASER_UPDATE_TIME_FP 0.15f
+constexpr int CAMERA_DISTANCE_SQR	= 100;
+constexpr float LASER_UPDATE_TIME	= 0.1f;
+constexpr float LASER_UPDATE_TIME_FP = 0.15f;
 
 uint CLam::s_lightCount = 0;		//Init light count
 VectorSet<CLam*> CLam::s_lasers;

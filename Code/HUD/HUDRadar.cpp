@@ -38,11 +38,12 @@ History:
 //TheOtherSide
 
 #define RANDOM() ((((float)cry_rand()/(float)RAND_MAX)*2.0f)-1.0f)
+constexpr float COMPASS_EPSILON = (0.01f);
 
-const static float fRadarSizeOverTwo   = 47.0f;
-const static float fEntitySize         = 4.0f;
-const static float fEntityMaxDistance  = fRadarSizeOverTwo - fEntitySize;
-const static float fRadarDefaultRadius = 75.0f;
+constexpr static float fRadarSizeOverTwo   = 47.0f;
+constexpr static float fEntitySize         = 4.0f;
+constexpr static float fEntityMaxDistance  = fRadarSizeOverTwo - fEntitySize;
+constexpr static float fRadarDefaultRadius = 75.0f;
 
 //-----------------------------------------------------------------------------------------------------
 
@@ -1134,7 +1135,7 @@ void CHUDRadar::UpdateCompassStealth(CActor* pActor, float fDeltaTime)
 			fCompass = gf_PI - (fabsf(fCompass) - fabsf(static_cast<int>(fCompass / gf_PI) * gf_PI));
 	}
 
-#define COMPASS_EPSILON (0.01f)
+
 	if (m_fLastCompassRot <= fCompass - COMPASS_EPSILON || m_fLastCompassRot >= fCompass + COMPASS_EPSILON)
 	{
 		char szCompass[HUD_MAX_STRING_SIZE];

@@ -10,7 +10,7 @@
 //   TOS_RECORD_EVENT(0, STOSGameEvent(eEGE_SynchronizerCreated, "MasterModule", true));
 #define TOS_RECORD_EVENT(entityId, tosGameEventExample) \
 if (g_pTOSGame)\
-	g_pTOSGame->GetEventRecorder()->RecordEvent(entityId, tosGameEventExample) \
+	g_pTOSGame->GetEventRecorder()->RecordEvent((entityId), (tosGameEventExample)) \
 
 // Description
 //   Initialize the event vars

@@ -22,10 +22,10 @@ History:
 #include "GameUtils.h"
 
 
-#define RUNSOUND_FADEIN_TIME 0.5f
-#define RUNSOUND_FADEOUT_TIME 0.5f
-#define WIND_MINSPEED 1.f
-#define WIND_MAXSPEED 50.f
+constexpr float RUNSOUND_FADEIN_TIME = 0.5f;
+constexpr float RUNSOUND_FADEOUT_TIME = 0.5f;
+constexpr float WIND_MINSPEED = 1.f;
+constexpr float WIND_MAXSPEED = 50.f;
 
 IGameTokenSystem* CVehicleMovementBase::m_pGameTokenSystem = 0;
 IVehicleSystem* CVehicleMovementBase::m_pVehicleSystem = 0;

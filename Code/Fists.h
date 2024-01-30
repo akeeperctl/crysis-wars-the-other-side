@@ -8,7 +8,7 @@ Description: OffHand Implementation
 
 -------------------------------------------------------------------------
 History:
-- 26:04:2006   18:35 : Created by Márcio Martins
+- 26:04:2006   18:35 : Created by MÐ±rcio Martins
 
 *************************************************************************/
 #ifndef __FISTS_H__
@@ -78,8 +78,8 @@ public:
 	virtual tSoundID PlayAction(const ItemString& action, int layer =0 , bool loop =false , uint flags  = eIPAF_Default , float speedOverride  = -1.0f );
 
 protected:
-	void	UpdateAnimState(float frameTime);
-	void  CollisionFeeback(Vec3 &pos, int eFAS);
+	void UpdateAnimState(float frameTime);
+	void CollisionFeeback(const Vec3 & pos, int eFAS) const;
 
 private:
 	bool OnActionAttack(EntityId actorId, const ActionId& actionId, int activationMode, float value);

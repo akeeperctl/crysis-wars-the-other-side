@@ -24,10 +24,13 @@ History:
 #include "Player.h"
 #include "IViewSystem.h"
 
-#define OH_NO_GRAB					0
-#define OH_GRAB_OBJECT			1
-#define OH_GRAB_ITEM				2
-#define OH_GRAB_NPC					3
+enum
+{
+	OH_NO_GRAB = 0,
+	OH_GRAB_OBJECT = 1,
+	OH_GRAB_ITEM = 2,
+	OH_GRAB_NPC = 3
+};
 
 enum EOffHandActions
 {

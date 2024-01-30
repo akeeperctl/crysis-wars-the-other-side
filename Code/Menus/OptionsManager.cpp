@@ -8,7 +8,7 @@ Description: Handles options setting, getting, saving and loading.
 
 -------------------------------------------------------------------------
 History:
-- 03/2007: Created by Jan Müller
+- 03/2007: Created by Jan MÑŒller
 
 *************************************************************************/
 
@@ -22,11 +22,11 @@ History:
 
 //-----------------------------------------------------------------------------------------------------
 
-#define CRYSIS_PROFILE_COLOR_AMBER	"11886393"
-#define CRYSIS_PROFILE_COLOR_BLUE		"5079987"
-#define CRYSIS_PROFILE_COLOR_GREEN	"4481854"
-#define CRYSIS_PROFILE_COLOR_CYAN		"2320478"
-#define CRYSIS_PROFILE_COLOR_WHITE	"13553087"
+constexpr const char* const CRYSIS_PROFILE_COLOR_AMBER	= "11886393";
+constexpr const char* const CRYSIS_PROFILE_COLOR_BLUE		= "5079987";
+constexpr const char* const CRYSIS_PROFILE_COLOR_GREEN	= "4481854";
+constexpr const char* const CRYSIS_PROFILE_COLOR_CYAN		= "2320478";
+constexpr const char* const CRYSIS_PROFILE_COLOR_WHITE	= "13553087";
 
 
 //-----------------------------------------------------------------------------------------------------

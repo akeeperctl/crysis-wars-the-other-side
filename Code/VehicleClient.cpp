@@ -22,7 +22,7 @@ History:
 #include "Player.h"
 #include "HUD/HUD.h"
 
-#define VEHICLE_GAMEPAD_DEADZONE 0.2f
+constexpr float VEHICLE_GAMEPAD_DEADZONE = 0.2f;
 //------------------------------------------------------------------------
 bool CVehicleClient::Init()
 {

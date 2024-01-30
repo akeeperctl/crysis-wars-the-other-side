@@ -7,7 +7,7 @@ $DateTime$
 
 -------------------------------------------------------------------------
 History:
-- 18:12:2005   14:01 : Created by Márcio Martins
+- 18:12:2005   14:01 : Created by MÐ±rcio Martins
 
 *************************************************************************/
 #include "StdAfx.h"
@@ -20,10 +20,10 @@ History:
 #include "OffHand.h"
 #include <ISound.h>
 
-#define EXPLOSIVE_GRENADE 0
-#define SMOKE_GRENADE			1
-#define FLASHBANG_GRENADE	2
-#define EMP_GRENADE				3
+constexpr int EXPLOSIVE_GRENADE = 0;
+constexpr int SMOKE_GRENADE		= 1;
+constexpr int FLASHBANG_GRENADE	= 2;
+constexpr int EMP_GRENADE		= 3;
 
 //------------------------------------------------------------------------
 void CAmmoPickup::PostInit( IGameObject * pGameObject )

@@ -24,7 +24,7 @@ History:
 #include "TheOtherSideMP/Actors/Aliens/TOSAlien.h"
 //~TheOtherSide
 
-#define LOOKIK_BLEND_RATIOS 5
+constexpr int LOOKIK_BLEND_RATIOS = 5;
 
 struct STrooperBeam
 {

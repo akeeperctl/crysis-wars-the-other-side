@@ -7,7 +7,7 @@ $DateTime$
 
 -------------------------------------------------------------------------
 History:
-- 17:1:2006   11:18 : Created by Márcio Martins
+- 17:1:2006   11:18 : Created by MÐ±rcio Martins
 
 *************************************************************************/
 #include "StdAfx.h"
@@ -18,8 +18,8 @@ History:
 #include <I3DEngine.h>
 
 
-#define TRACER_GEOM_SLOT  0
-#define TRACER_FX_SLOT    1
+constexpr int TRACER_GEOM_SLOT = 0;
+constexpr int TRACER_FX_SLOT   = 1;
 //------------------------------------------------------------------------
 CTracer::CTracer(const Vec3 &pos)
 : m_pos(0,0,0),

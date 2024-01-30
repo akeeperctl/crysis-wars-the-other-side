@@ -18,12 +18,12 @@ History:
 #include "Item.h"
 
 
-#define MAX_WEAPON_ATTACHMENTS 3 
+constexpr int MAX_WEAPON_ATTACHMENTS = 3; 
 
 //Bone & Attachment table (This should be in a nice file!!)
 namespace
 {
-	const char gBoneTable[MAX_WEAPON_ATTACHMENTS][32] =
+	constexpr char gBoneTable[MAX_WEAPON_ATTACHMENTS][32] =
 	{
 		"Bip01 Spine2",
 		"Bip01 Spine2",
@@ -31,7 +31,7 @@ namespace
 		//"weaponPos_pistol_R_leg",
 		//"weaponPos_pistol_L_leg"
 	};
-	const char gAttachmentTable[MAX_WEAPON_ATTACHMENTS][32] = 
+	constexpr char gAttachmentTable[MAX_WEAPON_ATTACHMENTS][32] = 
 	{
 		"back_item_attachment_01",
 		"back_item_attachment_02",

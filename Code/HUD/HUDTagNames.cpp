@@ -25,9 +25,9 @@ History:
 
 //-----------------------------------------------------------------------------------------------------
 
-#define COLOR_DEAD		ColorF(0.4f,0.4f,0.4f)
-#define COLOR_ENEMY		ColorF(0.9f,0.1f,0.1f)
-#define COLOR_FRIEND	ColorF(0.0353f,0.6235f,0.9137f)
+const ColorF COLOR_DEAD	= ColorF(0.4f,0.4f,0.4f);
+const ColorF COLOR_ENEMY	= ColorF(0.9f,0.1f,0.1f);
+const ColorF COLOR_FRIEND	= ColorF(0.0353f,0.6235f,0.9137f);
 
 //-----------------------------------------------------------------------------------------------------
 

@@ -8,7 +8,7 @@
   
  -------------------------------------------------------------------------
   History:
-  - 3:8:2004   11:23 : Created by Márcio Martins
+  - 3:8:2004   11:23 : Created by MÐ±rcio Martins
 
 *************************************************************************/
 #ifndef __GAME_H__
@@ -28,8 +28,8 @@
 #include "ServerSynchedStorage.h"
 #include "Cry_Camera.h"
 
-#define GAME_NAME				"Crysis Wars"
-#define GAME_LONGNAME		"Crysis Wars"
+constexpr const char* const GAME_NAME = "Crysis Wars";
+constexpr const char* const GAME_LONGNAME = "Crysis Wars";
 
 
 struct ISystem;

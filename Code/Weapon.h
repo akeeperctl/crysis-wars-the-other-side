@@ -25,9 +25,9 @@ History:
 
 #include "Item.h"
 
-#define WEAPON_FADECROSSHAIR_SELECT	(0.250f)
-#define WEAPON_FADECROSSHAIR_ZOOM		(0.200f)
-#define WEAPON_SHOOT_TIMER					(5000)
+constexpr float WEAPON_FADECROSSHAIR_SELECT	= 0.250f;
+constexpr float WEAPON_FADECROSSHAIR_ZOOM	= 0.200f;
+constexpr float WEAPON_SHOOT_TIMER			= 5000;
 
 class CProjectile;
 

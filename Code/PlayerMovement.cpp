@@ -25,7 +25,7 @@
 	} \
 }
 
-#define LADDER_TOP_DISTANCE 2.41f
+constexpr float LADDER_TOP_DISTANCE = 2.41f;
 //-----------------------------------------------------------------------------------------------
 //-----------------------------------------------------------------------------------------------
 CPlayerMovement::CPlayerMovement(CPlayer& player, const SActorFrameMovementParams& movement, float m_frameTime)

@@ -8,7 +8,7 @@ Description: Projectile
 
 -------------------------------------------------------------------------
 History:
-- 12:10:2005   11:15 : Created by Márcio Martins
+- 12:10:2005   11:15 : Created by MÐ±rcio Martins
 
 *************************************************************************/
 #ifndef __PROJECTILE_H__
@@ -28,7 +28,7 @@ History:
 #include "AmmoParams.h"
 
 
-#define MIN_DAMAGE								5
+constexpr float MIN_DAMAGE = 5.0f;
 
 class CProjectile :
 	public CGameObjectExtensionHelper<CProjectile, IGameObjectExtension>,

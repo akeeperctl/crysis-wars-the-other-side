@@ -20,6 +20,8 @@
 
 #include <vector>
 
+constexpr int GRAB_MAXLIMBS = 4;
+
 /**
  * Grabbing & throwing/dropping typically occurs in 3 phases:
  *
@@ -44,7 +46,7 @@
 
 struct SGrabStats
 {
-	#define GRAB_MAXLIMBS 4
+
 
 	EntityId grabId;
 	EntityId dropId;

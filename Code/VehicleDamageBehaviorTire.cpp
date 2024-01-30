@@ -18,8 +18,8 @@ History:
 #include "GameRules.h"
 
 
-#define TIRE_BLOW_EFFECT "vehicle_fx.chinese_truck.blown_tire1"
-#define AI_IMMOBILIZED_TIME 4
+constexpr const char* const TIRE_BLOW_EFFECT = "vehicle_fx.chinese_truck.blown_tire1";
+constexpr int AI_IMMOBILIZED_TIME = 4;
 
 
 //------------------------------------------------------------------------

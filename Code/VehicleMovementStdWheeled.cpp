@@ -28,8 +28,8 @@ History:
 #include "NetInputChainDebug.h"
 
 #define THREAD_SAFE 1
-#define LOAD_RAMP_TIME 0.2f
-#define LOAD_RELAX_TIME 0.25f
+constexpr float LOAD_RAMP_TIME = 0.2f;
+constexpr float LOAD_RELAX_TIME = 0.25f;
 
 //------------------------------------------------------------------------
 CVehicleMovementStdWheeled::CVehicleMovementStdWheeled()
