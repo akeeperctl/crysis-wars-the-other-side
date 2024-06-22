@@ -37,9 +37,16 @@ public:
 
 	void AttachTo(CActor *pActor);
 
+	//TheOtherSide
+	virtual int GetMasterId(IFunctionHandler *pH);
+	virtual int GetSlaveId(IFunctionHandler *pH);
+	virtual int GetConsumerEnergy(IFunctionHandler* pH);
+	virtual int SetConsumerEnergy(IFunctionHandler* pH, int energy);
+	//~TheOtherSide
+
 	//------------------------------------------------------------------------
 	virtual int DumpActorInfo(IFunctionHandler *pH);
-  virtual int SetViewAngleOffset(IFunctionHandler *pH);
+	virtual int SetViewAngleOffset(IFunctionHandler *pH);
 	virtual int GetViewAngleOffset(IFunctionHandler *pH);
 	virtual int Revive(IFunctionHandler *pH);
 	virtual int Kill(IFunctionHandler *pH);
@@ -156,11 +163,6 @@ protected:
 	ISystem					*m_pSystem;
 	IGameFramework	*m_pGameFW;
 
-	//TheOtherSide
-public:
-	virtual int GetConsumerEnergy(IFunctionHandler* pH);
-	virtual int SetConsumerEnergy(IFunctionHandler* pH, int energy);
-	//~TheOtherSide
 };
 
 #endif //__SCRIPTBIND_ACTOR_H__

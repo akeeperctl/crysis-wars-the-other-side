@@ -28,6 +28,11 @@
 #include <Cry_GeoDistance.h>
 #include <IEntitySystem.h>
 
+//TheOtherSide
+#include "TheOtherSideMP/Game/Modules/Master/MasterModule.h"
+//~TheOtherSide
+
+
 enum ESetInventoryAmmoMode
 {
 	CLIENT_SIDE = 1,	
@@ -188,6 +193,70 @@ CScriptBind_Actor::~CScriptBind_Actor()
 {
 }
 
+//TheOtherSide
+int CScriptBind_Actor::GetMasterId(IFunctionHandler* pH)
+{
+	const auto pActor = dynamic_cast<CTOSActor*>(GetActor(pH));
+	if (!pActor)
+		return pH->EndFunction();
+
+	const IEntity* const pMasterEntity = g_pTOSGame->GetMasterModule()->GetMaster(pActor->GetEntity());
+	if (pMasterEntity)
+	{
+		ScriptHandle entHandle;
+		entHandle.n = pMasterEntity->GetId();
+
+		return pH->EndFunction(entHandle);
+	}
+
+	return pH->EndFunction();
+}
+
+int CScriptBind_Actor::GetSlaveId(IFunctionHandler* pH)
+{
+	const auto pActor = dynamic_cast<CTOSActor*>(GetActor(pH));
+	if (!pActor)
+		return pH->EndFunction();
+
+	const IEntity* const pSlaveEntity = g_pTOSGame->GetMasterModule()->GetCurrentSlave(pActor->GetEntity());
+	if (pSlaveEntity)
+	{
+		ScriptHandle entHandle;
+		entHandle.n = pSlaveEntity->GetId();
+
+		return pH->EndFunction(entHandle);
+	}
+
+	return pH->EndFunction();
+}
+
+int CScriptBind_Actor::GetConsumerEnergy(IFunctionHandler* pH)
+{
+	const auto pActor = dynamic_cast<CTOSActor*>(GetActor(pH));
+	if (!pActor)
+		return pH->EndFunction();
+
+	const auto pConsumer = pActor->GetEnergyConsumer();
+	if (pConsumer)
+		return pH->EndFunction(pConsumer->GetEnergy());
+
+	return pH->EndFunction(0);
+}
+
+int CScriptBind_Actor::SetConsumerEnergy(IFunctionHandler* pH, int energy)
+{
+	const auto pActor = dynamic_cast<CTOSActor*>(GetActor(pH));
+	if (!pActor)
+		return pH->EndFunction();
+
+	if (pActor->GetEnergyConsumer())
+		pActor->GetEnergyConsumer()->SetEnergy(energy);
+
+	return pH->EndFunction();
+}
+
+//~TheOtherSide
+
 //------------------------------------------------------------------------
 void CScriptBind_Actor::AttachTo(CActor *pActor)
 {
@@ -219,33 +288,6 @@ CActor *CScriptBind_Actor::GetActor(IFunctionHandler *pH)
 	return nullptr;
 }
 
-
-//TheOtherSide
-int CScriptBind_Actor::GetConsumerEnergy(IFunctionHandler* pH)
-{
-	const auto pActor = dynamic_cast<CTOSActor*>(GetActor(pH));
-	if (!pActor)
-		return pH->EndFunction();
-
-	const auto pConsumer = pActor->GetEnergyConsumer();
-	if (pConsumer)
-		return pH->EndFunction(pConsumer->GetEnergy());
-
-	return pH->EndFunction(0);
-}
-
-int CScriptBind_Actor::SetConsumerEnergy(IFunctionHandler* pH, int energy)
-{
-	const auto pActor = dynamic_cast<CTOSActor*>(GetActor(pH));
-	if (!pActor)
-		return pH->EndFunction();
-
-	if (pActor->GetEnergyConsumer())
-		pActor->GetEnergyConsumer()->SetEnergy(energy);
-
-	return pH->EndFunction();
-}
-//~TheOtherSide
 
 //------------------------------------------------------------------------
 int CScriptBind_Actor::DumpActorInfo(IFunctionHandler *pH)

@@ -1099,7 +1099,23 @@ function InstantAction.Client:OnKill(playerId, shooterId, weaponClassName, damag
 	local headshot=string.find(matName, "head");
 	local melee=string.find(type, "melee");
 	
-	if(playerId == g_localActorId) then
+	--TheOtherSide
+
+	-- if(playerId == g_localActorId) then
+	-- 	--do return end; -- DeathFX disabled cause it's not resetting properly atm...
+	-- 	if(headshot) then
+	-- 		HUD.ShowDeathFX(2);
+	-- 	elseif (melee) then
+	-- 		HUD.ShowDeathFX(3);
+	-- 	else
+	-- 		HUD.ShowDeathFX(1);
+	-- 	end
+	-- end
+
+	local player = System.GetEntity(playerId)
+	local localPlayerSlaveId = player.actor:GetSlaveId()
+
+	if(playerId == g_localActorId or playerId == localPlayerSlaveId) then
 		--do return end; -- DeathFX disabled cause it's not resetting properly atm...
 		if(headshot) then
 			HUD.ShowDeathFX(2);
@@ -1109,6 +1125,8 @@ function InstantAction.Client:OnKill(playerId, shooterId, weaponClassName, damag
 			HUD.ShowDeathFX(1);
 		end
 	end
+
+	--~TheOtherSide
 
 
 	-- if killed is a local actor 
