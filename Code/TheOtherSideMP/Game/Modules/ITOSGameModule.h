@@ -31,6 +31,7 @@ struct ITOSGameModule  // NOLINT(cppcoreguidelines-special-member-functions)
 	virtual void Init() = 0;
 	virtual void Update(float frametime) = 0;
 	virtual void Serialize(TSerialize ser) = 0;
+	virtual bool NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int flags) = 0;
 	virtual int GetDebugLog() = 0;
 
 	virtual void InitCVars(IConsole* pConsole) = 0;

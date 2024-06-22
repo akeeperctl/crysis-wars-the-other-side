@@ -47,6 +47,12 @@ CTOSMasterModule::~CTOSMasterModule() = default;
 
 void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event)
 {
+	if (!pEntity)
+	{
+		CryLogAlwaysDev("OnExtraGameplayEvent pEntity is NULL");
+		return;
+	}
+
 	TOS_INIT_EVENT_VALUES(pEntity, event);
 
 	// Обнаружен баг
@@ -65,7 +71,7 @@ void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEven
 	//case eEGE_EntitiesPostReset: not ok
 	case eEGE_GamerulesStartGame: //not ok long time still ok
 	{
-		//10/10/2023, 18:43 Теперь синхронизаторы нужно спавнить через редактор (заебался я с ними возиться)
+		// 10/10/2023, 18:43 Akeeper: Теперь синхронизаторы нужно спавнить через редактор (заебался я с ними возиться)
 		//CreateSynchonizer<CTOSMasterSynchronizer>("MasterSynchronizer", "TOSMasterSynchronizer");
 		break;
 	}
@@ -316,7 +322,34 @@ void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEven
 
 		break;
 	}
-	//case eEGE_ActorRelease:
+	case eEGE_ActorDead:
+	{
+		// Раб погиб -> убиваем Мастера
+
+		if (gEnv->bServer)
+		{
+			const IEntity* const pSlaveEntity = pEntity;
+			const IEntity* const pMasterEntity = GetMaster(pSlaveEntity);
+
+			if (pSlaveEntity && pMasterEntity)
+			{
+				IActor* const pMasterActor = g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pMasterEntity->GetId());
+				if (pMasterActor)
+				{
+					const EntityId id = pMasterActor->GetEntityId();
+
+					HitInfo info;
+					info.SetDamage(9999);
+					info.shooterId = id;
+					info.targetId = id;
+
+					g_pGame->GetGameRules()->ServerHit(info);
+				}
+			}
+		}
+
+		break;
+	}
 	case eEGE_ClientDisconnect:
 	{
 		if (pEntity && gEnv->bServer)
@@ -429,6 +462,22 @@ void CTOSMasterModule::Update(float frametime)
 
 void CTOSMasterModule::Serialize(TSerialize ser)
 {
+	if (ser.GetSerializationTarget() == eST_Network)
+	{
+
+	}
+}
+
+bool CTOSMasterModule::NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int flags)
+{
+	if (!CTOSGenericModule::NetSerialize(ser, aspect, profile, flags))
+		return false;
+
+	//TODO: Нужно протестить 03.02.2024
+	ser.Value("m_masters", m_masters);
+
+
+	return true;
 }
 
 void CTOSMasterModule::MasterAdd(const IEntity* pMasterEntity, const char* slaveDesiredClass)

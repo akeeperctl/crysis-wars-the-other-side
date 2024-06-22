@@ -22,6 +22,7 @@ public:
 	void        Init() override;
 	void        Update(float frametime) override;
 	void        Serialize(TSerialize ser) override;
+	bool		NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int flags) override;
 
 	int GetDebugLog() override { return m_debugLogMode; }
 

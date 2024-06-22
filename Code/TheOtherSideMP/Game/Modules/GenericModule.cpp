@@ -43,6 +43,11 @@ void CTOSGenericModule::Serialize(TSerialize ser)
 {
 }
 
+bool CTOSGenericModule::NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int flags)
+{
+	return true;
+}
+
 CTOSGenericSynchronizer* CTOSGenericModule::GetSynchronizer() const
 {
 	return m_pSynchonizer;

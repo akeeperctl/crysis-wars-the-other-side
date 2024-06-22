@@ -66,6 +66,14 @@ struct STOSMasterInfo final : STOSSmartStruct  // NOLINT(cppcoreguidelines-speci
 		slaveId(_slaveId)
 	{}
 
+	bool Serialize(TSerialize ser)
+	{
+		ser.Value("slaveId", slaveId);
+		ser.Value("desiredSlaveClassName", desiredSlaveClassName);
+
+		return true;
+	}
+
 	EntityId slaveId;
 	string desiredSlaveClassName;
 	STOSMasterClientSavedParams mcSavedParams;///< Сохраненные параметры, которые отправил мастер-клиент на сервер перед началом управления рабом. \n mc - мастер клиент
@@ -110,6 +118,7 @@ public:
 	void Init() override;
 	void Update(float frametime) override;
 	void Serialize(TSerialize ser) override;
+	bool NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int flags) override;
 	void InitCVars(IConsole* pConsole) override;
 	void InitCCommands(IConsole* pConsole) override;
 	void ReleaseCVars() override;
