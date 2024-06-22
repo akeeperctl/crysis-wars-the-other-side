@@ -2519,6 +2519,7 @@ bool CWeapon::PredictProjectileHit(IPhysicalEntity *pShooter, const Vec3 &pos, c
 	particleFlags.flagsAND = ~(pef_log_collisions & pef_traceable & pef_log_poststep);
 	pProjectilePhysEntity->SetParams(&particleFlags);
 
+	//TheOtherSide здесь по идее можно прострелить себе ногу
 	pe_params_particle partPar;
 	partPar.pColliderToIgnore = pShooter;
 	pProjectilePhysEntity->SetParams(&partPar);

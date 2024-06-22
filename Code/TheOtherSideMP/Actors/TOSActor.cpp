@@ -264,6 +264,7 @@ void CTOSActor::Kill()
 {
 	CActor::Kill();
 
+	// Вызывается только на сервере
 	TOS_RECORD_EVENT(GetEntityId(), STOSGameEvent(eEGE_ActorDead, "", true));
 }
 
