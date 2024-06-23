@@ -13,9 +13,9 @@ Description:
 -------------------------------------------------------------------------
 History:
 - 07:11:2005: Created by Julien Darre
-- 01:02:2006: Modified by Jan Müller
+- 01:02:2006: Modified by Jan Muller
 - 22:02:2006: Refactored for G04 by Matthew Jack
-- 2007: Refactored by Jan Müller
+- 2007: Refactored by Jan Muller
 
 *************************************************************************/
 #include "StdAfx.h"
@@ -5781,20 +5781,20 @@ void CHUD::UpdatePlayerAmmo()
 
 		//TheOtherSide
 		auto* pPlayer = g_pTOSGame->GetActualClientActor();
-		if (!pPlayer) CryLogAlways("pPlayer указатель нулевой - игрок не найден.");
+		//if (!pPlayer) CryLogAlways("pPlayer указатель нулевой - игрок не найден.");
 		//~TheOtherSide
 
 		// Если игрок существует
 		if (pPlayer)
 		{
 			auto* pItem = pPlayer->GetCurrentItem(false);
-			if (!pItem) CryLogAlways("pItem указатель нулевой - текущий предмет не найден.");
+			//if (!pItem) CryLogAlways("pItem указатель нулевой - текущий предмет не найден.");
 
 			// Если предмет существует
 			if (pItem)
 			{
 				auto* pWeapon = dynamic_cast<CWeapon*>(pItem->GetIWeapon());
-				if (!pWeapon) CryLogAlways("pWeapon указатель нулевой - оружие не найдено.");
+				//if (!pWeapon) CryLogAlways("pWeapon указатель нулевой - оружие не найдено.");
 
 				// Если оружие существует
 				if (pWeapon)
@@ -5813,11 +5813,11 @@ void CHUD::UpdatePlayerAmmo()
 						// Если есть второе оружие в режиме двойного вооружения
 						if (auto* pSlave = pWeapon->GetDualWieldSlave())
 						{
-							if (!pSlave) CryLogAlways("pSlave указатель нулевой - второе оружие в режиме двойного вооружения не найдено.");
+							//if (!pSlave) CryLogAlways("pSlave указатель нулевой - второе оружие в режиме двойного вооружения не найдено.");
 
 							if (auto* pSlaveWeapon = pSlave->GetIWeapon())
 							{
-								if (!pSlaveWeapon) CryLogAlways("pSlaveWeapon указатель нулевой - оружие второго руки не найдено.");
+								//if (!pSlaveWeapon) CryLogAlways("pSlaveWeapon указатель нулевой - оружие второго руки не найдено.");
 
 								if (auto* pSlaveFM = pSlaveWeapon->GetFireMode(pSlaveWeapon->GetCurrentFireMode()))
 								{
@@ -5840,7 +5840,7 @@ void CHUD::UpdatePlayerAmmo()
 
 			// Проверка вспомогательного оружия
 			auto* pOffhand = g_pGame->GetIGameFramework()->GetIItemSystem()->GetItem(pPlayer->GetInventory()->GetItemByClass(CItem::sOffHandClass));
-			if (!pOffhand) CryLogAlways("pOffhand указатель нулевой - вспомогательное оружие не найдено.");
+			//if (!pOffhand) CryLogAlways("pOffhand указатель нулевой - вспомогательное оружие не найдено.");
 
 			if (pOffhand)
 			{
