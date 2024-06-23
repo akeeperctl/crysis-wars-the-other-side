@@ -165,6 +165,22 @@ public:
 	};
 
 	/**
+	 * \brief Получить EntityId сущности раба
+	 * \return EntityId управляемой сущности раба
+	 */
+	EntityId GetSlaveEntityId() const
+	{
+		//assert(m_pControlledEntity);
+		return m_pSlaveEntity ? m_pSlaveEntity->GetId() : 0;
+	};
+
+	void UpdateView(SViewParams& viewParams) const;
+	void Update(float frametime);
+	void AnimationEvent(IEntity* pEntity, ICharacterInstance* pCharacter, const AnimEventInstance& event);
+
+
+private:
+	/**
 	 * \brief Изменяет указатель на контролируемую сущность раба
 	 * \param pEntity - указатель на новую сущность. Это должен быть актёр, наследованный от IActor! Не передавать сюда пустой указатель!
 	 * \param cls - класс новой сущности
@@ -172,22 +188,13 @@ public:
 	 */
 	bool SetSlaveEntity(IEntity* pEntity, const char* cls);
 
+	void PrePhysicsUpdate();
+
 	/**
 	 * \brief Зануляет указатель на сущность раба, который сохранен в мастер-клиенте
 	 */
 	void ClearSlaveEntity();
 
-	void UpdateView(SViewParams& viewParams) const;
-	void PrePhysicsUpdate();
-	void Update(float frametime);
-	void AnimationEvent(IEntity* pEntity, ICharacterInstance* pCharacter, const AnimEventInstance& event);
-
-	const SCrosshairInfo& GetCrosshairInfo() const {return m_crosshairInfo;};
-
-
-
-
-private:
 	void OnActionDelayReleased(const ActionId action, float pressedTimeLen);
 
 	void SendMovementRequest(IMovementController* pController);
@@ -227,9 +234,4 @@ private:
 	
 	std::map<ActionId, float> m_actionPressedDuration;
 	std::map<ActionId, uint> m_actionFlags;
-
-public:
-	//static constexpr int INPUT_ASPECT = eEA_GameClientDynamic;
-	//static constexpr int ALIVE_ASPECT = eEA_GameServerDynamic;
-	//static constexpr int OWNER_ASPECT = eEA_GameServerStatic;
 };
