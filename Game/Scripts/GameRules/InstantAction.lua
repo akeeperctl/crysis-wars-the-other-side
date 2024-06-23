@@ -917,23 +917,28 @@ function InstantAction:RevivePlayer(channelId, player, keepEquip)
 			player.actor:SetSpectatorMode(0, NULL_ENTITY);
 		end
 	
-		if (not keepEquip) then
-			local additionalEquip;
-			if (groupId) then
-				local group=System.GetEntity(groupId);
-				if (group and group.GetAdditionalEquipmentPack) then
-					additionalEquip=group:GetAdditionalEquipmentPack();
+		if not player.actor:GetSlaveId() then
+			
+			if (not keepEquip) then
+				local additionalEquip;
+				if (groupId) then
+					local group=System.GetEntity(groupId);
+					if (group and group.GetAdditionalEquipmentPack) then
+						additionalEquip=group:GetAdditionalEquipmentPack();
+					end
 				end
+				self:EquipPlayer(player, additionalEquip);
 			end
-			self:EquipPlayer(player, additionalEquip);
+
+			local invuln = System.GetCVar("g_spawnProtectionTime");
+			if (invuln and invuln>0) then
+				self.game:SetInvulnerability(player.id, true, invuln);
+			end
 		end
-		player.death_time=nil;
-		player.frostShooterId=nil;
+
 		
-		local invuln = System.GetCVar("g_spawnProtectionTime");
-		if (invuln and invuln>0) then
-			self.game:SetInvulnerability(player.id, true, invuln);
-		end
+		player.death_time=nil;
+		player.frostShooterId=nil;	
 	end
 	
 	if (not result) then
@@ -1112,10 +1117,14 @@ function InstantAction.Client:OnKill(playerId, shooterId, weaponClassName, damag
 	-- 	end
 	-- end
 
-	local player = System.GetEntity(playerId)
-	local localPlayerSlaveId = player.actor:GetSlaveId()
+	local dude = System.GetEntity(playerId)
+	if not dude then
+		return
+	end
 
-	if(playerId == g_localActorId or playerId == localPlayerSlaveId) then
+	local localDudeSlaveId = dude.actor:GetSlaveId()
+
+	if(playerId == g_localActorId or (localDudeSlaveId and playerId == localDudeSlaveId )) then
 		--do return end; -- DeathFX disabled cause it's not resetting properly atm...
 		if(headshot) then
 			HUD.ShowDeathFX(2);
