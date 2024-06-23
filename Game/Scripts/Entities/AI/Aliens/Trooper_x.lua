@@ -369,7 +369,6 @@ Trooper_x = {
 	--	},	
 	Client = {},
 	Server = {},
-
 }
 
 if (g_deadTrooperShells == nil) then
@@ -652,57 +651,76 @@ function Trooper_x:Reset()
 	self:ResetTimers();
 end
 
+-- Функция убийства тропера
 function Trooper_x:Kill(ragdoll, shooterId, weaponId)
-	if (ragdoll and self.exploded) then
-		ragdoll = false;
-	end
-	BasicAlien.Kill(self, ragdoll, shooterId, weaponId);
+    -- Если тропер взорвался и должен стать тряпичной куклой, отменяем ragdoll
+    if (ragdoll and self.exploded) then
+        ragdoll = false;
+    end
+    -- Вызываем функцию убийства из базового класса
+    BasicAlien.Kill(self, ragdoll, shooterId, weaponId);
 
-	Trooper_Death(self); --,autoDestructing); -- let AI do something with this corpse
+    -- Обработка смерти тропера
+    Trooper_Death(self); -- let AI do something with this corpse
 
-	--TheOtherSide
-	--System.LogAlways("Kill")
-	self.allClients:ClKill(true);
-	--TheOtherSide
+    --TheOtherSide
+    --System.LogAlways("Kill")
+    -- Отправляем всем клиентам сообщение о смерти
+    self.allClients:ClKill(true);
+    --TheOtherSide
 
-	self:ResetTimers();
+    -- Сброс всех таймеров
+    self:ResetTimers();
 
-	self:SetAttachmentEffect(0, "damage_effect_1", "alien_special.Trooper.WoundedPlasma_death", g_Vectors.v000,
-		g_Vectors.v010, 1, 0);
-	if (self.Properties.bCanSelfDestruct == 0) then
-		self:SetTimer(TROOPER_CHECK_DEAD_SHELL_TIMER, 9000);
-	elseif (not self.bAutoDestructing) then
-		self:InitiateAutoDestruction();
-	end
+    -- Установка эффекта урона
+    self:SetAttachmentEffect(0, "damage_effect_1", "alien_special.Trooper.WoundedPlasma_death", g_Vectors.v000,
+        g_Vectors.v010, 1, 0);
 
-	if (ragdoll) then
-		self.actor:SetPhysicalizationProfile("ragdoll");
-		self:SetTimer(TROOPER_DEPHYSICALIZE_TIMER, 2000);
-	else
-		return;
-	end
+    -- Если тропер не может самоуничтожиться, устанавливаем таймер для проверки
+    if (self.Properties.bCanSelfDestruct == 0) then
+        self:SetTimer(TROOPER_CHECK_DEAD_SHELL_TIMER, 9000);
+    -- Если тропер не начал процесс самоуничтожения, инициируем его
+    elseif (not self.bAutoDestructing) then
+        self:InitiateAutoDestruction();
+    end
 
-	local vel = g_Vectors.temp_v1;
-	local pos = g_Vectors.temp_v2;
+    -- Если тропер должен стать тряпичной куклой
+    if (ragdoll) then
+        -- Устанавливаем физический профиль "ragdoll"
+        self.actor:SetPhysicalizationProfile("ragdoll");
+        -- Устанавливаем таймер для дефизикализации
+        self:SetTimer(TROOPER_DEPHYSICALIZE_TIMER, 2000);
+    else
+        return;
+    end
 
-	CopyVector(pos, self:GetWorldPos());
+    -- Временные векторы для расчёта импульса
+    local vel = g_Vectors.temp_v1;
+    local pos = g_Vectors.temp_v2;
 
-	local shooter = System.GetEntity(shooterId);
-	if (shooter) then
-		FastDifferenceVectors(vel, self:GetPos(), shooter:GetPos());
-		NormalizeVector(vel);
-	else
-		vel = g_Vectors.v000;
-	end
+    -- Копируем позицию тропера
+    CopyVector(pos, self:GetWorldPos());
 
-	local stats = self:GetPhysicalStats();
-	--					
-	self:AddImpulse(-1, pos, vel, stats.mass * 5, 1);
+    -- Получаем сущность стрелявшего
+    local shooter = System.GetEntity(shooterId);
+    if (shooter) then
+        -- Рассчитываем вектор импульса от стрелявшего к троперу
+        FastDifferenceVectors(vel, self:GetPos(), shooter:GetPos());
+        NormalizeVector(vel);
+    else
+        vel = g_Vectors.v000;
+    end
 
-	if (self.iSoundTimer) then
-		Script.KillTimer(self.iSoundTimer);
-		self.iSoundTimer = nil;
-	end
+    -- Получаем физические характеристики тропера
+    local stats = self:GetPhysicalStats();
+    -- Применяем импульс к троперу
+    self:AddImpulse(-1, pos, vel, stats.mass * 5, 1);
+
+    -- Если установлен таймер звука, убиваем его
+    if (self.iSoundTimer) then
+        Script.KillTimer(self.iSoundTimer);
+        self.iSoundTimer = nil;
+    end
 end
 
 function Trooper_x:ResetTimers()
@@ -1202,78 +1220,126 @@ function Trooper_x:MeleeDamage(impulse, meleeType)
 	end
 end
 
+-- Функция вызывается при срабатывании таймера
 function Trooper_x.Client:OnTimer(timerId, mSec)
-	if (timerId == PAIN_TIMER) then
-		if (self.actor:GetHealth() > 0) then
-			self:DoPainSounds();
+    -- Обработка различных таймеров
+    if (timerId == PAIN_TIMER) then
+        -- Если у актёра есть здоровье, воспроизводим звуки боли
+        if (self.actor:GetHealth() > 0) then
+            self:DoPainSounds();
+        end
+        -- Сброс флага воспроизведения звука боли
+        self.painSoundTriggered = nil;
+    elseif (timerId == TROOPER_JUMP_TIMER) then
+        -- Выполнение второго прыжка в ближнем бою
+        Trooper_PerformSecondMeleeJump(self);
+    elseif (timerId == TROOPER_END_JUMP_DODGE_TIMER) then
+        -- Выполнение прыжка-уклонения
+        local r = g_Vectors.temp;
+        CopyVector(r, AI.GetRefPointPosition(self.id));
+        Trooper_Jump(self, r, false, false, -15, true);
+    elseif (timerId == TROOPER_DEPHYSICALIZE_TIMER) then
+        -- Дефизикализация актёра, если он двигается медленно
+        if (self:GetSpeed() < 0.3) then
+            -- Условие для помещений или навигации по точкам
+            if (self.Properties.bIndoor == 1 or AI.GetNavigationType(self.id) == NAV_WAYPOINT_HUMAN) then
+                self.actor:SetPhysicalizationProfile("unragdoll");
+            end
+        else
+            -- Перезапуск таймера дефизикализации
+            self:SetTimer(TROOPER_DEPHYSICALIZE_TIMER, 2000);
+        end
+    elseif (timerId == TROOPER_MELEE_SPECIAL_TIMER) then
+        -- Сигнал начала специальной атаки в ближнем бою
+        AI.Signal(SIGNALFILTER_SENDER, 0, "MELEE_SPECIAL_START_TIMEOUT", self.id);
+    elseif (timerId == TROOPER_END_MELEE_TIMER) then
+        -- Установка возможности захвата актёра
+        self:SetGrabbable(1);
+        -- Закомментированный код выбора поведения после таймаута спец. атаки
+        --self:SelectPipe(0,"tr_melee_special_timeout");
+    elseif (timerId == TROOPER_CONVERSATION_REQUEST_TIMER) then
+        -- Запрос на начало разговора
+        AI.Signal(SIGNALFILTER_GROUPONLY_EXCEPT, 0, "REQUEST_CONVERSATION", self.id);
+        -- Установка таймера проверки разговора
+        self:SetTimer(TROOPER_CONVERSATION_CHECK_TIMER, 1000);
+    elseif (timerId == TROOPER_CONVERSATION_CHECK_TIMER) then
+        -- Проверка состояния разговора
+        if (AIBlackBoard.trooper_ConversationState == TROOPER_CONV_REQUESTING) then
+            -- Если все ещё в состоянии запроса и нет ответа - сброс
+            AIBlackBoard.trooper_ConversationState = TROOPER_CONV_IDLE;
+            AI.Signal(SIGNALFILTER_SENDER, 0, "REQUEST_CONVERSATION", self.id);
+        end
+    elseif (timerId == TROOPER_CONVERSATION_ANSWER_TIMER) then
+        -- Ответ на разговор
+        AI.Signal(SIGNALFILTER_SENDER, 0, "CONVERSATION_ANSWER", self.id);
+    elseif (timerId == TROOPER_PLAYERGRABBED_TIMER) then
+        -- Воспроизведение звука захвата игрока
+        local sndFlags = SOUND_DEFAULT_3D;
+        self.grabbedSound = self:PlaySoundEvent("sounds/alien:trooper:choke", g_Vectors.v000, g_Vectors.v010, sndFlags,
+            SOUND_SEMANTIC_LIVING_ENTITY);
+        -- Перезапуск таймера захвата игрока
+        self:SetTimer(TROOPER_PLAYERGRABBED_TIMER, 5000 + random(1, 1000));
+    elseif (timerId == TROOPER_CHECK_DEAD_SHELL_TIMER) then
+
+		--TheOtherSide
+		if self.actor:GetHealth() > 0 then
+			return
 		end
-		self.painSoundTriggered = nil;
-	elseif (timerId == TROOPER_JUMP_TIMER) then
-		Trooper_PerformSecondMeleeJump(self);
-	elseif (timerId == TROOPER_END_JUMP_DODGE_TIMER) then
-		local r = g_Vectors.temp;
-		CopyVector(r, AI.GetRefPointPosition(self.id));
-		Trooper_Jump(self, r, false, false, -15, true);
-	elseif (timerId == TROOPER_DEPHYSICALIZE_TIMER) then
-		if (self:GetSpeed() < 0.3) then
-			if (self.Properties.bIndoor == 1 or AI.GetNavigationType(self.id) == NAV_WAYPOINT_HUMAN) then
-				self.actor:SetPhysicalizationProfile("unragdoll");
-			end
-		else
-			self:SetTimer(TROOPER_DEPHYSICALIZE_TIMER, 2000);
-		end
-	elseif (timerId == TROOPER_MELEE_SPECIAL_TIMER) then
-		AI.Signal(SIGNALFILTER_SENDER, 0, "MELEE_SPECIAL_START_TIMEOUT", self.id);
-	elseif (timerId == TROOPER_END_MELEE_TIMER) then
-		self:SetGrabbable(1);
-		--self:SelectPipe(0,"tr_melee_special_timeout");
-	elseif (timerId == TROOPER_CONVERSATION_REQUEST_TIMER) then
-		AI.Signal(SIGNALFILTER_GROUPONLY_EXCEPT, 0, "REQUEST_CONVERSATION", self.id);
-		self:SetTimer(TROOPER_CONVERSATION_CHECK_TIMER, 1000);
-	elseif (timerId == TROOPER_CONVERSATION_CHECK_TIMER) then
-		if (AIBlackBoard.trooper_ConversationState == TROOPER_CONV_REQUESTING) then
-			-- still requesting, no answer - reset
-			AIBlackBoard.trooper_ConversationState = TROOPER_CONV_IDLE;
-			AI.Signal(SIGNALFILTER_SENDER, 0, "REQUEST_CONVERSATION", self.id);
-		end
-	elseif (timerId == TROOPER_CONVERSATION_ANSWER_TIMER) then
-		AI.Signal(SIGNALFILTER_SENDER, 0, "CONVERSATION_ANSWER", self.id);
-	elseif (timerId == TROOPER_PLAYERGRABBED_TIMER) then
-		local sndFlags = SOUND_DEFAULT_3D;
-		self.grabbedSound = self:PlaySoundEvent("sounds/alien:trooper:choke", g_Vectors.v000, g_Vectors.v010, sndFlags,
-			SOUND_SEMANTIC_LIVING_ENTITY);
-		self:SetTimer(TROOPER_PLAYERGRABBED_TIMER, 5000 + random(1, 1000));
-	elseif (timerId == TROOPER_CHECK_DEAD_SHELL_TIMER) then
-		if (not AIBlackBoard.lastTrooperDisappearTime) then
-			AIBlackBoard.lastTrooperDisappearTime = 0;
-		end
-		local curTime = _time;
-		if (curTime - AIBlackBoard.lastTrooperDisappearTime > 2) then
-			local playerViewDir = TrTimerVector1;
-			local dir = TrTimerVector2;
-			g_localActor.actor:GetHeadDir(playerViewDir);
-			FastDifferenceVectors(dir, self:GetPos(), g_localActor:GetPos());
-			local dist = LengthVector(dir);
-			if (dist > 2) then
-				ScaleVectorInPlace(dir, 1 / dist);
-				if (dotproduct3d(playerViewDir, dir) < 0.2) then
-					-- make the trooper magically disappear out of player's sight
-					AIBlackBoard.lastTrooperDisappearTime = curTime;
-					AI.SetSmartObjectState(self.id, "Idle");
-					self:RemoveActor();
-					return;
-				end
-			end
-		end
-		self:SetTimer(TROOPER_CHECK_DEAD_SHELL_TIMER, 2000);
-	elseif (timerId == TROOPER_WARMUP_AUTODESTRUCT_TIMER) then
-		self:WarmupAutoDestruct();
-	elseif (timerId == TROOPER_AUTODESTRUCT_TIMER) then
-		self:AutoDestruct();
-	elseif (timerId == TROOPER_GRABBEDFX_TIMER) then
-		self:ResetAttachment(0, "Grapped");
-		self.AI.bGrabbedFx = false;
-	end
+		--TheOtherSide
+		
+		-- if g_localActor.actor:GetSlaveId() == self.id then
+		-- 	System.LogAlways("Stop timer TROOPER_CHECK_DEAD_SHELL_TIMER")
+		-- 	return
+		-- end
+
+        -- Проверка исчезновения трупера
+        if (not AIBlackBoard.lastTrooperDisappearTime) then
+            AIBlackBoard.lastTrooperDisappearTime = 0;
+        end
+
+        local curTime = _time;
+
+        -- Если прошло более 2 секунд с последнего исчезновения
+        if (curTime - AIBlackBoard.lastTrooperDisappearTime > 2) then
+            local playerViewDir = TrTimerVector1;
+            local dir = TrTimerVector2;
+
+            -- Получение направления взгляда игрока
+            g_localActor.actor:GetHeadDir(playerViewDir);
+            -- Вычисление направления от игрока к труперу
+            FastDifferenceVectors(dir, self:GetPos(), g_localActor:GetPos());
+            -- Расстояние от игрока до трупера
+            local dist = LengthVector(dir);
+
+            -- Если расстояние больше 2 метров
+            if (dist > 2) then
+                -- Нормализация направления
+                ScaleVectorInPlace(dir, 1 / dist);
+
+                -- Если трупер вне поля зрения игрока
+                if (dotproduct3d(playerViewDir, dir) < 0.2) then
+                    -- Исчезновение трупера из видимости игрока
+                    AIBlackBoard.lastTrooperDisappearTime = curTime;
+                    AI.SetSmartObjectState(self.id, "Idle");
+                    self:RemoveActor();
+                    return;
+                end
+            end
+        end
+
+        -- Перезапуск таймера проверки исчезновения трупера
+        self:SetTimer(TROOPER_CHECK_DEAD_SHELL_TIMER, 2000);
+    elseif (timerId == TROOPER_WARMUP_AUTODESTRUCT_TIMER) then
+        -- Подготовка к автодеструкции
+        self:WarmupAutoDestruct();
+    elseif (timerId == TROOPER_AUTODESTRUCT_TIMER) then
+        -- Автодеструкция
+        self:AutoDestruct();
+    elseif (timerId == TROOPER_GRABBEDFX_TIMER) then
+        -- Сброс эффекта захвата
+        self:ResetAttachment(0, "Grapped");
+        self.AI.bGrabbedFx = false;
+    end
 end
 
 function Trooper_x:SetFireMode()
