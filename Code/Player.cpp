@@ -73,6 +73,7 @@ History:
 #include "TheOtherSideMP/HUD/TOSCrosshair.h"
 #include "TheOtherSideMP/Helpers/TOS_Console.h"
 #include <stdexcept>
+#include <TheOtherSideMP/Actors/Player/TOSPlayer.h>
 //~TheOtherSide
 
 // enable this to check nan's on position updates... useful for debugging some weird crashes
@@ -5201,8 +5202,6 @@ void CPlayer::SetFlyMode(uint8 flyMode)
 
 void CPlayer::SetSpectatorMode(uint8 mode, EntityId targetId)
 {
-	//CryLog("%s setting spectator mode %d, target %d", GetEntity()->GetName(), mode, targetId);
-
 	uint8 oldSpectatorMode=m_stats.spectatorMode;
 	bool server=gEnv->bServer;
 	if(server)
@@ -5224,7 +5223,7 @@ void CPlayer::SetSpectatorMode(uint8 mode, EntityId targetId)
 		if (server)
 		{
 			GetGameObject()->SetAspectProfile(eEA_Physics, eAP_Spectator);
-			GetGameObject()->InvokeRMI(CActor::ClSetSpectatorMode(), CActor::SetSpectatorModeParams(mode, targetId), eRMI_ToAllClients|eRMI_NoLocalCalls);
+			GetGameObject()->InvokeRMI(CActor::ClSetSpectatorMode(), CActor::SetSpectatorModeParams(mode, targetId), eRMI_ToAllClients | eRMI_NoLocalCalls);
 		}
 
 		Draw(false);
@@ -5270,11 +5269,6 @@ void CPlayer::SetSpectatorMode(uint8 mode, EntityId targetId)
 		if(mode == CActor::eASM_Follow)
 			MoveToSpectatorTargetPosition();
 	}
-	/*
-	// switch on/off spectator HUD
-	if (IsClient())
-	SAFE_HUD_FUNC(Show(mode==0));
-	*/
 }
 
 void CPlayer::MoveToSpectatorTargetPosition()

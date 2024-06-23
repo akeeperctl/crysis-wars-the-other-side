@@ -59,23 +59,25 @@ struct STOSScheduledMasterInfo final : STOSSmartStruct  // NOLINT(cppcoreguideli
 struct STOSMasterInfo final : STOSSmartStruct  // NOLINT(cppcoreguidelines-special-member-functions)
 {
 	STOSMasterInfo() :
-		slaveId(0)
+		slaveId(0), flags(0)
 	{}
 
 	explicit STOSMasterInfo(const EntityId _slaveId) :
-		slaveId(_slaveId)
+		slaveId(_slaveId), flags(0)
 	{}
 
 	bool Serialize(TSerialize ser)
 	{
 		ser.Value("slaveId", slaveId);
 		ser.Value("desiredSlaveClassName", desiredSlaveClassName);
+		ser.Value("flags", flags);
 
 		return true;
 	}
 
 	EntityId slaveId;
 	string desiredSlaveClassName;
+	uint flags;
 	STOSMasterClientSavedParams mcSavedParams;///< Сохраненные параметры, которые отправил мастер-клиент на сервер перед началом управления рабом. \n mc - мастер клиент
 };
 
@@ -155,9 +157,10 @@ public:
 	bool     SetMasterDesiredSlaveCls(const IEntity* pEntity, const char* slaveDesiredClass);
 
 	IEntity* GetCurrentSlave(const IEntity* pMasterEntity);
-	void     SetCurrentSlave(const IEntity* pMasterEntity, const IEntity* pSlaveEntity);
+	void     SetCurrentSlave(const IEntity* pMasterEntity, const IEntity* pSlaveEntity, uint masterFlags);
 	void     ClearCurrentSlave(const IEntity* pMasterEntity);
 	bool     IsSlave(const IEntity* pPotentialSlave) const;
+	bool	 ReviveSlave(const IEntity* pSlaveEntity, const Vec3& revivePos, const Ang3& angles, const int teamId, const bool resetWeapons) const;
 
 	void     DebugDraw(const Vec2& screenPos = {20,300}, float fontSize = 1.2f, float interval = 20.0f, int maxElemNum = 5);
 
@@ -175,8 +178,9 @@ public:
 	//Console variable's functions
 	static void CVarSetDesiredSlaveCls(ICVar* pVar);
 
-private:
 	bool GetMasterInfo(const IEntity* pMasterEntity, STOSMasterInfo& info);
+
+private:
 
 	/**
 	 * \brief Берёт параметры сущности с сервера и сохраняет их там-же на сервере

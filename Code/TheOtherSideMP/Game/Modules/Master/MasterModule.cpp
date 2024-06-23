@@ -1,6 +1,8 @@
 #include "StdAfx.h"
 #include "MasterModule.h"
 
+#include "Item.h"
+
 #include "Game.h"
 #include "GameRules.h"
 #include "IEntitySystem.h"
@@ -17,6 +19,7 @@
 #include "TheOtherSideMP/Helpers/TOS_AI.h"
 #include "TheOtherSideMP/Helpers/TOS_Cache.h"
 #include "TheOtherSideMP/Helpers/TOS_Entity.h"
+#include <stdexcept>
 
 CTOSMasterModule::CTOSMasterModule()
 	: tos_cl_JoinAsMaster(0),
@@ -252,14 +255,19 @@ void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEven
 			params.slaveId = pEntity->GetId();
 			params.masterId = g_pGame->GetIGameFramework()->GetClientActorId();
 
+			auto pFlags = static_cast<uint*>(event.extra_data);
+			if (pFlags)
+			{
+				params.masterFlags = *pFlags;
+				delete pFlags;
+			}
+
 			assert(m_pSynchonizer);
 			m_pSynchonizer->RMISend(
 				CTOSMasterSynchronizer::SvRequestMasterClientStartControl(),
 				params,
 				eRMI_ToServer
 			);
-
-			
 		}
 		break;
 	}
@@ -547,6 +555,12 @@ bool CTOSMasterModule::IsMaster(const IEntity* pMasterEntity)
 
 IEntity* CTOSMasterModule::GetCurrentSlave(const IEntity* pMasterEntity)
 {
+	if (pMasterEntity->GetClass() == g_pGame->GetGameRules()->GetEntity()->GetClass())
+	{
+		throw std::logic_error("GameRules не может быть мастером");
+		return nullptr;
+	}
+
 	if (gEnv->bServer && pMasterEntity)
 	{
 		if (IsMaster(pMasterEntity))
@@ -562,7 +576,7 @@ IEntity* CTOSMasterModule::GetCurrentSlave(const IEntity* pMasterEntity)
 	return nullptr;
 }
 
-void CTOSMasterModule::SetCurrentSlave(const IEntity* pMasterEntity, const IEntity* pSlaveEntity)
+void CTOSMasterModule::SetCurrentSlave(const IEntity* pMasterEntity, const IEntity* pSlaveEntity, uint masterFlags)
 {
 	assert(pMasterEntity);
 	assert(pSlaveEntity);
@@ -571,6 +585,7 @@ void CTOSMasterModule::SetCurrentSlave(const IEntity* pMasterEntity, const IEnti
 		return;
 
 	m_masters[pMasterEntity->GetId()].slaveId = pSlaveEntity->GetId();
+	m_masters[pMasterEntity->GetId()].flags = masterFlags;
 }
 
 void CTOSMasterModule::ClearCurrentSlave(const IEntity* pMasterEntity)
@@ -581,6 +596,7 @@ void CTOSMasterModule::ClearCurrentSlave(const IEntity* pMasterEntity)
 		return;
 
 	m_masters[pMasterEntity->GetId()].slaveId = 0;
+	m_masters[pMasterEntity->GetId()].flags = 0;
 }
 
 bool CTOSMasterModule::IsSlave(const IEntity* pPotentialSlave) const
@@ -595,6 +611,65 @@ bool CTOSMasterModule::IsSlave(const IEntity* pPotentialSlave) const
 	}
 
 	return false;
+}
+
+bool CTOSMasterModule::ReviveSlave(const IEntity* pSlaveEntity, const Vec3& revivePos, const Ang3& angles, const int teamId, const bool resetWeapons) const
+{
+	if (!pSlaveEntity)
+		return false;
+
+	auto pMasterActor = g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(GetMaster(pSlaveEntity)->GetId());
+	if (!pMasterActor)
+		return false;
+
+	auto pSlaveActor = dynamic_cast<CTOSActor*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pSlaveEntity->GetId()));
+	if (!pSlaveActor)
+		return false;
+
+	auto pGameRules = g_pGame->GetGameRules();
+
+	// get out of vehicles before reviving
+	if (IVehicle* pVehicle = pSlaveActor->GetLinkedVehicle())
+		if (IVehicleSeat* pSeat = pVehicle->GetSeatForPassenger(pSlaveActor->GetEntityId()))
+			pSeat->Exit(false);
+
+	// stop using any mounted weapons before reviving
+	if (auto pItem = dynamic_cast<CItem*>(pSlaveActor->GetCurrentItem()))
+		if (pItem->IsMounted())
+			pItem->StopUse(pSlaveActor->GetEntityId());
+
+	if (pGameRules->IsFrozen(pSlaveActor->GetEntityId()))
+		pGameRules->FreezeEntity(pSlaveActor->GetEntityId(), false, false);
+
+	//int health = 100;
+	//if(!gEnv->bMultiplayer && pActor->IsClient())
+	//health = g_pGameCVars->g_playerHealthValue;
+	//pSlaveActor->SetMaxHealth(health);
+
+	//if (!g_pGame->GetIGameFramework()->IsChannelOnHold(pMasterActor->GetChannelId()))
+	pSlaveActor->GetGameObject()->SetAspectProfile(eEA_Physics, eAP_Alive);
+
+	//Matrix34 tm(pSlaveActor->GetEntity()->GetWorldTM());
+	//tm.SetTranslation(revivePos);
+
+	//pSlaveActor->GetEntity()->SetWorldTM(tm);
+	//pSlaveActor->SetAngles(angles);
+
+	if (resetWeapons)
+	{
+		//pActor->GetGameObject()->InvokeRMI(CActor::ClClearInventory(), CActor::NoParams(), eRMI_ToAllClients | eRMI_NoLocalCalls);
+
+		//IInventory* pInventory = pActor->GetInventory();
+		//pInventory->Destroy();
+		//pInventory->Clear();
+		
+		pSlaveActor->ResetActorWeapons(1000);
+	}
+
+	pSlaveActor->NetReviveAt(revivePos, Quat(angles), teamId);
+	pSlaveActor->GetGameObject()->InvokeRMI(CActor::ClRevive(), CActor::ReviveParams(revivePos, angles, teamId), eRMI_ToAllClients | eRMI_NoLocalCalls);
+
+	return true;
 }
 
 void CTOSMasterModule::DebugDraw(const Vec2& screenPos, float fontSize, float interval, int maxElemNum)

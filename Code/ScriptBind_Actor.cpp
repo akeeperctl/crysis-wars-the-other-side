@@ -30,6 +30,7 @@
 
 //TheOtherSide
 #include "TheOtherSideMP/Game/Modules/Master/MasterModule.h"
+#include "TheOtherSideMP/Game/Modules/Master/MasterClient.h"
 //~TheOtherSide
 
 
@@ -185,6 +186,9 @@ CScriptBind_Actor::CScriptBind_Actor(ISystem *pSystem)
 	//TheOtherSide
 	SCRIPT_REG_FUNC(GetConsumerEnergy);
 	SCRIPT_REG_TEMPLFUNC(SetConsumerEnergy, "energy");
+	SCRIPT_REG_FUNC(GetMasterId);
+	SCRIPT_REG_FUNC(GetSlaveId);
+
 	//~TheOtherSide
 }
 
@@ -218,16 +222,29 @@ int CScriptBind_Actor::GetSlaveId(IFunctionHandler* pH)
 	if (!pActor)
 		return pH->EndFunction();
 
-	const IEntity* const pSlaveEntity = g_pTOSGame->GetMasterModule()->GetCurrentSlave(pActor->GetEntity());
-	if (pSlaveEntity)
-	{
-		ScriptHandle entHandle;
-		entHandle.n = pSlaveEntity->GetId();
+	auto pMM = g_pTOSGame->GetMasterModule();
 
-		return pH->EndFunction(entHandle);
+	ScriptHandle entHandle;
+
+	if (pActor->IsClient())
+	{
+		entHandle.n = pMM->GetMasterClient()->GetSlaveEntityId();
+	}
+	else
+	{
+		const IEntity* const pSlaveEntity = pMM->GetCurrentSlave(pActor->GetEntity());
+		if (pSlaveEntity)
+		{
+			entHandle.n = pSlaveEntity->GetId();
+		}
+		else
+		{
+			// Обработка случая, когда pSlaveEntity равно nullptr
+			return pH->EndFunction();
+		}
 	}
 
-	return pH->EndFunction();
+	return pH->EndFunction(entHandle);
 }
 
 int CScriptBind_Actor::GetConsumerEnergy(IFunctionHandler* pH)

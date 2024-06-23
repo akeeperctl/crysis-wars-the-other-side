@@ -301,8 +301,8 @@ public:
 	// player
 	virtual CActor *SpawnPlayer(int channelId, const char *name, const char *className, const Vec3 &pos, const Ang3 &angles);
 	virtual CActor *ChangePlayerClass(int channelId, const char *className);
-	virtual void RevivePlayer(CActor *pActor, const Vec3 &pos, const Ang3 &angles, int teamId=0, bool clearInventory=true);
-	virtual void RevivePlayerInVehicle(CActor *pActor, EntityId vehicleId, int seatId, int teamId=0, bool clearInventory=true);
+	virtual void RevivePlayer(CTOSActor* pActor, const Vec3 &pos, const Ang3 &angles, int teamId=0, bool clearInventory=true);
+	virtual void RevivePlayerInVehicle(CTOSActor* pActor, EntityId vehicleId, int seatId, int teamId=0, bool clearInventory=true);
 	virtual void RenamePlayer(CActor *pActor, const char *name);
 	virtual string VerifyName(const char *name, IEntity *pEntity=0);
 	virtual bool IsNameTaken(const char *name, IEntity *pEntity=0);

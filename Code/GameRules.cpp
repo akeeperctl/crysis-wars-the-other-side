@@ -43,6 +43,7 @@
 #include "TheOtherSideMP/Actors/player/TOSPlayer.h"
 #include "TheOtherSideMP/Game/TOSGameEventRecorder.h"
 #include "TheOtherSideMP/Game/Modules/Master/MasterModule.h"
+#include "TheOtherSideMP/Helpers/TOS_MasterModule.h"
 #include "TheOtherSideMP/HUD/TOSCrosshair.h"
 //TheOtherSide
 
@@ -929,11 +930,64 @@ CActor* CGameRules::ChangePlayerClass(const int channelId, const char* className
 }
 
 //------------------------------------------------------------------------
-void CGameRules::RevivePlayer(CActor* pActor, const Vec3& pos, const Ang3& angles, const int teamId, const bool clearInventory)
+void CGameRules::RevivePlayer(CTOSActor* pActor, const Vec3& pos, const Ang3& angles, const int teamId, const bool clearInventory)
 {
+	//TheOtherSide
+	// Воскрешение раба если он есть
+	auto pMM = g_pTOSGame->GetMasterModule();
+
+	auto pSlaveEntity = pMM->GetCurrentSlave(pActor->GetEntity());
+	if (pSlaveEntity)
+	{
+		pMM->ReviveSlave(pSlaveEntity, pos, angles, teamId, true);
+
+		const Vec3 slavePos = pSlaveEntity->GetWorldPos();
+		const Ang3 slaveAngles = pSlaveEntity->GetWorldAngles();
+
+		int health = 100; health = g_pGameCVars->g_playerHealthValue;
+		pActor->SetMaxHealth(health);
+
+		//Matrix34 tm(pActor->GetEntity()->GetWorldTM());
+		//tm.SetTranslation(slavePos);
+
+		//pActor->GetEntity()->SetWorldTM(tm);
+		//pActor->SetAngles(pSlaveEntity->GetWorldAngles());
+
+		pActor->NetReviveAt(slavePos, Quat(slaveAngles), teamId);
+		pActor->GetGameObject()->InvokeRMI(CActor::ClRevive(), CActor::ReviveParams(slavePos, slaveAngles, teamId), eRMI_ToAllClients | eRMI_NoLocalCalls);
+
+		STOSMasterInfo info;
+		if (pMM->GetMasterInfo(pActor->GetEntity(), info))
+		{
+			if (info.flags & TOS_DUDE_FLAG_HIDE_MODEL)
+			{
+				pActor->GetGameObject()->InvokeRMI(CTOSActor::ClMarkHideMe(), NetHideMeParams(true), eRMI_ToAllClients);
+				//pActor->GetGameObject()->SetAspectProfile(eEA_Physics, eAP_Spectator);
+			}
+
+			//if (info.flags & TOS_DUDE_FLAG_BEAM_MODEL)
+			//{
+			//	const Vec3 slavePos = pSlaveEntity->GetWorldPos();
+			//	const Quat slaveRot = pSlaveEntity->GetWorldRotation();
+
+			//	pActor->GetEntity()->SetWorldTM(Matrix34::CreateTranslationMat(slavePos), 0);
+			//	pActor->GetEntity()->SetRotation(slaveRot);
+
+			//	// Привязка работает от клиента к серверу без исп. RMI
+			//	pSlaveEntity->AttachChild(pActor->GetEntity(), IEntity::ATTACHMENT_KEEP_TRANSFORMATION);
+			//}
+		}
+		
+		m_pGameplayRecorder->Event(pActor->GetEntity(), GameplayEvent(eGE_Revive));
+
+		return;
+	}
+
+	//TheOtherSide
+
 	// get out of vehicles before reviving
-	if (IVehicle*         pVehicle = pActor->GetLinkedVehicle())
-		if (IVehicleSeat* pSeat    = pVehicle->GetSeatForPassenger(pActor->GetEntityId()))
+	if (IVehicle* pVehicle = pActor->GetLinkedVehicle())
+		if (IVehicleSeat* pSeat = pVehicle->GetSeatForPassenger(pActor->GetEntityId()))
 			pSeat->Exit(false);
 
 	// stop using any mounted weapons before reviving
@@ -975,7 +1029,7 @@ void CGameRules::RevivePlayer(CActor* pActor, const Vec3& pos, const Ang3& angle
 }
 
 //------------------------------------------------------------------------
-void CGameRules::RevivePlayerInVehicle(CActor* pActor, const EntityId vehicleId, const int seatId, const int teamId/* =0 */, const bool clearInventory/* =true */)
+void CGameRules::RevivePlayerInVehicle(CTOSActor* pActor, const EntityId vehicleId, const int seatId, const int teamId/* =0 */, const bool clearInventory/* =true */)
 {
 	// might get here with an invalid (-ve) seat id if all seats are currently occupied. 
 	// In that case we use the seat exit code to find a valid position to spawn at.
@@ -1148,8 +1202,11 @@ void CGameRules::KillPlayer(CTOSActor *pActor, const bool dropItem, const bool r
 	pActor->GetGameObject()->InvokeRMI(CActor::ClClearInventory(), CActor::NoParams(), eRMI_ToAllClients | eRMI_NoLocalCalls);
 	pActor->GetInventory()->Destroy();
 
-	if (ragdoll)
+	//TheOtherSide
+	const bool haveSlave = g_pTOSGame->GetMasterModule()->GetCurrentSlave(pActor->GetEntity()) != nullptr;
+	if (ragdoll && !haveSlave)
 		pActor->GetGameObject()->SetAspectProfile(eEA_Physics, eAP_Ragdoll);
+	//~TheOtherSide
 
 	int shooterhealth = 100;
 	if (shooterId)

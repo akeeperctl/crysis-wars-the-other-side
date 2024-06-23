@@ -182,7 +182,7 @@ IMPLEMENT_RMI(CTOSMasterSynchronizer, SvRequestMasterClientStartControl)
 
 		// В данном случае сервер не знает какому мастеру нужно прописать полученного раба.
 		// Поэтому мы передаём серверу информацию как о рабе, так и о мастере.
-		g_pTOSGame->GetMasterModule()->SetCurrentSlave(pMasterActor->GetEntity(), pSlaveActor->GetEntity());
+		g_pTOSGame->GetMasterModule()->SetCurrentSlave(pMasterActor->GetEntity(), pSlaveActor->GetEntity(), params.masterFlags);
 
 		CryLogAlways("[C++][%s][%s][SvRequestMasterClientStartControl]",
 			TOS_Debug::GetEnv(), TOS_Debug::GetAct(3));

@@ -530,6 +530,9 @@ class CActor :
 	public IGameObjectView, public IGameObjectProfileManager
 {
 public:
+
+	friend class CTOSActor;
+
 	struct ItemIdParam
 	{
 		ItemIdParam()

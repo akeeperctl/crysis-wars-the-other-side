@@ -121,7 +121,6 @@ void CTOSPlayer::InitLocalPlayer()
 void CTOSPlayer::SetSpectatorMode(uint8 mode, EntityId targetId)
 {
 	const int oldMode = GetSpectatorMode();
-	CPlayer::SetSpectatorMode(mode, targetId);
 
 	switch (mode)
 	{
@@ -155,6 +154,8 @@ void CTOSPlayer::SetSpectatorMode(uint8 mode, EntityId targetId)
 	default:
 		break;
 	}
+
+	CPlayer::SetSpectatorMode(mode, targetId);
 }
 
 void CTOSPlayer::Update(SEntityUpdateContext& ctx, int updateSlot)

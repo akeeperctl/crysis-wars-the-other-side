@@ -367,7 +367,9 @@ int CScriptBind_GameRules::RevivePlayer(IFunctionHandler *pH, ScriptHandle playe
 	if (!pGameRules)
 		return pH->EndFunction();
 
-	CActor *pActor = GetActor((EntityId)playerId.n);
+	//TheOtherSide
+	CTOSActor* pActor = GetActor((EntityId)playerId.n);
+	//~TheOtherSide
 
 	if (pActor)
 		pGameRules->RevivePlayer(pActor, pos, Ang3(angles), teamId, clearInventory);
@@ -382,8 +384,10 @@ int CScriptBind_GameRules::RevivePlayerInVehicle(IFunctionHandler *pH, ScriptHan
 
 	if (!pGameRules)
 		return pH->EndFunction();
-
-	CActor *pActor = GetActor((EntityId)playerId.n);
+	
+	//TheOtherSide
+	CTOSActor* pActor = GetActor((EntityId)playerId.n);
+	//TheOtherSide
 
 	if (pActor)
 		pGameRules->RevivePlayerInVehicle(pActor, (EntityId)vehicleId.n, seatId, teamId, clearInventory);

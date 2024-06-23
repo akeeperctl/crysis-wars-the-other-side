@@ -81,7 +81,6 @@ enum EExtraGameplayEvent
 	eEGE_TOSEntityAuthorityDelegated,
 
 	eEGE_ForceStartControl,
-	eEGE_Example1,
 
 	eEGE_EntitiesPreReset,
 	eEGE_EntitiesPostReset,
@@ -104,6 +103,12 @@ enum EExtraGameplayEvent
 	eEGE_UpdateChannelConnectionState,
 
 	eEGE_VehicleDestroyed,
+
+	eEGE_ActorRevived,
+	eEGE_Example2,
+	eEGE_Example3,
+	eEGE_Example4,
+	eEGE_Example5,
 
 	//eEGE_TOSGame_Init,
 
@@ -351,8 +356,16 @@ public:
 			return "eEGE_EntityRemovedForced";
 		case eEGE_VehicleDestroyed:
 			return "eEGE_VehicleDestroyed";
-		case eEGE_Example1:
-			return "eEGE_Example1";
+		case eEGE_ActorRevived:
+			return "eEGE_ActorRevived";		
+		case eEGE_Example2:
+			return "eEGE_Example2";		
+		case eEGE_Example3:
+			return "eEGE_Example3";		
+		case eEGE_Example4:
+			return "eEGE_Example4";		
+		case eEGE_Example5:
+			return "eEGE_Example5";
 		case eEGE_Last:
 			return "eEGE_Last";
 		default:

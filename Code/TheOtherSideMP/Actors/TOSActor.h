@@ -46,20 +46,20 @@ struct NetPlayAnimationParams
 	}
 };
 
-struct NetMarkMeAsSlaveParams
+struct NetMarkMeParams
 {
-	NetMarkMeAsSlaveParams()
-		: slave(false) {};
+	NetMarkMeParams()
+		: value(false) {};
 
-	explicit NetMarkMeAsSlaveParams(const bool _slave) :
-		slave(_slave)
+	explicit NetMarkMeParams(const bool _slave_or_master) :
+		value(_slave_or_master)
 	{}
 
-	bool slave;
+	bool value;
 
 	void SerializeWith(TSerialize ser)
 	{
-		ser.Value("slave", slave, 'bool');
+		ser.Value("value", value, 'bool');
 	}
 };
 
@@ -210,12 +210,18 @@ public:
 	void AnimationEvent(ICharacterInstance* pCharacter, const AnimEventInstance& event) override;
 
 	void NetKill(EntityId shooterId, uint16 weaponClassId, int damage, int material, int hit_type, int killerHealthOnKill) override;
+	void NetReviveAt(const Vec3& pos, const Quat& rot, int teamId) override;
+	void NetReviveInVehicle(EntityId vehicleId, int seatId, int teamId) override;
+	void NetSimpleKill() override;
+
 	// ~CActor
 
 	//ITOSMasterControllable
 	void UpdateMasterView(SViewParams& viewParams, Vec3& offsetX, Vec3& offsetY, Vec3& offsetZ, Vec3& target, Vec3& current, float& currentFov) override {};
 	void ApplyMasterMovement(const Vec3& delta) override {};
 	//~ITOSMasterControllable
+
+	bool ResetActorWeapons(int delayMilliseconds);
 
 	virtual Matrix33 GetViewMtx() { return {}; }
 	virtual Matrix33 GetBaseMtx() { return {}; }
@@ -255,6 +261,7 @@ public:
 
 	STOSSlaveStats& GetSlaveStats() { return m_slaveStats; } ///< Получить статистику раба. Изменять можно.
 	bool IsSlave() const {return m_isSlave;}
+	bool IsMaster() const {return m_isMaster;}
 	bool IsLocalSlave() const; ///< проверка на локальной машине является ли актёр рабом
 
 	virtual CTOSEnergyConsumer* GetEnergyConsumer() const;
@@ -265,19 +272,25 @@ private:
 	//std::list<SQueuedAnimEvent> m_AnimEventQueue;
 	string m_sLastNetworkedAnim;
 	bool m_isSlave;///< сериализованное по сети через RMI значение, является ли актёр рабом
+	bool m_isMaster;///< сериализованное по сети через RMI значение, является ли актёр мастером
 
 	void NetMarkMeSlave(bool slave) const;///< Зафиксировать на всех клиентах и сервере, что данный актёр стал рабом. \n Вызывать только с клиента!
+	void NetMarkMeMaster(bool master) const;///< Зафиксировать на всех клиентах и сервере, что данный актёр стал master. \n Вызывать только с клиента!
 
 	DECLARE_SERVER_RMI_NOATTACH(SvRequestPlayAnimation, NetPlayAnimationParams, eNRT_ReliableOrdered);
 	DECLARE_CLIENT_RMI_NOATTACH(ClPlayAnimation, NetPlayAnimationParams, eNRT_ReliableOrdered);
 
-	DECLARE_SERVER_RMI_NOATTACH(SvRequestMarkMeAsSlave, NetMarkMeAsSlaveParams, eNRT_ReliableOrdered);
-	DECLARE_CLIENT_RMI_NOATTACH(ClMarkMeAsSlave, NetMarkMeAsSlaveParams, eNRT_ReliableOrdered);
+	DECLARE_SERVER_RMI_NOATTACH(SvRequestMarkMeAsSlave, NetMarkMeParams, eNRT_ReliableOrdered);
+	DECLARE_CLIENT_RMI_NOATTACH(ClMarkMeAsSlave, NetMarkMeParams, eNRT_ReliableOrdered);	
+	
+	DECLARE_SERVER_RMI_NOATTACH(SvRequestMarkMeAsMaster, NetMarkMeParams, eNRT_ReliableOrdered);
+	DECLARE_CLIENT_RMI_NOATTACH(ClMarkMeAsMaster, NetMarkMeParams, eNRT_ReliableOrdered);
 
 	DECLARE_SERVER_RMI_NOATTACH(SvRequestHideMe, NetHideMeParams, eNRT_ReliableOrdered);
 	DECLARE_CLIENT_RMI_NOATTACH(ClMarkHideMe, NetHideMeParams, eNRT_ReliableOrdered);
 
 protected:
+	string m_name;
 	bool m_chargingJump;///< Если *true, то высота прыжка зависит от длительности нажатия на дейсвие прыжка [jump]
 
 	STOSSlaveStats m_slaveStats;

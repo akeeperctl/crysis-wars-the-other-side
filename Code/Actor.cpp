@@ -1953,10 +1953,10 @@ bool CActor::SetAspectProfile( EEntityAspects aspect, uint8 profile )
 
 	if (aspect == eEA_Physics)
 	{
-		/*CryLog("%s::SetProfile(%d): %s (was: %d %s)", GetEntity()->GetName(),
+		CryLog("%s::SetProfile(%d): %s (was: %d %s)", GetEntity()->GetName(),
 		profile, profile==eAP_Alive?"alive":(profile==eAP_Ragdoll?"ragdoll":(profile==eAP_Spectator?"spectator":(profile==eAP_Frozen?"frozen":"unknown"))),
 			m_currentPhysProfile, m_currentPhysProfile==eAP_Alive?"alive":(m_currentPhysProfile==eAP_Ragdoll?"ragdoll":(m_currentPhysProfile==eAP_Spectator?"spectator":(m_currentPhysProfile==eAP_Frozen?"frozen":"unknown"))));
-*/
+
 		if (m_currentPhysProfile==profile && !gEnv->pSystem->IsSerializingFile()) //rephysicalize when loading savegame
 			return true;
 
@@ -3346,6 +3346,11 @@ IMPLEMENT_RMI(CActor, SvRequestUseItem)
 //------------------------------------------------------------------------
 void CActor::NetReviveAt(const Vec3 &pos, const Quat &rot, int teamId)
 {
+	//TheOtherSide
+	throw std::logic_error("Функция не должна вызываться");
+	return;
+	//~TheOtherSide
+
 	if (IVehicle *pVehicle=GetLinkedVehicle())
 	{
 		if (IVehicleSeat *pSeat=pVehicle->GetSeatForPassenger(GetEntityId()))
@@ -3401,6 +3406,11 @@ void CActor::NetReviveAt(const Vec3 &pos, const Quat &rot, int teamId)
 //------------------------------------------------------------------------
 void CActor::NetReviveInVehicle(EntityId vehicleId, int seatId, int teamId)
 {
+	//TheOtherSide
+	throw std::logic_error("Функция не должна вызываться");
+	return;
+	//~TheOtherSide
+
 	// stop using any mounted weapons before reviving
 	CItem *pItem=static_cast<CItem *>(GetCurrentItem());
 	if (pItem)
@@ -3569,6 +3579,11 @@ void CActor::NetKill(EntityId shooterId, uint16 weaponClassId, int damage, int m
 //------------------------------------------------------------------------
 void CActor::NetSimpleKill()
 {
+	//TheOtherSide
+	throw std::logic_error("Функция не должна вызываться");
+	return;
+	//~TheOtherSide
+
 	if (GetHealth()>0)
 		SetHealth(0);
 

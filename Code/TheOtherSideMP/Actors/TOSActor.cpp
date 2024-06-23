@@ -19,12 +19,14 @@
 #include "TheOtherSideMP/Helpers/TOS_NET.h"
 
 #include "HUD/HUD.h"
+#include "HUD/HUDRadar.h"
 #include "HUD/HUDTagNames.h"
 
 CTOSActor::CTOSActor()
 	:
 	//m_filteredDeltaMovement(ZERO),
 	m_isSlave(false),
+	m_isMaster(false),
 	m_chargingJump(false),
 	m_pEnergyConsumer(nullptr)
 {
@@ -42,6 +44,8 @@ bool CTOSActor::Init(IGameObject* pGameObject)
 	assert(m_pEnergyConsumer);
 	m_pEnergyConsumer->Reset();
 
+	m_name = GetEntity()->GetName();
+
 	return true;
 }
 
@@ -58,15 +62,13 @@ void CTOSActor::PostInit(IGameObject* pGameObject)
 	m_slaveStats = STOSSlaveStats();
 
 	// Факт: если оружие выдаётся на сервере, оно выдаётся и на всех клиентах тоже.
-	if (gEnv->bServer && gEnv->bMultiplayer && !IsPlayer())
-	{
-		GetEntity()->SetTimer(eMPTIMER_REMOVEWEAPONSDELAY, 1000);
-	}
+	ResetActorWeapons(1000);
 
 	// 30.11.2023 Akeeper: Это я оставлю здесь на всякий случай.
 	// Но к сожалению это не позволяет включить PrePhysicsUpdate в одиночной игре 
 	// отравки запроса на движение в MasterClient. 
 	GetGameObject()->EnablePrePhysicsUpdate(ePPU_Always);
+	m_name = GetEntity()->GetName();
 }
 
 void CTOSActor::InitClient(const int channelId)
@@ -89,6 +91,27 @@ void CTOSActor::ProcessEvent(SEntityEvent& event)
 
 	switch (event.event)
 	{
+	//case ENTITY_EVENT_XFORM:
+	//{
+	//	auto flag = event.nParam[0];
+
+	//	if (gEnv->bServer && IsPlayer() && (flag & ENTITY_XFORM_POS))
+	//	{
+	//		auto pSlaveEntity = g_pTOSGame->GetMasterModule()->GetCurrentSlave(GetEntity());
+	//		if (pSlaveEntity)
+	//		{
+	//			const Vec3 slavePos = pSlaveEntity->GetWorldPos();
+	//			const Quat slaveRot = pSlaveEntity->GetWorldRotation();
+
+	//			if ((this->GetEntity()->GetWorldPos() - slavePos).len() > 1.0f)
+	//			{
+	//				this->GetEntity()->SetWorldTM(Matrix34::CreateTranslationMat(slavePos), 0);
+	//			}
+	//		}
+	//	}
+	//	
+	//	break;
+	//}
 	case ENTITY_EVENT_TIMER:
 	{
 		// Фикс бага #29
@@ -114,26 +137,26 @@ void CTOSActor::ProcessEvent(SEntityEvent& event)
 
 			if (actorClass == "Trooper")
 			{
-				equipName = gEnv->pConsole->GetCVar("tos_sv_TrooperMPEquipPack")->GetString();
+				equipName = (string)gEnv->pConsole->GetCVar("tos_sv_TrooperMPEquipPack")->GetString();
 			}
 			else if (actorClass == "Scout")
 			{
-				equipName = gEnv->pConsole->GetCVar("tos_sv_ScoutMPEquipPack")->GetString();
+				equipName = (string)gEnv->pConsole->GetCVar("tos_sv_ScoutMPEquipPack")->GetString();
 			}
 			else if (actorClass == "Alien")
 			{
-				equipName = gEnv->pConsole->GetCVar("tos_sv_AlienMPEquipPack")->GetString();
+				equipName = (string)gEnv->pConsole->GetCVar("tos_sv_AlienMPEquipPack")->GetString();
 			}
 			else if (actorClass == "Hunter")
 			{
-				equipName = gEnv->pConsole->GetCVar("tos_sv_HunterMPEquipPack")->GetString();
+				equipName = (string)gEnv->pConsole->GetCVar("tos_sv_HunterMPEquipPack")->GetString();
 			}
 			else if (actorClass == "Grunt")
 			{
-				equipName = gEnv->pConsole->GetCVar("tos_sv_HumanGruntMPEquipPack")->GetString();
+				equipName = (string)gEnv->pConsole->GetCVar("tos_sv_HumanGruntMPEquipPack")->GetString();
 			}
 
-			TOS_Inventory::GiveEquipmentPack(this, equipName.c_str(), false);
+			TOS_Inventory::GiveEquipmentPack(this, equipName, false);
 		}
 	}
 	default: 
@@ -260,7 +283,115 @@ void CTOSActor::Release()
 
 void CTOSActor::Revive(const bool fromInit)
 {
-	CActor::Revive(fromInit);
+	if (!m_isMaster)
+	{
+		CActor::Revive(fromInit);
+		return;
+	}
+
+	m_reviveNoReactionTime = .1f;
+	m_dropWpnPendingId = 0;
+	m_dropWpnWaitTime = 0.f;
+	m_suicideDelay = -1.f;
+	ClearExtensionCache();
+
+	if (fromInit)
+		g_pGame->GetGameRules()->OnRevive(this, GetEntity()->GetWorldPos(), GetEntity()->GetWorldRotation(), m_teamId);
+
+	//set the actor game parameters
+	SmartScriptTable gameParams;
+	if (GetEntity()->GetScriptTable() && GetEntity()->GetScriptTable()->GetValue("gameParams", gameParams))
+		SetParams(gameParams, true);
+
+	EntityId currentItemId = GetCurrentItemId(false);
+
+	SetActorModel(); // set the model before physicalizing
+
+	//if (currentItemId && gEnv->bClient && !gEnv->bServer)
+	//{
+	//	//		CryLogAlways("GAME: Item selected before model updated!!1");
+	//	m_pItemSystem->SetActorItem(this, (EntityId)0, false);
+	//	SelectItem(currentItemId, false);
+	//}
+
+	m_stance = STANCE_NULL;
+	m_desiredStance = STANCE_NULL;
+	m_previousStance = STANCE_NULL;
+
+	//Physicalize();
+
+	if (gEnv->bServer)
+		GetGameObject()->SetAspectProfile(eEA_Physics, eAP_Spectator);
+
+	Freeze(false);
+
+	if (IPhysicalEntity* pPhysics = GetEntity()->GetPhysics())
+	{
+		pe_action_move actionMove;
+		actionMove.dir.zero();
+		actionMove.iJump = 1;
+
+		pe_action_set_velocity actionVel;
+		actionVel.v.zero();
+		actionVel.w.zero();
+
+		pPhysics->Action(&actionMove);
+		pPhysics->Action(&actionVel);
+	}
+
+	m_zoomSpeedMultiplier = 1.0f;
+
+	memset(m_boneIDs, -1, sizeof(m_boneIDs));
+
+	if (m_pAnimatedCharacter)
+		m_pAnimatedCharacter->ResetState();
+
+	if (m_pMovementController)
+		m_pMovementController->Reset();
+
+	if (m_pGrabHandler)
+		m_pGrabHandler->Reset();
+
+	m_sleepTimer = 0.0f;
+
+	m_linkStats = SLinkStats();
+
+	m_inCombat = false;
+	m_enterCombat = false;
+	m_combatTimer = 0.0f;
+	//	m_lastFootStepPos = ZERO;
+	m_rightFoot = true;
+	m_pReplacementMaterial = 0;
+
+	m_frozenAmount = 0.0f;
+
+	if (m_screenEffects)
+		m_screenEffects->ClearAllBlendGroups(true);
+
+	if (IsClient())
+		gEnv->p3DEngine->ResetPostEffects();
+
+	//reset some AG inputs
+	if (m_pAnimatedCharacter)
+	{
+		UpdateAnimGraph(m_pAnimatedCharacter->GetAnimationGraphState());
+		m_pAnimatedCharacter->GetAnimationGraphState()->SetInput("Action", "idle");
+		m_pAnimatedCharacter->GetAnimationGraphState()->SetInput("waterLevel", 0);
+		m_pAnimatedCharacter->SetParams(m_pAnimatedCharacter->GetParams().ModifyFlags(eACF_EnableMovementProcessing, 0));
+		m_pAnimatedCharacter->GetAnimationGraphState()->SetInput(m_inputHealth, GetMaxHealth());
+	}
+
+	//	m_footstepAccumDistance = 0.0f;
+
+	ResetHelmetAttachment();
+
+	if (ICharacterInstance* pCharacter = GetEntity()->GetCharacter(0))
+		pCharacter->EnableProceduralFacialAnimation(GetMaxHealth() > 0);
+
+	if (IEntityPhysicalProxy* pPProxy = (IEntityPhysicalProxy*)GetEntity()->GetProxy(ENTITY_PROXY_PHYSICS))
+		pPProxy->EnableRestrictedRagdoll(false);
+
+	TOS_RECORD_EVENT(GetEntityId(), STOSGameEvent(eEGE_ActorRevived, "", true));
 }
 
 void CTOSActor::Kill()
@@ -340,6 +471,146 @@ void CTOSActor::NetKill(EntityId shooterId, uint16 weaponClassId, int damage, in
 				ToggleThirdPerson();
 		}
 	}
+}
+
+void CTOSActor::NetReviveAt(const Vec3& pos, const Quat& rot, int teamId)
+{
+	if (IVehicle* pVehicle = GetLinkedVehicle())
+	{
+		if (IVehicleSeat* pSeat = pVehicle->GetSeatForPassenger(GetEntityId()))
+			pSeat->Exit(false);
+	}
+
+	// stop using any mounted weapons before reviving
+	CItem* pItem = static_cast<CItem*>(GetCurrentItem());
+	if (pItem)
+	{
+		if (pItem->IsMounted())
+		{
+			pItem->StopUse(GetEntityId());
+			pItem = 0;
+		}
+	}
+
+	SetHealth(GetMaxHealth());
+
+	m_teamId = teamId;
+	g_pGame->GetGameRules()->OnRevive(this, pos, rot, m_teamId);
+
+	Revive();
+
+	// Мастер привязан координатно к рабу, поэтому менять позицию ему не требуется
+	if (!m_isMaster)
+	{
+		GetEntity()->SetWorldTM(Matrix34::Create(Vec3(1, 1, 1), rot, pos));
+		GetEntity()->SetRotation(rot);
+	}
+
+	// This will cover the case when the ClPickup RMI comes in before we're revived
+	{
+		if (m_netLastSelectablePickedUp)
+			pItem = static_cast<CItem*>(m_pItemSystem->GetItem(m_netLastSelectablePickedUp));
+		
+		m_netLastSelectablePickedUp = 0;
+
+		if (pItem)
+		{
+			bool soundEnabled = pItem->IsSoundEnabled();
+			pItem->EnableSound(false);
+			pItem->Select(false);
+			pItem->EnableSound(soundEnabled);
+
+			m_pItemSystem->SetActorItem(this, (EntityId)0);
+			SelectItem(pItem->GetEntityId(), true);
+		}
+	}
+
+	//TheOtherSide IsLocalSlave
+	if (IsClient() || IsLocalSlave())
+	{
+		//~TheOtherSide
+
+		SupressViewBlending(); // no view blending when respawning // CActor::Revive resets it.
+		if (g_pGame->GetHUD())
+			g_pGame->GetHUD()->GetRadar()->Reset();
+	}
+}
+
+void CTOSActor::NetReviveInVehicle(EntityId vehicleId, int seatId, int teamId)
+{
+	// stop using any mounted weapons before reviving
+	CItem* pItem = static_cast<CItem*>(GetCurrentItem());
+	if (pItem)
+	{
+		if (pItem->IsMounted())
+		{
+			pItem->StopUse(GetEntityId());
+			pItem = 0;
+		}
+	}
+
+	SetHealth(GetMaxHealth());
+
+	m_teamId = teamId;
+	g_pGame->GetGameRules()->OnReviveInVehicle(this, vehicleId, seatId, m_teamId);
+
+	Revive();
+
+	// fix our physicalization, since it's need for some vehicle stuff, and it will be set correctly before the end of the frame
+	// make sure we are alive, for when we transition from ragdoll to linked...
+	if (!GetEntity()->GetPhysics() || GetEntity()->GetPhysics()->GetType() != PE_LIVING)
+		Physicalize();
+
+	IVehicle* pVehicle = m_pGameFramework->GetIVehicleSystem()->GetVehicle(vehicleId);
+	assert(pVehicle);
+	if (pVehicle)
+	{
+		IVehicleSeat* pSeat = pVehicle->GetSeatById(seatId);
+		if (pSeat && (!pSeat->GetPassenger() || pSeat->GetPassenger() == GetEntityId()))
+			pSeat->Enter(GetEntityId(), false);
+	}
+
+	// This will cover the case when the ClPickup RMI comes in before we're revived
+	if (m_netLastSelectablePickedUp)
+		pItem = static_cast<CItem*>(m_pItemSystem->GetItem(m_netLastSelectablePickedUp));
+	m_netLastSelectablePickedUp = 0;
+
+	if (pItem)
+	{
+		bool soundEnabled = pItem->IsSoundEnabled();
+		pItem->EnableSound(false);
+		pItem->Select(false);
+		pItem->EnableSound(soundEnabled);
+
+		m_pItemSystem->SetActorItem(this, (EntityId)0);
+		SelectItem(pItem->GetEntityId(), true);
+	}
+
+	if (IsClient())
+	{
+		SupressViewBlending(); // no view bleding when respawning // CActor::Revive resets it.
+		if (g_pGame->GetHUD())
+			g_pGame->GetHUD()->GetRadar()->Reset();
+	}
+}
+
+void CTOSActor::NetSimpleKill()
+{
+	if (GetHealth() > 0)
+		SetHealth(0);
+
+	Kill();
+}
+
+bool CTOSActor::ResetActorWeapons(int delayMilliseconds)
+{
+	if (gEnv->bServer && gEnv->bMultiplayer && !IsPlayer())
+	{
+		GetEntity()->SetTimer(eMPTIMER_REMOVEWEAPONSDELAY, 1000);
+		return true;
+	}
+
+	return false;
 }
 
 //void CTOSActor::QueueAnimationEvent(const SQueuedAnimEvent& sEvent)
@@ -446,10 +717,21 @@ void CTOSActor::NetMarkMeSlave(const bool slave) const
 
 	if (gEnv->bClient)
 	{
-		NetMarkMeAsSlaveParams params;
-		params.slave = slave;
+		NetMarkMeParams params;
+		params.value = slave;
 
 		GetGameObject()->InvokeRMI(SvRequestMarkMeAsSlave(), params, eRMI_ToServer);
+	}
+}
+
+void CTOSActor::NetMarkMeMaster(const bool master) const
+{
+	if (gEnv->bClient)
+	{
+		NetMarkMeParams params;
+		params.value = master;
+
+		GetGameObject()->InvokeRMI(SvRequestMarkMeAsMaster(), params, eRMI_ToServer);
 	}
 }
 
@@ -526,18 +808,53 @@ IMPLEMENT_RMI(CTOSActor, ClPlayAnimation)
 	return true;
 }
 
+IMPLEMENT_RMI(CTOSActor, SvRequestMarkMeAsMaster)
+{
+	// Описываем здесь всё, что будет выполняться на сервере
+
+	m_isMaster = params.value;
+	GetGameObject()->InvokeRMI(ClMarkMeAsMaster(), params, eRMI_ToAllClients);
+
+	CryLogAlwaysDev("[C++][%s][%s][%s][%s] mark as master = %i",
+		TOS_Debug::GetEnv(),
+		TOS_Debug::GetAct(3),
+		__FUNCTION__,
+		m_name,
+		params.value);
+
+
+	return true;
+}
+
+IMPLEMENT_RMI(CTOSActor, ClMarkMeAsMaster)
+{
+	// Описываем здесь всё, что будет выполняться на клиенте
+
+	m_isMaster = params.value;
+
+	CryLogAlwaysDev("[C++][%s][%s][%s][%s] mark as master = %i",
+		TOS_Debug::GetEnv(),
+		TOS_Debug::GetAct(3),
+		__FUNCTION__,
+		m_name,
+		params.value);
+
+	return true;
+}
+
 IMPLEMENT_RMI(CTOSActor, SvRequestMarkMeAsSlave)
 {
 	// Описываем здесь всё, что будет выполняться на сервере
 
-	m_isSlave = params.slave;
+	m_isSlave = params.value;
 	GetGameObject()->InvokeRMI(ClMarkMeAsSlave(), params, eRMI_ToAllClients);
 
-	CryLogAlwaysDev("[C++][%s][%s][%s] mark as slave = %i",
+	CryLogAlwaysDev("[C++][%s][%s][%s][%s] mark as slave = %i",
 		TOS_Debug::GetEnv(),
 		TOS_Debug::GetAct(3),
 		__FUNCTION__,
-		params.slave);
+		m_name,
+		params.value);
 	
 
 	return true;
@@ -547,13 +864,14 @@ IMPLEMENT_RMI(CTOSActor, ClMarkMeAsSlave)
 {
 	// Описываем здесь всё, что будет выполняться на клиенте
 
-	m_isSlave = params.slave;
+	m_isSlave = params.value;
 
-	CryLogAlwaysDev("[C++][%s][%s][%s] mark as slave = %i",
+	CryLogAlwaysDev("[C++][%s][%s][%s][%s] mark as slave = %i",
 		TOS_Debug::GetEnv(),
 		TOS_Debug::GetAct(3),
 		__FUNCTION__,
-		params.slave);
+		m_name,
+		params.value);
 
 	return true;
 }
@@ -567,7 +885,7 @@ IMPLEMENT_RMI(CTOSActor, SvRequestHideMe)
 	if (pFists)
 		g_pGame->GetIGameFramework()->GetIItemSystem()->SetActorItem(this, pFists->GetEntityId());
 
-	GetGameObject()->SetAspectProfile(eEA_Physics, params.hide ? eAP_Spectator : eAP_Alive);
+	GetGameObject()->SetAspectProfile(eEA_Physics, GetSpectatorMode() != 0 || params.hide ? eAP_Spectator : eAP_Alive);
 	GetGameObject()->InvokeRMI(ClMarkHideMe(), params, eRMI_ToAllClients);	
 
 	return true;

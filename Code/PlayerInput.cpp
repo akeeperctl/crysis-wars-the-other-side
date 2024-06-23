@@ -19,7 +19,7 @@
 //TheOtherSide
 #include "TheOtherSideMP/Actors/Player/TOSPlayer.h"
 #include "TheOtherSideMP/Game/Modules/Master/MasterClient.h"
-#include <TOS_MasterModule.h>
+#include "TheOtherSideMP/Helpers/TOS_MasterModule.h"
 //~TheOtherSide
 
 TActionHandler<CPlayerInput>	CPlayerInput::s_actionHandler;

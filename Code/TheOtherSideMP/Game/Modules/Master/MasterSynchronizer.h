@@ -57,14 +57,16 @@ struct NetMasterStartControlParams
 {
 	EntityId slaveId;
 	EntityId masterId;
+	uint masterFlags;
 
 	NetMasterStartControlParams()
-		: slaveId(0), masterId(0) {}
+		: slaveId(0), masterId(0), masterFlags(0) {}
 
 	void SerializeWith(TSerialize ser)
 	{
 		ser.Value("slaveId", slaveId, 'eid');
 		ser.Value("masterId", masterId, 'eid');
+		ser.Value("masterFlags", masterFlags);
 	}
 };
 

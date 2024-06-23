@@ -806,7 +806,10 @@ void CTOSMasterClient::StartControl(IEntity* pEntity, uint dudeFlags /*= 0*/, bo
 
 	// Событие вызывает RMI, которая отправляется на сервер
 	// Смотреть CTOSMasterModule::OnExtraGameplayEvent()
-	TOS_RECORD_EVENT(m_pSlaveEntity->GetId(), STOSGameEvent(eEGE_MasterClientOnStartControl, "", true));
+
+	auto void_dudeFlags = static_cast<void*>(new uint(m_dudeFlags));
+
+	TOS_RECORD_EVENT(m_pSlaveEntity->GetId(), STOSGameEvent(eEGE_MasterClientOnStartControl, "", true, false, void_dudeFlags));
 }
 
 void CTOSMasterClient::StopControl(bool callFromFG /*= false*/)
@@ -850,6 +853,7 @@ bool CTOSMasterClient::SetSlaveEntity(IEntity* pEntity, const char* cls)
 	assert(pSlaveActor);
 
 	pSlaveActor->NetMarkMeSlave(true);
+	m_pLocalDude->NetMarkMeMaster(true);
 
 	TOS_RECORD_EVENT(m_pSlaveEntity->GetId(), STOSGameEvent(eEGE_MasterClientOnSetSlave, "", true));
 	return true;
@@ -865,6 +869,7 @@ void CTOSMasterClient::ClearSlaveEntity()
 	// В сетевой игре раб будет удаляться только при переходе в режим зрителя или выходе мастера из игры.
 	// Во всех остальных случаях раб удаляться не будет.
 	pSlaveActor->NetMarkMeSlave(false);
+	m_pLocalDude->NetMarkMeMaster(false);
 
 	m_pSlaveEntity = nullptr;
 	TOS_RECORD_EVENT(0, STOSGameEvent(eEGE_MasterClientOnClearSlave, "", true));
@@ -1104,10 +1109,13 @@ void CTOSMasterClient::PrepareDude(const bool toStartControl, const uint dudeFla
     }
     else
     {
-		pSynch->RMISend(
-			CTOSMasterSynchronizer::SvRequestApplyMCSavedParams(),
-			NetMasterIdParams(m_pLocalDude->GetEntityId()),
-			eRMI_ToServer);
+		if (!gEnv->bMultiplayer)
+		{
+			pSynch->RMISend(
+				CTOSMasterSynchronizer::SvRequestApplyMCSavedParams(),
+				NetMasterIdParams(m_pLocalDude->GetEntityId()),
+				eRMI_ToServer);
+		}
 
         if (dudeFlags & TOS_DUDE_FLAG_ENABLE_ACTION_FILTER)
         {

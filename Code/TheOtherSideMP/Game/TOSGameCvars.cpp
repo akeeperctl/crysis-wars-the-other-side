@@ -46,6 +46,8 @@ void STOSCvars::InitCCommands(IConsole* pConsole)
 	pConsole->AddCommand("getsyncs", CmdGetSyncs);
 	pConsole->AddCommand("getentitybyid", CmdGetEntityById);
 	pConsole->AddCommand("getentityscriptvalue", CmdGetEntityScriptValue);
+	pConsole->AddCommand("getentityscriptvalue", CmdGetEntityScriptValue);
+	pConsole->AddCommand("dumpactorinfo", CmdDumpActorInfo);
 
 	// Отладочные команды потребителя энергии
 	pConsole->AddCommand("consumersetenergy", CmdConsumerSetEnergy);
@@ -72,6 +74,8 @@ void STOSCvars::ReleaseCCommands()
 	pConsole->RemoveCommand("consumersetenergy");
 	pConsole->RemoveCommand("consumersetdrain");
 	pConsole->RemoveCommand("consumersetdebugentname");
+
+	pConsole->RemoveCommand("dumpactorinfo");
 }
 
 void STOSCvars::ReleaseCVars()
@@ -116,6 +120,31 @@ void STOSCvars::CmdNetChName(IConsoleCmdArgs* pArgs)
 		return;
 
 	CryLogAlways("Result: (%s|%s)", playerEntityName, pChannel->GetName());
+}
+
+void STOSCvars::CmdDumpActorInfo(IConsoleCmdArgs* pArgs)
+{
+	//m_currentPhysProfile
+
+	ONLY_SERVER_CMD;
+
+	const EntityId id = atoi(pArgs->GetArg(1));
+
+	const auto pEntity = gEnv->pEntitySystem->GetEntity(id);
+	if (!pEntity)
+	{
+		CryLogAlways("Failed: wrong 1 arg entityId");
+		return;
+	}
+
+	auto pActor = dynamic_cast<CTOSActor*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(id));
+	if (!pActor)
+	{
+		CryLogAlways("Failed: nullptr pActor");
+		return;
+	}
+
+	pActor->DumpActorInfo();
 }
 
 void STOSCvars::CmdGetEntityScriptValue(IConsoleCmdArgs* pArgs)
