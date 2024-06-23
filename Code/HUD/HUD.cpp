@@ -13,9 +13,9 @@ Description:
 -------------------------------------------------------------------------
 History:
 - 07:11:2005: Created by Julien Darre
-- 01:02:2006: Modified by Jan MГјller
+- 01:02:2006: Modified by Jan Müller
 - 22:02:2006: Refactored for G04 by Matthew Jack
-- 2007: Refactored by Jan MГјller
+- 2007: Refactored by Jan Müller
 
 *************************************************************************/
 #include "StdAfx.h"
@@ -1377,7 +1377,7 @@ void CHUD::ModeChanged(ENanoMode mode)
 void CHUD::EnergyChanged(float energy)
 {
 	//TheOtherSide
-	// РЈСЃС‚Р°СЂРµР»Рѕ 23/11/2023
+	// Устарело 23/11/2023
 	//m_animPlayerStats.Invoke("setEnergy", energy*0.5f+1.0f);
 	//~TheOtherSide
 }
@@ -5765,66 +5765,94 @@ void CHUD::UpdatePlayerAmmo()
 		return;
 	}
 
-	if(!(m_pHUDVehicleInterface && m_pHUDVehicleInterface->GetHUDType() != CHUDVehicleInterface::EHUD_NONE))
+	//TheOtherSide
+	const bool notVehicle = !(m_pHUDVehicleInterface && m_pHUDVehicleInterface->GetHUDType() != CHUDVehicleInterface::EHUD_NONE);
+	//~TheOtherSide
+
+	// Если не в транспортном средстве
+	if (notVehicle)
 	{
+		auto ammo = 0; // Количество боеприпасов
+		auto clipSize = 0; // Размер магазина
+		auto restAmmo = 0; // Оставшиеся боеприпасы
+		CryFixedStringT<128> grenadeType; // Тип гранаты
+		auto grenades = 0; // Количество гранат
+		auto TACLauncherMode = false; // Режим запуска ТАС
 
-		int ammo = 0;
-		int clipSize = 0;
-		int restAmmo = 0;
-		CryFixedStringT<128> grenadeType;
-		int grenades = 0;
-		bool TACLauncherMode = false;
+		//TheOtherSide
+		auto* pPlayer = g_pTOSGame->GetActualClientActor();
+		if (!pPlayer) CryLogAlways("pPlayer указатель нулевой - игрок не найден.");
+		//~TheOtherSide
 
-		CPlayer *pPlayer = static_cast<CPlayer*>(gEnv->pGame->GetIGameFramework()->GetClientActor());
-		if(pPlayer)
+		// Если игрок существует
+		if (pPlayer)
 		{
-			IItem *pItem = pPlayer->GetCurrentItem(false);
-			if(pItem)
-			{
-				if(CWeapon *pWeapon = static_cast<CWeapon*>(pItem->GetIWeapon()))
-				{
+			auto* pItem = pPlayer->GetCurrentItem(false);
+			if (!pItem) CryLogAlways("pItem указатель нулевой - текущий предмет не найден.");
 
-					IEntityClass *tacgun = gEnv->pEntitySystem->GetClassRegistry()->FindClass("TACGun");
-					if(pItem->GetEntity() && pItem->GetEntity()->GetClass()==tacgun)
+			// Если предмет существует
+			if (pItem)
+			{
+				auto* pWeapon = dynamic_cast<CWeapon*>(pItem->GetIWeapon());
+				if (!pWeapon) CryLogAlways("pWeapon указатель нулевой - оружие не найдено.");
+
+				// Если оружие существует
+				if (pWeapon)
+				{
+					auto* tacgun = gEnv->pEntitySystem->GetClassRegistry()->FindClass("TACGun");
+					// Если текущий предмет - TACGun
+					if (pItem->GetEntity() && pItem->GetEntity()->GetClass() == tacgun)
 					{
-						TACLauncherMode	= true;
+						TACLauncherMode = true;
 					}
-					
-					int fm = pWeapon->GetCurrentFireMode();
-					if(IFireMode *pFM = pWeapon->GetFireMode(fm))
+
+					auto fm = pWeapon->GetCurrentFireMode();
+					if (auto* pFM = pWeapon->GetFireMode(fm))
 					{
 						ammo = pFM->GetAmmoCount();
-						if(IItem *pSlave = pWeapon->GetDualWieldSlave())
+						// Если есть второе оружие в режиме двойного вооружения
+						if (auto* pSlave = pWeapon->GetDualWieldSlave())
 						{
-							if(IWeapon *pSlaveWeapon = pSlave->GetIWeapon())
-								if(IFireMode *pSlaveFM = pSlaveWeapon->GetFireMode(pSlaveWeapon->GetCurrentFireMode()))
+							if (!pSlave) CryLogAlways("pSlave указатель нулевой - второе оружие в режиме двойного вооружения не найдено.");
+
+							if (auto* pSlaveWeapon = pSlave->GetIWeapon())
+							{
+								if (!pSlaveWeapon) CryLogAlways("pSlaveWeapon указатель нулевой - оружие второго руки не найдено.");
+
+								if (auto* pSlaveFM = pSlaveWeapon->GetFireMode(pSlaveWeapon->GetCurrentFireMode()))
+								{
 									ammo += pSlaveFM->GetAmmoCount();
+								}
+							}
 						}
 						clipSize = pFM->GetClipSize();
 						restAmmo = pPlayer->GetInventory()->GetAmmoCount(pFM->GetAmmoType());
 
-						if(pFM->CanOverheat())
+						// Если оружие может перегреться
+						if (pFM->CanOverheat())
 						{
-							int heat = int(pFM->GetHeat()*100.0f);
+							auto heat = static_cast<int>(pFM->GetHeat() * 100.0f);
 							m_animPlayerStats.Invoke("setOverheatBar", heat);
 						}
 					}
 				}
 			}
 
-			IItem *pOffhand = g_pGame->GetIGameFramework()->GetIItemSystem()->GetItem(pPlayer->GetInventory()->GetItemByClass(CItem::sOffHandClass));
-			if(pOffhand)
+			// Проверка вспомогательного оружия
+			auto* pOffhand = g_pGame->GetIGameFramework()->GetIItemSystem()->GetItem(pPlayer->GetInventory()->GetItemByClass(CItem::sOffHandClass));
+			if (!pOffhand) CryLogAlways("pOffhand указатель нулевой - вспомогательное оружие не найдено.");
+
+			if (pOffhand)
 			{
-				int firemode = pOffhand->GetIWeapon()->GetCurrentFireMode();
-				if(IFireMode *pFm = pOffhand->GetIWeapon()->GetFireMode(firemode))
+				auto firemode = pOffhand->GetIWeapon()->GetCurrentFireMode();
+				if (auto* pFm = pOffhand->GetIWeapon()->GetFireMode(firemode))
 				{
-					if(pFm->GetAmmoType())
+					if (pFm->GetAmmoType())
 					{
 						grenadeType = pFm->GetAmmoType()->GetName();
-						if(pPlayer)
-							grenades = pPlayer->GetInventory()->GetAmmoCount(pFm->GetAmmoType());
+						grenades = pPlayer->GetInventory()->GetAmmoCount(pFm->GetAmmoType());
 					}
-					else //can happen during object pickup/throw
+					else // Может произойти во время подбора/броска объекта
 					{
 						grenadeType.assign(m_sGrenadeType, m_sGrenadeType.length());
 						grenades = m_iGrenadeAmmo;
@@ -5833,29 +5861,33 @@ void CHUD::UpdatePlayerAmmo()
 			}
 		}
 
-		if(m_playerAmmo == -1) //probably good to update fireMode
+		// Возможно, стоит обновить режим стрельбы
+		if (m_playerAmmo == -1)
 		{
-			SetFireMode(NULL, NULL);
+			SetFireMode(nullptr, nullptr);
 			m_animPlayerStats.Invoke("setAmmoMode", 0);
 		}
 
+		// Установка режима запуска ТАС
 		m_animPlayerStats.GetFlashPlayer()->SetVariable("TACLauncherMode", SFlashVarValue(TACLauncherMode));
 
-
-		if(m_playerAmmo != ammo || m_playerClipSize != clipSize || m_playerRestAmmo != restAmmo || 
+		// Обновление информации о боеприпасах, если она изменилась
+		if (m_playerAmmo != ammo || m_playerClipSize != clipSize || m_playerRestAmmo != restAmmo ||
 			m_iGrenadeAmmo != grenades || grenadeType.compare(m_sGrenadeType) != 0)
 		{
-			SFlashVarValue args[7] = {0, ammo, clipSize, restAmmo, grenades, grenadeType.c_str(), true};
+			SFlashVarValue args[7] = { 0, ammo, clipSize, restAmmo, grenades, grenadeType.c_str(), true };
 			m_animPlayerStats.Invoke("setAmmo", args, 7);
 			m_playerAmmo = ammo;
 			m_playerClipSize = clipSize;
 			m_playerRestAmmo = restAmmo;
 			m_iGrenadeAmmo = grenades;
-			m_sGrenadeType.assign(grenadeType.c_str()); // will alloc
+			m_sGrenadeType.assign(grenadeType.c_str()); // будет выделена память
 		}
 	}
 	else
-		m_playerAmmo = m_playerRestAmmo = -1; //forces update next time outside vehicle
+	{
+		m_playerAmmo = m_playerRestAmmo = -1; // принудительное обновление в следующий раз вне транспортного средства
+	}
 }
 
 //-----------------------------------------------------------------------------------------------------

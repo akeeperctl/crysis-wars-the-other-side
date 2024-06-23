@@ -681,7 +681,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">true</ExcludedFromBuild>
     </ClInclude>
-    <ClInclude Include="TheOtherSideMP\Extensions\EnergyРЎonsumer.h" />
+    <ClInclude Include="TheOtherSideMP\Extensions\EnergyСonsumer.h" />
     <ClInclude Include="TheOtherSideMP\Game\Modules\Abilities\AbilitiesSystem.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">true</ExcludedFromBuild>
@@ -727,6 +727,7 @@
     <ClInclude Include="TheOtherSideMP\TOSSmartStruct.h" />
     <ClInclude Include="Throw.h" />
     <ClInclude Include="ThrowableWeapon.h" />
+    <ClInclude Include="TOS_MasterModule.h" />
     <ClInclude Include="TracerManager.h" />
     <ClInclude Include="Trooper.h" />
     <ClInclude Include="VehicleActionAutomaticDoor.h" />

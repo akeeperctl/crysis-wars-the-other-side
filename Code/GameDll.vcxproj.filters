@@ -1,4 +1,4 @@
-п»ї<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Actor Files">
@@ -1472,10 +1472,13 @@
     <ClInclude Include="TheOtherSideMP\Actors\Animation\AnimationGraphState.h">
       <Filter>TheOtherSideMP\Actors\animation</Filter>
     </ClInclude>
-    <ClInclude Include="TheOtherSideMP\Extensions\EnergyРЎonsumer.h">
+    <ClInclude Include="TheOtherSideMP\Extensions\EnergyСonsumer.h">
       <Filter>TheOtherSideMP\Extensions</Filter>
     </ClInclude>
     <ClInclude Include="TheOtherSideMP\Helpers\TOS_Console.h">
+      <Filter>TheOtherSideMP\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="TOS_MasterModule.h">
       <Filter>TheOtherSideMP\Helpers</Filter>
     </ClInclude>
   </ItemGroup>
