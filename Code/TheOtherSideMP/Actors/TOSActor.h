@@ -175,7 +175,9 @@ struct STOSNetBodyInfo
 	//bool m_hasAimTarget;
 };
 
-class CTOSActor: public CActor, ITOSMasterControllable  // NOLINT(cppcoreguidelines-special-member-functions)
+class CTOSActor: 
+	public CActor, 
+	public ITOSMasterControllable  // NOLINT(cppcoreguidelines-special-member-functions)
 {
 public:
 	enum MPTimers
@@ -207,6 +209,7 @@ public:
 	void PlayAction(const char* action, const char* extension, bool looping = false) override;
 	void AnimationEvent(ICharacterInstance* pCharacter, const AnimEventInstance& event) override;
 
+	void NetKill(EntityId shooterId, uint16 weaponClassId, int damage, int material, int hit_type, int killerHealthOnKill) override;
 	// ~CActor
 
 	//ITOSMasterControllable

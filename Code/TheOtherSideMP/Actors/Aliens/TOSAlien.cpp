@@ -266,6 +266,11 @@ Matrix33 CTOSAlien::GetEyeMtx()
 	return m_eyeMtx;
 }
 
+void CTOSAlien::Kill()
+{
+	CTOSActor::Kill();
+}
+
 void CTOSAlien::ApplyMasterMovement(const Vec3& delta)
 {
 	//m_input.deltaMovement = FilterDeltaMovement(delta);

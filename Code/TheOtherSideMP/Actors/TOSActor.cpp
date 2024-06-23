@@ -18,6 +18,9 @@
 #include "TheOtherSideMP/Helpers/TOS_Inventory.h"
 #include "TheOtherSideMP/Helpers/TOS_NET.h"
 
+#include "HUD/HUD.h"
+#include "HUD/HUDTagNames.h"
+
 CTOSActor::CTOSActor()
 	:
 	//m_filteredDeltaMovement(ZERO),
@@ -296,6 +299,47 @@ void CTOSActor::AnimationEvent(ICharacterInstance* pCharacter, const AnimEventIn
 		pMC->AnimationEvent(GetEntity(), pCharacter, event);
 
 	CActor::AnimationEvent(pCharacter, event);
+}
+
+void CTOSActor::NetKill(EntityId shooterId, uint16 weaponClassId, int damage, int material, int hit_type, int killerHealthOnKill)
+{
+	static char weaponClassName[129] = { 0 };
+	m_pGameFramework->GetNetworkSafeClassName(weaponClassName, 128, weaponClassId);
+
+	g_pGame->GetGameRules()->OnKill(this, shooterId, weaponClassName, damage, material, hit_type);
+
+	m_netLastSelectablePickedUp = 0;
+
+	if (GetHealth() > 0)
+		SetHealth(0);
+
+	Kill();
+
+	g_pGame->GetGameRules()->OnKillMessage(GetEntityId(), shooterId, weaponClassName, damage, material, hit_type);
+
+	CHUD* pHUD = g_pGame->GetHUD();
+	if (!pHUD)
+		return;
+
+	bool ranked = pHUD->GetPlayerRank(shooterId) != 0 || pHUD->GetPlayerRank(GetEntityId()) != 0;
+
+	if (IsClient() && gEnv->bMultiplayer && shooterId != GetEntityId() && g_pGameCVars->g_deathCam != 0)
+	{
+		// use the spectator target to store who killed us (used for the MP death cam - not quite spectator mode but similar...).
+		if (g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(shooterId))
+		{
+			SetSpectatorTarget(shooterId);
+			SetSpectatorHealth(killerHealthOnKill);
+
+			// Also display the name of the enemy who shot you...
+			if (g_pGame->GetGameRules()->GetTeam(shooterId) != g_pGame->GetGameRules()->GetTeam(GetEntityId()) || g_pGame->GetGameRules()->GetTeamCount() <= 1)
+				SAFE_HUD_FUNC(GetTagNames()->AddEnemyTagName(shooterId));
+
+			// ensure full body is displayed (otherwise player is headless)
+			if (!IsThirdPerson())
+				ToggleThirdPerson();
+		}
+	}
 }
 
 //void CTOSActor::QueueAnimationEvent(const SQueuedAnimEvent& sEvent)

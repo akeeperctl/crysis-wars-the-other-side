@@ -1108,7 +1108,7 @@ bool CGameRules::IsNameTaken(const char* name, IEntity* pEntity)
 }
 
 //------------------------------------------------------------------------
-void CGameRules::KillPlayer(CActor* pActor, const bool dropItem, const bool ragdoll, const EntityId shooterId, const EntityId weaponId, const float damage, const int material, const int hit_type, const Vec3& impulse)
+void CGameRules::KillPlayer(CTOSActor *pActor, const bool dropItem, const bool ragdoll, const EntityId shooterId, const EntityId weaponId, const float damage, const int material, const int hit_type, const Vec3& impulse)
 {
 	if (!gEnv->bServer)
 		return;

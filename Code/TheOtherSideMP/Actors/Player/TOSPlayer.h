@@ -39,6 +39,7 @@ public:
 	void Release() override;
 	void UpdateView(SViewParams& viewParams) override;
 	void PostUpdateView(SViewParams& viewParams) override;
+	void Kill() override;
 	//~CPlayer
 
 	//CTOSActor

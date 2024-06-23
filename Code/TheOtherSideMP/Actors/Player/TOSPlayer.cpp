@@ -9,6 +9,7 @@
 
 #include "TheOtherSideMP/Extensions/EnergyСonsumer.h"
 #include "TheOtherSideMP/Game/TOSGameEventRecorder.h"
+#include <Claymore.h>
 
 CTOSPlayer::CTOSPlayer()
 	: m_pMasterClient(nullptr)
@@ -225,6 +226,18 @@ void CTOSPlayer::UpdateView(SViewParams& viewParams)
 void CTOSPlayer::PostUpdateView(SViewParams& viewParams)
 {
 	CPlayer::PostUpdateView(viewParams);
+}
+
+void CTOSPlayer::Kill()
+{
+	if (CNanoSuit* pSuit = GetNanoSuit())
+		pSuit->Death();
+
+	// notify any claymores/mines that this player has died
+	//	(they will be removed 30s later)
+	RemoveAllExplosives(EXPLOSIVE_REMOVAL_TIME);
+
+	CTOSActor::Kill();
 }
 
 Matrix33 CTOSPlayer::GetViewMtx()

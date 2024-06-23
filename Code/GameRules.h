@@ -28,6 +28,10 @@
 #include "Voting.h"
 #include "ShotValidator.h"
 
+//TheOtherSide
+#include "TheOtherSideMP/Actors/TOSActor.h"
+//TheOtherSide
+
 
 class CActor;
 class CPlayer;
@@ -302,7 +306,7 @@ public:
 	virtual void RenamePlayer(CActor *pActor, const char *name);
 	virtual string VerifyName(const char *name, IEntity *pEntity=0);
 	virtual bool IsNameTaken(const char *name, IEntity *pEntity=0);
-	virtual void KillPlayer(CActor *pActor, bool dropItem, bool ragdoll, EntityId shooterId, EntityId weaponId, float damage, int material, int hit_type, const Vec3 &impulse);
+	virtual void KillPlayer(CTOSActor* pActor, bool dropItem, bool ragdoll, EntityId shooterId, EntityId weaponId, float damage, int material, int hit_type, const Vec3 &impulse);
 	virtual void MovePlayer(CActor *pActor, const Vec3 &pos, const Ang3 &angles);
 	virtual void ChangeSpectatorMode(CActor *pActor, uint8 mode, EntityId target, bool resetAll);
 	virtual void RequestNextSpectatorTarget(CActor* pActor, int change);

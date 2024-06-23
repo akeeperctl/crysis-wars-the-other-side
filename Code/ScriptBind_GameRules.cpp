@@ -7,7 +7,7 @@ $DateTime$
 
 -------------------------------------------------------------------------
 History:
-- 27:10:2004   11:29 : Created by Márcio Martins
+- 27:10:2004   11:29 : Created by MÐ±rcio Martins
 
 *************************************************************************/
 #include "StdAfx.h"
@@ -17,6 +17,10 @@ History:
 #include "Game.h"
 #include "GameCVars.h"
 #include "MPTutorial.h"
+
+//TheOtherSide
+#include "TheOtherSideMP/Actors/TOSActor.h"
+//TheOtherSide
 
 //------------------------------------------------------------------------
 CScriptBind_GameRules::CScriptBind_GameRules(ISystem *pSystem, IGameFramework *pGameFramework)
@@ -271,9 +275,9 @@ CGameRules *CScriptBind_GameRules::GetGameRules(IFunctionHandler *pH)
 }
 
 //------------------------------------------------------------------------
-CActor *CScriptBind_GameRules::GetActor(EntityId id)
+CTOSActor* CScriptBind_GameRules::GetActor(EntityId id)
 {
-	return static_cast<CActor *>(m_pGameFW->GetIActorSystem()->GetActor(id));
+	return static_cast<CTOSActor*>(m_pGameFW->GetIActorSystem()->GetActor(id));
 }
 
 //------------------------------------------------------------------------
@@ -412,7 +416,10 @@ int CScriptBind_GameRules::KillPlayer(IFunctionHandler *pH, ScriptHandle playerI
 	if (!pGameRules)
 		return pH->EndFunction();
 
-	CActor *pActor = GetActor((EntityId)playerId.n);
+	//TheOtherSide
+	//CActor *pActor = GetActor((EntityId)playerId.n);
+	CTOSActor *pActor = GetActor((EntityId)playerId.n);
+	//TheOtherSide
 
 	if (pActor)
 		pGameRules->KillPlayer(pActor, dropItem, ragdoll, (EntityId)shooterId.n, (EntityId)weaponId.n, damage, material, hit_type, impulse);

@@ -72,6 +72,7 @@ History:
 //TheOtherSide
 #include "TheOtherSideMP/HUD/TOSCrosshair.h"
 #include "TheOtherSideMP/Helpers/TOS_Console.h"
+#include <stdexcept>
 //~TheOtherSide
 
 // enable this to check nan's on position updates... useful for debugging some weird crashes
@@ -3377,6 +3378,12 @@ void CPlayer::Revive( bool fromInit )
 
 void CPlayer::Kill()
 {
+	//TheOtherSide
+	//См. CTOSPlayer::Kill()
+	throw std::logic_error("Эта функция не должна вызываться");
+	return;
+	//TheOtherSide
+
 	if (CNanoSuit *pSuit=GetNanoSuit())
 		pSuit->Death();
 

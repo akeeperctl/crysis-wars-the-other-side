@@ -39,6 +39,7 @@
 
 //TheOtherSide
 #include "TheOtherSideMP/Actors/player/TOSPlayer.h"
+#include <stdexcept>
 //~TheOtherSide
 
 IItemSystem *CActor::m_pItemSystem=0;
@@ -3459,6 +3460,11 @@ void CActor::NetReviveInVehicle(EntityId vehicleId, int seatId, int teamId)
 //------------------------------------------------------------------------
 void CActor::NetKill(EntityId shooterId, uint16 weaponClassId, int damage, int material, int hit_type, int killerHealthOnKill)
 {
+	//TheOtherSide
+	throw std::logic_error("Функция не должна вызываться");
+	return;
+	//TheOtherSide
+
 	static char weaponClassName[129]={0};
 	m_pGameFramework->GetNetworkSafeClassName(weaponClassName, 128, weaponClassId);
 

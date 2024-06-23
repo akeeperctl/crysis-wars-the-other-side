@@ -8,7 +8,7 @@ Description: Script Binding for GameRules
 
 -------------------------------------------------------------------------
 History:
-- 23:2:2006   18:30 : Created by Márcio Martins
+- 23:2:2006   18:30 : Created by MÐ±rcio Martins
 
 *************************************************************************/
 #ifndef __SCRIPTBIND_GAMERULES_H__
@@ -22,6 +22,10 @@ History:
 #include <IScriptSystem.h>
 #include <ScriptHelpers.h>
 
+
+//TheOtherSide
+class CTOSActor;
+//TheOtherSide
 
 class CGameRules;
 class CActor;
@@ -229,7 +233,7 @@ private:
 	void RegisterMethods();
 
 	CGameRules *GetGameRules(IFunctionHandler *pH);
-	CActor *GetActor(EntityId id);
+	CTOSActor *GetActor(EntityId id);
 
 	SmartScriptTable	m_players;
 	SmartScriptTable	m_teamplayers;

@@ -323,13 +323,12 @@ void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEven
 		break;
 	}
 	case eEGE_ActorDead:
-	{
-		// Раб погиб -> убиваем Мастера
-
+	{	
 		if (gEnv->bServer)
 		{
-			const IEntity* const pSlaveEntity = pEntity;
-			const IEntity* const pMasterEntity = GetMaster(pSlaveEntity);
+			// Раб погиб -> убиваем Мастера
+			IEntity* pSlaveEntity = pEntity;
+			IEntity* pMasterEntity = GetMaster(pSlaveEntity);
 
 			if (pSlaveEntity && pMasterEntity)
 			{
@@ -346,6 +345,28 @@ void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEven
 					g_pGame->GetGameRules()->ServerHit(info);
 				}
 			}
+			else
+			{
+				// Мастер погиб -> убиваем Раба
+				pMasterEntity = pEntity;
+				pSlaveEntity = GetCurrentSlave(pMasterEntity);
+
+				if (pMasterEntity && pSlaveEntity)
+				{
+					IActor* const pSlaveActor = g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pSlaveEntity->GetId());
+					if (pSlaveActor)
+					{
+						const EntityId id = pSlaveActor->GetEntityId();
+
+						HitInfo info;
+						info.SetDamage(9999);
+						info.shooterId = id;
+						info.targetId = id;
+
+						g_pGame->GetGameRules()->ServerHit(info);
+					}
+				}
+			}	
 		}
 
 		break;

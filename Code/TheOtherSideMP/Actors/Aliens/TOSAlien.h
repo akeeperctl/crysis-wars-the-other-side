@@ -19,6 +19,7 @@ public:
 	Matrix33 GetViewMtx() override;
 	Matrix33 GetBaseMtx() override;
 	Matrix33 GetEyeMtx() override;
+	void Kill() override;
 	//~CTOSActor
 
 	//ITOSMasterControllable
