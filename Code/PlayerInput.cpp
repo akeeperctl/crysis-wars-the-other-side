@@ -19,7 +19,9 @@
 //TheOtherSide
 #include "TheOtherSideMP/Actors/Player/TOSPlayer.h"
 #include "TheOtherSideMP/Game/Modules/Master/MasterClient.h"
+#include <TOS_MasterModule.h>
 //~TheOtherSide
+
 TActionHandler<CPlayerInput>	CPlayerInput::s_actionHandler;
 
 CPlayerInput::CPlayerInput( CPlayer * pPlayer ) : 
@@ -147,6 +149,7 @@ void CPlayerInput::OnAction( const ActionId& actionId, int activationMode, float
 	//TheOtherSide
 	const auto pTOSPlayer = dynamic_cast<CTOSPlayer*>(m_pPlayer);
 	assert(pTOSPlayer);
+
 	if (pTOSPlayer)
 	{
 		const auto pMC = pTOSPlayer->GetMasterClient();
@@ -978,6 +981,11 @@ void CPlayerInput::SerializeSaveGame( TSerialize ser )
 
 bool CPlayerInput::OnActionMoveForward(EntityId entityId, const ActionId& actionId, int activationMode, float value)
 {
+	//TheOtherSide
+	if (TOS_MasterModule::ClientPlayerHaveSlave(m_pPlayer))
+		return false;
+	//TheOtherSide
+
 	if (CanMove())
 	{
 		if(activationMode == 2)
@@ -1003,6 +1011,11 @@ bool CPlayerInput::OnActionMoveForward(EntityId entityId, const ActionId& action
 
 bool CPlayerInput::OnActionMoveBack(EntityId entityId, const ActionId& actionId, int activationMode, float value)
 {
+	//TheOtherSide
+	if (TOS_MasterModule::ClientPlayerHaveSlave(m_pPlayer))
+		return false;
+	//TheOtherSide
+
 	if (CanMove())
 	{
 		if (activationMode == eAAM_OnPress)
@@ -1040,6 +1053,11 @@ bool CPlayerInput::OnActionMoveBack(EntityId entityId, const ActionId& actionId,
 
 bool CPlayerInput::OnActionMoveLeft(EntityId entityId, const ActionId& actionId, int activationMode, float value)
 {
+	//TheOtherSide
+	if (TOS_MasterModule::ClientPlayerHaveSlave(m_pPlayer))
+		return false;
+	//TheOtherSide
+
 	if (CanMove())
 	{
 		if(activationMode == 2)
@@ -1065,6 +1083,11 @@ bool CPlayerInput::OnActionMoveLeft(EntityId entityId, const ActionId& actionId,
 
 bool CPlayerInput::OnActionMoveRight(EntityId entityId, const ActionId& actionId, int activationMode, float value)
 {
+	//TheOtherSide
+	if (TOS_MasterModule::ClientPlayerHaveSlave(m_pPlayer))
+		return false;
+	//TheOtherSide
+
 	if (CanMove())
 	{
 		if(activationMode == 2)
@@ -1182,6 +1205,11 @@ bool CPlayerInput::OnActionSuitSkin(EntityId entityId, const ActionId& actionId,
 
 bool CPlayerInput::OnActionJump(EntityId entityId, const ActionId& actionId, int activationMode, float value)
 {
+	//TheOtherSide
+	if (TOS_MasterModule::ClientPlayerHaveSlave(m_pPlayer))
+		return false;
+	//TheOtherSide
+
 	bool canJump = ((m_pPlayer->GetStance() == STANCE_ZEROG) || 
 									(m_pPlayer->GetStance() == STANCE_SWIM) ||
 									 m_pPlayer->TrySetStance(STANCE_STAND));
