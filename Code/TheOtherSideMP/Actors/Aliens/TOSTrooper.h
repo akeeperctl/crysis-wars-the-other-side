@@ -4,22 +4,22 @@
 
 
 
-class CTOSTrooper final : public CTrooper  // NOLINT(cppcoreguidelines-special-member-functions)
+class CTOSTrooper  : public CTrooper  // NOLINT(cppcoreguidelines-special-member-functions)
 {
 public:
 	CTOSTrooper();
-	~CTOSTrooper() override;
+	~CTOSTrooper() ;
 
 	//CTrooper
-	void PostInit(IGameObject* pGameObject) override;
-	void Update(SEntityUpdateContext& ctx, int updateSlot) override;
-	bool NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int flags) override;
-	void ProcessMovement(float frameTime) override;
+	void PostInit(IGameObject* pGameObject) ;
+	void Update(SEntityUpdateContext& ctx, int updateSlot) ;
+	bool NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int flags) ;
+	void ProcessMovement(float frameTime) ;
 	void ProcessJumpFlyControl(const Vec3& move, float frameTime);
 	//~CTrooper
 
 	//ITOSMasterControllable
-	void UpdateMasterView(SViewParams& viewParams, Vec3& offsetX, Vec3& offsetY, Vec3& offsetZ, Vec3& target, Vec3& current, float& currentFov) override;
+	void UpdateMasterView(SViewParams& viewParams, Vec3& offsetX, Vec3& offsetY, Vec3& offsetZ, Vec3& target, Vec3& current, float& currentFov) ;
 	//~ITOSMasterControllable
 
 	void ProcessJump(const CMovementRequest& request);

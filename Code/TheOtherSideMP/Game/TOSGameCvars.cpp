@@ -34,8 +34,8 @@ void STOSCvars::InitCVars(IConsole* pConsole)
 	tos_sv_HumanGruntMPEquipPack = pConsole->RegisterString("tos_sv_HumanGruntMPEquipPack", "NK_Pistol", 0, "");
 	tos_sv_EnableMPStealthOMeterForTeam = pConsole->RegisterString("tos_sv_EnableMPStealthOMeterForTeam", "aliens", 0, "Enable for only one Team. Teams: all, black, tan, aliens");
 
-	for (const auto pModule : g_pTOSGame->m_modules)
-		pModule->InitCVars(pConsole);
+	for (std::vector<ITOSGameModule*>::iterator it = g_pTOSGame->m_modules.begin(); it != g_pTOSGame->m_modules.end(); ++it)
+		(*it)->InitCVars(pConsole);
 }
 
 void STOSCvars::InitCCommands(IConsole* pConsole)
@@ -57,14 +57,14 @@ void STOSCvars::InitCCommands(IConsole* pConsole)
 	//CLIENT COMMANDS
 	pConsole->AddCommand("getlocalname", CmdGetLocalName);
 
-	for (const auto pModule : g_pTOSGame->m_modules)
-		pModule->InitCCommands(pConsole);
+	for (std::vector<ITOSGameModule*>::iterator it = g_pTOSGame->m_modules.begin(); it != g_pTOSGame->m_modules.end(); ++it)
+		(*it)->InitCCommands(pConsole);
 }
 
 void STOSCvars::ReleaseCCommands()
 {
-	for (const auto pModule : g_pTOSGame->m_modules)
-		pModule->ReleaseCCommands();
+	for (std::vector<ITOSGameModule*>::iterator it = g_pTOSGame->m_modules.begin(); it != g_pTOSGame->m_modules.end(); ++it)
+		(*it)->ReleaseCCommands();
 
 	const auto pConsole = gEnv->pConsole;
 
@@ -80,8 +80,8 @@ void STOSCvars::ReleaseCCommands()
 
 void STOSCvars::ReleaseCVars()
 {
-	for (const auto pModule : g_pTOSGame->m_modules)
-		pModule->ReleaseCVars();
+	for (std::vector<ITOSGameModule*>::iterator it = g_pTOSGame->m_modules.begin(); it != g_pTOSGame->m_modules.end(); ++it)
+		(*it)->ReleaseCVars();
 
 
 	const auto pConsole = gEnv->pConsole;
@@ -304,10 +304,10 @@ void STOSCvars::CmdGetSyncs(IConsoleCmdArgs* pArgs)
 	TSynches syncs;
 	CTOSGenericSynchronizer::GetSynchonizers(syncs);
 
-	for (const auto& syncPair : syncs)
+	for (TSynches::const_iterator it = syncs.begin(); it != syncs.end(); ++it)
 	{
-		const char* name = syncPair.first;
-		const auto id = syncPair.second;
+		const char* name = it->first;
+		const int id = it->second; // Предполагается, что id имеет тип int
 
 		CryLogAlways("	%s|%i", name, id);
 	}

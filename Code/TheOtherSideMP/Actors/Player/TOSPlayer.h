@@ -3,7 +3,7 @@
 #include "Player.h"
 class CTOSMasterClient;
 
-class CTOSPlayer final : public CPlayer  // NOLINT(cppcoreguidelines-special-member-functions)
+class CTOSPlayer  : public CPlayer  // NOLINT(cppcoreguidelines-special-member-functions)
 {
 	friend class CPlayerMovement;
 	friend class CPlayerRotation;
@@ -14,7 +14,7 @@ class CTOSPlayer final : public CPlayer  // NOLINT(cppcoreguidelines-special-mem
 
 public:
 	CTOSPlayer();
-	~CTOSPlayer() override;
+	~CTOSPlayer() ;
 
 	//CPlayer
 	/**
@@ -22,30 +22,30 @@ public:
 	* Вызывается на сервере при создании объекта на сервере.
 	* Инициализирует текущий GameObjectExtension на клиенте по определенному каналу.
 	*/
-	bool Init(IGameObject* pGameObject) override;
-	void InitClient(int channelId ) override;
+	bool Init(IGameObject* pGameObject) ;
+	void InitClient(int channelId ) ;
 
 
 	/**
 	* Init Local Player
 	* Вызывается на локальной машине игрока при подключении его к серверу
 	*/
-	void InitLocalPlayer() override;
-	void SetSpectatorMode(uint8 mode, EntityId targetId) override;
+	void InitLocalPlayer() ;
+	void SetSpectatorMode(uint8 mode, EntityId targetId) ;
 
-	void PostInit( IGameObject * pGameObject ) override;
-	void Update(SEntityUpdateContext& ctx, int updateSlot) override;
-	bool NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int flags) override;
-	void Release() override;
-	void UpdateView(SViewParams& viewParams) override;
-	void PostUpdateView(SViewParams& viewParams) override;
-	void Kill() override;
+	void PostInit( IGameObject * pGameObject ) ;
+	void Update(SEntityUpdateContext& ctx, int updateSlot) ;
+	bool NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int flags) ;
+	void Release() ;
+	void UpdateView(SViewParams& viewParams) ;
+	void PostUpdateView(SViewParams& viewParams) ;
+	void Kill() ;
 	//~CPlayer
 
 	//CTOSActor
-	Matrix33 GetViewMtx() override;
-	Matrix33 GetBaseMtx() override;
-	Matrix33 GetEyeMtx() override;
+	Matrix33 GetViewMtx() ;
+	Matrix33 GetBaseMtx() ;
+	Matrix33 GetEyeMtx() ;
 	//~CTOSActor
 
 	CTOSMasterClient* GetMasterClient() const;

@@ -21,7 +21,7 @@ History:
 
 #include "Single.h"
 
-constexpr int SINGLETG_MAX_TARGETS = 4;
+const int SINGLETG_MAX_TARGETS = 4;
 
 class CSingleTG : public CSingle
 {

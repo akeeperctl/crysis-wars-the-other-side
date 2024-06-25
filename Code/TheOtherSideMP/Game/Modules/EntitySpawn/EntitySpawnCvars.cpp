@@ -109,31 +109,35 @@ void CTOSEntitySpawnModule::CmdGetListEntities(IConsoleCmdArgs* pArgs)
 
 	CryLogAlways("Result: ");
 	CryLogAlways("	saved: ");
-	for (const auto& savedPair : pModule->m_savedSpawnParams)
-	{
-		const auto savedName = savedPair.second->savedName;
-		const auto savedAuthPlayer = savedPair.second->authorityPlayerName;
-		const auto savedWillBeControlled = savedPair.second->forceStartControl;
 
-		CryLogAlways("		--- name: %s, authName: %s, willBeControlled: %i", 
-			savedName.c_str(), 
-			savedAuthPlayer.c_str(), 
+	TMapTOSParams::const_iterator it = pModule->m_savedSpawnParams.begin();
+	TMapTOSParams::const_iterator end = pModule->m_savedSpawnParams.end();
+	for (; it != end; ++it)
+	{
+		const string& savedName = it->second->savedName;
+		const string& savedAuthPlayer = it->second->authorityPlayerName;
+		const bool savedWillBeControlled = it->second->forceStartControl;
+
+		CryLogAlways("		--- name: %s, authName: %s, willBeControlled: %i",
+			savedName.c_str(),
+			savedAuthPlayer.c_str(),
 			savedWillBeControlled);
 	}
 
 	CryLogAlways("	marked for recreation: ");
-	for (const auto markedId : CTOSEntitySpawnModule::s_markedForRecreation)
+	std::vector<EntityId>::const_iterator markedIt = CTOSEntitySpawnModule::s_markedForRecreation.begin();
+	std::vector<EntityId>::const_iterator markedEnd = CTOSEntitySpawnModule::s_markedForRecreation.end();
+	for (; markedIt != markedEnd; ++markedIt)
 	{
-		const auto pEntity = gEnv->pEntitySystem->GetEntity(markedId);
+		const EntityId markedId = *markedIt;
+		const IEntity* pEntity = gEnv->pEntitySystem->GetEntity(markedId);
 		if (!pEntity)
 			continue;
 
-		const auto markedName = pEntity->GetName();
+		const char* markedName = pEntity->GetName();
 
 		CryLogAlways("		--- name: %s, id: %i", markedName, markedId);
 	}
-
-
 }
 
 void CTOSEntitySpawnModule::CmdGetEntityRot(IConsoleCmdArgs* pArgs)

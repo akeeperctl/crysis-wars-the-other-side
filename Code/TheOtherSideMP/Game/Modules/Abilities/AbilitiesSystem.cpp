@@ -51,10 +51,10 @@ void CAbilitiesSystem::Update(const float frameTime)
                 if (pActor == g_pControlSystem->GetClientActor() && g_pGameCVars->abil_debug_draw_info > 0)
                 {
                     static float color[] = {1, 1, 1, 1};
-                    constexpr float size = 1.2f;
-                    constexpr float scale = 30.0f;
-                    constexpr float xOffset = 60.0f;
-                    constexpr float yOffset = 30.0f;
+                    const float size = 1.2f;
+                    const float scale = 30.0f;
+                    const float xOffset = 60.0f;
+                    const float yOffset = 30.0f;
                     const auto index = static_cast<float>(ability.index);
 
                     gEnv->pRenderer->Draw2dLabel(xOffset, yOffset + scale * index, size, color, false,
@@ -506,7 +506,7 @@ void CAbilitiesSystem::Update(const float frameTime)
                             const auto pVehicle = pPlayer->GetLinkedVehicle();
                             if (pVehicle && pVehicle->GetDamageRatio() > 0)
                             {
-                                constexpr float constDelay = 0.9f; //in sec
+                                const float constDelay = 0.9f; //in sec
                                 static float healingUpDelay = constDelay;
 
                                 if (healingUpDelay != 0.0f)

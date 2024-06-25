@@ -2475,7 +2475,7 @@ EntityId CGameRules::GetSpawnLocation(const EntityId playerId, const bool ignore
 
 	float       mdtd         = minDistToDeath;
 	float       zoffset      = 0.0f;
-	constexpr float safeDistance = 1.f; //0.82f; // this is 2x the radius of a player collider (capsule/cylinder)
+	const float safeDistance = 1.f; //0.82f; // this is 2x the radius of a player collider (capsule/cylinder)
 
 	while (!IsSpawnLocationSafe(playerId, candidates[i], safeDistance, zoffset) || !IsSpawnLocationFarEnough(candidates[i], mdtd, deathPos) || enemyRejectDistSqr > 0.f && GetClosestPlayerDistSqr(candidates[i], playerId) < enemyRejectDistSqr || IsSpawnUsed(candidates[i]))
 	{
@@ -2596,7 +2596,7 @@ EntityId CGameRules::GetSpawnLocationTeam(const EntityId playerId, const Vec3& d
 		return GetSpawnLocationTeamFirst();
 
 	EntityId    bestPointId(0);
-	constexpr float safeDistance = 1.f; //0.82f; // this is 2x the radius of a player collider (capsule/cylinder)
+	const float safeDistance = 1.f; //0.82f; // this is 2x the radius of a player collider (capsule/cylinder)
 	const float minDistToDeathSqr(g_pGameCVars->g_spawndeathdist * g_pGameCVars->g_spawndeathdist);
 	const int   enemyTeamId(GetEnemyTeamId(playerTeamId));
 	// the only player of the team - maximize enemy dist

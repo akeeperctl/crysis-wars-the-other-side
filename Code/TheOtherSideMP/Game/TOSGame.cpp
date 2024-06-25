@@ -59,13 +59,15 @@ void CTOSGame::Init()
 	// Исправление бага https://github.com/akeeperctl/crysis-wars-the-other-side/issues/8
 	g_pGameCVars->hud_enableAlienInterference = 0;
 
-	for (ITOSGameModule* pModule : m_modules)
+	for (std::vector<ITOSGameModule*>::iterator it = m_modules.begin(); it != m_modules.end(); ++it)
 	{
+		ITOSGameModule* pModule = *it;
 		if (pModule)
 		{
 			pModule->Init();
 		}
 	}
+
 }
 
 void CTOSGame::Shutdown()
@@ -86,11 +88,12 @@ void CTOSGame::Update(const float frameTime, int frameId)
 	UpdateChannelConnectionState();
 	UpdateContextViewState();
 
-	for (ITOSGameModule* pModules : m_modules)
+	for (std::vector<ITOSGameModule*>::iterator it = m_modules.begin(); it != m_modules.end(); ++it)
 	{
-		if (pModules)
+		ITOSGameModule* pModule = *it;
+		if (pModule)
 		{
-			pModules->Update(frameTime);
+			pModule->Update(frameTime);
 		}
 	}
 }

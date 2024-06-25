@@ -46,13 +46,13 @@ CTOSMasterModule::CTOSMasterModule()
 	m_scheduledTakeControls.clear();
 }
 
-CTOSMasterModule::~CTOSMasterModule() = default;
+CTOSMasterModule::~CTOSMasterModule() {};
 
 void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event)
 {
 	if (!pEntity)
 	{
-		CryLogAlwaysDev("OnExtraGameplayEvent pEntity is NULL");
+		CryWarning(VALIDATOR_MODULE_GAME, VALIDATOR_WARNING, "OnExtraGameplayEvent Entity is NULL when");
 		return;
 	}
 
@@ -438,13 +438,13 @@ void CTOSMasterModule::Init()
 
 void CTOSMasterModule::Update(float frametime)
 {
-	for (auto &schedPair : m_scheduledTakeControls)
+	for (auto it = m_scheduledTakeControls.begin(); it != m_scheduledTakeControls.end();)
 	{
-		const auto slaveId = schedPair.first;
-		const auto masterChannelId = schedPair.second.masterChannelId;
-		const auto inGame = g_pGame->GetGameRules()->IsChannelInGame(masterChannelId);
+		const auto slaveId = it->first;
+		const auto masterChannelId = it->second.masterChannelId;
+		const bool inGame = g_pGame->GetGameRules()->IsChannelInGame(masterChannelId);
 
-		auto& delay = schedPair.second.inGameDelay;
+		float& delay = it->second.inGameDelay;
 
 		if (inGame && delay < 0.0f)
 		{
@@ -459,19 +459,24 @@ void CTOSMasterModule::Update(float frametime)
 				masterChannelId
 			);
 
-			m_scheduledTakeControls.erase(slaveId);
+			it = m_scheduledTakeControls.erase(it);
 			break;
 		}
-
-		delay -= gEnv->pTimer->GetFrameStartTime().GetSeconds();
+		else
+		{
+			delay -= gEnv->pTimer->GetFrameStartTime().GetSeconds();
+			++it;
+		}
 	}
+
 
 	if (gEnv->bServer)
 	{
 		// Очистим неактуальных мастеров.
-		for (const auto& masterPair : m_masters)
+		auto it = m_masters.begin();
+		for (; it != m_masters.end(); it++)
 		{
-			const EntityId id = masterPair.first;
+			const EntityId id = it->first;
 
 			const auto pMasterEntity = TOS_GET_ENTITY(id);
 			if (!pMasterEntity)
@@ -502,8 +507,8 @@ bool CTOSMasterModule::NetSerialize(TSerialize ser, EEntityAspects aspect, uint8
 	if (!CTOSGenericModule::NetSerialize(ser, aspect, profile, flags))
 		return false;
 
-	//TODO: Нужно протестить 03.02.2024
-	ser.Value("m_masters", m_masters);
+	// Вызывает вылет 24/06/2024
+	//ser.Value("m_masters", m_masters);
 
 
 	return true;
@@ -565,10 +570,11 @@ IEntity* CTOSMasterModule::GetCurrentSlave(const IEntity* pMasterEntity)
 	{
 		if (IsMaster(pMasterEntity))
 		{
-			for (const auto& masterSlavePair : m_masters)
+			auto it = m_masters.begin();
+			for (; it != m_masters.end(); it++)
 			{
-				if (masterSlavePair.first == pMasterEntity->GetId())
-					return gEnv->pEntitySystem->GetEntity(masterSlavePair.second.slaveId);
+				if (it->first == pMasterEntity->GetId())
+					return gEnv->pEntitySystem->GetEntity(it->second.slaveId);
 			}				
 		}
 	}
@@ -604,9 +610,10 @@ bool CTOSMasterModule::IsSlave(const IEntity* pPotentialSlave) const
 	if (!pPotentialSlave)
 		return false;
 
-	for (auto &masterPair : m_masters)
+	auto it = m_masters.begin();
+	for (; it != m_masters.end(); it++)
 	{
-		if (masterPair.second.slaveId == pPotentialSlave->GetId())
+		if (it->second.slaveId == pPotentialSlave->GetId())
 			return true;
 	}
 
@@ -682,9 +689,10 @@ void CTOSMasterModule::DebugDraw(const Vec2& screenPos, float fontSize, float in
 		"--- TOS Master System (MasterName:SlaveName) ---");
 
 	//Body
-	for (const auto& masterInfoPair : m_masters)
+	auto it = m_masters.begin();
+	for (; it != m_masters.end(); it++)
 	{
-		const auto pMasterActor = dynamic_cast<CTOSPlayer*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(masterInfoPair.first));
+		const auto pMasterActor = dynamic_cast<CTOSPlayer*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(it->first));
 		if (!pMasterActor)
 			continue;
 
@@ -830,10 +838,12 @@ void CTOSMasterModule::ApplyMasterClientParams(IEntity* pMasterEntity)
 
 		//Загружаем инвентарь
 		auto& items = saved.inventoryItems;
+		auto it = items.begin();
+		auto end = items.end();
 
-		for (auto& itemPair : items)
+		for (; it != end; it++)
 		{
-			string itemClass = itemPair.second;
+			string itemClass = it->second;
 
 			const bool isItem = g_pGame->GetIGameFramework()->GetIItemSystem()->IsItemClass(itemClass.c_str());
 			if (isItem)
@@ -874,11 +884,14 @@ IEntity* CTOSMasterModule::GetMaster(const IEntity* pSlaveEntity) const
 	if (!pSlaveEntity)
 		return nullptr;
 
-	for (const auto masterPair : m_masters)
+	auto it = m_masters.begin();
+	auto end = m_masters.end();
+
+	for (; it != end; it++)
 	{
-		if (masterPair.second.slaveId == pSlaveEntity->GetId())
+		if (it->second.slaveId == pSlaveEntity->GetId())
 		{
-			return TOS_GET_ENTITY(masterPair.first);
+			return TOS_GET_ENTITY(it->first);
 		}
 	}
 

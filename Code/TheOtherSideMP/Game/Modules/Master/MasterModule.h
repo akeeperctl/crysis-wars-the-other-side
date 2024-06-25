@@ -38,7 +38,7 @@ struct STOSMasterClientSavedParams
  * \brief хранит информацию о канале мастера во время перезапуска игры.
    \n Нужен для фикса бага: https://github.com/akeeperctl/crysis-wars-the-other-side/issues/9
  */
-struct STOSScheduledMasterInfo final : STOSSmartStruct  // NOLINT(cppcoreguidelines-special-member-functions)
+struct STOSScheduledMasterInfo  : STOSSmartStruct  // NOLINT(cppcoreguidelines-special-member-functions)
 {
 	STOSScheduledMasterInfo()
 		: masterChannelId(0),
@@ -56,7 +56,7 @@ struct STOSScheduledMasterInfo final : STOSSmartStruct  // NOLINT(cppcoreguideli
 /**
  * \brief хранит информацию о работе одного мастера
  */
-struct STOSMasterInfo final : STOSSmartStruct  // NOLINT(cppcoreguidelines-special-member-functions)
+struct STOSMasterInfo  : STOSSmartStruct  // NOLINT(cppcoreguidelines-special-member-functions)
 {
 	STOSMasterInfo() :
 		slaveId(0), flags(0)
@@ -106,25 +106,25 @@ struct STOSStartControlInfo
  * \note \a Мастер - это игрок, контролирующий в данный момент \a раба (в частности пришельца). (консольная команда tos_cl_JoinAsAlien)
  * \note \a Раб - это сущность, которую контролирует \a мастер в данный момент.
  */
-class CTOSMasterModule final : public CTOSGenericModule  // NOLINT(cppcoreguidelines-special-member-functions)
+class CTOSMasterModule  : public CTOSGenericModule  // NOLINT(cppcoreguidelines-special-member-functions)
 {
 	friend class CTOSMasterSynchronizer;
 
 public:
 	CTOSMasterModule();
-	~CTOSMasterModule() override;
+	~CTOSMasterModule() ;
 
 	//ITOSGameModule
-	void OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event) override;
-	const char* GetName() override {return "CTOSMasterModule";};
-	void Init() override;
-	void Update(float frametime) override;
-	void Serialize(TSerialize ser) override;
-	bool NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int flags) override;
-	void InitCVars(IConsole* pConsole) override;
-	void InitCCommands(IConsole* pConsole) override;
-	void ReleaseCVars() override;
-	void ReleaseCCommands() override;
+	void OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event) ;
+	const char* GetName()  {return "CTOSMasterModule";};
+	void Init() ;
+	void Update(float frametime) ;
+	void Serialize(TSerialize ser) ;
+	bool NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int flags) ;
+	void InitCVars(IConsole* pConsole) ;
+	void InitCCommands(IConsole* pConsole) ;
+	void ReleaseCVars() ;
+	void ReleaseCCommands() ;
 	//ITOSGameModule
 
 	/**
@@ -162,7 +162,7 @@ public:
 	bool     IsSlave(const IEntity* pPotentialSlave) const;
 	bool	 ReviveSlave(const IEntity* pSlaveEntity, const Vec3& revivePos, const Ang3& angles, const int teamId, const bool resetWeapons) const;
 
-	void     DebugDraw(const Vec2& screenPos = {20,300}, float fontSize = 1.2f, float interval = 20.0f, int maxElemNum = 5);
+	void     DebugDraw(const Vec2& screenPos = Vec2(20,300), float fontSize = 1.2f, float interval = 20.0f, int maxElemNum = 5);
 
 	//Console command's functions
 	static void CmdGetMastersList(IConsoleCmdArgs* pArgs);

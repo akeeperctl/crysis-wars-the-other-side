@@ -45,7 +45,7 @@ struct IHitListener;
  * \n Dude - это локальный персонаж.
  * \n Автоудаление класса: отсутствует.
  */
-class CTOSMasterClient final : public IActionListener
+class CTOSMasterClient  : public IActionListener
 {
 	//friend class CGameRules;
 	//friend class CControlSystem;
@@ -119,7 +119,7 @@ public:
 
 	// IActionListener интерфейс используется только для декларации функции.
 	// Этот класс не слушает actions сам по себе, а работает через функцию в PlayerInput 
-	void OnAction(const ActionId& action, int activationMode, float value) override;
+	void OnAction(const ActionId& action, int activationMode, float value) ;
 	// ~IActionListener
 
 private:

@@ -20,7 +20,7 @@
 
 #include <vector>
 
-constexpr int GRAB_MAXLIMBS = 4;
+const int GRAB_MAXLIMBS = 4;
 
 /**
  * Grabbing & throwing/dropping typically occurs in 3 phases:

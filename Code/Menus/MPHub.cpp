@@ -832,21 +832,21 @@ void CMPHub::DisconnectError(EDisconnectionCause dc, bool connecting, const char
 		ILocalizationManager* pLoc = gEnv->pSystem->GetLocalizationManager();
 		if(pLoc)
 		{
-			wstring final;
+			wstring localizedFinal;
 			if(strlen(serverMsg) > 21 && strncmp(serverMsg + 21, "None", 4) != 0)
 			{
 				wstring localised, tmp;
 				ExpandToWChar(serverMsg + 21, tmp);
 				pLoc->LocalizeLabel(msg, localised);
-				pLoc->FormatStringMessage(final, localised, tmp);
+				pLoc->FormatStringMessage(localizedFinal, localised, tmp);
 			}
 			else
 			{
 				// different message if the server isn't running a mod
-				pLoc->LocalizeLabel("@ui_menu_disconnect_Mod2", final);
+				pLoc->LocalizeLabel("@ui_menu_disconnect_Mod2", localizedFinal);
 			}
 
-			ShowErrorText(final);
+			ShowErrorText(localizedFinal);
 		}
 		break;
 	}
@@ -856,13 +856,13 @@ void CMPHub::DisconnectError(EDisconnectionCause dc, bool connecting, const char
 			ILocalizationManager* pLoc = gEnv->pSystem->GetLocalizationManager();
 			if(pLoc)
 			{
-				wstring final;
+				wstring localizedFinal;
 				wstring localised, tmp;
 				ExpandToWChar(serverMsg, tmp);
 				pLoc->LocalizeLabel(msg, localised);
-				pLoc->FormatStringMessage(final, localised, tmp);
+				pLoc->FormatStringMessage(localizedFinal, localised, tmp);
 
-				ShowErrorText(final);
+				ShowErrorText(localizedFinal);
 			}
 			break;
 		}
@@ -1480,7 +1480,7 @@ void CMPHub::MapDownloadPromptUser(const char* url, bool levelPresent)
 		return;
 	}
 
-	wstring final, error, mapName;
+	wstring localizedFinal, error, mapName;
 	ExpandToWChar(pInfo->levelName, mapName);
 
 	if(canDownload)
@@ -1490,15 +1490,15 @@ void CMPHub::MapDownloadPromptUser(const char* url, bool levelPresent)
 		{
 			// don't already have this map. Ask whether to download it.
 			pLocMan->LocalizeLabel("@md_msg5", error);
-			pLocMan->FormatStringMessage(final, error, mapName);
-			ShowLargeYesNoDialog(final.c_str(), "download_notPresent");
+			pLocMan->FormatStringMessage(localizedFinal, error, mapName);
+			ShowLargeYesNoDialog(localizedFinal.c_str(), "download_notPresent");
 		}
 		else
 		{
 			// already have the map, but wrong version. Ask whether to update it.
 			pLocMan->LocalizeLabel("@md_msg2", error);
-			pLocMan->FormatStringMessage(final, error, mapName);
-			ShowLargeYesNoDialog(final.c_str(), "download_update");
+			pLocMan->FormatStringMessage(localizedFinal, error, mapName);
+			ShowLargeYesNoDialog(localizedFinal.c_str(), "download_update");
 		}
 	}
 	else
@@ -1507,15 +1507,15 @@ void CMPHub::MapDownloadPromptUser(const char* url, bool levelPresent)
 		{
 			// level not found, and we don't have a URL to download from.
 			pLocMan->LocalizeLabel("@md_msg4", error);
-			pLocMan->FormatStringMessage(final, error, mapName);
-			ShowLargeError(final.c_str(), "download_notPossible");
+			pLocMan->FormatStringMessage(localizedFinal, error, mapName);
+			ShowLargeError(localizedFinal.c_str(), "download_notPossible");
 		}
 		else
 		{
 			// level found, but wrong version, and we don't have a URL to download from.
 			pLocMan->LocalizeLabel("@md_msg3", error);
-			pLocMan->FormatStringMessage(final, error, mapName);
-			ShowLargeError(final.c_str(), "download_notPossible");
+			pLocMan->FormatStringMessage(localizedFinal, error, mapName);
+			ShowLargeError(localizedFinal.c_str(), "download_notPossible");
 		}
 	}
 }
@@ -1561,7 +1561,7 @@ void CMPHub::OnDownloadFinished(int result, const char* fileName)
 		CryLog("Can't localise strings!");
 		return;
 	}
-	wstring error, subError, final;
+	wstring error, subError, localizedFinal;
 	bool retry = true;
 
 	switch(result)
@@ -1703,8 +1703,8 @@ void CMPHub::OnDownloadFinished(int result, const char* fileName)
 		else
 			pLocMan->LocalizeLabel("@md_msg8", error);
 
-		pLocMan->FormatStringMessage(final, error, subError.c_str());
-		ShowLargeYesNoDialog(final.c_str(), "download_Retry");
+		pLocMan->FormatStringMessage(localizedFinal, error, subError.c_str());
+		ShowLargeYesNoDialog(localizedFinal.c_str(), "download_Retry");
 	}
 
 	// if unsuccessful, clear the server info so we retry from start next time.

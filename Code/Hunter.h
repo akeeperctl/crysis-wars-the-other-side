@@ -106,7 +106,7 @@ protected:
 	Vec3 m_footGroundPos[4];
 	Vec3 m_footGroundPosLast[4];
   int  m_footGroundSurface[4];
-	/// True if tentacle's final world position, after all adjustments, is on the ground.
+	/// True if tentacle's  world position, after all adjustments, is on the ground.
 	bool m_footTouchesGround[4];
 	f32 m_footTouchesGroundSmooth[4];
 	f32 m_footTouchesGroundSmoothRate[4];

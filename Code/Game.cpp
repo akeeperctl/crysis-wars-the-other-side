@@ -281,7 +281,7 @@ bool CGame::Init(IGameFramework *pFramework)
 						{
 							GameWarning("[GameProfiles]: Cannot activate profile '%s' for user '%s'. Trying to re-create.", desc.name, userName);
 							IPlayerProfileManager::EProfileOperationResult profileResult;
-							m_pPlayerProfileManager->CreateProfile(userName, desc.name, true, profileResult); // override if present!
+							m_pPlayerProfileManager->CreateProfile(userName, desc.name, true, profileResult); //  if present!
 							pProfile = m_pPlayerProfileManager->ActivateProfile(userName, desc.name);
 							if (pProfile == 0)
 								GameWarning("[GameProfiles]: Cannot activate profile '%s' for user '%s'.", desc.name, userName);

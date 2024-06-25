@@ -28,8 +28,8 @@
 #include "ServerSynchedStorage.h"
 #include "Cry_Camera.h"
 
-constexpr const char* const GAME_NAME = "Crysis Wars";
-constexpr const char* const GAME_LONGNAME = "Crysis Wars";
+const const char* const GAME_NAME = "Crysis Wars";
+const const char* const GAME_LONGNAME = "Crysis Wars";
 
 
 struct ISystem;

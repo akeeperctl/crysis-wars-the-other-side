@@ -38,12 +38,12 @@ History:
 //TheOtherSide
 
 #define RANDOM() ((((float)cry_rand()/(float)RAND_MAX)*2.0f)-1.0f)
-constexpr float COMPASS_EPSILON = (0.01f);
+const float COMPASS_EPSILON = (0.01f);
 
-constexpr static float fRadarSizeOverTwo   = 47.0f;
-constexpr static float fEntitySize         = 4.0f;
-constexpr static float fEntityMaxDistance  = fRadarSizeOverTwo - fEntitySize;
-constexpr static float fRadarDefaultRadius = 75.0f;
+const static float fRadarSizeOverTwo   = 47.0f;
+const static float fEntitySize         = 4.0f;
+const static float fEntityMaxDistance  = fRadarSizeOverTwo - fEntitySize;
+const static float fRadarDefaultRadius = 75.0f;
 
 //-----------------------------------------------------------------------------------------------------
 
@@ -250,11 +250,32 @@ void CHUDRadar::RemoveFromRadar(EntityId id)
 		}
 	}
 	{
-		for (unsigned int& m_taggedEntitie : m_taggedEntities)
+		//for (unsigned int& m_taggedEntitie : m_taggedEntities)
+		//{
+		//	if (m_taggedEntitie == id)
+		//	{
+		//		m_taggedEntitie = 0;
+		//		break;
+		//	}
+		//}
+
+		//std::vector<EntityId>::iterator it = m_taggedEntities.begin();
+		//std::vector<EntityId>::iterator end = m_taggedEntities.end();
+
+		//for ( ; it !=  ++it)
+		//{
+		//	if (*it == id)
+		//	{
+		//		*it = 0;
+		//		break;
+		//	}
+		//}
+
+		for (unsigned int i = 0; i < sizeof(m_taggedEntities) / sizeof(m_taggedEntities[0]); ++i)
 		{
-			if (m_taggedEntitie == id)
+			if (m_taggedEntities[i] == id)
 			{
-				m_taggedEntitie = 0;
+				m_taggedEntities[i] = 0;
 				break;
 			}
 		}

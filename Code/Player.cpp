@@ -5386,6 +5386,19 @@ void CPlayer::SpawnParticleEffect(const char* effectName, const Vec3& pos, const
 	pEffect->Spawn(true, IParticleEffect::ParticleLoc(pos, dir, 1.0f));
 }
 
+//TheOtherSide
+static const char* get_random_sound(const string& inputsound, const int min, const int max)
+{
+	int iRandomVal = min + Random(max);
+	char buffer[64];
+
+	sprintf(buffer, "%i", iRandomVal);
+
+	string finalString = inputsound + buffer + ".mp2";
+	return finalString.c_str();
+}
+//~TheOtherSide
+
 void CPlayer::PlaySound(EPlayerSounds sound, bool play, bool param /*= false*/, const char* paramName /*=NULL*/, float paramValue /*=0.0f*/)
 {
 	if(!gEnv->pSoundSystem)
@@ -5404,20 +5417,6 @@ void CPlayer::PlaySound(EPlayerSounds sound, bool play, bool param /*= false*/, 
 	//TheOtherSide
 	const int feedbackVersion = TOS_Console::GetSafeIntVar("tos_cl_playerFeedbackSoundsVersion");
 	assert(feedbackVersion == 1 || feedbackVersion == 2);
-
-	auto get_random_sound
-	{
-		[](const string& inputsound, const int min, const int max)
-		{
-			int iRandomVal = min + Random(max);
-			char buffer[64];
-
-			sprintf(buffer, "%i", iRandomVal);
-
-			string final = inputsound + buffer + ".mp2";
-			return final.c_str();
-		}
-	};
 
 	if (feedbackVersion == 2)
 	{

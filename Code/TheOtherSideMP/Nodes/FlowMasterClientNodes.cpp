@@ -7,7 +7,7 @@
 #include "TheOtherSideMP/Game/Modules/Master/MasterClient.h"
 #include "TheOtherSideMP/Game/Modules/Master/MasterModule.h"
 
-class CFlowNode_MCStartControl final : public CFlowBaseNode
+class CFlowNode_MCStartControl  : public CFlowBaseNode
 {
 	int m_savedItemsCount;
 	EntityId m_currentDudeItemId;
@@ -21,9 +21,9 @@ public:
 		m_savedItems.clear();
 	}
 
-	~CFlowNode_MCStartControl() override = default;
+	~CFlowNode_MCStartControl() {};
 
-	//IFlowNodePtr Clone(SActivationInfo* pActInfo) override
+	//IFlowNodePtr Clone(SActivationInfo* pActInfo) 
 	//{
 	//	return new CFlowNode_MCStartControl(pActInfo);
 	//}
@@ -92,7 +92,7 @@ public:
 		}
 	}
 
-	void GetConfiguration(SFlowNodeConfig& config) override
+	void GetConfiguration(SFlowNodeConfig& config) 
 	{
 		static const SInputPortConfig inputs[] = {
 			InputPortConfig_Void("Start", _HELP("Trigger to start controlling input actor")),
@@ -116,7 +116,7 @@ public:
 		config.SetCategory(EFLN_DEBUG);
 	}
 
-	void ProcessEvent(const EFlowEvent event, SActivationInfo* pActInfo) override
+	void ProcessEvent(const EFlowEvent event, SActivationInfo* pActInfo) 
 	{
 		if (gEnv->bMultiplayer)
 			return;
@@ -154,7 +154,7 @@ public:
 
 			if (pDudePlayer->GetLinkedVehicle())
 			{
-				CryLogAlwaysDev("%s[%s][%s] Player %s cannot start control Slave %s while in a vehicle", 
+				CryLog("%s[%s][%s] Player %s cannot start control Slave %s while in a vehicle", 
 					TOS_COLOR_YELLOW, 
 					TOS_Debug::GetEnv(), 
 					TOS_Debug::GetAct(1), 
@@ -205,12 +205,12 @@ public:
 		}
 	}
 
-	void GetMemoryStatistics(ICrySizer* s) override
+	void GetMemoryStatistics(ICrySizer* s) 
 	{
 		s->Add(*this);
 	}
 
-	void Serialize(SActivationInfo* pActInfo, TSerialize ser) override
+	void Serialize(SActivationInfo* pActInfo, TSerialize ser) 
 	{
 		ser.BeginGroup("CFlowNode_MCStartControl");
 		//ser.Value("entityId", m_EntityId, 'eid');

@@ -63,11 +63,11 @@ static void PrecacheMaterials(const bool bCacheAsian)
 		g_USNanoMats[NANOMODE_DEFENSE_HIT_REACTION].helmet = matMan->LoadMaterial("objects/characters/human/us/nanosuit/nanosuit_us_helmet_invulnerability.mtl");
 		g_USNanoMats[NANOMODE_DEFENSE_HIT_REACTION].arms   = matMan->LoadMaterial("objects/weapons/arms_global/arms_nanosuit_us_invulnerability.mtl");
 		// strategically leak it
-		for (const auto& g_USNanoMat : g_USNanoMats)
+		for (int i = 0; i < NANOMODE_LAST; ++i)
 		{
-			g_USNanoMat.body->AddRef();
-			g_USNanoMat.helmet->AddRef();
-			g_USNanoMat.arms->AddRef();
+			g_USNanoMats[i].body->AddRef();
+			g_USNanoMats[i].helmet->AddRef();
+			g_USNanoMats[i].arms->AddRef();
 		}
 	}
 
@@ -92,11 +92,11 @@ static void PrecacheMaterials(const bool bCacheAsian)
 		g_AsianNanoMats[NANOMODE_DEFENSE_HIT_REACTION].helmet = matMan->LoadMaterial("objects/characters/human/asian/nanosuit/nanosuit_asian_helmet_invulnerability.mtl");
 		g_AsianNanoMats[NANOMODE_DEFENSE_HIT_REACTION].arms   = matMan->LoadMaterial("objects/weapons/arms_global/arms_nanosuit_asian_invulnerability.mtl");
 		// strategically leak it
-		for (const auto& g_AsianNanoMat : g_AsianNanoMats)
+		for (int i = 0; i < NANOMODE_LAST; ++i)
 		{
-			g_AsianNanoMat.body->AddRef();
-			g_AsianNanoMat.helmet->AddRef();
-			g_AsianNanoMat.arms->AddRef();
+			g_AsianNanoMats[i].body->AddRef();
+			g_AsianNanoMats[i].helmet->AddRef();
+			g_AsianNanoMats[i].arms->AddRef();
 		}
 	}
 }
@@ -215,14 +215,14 @@ CNanoSuit::CNanoSuit()
 	m_pConsumer(nullptr)
 	//~TheOtherSide
 {
-	for (auto& m_sound : m_sounds)
+	for (int i = 0; i < ESound_Suit_Last; ++i)
 	{
-		m_sound.ID             = INVALID_SOUNDID;
-		m_sound.bLooping       = false;
-		m_sound.b3D            = false;
-		m_sound.nMassIndex     = -1;
-		m_sound.nSpeedIndex    = -1;
-		m_sound.nStrengthIndex = -1;
+		m_sounds[i].ID = INVALID_SOUNDID;
+		m_sounds[i].bLooping = false;
+		m_sounds[i].b3D = false;
+		m_sounds[i].nMassIndex = -1;
+		m_sounds[i].nSpeedIndex = -1;
+		m_sounds[i].nStrengthIndex = -1;
 	}
 
 	//m_maxEnergy = m_energy = NANOSUIT_ENERGY;
@@ -230,7 +230,7 @@ CNanoSuit::CNanoSuit()
 	Reset(nullptr);
 }
 
-CNanoSuit::~CNanoSuit() = default;
+CNanoSuit::~CNanoSuit() {};
 
 void CNanoSuit::Reset(CPlayer* owner)
 {
@@ -245,10 +245,8 @@ void CNanoSuit::Reset(CPlayer* owner)
 
 	m_bNightVisionEnabled = false;
 
-	for (auto& m_slot : m_slots)
-	{
-		m_slot.desiredVal = 50.0f;
-	}
+	for (int k = 0; k < NANOSLOT_LAST; ++k)
+		m_slots[k].desiredVal = 50.0f;
 
 	//TheOtherSide
 	//ResetEnergy();
@@ -278,20 +276,20 @@ void CNanoSuit::Reset(CPlayer* owner)
 	m_invulnerable            = false;
 	m_defenseHitTimer         = 0.0f;
 
-	for (auto& m_sound : m_sounds)
+	for (int i = 0; i < ESound_Suit_Last; ++i)
 	{
-		if (m_sound.ID != INVALID_SOUNDID)
+		if (m_sounds[i].ID != INVALID_SOUNDID)
 		{
 			if (gEnv->pSoundSystem)
-				if (ISound* pSound = gEnv->pSoundSystem->GetSound(m_sound.ID))
+				if (ISound* pSound = gEnv->pSoundSystem->GetSound(m_sounds[i].ID))
 					pSound->Stop();
 
-			m_sound.ID             = INVALID_SOUNDID;
-			m_sound.bLooping       = false;
-			m_sound.b3D            = false;
-			m_sound.nMassIndex     = -1;
-			m_sound.nSpeedIndex    = -1;
-			m_sound.nStrengthIndex = -1;
+			m_sounds[i].ID = INVALID_SOUNDID;
+			m_sounds[i].bLooping = false;
+			m_sounds[i].b3D = false;
+			m_sounds[i].nMassIndex = -1;
+			m_sounds[i].nSpeedIndex = -1;
+			m_sounds[i].nStrengthIndex = -1;
 		}
 	}
 
@@ -584,10 +582,8 @@ void CNanoSuit::Update(const float frameTime)
 	if (m_energyRechargeDelay > 0.0f)
 		m_energyRechargeDelay = max(0.0f, m_energyRechargeDelay - frameTime);
 
-	for (auto& m_slot : m_slots)
-	{
-		m_slot.realVal = m_slot.desiredVal;
-	}
+	for (int i=0;i<NANOSLOT_LAST;++i)
+		m_slots[i].realVal = m_slots[i].desiredVal;
 
 	if (isServer)
 		//adjust the player health.
@@ -679,10 +675,10 @@ void CNanoSuit::Update(const float frameTime)
 
 void CNanoSuit::Balance(const float energy)
 {
-	for (auto& m_slot : m_slots)
+	for (int i = 0; i < NANOSLOT_LAST; i++)
 	{
-		const float slotPerCent = m_slot.desiredVal / NANOSUIT_ENERGY; //computes percentage for NANOSUIT_ENERGY total ...
-		m_slot.realVal          = energy * slotPerCent;
+		float slotPerCent = m_slots[i].desiredVal / NANOSUIT_ENERGY; //computes percentage for NANOSUIT_ENERGY total ...
+		m_slots[i].realVal = energy * slotPerCent;
 	}
 }
 
@@ -1504,7 +1500,7 @@ void CNanoSuit::PlaySound(const ENanoSound sound, const float param, const bool 
 		}
 		if (!pSound && !stopSound)
 		{
-			constexpr int soundFlag = 0;
+			const int soundFlag = 0;
 			pSound              = gEnv->pSoundSystem->CreateSound(soundName, soundFlag);
 
 			if (pSound)
@@ -2102,10 +2098,10 @@ void CNanoSuit::ResetEnergy()
 
 	SetSuitEnergy(maxEnergy);
 	m_lastEnergy = maxEnergy;
-	for (auto& m_slot : m_slots)
-	{
-		m_slot.realVal = m_slot.desiredVal;
-	}
+
+	for (int i = 0; i < NANOSLOT_LAST; i++)
+		m_slots[i].realVal = m_slots[i].desiredVal;
+
 
 	if (m_pOwner && gEnv->bServer)
 		m_pOwner->GetGameObject()->ChangedNetworkState(CPlayer::ASPECT_NANO_SUIT_ENERGY);

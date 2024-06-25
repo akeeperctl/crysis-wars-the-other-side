@@ -20,10 +20,10 @@ History:
 #include "OffHand.h"
 #include <ISound.h>
 
-constexpr int EXPLOSIVE_GRENADE = 0;
-constexpr int SMOKE_GRENADE		= 1;
-constexpr int FLASHBANG_GRENADE	= 2;
-constexpr int EMP_GRENADE		= 3;
+const int EXPLOSIVE_GRENADE = 0;
+const int SMOKE_GRENADE		= 1;
+const int FLASHBANG_GRENADE	= 2;
+const int EMP_GRENADE		= 3;
 
 //------------------------------------------------------------------------
 void CAmmoPickup::PostInit( IGameObject * pGameObject )

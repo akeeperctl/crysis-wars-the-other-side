@@ -25,8 +25,8 @@ History:
 #include <platform.h>
 #include "CryThread.h"
 
-constexpr float ENGINESOUND_MAX_DIST = 150.f;
-constexpr float ENGINESOUND_IDLE_RATIO = 0.2f;
+const float ENGINESOUND_MAX_DIST = 150.f;
+const float ENGINESOUND_IDLE_RATIO = 0.2f;
 
 
 struct IGroundEffect;

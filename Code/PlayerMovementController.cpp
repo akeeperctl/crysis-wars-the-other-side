@@ -724,7 +724,7 @@ bool CPlayerMovementController::UpdateNormal( float frameTime, SActorFrameMoveme
 	if (m_pPlayer->GetLastRequestedVelocity().len2() > 0.01f)
 		moveDirection = m_pPlayer->GetLastRequestedVelocity().GetNormalized();
 
-	// potentially override our normal targets due to a targeted animation request
+	// potentially  our normal targets due to a targeted animation request
 	bool hasMoveTarget = false;
 	bool hasBodyTarget = false;
 	Vec3 moveTarget;

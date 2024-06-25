@@ -644,7 +644,7 @@ void CPlayerView::ViewFirstPerson(SViewParams &viewParams)
 			float dot(m_io.viewQuatFinal.GetColumn0() * vSpeed);
 
 			// To tweak the scale of strafing lag: (may need to manually adjust the strafing angle offsets as well.)
-			constexpr float kStrafeHorzScale = 0.05f;
+			const float kStrafeHorzScale = 0.05f;
 
 			bobDir.x -= dot * kStrafeHorzScale;	// the faster we move right, the more the gun lags to the left and vice versa
 

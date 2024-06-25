@@ -9,7 +9,7 @@
 	\note Подразумевалось, что это облегчит работу с интерфейсом прицеливания.
 	\note 10/12/2023, 17:57: класс пока что не особо помагает, наоборот с ним больше мороки.
  */
-class CTOSHUDCrosshair final : public CHUDCrosshair
+class CTOSHUDCrosshair  : public CHUDCrosshair
 {
 	friend class CHUD;
 	friend class CTOSMasterClient;
@@ -25,8 +25,8 @@ public:
 	explicit CTOSHUDCrosshair(CHUD* pHUD);
 
 	// CHUDCrosshair
-	void Update(float fDeltaTime) override;
-	void UpdateCrosshair() override;
+	void Update(float fDeltaTime) ;
+	void UpdateCrosshair() ;
 	// ~CHUDCrosshair
 
 

@@ -104,223 +104,223 @@ public:
 	virtual ~CMelee();
 
 	//IFireMode
-	void Init(IWeapon* pWeapon, const struct IItemParamsNode* params) override;
-	void Update(float frameTime, uint frameId) override;
-	void PostUpdate(float frameTime) override {};
-	void UpdateFPView(float frameTime) override {};
-	void Release() override;
-	void GetMemoryStatistics(ICrySizer* s) override;
+	void Init(IWeapon* pWeapon, const struct IItemParamsNode* params) ;
+	void Update(float frameTime, uint frameId) ;
+	void PostUpdate(float frameTime)  {};
+	void UpdateFPView(float frameTime)  {};
+	void Release() ;
+	void GetMemoryStatistics(ICrySizer* s) ;
 
-	void ResetParams(const struct IItemParamsNode* params) override;
-	void PatchParams(const struct IItemParamsNode* patch) override;
+	void ResetParams(const struct IItemParamsNode* params) ;
+	void PatchParams(const struct IItemParamsNode* patch) ;
 
-	void Activate(bool activate) override;
+	void Activate(bool activate) ;
 
-	int GetAmmoCount() const override
+	int GetAmmoCount() const 
 	{
 		return 0;
 	};
 
-	int GetClipSize() const override
+	int GetClipSize() const 
 	{
 		return 0;
 	};
 
-	bool OutOfAmmo() const override
+	bool OutOfAmmo() const 
 	{
 		return false;
 	};
 
-	bool CanReload() const override
+	bool CanReload() const 
 	{
 		return false;
 	};
-	void Reload(int zoomed) override {};
+	void Reload(int zoomed)  {};
 
-	bool IsReloading() override
+	bool IsReloading() 
 	{
 		return false;
 	};
-	void CancelReload() override {};
+	void CancelReload()  {};
 
-	bool CanCancelReload() override
+	bool CanCancelReload() 
 	{
 		return false;
 	};
 
-	bool AllowZoom() const override
+	bool AllowZoom() const 
 	{
 		return true;
 	};
-	void Cancel() override {};
+	void Cancel()  {};
 
-	float GetRecoil() const override
+	float GetRecoil() const 
 	{
 		return 0.0f;
 	};
 
-	float GetSpread() const override
+	float GetSpread() const 
 	{
 		return 0.0f;
 	};
 
-	float GetMinSpread() const override
+	float GetMinSpread() const 
 	{
 		return 0.0f;
 	}
 
-	float GetMaxSpread() const override
+	float GetMaxSpread() const 
 	{
 		return 0.0f;
 	}
 
-	const char* GetCrosshair() const override
+	const char* GetCrosshair() const 
 	{
 		return "";
 	};
 
-	bool CanFire(bool considerAmmo = true) const override;
-	void StartFire() override;
-	void StopFire() override;
+	bool CanFire(bool considerAmmo = true) const ;
+	void StartFire() ;
+	void StopFire() ;
 
-	bool IsFiring() const override
+	bool IsFiring() const 
 	{
 		return m_attacking;
 	};
 
-	float GetHeat() const override
+	float GetHeat() const 
 	{
 		return 0.0f;
 	};
 
-	bool CanOverheat() const override
+	bool CanOverheat() const 
 	{
 		return false;
 	};
 
-	void StartSecondaryFire(EntityId shooterId) override {};
+	void StartSecondaryFire(EntityId shooterId)  {};
 
-	void NetShoot(const Vec3& hit, int ph) override;
-	void NetShootEx(const Vec3& pos, const Vec3& dir, const Vec3& vel, const Vec3& hit, float extra, int ph) override;
-	void NetEndReload() override {};
+	void NetShoot(const Vec3& hit, int ph) ;
+	void NetShootEx(const Vec3& pos, const Vec3& dir, const Vec3& vel, const Vec3& hit, float extra, int ph) ;
+	void NetEndReload()  {};
 
-	void NetStartFire() override;
-	void NetStopFire() override;
-	void NetStartSecondaryFire() override {}
+	void NetStartFire() ;
+	void NetStopFire() ;
+	void NetStartSecondaryFire()  {}
 
-	EntityId GetProjectileId() const override
+	EntityId GetProjectileId() const 
 	{
 		return 0;
 	};
 
-	EntityId RemoveProjectileId() override
+	EntityId RemoveProjectileId() 
 	{
 		return 0;
 	};
-	void SetProjectileId(EntityId id) override {};
+	void SetProjectileId(EntityId id)  {};
 
-	const char* GetType() const override;
+	const char* GetType() const ;
 
-	IEntityClass* GetAmmoType() const override
+	IEntityClass* GetAmmoType() const 
 	{
 		return nullptr;
 	};
-	int         GetDamage(float distance = 0.0f) const override;
-	const char* GetDamageType() const override;
+	int         GetDamage(float distance = 0.0f) const ;
+	const char* GetDamageType() const ;
 
-	float GetSpinUpTime() const override
+	float GetSpinUpTime() const 
 	{
 		return 0.0f;
 	};
 
-	float GetSpinDownTime() const override
+	float GetSpinDownTime() const 
 	{
 		return 0.0f;
 	};
 
-	float GetNextShotTime() const override
+	float GetNextShotTime() const 
 	{
 		return 0.0f;
 	};
-	void SetNextShotTime(float time) override {};
+	void SetNextShotTime(float time)  {};
 
-	float GetFireRate() const override
+	float GetFireRate() const 
 	{
 		return 0.0f;
 	};
 
-	void Enable(bool enable) override
+	void Enable(bool enable) 
 	{
 		m_enabled = enable;
 	};
 
-	bool IsEnabled() const override
+	bool IsEnabled() const 
 	{
 		return m_enabled;
 	};
 
-	Vec3 GetFiringPos(const Vec3& probableHit) const override
+	Vec3 GetFiringPos(const Vec3& probableHit) const 
 	{
 		return ZERO;
 	}
 
-	Vec3 GetFiringDir(const Vec3& probableHit, const Vec3& firingPos) const override
+	Vec3 GetFiringDir(const Vec3& probableHit, const Vec3& firingPos) const 
 	{
 		return ZERO;
 	}
 
-	void SetName(const char* name) override
+	void SetName(const char* name) 
 	{
 		m_name = name;
 	};
 
-	const char* GetName() override
+	const char* GetName() 
 	{
 		return m_name.empty() ? nullptr : m_name.c_str();
 	};
 
-	bool HasFireHelper() const override
+	bool HasFireHelper() const 
 	{
 		return false;
 	}
 
-	Vec3 GetFireHelperPos() const override
+	Vec3 GetFireHelperPos() const 
 	{
 		return Vec3(ZERO);
 	}
 
-	Vec3 GetFireHelperDir() const override
+	Vec3 GetFireHelperDir() const 
 	{
 		return FORWARD_DIRECTION;
 	}
 
-	int GetCurrentBarrel() const override
+	int GetCurrentBarrel() const 
 	{
 		return 0;
 	}
 
-	void Serialize(TSerialize ser) override {};
-	void PostSerialize() override {};
+	void Serialize(TSerialize ser)  {};
+	void PostSerialize()  {};
 
-	void SetRecoilMultiplier(float recoilMult) override { }
+	void SetRecoilMultiplier(float recoilMult)  { }
 
-	float GetRecoilMultiplier() const override
+	float GetRecoilMultiplier() const 
 	{
 		return 1.0f;
 	}
 
-	void PatchSpreadMod(SSpreadModParams& sSMP) override {};
-	void ResetSpreadMod() override {};
+	void PatchSpreadMod(SSpreadModParams& sSMP)  {};
+	void ResetSpreadMod()  {};
 
-	void PatchRecoilMod(SRecoilModParams& sRMP) override {};
-	void ResetRecoilMod() override {};
+	void PatchRecoilMod(SRecoilModParams& sRMP)  {};
+	void ResetRecoilMod()  {};
 
-	void ResetLock() override {};
-	void StartLocking(EntityId targetId, int partId) override {};
-	void Lock(EntityId targetId, int partId) override {};
-	void Unlock() override {};
+	void ResetLock()  {};
+	void StartLocking(EntityId targetId, int partId)  {};
+	void Lock(EntityId targetId, int partId)  {};
+	void Unlock()  {};
 
-	float GetRecoilAmount() const override
+	float GetRecoilAmount() const 
 	{
 		return 0;
 	};

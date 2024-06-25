@@ -379,7 +379,7 @@ public:
 	{
 		static const SInputPortConfig in_ports[] = 
 		{
-			InputPortConfig<float> ( "SetFOV", _HELP("Trigger to override Camera's FieldOfView." )),
+			InputPortConfig<float> ( "SetFOV", _HELP("Trigger to  Camera's FieldOfView." )),
 			InputPortConfig_Void   ( "GetFOV", _HELP("Trigger to get current Camera's FieldOfView." )),
 			InputPortConfig_Void   ( "ResetFOV", _HELP("Trigger to reset FieldOfView to default value." )),
 			{0}

@@ -44,7 +44,7 @@ void CShotValidator::AddShot(const EntityId playerId, const EntityId weaponId, c
 
 	const CTimeValue now = gEnv->pTimer->GetFrameStartTime();
 	const int        channelId = m_pGameRules->GetChannelId(playerId);
-	constexpr int        shotLife = 3;
+	const int        shotLife = 3;
 
 	const TChannelHits::iterator chit = m_pendinghits.find(channelId);
 	if (chit == m_pendinghits.end())

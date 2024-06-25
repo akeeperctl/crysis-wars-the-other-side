@@ -28,7 +28,7 @@ History:
 #include "AmmoParams.h"
 
 
-constexpr float MIN_DAMAGE = 5.0f;
+const float MIN_DAMAGE = 5.0f;
 
 class CProjectile :
 	public CGameObjectExtensionHelper<CProjectile, IGameObjectExtension>,

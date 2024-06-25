@@ -692,7 +692,7 @@ void CVehicleMovementHelicopter::ProcessActionsLift(float deltaTime)
 
 void CVehicleMovementHelicopter::Boost(bool enable)
 {
-	// override: prevent boosting if helicopter is above the altitude limit
+	// : prevent boosting if helicopter is above the altitude limit
 	//	(prevents players gaining extra height by boosting)
 	if(enable && m_pAltitudeLimitVar)
 	{

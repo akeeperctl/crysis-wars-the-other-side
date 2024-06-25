@@ -3,11 +3,11 @@
 
 namespace TOS_NET
 {
-	static constexpr EEntityAspects CLIENT_ASPECT_STATIC = eEA_GameClientStatic;
-	static constexpr EEntityAspects CLIENT_ASPECT_DYNAMIC = eEA_GameClientDynamic;
+	static const EEntityAspects CLIENT_ASPECT_STATIC = eEA_GameClientStatic;
+	static const EEntityAspects CLIENT_ASPECT_DYNAMIC = eEA_GameClientDynamic;
 
-	static constexpr EEntityAspects SERVER_ASPECT_DYNAMIC = eEA_GameServerDynamic; // AI
-	static constexpr EEntityAspects SERVER_ASPECT_STATIC = eEA_GameServerStatic;
+	static const EEntityAspects SERVER_ASPECT_DYNAMIC = eEA_GameServerDynamic; // AI
+	static const EEntityAspects SERVER_ASPECT_STATIC = eEA_GameServerStatic;
 
 	/**
 	 * \brief Проверка принадлежат ли права pGO на изменение сущности с id checkedId

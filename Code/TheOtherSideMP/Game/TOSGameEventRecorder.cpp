@@ -13,22 +13,22 @@ const bool mustDrawDesc = (eventDesc).length() > 1;\
 const bool mustDrawEnt = (entName).length() > 1 || (entId) > 0;\
 if (mustDrawDesc && mustDrawEnt)\
 {\
-	CryLogAlways("[C++][%s][%s][CTOSGame::OnExtraGameplayEvent] Event: %s, Entity: (%s|%i), Desc: %s",\
+	CryLog("[C++][%s][%s] [ExtraGameplayEvent] %s, %s:%i, %s",\
 		TOS_Debug::GetEnv(), TOS_Debug::GetAct(1), (eventName).c_str(), (entName).c_str(), entId, (eventDesc).c_str());\
 }\
 else if (mustDrawEnt && !mustDrawDesc)\
 {\
-	CryLogAlways("[C++][%s][%s][CTOSGame::OnExtraGameplayEvent] Event: %s, Entity: (%s|%i)",\
+	CryLog("[C++][%s][%s] [OnExtraGameplayEvent] %s, %s:%i",\
 		TOS_Debug::GetEnv(), TOS_Debug::GetAct(1), (eventName).c_str(), (entName).c_str(), entId);\
 }\
 else if (mustDrawDesc && !mustDrawEnt)\
 {\
-	CryLogAlways("[C++][%s][%s][CTOSGame::OnExtraGameplayEvent] Event: %s, Desc: %s",\
+	CryLog("[C++][%s][%s] [OnExtraGameplayEvent] %s, %s",\
 		TOS_Debug::GetEnv(), TOS_Debug::GetAct(1), (eventName).c_str(), (eventDesc).c_str());\
 }\
 else\
 {\
-	CryLogAlways("[C++][%s][%s][CTOSGame::OnExtraGameplayEvent] Event: %s",\
+	CryLog("[C++][%s][%s] [OnExtraGameplayEvent] %s",\
 		TOS_Debug::GetEnv(), TOS_Debug::GetAct(1), (eventName).c_str());\
 }\
 
@@ -54,19 +54,21 @@ bool CTOSGame::OnInputEvent(const SInputEvent& event)
 	if (gEnv->bEditor && g_pGame->GetIGameFramework()->IsEditing())
 		return false;
 
-	for (const auto pModule : m_modules)
+	for (std::vector<ITOSGameModule*>::iterator it = m_modules.begin(); it != m_modules.end(); ++it)
 	{
+		ITOSGameModule* pModule = *it;
 		if (pModule)
 		{
 			pModule->OnInputEvent(event);
 		}
 	}
 
-	for (const auto pFGModule : m_flowgraphModules)
+	for (std::vector<ITOSGameModule*>::iterator it = m_flowgraphModules.begin(); it != m_flowgraphModules.end(); ++it)
 	{
-		if (pFGModule)
+		ITOSGameModule* pModule = *it;
+		if (pModule)
 		{
-			pFGModule->OnInputEvent(event);
+			pModule->OnInputEvent(event);
 		}	
 	}
 
@@ -108,43 +110,6 @@ void CTOSGame::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event
 	//This code Handle gameplay events from ALL game and The Other Side
 	TOS_INIT_EVENT_VALUES(pEntity, event);
 	//const char* envName = "";
-
-	//if (gEnv->bServer)
-	//{
-	//	envName = "[SERVER]";
-	//}
-	//else if (pGO)
-	//{
-	//	auto pNetCh = pGO->GetNetChannel();
-	//	if (pNetCh && pNetCh->IsLocal())
-	//	{
-	//		envName = "[LOCAL]";
-	//	}
-
-	//}
-	//else if (gEnv->bClient)
-	//{
-	//	envName = "[CLIENT]";
-	//}
-
-	//switch(event.event)
-	//{
-	//case eGE_Disconnected:
-	//case eGE_Connected:
-	//{
-	//	//if (pEntity && event.console_log)
-	//	if (pEntity && gEnv->bServer)
-	//	{
-	//		//Net channel is null on client
-	//		auto pNetCh = pGO->GetNetChannel();
-
-	//		//Case 1
-	//		CryLogAlways("[C++][%s][%s][CTOSGame::OnExtraGameplayEvent] Event: %s, Name: (CH:%s|GO:%s|Id:%i)",
-	//			TOS_Debug::GetEnv(), TOS_Debug::GetAct(1), eventName, pNetCh ? pNetCh->GetName() : "NULL", entName, pEntity->GetId());
-	//	}
-	//	break;
-	//}
-	//}
 
 	const bool logVanillaEvents = event.vanilla_recorder && g_pTOSGameCvars->tos_any_EventRecorderLogVanilla > 0;
 	const bool logExtraEvents = event.console_log && !event.vanilla_recorder;
@@ -190,14 +155,16 @@ void CTOSGame::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event
 		//CryLogAlways("	Desc: %s", eventDesc);
 	}
 
-	for (const auto pModule : m_modules)
+	for (std::vector<ITOSGameModule*>::const_iterator it = m_modules.begin(); it != m_modules.end(); ++it)
 	{
+		ITOSGameModule* pModule = *it;
 		if (pModule)
 			pModule->OnExtraGameplayEvent(pEntity, event);
 	}
 
-	for (const auto pModule : m_flowgraphModules)
+	for (std::vector<ITOSGameModule*>::const_iterator it = m_flowgraphModules.begin(); it != m_flowgraphModules.end(); ++it)
 	{
+		ITOSGameModule* pModule = *it;
 		if (pModule)
 			pModule->OnExtraGameplayEvent(pEntity, event);
 	}
@@ -267,7 +234,7 @@ void CTOSGame::OnElementFound(const char* sName, ScriptVarType type)
 		break;
 	}
 
-	CryLogAlways("	Element: %s\t%s",typeName, sName);
+	CryLog("	Element: %s\t%s",typeName, sName);
 }
 
 void CTOSGame::OnElementFound(int nIdx, ScriptVarType type)

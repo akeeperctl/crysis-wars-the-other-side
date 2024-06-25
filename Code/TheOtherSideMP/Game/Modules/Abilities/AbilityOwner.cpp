@@ -448,7 +448,7 @@ void CAbilityOwner::ToggleAbility(int index, EntityId targetId)
                                 {
                                     const auto maxHealth = pMember->GetMaxHealth();
                                     const auto currentHealth = pMember->GetHealth();
-                                    constexpr auto divider = 6;
+                                    const auto divider = 6;
 
                                     int addValue = maxHealth / divider;
 

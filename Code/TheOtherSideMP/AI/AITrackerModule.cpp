@@ -16,9 +16,9 @@
 #include "TheOtherSideMP/Helpers/TOS_STL.h"
 
 #define IS_VOID_HOLDER(entityId, isHolder)\
-for (auto& voidPair : m_voidHolders)\
+for (auto it = m_voidHolders.begin(); it != m_voidHolders.end(); it++)\
 {\
-	if (voidPair.first.id == (entityId))\
+	if (it->first.id == (entityId))\
 	{\
 		(isHolder) = true;\
 		break;\
@@ -90,34 +90,34 @@ bool СTOSAIModule::IsExecuting(const IAIObject* pUserAI, const char* actionName
 
 void СTOSAIModule::Update(const float frametime)
 {
-	for (auto& holderPair : m_voidHolders)
+	for (auto it = m_voidHolders.begin(); it != m_voidHolders.end(); it++)
 	{
-		if (holderPair.second > 0)
-			holderPair.second -= frametime;
+		if (it->second > 0)
+			it->second -= frametime;
 
-		if (holderPair.second <= 0)
+		if (it->second <= 0)
 		{
-			holderPair.second = 0;
+			it->second = 0;
 
-			const auto pEntity = TOS_GET_ENTITY(holderPair.first.id);
+			const auto pEntity = TOS_GET_ENTITY(it->first.id);
 			if (pEntity)
 			{
-				const auto actionInfo = holderPair.first.actionInfo;
+				const auto actionInfo = it->first.actionInfo;
 				const auto pObject = TOS_GET_ENTITY(actionInfo.objectId);
 
 				TOS_AI::ExecuteAIAction(pEntity->GetAI(), pObject, actionInfo.name, actionInfo.maxAlertness, -1, actionInfo.flag, actionInfo.desiredGoalPipe, "Implement void fix");
 
-				m_voidHolders.erase(holderPair.first);
+				m_voidHolders.erase(it->first);
 			}
 			break;
 		}
 	}
 
 	static float color[] = {1, 1, 1, 1};
-	constexpr auto   size = 1.1f;
-	constexpr auto   scale = 20;
-	constexpr auto   xoffset = TOS_Debug::XOFFSET_COMMON;
-	constexpr auto   yoffset = TOS_Debug::YOFFSET_AIACTION_TRACKER;
+	const auto   size = 1.1f;
+	const auto   scale = 20;
+	const auto   xoffset = TOS_Debug::XOFFSET_COMMON;
+	const auto   yoffset = TOS_Debug::YOFFSET_AIACTION_TRACKER;
 
 	if (GetDebugLog() > 0)
 		gEnv->pRenderer->Draw2dLabel(xoffset, yoffset - 20, 1.3f, color, false, "AI Action Tracker: %i objects", m_entitiesActions.size());
@@ -224,7 +224,7 @@ void СTOSAIModule::Update(const float frametime)
 				m_voidHolders[SVoidHolder(entityId, info)] = 0.5f;
 
 				if (GetDebugLog() > 0)
-					CryLogAlwaysDev("%s[C++][Detect and Fix Void Action][Victim: %s]", TOS_COLOR_RED, pEntity->GetName());
+					CryLog("%s[C++][Detect and Fix Void Action][Victim: %s]", TOS_COLOR_RED, pEntity->GetName());
 
 				TOS_AI::AbortAIAction(pAI, info.goalPipeId, false, "Void Action Fix");
 			}
@@ -537,9 +537,10 @@ void СTOSAIModule::OnActionAborted(const IAIObject* pAIObject)
 
 void СTOSAIModule::Reset()
 {
-	for (const auto& actionPair : m_entitiesActions)
+	auto it = m_entitiesActions.begin();
+	for (; it != m_entitiesActions.end(); it++)
 	{
-		const auto pEntity = gEnv->pEntitySystem->GetEntity(actionPair.first);
+		const auto pEntity = gEnv->pEntitySystem->GetEntity(it->first);
 		if (!pEntity)
 			continue;
 
@@ -548,7 +549,7 @@ void СTOSAIModule::Reset()
 			IPipeUser* pPipeUser = pEntity->GetAI()->CastToIPipeUser();
 			assert(pPipeUser);
 
-			pPipeUser->UnRegisterGoalPipeListener(this, actionPair.second.goalPipeId);
+			pPipeUser->UnRegisterGoalPipeListener(this, it->second.goalPipeId);
 		}
 	}
 
@@ -565,9 +566,10 @@ void СTOSAIModule::SetActionInfo(const IAIObject* pAI, const SAIActionInfo& act
 
 	const auto id = pAI->GetEntity()->GetId();
 
-	for (const auto& actionPair : m_entitiesActions)
+	auto it = m_entitiesActions.begin();
+	for (; it != m_entitiesActions.end(); it++)
 	{
-		if (actionPair.first == id)
+		if (it->first == id)
 		{
 			m_entitiesActions[id].flag = actionInfo.flag;
 			m_entitiesActions[id].goalPipeId = actionInfo.goalPipeId;
@@ -646,11 +648,12 @@ void СTOSAIModule::OnGoalPipeEvent(IPipeUser* pPipeUser, const EGoalPipeEvent e
 {
 	IEntity* pPipeOwner = nullptr;
 
-	for (const auto& actionPair : m_entitiesActions)
+	auto it = m_entitiesActions.begin();
+	for (; it != m_entitiesActions.end(); it++)
 	{
-		if (actionPair.second.goalPipeId == goalPipeId)
+		if (it->second.goalPipeId == goalPipeId)
 		{
-			const auto pEntity = gEnv->pEntitySystem->GetEntity(actionPair.first);
+			const auto pEntity = gEnv->pEntitySystem->GetEntity(it->first);
 			if (!pEntity)
 				continue;
 

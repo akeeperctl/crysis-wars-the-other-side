@@ -336,8 +336,8 @@ void CTOSMasterClient::Update(float frametime)
 	m_cameraInfo.worldPos = cam.GetMatrix().GetTranslation();
     m_cameraInfo.lookPointPos = m_cameraInfo.worldPos + m_cameraInfo.viewDir;
 
-	constexpr auto            rayFlags = (COLLISION_RAY_PIERCABILITY & rwi_pierceability_mask);
-	static constexpr unsigned entityFlags =
+	const auto            rayFlags = (COLLISION_RAY_PIERCABILITY & rwi_pierceability_mask);
+	static const unsigned entityFlags =
 		ent_living |
 		ent_rigid |
 		ent_static |
@@ -402,16 +402,20 @@ void CTOSMasterClient::Update(float frametime)
 		SendMovementRequest(pController);
 
 	// Подсчет времени, сколько была нажата определенная клавиша в сек.
-	for (auto& it : m_actionFlags)
+	std::map<ActionId, uint>::iterator it = m_actionFlags.begin();
+	std::map<ActionId, uint>::iterator end = m_actionFlags.end();
+
+	for (; it != end; ++it)
 	{
-		const ActionId action = it.first;
-		const bool pressed = it.second & TOS_PRESSED;
+		const ActionId action = it->first;
+		const bool pressed = it->second & TOS_PRESSED;
 
 		m_actionPressedDuration[action] += pressed ? frametime : 0.0f;
 
 		if (!pressed)
 			m_actionPressedDuration[action] = 0.0f;
 	}
+
 }
 
 void CTOSMasterClient::UpdateCrosshair(const IEntity* pSlaveEntity, const IActor* pLocalDudeActor, int rayFlags, unsigned entityFlags)
@@ -485,7 +489,7 @@ void CTOSMasterClient::UpdateLookFire(const IEntity* pSlaveEntity, const int ray
 
 void CTOSMasterClient::OnActionDelayReleased(const ActionId action, float pressedTimeLen)
 {
-	CryLogAlwaysDev("[%s] is released with time %f", action, pressedTimeLen);
+	CryLog("[%s] is released with time %f", action, pressedTimeLen);
 }
 
 void CTOSMasterClient::SendMovementRequest(IMovementController* pController)
@@ -642,7 +646,7 @@ void CTOSMasterClient::ProcessMeleeDamage() const
 	{
 		const Vec3 slavePos = m_pSlaveEntity->GetWorldPos();
 		const Vec3 toTargetDir(m_meleeInfo.targetPos - slavePos);
-		constexpr float attackRadius = 2.5f;
+		const float attackRadius = 2.5f;
 
 		const float dist = toTargetDir.GetLength();
 		if (dist < attackRadius)
@@ -687,7 +691,7 @@ void CTOSMasterClient::ProcessMeleeDamage() const
 			//{
 			//	if (!isHaveNanosuit)
 			//	{
-			//		constexpr float noNanosuitMultiplier = 4.0f;
+			//		const float noNanosuitMultiplier = 4.0f;
 			//		hit.SetDamage(damage * damageMultiplier * noNanosuitMultiplier);
 			//	}
 			//	else if (isHaveNanosuit)
@@ -963,7 +967,7 @@ void CTOSMasterClient::UpdateView(SViewParams& viewParams) const
 	    const Vec3 start = (pControlledActor->GetBaseMtx() * eyeOffsetView + viewParams.position + offsetX);
 	    // +offsetZ;// + offsetX;// +offsetZ;
 
-	    constexpr float wallSafeDistance = 0.3f; // how far to keep camera from walls
+	    const float wallSafeDistance = 0.3f; // how far to keep camera from walls
 
 	    primitives::sphere sphere;
 	    sphere.center = start;

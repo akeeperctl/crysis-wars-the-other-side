@@ -7,7 +7,7 @@ $DateTime$
 
 -------------------------------------------------------------------------
 History:
-- 11:9:2005   15:00 : Created by Márcio Martins
+- 11:9:2005   15:00 : Created by MÐ±rcio Martins
 
 *************************************************************************/
 #include "StdAfx.h"
@@ -227,7 +227,7 @@ void CThrow::NetStartFire()
 	m_firing = true;
 	m_throwing = false;
 	m_thrown = false;
-	m_pulling = false; // false here to not override network orders
+	m_pulling = false; // false here to not  network orders
 	m_netfiring = true;
 
 	m_pWeapon->PlayAction(m_throwactions.pull);

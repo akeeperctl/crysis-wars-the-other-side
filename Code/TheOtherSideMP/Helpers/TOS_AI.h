@@ -14,10 +14,10 @@
 
 namespace TOS_AI
 {
-	constexpr auto FORGETTIME_TARGET = "target";
-	constexpr auto FORGETTIME_SEEK = "seek";
-	constexpr auto FORGETTIME_MEMORY = "memory";
-	constexpr auto FORGETTIME_ALL = "all";
+	const auto FORGETTIME_TARGET = "target";
+	const auto FORGETTIME_SEEK = "seek";
+	const auto FORGETTIME_MEMORY = "memory";
+	const auto FORGETTIME_ALL = "all";
 
 	//functions forward declaration
 	inline void EnableCombat(IAIObject* pAI, bool enable, bool toFirst, const char* solution);
@@ -174,7 +174,7 @@ namespace TOS_AI
 		pData->fValue = static_cast<float>(actionInfo.maxAlertness);
 		pData->iValue = actionInfo.goalPipeId;
 
-		constexpr int method = 1;
+		const int method = 1;
 
 		if (method == 0)
 			SendSignal(pUser, SIGNALFILTER_SENDER, "ACT_EXECUTE", pObjectEntity, pData);
@@ -235,7 +235,7 @@ namespace TOS_AI
 		pData->iValue = actionGoalPipeId;
 
 		//method 0 may not trigger an action in the Update function
-		constexpr int method = 1;
+		const int method = 1;
 
 		if (method == 0)
 			SendSignal(pUser, SIGNALFILTER_SENDER, "ACT_EXECUTE", pObject, pData);

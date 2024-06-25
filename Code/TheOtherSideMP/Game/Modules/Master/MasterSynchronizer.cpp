@@ -72,7 +72,7 @@ IMPLEMENT_RMI(CTOSMasterSynchronizer, SvRequestMasterAdd)
 
 	if (gEnv->bServer)
 	{
-		CryLogAlways("[C++][%s][%s][SvRequestMasterAdd]", TOS_Debug::GetEnv(), TOS_Debug::GetAct(3));
+		CryLog("[C++][%s][%s][SvRequestMasterAdd]", TOS_Debug::GetEnv(), TOS_Debug::GetAct(3));
 
 		const auto pEntity = gEnv->pEntitySystem->GetEntity(params.entityId);
 		assert(pEntity);
@@ -89,7 +89,7 @@ IMPLEMENT_RMI(CTOSMasterSynchronizer, SvRequestMasterRemove)
 
 	if (gEnv->bServer)
 	{
-		CryLogAlways("[C++][%s][%s][SvRequestMasterRemove]", TOS_Debug::GetEnv(), TOS_Debug::GetAct(3));
+		CryLog("[C++][%s][%s][SvRequestMasterRemove]", TOS_Debug::GetEnv(), TOS_Debug::GetAct(3));
 
 		const auto pEntity = gEnv->pEntitySystem->GetEntity(params.entityId);
 		assert(pEntity);
@@ -106,7 +106,7 @@ IMPLEMENT_RMI(CTOSMasterSynchronizer, SvRequestSetDesiredSlaveCls)
 
 	if (gEnv->bServer)
 	{
-		CryLogAlways("[C++][%s][%s][SvRequestSetDesiredSlaveCls]", TOS_Debug::GetEnv(), TOS_Debug::GetAct(3));
+		CryLog("[C++][%s][%s][SvRequestSetDesiredSlaveCls]", TOS_Debug::GetEnv(), TOS_Debug::GetAct(3));
 		// Указатель на класс уже проверен на этапе перед отправкой RMI
 		const auto pEntity = gEnv->pEntitySystem->GetEntity(params.entityId);
 		assert(pEntity);
@@ -136,7 +136,7 @@ IMPLEMENT_RMI(CTOSMasterSynchronizer, ClMasterClientStartControl)
 		if (slaveIsPlayer)
 			return true;
 
-		constexpr uint flags = 
+		const uint flags = 
 			TOS_DUDE_FLAG_BEAM_MODEL | 
 			TOS_DUDE_FLAG_DISABLE_SUIT | 
 			TOS_DUDE_FLAG_ENABLE_ACTION_FILTER | 
@@ -148,7 +148,7 @@ IMPLEMENT_RMI(CTOSMasterSynchronizer, ClMasterClientStartControl)
 
 		const auto localPlayerNick = g_pGame->GetIGameFramework()->GetClientActor()->GetEntity()->GetName();
 
-		CryLogAlways("[C++][%s][%s][ClMasterClientStartControl] LocalPlayerNick: %s",
+		CryLog("[C++][%s][%s][ClMasterClientStartControl] localPlayerNick: %s",
 			TOS_Debug::GetEnv(), TOS_Debug::GetAct(3), localPlayerNick);
 	}
 
@@ -184,7 +184,7 @@ IMPLEMENT_RMI(CTOSMasterSynchronizer, SvRequestMasterClientStartControl)
 		// Поэтому мы передаём серверу информацию как о рабе, так и о мастере.
 		g_pTOSGame->GetMasterModule()->SetCurrentSlave(pMasterActor->GetEntity(), pSlaveActor->GetEntity(), params.masterFlags);
 
-		CryLogAlways("[C++][%s][%s][SvRequestMasterClientStartControl]",
+		CryLog("[C++][%s][%s][SvRequestMasterClientStartControl]",
 			TOS_Debug::GetEnv(), TOS_Debug::GetAct(3));
 	}
 
@@ -197,7 +197,7 @@ IMPLEMENT_RMI(CTOSMasterSynchronizer, SvRequestMasterClientStopControl)
 
 	if (gEnv->bServer)
 	{
-		CryLogAlways("[C++][%s][%s][SvRequestMasterClientStopControl]",
+		CryLog("[C++][%s][%s][SvRequestMasterClientStopControl]",
 			TOS_Debug::GetEnv(), TOS_Debug::GetAct(3));
 
 		const auto pMasterEntity = gEnv->pEntitySystem->GetEntity(params.masterId);
@@ -215,7 +215,7 @@ IMPLEMENT_RMI(CTOSMasterSynchronizer, SvRequestDelegateAuthority)
 
 	if (gEnv->bServer)
 	{
-		CryLogAlways("[C++][%s][%s][SvRequestDelegateAuthority] ChannelId: %i, SlaveId: %i",
+		CryLog("[C++][%s][%s][SvRequestDelegateAuthority] ChannelId: %i, SlaveId: %i",
 			TOS_Debug::GetEnv(), TOS_Debug::GetAct(3), params.masterChannelId, params.slaveId);
 
 		const auto pSlaveEntity = gEnv->pEntitySystem->GetEntity(params.slaveId);
@@ -236,7 +236,7 @@ IMPLEMENT_RMI(CTOSMasterSynchronizer, ClMasterClientStopControl)
 
 	if (gEnv->bClient)
 	{
-		CryLogAlways("[C++][%s][%s][ClMasterClientStopControl]",
+		CryLog("[C++][%s][%s][ClMasterClientStopControl]",
 			TOS_Debug::GetEnv(), TOS_Debug::GetAct(3));
 
 		g_pTOSGame->GetMasterModule()->GetMasterClient()->StopControl();
@@ -251,7 +251,7 @@ IMPLEMENT_RMI(CTOSMasterSynchronizer, SvRequestSaveMCParams)
 
 	if (gEnv->bServer)
 	{
-		CryLogAlways("[C++][%s][%s][SvRequestSaveMCParams]",
+		CryLog("[C++][%s][%s][SvRequestSaveMCParams]",
 			TOS_Debug::GetEnv(), TOS_Debug::GetAct(3));
 
 		const auto pMasterEntity = gEnv->pEntitySystem->GetEntity(params.masterId);
@@ -273,7 +273,7 @@ IMPLEMENT_RMI(CTOSMasterSynchronizer, SvRequestApplyMCSavedParams)
 
 	if (gEnv->bServer)
 	{
-		CryLogAlways("[C++][%s][%s][SvRequestApplyMCSavedParams]",
+		CryLog("[C++][%s][%s][SvRequestApplyMCSavedParams]",
 			TOS_Debug::GetEnv(), TOS_Debug::GetAct(3));
 
 		const auto pMasterEntity = gEnv->pEntitySystem->GetEntity(params.masterId);

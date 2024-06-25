@@ -28,10 +28,10 @@ History:
 #define ResetValueEx(name, var, defaultValue) if (defaultInit) var=defaultValue; reader.Read(name, var)
 
 
-constexpr float WEAPON_HIT_RANGE		= 2000.0f;
-constexpr float WEAPON_HIT_MIN_DISTANCE	= 1.5f;
+const float WEAPON_HIT_RANGE		= 2000.0f;
+const float WEAPON_HIT_MIN_DISTANCE	= 1.5f;
 
-constexpr float AUTOAIM_TIME_OUT		= 10.0f;
+const float AUTOAIM_TIME_OUT		= 10.0f;
 
 
 class CSingle :

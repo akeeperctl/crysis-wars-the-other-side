@@ -57,7 +57,7 @@ struct STOSEntitySpawnParams : public STOSSmartStruct
 		this->forceStartControl = params.forceStartControl;
 	}
 
-	~STOSEntitySpawnParams() override { }
+	~STOSEntitySpawnParams()  { }
 
 	IScriptTable* pSavedScript;
 	SEntitySpawnParams vanilla; 
@@ -101,23 +101,23 @@ typedef std::map<int, _smart_ptr<STOSEntityDelaySpawnParams>>        TMapDelayTO
  * \brief Модуль создания сущностей, используемых в моде The Other Side
  * \note Также модуль предназначен для пересоздания сущностей, удаленных во время работы консольной команды sv_restart.
  */
-class CTOSEntitySpawnModule final :
+class CTOSEntitySpawnModule  :
 	public CTOSGenericModule
 {
 public:
 	CTOSEntitySpawnModule();
-	~CTOSEntitySpawnModule() override;
+	~CTOSEntitySpawnModule() ;
 
 	//ITOSGameModule
-	void OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event) override;
-	const char* GetName() override { return "CTOSEntitySpawnModule"; };
-	void Init() override;
-	void Update(float frametime) override;
-	void Serialize(TSerialize ser) override;
-	void InitCVars(IConsole* pConsole) override;
-	void InitCCommands(IConsole* pConsole) override;
-	void ReleaseCVars() override;
-	void ReleaseCCommands() override;
+	void OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event) ;
+	const char* GetName()  { return "CTOSEntitySpawnModule"; };
+	void Init() ;
+	void Update(float frametime) ;
+	void Serialize(TSerialize ser) ;
+	void InitCVars(IConsole* pConsole) ;
+	void InitCCommands(IConsole* pConsole) ;
+	void ReleaseCVars() ;
+	void ReleaseCCommands() ;
 	//~ITOSGameModule
 
 	//Console command's functions

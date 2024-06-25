@@ -32,12 +32,12 @@
 #include "ItemScheduler.h"
 #include "ItemString.h"
 
-constexpr const char* const ITEM_ARMS_ATTACHMENT_NAME		= "arms_fp";
+const const char* const ITEM_ARMS_ATTACHMENT_NAME		= "arms_fp";
 
-constexpr const char* const ITEM_DESELECT_POSE				= "nw";
+const const char* const ITEM_DESELECT_POSE				= "nw";
 
-constexpr const char* const ITEM_FIRST_PERSON_TOKEN			= "fp";
-constexpr const char* const ITEM_THIRD_PERSON_TOKEN			= "tp";
+const const char* const ITEM_FIRST_PERSON_TOKEN			= "fp";
+const const char* const ITEM_THIRD_PERSON_TOKEN			= "tp";
 
 struct ICharacterInstance;
 struct AnimEventInstance;

@@ -104,7 +104,7 @@ void CTOSPlayer::InitLocalPlayer()
 	//		TOS_Debug::GetEnv(), TOS_Debug::GetAct(1), GetEntity()->GetName());
 	//}
 
-	CryLogAlwaysDev("[C++][%s][%s][CTOSPlayer::InitLocalPlayer] Player: %s",
+	CryLog("[C++][%s][%s][CTOSPlayer::InitLocalPlayer] Player: %s",
 		TOS_Debug::GetEnv(), TOS_Debug::GetAct(1), GetEntity()->GetName());
 
 	//Case 4 perfect - Master Client was created only on local machine

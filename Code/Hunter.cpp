@@ -36,9 +36,9 @@ class CHunterBlending : public IAnimationBlending
 public:
 	CHunterBlending() { }
 
-	~CHunterBlending() override { }
+	~CHunterBlending()  { }
 
-	SAnimationBlendingParams* Update(IEntity* pIEntity, Vec3 DesiredBodyDirection, Vec3 DesiredMoveDirection, f32 fDesiredMovingSpeed) override
+	SAnimationBlendingParams* Update(IEntity* pIEntity, Vec3 DesiredBodyDirection, Vec3 DesiredMoveDirection, f32 fDesiredMovingSpeed) 
 	{
 		m_params.m_yawAngle = 0;
 		m_params.m_speed = 0;
@@ -85,17 +85,20 @@ protected:
 CHunter::CHunter()
 	: m_zDelta(0),
 	m_turning(false),
-	m_IKLimbIndex{},
-	m_footGroundSurface{},
-	m_footTouchesGround{},
-	m_footTouchesGroundSmooth{},
-	m_footTouchesGroundSmoothRate{},
-	m_footAttachments{},
+	//m_IKLimbIndex{},
+	//m_footGroundSurface{},
+	//m_footTouchesGround{},
+	//m_footTouchesGroundSmooth{},
+	//m_footTouchesGroundSmoothRate{},
+	//m_footAttachments{},
 	m_IKLook(false),
 	m_nextStopCheck(0),
-	m_footSoundTime{},
+	//m_footSoundTime{},
 	m_smoothZ(0),
-	m_zOffset(0) {}
+	m_zOffset(0) 
+{
+
+}
 
 IGrabHandler* CHunter::CreateGrabHanlder()
 {

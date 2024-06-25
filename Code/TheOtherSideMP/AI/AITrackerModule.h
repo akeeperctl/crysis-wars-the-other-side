@@ -134,11 +134,11 @@ struct SAIActionStats
 	\note Указатель на модуль существует только на сервере.
 	\note Указатель на модуль на клиенте равен nullptr.
  */
-class СTOSAIModule final : public CTOSGenericModule, IGoalPipeListener
+class СTOSAIModule  : public CTOSGenericModule, IGoalPipeListener
 {
 public:
 	СTOSAIModule();
-	~СTOSAIModule() override;
+	~СTOSAIModule() ;
 
 	bool IsExecuting(const IAIObject* pUserAI, int actionGoalPipeId);
 	bool IsExecuting(const IAIObject* pUserAI, const char* actionName);
@@ -148,24 +148,24 @@ public:
 	//void OnVehicleDestroyed(const IVehicle* pVeh);
 
 	//ITOSGameModule
-	bool OnInputEvent(const SInputEvent& event) override { return true; };
-	bool OnInputEventUI(const SInputEvent& event) override { return false; };
+	bool OnInputEvent(const SInputEvent& event)  { return true; };
+	bool OnInputEventUI(const SInputEvent& event)  { return false; };
 
-	void        OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event) override;
-	void        GetMemoryStatistics(ICrySizer* s) override;
-	const char* GetName() override { return R"(СTOSAIModule)"; }
-	void        Init() override;
-	void        Update(float frametime) override;
-	void        Serialize(TSerialize ser) override;
+	void        OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event) ;
+	void        GetMemoryStatistics(ICrySizer* s) ;
+	const char* GetName()  { return "СTOSAIModule"; }
+	void        Init() ;
+	void        Update(float frametime) ;
+	void        Serialize(TSerialize ser) ;
 
-	void InitCVars(IConsole* pConsole) override;
-	void InitCCommands(IConsole* pConsole) override;
-	void ReleaseCVars() override;
-	void ReleaseCCommands() override;
+	void InitCVars(IConsole* pConsole) ;
+	void InitCCommands(IConsole* pConsole) ;
+	void ReleaseCVars() ;
+	void ReleaseCCommands() ;
 	//~ITOSGameModule
 
 	//IGoalPipeListener
-	void OnGoalPipeEvent(IPipeUser* pPipeUser, EGoalPipeEvent event, int goalPipeId) override;
+	void OnGoalPipeEvent(IPipeUser* pPipeUser, EGoalPipeEvent event, int goalPipeId) ;
 	//~IGoalPipeListener
 
 	bool IsTracking(const IAIObject* pAI) const;

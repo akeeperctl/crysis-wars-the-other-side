@@ -147,7 +147,7 @@ bool SetLuaVarRecursive(const char *sKey, const ScriptAnyValue &newValue) {
 		nextToken = tokenStream.Tokenize(".", curPos);
 	}
 
-	// We should be left on the final token
+	// We should be left on the  token
 	value.table->SetValueAny(token, newValue);
 
 	// Delete copy and return

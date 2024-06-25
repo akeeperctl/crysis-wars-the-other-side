@@ -23,7 +23,7 @@ History:
 #include "Single.h"
 #include "WeaponSystem.h"
 
-constexpr float HM_TIME_TO_UPDATE = 0.0f;
+const float HM_TIME_TO_UPDATE = 0.0f;
 
 //------------------------------------------------------------------------
 CHomingMissile::CHomingMissile()
@@ -43,7 +43,7 @@ CHomingMissile::CHomingMissile()
 }
 
 //------------------------------------------------------------------------
-CHomingMissile::~CHomingMissile() = default;
+CHomingMissile::~CHomingMissile() {};
 
 //------------------------------------------------------------------------
 bool CHomingMissile::Init(IGameObject* pGameObject)

@@ -135,12 +135,12 @@ struct STOSNetBodyInfo
 
 	void Reset()
 	{
-		moveTarget = {0,0,0};
-		aimTarget  = {0,0,0};
-		lookTarget = {0,0,0};
-		bodyTarget = {0,0,0};
-		fireTarget = {0,0,0};
-		deltaMov = {0,0,0};
+		moveTarget = Vec3(0, 0, 0);
+		aimTarget = Vec3(0, 0, 0);
+		lookTarget = Vec3(0, 0, 0);
+		bodyTarget = Vec3(0, 0, 0);
+		fireTarget = Vec3(0, 0, 0);
+		deltaMov = Vec3(0, 0, 0);
 
 		//pseudoSpeed;
 		desiredSpeed = 0;
@@ -152,7 +152,6 @@ struct STOSNetBodyInfo
 		hidden = false;
 		//bool allowStrafing;
 		//bool hasAimTarget;
-
 	}
 
 	// Скопировано из CoopGrunt.h
@@ -189,44 +188,44 @@ public:
 	friend class CTOSMasterClient;
 
 	CTOSActor();
-	~CTOSActor() override;
+	~CTOSActor() ;
 
 	// CActor
-	bool Init(IGameObject* pGameObject) override;
-	void PostInit( IGameObject * pGameObject ) override;
-	void InitClient(int channelId ) override;
-	void ProcessEvent(SEntityEvent& event) override;
-	bool NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int flags) override;
-	void SelectNextItem(int direction, bool keepHistory, const char* category) override;
-	void HolsterItem(bool holster) override;
-	void SelectLastItem(bool keepHistory, bool forceNext) override;
-	void SelectItemByName(const char* name, bool keepHistory) override;
-	void SelectItem(EntityId itemId, bool keepHistory) override;
-	void Update(SEntityUpdateContext& ctx, int updateSlot) override;
-	void Release() override;
-	void Revive(bool fromInit = false) override;
-	void Kill() override;
-	void PlayAction(const char* action, const char* extension, bool looping = false) override;
-	void AnimationEvent(ICharacterInstance* pCharacter, const AnimEventInstance& event) override;
+	bool Init(IGameObject* pGameObject) ;
+	void PostInit( IGameObject * pGameObject ) ;
+	void InitClient(int channelId ) ;
+	void ProcessEvent(SEntityEvent& event) ;
+	bool NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int flags) ;
+	void SelectNextItem(int direction, bool keepHistory, const char* category) ;
+	void HolsterItem(bool holster) ;
+	void SelectLastItem(bool keepHistory, bool forceNext) ;
+	void SelectItemByName(const char* name, bool keepHistory) ;
+	void SelectItem(EntityId itemId, bool keepHistory) ;
+	void Update(SEntityUpdateContext& ctx, int updateSlot) ;
+	void Release() ;
+	void Revive(bool fromInit = false) ;
+	void Kill() ;
+	void PlayAction(const char* action, const char* extension, bool looping = false) ;
+	void AnimationEvent(ICharacterInstance* pCharacter, const AnimEventInstance& event) ;
 
-	void NetKill(EntityId shooterId, uint16 weaponClassId, int damage, int material, int hit_type, int killerHealthOnKill) override;
-	void NetReviveAt(const Vec3& pos, const Quat& rot, int teamId) override;
-	void NetReviveInVehicle(EntityId vehicleId, int seatId, int teamId) override;
-	void NetSimpleKill() override;
+	void NetKill(EntityId shooterId, uint16 weaponClassId, int damage, int material, int hit_type, int killerHealthOnKill) ;
+	void NetReviveAt(const Vec3& pos, const Quat& rot, int teamId) ;
+	void NetReviveInVehicle(EntityId vehicleId, int seatId, int teamId) ;
+	void NetSimpleKill() ;
 
 	// ~CActor
 
 	//ITOSMasterControllable
-	void UpdateMasterView(SViewParams& viewParams, Vec3& offsetX, Vec3& offsetY, Vec3& offsetZ, Vec3& target, Vec3& current, float& currentFov) override {};
-	void ApplyMasterMovement(const Vec3& delta) override {};
+	void UpdateMasterView(SViewParams& viewParams, Vec3& offsetX, Vec3& offsetY, Vec3& offsetZ, Vec3& target, Vec3& current, float& currentFov)  {};
+	void ApplyMasterMovement(const Vec3& delta)  {};
 	//~ITOSMasterControllable
 
 	bool ResetActorWeapons(int delayMilliseconds);
 
-	virtual Matrix33 GetViewMtx() { return {}; }
-	virtual Matrix33 GetBaseMtx() { return {}; }
-	virtual Matrix33 GetEyeMtx() { return {}; }
-
+	virtual Matrix33 GetViewMtx() { return Matrix33(); };
+	virtual Matrix33 GetBaseMtx() { return Matrix33(); };
+	virtual Matrix33 GetEyeMtx() { return Matrix33(); };
+	
 
 
 	//Новые функции сюда

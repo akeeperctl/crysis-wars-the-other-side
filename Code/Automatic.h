@@ -8,7 +8,7 @@ Description: C++ Item Implementation
 
 -------------------------------------------------------------------------
 History:
-- 11:9:2004   15:00 : Created by Márcio Martins
+- 11:9:2004   15:00 : Created by MÐ±rcio Martins
 
 *************************************************************************/
 #ifndef __AUTOMATIC_H__
@@ -58,7 +58,7 @@ public:
 	virtual void StartFire();
 	virtual void StopFire();
 	virtual const char *GetType() const;
-	// no new members... don't override GetMemoryStatistics
+	// no new members... don't  GetMemoryStatistics
 
 	// ~CSingle
 

@@ -117,21 +117,23 @@ void CTOSMasterModule::CmdGetMastersList(IConsoleCmdArgs* pArgs)
 	std::map<EntityId, STOSMasterInfo> masters;
 	g_pTOSGame->GetMasterModule()->GetMasters(masters);
 
-	CryLogAlways("Result: (master(id)|slave(id))");
-	for (const auto& masterPair : masters)
+	CryLogAlways("Result: master:id | slave:id");
+	for (std::map<EntityId, STOSMasterInfo>::const_iterator it = masters.begin(); it != masters.end(); ++it)
 	{
-		const EntityId masterId = masterPair.first;
-		const EntityId slaveId = masterPair.second.slaveId;
+		const EntityId masterId = it->first;
+		const STOSMasterInfo& masterInfo = it->second;
+		const EntityId slaveId = masterInfo.slaveId;
 
-		const auto pMasterEnt = gEnv->pEntitySystem->GetEntity(masterId);
-		const auto pSlaveEnt = gEnv->pEntitySystem->GetEntity(slaveId);
+		const IEntity* pMasterEnt = gEnv->pEntitySystem->GetEntity(masterId);
+		const IEntity* pSlaveEnt = gEnv->pEntitySystem->GetEntity(slaveId);
 
 		const char* masterName = pMasterEnt ? pMasterEnt->GetName() : "NULL";
 		const char* slaveName = pSlaveEnt ? pSlaveEnt->GetName() : "NULL";
-		const char* desiredSlaveClass = masterPair.second.desiredSlaveClassName;
+		const char* desiredSlaveClass = masterInfo.desiredSlaveClassName;
 
-		CryLogAlways("	%s(%i)|%s(%i)(%s)", masterName, masterId, slaveName, slaveId, desiredSlaveClass);
+		CryLogAlways("	%s:%i | %s:%i | desired slave class: %s", masterName, masterId, slaveName, slaveId, desiredSlaveClass);
 	}
+
 }
 
 void CTOSMasterModule::CmdIsMaster(IConsoleCmdArgs* pArgs)

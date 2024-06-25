@@ -108,24 +108,24 @@ typedef NetMasterStopControlParams NetMasterIdParams;
  * \brief TOS Master Module сетевой синхронизатор
  * \note Обеспечивает вызов RMI'шек, необходимых для сетевой синхронизации работы модуля
  */
-class CTOSMasterSynchronizer final : public CTOSGenericSynchronizer  // NOLINT(cppcoreguidelines-special-member-functions)
+class CTOSMasterSynchronizer  : public CTOSGenericSynchronizer  // NOLINT(cppcoreguidelines-special-member-functions)
 {
 public:
 	CTOSMasterSynchronizer();
-	~CTOSMasterSynchronizer() override;
+	~CTOSMasterSynchronizer() ;
 
 	// IGameObjectExtension
-	void PostInit(IGameObject* pGameObject) override;
-	void Release() override;
-	void FullSerialize(TSerialize ser) override;
-	bool NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int flags) override;
-	void Update(SEntityUpdateContext& ctx, int updateSlot) override;
-	void HandleEvent(const SGameObjectEvent&) override;
-	void ProcessEvent(SEntityEvent&) override;
-	void GetMemoryStatistics(ICrySizer* s) override;
+	void PostInit(IGameObject* pGameObject) ;
+	void Release() ;
+	void FullSerialize(TSerialize ser) ;
+	bool NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int flags) ;
+	void Update(SEntityUpdateContext& ctx, int updateSlot) ;
+	void HandleEvent(const SGameObjectEvent&) ;
+	void ProcessEvent(SEntityEvent&) ;
+	void GetMemoryStatistics(ICrySizer* s) ;
 	//~IGameObjectExtension
 
-	const char* GetNameOfClass() override {return "CTOSMasterSynchronizer";}
+	const char* GetNameOfClass()  {return "CTOSMasterSynchronizer";}
 
 	//CLIENT - Направленные на клиент
 	//SERVER - Направленные на сервер с клиента

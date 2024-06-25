@@ -22,7 +22,7 @@ History:
 #include "Projectile.h"
 #include "VectorSet.h"
 
-constexpr int MAX_SPAWNED_ROCKS = 10;
+const int MAX_SPAWNED_ROCKS = 10;
 
 class CRock : public CProjectile
 {

@@ -54,7 +54,7 @@ struct DBG_shoot
 	Vec3 dst;
 };
 
-constexpr int DGB_ShotCounter(3);
+const int DGB_ShotCounter(3);
 int       DGB_curIdx(-1);
 int       DGB_curLimit(-1);
 DBG_shoot DGB_shots[DGB_ShotCounter];

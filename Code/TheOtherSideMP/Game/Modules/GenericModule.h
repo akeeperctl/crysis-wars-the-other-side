@@ -11,25 +11,25 @@ public:
 	friend class CTOSMasterModule;
 
 	CTOSGenericModule();
-	~CTOSGenericModule() override;
+	~CTOSGenericModule() ;
 
 	//ITOSGameModule
-	bool        OnInputEvent(const SInputEvent& event) override { return true; };
-	bool        OnInputEventUI(const SInputEvent& event) override { return false; };
-	void        OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event) override;
-	void        GetMemoryStatistics(ICrySizer* s) override;
-	const char* GetName() override { return "CTOSGenericModule"; };
-	void        Init() override;
-	void        Update(float frametime) override;
-	void        Serialize(TSerialize ser) override;
-	bool		NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int flags) override;
+	bool        OnInputEvent(const SInputEvent& event)  { return true; };
+	bool        OnInputEventUI(const SInputEvent& event)  { return false; };
+	void        OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event) ;
+	void        GetMemoryStatistics(ICrySizer* s) ;
+	const char* GetName()  { return "CTOSGenericModule"; };
+	void        Init() ;
+	void        Update(float frametime) ;
+	void        Serialize(TSerialize ser) ;
+	bool		NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int flags) ;
 
-	int GetDebugLog() override { return m_debugLogMode; }
+	int GetDebugLog()  { return m_debugLogMode; }
 
-	void InitCVars(IConsole* pConsole) override {};
-	void InitCCommands(IConsole* pConsole) override {};
-	void ReleaseCVars() override {};
-	void ReleaseCCommands() override {};
+	void InitCVars(IConsole* pConsole)  {};
+	void InitCCommands(IConsole* pConsole)  {};
+	void ReleaseCVars()  {};
+	void ReleaseCCommands()  {};
 
 	//~ITOSGameModule
 

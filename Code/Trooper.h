@@ -24,7 +24,7 @@ History:
 #include "TheOtherSideMP/Actors/Aliens/TOSAlien.h"
 //~TheOtherSide
 
-constexpr int LOOKIK_BLEND_RATIOS = 5;
+const int LOOKIK_BLEND_RATIOS = 5;
 
 struct STrooperBeam
 {
@@ -163,45 +163,45 @@ public:
 		m_modelQuat.SetIdentity();
 	}
 
-	void Revive(bool fromInit = false) override;
+	void Revive(bool fromInit = false) ;
 
-	void Update(SEntityUpdateContext&, int updateSlot) override;
+	void Update(SEntityUpdateContext&, int updateSlot) ;
 
-	void SetActorMovement(SMovementRequestParams &control) override;
+	void SetActorMovement(SMovementRequestParams &control) ;
 
-	void SetParams(SmartScriptTable &rTable,bool resetFirst) override;
+	void SetParams(SmartScriptTable &rTable,bool resetFirst) ;
 
-	void ProcessRotation(float frameTime) override;
-	void ProcessMovement(float frameTime) override;
+	void ProcessRotation(float frameTime) ;
+	void ProcessMovement(float frameTime) ;
 
-	void ProcessAnimation(ICharacterInstance *pCharacter,float frameTime) override;
+	void ProcessAnimation(ICharacterInstance *pCharacter,float frameTime) ;
 
-	void SetActorStance(SMovementRequestParams &control, int& actions) override;
+	void SetActorStance(SMovementRequestParams &control, int& actions) ;
 
 	//virtual bool UpdateStance();
 
-	void ResetAnimations() override;
+	void ResetAnimations() ;
 
-	void UpdateStats(float frameTime) override;
+	void UpdateStats(float frameTime) ;
 
-	bool IsFlying() override
+	bool IsFlying() 
 	{return false;}
 
-	void BindInputs( IAnimationGraphState * pAGState ) override;
+	void BindInputs( IAnimationGraphState * pAGState ) ;
 
 	//Player can grab troopers
-	int	 GetActorSpecies() override
+	int	 GetActorSpecies() 
 	{ return eGCT_TROOPER; }
 
-	void GetMemoryStatistics(ICrySizer * s) override;
+	void GetMemoryStatistics(ICrySizer * s) ;
 
-	void SetAnimTentacleParams(pe_params_rope& rope, float animBlend) override;
+	void SetAnimTentacleParams(pe_params_rope& rope, float animBlend) ;
 
-	void AnimationEvent(ICharacterInstance *pCharacter, const AnimEventInstance &event) override;
+	void AnimationEvent(ICharacterInstance *pCharacter, const AnimEventInstance &event) ;
 
-	void UpdateAnimGraph( IAnimationGraphState * pState ) override;
+	void UpdateAnimGraph( IAnimationGraphState * pState ) ;
 
-	void FullSerialize( TSerialize ser ) override;
+	void FullSerialize( TSerialize ser ) ;
 
 private:
 	void InitHeightVariance(SmartScriptTable &rTable);

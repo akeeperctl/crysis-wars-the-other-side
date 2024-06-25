@@ -760,7 +760,7 @@ protected:
 	Ang3		m_angleOffset;	// Used only by the view system. (retained state)
 
 	Quat	m_viewQuat;//view quaternion
-	Quat	m_viewQuatFinal;//the final exact view quaternion (with recoil added)
+	Quat	m_viewQuatFinal;//the  exact view quaternion (with recoil added)
 	Quat	m_baseQuat;//base rotation quaternion, rotating on the Z axis
 
 	Matrix34 m_clientViewMatrix;

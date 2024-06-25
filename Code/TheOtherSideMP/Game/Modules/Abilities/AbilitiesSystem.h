@@ -3,30 +3,30 @@
 #include "../Control/IControlSystemChild.h"
 #include "AbilityOwner.h"
 
-constexpr const char* ABILITY_DEFAULT = "Default";
+const const char* ABILITY_DEFAULT = "Default";
 
-constexpr const char* ABILITY_TROOPER_RAGE = "TrRage";
-constexpr const char* ABILITY_TROOPER_SHIELD = "TrShield";
-constexpr const char* ABILITY_TROOPER_EMP = "TrEMP";
-constexpr const char* ABILITY_TROOPER_CLOAK = "TrCloak";
+const const char* ABILITY_TROOPER_RAGE = "TrRage";
+const const char* ABILITY_TROOPER_SHIELD = "TrShield";
+const const char* ABILITY_TROOPER_EMP = "TrEMP";
+const const char* ABILITY_TROOPER_CLOAK = "TrCloak";
 
-constexpr const char* ABILITY_HUNTER_GRAB = "HrGrab";
-constexpr const char* ABILITY_HUNTER_SHIELD = "HrShield";
+const const char* ABILITY_HUNTER_GRAB = "HrGrab";
+const const char* ABILITY_HUNTER_SHIELD = "HrShield";
 
-constexpr const char* ABILITY_SCOUT_SPOTLIGHT = "ScSpotlight";
-constexpr const char* ABILITY_SCOUT_ANTIGRAV = "ScAntigrav";
-constexpr const char* ABILITY_SCOUT_OBJECTGRAB = "ScGrab";
+const const char* ABILITY_SCOUT_SPOTLIGHT = "ScSpotlight";
+const const char* ABILITY_SCOUT_ANTIGRAV = "ScAntigrav";
+const const char* ABILITY_SCOUT_OBJECTGRAB = "ScGrab";
 
-constexpr const char* ABILITY_HUMAN_VEHICLE_HEALING = "HmVehicleHealing";
+const const char* ABILITY_HUMAN_VEHICLE_HEALING = "HmVehicleHealing";
 
-constexpr const char* VISIBLE_MODE_HIDE = "Hide";
-constexpr const char* VISIBLE_MODE_SHOW = "Show";
-constexpr const char* VISIBLE_MODE_DISABLED = "Disabled";
-constexpr const char* VISIBLE_MODE_ACTIVATED = "Activated";
+const const char* VISIBLE_MODE_HIDE = "Hide";
+const const char* VISIBLE_MODE_SHOW = "Show";
+const const char* VISIBLE_MODE_DISABLED = "Disabled";
+const const char* VISIBLE_MODE_ACTIVATED = "Activated";
 
-constexpr int LEFT_ABILITY = 1;
-constexpr int CENTER_ABILITY = 2;
-constexpr int RIGHT_ABILITY = 3;
+const int LEFT_ABILITY = 1;
+const int CENTER_ABILITY = 2;
+const int RIGHT_ABILITY = 3;
 
 class CAbility;
 class CAbilityOwner;
@@ -57,21 +57,21 @@ public:
 	friend class CAbilityOwner;
 
 	//IControlSystemChild
-	void		OnMainMenuEnter() override;
-	void		OnGameRulesReset() override;
-	void		OnActorDeath(IActor* pActor) override;
-	void		OnActorGrabbed(IActor* pActor, EntityId grabberId) override;
-	void		OnActorDropped(IActor* pActor, EntityId droppedId) override;
-	void		OnActorGrab(IActor* pActor, EntityId grabId) override;
-	void		OnActorDrop(IActor* pActor, EntityId dropId) override;
-	void		OnEnterVehicle(IActor* pActor, IVehicle* pVehicle) override;
-	void		OnExitVehicle(IActor* pActor) override;
-	bool		OnInputEvent(const SInputEvent& event) override;
-	void		Init() override;
-	void		Update(float frameTime) override;
-	void		Serialize(TSerialize ser) override;
-	void		GetMemoryStatistics(ICrySizer* s) override;
-	const char* GetChildName() override { return "CAbilitiesSystem"; }
+	void		OnMainMenuEnter() ;
+	void		OnGameRulesReset() ;
+	void		OnActorDeath(IActor* pActor) ;
+	void		OnActorGrabbed(IActor* pActor, EntityId grabberId) ;
+	void		OnActorDropped(IActor* pActor, EntityId droppedId) ;
+	void		OnActorGrab(IActor* pActor, EntityId grabId) ;
+	void		OnActorDrop(IActor* pActor, EntityId dropId) ;
+	void		OnEnterVehicle(IActor* pActor, IVehicle* pVehicle) ;
+	void		OnExitVehicle(IActor* pActor) ;
+	bool		OnInputEvent(const SInputEvent& event) ;
+	void		Init() ;
+	void		Update(float frameTime) ;
+	void		Serialize(TSerialize ser) ;
+	void		GetMemoryStatistics(ICrySizer* s) ;
+	const char* GetChildName()  { return "CAbilitiesSystem"; }
 	//~IControlSystemChild
 
 

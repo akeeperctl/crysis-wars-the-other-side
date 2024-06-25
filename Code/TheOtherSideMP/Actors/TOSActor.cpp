@@ -33,7 +33,7 @@ CTOSActor::CTOSActor()
 	
 }
 
-CTOSActor::~CTOSActor() = default;
+CTOSActor::~CTOSActor() {};
 
 bool CTOSActor::Init(IGameObject* pGameObject)
 {
@@ -815,7 +815,7 @@ IMPLEMENT_RMI(CTOSActor, SvRequestMarkMeAsMaster)
 	m_isMaster = params.value;
 	GetGameObject()->InvokeRMI(ClMarkMeAsMaster(), params, eRMI_ToAllClients);
 
-	CryLogAlwaysDev("[C++][%s][%s][%s][%s] mark as master = %i",
+	CryLog("[C++][%s][%s][%s][%s] mark as master = %i",
 		TOS_Debug::GetEnv(),
 		TOS_Debug::GetAct(3),
 		__FUNCTION__,
@@ -832,7 +832,7 @@ IMPLEMENT_RMI(CTOSActor, ClMarkMeAsMaster)
 
 	m_isMaster = params.value;
 
-	CryLogAlwaysDev("[C++][%s][%s][%s][%s] mark as master = %i",
+	CryLog("[C++][%s][%s][%s][%s] mark as master = %i",
 		TOS_Debug::GetEnv(),
 		TOS_Debug::GetAct(3),
 		__FUNCTION__,
@@ -849,7 +849,7 @@ IMPLEMENT_RMI(CTOSActor, SvRequestMarkMeAsSlave)
 	m_isSlave = params.value;
 	GetGameObject()->InvokeRMI(ClMarkMeAsSlave(), params, eRMI_ToAllClients);
 
-	CryLogAlwaysDev("[C++][%s][%s][%s][%s] mark as slave = %i",
+	CryLog("[C++][%s][%s][%s][%s] mark as slave = %i",
 		TOS_Debug::GetEnv(),
 		TOS_Debug::GetAct(3),
 		__FUNCTION__,
@@ -866,7 +866,7 @@ IMPLEMENT_RMI(CTOSActor, ClMarkMeAsSlave)
 
 	m_isSlave = params.value;
 
-	CryLogAlwaysDev("[C++][%s][%s][%s][%s] mark as slave = %i",
+	CryLog("[C++][%s][%s][%s][%s] mark as slave = %i",
 		TOS_Debug::GetEnv(),
 		TOS_Debug::GetAct(3),
 		__FUNCTION__,

@@ -1352,7 +1352,7 @@ void CShark::ProcessMovement(float frameTime)
 		}
 		else if(m_state != S_Circling && dot<0.2 || dot<0.8 && ( m_state == S_FinalAttackAlign ))
 		{
-			// target behind or align before final attack, do a slow narrow turn
+			// target behind or align before  attack, do a slow narrow turn
 //			m_bCircularTrajectory = true;
 			desiredSpeed = m_params.speed_min;// + (maxSpeed - m_params.speed_min)/3;
 			rotSpeed = desiredSpeed/m_params.minTurnRadius;
@@ -1876,7 +1876,7 @@ void CShark::SetDesiredDirection(const Vec3 &desiredDir)
 	//m_input.viewVector = desiredDir;
 }
 
-// common functionality can go in here and called from subclasses that override SetActorMovement
+// common functionality can go in here and called from subclasses that  SetActorMovement
 void CShark::SetActorMovementCommon(SMovementRequestParams& control)
 {
 	SMovementState state;

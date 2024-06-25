@@ -33,24 +33,24 @@ public:
 	virtual ~CTOSEnergyConsumer();
 
 	// IGameObjectExtension
-	bool Init(IGameObject* pGameObject) override;
-	void PostInit(IGameObject* pGameObject) override;
-	void InitClient(int channelId) override;
-	void PostInitClient(int channelId) override;
-	void Release() override;
-	void FullSerialize(TSerialize ser) override;
-	bool NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int flags) override;
-	void PostSerialize() override {};
-	void SerializeSpawnInfo(TSerialize ser) override {}
-	ISerializableInfoPtr GetSpawnInfo() override{return 0;}
-	void Update(SEntityUpdateContext& ctx, int updateSlot) override;
-	void PostUpdate(float frameTime) override {};
-	void PostRemoteSpawn() override {};
-	void HandleEvent(const SGameObjectEvent&) override;
-	void ProcessEvent(SEntityEvent&) override;
-	void SetChannelId(uint16 id) override {};
-	void SetAuthority(bool auth) override {};
-	void GetMemoryStatistics(ICrySizer* s) override;
+	bool Init(IGameObject* pGameObject) ;
+	void PostInit(IGameObject* pGameObject) ;
+	void InitClient(int channelId) ;
+	void PostInitClient(int channelId) ;
+	void Release() ;
+	void FullSerialize(TSerialize ser) ;
+	bool NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int flags) ;
+	void PostSerialize()  {};
+	void SerializeSpawnInfo(TSerialize ser)  {}
+	ISerializableInfoPtr GetSpawnInfo() {return 0;}
+	void Update(SEntityUpdateContext& ctx, int updateSlot) ;
+	void PostUpdate(float frameTime)  {};
+	void PostRemoteSpawn()  {};
+	void HandleEvent(const SGameObjectEvent&) ;
+	void ProcessEvent(SEntityEvent&) ;
+	void SetChannelId(uint16 id)  {};
+	void SetAuthority(bool auth)  {};
+	void GetMemoryStatistics(ICrySizer* s) ;
 	//~IGameObjectExtension
 
 	bool		AddEnergy(float value);
@@ -107,7 +107,7 @@ public:
 	DECLARE_SERVER_RMI_PREATTACH(SvRequestSetEnergy, NetEnergyParams, eNRT_ReliableOrdered);
 
 	static string s_debugEntityName;
-	static constexpr float DEFAULT_ENERGY = 200.0f;
+	static const int DEFAULT_ENERGY = 200;
 
 private:
 	float m_energy;

@@ -20,7 +20,7 @@ History:
 #include "Game.h"
 #include "GameCVars.h"
 
-constexpr float HIT_RANGE = 2000.0f;
+const float HIT_RANGE = 2000.0f;
 
 //------------------------------------------------------------------------
 CDebugGun::CDebugGun()
@@ -31,7 +31,7 @@ CDebugGun::CDebugGun()
 
 	for (int i = 15; i >= 0; --i)
 	{
-		m_fireModes.emplace_back("pierceability", static_cast<float>(i));
+		m_fireModes.push_back( std::make_pair("pierceability", static_cast<float>(i)) );
 	}
 }
 
@@ -71,7 +71,7 @@ void CDebugGun::Update(SEntityUpdateContext& ctx, int update)
 		return;
 
 	static float           drawColor[4] = {1, 1, 1, 1};
-	static constexpr float fontLarge    = 1.4f;
+	static const float fontLarge    = 1.4f;
 
 	IRenderer*      pRenderer = gEnv->pRenderer;
 	IRenderAuxGeom* pAuxGeom  = pRenderer->GetIRenderAuxGeom();
@@ -91,9 +91,9 @@ void CDebugGun::Update(SEntityUpdateContext& ctx, int update)
 
 	if (hits = gEnv->pPhysicalWorld->RayWorldIntersection(cam.GetPosition() + cam.GetViewdir(), cam.GetViewdir() * HIT_RANGE, ent_all, flags, &rayhit, 1))
 	{
-		static constexpr float font = 1.2f;
-		static constexpr int   dx   = 5;
-		static constexpr int   dy   = 15;
+		static const float font = 1.2f;
+		static const int   dx   = 5;
+		static const int   dy   = 15;
 
 		IMaterialManager*    pMatMan        = gEnv->p3DEngine->GetMaterialManager();
 		IActorSystem*        pActorSystem   = g_pGame->GetIGameFramework()->GetIActorSystem();

@@ -778,7 +778,7 @@ void CAlien::Update(SEntityUpdateContext& ctx, const int updateSlot)
 
 				if (m_params.groundEffectMaxSpeed != 0.f)
 				{
-					constexpr static float minspeed = 1.f;
+					const static float minspeed = 1.f;
 					const float        speed = max(0.f, m_stats.speed + m_stats.angVelocity.len() - minspeed);
 
 					speedScale = min(1.f, speed / m_params.groundEffectMaxSpeed);
@@ -1454,7 +1454,7 @@ void CAlien::ProcessAnimation(ICharacterInstance* pCharacter, float frameTime)
 		ISkeletonPose* pSkeletonPose = pCharacter ? pCharacter->GetISkeletonPose() : nullptr;
 		if (pSkeletonPose)
 		{
-			static constexpr float customBlend[5] = {0.04f, 0.06f, 0.08f, 0.6f, 0.6f};
+			static const float customBlend[5] = {0.04f, 0.06f, 0.08f, 0.6f, 0.6f};
 			//update look ik	
 			if (!m_stats.isGrabbed)
 				pSkeletonPose->SetLookIK(true, gf_PI * 0.9f, m_stats.lookTargetSmooth, customBlend);
@@ -2103,7 +2103,7 @@ void CAlien::SetDesiredDirection(const Vec3& desiredDir)
 	//m_input.viewVector = desiredDir;
 }
 
-// common functionality can go in here and called from subclasses that override SetActorMovement
+// common functionality can go in here and called from subclasses that  SetActorMovement
 void CAlien::SetActorMovementCommon(SMovementRequestParams& control)
 {
 	SMovementState state;

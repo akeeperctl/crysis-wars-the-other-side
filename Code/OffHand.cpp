@@ -31,32 +31,32 @@ History:
 #include "TheOtherSideMP/HUD/TOSCrosshair.h"
 //~TheOtherSide
 
-constexpr float KILL_NPC_TIMEOUT = 7.25f;
-constexpr float TIME_TO_UPDATE_CH = 0.25f;
+const float KILL_NPC_TIMEOUT = 7.25f;
+const float TIME_TO_UPDATE_CH = 0.25f;
 
-constexpr int MAX_CHOKE_SOUNDS	= 5;
+const int MAX_CHOKE_SOUNDS	= 5;
 
-constexpr int MAX_GRENADE_TYPES = 4;
+const int MAX_GRENADE_TYPES = 4;
 
-constexpr int INPUT_DEF     = 0;
-constexpr int INPUT_USE		= 1;
-constexpr int INPUT_LBM     = 2;
-constexpr int INPUT_RBM		= 3;
+const int INPUT_DEF     = 0;
+const int INPUT_USE		= 1;
+const int INPUT_LBM     = 2;
+const int INPUT_RBM		= 3;
 
-constexpr int GRAB_TYPE_ONE_HANDED	= 0;
-constexpr int GRAB_TYPE_TWO_HANDED  = 1;
-constexpr int GRAB_TYPE_NPC			= 2;
+const int GRAB_TYPE_ONE_HANDED	= 0;
+const int GRAB_TYPE_TWO_HANDED  = 1;
+const int GRAB_TYPE_NPC			= 2;
 
-constexpr int ITEM_NO_EXCHANGE			= 0;
-constexpr int ITEM_CAN_PICKUP			= 1;
-constexpr int ITEM_CAN_EXCHANGE			= 2;
+const int ITEM_NO_EXCHANGE			= 0;
+const int ITEM_CAN_PICKUP			= 1;
+const int ITEM_CAN_EXCHANGE			= 2;
 
-constexpr float OFFHAND_RANGE					= 2.5f;
+const float OFFHAND_RANGE					= 2.5f;
 
 //Sounds tables
 namespace 
 {
-	constexpr char gChokeSoundsTable[MAX_CHOKE_SOUNDS][64] =
+	const char gChokeSoundsTable[MAX_CHOKE_SOUNDS][64] =
 	{
 		"Languages/dialog/ai_korean_soldier_1/choke_01.mp3",
 		"Languages/dialog/ai_korean_soldier_2/choke_02.mp3",
@@ -64,7 +64,7 @@ namespace
 		"Languages/dialog/ai_korean_soldier_3/choke_04.mp3",
 		"Languages/dialog/ai_korean_soldier_1/choke_05.mp3"
 	};
-	constexpr char gDeathSoundsTable[MAX_CHOKE_SOUNDS][64] =
+	const char gDeathSoundsTable[MAX_CHOKE_SOUNDS][64] =
 	{
 		"Languages/dialog/ai_korean_soldier_1/choke_grab_00.mp3",
 		"Languages/dialog/ai_korean_soldier_1/choke_grab_01.mp3",

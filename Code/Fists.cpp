@@ -26,7 +26,7 @@ History:
 
 TActionHandler<CFists> CFists::s_actionHandler;
 
-constexpr float TIMEOUT = 2.5f;
+const float TIMEOUT = 2.5f;
 //------------------------------------------------------------------------
 CFists::CFists()
 	: m_timeOut(0.0f),
@@ -49,7 +49,10 @@ CFists::CFists()
 }
 
 //------------------------------------------------------------------------
-CFists::~CFists() = default;
+CFists::~CFists() 
+{
+
+};
 
 //-------------------------------------------------------------------------
 void CFists::Reset()

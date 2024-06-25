@@ -7,9 +7,9 @@
 #include "TheOtherSideMP/Extensions/EnergyСonsumer.h"
 #include "TheOtherSideMP/Helpers/TOS_Console.h"
 
-CTOSTrooper::CTOSTrooper() = default;
+CTOSTrooper::CTOSTrooper() {};
 
-CTOSTrooper::~CTOSTrooper() = default;
+CTOSTrooper::~CTOSTrooper() {};
 
 void CTOSTrooper::PostInit(IGameObject* pGameObject)
 {
@@ -86,7 +86,7 @@ void CTOSTrooper::ProcessJumpFlyControl(const Vec3& move, const float frameTime)
 			GetEntity()->GetPhysics()->Action(&actionMove);
 
 		//Matrix rotation debug
-		constexpr bool isDebugEnabled = false;
+		const bool isDebugEnabled = false;
 		if (isDebugEnabled)
 		{
 			static float c[] = {1, 1, 1, 1};
@@ -156,7 +156,7 @@ void CTOSTrooper::ProcessJump(const CMovementRequest& request)
 		const float     onGround  = pActorStats->onGround;
 
 		const float		jumpPressDur = pSlaveStats->chargingJumpPressDur;
-		constexpr float jumpForce = 6.0f;
+		const float jumpForce = 6.0f;
 		//const float		finalOnceJumpForce = clamp(jumpForce * (jumpPressDur * 2), 5, 15);
 		const float		finalOnceJumpForce = jumpPressDur > TOS_Console::GetSafeFloatVar("tos_sv_chargingJumpInputTime") ? jumpForce + 4.0f : jumpForce;
 

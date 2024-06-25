@@ -23,9 +23,9 @@
 #include "TheOtherSideMP/Extensions/EnergyСonsumer.h"
 //TheOtherSide
 
-static constexpr float NANOSUIT_ENERGY                = CTOSEnergyConsumer::DEFAULT_ENERGY;
-static constexpr float NANOSUIT_HEALTH_REGEN_INTERVAL = 1.0f;
-static constexpr float NANOSUIT_MAXIMUM_HEALTH_REGEN  = 40.0f;
+static const float NANOSUIT_ENERGY                = CTOSEnergyConsumer::DEFAULT_ENERGY;
+static const float NANOSUIT_HEALTH_REGEN_INTERVAL = 1.0f;
+static const float NANOSUIT_MAXIMUM_HEALTH_REGEN  = 40.0f;
 
 enum ENanoSlot
 {
@@ -217,7 +217,7 @@ class CNanoSuit
 public:
 	struct INanoSuitListener
 	{
-		virtual      ~INanoSuitListener() = default;
+		virtual      ~INanoSuitListener() {};
 		virtual void ModeChanged(ENanoMode mode) = 0; // nanomode
 		virtual void EnergyChanged(float energy) = 0; // energy
 	};

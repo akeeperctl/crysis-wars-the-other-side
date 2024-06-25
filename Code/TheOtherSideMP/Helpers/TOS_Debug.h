@@ -10,29 +10,29 @@
 		gEnv->pRenderer->Draw2dLabel(x, y, size, color, false, format, __VA_ARGS__);\
 	}\
 
-enum class ELogColor
+enum ELogColor
 {
-	blue = 2,
-	green = 3,
-	red = 4,
-	cyan = 5,
-	yellow = 6,
-	purple = 7,
-	brown = 8,
-	grey = 9
+	eLC_BLUE = 2,
+	eLC_GREEN = 3,
+	eLC_RED = 4,
+	eLC_CYAN = 5,
+	eLC_YELLOW = 6,
+	eLC_PURPLE = 7,
+	eLC_BROWN = 8,
+	eLC_GREY = 9
 };
 
 namespace TOS_Debug
 {
-	constexpr auto SIZE_HEADER = 1.3f;
-	constexpr auto SIZE_COMMON = 1.1f;
-	constexpr auto XOFFSET_COMMON = 60;
-	constexpr auto YOFFSET_CONQ_CMDRS = 120;
-	constexpr auto YOFFSET_CONQ_CHANNELS = 220;
-	constexpr auto YOFFSET_CONQ_CMDR_SQUADS = 320;
-	constexpr auto YOFFSET_AIACTION_TRACKER = 420;
-	constexpr auto YOFFSET_SQUAD = 520;
-	constexpr auto YOFFSET_CLIENTAREA = 520;
+	const auto SIZE_HEADER = 1.3f;
+	const auto SIZE_COMMON = 1.1f;
+	const auto XOFFSET_COMMON = 60;
+	const auto YOFFSET_CONQ_CMDRS = 120;
+	const auto YOFFSET_CONQ_CHANNELS = 220;
+	const auto YOFFSET_CONQ_CMDR_SQUADS = 320;
+	const auto YOFFSET_AIACTION_TRACKER = 420;
+	const auto YOFFSET_SQUAD = 520;
+	const auto YOFFSET_CLIENTAREA = 520;
 
 	// 29.09.2023 Crashing when log
 	//inline void Log(const char* format, ...)
@@ -143,13 +143,13 @@ namespace TOS_Debug
 		switch (type)
 		{
 		case 1:
-			return "FUNC CALL";
+			return "func call";
 		case 2:
-			return "CONSTR CALL";
+			return "constr call";
 		case 3:
-			return "RMI RECEIVED";
+			return "rmi received";
 		default:
-			return "UNDEFINED_DEBUG_ACTION";
+			return "undefined";
 			break;
 		}
 	}
@@ -158,57 +158,57 @@ namespace TOS_Debug
 	{
 		if (gEnv->bServer && !gEnv->bClient)
 		{
-			return "DEDICATED";
+			return "ded";
 		}
 		else if (gEnv->bServer && gEnv->bClient)
 		{
-			return "SERVERCLIENT";
+			return "svcl";
 		}
 		else if (gEnv->bServer)
 		{
-			return "SERVER";
+			return "sv";
 		}
 		else if (gEnv->bClient)
 		{
-			return "CLIENT";
+			return "cl";
 		}
 
-		return "ENV_NULL";
+		return "env_null";
 	}
 
 	inline const char* GetLogColor(ELogColor colorenum)
 	{
 		const char* color = 0;
 
-		if (colorenum == ELogColor::blue)
+		if (colorenum == ELogColor::eLC_BLUE)
 		{
 			color = "$2";
 		}
-		else if (colorenum == ELogColor::brown)
+		else if (colorenum == ELogColor::eLC_BROWN)
 		{
 			color = "$8";
 		}
-		else if (colorenum == ELogColor::cyan)
+		else if (colorenum == ELogColor::eLC_CYAN)
 		{
 			color = "$5";
 		}
-		else if (colorenum == ELogColor::green)
+		else if (colorenum == ELogColor::eLC_GREEN)
 		{
 			color = "$3";
 		}
-		else if (colorenum == ELogColor::grey)
+		else if (colorenum == ELogColor::eLC_GREY)
 		{
 			color = "$9";
 		}
-		else if (colorenum == ELogColor::purple)
+		else if (colorenum == ELogColor::eLC_PURPLE)
 		{
 			color = "$7";
 		}
-		else if (colorenum == ELogColor::red)
+		else if (colorenum == ELogColor::eLC_RED)
 		{
 			color = "$4";
 		}
-		else if (colorenum == ELogColor::yellow)
+		else if (colorenum == ELogColor::eLC_YELLOW)
 		{
 			color = "$6";
 		}
@@ -218,11 +218,11 @@ namespace TOS_Debug
 	}
 }
 
-const char* const TOS_COLOR_BLUE = TOS_Debug::GetLogColor(ELogColor::blue);
-const char* const TOS_COLOR_BROWN = TOS_Debug::GetLogColor(ELogColor::brown);
-const char* const TOS_COLOR_CYAN = TOS_Debug::GetLogColor(ELogColor::cyan);
-const char* const TOS_COLOR_GREEN = TOS_Debug::GetLogColor(ELogColor::green);
-const char* const TOS_COLOR_GREY = TOS_Debug::GetLogColor(ELogColor::grey);
-const char* const TOS_COLOR_PURPLE = TOS_Debug::GetLogColor(ELogColor::purple);
-const char* const TOS_COLOR_RED = TOS_Debug::GetLogColor(ELogColor::red);
-const char* const TOS_COLOR_YELLOW = TOS_Debug::GetLogColor(ELogColor::yellow);
+const char* const TOS_COLOR_BLUE = TOS_Debug::GetLogColor(ELogColor::eLC_BLUE);
+const char* const TOS_COLOR_BROWN = TOS_Debug::GetLogColor(ELogColor::eLC_BROWN);
+const char* const TOS_COLOR_CYAN = TOS_Debug::GetLogColor(ELogColor::eLC_CYAN);
+const char* const TOS_COLOR_GREEN = TOS_Debug::GetLogColor(ELogColor::eLC_GREEN);
+const char* const TOS_COLOR_GREY = TOS_Debug::GetLogColor(ELogColor::eLC_GREY);
+const char* const TOS_COLOR_PURPLE = TOS_Debug::GetLogColor(ELogColor::eLC_PURPLE);
+const char* const TOS_COLOR_RED = TOS_Debug::GetLogColor(ELogColor::eLC_RED);
+const char* const TOS_COLOR_YELLOW = TOS_Debug::GetLogColor(ELogColor::eLC_YELLOW);

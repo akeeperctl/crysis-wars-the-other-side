@@ -33,7 +33,7 @@ typedef void (*func)();
 //enum EExtraGameplayEvent;
 
 // ReSharper disable once CppPolymorphicClassWithNonVirtualPublicDestructor
-class CTOSGame final :  // NOLINT(cppcoreguidelines-special-member-functions)
+class CTOSGame:  // NOLINT(cppcoreguidelines-special-member-functions)
 	public IGameplayListener,
 	public IInputEventListener,
 	public IEntitySystemSink,
@@ -57,12 +57,12 @@ public:
 	//~IHardwareMouseEventListener
 
 	//IInputEventListener
-	bool OnInputEvent(const SInputEvent& event) override;
-	bool OnInputEventUI(const SInputEvent& event) override { return false; }
+	bool OnInputEvent(const SInputEvent& event) ;
+	bool OnInputEventUI(const SInputEvent& event)  { return false; }
 	//~IInputEventListener
 
 	//IGameplayListener
-	void OnGameplayEvent(IEntity* pEntity, const GameplayEvent& event) override;
+	void OnGameplayEvent(IEntity* pEntity, const GameplayEvent& event) ;
 	//~IGameplayListener
 
 	//TOSEventRecorder->RecordEvent->calling this
@@ -70,15 +70,15 @@ public:
 	void OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event) const;
 
 	//IEntitySystemSink
-	bool OnBeforeSpawn( SEntitySpawnParams &params ) override;
-	void OnSpawn(IEntity* pEntity, SEntitySpawnParams& params) override;
-	bool OnRemove(IEntity* pEntity) override;
-	void OnEvent(IEntity* pEntity, SEntityEvent& event) override;
+	bool OnBeforeSpawn( SEntitySpawnParams &params ) ;
+	void OnSpawn(IEntity* pEntity, SEntitySpawnParams& params) ;
+	bool OnRemove(IEntity* pEntity) ;
+	void OnEvent(IEntity* pEntity, SEntityEvent& event) ;
 	//~IEntitySystemSink
 
 	//IScriptTableDumpSink
-	void OnElementFound(const char* sName, ScriptVarType type) override;
-	void OnElementFound(int nIdx, ScriptVarType type) override;
+	void OnElementFound(const char* sName, ScriptVarType type) ;
+	void OnElementFound(int nIdx, ScriptVarType type) ;
 	//~IScriptTableDumpSink
 
 	//ILevelSystemListener

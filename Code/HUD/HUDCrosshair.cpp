@@ -98,7 +98,7 @@ void CHUDCrosshair::Update(const float fDeltaTime)
 	IItem*         pItem               = pItemSystem->GetItem(pInventory->GetCurrentItem());
 	const IWeapon* pWeapon             = nullptr;
 	const IWeapon* pSlaveWeapon        = nullptr;
-	constexpr float    fAlternateIronSight = 0.03f;
+	const float    fAlternateIronSight = 0.03f;
 
 	if (pItem)
 	{

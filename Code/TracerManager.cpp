@@ -18,8 +18,8 @@ History:
 #include <I3DEngine.h>
 
 
-constexpr int TRACER_GEOM_SLOT = 0;
-constexpr int TRACER_FX_SLOT   = 1;
+const int TRACER_GEOM_SLOT = 0;
+const int TRACER_FX_SLOT   = 1;
 //------------------------------------------------------------------------
 CTracer::CTracer(const Vec3 &pos)
 : m_pos(0,0,0),

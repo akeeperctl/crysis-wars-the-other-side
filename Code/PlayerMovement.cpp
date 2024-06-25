@@ -25,7 +25,7 @@
 	} \
 }
 
-constexpr float LADDER_TOP_DISTANCE = 2.41f;
+const float LADDER_TOP_DISTANCE = 2.41f;
 //-----------------------------------------------------------------------------------------------
 //-----------------------------------------------------------------------------------------------
 CPlayerMovement::CPlayerMovement(CPlayer& player, const SActorFrameMovementParams& movement, float m_frameTime)
@@ -1385,8 +1385,8 @@ void CPlayerMovement::ProcessTurning()
 	if (m_stats.isRagDoll || (m_player.m_stats.isFrozen.Value() || m_stats.isOnLadder/*&& !m_player.IsPlayer()*/))
 		return;
 
-	static constexpr bool  ROTATION_AFFECTS_THIRD_PERSON_MODEL = true;
-	static constexpr float ROTATION_SPEED = 23.3f;
+	static const bool  ROTATION_AFFECTS_THIRD_PERSON_MODEL = true;
+	static const float ROTATION_SPEED = 23.3f;
 
 	const Quat entityRot = m_player.GetEntity()->GetWorldRotation().GetNormalized();
 	const Quat inverseEntityRot = entityRot.GetInverted();
@@ -1454,8 +1454,8 @@ void CPlayerMovement::ProcessTurning()
 	if (m_player.IsPlayer() && (g_pGameCVars->ca_GameControlledStrafingPtr->GetIVal() != 0) && (g_pGameCVars->ac_enableProceduralLeaning == 0.0f))
 	{
 		const float     turningSpeed = m_frameTime > 0.0f ? (fabs(RAD2DEG(m_request.rotation.GetRotZ())) / m_frameTime) : 0.0f;
-		constexpr float turningSpeedMin = 30.0f;
-		constexpr float turningSpeedMax = 180.0f;
+		const float turningSpeedMin = 30.0f;
+		const float turningSpeedMax = 180.0f;
 		const float     turningSpeedFraction = CLAMP((turningSpeed - turningSpeedMin) / (turningSpeedMax - turningSpeedMin), 0.0f, 1.0f);
 		const float     travelSpeedScale = LERP(1.0f, CLAMP(g_pGameCVars->pl_curvingSlowdownSpeedScale, 0.0f, 1.0f), turningSpeedFraction);
 		m_request.velocity *= travelSpeedScale;
@@ -1529,8 +1529,8 @@ void CPlayerMovement::ProcessMovementOnLadder(CPlayer& player)
 			// check if player can move forward from top of ladder before getting off. If they can't,
 			//	they'll need to strafe / jump off.
 			ray_hit                       hit;
-			static constexpr int          obj_types = ent_static | ent_terrain | ent_rigid | ent_sleeping_rigid;
-			static constexpr unsigned int flags = rwi_stop_at_pierceable | rwi_colltype_any;
+			static const int          obj_types = ent_static | ent_terrain | ent_rigid | ent_sleeping_rigid;
+			static const unsigned int flags = rwi_stop_at_pierceable | rwi_colltype_any;
 			static float                  backDist = 0.15f;
 			Vec3                          currentPos = player.m_stats.ladderTop + backDist * player.m_stats.ladderOrientation;
 			Vec3                          newPos = player.m_stats.ladderTop - player.m_stats.ladderOrientation;

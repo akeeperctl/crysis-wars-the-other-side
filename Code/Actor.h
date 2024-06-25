@@ -89,7 +89,7 @@ struct IActorMovementController : public IMovementController
 };
 
 //FIXME:not sure to put this here
-constexpr int ZEROG_AREA_ID = PHYS_FOREIGN_ID_USER + 1;
+const int ZEROG_AREA_ID = PHYS_FOREIGN_ID_USER + 1;
 
 // Collision ray piercability to ignore leaves and other things
 enum
@@ -826,7 +826,7 @@ public:
 	CWeapon* GetWeaponByClass(IEntityClass* pClass) const;
 
 	virtual void SelectNextItem(int direction, bool keepHistory, const char* category = nullptr);
-	void         HolsterItem(bool holster) override;
+	void         HolsterItem(bool holster) ;
 	virtual void SelectLastItem(bool keepHistory, bool forceNext = false);
 	virtual void SelectItemByName(const char* name, bool keepHistory);
 	virtual void SelectItem(EntityId itemId, bool keepHistory);
@@ -851,65 +851,65 @@ public:
 	virtual ~CActor();
 
 	// IActor
-	void ProcessEvent(SEntityEvent& event) override;
+	void ProcessEvent(SEntityEvent& event) ;
 
-	void Release() override
+	void Release() 
 	{
 		delete this;
 	};
-	void                 ResetAnimGraph() override;
-	void                 FullSerialize(TSerialize ser) override;
-	bool                 NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int flags) override;
-	void                 PostSerialize() override;
-	void                 SerializeSpawnInfo(TSerialize ser) override;
-	ISerializableInfoPtr GetSpawnInfo() override;
-	void                 SetChannelId(uint16 id) override;
-	void                 SerializeLevelToLevel(TSerialize& ser) override;
-	IInventory*          GetInventory() const override;
+	void                 ResetAnimGraph() ;
+	void                 FullSerialize(TSerialize ser) ;
+	bool                 NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int flags) ;
+	void                 PostSerialize() ;
+	void                 SerializeSpawnInfo(TSerialize ser) ;
+	ISerializableInfoPtr GetSpawnInfo() ;
+	void                 SetChannelId(uint16 id) ;
+	void                 SerializeLevelToLevel(TSerialize& ser) ;
+	IInventory*          GetInventory() const ;
 
-	bool IsClient() const override;
+	bool IsClient() const ;
 
-	IMaterial* GetReplacementMaterial() override
+	IMaterial* GetReplacementMaterial() 
 	{
 		return m_pReplacementMaterial;
 	};
 
-	bool Init(IGameObject* pGameObject) override;
-	void InitClient(int channelId) override;
-	void PostInit(IGameObject* pGameObject) override;
-	void PostInitClient(int channelId) override {};
-	void Update(SEntityUpdateContext& ctx, int updateSlot) override;
-	void UpdateView(SViewParams& viewParams) override {};
-	void PostUpdateView(SViewParams& viewParams) override {};
+	bool Init(IGameObject* pGameObject) ;
+	void InitClient(int channelId) ;
+	void PostInit(IGameObject* pGameObject) ;
+	void PostInitClient(int channelId)  {};
+	void Update(SEntityUpdateContext& ctx, int updateSlot) ;
+	void UpdateView(SViewParams& viewParams)  {};
+	void PostUpdateView(SViewParams& viewParams)  {};
 
-	void InitLocalPlayer() override {};
+	void InitLocalPlayer()  {};
 
 	virtual void InitiateCombat();
 	virtual void ExtendCombat();
 
-	void SetIKPos(const char* pLimbName, const Vec3& goalPos, int priority) override;
+	void SetIKPos(const char* pLimbName, const Vec3& goalPos, int priority) ;
 
-	void HandleEvent(const SGameObjectEvent& event) override;
-	void PostUpdate(float frameTime) override;
-	void PostRemoteSpawn() override {};
+	void HandleEvent(const SGameObjectEvent& event) ;
+	void PostUpdate(float frameTime) ;
+	void PostRemoteSpawn()  {};
 
-	bool IsThirdPerson() const override
+	bool IsThirdPerson() const 
 	{
 		return true;
 	};
-	void ToggleThirdPerson() override {}
+	void ToggleThirdPerson()  {}
 
-	void RequestFacialExpression(const char* pExpressionName /* = NULL */) override;
-	void PrecacheFacialExpression(const char* pExpressionName) override;
+	void RequestFacialExpression(const char* pExpressionName /* = NULL */) ;
+	void PrecacheFacialExpression(const char* pExpressionName) ;
 
-	void NotifyInventoryAmmoChange(IEntityClass* pAmmoClass, int amount) override;
+	void NotifyInventoryAmmoChange(IEntityClass* pAmmoClass, int amount) ;
 
-	EntityId GetGrabbedEntityId() const override
+	EntityId GetGrabbedEntityId() const 
 	{
 		return 0;
 	}
 
-	void HideAllAttachments(bool isHiding) override;
+	void HideAllAttachments(bool isHiding) ;
 
 	//[Kirill] need this to make sure AG inputs are correct for MP exiting vehicle gunner seat
 	virtual void UpdateTPItem();
@@ -917,9 +917,9 @@ public:
 	// ~IActor
 
 	// IGameObjectProfileManager
-	bool SetAspectProfile(EEntityAspects aspect, uint8 profile) override;
+	bool SetAspectProfile(EEntityAspects aspect, uint8 profile) ;
 
-	uint8 GetDefaultProfile(const EEntityAspects aspect) override
+	uint8 GetDefaultProfile(const EEntityAspects aspect) 
 	{
 		return aspect == eEA_Physics ? eAP_NotPhysicalized : 0;
 	}
@@ -948,18 +948,18 @@ public:
 		return m_timeImpulseRecover;
 	};
 
-	void SetViewRotation(const Quat& rotation) override {};
+	void SetViewRotation(const Quat& rotation)  {};
 
-	Quat GetViewRotation() const override
+	Quat GetViewRotation() const 
 	{
 		return GetEntity()->GetRotation();
 	};
-	void EnableTimeDemo(bool bTimeDemo) override {};
+	void EnableTimeDemo(bool bTimeDemo)  {};
 
 	// offset to add to the computed camera angles every frame
 	virtual void SetViewAngleOffset(const Vec3& offset) {};
 
-	Vec3 GetViewAngleOffset() override
+	Vec3 GetViewAngleOffset() 
 	{
 		return Vec3(0, 0, 0);
 	};
@@ -972,7 +972,7 @@ public:
 	virtual void PostPhysicalize();
 	virtual void RagDollize(bool fallAndPlay);
 	//
-	int IsGod() override
+	int IsGod() 
 	{
 		return 0;
 	}
@@ -1033,26 +1033,26 @@ public:
 	virtual bool LooseHelmet(Vec3 hitDir = Vec3(0, 0, 0), Vec3 hitPos = Vec3(0, 0, 0), bool simulate = false);
 	virtual void GoLimp();
 	virtual void StandUp();
-	void         NotifyLeaveFallAndPlay() override;
-	bool         IsFallen() const override;
+	void         NotifyLeaveFallAndPlay() ;
+	bool         IsFallen() const ;
 	virtual int  GetFallenTime() const;
 	//
-	IEntity*         LinkToVehicle(EntityId vehicleId) override;
+	IEntity*         LinkToVehicle(EntityId vehicleId) ;
 	virtual IEntity* LinkToVehicleRemotely(EntityId vehicleId);
 	virtual void     LinkToMountedWeapon(EntityId weaponId) {};
 	virtual IEntity* LinkToEntity(EntityId entityId, bool bKeepTransformOnDetach = true);
 
-	ILINE IEntity* GetLinkedEntity() const override
+	ILINE IEntity* GetLinkedEntity() const 
 	{
 		return m_linkStats.GetLinked();
 	}
 
-	ILINE IVehicle* GetLinkedVehicle() const override
+	ILINE IVehicle* GetLinkedVehicle() const 
 	{
 		return m_linkStats.GetLinkedVehicle();
 	}
 
-	void SetViewInVehicle(Quat viewRotation) override {};
+	void SetViewInVehicle(Quat viewRotation)  {};
 
 	virtual void SupressViewBlending() {};
 
@@ -1068,13 +1068,13 @@ public:
 	}
 
 	//for animations
-	void PlayAction(const char* action, const char* extension, bool looping = false) override {};
+	void PlayAction(const char* action, const char* extension, bool looping = false)  {};
 	//
 	virtual void SetMovementTarget(const Vec3& position, const Vec3& looktarget, const Vec3& up, float speed) {};
 	//
 	virtual void CreateScriptEvent(const char* event, float value, const char* str = nullptr);
 	virtual bool CreateCodeEvent(SmartScriptTable& rTable);
-	void         AnimationEvent(ICharacterInstance* pCharacter, const AnimEventInstance& event) override;
+	void         AnimationEvent(ICharacterInstance* pCharacter, const AnimEventInstance& event) ;
 	//
 	virtual void CameraShake(float angle, float shift, float duration, float frequency, Vec3 pos, int ID, const char* source = "") {};
 	//
@@ -1091,32 +1091,32 @@ public:
 	virtual void  SetViewLimits(Vec3 dir, float rangeH, float rangeV) {};
 	virtual void  SetZoomSpeedMultiplier(float m);
 	virtual float GetZoomSpeedMultiplier() const;
-	void          SetHealth(int health) override;
+	void          SetHealth(int health) ;
 	virtual void  DamageInfo(EntityId shooterID, EntityId weaponID, float damage, const char* damageType);
 
-	IAnimatedCharacter* GetAnimatedCharacter() override
+	IAnimatedCharacter* GetAnimatedCharacter() 
 	{
 		return m_pAnimatedCharacter;
 	}
 
 	void SetMaxHealth(int maxHealth);
 
-	int32 GetHealth() const override
+	int32 GetHealth() const 
 	{
 		return static_cast<int32>(m_health);
 	}
 
-	int32 GetMaxHealth() const override
+	int32 GetMaxHealth() const 
 	{
 		return m_maxHealth;
 	}
 
-	int32 GetArmor() const override
+	int32 GetArmor() const 
 	{
 		return 0;
 	}
 
-	int32 GetMaxArmor() const override
+	int32 GetMaxArmor() const 
 	{
 		return 0;
 	}
@@ -1241,7 +1241,7 @@ public:
 
 	//
 	virtual int  GetBoneID(int ID, int slot = 0) const;
-	Vec3         GetLocalEyePos(int slot = 0) const override;
+	Vec3         GetLocalEyePos(int slot = 0) const ;
 	virtual Vec3 GetLocalEyePos2(int slot = 0) const;
 
 	ILINE /* virtual */ bool InZeroG() const
@@ -1284,7 +1284,7 @@ public:
 	void ClearIKPosBlending(const char* pLimbName);
 
 	//
-	IMovementController* GetMovementController() override
+	IMovementController* GetMovementController() 
 	{
 		return m_pMovementController;
 	}
@@ -1295,18 +1295,18 @@ public:
 	virtual bool TrySetStance(EStance stance); // Shared between humans and aliens.
 	//
 
-	IAnimationGraphState* GetAnimationGraphState() override;
+	IAnimationGraphState* GetAnimationGraphState() ;
 
 	IAnimatedCharacter* GetAnimatedCharacter() const
 	{
 		return m_pAnimatedCharacter;
 	};
-	void SetFacialAlertnessLevel(int alertness) override;
+	void SetFacialAlertnessLevel(int alertness) ;
 
 	//weapons
-	IItem*   GetCurrentItem(bool includeVehicle = false) const override;
+	IItem*   GetCurrentItem(bool includeVehicle = false) const ;
 	EntityId GetCurrentItemId(bool includeVehicle = false) const;
-	IItem*   GetHolsteredItem() const override;
+	IItem*   GetHolsteredItem() const ;
 
 	//Net
 	EntityId NetGetCurrentItem() const;
@@ -1329,7 +1329,7 @@ public:
 
 	void InitActorAttachments();
 
-	void SwitchDemoModeSpectator(bool activate) override {}; //this is a player only function
+	void SwitchDemoModeSpectator(bool activate)  {}; //this is a player only function
 
 	//misc
 	virtual void ReplaceMaterial(const char* strMaterial);
@@ -1358,7 +1358,7 @@ public:
 		return eGCT_UNKNOWN;
 	}
 
-	void SetAnimTentacleParams(pe_params_rope& rope, float animBlend) override {};
+	void SetAnimTentacleParams(pe_params_rope& rope, float animBlend)  {};
 
 	virtual bool IsCloaked() const
 	{

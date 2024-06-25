@@ -31,6 +31,7 @@ namespace TOS_Inventory
 		return Script::CallMethod(pActor->GetEntity()->GetScriptTable(), "SelectSecondaryWeapon");
 	};
 
+	// TODO: Закэшировать паки
 	inline void GiveEquipmentPack(IActor* pActor, const string& name, const bool resetInventory = false)
 	{
 		if (!pActor || name.empty())
