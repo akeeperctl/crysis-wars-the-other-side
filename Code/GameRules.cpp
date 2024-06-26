@@ -947,12 +947,6 @@ void CGameRules::RevivePlayer(CTOSActor* pActor, const Vec3& pos, const Ang3& an
 		int health = 100; health = g_pGameCVars->g_playerHealthValue;
 		pActor->SetMaxHealth(health);
 
-		//Matrix34 tm(pActor->GetEntity()->GetWorldTM());
-		//tm.SetTranslation(slavePos);
-
-		//pActor->GetEntity()->SetWorldTM(tm);
-		//pActor->SetAngles(pSlaveEntity->GetWorldAngles());
-
 		pActor->NetReviveAt(slavePos, Quat(slaveAngles), teamId);
 		pActor->GetGameObject()->InvokeRMI(CActor::ClRevive(), CActor::ReviveParams(slavePos, slaveAngles, teamId), eRMI_ToAllClients | eRMI_NoLocalCalls);
 
@@ -964,18 +958,6 @@ void CGameRules::RevivePlayer(CTOSActor* pActor, const Vec3& pos, const Ang3& an
 				pActor->GetGameObject()->InvokeRMI(CTOSActor::ClMarkHideMe(), NetHideMeParams(true), eRMI_ToAllClients);
 				//pActor->GetGameObject()->SetAspectProfile(eEA_Physics, eAP_Spectator);
 			}
-
-			//if (info.flags & TOS_DUDE_FLAG_BEAM_MODEL)
-			//{
-			//	const Vec3 slavePos = pSlaveEntity->GetWorldPos();
-			//	const Quat slaveRot = pSlaveEntity->GetWorldRotation();
-
-			//	pActor->GetEntity()->SetWorldTM(Matrix34::CreateTranslationMat(slavePos), 0);
-			//	pActor->GetEntity()->SetRotation(slaveRot);
-
-			//	// Привязка работает от клиента к серверу без исп. RMI
-			//	pSlaveEntity->AttachChild(pActor->GetEntity(), IEntity::ATTACHMENT_KEEP_TRANSFORMATION);
-			//}
 		}
 		
 		m_pGameplayRecorder->Event(pActor->GetEntity(), GameplayEvent(eGE_Revive));

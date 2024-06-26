@@ -497,6 +497,14 @@ void CTOSMasterClient::SendMovementRequest(IMovementController* pController)
 	assert(pController);
 	if (!pController)
 		return;
+	
+	int disableLookAt = 0;
+	ICVar* pCvarDisableLookAt = gEnv->pConsole->GetCVar("tos_cl_DisableLookAt");
+	if (pCvarDisableLookAt)
+		disableLookAt = pCvarDisableLookAt->GetIVal();
+
+	if (disableLookAt > 0)
+		return;
 
 	m_movementRequest.SetLookTarget(m_lookfireInfo.lookTargetPos);
 	m_movementRequest.SetFireTarget(m_lookfireInfo.fireTargetPos);

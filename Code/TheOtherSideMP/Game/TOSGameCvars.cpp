@@ -23,6 +23,7 @@ void STOSCvars::InitCVars(IConsole* pConsole)
 	//pConsole->Register("tos_show_version", &tos_show_version, 1, 0, "");
 	//VF_DUMPTODISK
 
+	pConsole->Register("tos_cl_DisableLookAt", &tos_cl_DisableLookAt, 0, VF_RESTRICTEDMODE | VF_NOT_NET_SYNCED, "Disable slave entity look at crosshair");
 	pConsole->Register("tos_any_EventRecorderLogVanilla", &tos_any_EventRecorderLogVanilla, 0, 0, "Log vanilla events to the console (eGE_ prefix) 1 - yes, 0 - no");
 	pConsole->Register("tos_sv_EnableShotValidator", &tos_sv_EnableShotValidator, 1, 0, "Enable shot validator in multiplayer 1 - yes, 0 - no");
 	pConsole->Register("tos_sv_chargingJumpInputTime", &tos_sv_chargingJumpInputTime, 0.20f, 0, "Time between press jump and jump action confirm");
@@ -92,6 +93,7 @@ void STOSCvars::ReleaseCVars()
 	//pConsole->UnregisterVariable("tos_show_version", true);
 	//pConsole->UnregisterVariable("tos_cl_SlaveEntityClass", true);
 	pConsole->UnregisterVariable("tos_cl_JoinAsMaster", true);
+	pConsole->UnregisterVariable("tos_cl_DisableLookAt", true);
 
 	pConsole->UnregisterVariable("tos_any_EventRecorderLogVanilla", true);
 	pConsole->UnregisterVariable("tos_sv_EnableShotValidator", true);
