@@ -13,7 +13,7 @@
 
 enum ETOSDudePrepareFlags
 {
-	TOS_DUDE_FLAG_HIDE_MODEL           = BIT(0),
+	//TOS_DUDE_FLAG_HIDE_MODEL           = BIT(0),
 	TOS_DUDE_FLAG_BEAM_MODEL           = BIT(1),
 	//TOS_DUDE_FLAG_CLEAR_INVENTORY      = BIT(2),
 	TOS_DUDE_FLAG_DISABLE_SUIT         = BIT(2),

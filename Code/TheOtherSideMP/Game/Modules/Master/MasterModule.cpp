@@ -48,6 +48,13 @@ CTOSMasterModule::CTOSMasterModule()
 
 CTOSMasterModule::~CTOSMasterModule() {};
 
+void CTOSMasterModule::Reset()
+{
+	m_masters.clear();
+	m_scheduledTakeControls.clear();
+	m_pLocalMasterClient = nullptr;
+}
+
 void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event)
 {
 	if (!pEntity)
@@ -473,8 +480,7 @@ void CTOSMasterModule::Update(float frametime)
 	if (gEnv->bServer)
 	{
 		// Очистим неактуальных мастеров.
-		auto it = m_masters.begin();
-		for (; it != m_masters.end(); it++)
+		for (auto it = m_masters.begin(); it != m_masters.end(); it++)
 		{
 			const EntityId id = it->first;
 
@@ -486,6 +492,22 @@ void CTOSMasterModule::Update(float frametime)
 			}
 		}
 	}
+
+	//for (auto it = m_masters.begin(); it != m_masters.end(); it++)
+	//{
+	//	const EntityId id = it->first;
+	//	auto pActor = static_cast<CTOSPlayer*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(id));
+	//	if (pActor)
+	//	{
+	//		auto pCharacter = pActor->GetAnimatedCharacter();
+
+	//		if (pCharacter->GetPhysicalColliderMode() != eColliderMode_Spectator)
+	//		{
+	//			pCharacter->ForceRefreshPhysicalColliderMode();
+	//			pCharacter->RequestPhysicalColliderMode(eColliderMode_Spectator, eColliderModeLayer_Game, "MasterModule::Update");
+	//		}
+	//	}
+	//}
 
 	const auto pMC = GetMasterClient();
 	if (pMC)

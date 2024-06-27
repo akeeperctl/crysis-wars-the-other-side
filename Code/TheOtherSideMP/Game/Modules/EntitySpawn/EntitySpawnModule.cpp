@@ -51,11 +51,11 @@ void CTOSEntitySpawnModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGam
 	}
 	case eEGE_TOSEntityOnSpawn:
 	{
-		//2
+		auto pParams = new STOSEntitySpawnParams(*static_cast<STOSEntitySpawnParams*>(event.extra_data));
+		assert(pParams);	
+
 		if (!HaveSavedParams(pEntity))
 		{
-			auto pParams = new STOSEntitySpawnParams(*static_cast<STOSEntitySpawnParams*>(event.extra_data));
-			assert(pParams);
 
 			// id должен генерироваться
 			pParams->vanilla.id = 0;
@@ -70,11 +70,11 @@ void CTOSEntitySpawnModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGam
 
 		break;
 	}
-
 	case eEGE_EntityOnRemove:
 	{
 		if (HaveSavedParams(pEntity))
 		{
+			//just log
 			TOS_RECORD_EVENT(entId, STOSGameEvent(eEGE_TOSEntityOnRemove, "", true));
 		}
 
@@ -86,9 +86,19 @@ void CTOSEntitySpawnModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGam
 
 		break;
 	}
+	case eEGE_OnServerStartRestarting:
+	case eEGE_OnLevelLoadingStart:
+	{
+		Reset();
+	}
 	default: 
 		break;
 	}
+}
+
+void CTOSEntitySpawnModule::Reset()
+{
+	Init();
 }
 
 void CTOSEntitySpawnModule::Init()

@@ -42,6 +42,8 @@ void CTOSGame::Init()
 	if (gEnv->pEntitySystem)
 		gEnv->pEntitySystem->AddSink(this);
 
+	g_pGame->GetIGameFramework()->GetILevelSystem()->AddListener(this);
+
 	m_pEventRecorder = new CTOSGameEventRecorder();
 
 	if (gEnv->bServer && gEnv->pAISystem)
@@ -77,6 +79,7 @@ void CTOSGame::Shutdown()
 		gEnv->pInput->RemoveEventListener(this);
 	if (gEnv->pEntitySystem)
 		gEnv->pEntitySystem->RemoveSink(this);
+	g_pGame->GetIGameFramework()->GetILevelSystem()->RemoveListener(this);
 
 
 	this->~CTOSGame();
@@ -96,6 +99,30 @@ void CTOSGame::Update(const float frameTime, int frameId)
 			pModule->Update(frameTime);
 		}
 	}
+}
+
+void CTOSGame::OnLevelNotFound(const char* levelName)
+{
+
+}
+
+void CTOSGame::OnLoadingStart(ILevelInfo* pLevel)
+{
+	m_pMasterModule->Reset();
+
+	TOS_RECORD_EVENT(0, STOSGameEvent(eEGE_OnLevelLoadingStart, pLevel->GetName(), true));
+}
+
+void CTOSGame::OnLoadingComplete(ILevel* pLevel)
+{
+}
+
+void CTOSGame::OnLoadingError(ILevelInfo* pLevel, const char* error)
+{
+}
+
+void CTOSGame::OnLoadingProgress(ILevelInfo* pLevel, int progressAmount)
+{
 }
 
 CTOSGameEventRecorder* CTOSGame::GetEventRecorder() const

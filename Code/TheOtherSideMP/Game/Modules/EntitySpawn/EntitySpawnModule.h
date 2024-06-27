@@ -120,6 +120,8 @@ public:
 	void ReleaseCCommands() ;
 	//~ITOSGameModule
 
+	void Reset();
+
 	//Console command's functions
 	static void CmdSpawnEntity(IConsoleCmdArgs* pArgs);
 	static void CmdRemoveEntityById(IConsoleCmdArgs* pArgs);

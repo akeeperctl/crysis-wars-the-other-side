@@ -4,6 +4,7 @@
 #include <IGameFramework.h>
 #include <IVehicleSystem.h>
 #include <IGameplayRecorder.h>
+#include <ILevelSystem.h>
 #include <IInput.h>
 
 class СTOSAIModule;
@@ -37,7 +38,8 @@ class CTOSGame:  // NOLINT(cppcoreguidelines-special-member-functions)
 	public IGameplayListener,
 	public IInputEventListener,
 	public IEntitySystemSink,
-	public IScriptTableDumpSink
+	public IScriptTableDumpSink,
+	public ILevelSystemListener
 {
 public:
 	CTOSGame();
@@ -51,7 +53,16 @@ public:
 	void Update(float frameTime, int frameId);
 
 	//Events
+	// ILevelSystemListener
+	void OnLevelNotFound(const char* levelName);
+	void OnLoadingStart(ILevelInfo* pLevel);
+	void OnLoadingComplete(ILevel* pLevel);
+	void OnLoadingError(ILevelInfo* pLevel, const char* error);
+	void OnLoadingProgress(ILevelInfo* pLevel, int progressAmount);
 	
+	// ILevelSystemListener
+
+
 	//IHardwareMouseEventListener
 	void OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eHardwareMouseEvent);
 	//~IHardwareMouseEventListener

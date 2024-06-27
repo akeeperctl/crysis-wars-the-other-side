@@ -31,6 +31,10 @@
 #include "Menus/MPHub.h"
 #include "INetworkService.h"
 
+//TheOtherSide
+#include "TheOtherSideMP/Game/TOSGameEventRecorder.h"
+//TheOtherSide
+
 static void BroadcastChangeSafeMode( ICVar * )
 {
 	SGameObjectEvent event(eCGE_ResetMovementController, eGOEF_ToExtensions);
@@ -1193,6 +1197,8 @@ void CGame::CmdRestart(IConsoleCmdArgs *pArgs)
 		CryLogAlways(" ////////////////// SERVER RESTARTING //////////////////");
 		CryLogAlways(" ////////////////// SERVER RESTARTING //////////////////");
 		CryLogAlways(" ");
+
+		TOS_RECORD_EVENT(0, STOSGameEvent(eEGE_OnServerStartRestarting, "", false));
 	}
 	//~TheOtherSide
 

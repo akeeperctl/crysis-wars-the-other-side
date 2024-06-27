@@ -833,12 +833,15 @@ function InstantAction:RevivePlayer(channelId, player, keepEquip)
 
 	local teamId=self.game:GetTeam(player.id);
 	local teamName=self.game:GetTeamName(teamId);
+
+	local playerName = player:GetName();
+	local playerChannelId = self.game:GetChannelId(player.id);
 	
 	if (player:IsDead()) then
 		keepEquip=false;
 	end
 
-	System.LogAlways("<lua> NEW revive player: "..tostring(player:GetName()).." team: "..teamName.." teamId: "..teamId)
+	System.LogAlways("<lua> Revive player: '"..playerName.."' team: "..teamName.." teamId: "..teamId)
 	
 	player.lastExitedVehicleId = nil;
 	player.lastExitedVehicleTime = nil;
@@ -868,6 +871,10 @@ function InstantAction:RevivePlayer(channelId, player, keepEquip)
 		return false;
 	end
 	
+	--TheOtherSide
+	local pos,angles;
+	--~TheOtherSide
+
 	if (not result) then
 		local ignoreTeam=(groupId~=nil) or (not self.TEAM_SPAWN_LOCATIONS);
 		
@@ -893,8 +900,6 @@ function InstantAction:RevivePlayer(channelId, player, keepEquip)
 			player.spawn_time=_time;
 			player.skipSpawnId=spawnId;
 		end
-
-		local pos,angles;
 
 		if (spawnId) then
 			local spawn=System.GetEntity(spawnId)
@@ -948,7 +953,16 @@ function InstantAction:RevivePlayer(channelId, player, keepEquip)
 		end
 
 		if (willControlSlave) then
-			System.LogAlways("<lua>".." player "..tostring(player.id).." will be control slave")
+			System.LogAlways("<lua>".." Player '"..playerName.."' will be control slave");
+
+			local slaveClassName = "Trooper";
+			local slaveSpawnDelaySec = 0.08;
+
+			self.game:SpawnAndAssignSlaveToPlayer(playerChannelId, slaveClassName, slaveSpawnDelaySec);
+		elseif (isControllingSlave) then
+			System.LogAlways("<lua>".." Player '"..playerName.."' already controlling the slave")
+
+			self.game:ReviveSlaveOfPlayer(playerChannelId, pos, angles);
 		end
 		--~TheOtherSide
 		

@@ -33,7 +33,6 @@ public:
 		EIP_Start = 0,
 		EIP_Cancel,
 		EIP_BeamDude,
-		EIP_HideDude,
 		EIP_DisableSuit,
 		EIP_DisableActions,
 		EIP_SaveItems,
@@ -98,7 +97,6 @@ public:
 			InputPortConfig_Void("Start", _HELP("Trigger to start controlling input actor")),
 			InputPortConfig_Void("Cancel", _HELP("Trigger to cancel controlling of input actor")),
 			InputPortConfig<bool>("BeamDude", _HELP("Beam dude to input actor position")),
-			InputPortConfig<bool>("HideDude", _HELP("Disable dude's model from rendering")),
 			InputPortConfig<bool>("DisableSuit", _HELP("Disable dude's nanosuit")),
 			InputPortConfig<bool>("DisableActions", _HELP("Disable dude's human actions")),
 			InputPortConfig<bool>("SaveItems", _HELP("Save/load dude's inventory items before/after start control")),
@@ -176,8 +174,8 @@ public:
 				if (GetPortBool(pActInfo, EIP_BeamDude))
 					flags |= TOS_DUDE_FLAG_BEAM_MODEL;
 
-				if (GetPortBool(pActInfo, EIP_HideDude))
-					flags |= TOS_DUDE_FLAG_HIDE_MODEL;
+				//if (GetPortBool(pActInfo, EIP_HideDude))
+				//	flags |= TOS_DUDE_FLAG_HIDE_MODEL;
 
 				if (GetPortBool(pActInfo, EIP_DisableSuit))
 					flags |= TOS_DUDE_FLAG_DISABLE_SUIT;

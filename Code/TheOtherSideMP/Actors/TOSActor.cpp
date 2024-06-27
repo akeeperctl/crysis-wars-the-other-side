@@ -284,7 +284,30 @@ void CTOSActor::Release()
 void CTOSActor::Revive(const bool fromInit)
 {
 	CActor::Revive(fromInit);
-	return;
+
+	if (m_isMaster)
+	{
+		// Скрыть актера, если он мастер
+
+		if (gEnv->bClient)
+		{
+			GetGameObject()->InvokeRMI(SvRequestHideMe(), NetHideMeParams(true), eRMI_ToServer);
+		}
+		else if (gEnv->bServer)
+		{
+			const auto* pFists = dynamic_cast<CFists*>(GetItemByClass(CItem::sFistsClass));
+			if (pFists)
+				g_pGame->GetIGameFramework()->GetIItemSystem()->SetActorItem(this, pFists->GetEntityId());
+
+			GetGameObject()->InvokeRMI(ClMarkHideMe(), NetHideMeParams(true), eRMI_ToAllClients);
+		}
+
+		if (ICharacterInstance* pCharacter = GetEntity()->GetCharacter(0))
+			pCharacter->GetISkeletonPose()->DestroyCharacterPhysics(1);
+		
+		m_pAnimatedCharacter->ForceRefreshPhysicalColliderMode();
+		m_pAnimatedCharacter->RequestPhysicalColliderMode(eColliderMode_Spectator, eColliderModeLayer_Game, "Actor::SetAspectProfile");
+	}
 
 	TOS_RECORD_EVENT(GetEntityId(), STOSGameEvent(eEGE_ActorRevived, "", true));
 }

@@ -20,7 +20,78 @@ History:
 
 //TheOtherSide
 #include "TheOtherSideMP/Actors/TOSActor.h"
-//TheOtherSide
+#include "TheOtherSideMP/Game/Modules/EntitySpawn/EntitySpawnModule.h"
+#include "TheOtherSideMP/Game/Modules/Master/MasterModule.h"
+
+
+int CScriptBind_GameRules::ReviveSlaveOfPlayer(IFunctionHandler* pH, int playerChannelId, Vec3 pos, Vec3 angles)
+{
+	const IActor* const pPlayer = g_pGame->GetIGameFramework()->GetIActorSystem()->GetActorByChannelId(playerChannelId);
+	if (!pPlayer)
+	{
+		CryLog("<C++> Cant revive slave for player %i, player not exist", playerChannelId);
+		return pH->EndFunction();
+	}
+
+	const IEntity* const pSlave = g_pTOSGame->GetMasterModule()->GetCurrentSlave(pPlayer->GetEntity());
+	if (!pSlave)
+	{
+		CryLog("<C++> Cant revive slave for player %i, player not have a slave", playerChannelId);
+		return pH->EndFunction();
+	}
+
+	const int teamId = g_pGame->GetGameRules()->GetTeam(pPlayer->GetEntityId());
+	const bool resetWeapons = true;
+
+	g_pTOSGame->GetMasterModule()->ReviveSlave(pSlave, pos, Ang3(angles), teamId, resetWeapons);
+}
+
+int CScriptBind_GameRules::SpawnAndAssignSlaveToPlayer(IFunctionHandler* pH, int playerChannelId, const char* slaveClassName, float spawnDelaySec)
+{
+	const IActor* const pPlayer = g_pGame->GetIGameFramework()->GetIActorSystem()->GetActorByChannelId(playerChannelId);
+	if (!pPlayer)
+	{
+		CryLog("<C++> Cant spawn slave for player %i, player not exist", playerChannelId);
+		return pH->EndFunction();
+	}
+
+	IEntityClass* const pClass = gEnv->pEntitySystem->GetClassRegistry()->FindClass(slaveClassName);
+	if (!pClass)
+	{
+		CryLog("<C++> Cant spawn slave for player% i, slave class is undefined", playerChannelId);
+		return pH->EndFunction();
+	}
+
+	const string playerName = pPlayer->GetEntity()->GetName();
+	const IEntity* const pSlave = g_pTOSGame->GetEntitySpawnModule()->GetSavedSlaveByAuthName(playerName);
+
+	if (pSlave)
+	{
+		CryLog("<C++> Cant spawn slave for player %i, player already have a slave", playerChannelId);
+		return pH->EndFunction();
+	}
+
+	STOSEntityDelaySpawnParams params;
+	params.authorityPlayerName = playerName;
+	params.savedName = playerName + "_slave";
+	params.scheduledTimeStamp = gEnv->pTimer->GetFrameStartTime().GetSeconds();
+	params.spawnDelay = spawnDelaySec;
+	//params.tosFlags |= TOS_ENTITY_FLAG_MUST_RECREATED;
+	params.vanilla.bStaticEntityId = true;
+	params.vanilla.nFlags |= ENTITY_FLAG_NEVER_NETWORK_STATIC | ENTITY_FLAG_TRIGGER_AREAS | ENTITY_FLAG_CASTSHADOW;
+	params.vanilla.pClass = pClass;
+	params.vanilla.qRotation = pPlayer->GetEntity()->GetWorldRotation();
+	params.vanilla.vPosition = pPlayer->GetEntity()->GetWorldPos();
+	params.forceStartControl = true;
+
+	if (CTOSEntitySpawnModule::SpawnEntityDelay(params, true))
+	{
+		return pH->EndFunction(true);
+	}
+
+	return pH->EndFunction();
+}
+//~TheOtherSide
 
 //------------------------------------------------------------------------
 CScriptBind_GameRules::CScriptBind_GameRules(ISystem *pSystem, IGameFramework *pGameFramework)
@@ -86,6 +157,11 @@ void CScriptBind_GameRules::RegisterMethods()
 {
 #undef SCRIPT_REG_CLASSNAME
 #define SCRIPT_REG_CLASSNAME &CScriptBind_GameRules::
+
+	//TheOtherSide
+	SCRIPT_REG_TEMPLFUNC(ReviveSlaveOfPlayer, "playerChannelId, pos, angles");
+	SCRIPT_REG_TEMPLFUNC(SpawnAndAssignSlaveToPlayer, "playerChannelId, slaveClassName, spawnDelaySec");
+	//TheOtherSide
 
 	SCRIPT_REG_TEMPLFUNC(IsServer, "");
 	SCRIPT_REG_TEMPLFUNC(IsClient, "");

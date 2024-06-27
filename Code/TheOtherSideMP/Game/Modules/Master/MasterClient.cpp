@@ -1019,10 +1019,10 @@ void CTOSMasterClient::PrepareDude(const bool toStartControl, const uint dudeFla
 			g_pGameActions->FilterMasterControlSlave()->Enable(true);
         }
 
-		if (dudeFlags & TOS_DUDE_FLAG_HIDE_MODEL)
-		{
-			m_pLocalDude->GetGameObject()->InvokeRMI(CTOSActor::SvRequestHideMe(), NetHideMeParams(true), eRMI_ToServer);
-		}
+		//if (dudeFlags & TOS_DUDE_FLAG_HIDE_MODEL)
+		//{
+		m_pLocalDude->GetGameObject()->InvokeRMI(CTOSActor::SvRequestHideMe(), NetHideMeParams(true), eRMI_ToServer);
+		//}
 
 		if (dudeFlags & TOS_DUDE_FLAG_BEAM_MODEL)
 		{
@@ -1109,10 +1109,10 @@ void CTOSMasterClient::PrepareDude(const bool toStartControl, const uint dudeFla
 			g_pGameActions->FilterMasterControlSlave()->Enable(false);
         }
 
-		if (dudeFlags & TOS_DUDE_FLAG_HIDE_MODEL)
-		{
-			m_pLocalDude->GetGameObject()->InvokeRMI(CTOSActor::SvRequestHideMe(), NetHideMeParams(false), eRMI_ToServer);
-		}
+		//if (dudeFlags & TOS_DUDE_FLAG_HIDE_MODEL)
+		//{
+		m_pLocalDude->GetGameObject()->InvokeRMI(CTOSActor::SvRequestHideMe(), NetHideMeParams(false), eRMI_ToServer);
+		//}
 
 		if (dudeFlags & TOS_DUDE_FLAG_BEAM_MODEL)
 		{

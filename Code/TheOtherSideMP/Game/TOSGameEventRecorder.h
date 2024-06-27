@@ -105,8 +105,8 @@ enum EExtraGameplayEvent
 	eEGE_VehicleDestroyed,
 
 	eEGE_ActorRevived,
-	eEGE_Example2,
-	eEGE_Example3,
+	eEGE_OnLevelLoadingStart,
+	eEGE_OnServerStartRestarting,
 	eEGE_Example4,
 	eEGE_Example5,
 
@@ -358,10 +358,10 @@ public:
 			return "eEGE_VehicleDestroyed";
 		case eEGE_ActorRevived:
 			return "eEGE_ActorRevived";		
-		case eEGE_Example2:
-			return "eEGE_Example2";		
-		case eEGE_Example3:
-			return "eEGE_Example3";		
+		case eEGE_OnLevelLoadingStart:
+			return "eEGE_OnLevelLoadingStart";		
+		case eEGE_OnServerStartRestarting:
+			return "eEGE_OnServerStartRestarting";		
 		case eEGE_Example4:
 			return "eEGE_Example4";		
 		case eEGE_Example5:
