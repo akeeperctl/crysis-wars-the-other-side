@@ -3,6 +3,7 @@
 #include "EntitySpawnModule.h"
 
 #include "Game.h"
+#include "GameRules.h"
 #include "IEntity.h"
 
 #include "../../TOSGame.h"
@@ -119,13 +120,6 @@ void CTOSEntitySpawnModule::Update(float frametime)
 
 		if (curTime - recordedTime > delay)
 		{
-			IEntity* pAuthorityPlayerEnt = gEnv->pEntitySystem->FindEntityByName(pSpawnParams->authorityPlayerName);
-			if (pAuthorityPlayerEnt)
-			{
-				pSpawnParams->vanilla.vPosition = pAuthorityPlayerEnt->GetWorldPos();
-				pSpawnParams->vanilla.qRotation = pAuthorityPlayerEnt->GetWorldRotation();
-			}
-
 			SpawnEntity(*pSpawnParams, true);
 
 			s_scheduledSpawnsDelay.erase(it++);
@@ -267,6 +261,15 @@ IEntity* CTOSEntitySpawnModule::SpawnEntity(STOSEntitySpawnParams& params, bool 
 	const EntityId entityId = pEntity->GetId();
 	
 	gEnv->pEntitySystem->InitEntity(pEntity, params.vanilla);
+
+	CActor* pActor = static_cast<CActor*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(entityId));
+
+	IEntity* pAuthorityPlayerEnt = gEnv->pEntitySystem->FindEntityByName(params.authorityPlayerName);
+	if (pAuthorityPlayerEnt)
+	{
+		g_pGame->GetGameRules()->MovePlayer(pActor, pAuthorityPlayerEnt->GetWorldPos(), Ang3(pAuthorityPlayerEnt->GetWorldRotation()));
+	}
+
 
 	//1
 	if (sendTosEvent)

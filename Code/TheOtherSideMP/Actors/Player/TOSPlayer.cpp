@@ -128,7 +128,7 @@ void CTOSPlayer::SetSpectatorMode(uint8 mode, EntityId targetId)
 	{
 		if (oldMode > eASM_None)
 		{
-			TOS_RECORD_EVENT(GetEntityId(), STOSGameEvent(eEGE_PlayerJoinedGame, "", true));
+			//TOS_RECORD_EVENT(GetEntityId(), STOSGameEvent(eEGE_PlayerJoinedGame, "", true));
 		}
 
 		break;

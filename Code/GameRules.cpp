@@ -936,19 +936,18 @@ void CGameRules::RevivePlayer(CTOSActor* pActor, const Vec3& pos, const Ang3& an
 	// Воскрешение раба если он есть
 	auto pMM = g_pTOSGame->GetMasterModule();
 
+	const string teamName = g_pGame->GetGameRules()->GetTeamName(teamId);
+
 	auto pSlaveEntity = pMM->GetCurrentSlave(pActor->GetEntity());
 	if (pSlaveEntity)
 	{
-		pMM->ReviveSlave(pSlaveEntity, pos, angles, teamId, true);
-
-		const Vec3 slavePos = pSlaveEntity->GetWorldPos();
-		const Ang3 slaveAngles = pSlaveEntity->GetWorldAngles();
-
 		int health = 100; health = g_pGameCVars->g_playerHealthValue;
 		pActor->SetMaxHealth(health);
 
-		pActor->NetReviveAt(slavePos, Quat(slaveAngles), teamId);
-		pActor->GetGameObject()->InvokeRMI(CActor::ClRevive(), CActor::ReviveParams(slavePos, slaveAngles, teamId), eRMI_ToAllClients | eRMI_NoLocalCalls);
+		pActor->NetReviveAt(pos, Quat(angles), teamId);
+		pActor->GetGameObject()->InvokeRMI(CActor::ClRevive(), CActor::ReviveParams(pos, angles, teamId), eRMI_ToAllClients | eRMI_NoLocalCalls);
+
+		MovePlayer(pActor, pos, angles);
 
 		STOSMasterInfo info;
 		if (pMM->GetMasterInfo(pActor->GetEntity(), info))
@@ -962,10 +961,16 @@ void CGameRules::RevivePlayer(CTOSActor* pActor, const Vec3& pos, const Ang3& an
 		
 		m_pGameplayRecorder->Event(pActor->GetEntity(), GameplayEvent(eGE_Revive));
 
+		pMM->ReviveSlave(pSlaveEntity, pos, angles, teamId, true);
+
 		return;
 	}
+	else if (teamName == "aliens")
+	{
+		TOS_RECORD_EVENT(pActor->GetEntityId(), STOSGameEvent(eEGE_PlayerJoinedGame, "Player revived to playing as alien", true));
+	}
 
-	//TheOtherSide
+	//~TheOtherSide
 
 	// get out of vehicles before reviving
 	if (IVehicle* pVehicle = pActor->GetLinkedVehicle())
