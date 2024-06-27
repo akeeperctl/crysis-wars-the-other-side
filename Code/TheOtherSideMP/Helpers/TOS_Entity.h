@@ -10,15 +10,11 @@ namespace TOS_Entity
 {
 	inline IEntity* Spawn(STOSEntitySpawnParams& params)
 	{
-		const auto pEntity = CTOSEntitySpawnModule::SpawnEntity(params, true);
-
-		return pEntity;
+		return CTOSEntitySpawnModule::SpawnEntity(params, true);
 	}
 	inline bool SpawnDelay(STOSEntityDelaySpawnParams& params)
 	{
-		const auto spawned = CTOSEntitySpawnModule::SpawnEntityDelay(params, true);
-
-		return spawned;
+		return CTOSEntitySpawnModule::SpawnEntityDelay(params, true);
 	}
 	inline void RemoveEntityForced(const EntityId id)
 	{

@@ -12,6 +12,9 @@
 #include "TheOtherSideMP/Helpers/TOS_Entity.h"
 #include "TheOtherSideMP/Helpers/TOS_STL.h"
 
+#include "CryMemoryAllocator.h"
+#include "CryMemoryManager.h"
+
 TVecEntities CTOSEntitySpawnModule::s_markedForRecreation;
 TMapDelayTOSParams CTOSEntitySpawnModule::s_scheduledSpawnsDelay;
 
@@ -133,7 +136,7 @@ void CTOSEntitySpawnModule::Update(float frametime)
 
 	auto end = m_scheduledRecreations.end();
 
-	for (auto it = m_scheduledRecreations.begin(); it != end;) // Используйте переменную 'end', а не повторный вызов m_scheduledRecreations.end()
+	for (auto it = m_scheduledRecreations.begin(); it != end;)
 	{
 		EntityId scheduledId = it->first;
 		IEntity* pScheduledEnt = gEnv->pEntitySystem->GetEntity(scheduledId);
@@ -330,7 +333,7 @@ bool CTOSEntitySpawnModule::SpawnEntityDelay(STOSEntityDelaySpawnParams& params,
 		}
 	}
 
-
+	// Спавнит сразу, если задержка очень маленькая
 	if (params.spawnDelay < 0.001f)
 	{
 		return SpawnEntity(params,sendTosEvent);

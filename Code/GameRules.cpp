@@ -932,46 +932,6 @@ CActor* CGameRules::ChangePlayerClass(const int channelId, const char* className
 //------------------------------------------------------------------------
 void CGameRules::RevivePlayer(CTOSActor* pActor, const Vec3& pos, const Ang3& angles, const int teamId, const bool clearInventory)
 {
-	//TheOtherSide
-	// Воскрешение раба если он есть
-	auto pMM = g_pTOSGame->GetMasterModule();
-
-	const string teamName = g_pGame->GetGameRules()->GetTeamName(teamId);
-
-	auto pSlaveEntity = pMM->GetCurrentSlave(pActor->GetEntity());
-	if (pSlaveEntity)
-	{
-		int health = 100; health = g_pGameCVars->g_playerHealthValue;
-		pActor->SetMaxHealth(health);
-
-		pActor->NetReviveAt(pos, Quat(angles), teamId);
-		pActor->GetGameObject()->InvokeRMI(CActor::ClRevive(), CActor::ReviveParams(pos, angles, teamId), eRMI_ToAllClients | eRMI_NoLocalCalls);
-
-		MovePlayer(pActor, pos, angles);
-
-		STOSMasterInfo info;
-		if (pMM->GetMasterInfo(pActor->GetEntity(), info))
-		{
-			if (info.flags & TOS_DUDE_FLAG_HIDE_MODEL)
-			{
-				pActor->GetGameObject()->InvokeRMI(CTOSActor::ClMarkHideMe(), NetHideMeParams(true), eRMI_ToAllClients);
-				//pActor->GetGameObject()->SetAspectProfile(eEA_Physics, eAP_Spectator);
-			}
-		}
-		
-		m_pGameplayRecorder->Event(pActor->GetEntity(), GameplayEvent(eGE_Revive));
-
-		pMM->ReviveSlave(pSlaveEntity, pos, angles, teamId, true);
-
-		return;
-	}
-	else if (teamName == "aliens")
-	{
-		TOS_RECORD_EVENT(pActor->GetEntityId(), STOSGameEvent(eEGE_PlayerJoinedGame, "Player revived to playing as alien", true));
-	}
-
-	//~TheOtherSide
-
 	// get out of vehicles before reviving
 	if (IVehicle* pVehicle = pActor->GetLinkedVehicle())
 		if (IVehicleSeat* pSeat = pVehicle->GetSeatForPassenger(pActor->GetEntityId()))
