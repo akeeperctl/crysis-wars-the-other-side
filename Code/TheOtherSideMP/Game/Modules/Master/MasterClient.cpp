@@ -917,88 +917,62 @@ void CTOSMasterClient::UpdateView(SViewParams& viewParams) const
 	const auto pControlledActor = dynamic_cast<CTOSActor*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(controlledId));
     if (pControlledActor)
     {
-		/*
-    	if (controlledCls == "Hunter")
-        {
-            target(g_pGameCVars->ctrl_hrTargetx, g_pGameCVars->ctrl_hrTargety, g_pGameCVars->ctrl_hrTargetz);
-            offsetY = gEnv->pSystem->GetViewCamera().GetViewdir() * current.y + alienWorldMtx.GetColumn1() *
-                g_pGameCVars->ctrl_hrForwardOffset;
-            currentFov = g_pGameCVars->ctrl_hrFov;
-        }
-        else if (controlledCls == "Scout")
-        {
-            offsetY = gEnv->pSystem->GetViewCamera().GetViewdir() * current.y; //Used by all aliens in this mod
-            target(g_pGameCVars->ctrl_scTargetx, g_pGameCVars->ctrl_scTargety, g_pGameCVars->ctrl_scTargetz);
-            currentFov = g_pGameCVars->ctrl_scFov;
-        }
-        else if (controlledCls == "Drone")
-        {
-            target(g_pGameCVars->ctrl_trTargetx, g_pGameCVars->ctrl_trTargety, g_pGameCVars->ctrl_trTargetz);
-            offsetY = gEnv->pSystem->GetViewCamera().GetViewdir() * current.y; //Used by all aliens in this mod
-            currentFov = g_pGameCVars->ctrl_trFov;
-        }
-        else if (controlledCls == "Pinger")
-        {
-            target(g_pGameCVars->ctrl_pgTargetx, g_pGameCVars->ctrl_pgTargety, g_pGameCVars->ctrl_pgTargetz);
-            offsetY = gEnv->pSystem->GetViewCamera().GetViewdir() * current.y + alienWorldMtx.GetColumn1();
-            currentFov = g_pGameCVars->ctrl_pgFov;
-        }
-        else if (controlledCls == "Alien")
-        {
-            target(g_pGameCVars->ctrl_alTargetx, g_pGameCVars->ctrl_alTargety, g_pGameCVars->ctrl_alTargetz);
-            offsetY = gEnv->pSystem->GetViewCamera().GetViewdir() * current.y; //Used by all aliens in this mod
-            currentFov = g_pGameCVars->ctrl_alFov;
-        }
-        */
 
         pControlledActor->UpdateMasterView(viewParams, offsetX, offsetY, offsetZ, target, current, currentFov);
 
+		// Массив для хранения сущностей, которые следует пропустить при трассировке луча
+		IPhysicalEntity* pSkipEntities[10];
+		int nSkip = 0; // Количество сущностей для пропуска
 
+		IItem* pItem = pControlledActor->GetCurrentItem();
+		if (pItem)
+		{
+			const auto pWeapon = dynamic_cast<CWeapon*>(pItem->GetIWeapon());
+			if (pWeapon)
+			{
+				// Получение сущностей для пропуска от оружия
+				nSkip = CSingle::GetSkipEntities(pWeapon, pSkipEntities, 10);
+			}
+		}
 
-        // Старт кода, который я скопипастил из ControlClient.cpp
+		// Расчет длины смещения по оси Y
+		const float oldLen = offsetY.len();
 
-    	//Get skip entities
-	    IPhysicalEntity* pSkipEntities[10];  // NOLINT(modernize-avoid-c-arrays)
-	    int nSkip = 0;
-	    IItem* pItem = pControlledActor->GetCurrentItem();
-	    if (pItem)
-	    {
-		    const auto pWeapon = dynamic_cast<CWeapon*>(pItem->GetIWeapon());
-	        if (pWeapon)
-	            nSkip = CSingle::GetSkipEntities(pWeapon, pSkipEntities, 10);
-	    }
+		// Вычисление начальной позиции для трассировки луча
+		const Vec3 eyeOffsetView = pControlledActor->GetStanceInfo(pControlledActor->GetStance())->viewOffset;
+		const Vec3 start = (pControlledActor->GetBaseMtx() * eyeOffsetView + viewParams.position + offsetX);
 
-	    const float oldLen = offsetY.len();
+		// Определение безопасного расстояния от стен для камеры
+		const float wallSafeDistance = 0.3f;
 
-	    // Ray cast to camera with offset position to check colliding
-	    const Vec3 eyeOffsetView = pControlledActor->GetStanceInfo(pControlledActor->GetStance())->viewOffset;
-	    const Vec3 start = (pControlledActor->GetBaseMtx() * eyeOffsetView + viewParams.position + offsetX);
-	    // +offsetZ;// + offsetX;// +offsetZ;
+		// Создание сферы для трассировки луча
+		primitives::sphere sphere;
+		sphere.center = start;
+		sphere.r = wallSafeDistance;
 
-	    const float wallSafeDistance = 0.3f; // how far to keep camera from walls
+		// Переменная для хранения информации о контакте
+		geom_contact* pContact = nullptr;
 
-	    primitives::sphere sphere;
-	    sphere.center = start;
-	    sphere.r = wallSafeDistance;
+		// Выполнение трассировки луча в физическом мире
+		const float hitDist = gEnv->pPhysicalWorld->PrimitiveWorldIntersection(
+			sphere.type, &sphere, offsetY, ent_static | ent_terrain | ent_rigid | ent_sleeping_rigid,
+			&pContact, 0, rwi_stop_at_pierceable, nullptr, nullptr, 0, pSkipEntities, nSkip);
 
-	    geom_contact* pContact = nullptr;
-	    const float hitDist = gEnv->pPhysicalWorld->PrimitiveWorldIntersection(
-	        sphere.type, &sphere, offsetY, ent_static | ent_terrain | ent_rigid | ent_sleeping_rigid,
-	        &pContact, 0, rwi_stop_at_pierceable, nullptr, nullptr, 0, pSkipEntities, nSkip);
+		// Обработка результатов трассировки луча
+		if (hitDist > 0 && pContact)
+		{
+			// Корректировка смещения, если было обнаружено столкновение
+			offsetY = pContact->pt - start;
+			if (offsetY.len() > wallSafeDistance)
+			{
+				offsetY -= offsetY.GetNormalized() * wallSafeDistance;
+			}
+			// Корректировка позиции камеры на основе расстояния до столкновения
+			current.y = current.y * (hitDist / oldLen);
+		}
 
-	    if (hitDist > 0 && pContact /*&& !m_pAbilitiesSystem->trooper.isCeiling*/)
-	    {
-	        offsetY = pContact->pt - start;
-	        if (offsetY.len() > 0.3f)
-	        {
-	            offsetY -= offsetY.GetNormalized() * 0.3f;
-	        }
-	        current.y = current.y * (hitDist / oldLen);
-	    }
-
-        viewParams.position += (offsetX + offsetY + offsetZ);
-
-        // Конец кода, который я скопипастил из ControlClient.cpp
+		// Обновление позиции камеры с учетом новых смещений
+		viewParams.position += (offsetX + offsetY + offsetZ);
     }
 
 	viewParams.rotation = m_pLocalDude->GetViewQuatFinal();
@@ -1056,10 +1030,11 @@ void CTOSMasterClient::PrepareDude(const bool toStartControl, const uint dudeFla
 			const Quat slaveRot = m_pSlaveEntity->GetWorldRotation();
 
 			m_pLocalDude->GetEntity()->SetWorldTM(Matrix34::CreateTranslationMat(slavePos), 0);
-			m_pLocalDude->GetEntity()->SetRotation(slaveRot);
 
 			// Привязка работает от клиента к серверу без исп. RMI
-			m_pSlaveEntity->AttachChild(m_pLocalDude->GetEntity(), IEntity::ATTACHMENT_KEEP_TRANSFORMATION);
+			m_pSlaveEntity->AttachChild(m_pLocalDude->GetEntity(), ENTITY_XFORM_USER | IEntity::ATTACHMENT_KEEP_TRANSFORMATION);
+		
+			m_pLocalDude->SetViewRotation(slaveRot);
 		}
 
 		IInventory* pInventory = m_pLocalDude->GetInventory();

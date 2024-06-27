@@ -28,7 +28,7 @@ void CTOSMasterModule::InitCVars(IConsole* pConsole)
 	pConsole->Register("tos_cl_nanosuitSoundsVersion", &tos_cl_nanosuitSoundsVersion, 1, VF_NOT_NET_SYNCED,
 		"Version of nanosuit sounds. \n 1 - from Crysis 1, \n 2 - from Crysis 2");
 
-	pConsole->Register("tos_sv_SlaveSpawnDelay", &tos_sv_SlaveSpawnDelay, 0.03f, VF_CHEAT, 
+	pConsole->Register("tos_sv_SlaveSpawnDelay", &tos_sv_SlaveSpawnDelay, 0.1f, VF_CHEAT, 
 		"Delay in seconds before slave spawns. \n" 
 		"It is necessary so that the slave cannot appear before the master respawns");
 
