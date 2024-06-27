@@ -1238,32 +1238,44 @@ void CGame::CmdReloadItems(IConsoleCmdArgs *pArgs)
 //------------------------------------------------------------------------
 void CGame::CmdReloadGameRules(IConsoleCmdArgs *pArgs)
 {
-  if (gEnv->bMultiplayer)
-    return;
+  //if (gEnv->bMultiplayer)
+  //  return;
 
-  IGameRulesSystem* pGameRulesSystem = g_pGame->GetIGameFramework()->GetIGameRulesSystem();
-  IGameRules* pGameRules = pGameRulesSystem->GetCurrentGameRules();
-    
-  const char* name = "SinglePlayer";
-  IEntityClass* pEntityClass = 0; 
-  
-  if (pGameRules)    
-  {
-    pEntityClass = pGameRules->GetEntity()->GetClass();
-    name = pEntityClass->GetName();
-  }  
-  else
-    pEntityClass = gEnv->pEntitySystem->GetClassRegistry()->FindClass(name);
+	// Получение интерфейса системы правил игры
+	IGameRulesSystem* pGameRulesSystem = g_pGame->GetIGameFramework()->GetIGameRulesSystem();
 
-  if (pEntityClass)
-  {
-    pEntityClass->LoadScript(true);
-  
-    if (pGameRulesSystem->CreateGameRules(name))
-      CryLog("reloaded GameRules <%s>", name);
-    else
-      GameWarning("reloading GameRules <%s> failed!", name);
-  }  
+	// Получение текущих правил игры
+	IGameRules* pGameRules = pGameRulesSystem->GetCurrentGameRules();
+
+	// Имя класса сущности по умолчанию для одиночной игры
+	const char* name = "SinglePlayer";
+	IEntityClass* pEntityClass = nullptr;
+
+	// Если правила игры уже существуют, получаем класс сущности
+	if (pGameRules) 
+	{
+		pEntityClass = pGameRules->GetEntity()->GetClass();
+		name = pEntityClass->GetName();
+	}
+	else 
+	{
+		// В противном случае ищем класс сущности по имени
+		pEntityClass = gEnv->pEntitySystem->GetClassRegistry()->FindClass(name);
+	}
+
+	// Если класс сущности найден, пытаемся загрузить скрипт и создать правила игры
+	if (pEntityClass) 
+	{
+		pEntityClass->LoadScript(true);
+
+		if (pGameRulesSystem->CreateGameRules(name)) 
+		{
+			CryLog("reloaded GameRules <%s>", name);
+		}
+		else {
+			GameWarning("reloading GameRules <%s> failed!", name);
+		}
+	}
 }
 
 void CGame::CmdNextLevel(IConsoleCmdArgs* pArgs)
