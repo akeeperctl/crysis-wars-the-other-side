@@ -14,6 +14,7 @@
 --
 ----------------------------------------------------------------------------------------------------
 Script.LoadScript("scripts/gamerules/instantaction.lua", 1, 1);
+System.LogAlways("<lua> loading scripts/gamerules/teaminstantaction.lua")
 --------------------------------------------------------------------------
 TeamInstantAction = new(InstantAction);
 TeamInstantAction.States = { "Reset", "PreGame", "InGame", "PostGame", };

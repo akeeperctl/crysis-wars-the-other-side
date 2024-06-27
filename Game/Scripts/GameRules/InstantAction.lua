@@ -14,6 +14,8 @@
 --
 ----------------------------------------------------------------------------------------------------
 Script.LoadScript("scripts/gamerules/singleplayer.lua", 1, 1);
+System.LogAlways("<lua> loading scripts/gamerules/instantaction.lua")
+
 --------------------------------------------------------------------------
 InstantAction = new(SinglePlayer);
 InstantAction.States = { "Reset", "PreGame", "InGame", "PostGame", };
@@ -825,13 +827,18 @@ end
 
 ----------------------------------------------------------------------------------------------------
 function InstantAction:RevivePlayer(channelId, player, keepEquip)
+
 	local result=false;
 	local groupId=player.spawnGroupId;
+
 	local teamId=self.game:GetTeam(player.id);
+	local teamName=self.game:GetTeamName(teamId);
 	
 	if (player:IsDead()) then
 		keepEquip=false;
 	end
+
+	System.LogAlways("<lua> NEW revive player: "..tostring(player:GetName()).." team: "..teamName.." teamId: "..teamId)
 	
 	player.lastExitedVehicleId = nil;
 	player.lastExitedVehicleTime = nil;
@@ -917,7 +924,11 @@ function InstantAction:RevivePlayer(channelId, player, keepEquip)
 			player.actor:SetSpectatorMode(0, NULL_ENTITY);
 		end
 	
-		if not player.actor:GetSlaveId() then
+		--TheOtherSide
+		local isControllingSlave = player.actor:GetSlaveId() ~= nil
+		local willControlSlave = (teamId == 3) and not isControllingSlave
+
+		if not (isControllingSlave or willControlSlave) then
 			
 			if (not keepEquip) then
 				local additionalEquip;
@@ -936,6 +947,10 @@ function InstantAction:RevivePlayer(channelId, player, keepEquip)
 			end
 		end
 
+		if (willControlSlave) then
+			System.LogAlways("<lua>".." player "..tostring(player.id).." will be control slave")
+		end
+		--~TheOtherSide
 		
 		player.death_time=nil;
 		player.frostShooterId=nil;	
