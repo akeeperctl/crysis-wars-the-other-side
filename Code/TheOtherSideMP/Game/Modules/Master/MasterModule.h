@@ -3,10 +3,9 @@
 #include <unordered_map>
 
 #include "../GenericModule.h"
-
 #include "../../TOSGame.h"
-
 #include "TheOtherSideMP/TOSSmartStruct.h"
+#include "IGameRulesSystem.h"
 
 class CTOSMasterClient;
 class CTOSMasterSynchronizer;
@@ -106,7 +105,9 @@ struct STOSStartControlInfo
  * \note \a Мастер - это игрок, контролирующий в данный момент \a раба (в частности пришельца). (консольная команда tos_cl_JoinAsAlien)
  * \note \a Раб - это сущность, которую контролирует \a мастер в данный момент.
  */
-class CTOSMasterModule  : public CTOSGenericModule  // NOLINT(cppcoreguidelines-special-member-functions)
+class CTOSMasterModule  : 
+	public CTOSGenericModule,
+	public IHitListener
 {
 	friend class CTOSMasterSynchronizer;
 
@@ -126,6 +127,12 @@ public:
 	void ReleaseCVars() ;
 	void ReleaseCCommands() ;
 	//ITOSGameModule
+
+	//IHitListener
+	void OnHit(const HitInfo&);
+	void OnExplosion(const ExplosionInfo&) {};
+	void OnServerExplosion(const ExplosionInfo&) {};
+	//~IHitListener
 
 	void Reset();
 

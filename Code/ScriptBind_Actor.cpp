@@ -188,6 +188,8 @@ CScriptBind_Actor::CScriptBind_Actor(ISystem *pSystem)
 	SCRIPT_REG_TEMPLFUNC(SetConsumerEnergy, "energy");
 	SCRIPT_REG_FUNC(GetMasterId);
 	SCRIPT_REG_FUNC(GetSlaveId);
+	SCRIPT_REG_FUNC(IsSlave);
+	SCRIPT_REG_FUNC(IsMaster);
 
 	//~TheOtherSide
 }
@@ -198,6 +200,31 @@ CScriptBind_Actor::~CScriptBind_Actor()
 }
 
 //TheOtherSide
+int CScriptBind_Actor::IsMaster(IFunctionHandler* pH)
+{
+	const auto pActor = dynamic_cast<CTOSActor*>(GetActor(pH));
+	if (!pActor)
+		return pH->EndFunction();
+
+	if (pActor->IsMaster())
+		return pH->EndFunction(1);
+
+	return pH->EndFunction();
+}
+
+int CScriptBind_Actor::IsSlave(IFunctionHandler* pH)
+{
+	const auto pActor = dynamic_cast<CTOSActor*>(GetActor(pH));
+	if (!pActor)
+		return pH->EndFunction();
+
+	if (pActor->IsSlave())
+		return pH->EndFunction(1);
+
+	return pH->EndFunction();
+}
+
+
 int CScriptBind_Actor::GetMasterId(IFunctionHandler* pH)
 {
 	const auto pActor = dynamic_cast<CTOSActor*>(GetActor(pH));

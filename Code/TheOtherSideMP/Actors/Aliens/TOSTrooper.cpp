@@ -38,6 +38,9 @@ void CTOSTrooper::Update(SEntityUpdateContext& ctx, const int updateSlot)
 	NETINPUT_TRACE(GetEntityId(), m_netBodyInfo.desiredSpeed);
 	NETINPUT_TRACE(GetEntityId(), m_netBodyInfo.deltaMov);
 	NETINPUT_TRACE(GetEntityId(), m_netBodyInfo.lookTarget);
+
+	// Трупер не синхрон физику после смерти
+	NETINPUT_TRACE(GetEntityId(), m_currentPhysProfile);
 }
 
 bool CTOSTrooper::NetSerialize(const TSerialize ser, const EEntityAspects aspect, const uint8 profile, const int flags)

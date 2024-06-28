@@ -20,6 +20,7 @@
 #include "TheOtherSideMP/Helpers/TOS_Cache.h"
 #include "TheOtherSideMP/Helpers/TOS_Entity.h"
 #include <stdexcept>
+#include <TheOtherSideMP/Helpers/TOS_NET.h>
 
 CTOSMasterModule::CTOSMasterModule()
 	: tos_cl_JoinAsMaster(0),
@@ -46,7 +47,13 @@ CTOSMasterModule::CTOSMasterModule()
 	m_scheduledTakeControls.clear();
 }
 
-CTOSMasterModule::~CTOSMasterModule() {};
+CTOSMasterModule::~CTOSMasterModule() 
+{
+	if (g_pGame->GetGameRules())
+	{
+		g_pGame->GetGameRules()->RemoveHitListener(this);
+	}
+};
 
 void CTOSMasterModule::Reset()
 {
@@ -83,6 +90,12 @@ void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEven
 	{
 		// 10/10/2023, 18:43 Akeeper: Теперь синхронизаторы нужно спавнить через редактор (заебался я с ними возиться)
 		//CreateSynchonizer<CTOSMasterSynchronizer>("MasterSynchronizer", "TOSMasterSynchronizer");
+
+		if (g_pGame->GetGameRules())
+		{
+			g_pGame->GetGameRules()->AddHitListener(this);
+		}
+
 		break;
 	}
 	//case eEGE_ActorPostInit: no ok on client
@@ -541,6 +554,13 @@ void CTOSMasterModule::MasterAdd(const IEntity* pMasterEntity, const char* slave
 
 			m_masters[id] = info;
 
+			auto pActor = static_cast<CTOSActor*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(id));
+			if (pActor)
+			{
+				pActor->SetMeMaster(true);
+				pActor->GetGameObject()->ChangedNetworkState(TOS_NET::SERVER_ASPECT_STATIC);
+			}
+
 			TOS_RECORD_EVENT(id, STOSGameEvent(eEGE_MasterAdd, "", true));
 		}
 	}
@@ -555,6 +575,14 @@ void CTOSMasterModule::MasterRemove(const IEntity* pMasterEntity)
 			const EntityId id = pMasterEntity->GetId();
 
 			m_masters.erase(id);
+
+			auto pActor = static_cast<CTOSActor*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(id));
+			if (pActor)
+			{
+				pActor->SetMeMaster(false);
+				pActor->GetGameObject()->ChangedNetworkState(TOS_NET::SERVER_ASPECT_STATIC);
+			}
+
 
 			TOS_RECORD_EVENT(id, STOSGameEvent(eEGE_MasterRemove, "", true));
 		}
@@ -606,6 +634,13 @@ void CTOSMasterModule::SetCurrentSlave(const IEntity* pMasterEntity, const IEnti
 
 	m_masters[pMasterEntity->GetId()].slaveId = pSlaveEntity->GetId();
 	m_masters[pMasterEntity->GetId()].flags = masterFlags;
+
+	auto pActor = static_cast<CTOSActor*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pSlaveEntity->GetId()));
+	if (pActor)
+	{
+		pActor->SetMeSlave(true);
+		pActor->GetGameObject()->ChangedNetworkState(TOS_NET::SERVER_ASPECT_STATIC);
+	}
 }
 
 void CTOSMasterModule::ClearCurrentSlave(const IEntity* pMasterEntity)
@@ -614,6 +649,15 @@ void CTOSMasterModule::ClearCurrentSlave(const IEntity* pMasterEntity)
 
 	if (!IsMaster(pMasterEntity))
 		return;
+
+	EntityId slaveId = m_masters[pMasterEntity->GetId()].slaveId;
+
+	auto pActor = static_cast<CTOSActor*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(slaveId));
+	if (pActor)
+	{
+		pActor->SetMeSlave(false);
+		pActor->GetGameObject()->ChangedNetworkState(TOS_NET::SERVER_ASPECT_STATIC);
+	}
 
 	m_masters[pMasterEntity->GetId()].slaveId = 0;
 	m_masters[pMasterEntity->GetId()].flags = 0;

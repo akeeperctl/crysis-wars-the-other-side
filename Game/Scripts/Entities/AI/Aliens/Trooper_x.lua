@@ -1032,193 +1032,176 @@ function Trooper_x:MeleeAttack(entity)
 end
 
 function Trooper_x:GetMeleeDamageImpulse(impulse, dirtype)
-	if (dirtype == 1) then
-		CopyVector(impulse, self:GetDirectionVector(0));
-		NegVector(impulse);
-		FastSumVectors(impulse, impulse, self:GetDirectionVector(1));
-	elseif (dirtype == 2) then
-		CopyVector(impulse, self:GetDirectionVector(0));
-		FastSumVectors(impulse, impulse, self:GetDirectionVector(1));
-	else
-		CopyVector(impulse, self:GetDirectionVector(1));
-	end
-	impulse.z = impulse.z + 0.7;
-	NormalizeVector(impulse);
-	if (dirtype == 4) then
-		-- jump melee
-		ScaleVectorInPlace(impulse, 2);
-		self.melee.damageMultiplier = 1.2;
-	else
-		self.melee.damageMultiplier = 1;
-	end
+    -- Направление импульса зависит от типа атаки (dirtype)
+    if dirtype == 1 then
+        -- Обратное направление с добавлением вертикального компонента
+        CopyVector(impulse, self:GetDirectionVector(0))
+        NegVector(impulse)
+        FastSumVectors(impulse, impulse, self:GetDirectionVector(1))
+    elseif dirtype == 2 then
+        -- Прямое направление с добавлением вертикального компонента
+        CopyVector(impulse, self:GetDirectionVector(0))
+        FastSumVectors(impulse, impulse, self:GetDirectionVector(1))
+    else
+        -- Только вертикальный компонент
+        CopyVector(impulse, self:GetDirectionVector(1))
+    end
+
+    -- Добавляем небольшой подъемный компонент к импульсу
+    impulse.z = impulse.z + 0.7
+    NormalizeVector(impulse)
+
+    -- Если это прыжковая атака, увеличиваем импульс и множитель урона
+    if dirtype == 4 then
+        -- Усиление импульса для прыжковой атаки
+        ScaleVectorInPlace(impulse, 2)
+        self.melee.damageMultiplier = 1.2
+    else
+        -- Стандартный множитель урона для обычной атаки
+        self.melee.damageMultiplier = 1
+    end
 end
+
 
 function Trooper_x:MeleeDamage(impulse, meleeType)
-	local entity = self.AI.meleeTarget;
+    -- Получаем цель для ближнего боя
+    local entity = self.AI.meleeTarget
+    local radius
 
-	local radius;
+    -- Если цель существует
+    if entity then
+        -- Если цель находится в транспортном средстве
+        if entity.vehicle then
+            -- Используем предварительно вычисленный радиус, если он есть
+            if entity.AI.vehicleRadius then
+                radius = entity.AI.vehicleRadius + 2
+            else
+                -- Вычисляем радиус на основе размеров транспортного средства
+                local bbmin, bbmax = entity:GetLocalBBox(Trooper_bbmin_cache, Trooper_bbmax_cache)
+                FastDifferenceVectors(bbmax, bbmax, bbmin)
+                local size = math.max(bbmax.x, bbmax.y) / 2
+                entity.AI.vehicleRadius = size
+                radius = size + 2
+            end
+        else
+            -- Стандартный радиус для ближнего боя
+            radius = 2.5
+        end
 
-	if (entity) then
-		if (entity.vehicle) then
-			if (entity.AI.vehicleRadius) then
-				radius = entity.AI.vehicleRadius + 2;
-			else
-				local bbmin, bbmax = entity:GetLocalBBox(Trooper_bbmin_cache, Trooper_bbmax_cache);
-				FastDifferenceVectors(bbmax, bbmax, bbmin);
-				local size = bbmax.x;
-				local size1 = bbmax.y;
-				if (size1 > size) then
-					size = size1;
-				end
-				size = size / 2;
-				entity.AI.vehicleRadius = size;
-				radius = size + 2;
-			end
-		else
-			radius = 2.5;
-		end
+        -- Получаем позицию сущности и проверяем возможность нанесения урона
+        local pos = self:GetWorldPos()
+        local distance, angle = AI.CheckMeleeDamage(self.id, entity.id, radius, -1.3, 1.3, 150)
 
-		local pos = self:GetWorldPos();
-		local distance, angle = AI.CheckMeleeDamage(self.id, entity.id, radius, -1.3, 1.3, 150);
+        -- Если урон возможен
+        if distance then
+            -- Получаем направление удара
+            local headDir = self.actor:GetHeadDir()
+            local dirX = self:GetDirectionVector(0)
+            local dirY = self:GetDirectionVector(1)
+            local dirZ = self:GetDirectionVector(2)
+            local hitDir = self.melee.meleeDir and FastSumVectors(g_Vectors.temp_v1, headDir, self.melee.meleeDir) or headDir
+            NormalizeVector(hitDir)
 
-		if (distance) then
-			--AI.LogEvent( "Trooper_x:MeleeDamage()" );
-			local headDir = self.actor:GetHeadDir();
-			local dirX = self:GetDirectionVector(0);
-			local dirY = self:GetDirectionVector(1);
-			local dirZ = self:GetDirectionVector(2);
+            -- Рассчитываем позицию удара с учетом смещения
+            local offset = self.melee.damageOffset
+            pos.x = pos.x + dirX.x * offset.x + dirY.x * offset.y + dirZ.x * offset.z
+            pos.y = pos.y + dirX.y * offset.x + dirY.y * offset.y + dirZ.y * offset.z
+            pos.z = pos.z + dirX.z * offset.x + dirY.z * offset.y + dirZ.z * offset.z
 
-			-- if the alien has local meleeDir, blend the head direction and the melee dir.
-			local hitDir = g_Vectors.temp_v1;
-			if (self.melee.meleeDir) then
-				FastSumVectors(hitDir, headDir, self.melee.meleeDir);
-				NormalizeVector(hitDir);
-			else
-				CopyVector(hitDir, headDir);
-			end
+            -- Если правила игры позволяют обработку удара
+            if g_gameRules and g_gameRules.Client then
+                local hit = self.temp_hit
+                hit.pos = pos
+                hit.partId = -1
+                hit.dir = hitDir
+                hit.shooter = self
+                hit.shooterId = self.id
+                hit.weapon = self
+                hit.radius = 0
+                hit.weaponId = self.id
+                hit.type = "melee"
 
-			--			if(not entity.vehicle) then
-			local offset = self.melee.damageOffset;
+                -- Рассчитываем урон в зависимости от типа цели
+                local melee = self.melee
+                if entity.vehicle then
+                    hit.damage = melee.damage * melee.damageMultiplier * self.Properties.Damage.DamageMultipliers.MeleeVehicle
+                elseif entity.Properties and entity.Properties.bNanoSuit == 0 then
+                    hit.damage = melee.damage * 4 -- Смертельный урон без нанокостюма
+                elseif entity == g_localActor then
+                    -- Урон по игроку с учетом его положения
+                    local dir = FastDifferenceVectors(g_Vectors.temp, self:GetWorldPos(), entity:GetWorldPos())
+                    local playerDir = g_localActor.actor:GetHeadDir(g_Vectors.temp_v1)
+                    local dot = dotproduct2d(dir, playerDir)
+                    hit.damage = CalculatePlayerDamage(dot, melee, hit.damage)
+                end
 
-			pos.x = pos.x + dirX.x * offset.x + dirY.x * offset.y + dirZ.x * offset.z;
-			pos.y = pos.y + dirX.y * offset.x + dirY.y * offset.y + dirZ.y * offset.z;
-			pos.z = pos.z + dirX.z * offset.x + dirY.z * offset.y + dirZ.z * offset.z;
-			--			end			
-			-- Debug
-			--AI.SetRefPointPosition(self.id,pos);
-			-- Hit!
-			if (g_gameRules and g_gameRules.Client) then -- and g_gameRules.server.RequestMeleeHit) then
-				local hit     = self.temp_hit;
-				--AI.LogComment( "Trooper_x:MeleeDamage: Hit "..self:GetName().."." );
-				--				if(entity.vehicle) then
-				--					-- vehicle needs the hit position to actually touch it
-				--					local dir = g_Vectors.temp;
-				--					FastDifferenceVectors(dir,entity:GetWorldPos(),pos);
-				--					local	hits = Physics.RayWorldIntersection(pos,dir,1,ent_static+ent_rigid+ent_sleeping_rigid+ent_living,self.id,nil,g_HitTable);
-				--					if( hits >0 ) then
-				--						local firstHit = g_HitTable[1];
-				--						CopyVector(pos,firstHit.pos);
-				--					end
-				--				end
+                -- Устанавливаем цель и идентификатор цели
+                hit.target = entity
+                hit.targetId = entity.id
 
-				hit.pos       = pos;
-				hit.partId    = -1;
-				hit.dir       = hitDir;
-				hit.shooter   = self;
-				hit.shooterId = self.id;
-				hit.weapon    = self;
-				hit.radius    = 0;
-				hit.weaponId  = self.id;
-				hit.type      = "melee";
+                -- Устанавливаем нормаль удара
+                hit.normal = hit.normal or {}
+                CopyVector(hit.normal, hitDir)
+                NegVector(hit.normal)
 
-				local melee   = self.melee;
-				if (entity.vehicle) then
-					hit.damage = melee.damage * melee.damageMultiplier;
-					hit.damage = hit.damage * self.Properties.Damage.DamageMultipliers.MeleeVehicle;
-				elseif (entity.Properties and entity.Properties.bNanoSuit == 0) then
-					hit.damage = melee.damage * 4; --make melee deadly when there's no nanosuit
-				elseif (entity == g_localActor) then
-					-- normal melee against player
-					local dir = g_Vectors.temp;
-					FastDifferenceVectors(dir, self:GetWorldPos(), entity:GetWorldPos());
-					local playerDir = g_Vectors.temp_v1;
-					g_localActor.actor:GetHeadDir(playerDir);
-					local dot = dotproduct2d(dir, playerDir);
-					-- check where's the trooper in player fov, more on the back = less damage
-					if (dot < 0) then
-						hit.damage = melee.damageSmall;
-					elseif (dot > 0.7) then
-						hit.damage = melee.damage * melee.damageMultiplier;
-						-- frontal hit, display scratches on visor
-						-- LUC TO DO: Disabled, waiting for Tiago's procedural FX
-						--						if(not meleeType) then
-						--							meleeType = 1;
-						--						end
-						--						local effectId = MaterialEffects.GetEffectIdByName("player_fx", self.melee.effect[meleeType]);
-						--		  			if (effectId ~= MFX_INVALID_EFFECTID) then
-						--		    			spawned = MaterialEffects.ExecuteEffect(effectId, {pos=entity:GetWorldPos()});		
-						--		  			end
-					else
-						hit.damage = melee.damage * (melee.damageSmall + (melee.damage - melee.damageSmall) * dot / 0.7) *
-						self.melee.damageMultiplier;
-					end
-				end
+                -- Обрабатываем удар
+                g_gameRules.Server.OnHit(g_gameRules, hit, false)
+                g_gameRules.Client.OnHit(g_gameRules, hit, false)
 
-				hit.target = entity;
-				hit.targetId = entity.id;
+                -- Воспроизводим звук удара и вызываем эффекты
+                self:PlayMeleeSoundAndEffects(entity, impulse, radius, distance)
 
-				hit.normal = hit.normal or {};
-				CopyVector(hit.normal, hitDir);
-				NegVector(hit.normal);
-
-				--g_gameRules.server:RequestMeleeHit(hit.shooter.id, hit.shooter.id, hit.target.id, 0, hit.pos);
-				g_gameRules.Server.OnHit(g_gameRules, hit, false);
-				g_gameRules.Client.OnHit(g_gameRules, hit, false);
-				--				self:MeleeCustom(entity,pos,hitDir);
-
-				-- TO DO: replace with Script bind actor.MeleeEffect() (using material)
-				-- for all targets
-				if (entity == g_localActor) then
-					self:PlaySoundEvent("sounds/physics:bullet_impact:mat_armor_fp", g_Vectors.v000, g_Vectors.v010,
-						SOUND_2D, SOUND_SEMANTIC_PLAYER_FOLEY);
-				end
-
-				if (entity.actor and entity.actor:IsPlayer()) then
-					local targetPos = g_Vectors.temp_v2;
-					entity:GetPos(targetPos);
-					--					local distance = math.sqrt(distance2);
-					entity:AddImpulse(-1, targetPos, impulse, 300 + (radius - distance) * 100, 1);
-
-					local dotSide = dotproduct2d(impulse, entity:GetDirectionVector(0));
-					local angImp = g_Vectors.temp_v3;
-					angImp.x = randomF(-0.3, -0.2);
-					angImp.y = 0;
-					angImp.z = -dotSide * math.pi * (0.35 + 0.1 * distance / radius);
-					entity.actor:AddAngularImpulse(angImp, 0.0, 0.4);
-
-					entity.actor:CameraShake(45, 0.3, 0.13, g_Vectors.v000);
-
-					local energy = entity.actor:GetNanoSuitEnergy();
-					if (energy ~= 0) then
-						entity.actor:SetNanoSuitEnergy(energy - 0.2 * NANOSUIT_ENERGY);
-					end
-				elseif (entity.vehicle and entity:IsEntityOnVehicle(g_localActor.id)) then
-					-- player is on the meleed vehicle
-					-- TO DO: improve with linear shake rather than angular
-					g_localActor.actor:CameraShake(random(20, 30), 0.2, 0.13, g_Vectors.v000);
-				end
-
-				--TheOtherSide
-				self.allClients:ClMeleeHit(entity.id);
-				--~TheOtherSide
-
-				self:SelectPipe(0, "tr_end_melee");
-			end
-		end
-		--	else
-		--		AI.LogEvent( "BasicAlien:MeleeDamage: no entities on radius ");
-	end
+                -- Завершаем атаку
+                self:SelectPipe(0, "tr_end_melee")
+            end
+        end
+    end
 end
+
+-- Вспомогательная функция для расчета урона по игроку
+function CalculatePlayerDamage(dot, melee, baseDamage)
+    if dot < 0 then
+        return melee.damageSmall
+    elseif dot > 0.7 then
+        return melee.damage * melee.damageMultiplier
+    else
+        return melee.damage * (melee.damageSmall + (melee.damage - melee.damageSmall) * dot / 0.7) * melee.damageMultiplier
+    end
+end
+
+-- Вспомогательная функция для воспроизведения звука и эффектов удара
+function Trooper_x:PlayMeleeSoundAndEffects(entity, impulse, radius, distance)
+    if entity == g_localActor then
+        self:PlaySoundEvent("sounds/physics:bullet_impact:mat_armor_fp", g_Vectors.v000, g_Vectors.v010, SOUND_2D, SOUND_SEMANTIC_PLAYER_FOLEY)
+    end
+
+    if entity.actor and entity.actor:IsPlayer() then
+        ApplyPlayerImpulse(entity, impulse, radius, distance)
+    elseif entity.vehicle and entity:IsEntityOnVehicle(g_localActor.id) then
+        g_localActor.actor:CameraShake(random(20, 30), 0.2, 0.13, g_Vectors.v000)
+    end
+end
+
+-- Вспомогательная функция для применения импульса к игроку
+function ApplyPlayerImpulse(entity, impulse, radius, distance)
+    local targetPos = entity:GetPos(g_Vectors.temp_v2)
+    entity:AddImpulse(-1, targetPos, impulse, 300 + (radius - distance) * 100, 1)
+
+    local dotSide = dotproduct2d(impulse, entity:GetDirectionVector(0))
+    local angImp = g_Vectors.temp_v3
+    angImp.x = randomF(-0.3, -0.2)
+    angImp.y = 0
+    angImp.z = -dotSide * math.pi * (0.35 + 0.1 * distance / radius)
+    entity.actor:AddAngularImpulse(angImp, 0.0, 0.4)
+
+    entity.actor:CameraShake(45, 0.3, 0.13, g_Vectors.v000)
+
+    local energy = entity.actor:GetNanoSuitEnergy()
+    if energy ~= 0 then
+        entity.actor:SetNanoSuitEnergy(energy - 0.2 * NANOSUIT_ENERGY)
+    end
+end
+
 
 -- Функция вызывается при срабатывании таймера
 function Trooper_x.Client:OnTimer(timerId, mSec)
@@ -1239,6 +1222,12 @@ function Trooper_x.Client:OnTimer(timerId, mSec)
         CopyVector(r, AI.GetRefPointPosition(self.id));
         Trooper_Jump(self, r, false, false, -15, true);
     elseif (timerId == TROOPER_DEPHYSICALIZE_TIMER) then
+		--TheOtherSide
+		if (self.actor:IsSlave()) then
+			return
+		end
+		--TheOtherSide
+
         -- Дефизикализация актёра, если он двигается медленно
         if (self:GetSpeed() < 0.3) then
             -- Условие для помещений или навигации по точкам

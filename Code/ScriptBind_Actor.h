@@ -38,6 +38,8 @@ public:
 	void AttachTo(CActor *pActor);
 
 	//TheOtherSide
+	virtual int IsMaster(IFunctionHandler *pH);
+	virtual int IsSlave(IFunctionHandler *pH);
 	virtual int GetMasterId(IFunctionHandler *pH);
 	virtual int GetSlaveId(IFunctionHandler *pH);
 	virtual int GetConsumerEnergy(IFunctionHandler* pH);

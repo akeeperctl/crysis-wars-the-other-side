@@ -2143,12 +2143,13 @@ void CActor::ProfileChanged( uint8 newProfile )
 	}
 }
 
-bool CActor::NetSerialize( TSerialize ser, EEntityAspects aspect, uint8 profile, int pflags )
+// Функция NetSerialize сериализует состояние актёра для сетевой синхронизации.
+bool CActor::NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int pflags)
 {
+	// Обрабатываем только физический аспект сущности.
 	if (aspect == eEA_Physics)
 	{
-		uint8 currentProfile = 255;
-
+		// Определяем тип физической сущности на основе профиля.
 		pe_type type = PE_NONE;
 		switch (profile)
 		{
@@ -2156,63 +2157,68 @@ bool CActor::NetSerialize( TSerialize ser, EEntityAspects aspect, uint8 profile,
 			type = PE_NONE;
 			break;
 		case eAP_Spectator:
-			type = PE_LIVING;
-			break;
 		case eAP_Alive:
 			type = PE_LIVING;
 			break;
 		case eAP_Sleep:
+		case eAP_Ragdoll:
 			type = PE_ARTICULATED;
 			break;
 		case eAP_Frozen:
 			type = PE_RIGID;
 			break;
-		case eAP_Ragdoll:
-			type = PE_ARTICULATED;
-			break;
-		case eAP_Linked: 	//if actor is attached to a vehicle - don't serialize actor physics additionally
+		case eAP_Linked:
+			// Если актёр привязан к транспортному средству, дополнительная сериализация физики не требуется.
 			return true;
-			break;
 		default:
+			// Неизвестный профиль - сериализация не выполняется.
 			return false;
 		}
 
-		// TODO: remove this when craig fixes it in the network system
-		if (profile==eAP_Spectator)
+		// Временный код: пропускаем неиспользуемые значения до исправления в сетевой системе.
+		if (profile == eAP_Spectator)
 		{
-			int x=0;	
-			ser.Value("unused", x, 'skip');
+			int unused = 0;
+			ser.Value("unused", unused, 'skip');
 		}
-		else if (profile==eAP_Sleep)
+		else if (profile == eAP_Sleep)
 		{
-			int x=0;	
-			ser.Value("unused1", x, 'skip');
-			ser.Value("unused2", x, 'skip');
+			int unused1 = 0;
+			int unused2 = 0;
+			ser.Value("unused1", unused1, 'skip');
+			ser.Value("unused2", unused2, 'skip');
 		}
 
+		// Сериализуем массу актёра, необходимую для физикализации.
+		ser.Value("ActorMass", GetActorStats()->mass, 'aMas');
 
-		ser.Value("ActorMass", GetActorStats()->mass, 'aMas');  //needed for physicalization
-
+		// Если тип физической сущности не определён, завершаем сериализацию.
 		if (type == PE_NONE)
 			return true;
 
-		IEntityPhysicalProxy * pEPP = (IEntityPhysicalProxy *) GetEntity()->GetProxy(ENTITY_PROXY_PHYSICS);
+		// Получаем физический прокси сущности.
+		IEntityPhysicalProxy* pEPP = static_cast<IEntityPhysicalProxy*>(GetEntity()->GetProxy(ENTITY_PROXY_PHYSICS));
+
+		// Если мы записываем данные и физическая сущность отсутствует или не соответствует типу, сериализуем "мусор".
 		if (ser.IsWriting())
 		{
 			if (!pEPP || !pEPP->GetPhysicalEntity() || pEPP->GetPhysicalEntity()->GetType() != type)
 			{
-				gEnv->pPhysicalWorld->SerializeGarbageTypedSnapshot( ser, type, 0 );
+				gEnv->pPhysicalWorld->SerializeGarbageTypedSnapshot(ser, type, 0);
 				return true;
 			}
 		}
 		else if (!pEPP)
 		{
+			// Если физический прокси отсутствует, сериализация не выполняется.
 			return false;
 		}
 
-		pEPP->SerializeTyped( ser, type, pflags );
+		// Выполняем типизированную сериализацию физического прокси.
+		pEPP->SerializeTyped(ser, type, pflags);
 	}
 
+	// Сериализация успешно выполнена.
 	return true;
 }
 

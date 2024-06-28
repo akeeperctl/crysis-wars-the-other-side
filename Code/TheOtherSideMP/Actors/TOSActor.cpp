@@ -28,6 +28,7 @@ CTOSActor::CTOSActor()
 	m_isSlave(false),
 	m_isMaster(false),
 	m_chargingJump(false),
+	m_lastShooterId(0),
 	m_pEnergyConsumer(nullptr)
 {
 	
@@ -170,9 +171,19 @@ bool CTOSActor::NetSerialize(TSerialize ser, const EEntityAspects aspect, const 
 	if (!CActor::NetSerialize(ser,aspect,profile,flags))
 		return false;
 
-	//if (m_pEnergyConsumer->NetSerialize(ser,aspect, profile, flags))
-	//{
-	//}
+	if (aspect == TOS_NET::SERVER_ASPECT_STATIC)
+	{
+		// Персонаж мастера всегда должен быть невидим
+		ser.Value("is_master", m_isMaster, 'bool');
+		ser.Value("is_slave", m_isSlave, 'bool');
+
+		if (ser.IsReading())
+		{
+			HideMe(m_isMaster);
+		}
+
+	}
+
 
 	return true;
 }
@@ -267,8 +278,8 @@ void CTOSActor::Update(SEntityUpdateContext& ctx, const int updateSlot)
 	//	svTeamId = g_pGame->GetGameRules()->GetTeam(GetEntityId());
 	//}
 
-	//NETINPUT_TRACE(GetEntityId(), clTeamId);
-	//NETINPUT_TRACE(GetEntityId(), svTeamId);
+	NETINPUT_TRACE(GetEntityId(), m_isMaster);
+	NETINPUT_TRACE(GetEntityId(), m_isSlave);
 }
 
 void CTOSActor::Release()
@@ -307,6 +318,7 @@ void CTOSActor::Revive(const bool fromInit)
 			SetAngles(Ang3(m_lastSpawnPointRotation));
 		}
 
+		// Не уверен что это на что-то влияет
 		SAnimatedCharacterParams params = m_pAnimatedCharacter->GetParams();
 		params.flags &= ~eACF_EnableMovementProcessing;
 		params.flags |= eACF_NoLMErrorCorrection;
@@ -648,31 +660,71 @@ bool CTOSActor::UpdateLastMPSpawnPointRotation(const Quat& rotation)
 	return true;
 }
 
-void CTOSActor::NetMarkMeSlave(const bool slave) const
+bool CTOSActor::UpdateLastShooterId(const EntityId id)
 {
-	CRY_ASSERT_MESSAGE(!IsPlayer(), "[MarkMeSlave] by design at 21/10/2023 the player cannot be a slave");
-	if (IsPlayer())
-		return;
+	m_lastShooterId = id;
 
-	if (gEnv->bClient)
-	{
-		NetMarkMeParams params;
-		params.value = slave;
-
-		GetGameObject()->InvokeRMI(SvRequestMarkMeAsSlave(), params, eRMI_ToServer);
-	}
+	return true;
 }
 
-void CTOSActor::NetMarkMeMaster(const bool master) const
+bool CTOSActor::HideMe(bool value)
 {
-	if (gEnv->bClient)
+	SActorStats* pActorStats = GetActorStats();
+	if (pActorStats)
 	{
-		NetMarkMeParams params;
-		params.value = master;
+		pActorStats->isHidden = value;
 
-		GetGameObject()->InvokeRMI(SvRequestMarkMeAsMaster(), params, eRMI_ToServer);
+		uint32 slotFlags = GetEntity()->GetSlotFlags(0);
+
+		if (value)
+			slotFlags &= ~ENTITY_SLOT_RENDER;
+		else
+			slotFlags |= ENTITY_SLOT_RENDER;
+
+		GetEntity()->SetSlotFlags(0, slotFlags);
+		return true;
 	}
+
+	return false;
 }
+
+bool CTOSActor::SetMeSlave(bool value)
+{
+	m_isSlave = value;
+	return true;
+}
+
+bool CTOSActor::SetMeMaster(bool value)
+{
+	m_isMaster = value;
+	return true;
+}
+
+//void CTOSActor::NetMarkMeSlave(const bool slave) const
+//{
+//	CRY_ASSERT_MESSAGE(!IsPlayer(), "[MarkMeSlave] by design at 21/10/2023 the player cannot be a slave");
+//	if (IsPlayer())
+//		return;
+//
+//	if (gEnv->bClient)
+//	{
+//		NetMarkMeParams params;
+//		params.value = slave;
+//
+//		GetGameObject()->InvokeRMI(SvRequestMarkMeAsSlave(), params, eRMI_ToServer);
+//	}
+//}
+//
+//void CTOSActor::NetMarkMeMaster(const bool master) const
+//{
+//	if (gEnv->bClient)
+//	{
+//		NetMarkMeParams params;
+//		params.value = master;
+//
+//		GetGameObject()->InvokeRMI(SvRequestMarkMeAsMaster(), params, eRMI_ToServer);
+//	}
+//}
 
 //const Vec3& CTOSActor::FilterDeltaMovement(const Vec3& deltaMov)
 //{
@@ -747,73 +799,76 @@ IMPLEMENT_RMI(CTOSActor, ClPlayAnimation)
 	return true;
 }
 
-IMPLEMENT_RMI(CTOSActor, SvRequestMarkMeAsMaster)
-{
-	// Описываем здесь всё, что будет выполняться на сервере
-
-	m_isMaster = params.value;
-	GetGameObject()->InvokeRMI(ClMarkMeAsMaster(), params, eRMI_ToAllClients);
-
-	CryLog("[C++][%s][%s][%s][%s] mark as master = %i",
-		TOS_Debug::GetEnv(),
-		TOS_Debug::GetAct(3),
-		__FUNCTION__,
-		m_debugName,
-		params.value);
-
-
-	return true;
-}
-
-IMPLEMENT_RMI(CTOSActor, ClMarkMeAsMaster)
-{
-	// Описываем здесь всё, что будет выполняться на клиенте
-
-	m_isMaster = params.value;
-
-	CryLog("[C++][%s][%s][%s][%s] mark as master = %i",
-		TOS_Debug::GetEnv(),
-		TOS_Debug::GetAct(3),
-		__FUNCTION__,
-		m_debugName,
-		params.value);
-
-	return true;
-}
-
-IMPLEMENT_RMI(CTOSActor, SvRequestMarkMeAsSlave)
-{
-	// Описываем здесь всё, что будет выполняться на сервере
-
-	m_isSlave = params.value;
-	GetGameObject()->InvokeRMI(ClMarkMeAsSlave(), params, eRMI_ToAllClients);
-
-	CryLog("[C++][%s][%s][%s][%s] mark as slave = %i",
-		TOS_Debug::GetEnv(),
-		TOS_Debug::GetAct(3),
-		__FUNCTION__,
-		m_debugName,
-		params.value);
-	
-
-	return true;
-}
-
-IMPLEMENT_RMI(CTOSActor, ClMarkMeAsSlave)
-{
-	// Описываем здесь всё, что будет выполняться на клиенте
-
-	m_isSlave = params.value;
-
-	CryLog("[C++][%s][%s][%s][%s] mark as slave = %i",
-		TOS_Debug::GetEnv(),
-		TOS_Debug::GetAct(3),
-		__FUNCTION__,
-		m_debugName,
-		params.value);
-
-	return true;
-}
+//IMPLEMENT_RMI(CTOSActor, SvRequestMarkMeAsMaster)
+//{
+//	// Описываем здесь всё, что будет выполняться на сервере
+//
+//	m_isMaster = params.value;
+//	GetGameObject()->InvokeRMI(ClMarkMeAsMaster(), params, eRMI_ToAllClients);
+//
+//	GetGameObject()->ChangedNetworkState(TOS_NET::SERVER_ASPECT_STATIC);
+//
+//	CryLog("[C++][%s][%s][%s][%s] mark as master = %i",
+//		TOS_Debug::GetEnv(),
+//		TOS_Debug::GetAct(3),
+//		__FUNCTION__,
+//		m_debugName,
+//		params.value);
+//
+//
+//	return true;
+//}
+//
+//IMPLEMENT_RMI(CTOSActor, ClMarkMeAsMaster)
+//{
+//	// Описываем здесь всё, что будет выполняться на клиенте
+//
+//	m_isMaster = params.value;
+//
+//	CryLog("[C++][%s][%s][%s][%s] mark as master = %i",
+//		TOS_Debug::GetEnv(),
+//		TOS_Debug::GetAct(3),
+//		__FUNCTION__,
+//		m_debugName,
+//		params.value);
+//
+//	return true;
+//}
+//
+//IMPLEMENT_RMI(CTOSActor, SvRequestMarkMeAsSlave)
+//{
+//	// Описываем здесь всё, что будет выполняться на сервере
+//
+//	m_isSlave = params.value;
+//
+//	GetGameObject()->ChangedNetworkState(TOS_NET::SERVER_ASPECT_STATIC);
+//
+//	CryLog("[C++][%s][%s][%s][%s] mark as slave = %i",
+//		TOS_Debug::GetEnv(),
+//		TOS_Debug::GetAct(3),
+//		__FUNCTION__,
+//		m_debugName,
+//		params.value);
+//	
+//
+//	return true;
+//}
+//
+//IMPLEMENT_RMI(CTOSActor, ClMarkMeAsSlave)
+//{
+//	// Описываем здесь всё, что будет выполняться на клиенте
+//
+//	m_isSlave = params.value;
+//
+//	CryLog("[C++][%s][%s][%s][%s] mark as slave = %i",
+//		TOS_Debug::GetEnv(),
+//		TOS_Debug::GetAct(3),
+//		__FUNCTION__,
+//		m_debugName,
+//		params.value);
+//
+//	return true;
+//}
 
 IMPLEMENT_RMI(CTOSActor, SvRequestHideMe)
 {
@@ -834,24 +889,6 @@ IMPLEMENT_RMI(CTOSActor, ClMarkHideMe)
 {
 	// Описываем здесь всё, что будет выполняться на клиенте
 
-	SActorStats* pActorStats = GetActorStats();
-	if (pActorStats)
-	{
-		//const auto* pFists = dynamic_cast<CFists*>(GetItemByClass(CItem::sFistsClass));
-		//if (pFists)
-		//	g_pGame->GetIGameFramework()->GetIItemSystem()->SetActorItem(this, pFists->GetEntityId());
-
-		pActorStats->isHidden = params.hide;
-
-		uint32 slotFlags = GetEntity()->GetSlotFlags(0);
-
-		if (params.hide)
-			slotFlags |= ENTITY_SLOT_RENDER;
-		else
-			slotFlags &= ~ENTITY_SLOT_RENDER;
-
-		GetEntity()->SetSlotFlags(0, slotFlags);
-	}
-
+	HideMe(params.hide);
 	return true;
 }

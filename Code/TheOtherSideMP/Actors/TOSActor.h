@@ -179,6 +179,9 @@ class CTOSActor:
 	public ITOSMasterControllable  // NOLINT(cppcoreguidelines-special-member-functions)
 {
 public:
+
+	friend class CTOSMasterModule;
+
 	enum MPTimers
 	{
 		eMPTIMER_GIVEWEAPONDELAY = 0x110,
@@ -267,31 +270,40 @@ public:
 	bool IsHaveChargingJump() const {return m_chargingJump;}
 
 	bool UpdateLastMPSpawnPointRotation(const Quat& rotation);
+	bool UpdateLastShooterId(const EntityId id);
+
+protected:
+	// Сделать мастером или рабом на стороне сервера
+	bool SetMeSlave(bool value);
+	bool SetMeMaster(bool value);
 
 private:
+	// Скрыть актера на стороне клиента
+	bool HideMe(bool value);
 
 	string m_debugName;
 	string m_sLastNetworkedAnim;
 
 	Quat m_lastSpawnPointRotation;
+	EntityId m_lastShooterId;
 
-	bool m_isSlave; // сериализованное по сети через RMI значение, является ли актёр рабом
-	bool m_isMaster; // сериализованное по сети через RMI значение, является ли актёр мастером
+	bool m_isSlave; // сериализованное по сети значение, является ли актёр рабом
+	bool m_isMaster; // сериализованное по сети значение, является ли актёр мастером
 
 	// Зафиксировать на всех клиентах и сервере, что данный актёр стал рабом. Вызывать только с клиента!
-	void NetMarkMeSlave(bool slave) const;
+	//void NetMarkMeSlave(bool slave) const;
 
 	// Зафиксировать на всех клиентах и сервере, что данный актёр стал master. Вызывать только с клиента!
-	void NetMarkMeMaster(bool master) const;
+	//void NetMarkMeMaster(bool master) const;
 
 	DECLARE_SERVER_RMI_NOATTACH(SvRequestPlayAnimation, NetPlayAnimationParams, eNRT_ReliableOrdered);
 	DECLARE_CLIENT_RMI_NOATTACH(ClPlayAnimation, NetPlayAnimationParams, eNRT_ReliableOrdered);
 
-	DECLARE_SERVER_RMI_NOATTACH(SvRequestMarkMeAsSlave, NetMarkMeParams, eNRT_ReliableOrdered);
-	DECLARE_CLIENT_RMI_NOATTACH(ClMarkMeAsSlave, NetMarkMeParams, eNRT_ReliableOrdered);	
-	
-	DECLARE_SERVER_RMI_NOATTACH(SvRequestMarkMeAsMaster, NetMarkMeParams, eNRT_ReliableOrdered);
-	DECLARE_CLIENT_RMI_NOATTACH(ClMarkMeAsMaster, NetMarkMeParams, eNRT_ReliableOrdered);
+	//DECLARE_SERVER_RMI_NOATTACH(SvRequestMarkMeAsSlave, NetMarkMeParams, eNRT_ReliableOrdered);
+	//DECLARE_CLIENT_RMI_NOATTACH(ClMarkMeAsSlave, NetMarkMeParams, eNRT_ReliableOrdered);	
+	//
+	//DECLARE_SERVER_RMI_NOATTACH(SvRequestMarkMeAsMaster, NetMarkMeParams, eNRT_ReliableOrdered);
+	//DECLARE_CLIENT_RMI_NOATTACH(ClMarkMeAsMaster, NetMarkMeParams, eNRT_ReliableOrdered);
 
 	DECLARE_SERVER_RMI_NOATTACH(SvRequestHideMe, NetHideMeParams, eNRT_ReliableOrdered);
 	DECLARE_CLIENT_RMI_NOATTACH(ClMarkHideMe, NetHideMeParams, eNRT_ReliableOrdered);

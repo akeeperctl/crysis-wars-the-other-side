@@ -864,8 +864,8 @@ bool CTOSMasterClient::SetSlaveEntity(IEntity* pEntity, const char* cls)
 	const auto pSlaveActor = GetSlaveActor();
 	assert(pSlaveActor);
 
-	pSlaveActor->NetMarkMeSlave(true);
-	m_pLocalDude->NetMarkMeMaster(true);
+	//pSlaveActor->NetMarkMeSlave(true);
+	//m_pLocalDude->NetMarkMeMaster(true);
 
 	TOS_RECORD_EVENT(m_pSlaveEntity->GetId(), STOSGameEvent(eEGE_MasterClientOnSetSlave, "", true));
 	return true;
@@ -876,12 +876,11 @@ void CTOSMasterClient::ClearSlaveEntity()
 	const auto pSlaveActor = GetSlaveActor();
 	if (!pSlaveActor)
 		return;
-
 	// 21/10/2023, 14:40
 	// В сетевой игре раб будет удаляться только при переходе в режим зрителя или выходе мастера из игры.
 	// Во всех остальных случаях раб удаляться не будет.
-	pSlaveActor->NetMarkMeSlave(false);
-	m_pLocalDude->NetMarkMeMaster(false);
+	//pSlaveActor->NetMarkMeSlave(false);
+	//m_pLocalDude->NetMarkMeMaster(false);
 
 	m_pSlaveEntity = nullptr;
 	TOS_RECORD_EVENT(0, STOSGameEvent(eEGE_MasterClientOnClearSlave, "", true));

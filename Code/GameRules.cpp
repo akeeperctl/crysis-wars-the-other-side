@@ -413,7 +413,7 @@ void CGameRules::ProcessEvent(SEntityEvent& event)
 		m_removals.clear();
 
 	//TheOtherSide
-		TOS_RECORD_EVENT(GetEntityId(), STOSGameEvent(eEGE_GamerulesReset, "", false));
+		TOS_RECORD_EVENT(GetEntityId(), STOSGameEvent(eEGE_GamerulesReset, "", true));
 	//~TheOtherSide
 
 		break;
@@ -430,16 +430,14 @@ void CGameRules::ProcessEvent(SEntityEvent& event)
 		}
 
 	//TheOtherSide
-		TOS_RECORD_EVENT(GetEntityId(), STOSGameEvent(eEGE_GamerulesStartGame, "", false));
+		TOS_RECORD_EVENT(GetEntityId(), STOSGameEvent(eEGE_GamerulesStartGame, "", true));
 	//~TheOtherSide
-
 		break;
 
 	//TheOtherSide
-
-	case ENTITY_EVENT_INIT:TOS_RECORD_EVENT(GetEntityId(), STOSGameEvent(eEGE_GamerulesEventInit, "", false));
+	case ENTITY_EVENT_INIT:
+		TOS_RECORD_EVENT(GetEntityId(), STOSGameEvent(eEGE_GamerulesEventInit, "", true));
 		break;
-
 	//~TheOtherSide
 
 	case ENTITY_EVENT_ENTER_SCRIPT_STATE:
