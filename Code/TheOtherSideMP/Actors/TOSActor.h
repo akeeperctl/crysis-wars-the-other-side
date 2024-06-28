@@ -266,15 +266,23 @@ public:
 	virtual CTOSEnergyConsumer* GetEnergyConsumer() const;
 	bool IsHaveChargingJump() const {return m_chargingJump;}
 
+	bool UpdateLastMPSpawnPointRotation(const Quat& rotation);
+
 private:
 
-	//std::list<SQueuedAnimEvent> m_AnimEventQueue;
+	string m_debugName;
 	string m_sLastNetworkedAnim;
-	bool m_isSlave;///< сериализованное по сети через RMI значение, является ли актёр рабом
-	bool m_isMaster;///< сериализованное по сети через RMI значение, является ли актёр мастером
 
-	void NetMarkMeSlave(bool slave) const;///< Зафиксировать на всех клиентах и сервере, что данный актёр стал рабом. \n Вызывать только с клиента!
-	void NetMarkMeMaster(bool master) const;///< Зафиксировать на всех клиентах и сервере, что данный актёр стал master. \n Вызывать только с клиента!
+	Quat m_lastSpawnPointRotation;
+
+	bool m_isSlave; // сериализованное по сети через RMI значение, является ли актёр рабом
+	bool m_isMaster; // сериализованное по сети через RMI значение, является ли актёр мастером
+
+	// Зафиксировать на всех клиентах и сервере, что данный актёр стал рабом. Вызывать только с клиента!
+	void NetMarkMeSlave(bool slave) const;
+
+	// Зафиксировать на всех клиентах и сервере, что данный актёр стал master. Вызывать только с клиента!
+	void NetMarkMeMaster(bool master) const;
 
 	DECLARE_SERVER_RMI_NOATTACH(SvRequestPlayAnimation, NetPlayAnimationParams, eNRT_ReliableOrdered);
 	DECLARE_CLIENT_RMI_NOATTACH(ClPlayAnimation, NetPlayAnimationParams, eNRT_ReliableOrdered);
@@ -289,7 +297,6 @@ private:
 	DECLARE_CLIENT_RMI_NOATTACH(ClMarkHideMe, NetHideMeParams, eNRT_ReliableOrdered);
 
 protected:
-	string m_name;
 	bool m_chargingJump;///< Если *true, то высота прыжка зависит от длительности нажатия на дейсвие прыжка [jump]
 
 	STOSSlaveStats m_slaveStats;

@@ -44,7 +44,7 @@ bool CTOSActor::Init(IGameObject* pGameObject)
 	assert(m_pEnergyConsumer);
 	m_pEnergyConsumer->Reset();
 
-	m_name = GetEntity()->GetName();
+	m_debugName = GetEntity()->GetName();
 
 	return true;
 }
@@ -68,7 +68,7 @@ void CTOSActor::PostInit(IGameObject* pGameObject)
 	// Но к сожалению это не позволяет включить PrePhysicsUpdate в одиночной игре 
 	// отравки запроса на движение в MasterClient. 
 	GetGameObject()->EnablePrePhysicsUpdate(ePPU_Always);
-	m_name = GetEntity()->GetName();
+	m_debugName = GetEntity()->GetName();
 }
 
 void CTOSActor::InitClient(const int channelId)
@@ -302,9 +302,21 @@ void CTOSActor::Revive(const bool fromInit)
 			GetGameObject()->InvokeRMI(ClMarkHideMe(), NetHideMeParams(true), eRMI_ToAllClients);
 		}
 
+		if (IsClient())
+		{
+			SetAngles(Ang3(m_lastSpawnPointRotation));
+		}
+
+		SAnimatedCharacterParams params = m_pAnimatedCharacter->GetParams();
+		params.flags &= ~eACF_EnableMovementProcessing;
+		params.flags |= eACF_NoLMErrorCorrection;
+
+		m_pAnimatedCharacter->SetParams(params);
+
+		// Фиксит "физичность" в режиме зрителя после контроля раба
 		if (ICharacterInstance* pCharacter = GetEntity()->GetCharacter(0))
 			pCharacter->GetISkeletonPose()->DestroyCharacterPhysics(1);
-		
+
 		m_pAnimatedCharacter->ForceRefreshPhysicalColliderMode();
 		m_pAnimatedCharacter->RequestPhysicalColliderMode(eColliderMode_Spectator, eColliderModeLayer_Game, "Actor::SetAspectProfile");
 	}
@@ -421,8 +433,9 @@ void CTOSActor::NetReviveAt(const Vec3& pos, const Quat& rot, int teamId)
 	if (!m_isMaster)
 	{
 		GetEntity()->SetWorldTM(Matrix34::Create(Vec3(1, 1, 1), rot, pos));
-		GetEntity()->SetRotation(rot);
 	}
+	// Фиксит положение камеры игрока после воскрешения после смерти
+	GetEntity()->SetRotation(rot);
 
 	// This will cover the case when the ClPickup RMI comes in before we're revived
 	{
@@ -446,12 +459,13 @@ void CTOSActor::NetReviveAt(const Vec3& pos, const Quat& rot, int teamId)
 	//TheOtherSide IsLocalSlave
 	if (IsClient() || IsLocalSlave())
 	{
-		//~TheOtherSide
-
 		SupressViewBlending(); // no view blending when respawning // CActor::Revive resets it.
 		if (g_pGame->GetHUD())
 			g_pGame->GetHUD()->GetRadar()->Reset();
 	}
+
+	UpdateLastMPSpawnPointRotation(rot);
+	//~TheOtherSide
 }
 
 void CTOSActor::NetReviveInVehicle(EntityId vehicleId, int seatId, int teamId)
@@ -627,6 +641,13 @@ CTOSEnergyConsumer* CTOSActor::GetEnergyConsumer() const
 	return m_pEnergyConsumer;
 }
 
+bool CTOSActor::UpdateLastMPSpawnPointRotation(const Quat& rotation)
+{
+	m_lastSpawnPointRotation = rotation;
+
+	return true;
+}
+
 void CTOSActor::NetMarkMeSlave(const bool slave) const
 {
 	CRY_ASSERT_MESSAGE(!IsPlayer(), "[MarkMeSlave] by design at 21/10/2023 the player cannot be a slave");
@@ -737,7 +758,7 @@ IMPLEMENT_RMI(CTOSActor, SvRequestMarkMeAsMaster)
 		TOS_Debug::GetEnv(),
 		TOS_Debug::GetAct(3),
 		__FUNCTION__,
-		m_name,
+		m_debugName,
 		params.value);
 
 
@@ -754,7 +775,7 @@ IMPLEMENT_RMI(CTOSActor, ClMarkMeAsMaster)
 		TOS_Debug::GetEnv(),
 		TOS_Debug::GetAct(3),
 		__FUNCTION__,
-		m_name,
+		m_debugName,
 		params.value);
 
 	return true;
@@ -771,7 +792,7 @@ IMPLEMENT_RMI(CTOSActor, SvRequestMarkMeAsSlave)
 		TOS_Debug::GetEnv(),
 		TOS_Debug::GetAct(3),
 		__FUNCTION__,
-		m_name,
+		m_debugName,
 		params.value);
 	
 
@@ -788,7 +809,7 @@ IMPLEMENT_RMI(CTOSActor, ClMarkMeAsSlave)
 		TOS_Debug::GetEnv(),
 		TOS_Debug::GetAct(3),
 		__FUNCTION__,
-		m_name,
+		m_debugName,
 		params.value);
 
 	return true;

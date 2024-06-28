@@ -46,7 +46,7 @@ int CScriptBind_GameRules::ReviveSlaveOfPlayer(IFunctionHandler* pH, int playerC
 	g_pTOSGame->GetMasterModule()->ReviveSlave(pSlave, pos, Ang3(angles), teamId, resetWeapons);
 }
 
-int CScriptBind_GameRules::SpawnAndAssignSlaveToPlayer(IFunctionHandler* pH, int playerChannelId, const char* slaveClassName, float spawnDelaySec)
+int CScriptBind_GameRules::SpawnAndAssignSlaveToPlayer(IFunctionHandler* pH, int playerChannelId, const char* slaveClassName, float spawnDelaySec, Vec3 pos, Vec3 angles)
 {
 	const IActor* const pPlayer = g_pGame->GetIGameFramework()->GetIActorSystem()->GetActorByChannelId(playerChannelId);
 	if (!pPlayer)
@@ -80,8 +80,8 @@ int CScriptBind_GameRules::SpawnAndAssignSlaveToPlayer(IFunctionHandler* pH, int
 	params.vanilla.bStaticEntityId = true;
 	params.vanilla.nFlags |= ENTITY_FLAG_NEVER_NETWORK_STATIC | ENTITY_FLAG_TRIGGER_AREAS | ENTITY_FLAG_CASTSHADOW;
 	params.vanilla.pClass = pClass;
-	params.vanilla.qRotation = pPlayer->GetEntity()->GetWorldRotation();
-	params.vanilla.vPosition = pPlayer->GetEntity()->GetWorldPos();
+	params.vanilla.qRotation = Quat(Ang3(angles));
+	params.vanilla.vPosition = pos;
 	params.forceStartControl = true;
 
 	if (CTOSEntitySpawnModule::SpawnEntityDelay(params, true))
@@ -160,7 +160,7 @@ void CScriptBind_GameRules::RegisterMethods()
 
 	//TheOtherSide
 	SCRIPT_REG_TEMPLFUNC(ReviveSlaveOfPlayer, "playerChannelId, pos, angles");
-	SCRIPT_REG_TEMPLFUNC(SpawnAndAssignSlaveToPlayer, "playerChannelId, slaveClassName, spawnDelaySec");
+	SCRIPT_REG_TEMPLFUNC(SpawnAndAssignSlaveToPlayer, "playerChannelId, slaveClassName, spawnDelaySec, pos, angles");
 	//TheOtherSide
 
 	SCRIPT_REG_TEMPLFUNC(IsServer, "");

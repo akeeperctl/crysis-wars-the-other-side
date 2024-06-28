@@ -912,12 +912,10 @@ void CTOSMasterClient::UpdateView(SViewParams& viewParams) const
     }
 
     const EntityId controlledId = m_pSlaveEntity->GetId();
-	const string   controlledCls = m_pSlaveEntity->GetClass()->GetName();
-
 	const auto pControlledActor = dynamic_cast<CTOSActor*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(controlledId));
+
     if (pControlledActor)
     {
-
         pControlledActor->UpdateMasterView(viewParams, offsetX, offsetY, offsetZ, target, current, currentFov);
 
 		// Массив для хранения сущностей, которые следует пропустить при трассировке луча
@@ -1033,8 +1031,16 @@ void CTOSMasterClient::PrepareDude(const bool toStartControl, const uint dudeFla
 
 			// Привязка работает от клиента к серверу без исп. RMI
 			m_pSlaveEntity->AttachChild(m_pLocalDude->GetEntity(), ENTITY_XFORM_USER | IEntity::ATTACHMENT_KEEP_TRANSFORMATION);
+			//m_pLocalDude->LinkToEntity(m_pSlaveEntity->GetId(), true);
 		
+			SAnimatedCharacterParams params = m_pLocalDude->GetAnimatedCharacter()->GetParams();
+			params.flags &= ~eACF_EnableMovementProcessing;
+			params.flags |= eACF_NoLMErrorCorrection;
+
+			m_pLocalDude->GetAnimatedCharacter()->SetParams(params);
+
 			m_pLocalDude->SetViewRotation(slaveRot);
+			//m_pLocalDude->SetAngles(Ang3(slaveRot));
 		}
 
 		IInventory* pInventory = m_pLocalDude->GetInventory();
@@ -1117,6 +1123,12 @@ void CTOSMasterClient::PrepareDude(const bool toStartControl, const uint dudeFla
 		if (dudeFlags & TOS_DUDE_FLAG_BEAM_MODEL)
 		{
 			m_pLocalDude->GetEntity()->DetachThis(IEntity::ATTACHMENT_KEEP_TRANSFORMATION, 0);
+
+			SAnimatedCharacterParams params = m_pLocalDude->GetAnimatedCharacter()->GetParams();
+			params.flags |= eACF_EnableMovementProcessing;
+			params.flags &= ~eACF_NoLMErrorCorrection;
+
+			m_pLocalDude->GetAnimatedCharacter()->SetParams(params);
 		}
 
         //m_pLocalDude->InitInterference();

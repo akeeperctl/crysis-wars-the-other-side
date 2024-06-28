@@ -841,7 +841,7 @@ function InstantAction:RevivePlayer(channelId, player, keepEquip)
 		keepEquip=false;
 	end
 
-	System.LogAlways("<lua> Revive player: '"..playerName.."' team: "..teamName.." teamId: "..teamId)
+	Log("<lua> Revive player: '"..playerName.."' team: "..teamName.." teamId: "..teamId)
 	
 	player.lastExitedVehicleId = nil;
 	player.lastExitedVehicleTime = nil;
@@ -953,14 +953,19 @@ function InstantAction:RevivePlayer(channelId, player, keepEquip)
 		end
 
 		if (willControlSlave) then
-			System.LogAlways("<lua>".." Player '"..playerName.."' will be control slave");
+			Log("<lua>".." Player '"..playerName.."' will be control slave");
 
 			local slaveClassName = "Trooper";
-			local slaveSpawnDelaySec = 0.08;
+			local slaveSpawnDelaySec = 0.1;
+			local delay = System.GetCVar("tos_sv_SlaveSpawnDelay");
 
-			self.game:SpawnAndAssignSlaveToPlayer(playerChannelId, slaveClassName, slaveSpawnDelaySec);
+			if (delay and delay > 0) then
+				slaveSpawnDelaySec = delay
+			end
+
+			self.game:SpawnAndAssignSlaveToPlayer(playerChannelId, slaveClassName, slaveSpawnDelaySec, pos, angles);
 		elseif (isControllingSlave) then
-			System.LogAlways("<lua>".." Player '"..playerName.."' already controlling the slave")
+			Log("<lua>".." Player '"..playerName.."' already controlling the slave")
 
 			self.game:ReviveSlaveOfPlayer(playerChannelId, pos, angles);
 		end
