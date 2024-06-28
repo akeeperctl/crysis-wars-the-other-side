@@ -38,7 +38,7 @@
 CNanoSuit::SNanoMaterial g_USNanoMats[NANOMODE_LAST];
 CNanoSuit::SNanoMaterial g_AsianNanoMats[NANOMODE_LAST];
 
-static void PrecacheMaterials(const bool bCacheAsian)
+void CNanoSuit::PrecacheMaterials(const bool bCacheAsian)
 {
 	// preload materials
 	IMaterialManager* matMan = gEnv->p3DEngine->GetMaterialManager();

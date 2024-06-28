@@ -56,6 +56,7 @@ public:
 	// ILevelSystemListener
 	void OnLevelNotFound(const char* levelName);
 	void OnLoadingStart(ILevelInfo* pLevel);
+	void CacheAssets();
 	void OnLoadingComplete(ILevel* pLevel);
 	void OnLoadingError(ILevelInfo* pLevel, const char* error);
 	void OnLoadingProgress(ILevelInfo* pLevel, int progressAmount);

@@ -2,6 +2,7 @@
 #include "TOSGame.h"
 
 #include "Game.h"
+#include "NanoSuit.h"
 #include "TOSGameEventRecorder.h"
 
 #include "Modules/ITOSGameModule.h"
@@ -10,6 +11,7 @@
 #include "Modules/Master/MasterModule.h"
 
 #include "TheOtherSideMP/AI/AITrackerModule.h"
+#include "TheOtherSideMP/Helpers/TOS_Cache.h"
 
 CTOSGame::CTOSGame()
 	: m_pAITrackerModule(nullptr),
@@ -69,7 +71,6 @@ void CTOSGame::Init()
 			pModule->Init();
 		}
 	}
-
 }
 
 void CTOSGame::Shutdown()
@@ -113,8 +114,41 @@ void CTOSGame::OnLoadingStart(ILevelInfo* pLevel)
 	TOS_RECORD_EVENT(0, STOSGameEvent(eEGE_OnLevelLoadingStart, pLevel->GetName(), true));
 }
 
+void CTOSGame::CacheAssets()
+{
+	//Пришельцы
+	TOS_Cache::CacheObject("Objects/Characters/Alien/trooper/Trooper.chr");
+	TOS_Cache::CacheObject("Objects/Characters/Alien/trooper/trooper_leader.chr");
+	TOS_Cache::CacheObject("Objects/Characters/Alien/scout/scout_base.cdf");
+	TOS_Cache::CacheObject("Objects/Characters/Alien/scout/scout_leader.cdf");
+	TOS_Cache::CacheObject("Objects/Characters/Alien/hunter/Hunter.cdf");
+	TOS_Cache::CacheObject("Objects/Characters/Alien/AlienBase/AlienBase.cdf");
+
+	//Нанокостюмы
+	TOS_Cache::CacheObject("Objects/Characters/Human/US/NanoSuit/nanosuit_us.cdf");
+	TOS_Cache::CacheObject("Objects/Characters/Human/US/NanoSuit/nanosuit_us_fp3p.cdf");
+	TOS_Cache::CacheObject("Objects/Characters/Human/US/NanoSuit/nanosuit_us_multiplayer.cdf");
+	TOS_Cache::CacheObject("objects/weapons/arms_global/arms_nanosuit_us.chr");
+	CNanoSuit::PrecacheMaterials(false);
+
+	TOS_Cache::CacheObject("Objects/Characters/Human/Asian/NanoSuit/nanosuit_asian.cdf");
+	TOS_Cache::CacheObject("Objects/Characters/Human/Asian/NanoSuit/nanosuit_asian_fp3p.cdf");
+	TOS_Cache::CacheObject("Objects/Characters/Human/Asian/NanoSuit/nanosuit_asian_multiplayer.cdf");
+	TOS_Cache::CacheObject("objects/weapons/arms_global/arms_nanosuit_asian.chr");
+	CNanoSuit::PrecacheMaterials(true);
+
+	//Прочие объекты
+	TOS_Cache::CacheObject("objects/effects/tracer_standard_new.cgf");
+	TOS_Cache::CacheObject("objects/effects/tracer_standard_red_new.cgf");
+	TOS_Cache::CacheMaterial("objects/effects/tracer_standard.mtl");
+
+	TOS_Cache::CacheObject("objects/characters/human/asian/nk_soldier/nk_soldier_frozen_scatter.cgf");
+}
+
 void CTOSGame::OnLoadingComplete(ILevel* pLevel)
 {
+	//Кешируем модели объектов, чтобы при их спавне не было подгрузок/подлагиваний
+	CacheAssets();
 }
 
 void CTOSGame::OnLoadingError(ILevelInfo* pLevel, const char* error)

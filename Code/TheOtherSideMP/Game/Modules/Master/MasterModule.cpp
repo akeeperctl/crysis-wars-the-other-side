@@ -432,14 +432,6 @@ void CTOSMasterModule::Init()
 {
 	CTOSGenericModule::Init();
 
-	//Кешируем модели объектов, чтобы при их спавне не было подгрузок/подлагиваний
-	TOS_Cache::CacheObject("Objects/Characters/Alien/trooper/Trooper.chr");
-	TOS_Cache::CacheObject("Objects/Characters/Alien/trooper/trooper_leader.chr");
-	TOS_Cache::CacheObject("Objects/Characters/Alien/scout/scout_base.cdf");
-	TOS_Cache::CacheObject("Objects/Characters/Alien/scout/scout_leader.cdf");
-	TOS_Cache::CacheObject("Objects/Characters/Alien/hunter/Hunter.cdf");
-	TOS_Cache::CacheObject("Objects/Characters/Alien/AlienBase/AlienBase.cdf");
-
 	m_scheduledTakeControls.clear();
 }
 

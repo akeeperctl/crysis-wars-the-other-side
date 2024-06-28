@@ -215,6 +215,10 @@ class CPlayer;
 class CNanoSuit
 {
 public:
+	//TheOtherSide
+	static void PrecacheMaterials(const bool bCacheAsian);
+	//TheOtherSide
+
 	struct INanoSuitListener
 	{
 		virtual      ~INanoSuitListener() {};
