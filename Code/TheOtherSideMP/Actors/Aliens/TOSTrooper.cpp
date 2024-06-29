@@ -6,6 +6,7 @@
 
 #include "TheOtherSideMP/Extensions/EnergyСonsumer.h"
 #include "TheOtherSideMP/Helpers/TOS_Console.h"
+#include <TheOtherSideMP/Helpers/TOS_NET.h>
 
 CTOSTrooper::CTOSTrooper() {};
 
@@ -24,6 +25,7 @@ void CTOSTrooper::PostInit(IGameObject* pGameObject)
 		m_pEnergyConsumer->SetRechargeTimeSP(TOS_Console::GetSafeFloatVar("tos_tr_regen_energy_recharge_time_sp"));
 		m_pEnergyConsumer->SetRechargeTimeMP(TOS_Console::GetSafeFloatVar("tos_tr_regen_energy_recharge_time_mp"));
 	}
+
 }
 
 void CTOSTrooper::Update(SEntityUpdateContext& ctx, const int updateSlot)
@@ -32,15 +34,65 @@ void CTOSTrooper::Update(SEntityUpdateContext& ctx, const int updateSlot)
 
 	const float regenStartDelay = m_pEnergyConsumer->GetRegenStartDelay();
 
+	IPhysicalEntity* pPhysEnt = GetEntity()->GetPhysics();
+
+	pe_status_dynamics dynStat;
+	pe_status_living livStat;
+
+	int dynStatType = dynStat.type;
+	memset(&dynStat, 0, sizeof(pe_status_dynamics));
+	dynStat.type = dynStatType;
+
+	int livStatType = livStat.type;
+	memset(&livStat, 0, sizeof(pe_status_living));
+	livStat.groundSlope = Vec3(0, 0, 1);
+	livStat.type = livStatType;
+
+	pPhysEnt->GetStatus(&dynStat);
+	pPhysEnt->GetStatus(&livStat);
+
+
 	NETINPUT_TRACE(GetEntityId(), regenStartDelay);
 	NETINPUT_TRACE(GetEntityId(), m_input.deltaMovement);
 	NETINPUT_TRACE(GetEntityId(), m_input.viewDir);
 	NETINPUT_TRACE(GetEntityId(), m_netBodyInfo.desiredSpeed);
 	NETINPUT_TRACE(GetEntityId(), m_netBodyInfo.deltaMov);
 	NETINPUT_TRACE(GetEntityId(), m_netBodyInfo.lookTarget);
+	NETINPUT_TRACE(GetEntityId(), GetEntity()->GetWorldPos());
+	NETINPUT_TRACE(GetEntityId(), m_stats.inAir);
+	NETINPUT_TRACE(GetEntityId(), m_stats.onGround);
+	NETINPUT_TRACE(GetEntityId(), m_jumpParams.bFreeFall);
+	NETINPUT_TRACE(GetEntityId(), m_jumpParams.velocity);
+	NETINPUT_TRACE(GetEntityId(), m_jumpParams.state);
+	NETINPUT_TRACE(GetEntityId(), dynStat.mass);
+	NETINPUT_TRACE(GetEntityId(), dynStat.a);
+	NETINPUT_TRACE(GetEntityId(), dynStat.v);
+	NETINPUT_TRACE(GetEntityId(), livStat.bFlying);
+	NETINPUT_TRACE(GetEntityId(), livStat.bStuck);
+	NETINPUT_TRACE(GetEntityId(), livStat.timeFlying);
+	NETINPUT_TRACE(GetEntityId(), livStat.velRequested);
+	NETINPUT_TRACE(GetEntityId(), livStat.velUnconstrained);
+	NETINPUT_TRACE(GetEntityId(), livStat.groundHeight);
+	NETINPUT_TRACE(GetEntityId(), InZeroG());
 
 	// Трупер не синхрон физику после смерти
-	NETINPUT_TRACE(GetEntityId(), m_currentPhysProfile);
+	//NETINPUT_TRACE(GetEntityId(), m_currentPhysProfile);
+	//NETINPUT_TRACE(GetEntityId(), GetActorStats()->mass);
+	//NETINPUT_TRACE(GetEntityId(), m_stats.mass);
+	NETINPUT_TRACE(GetEntityId(), IsSlave());
+
+	//~TheOtherSide
+
+	EAutoDisablePhysicsMode adpm = eADPM_Never;
+	if (m_stats.isRagDoll)
+		adpm = eADPM_Never;
+	else if (IsLocalSlave() || (gEnv->bMultiplayer && gEnv->bServer))
+		adpm = eADPM_Never;
+	else if (IsPlayer())
+		adpm = eADPM_WhenInvisibleAndFarAway;
+	else
+		adpm = eADPM_WhenAIDeactivated;
+	GetGameObject()->SetAutoDisablePhysicsMode(adpm);
 }
 
 bool CTOSTrooper::NetSerialize(const TSerialize ser, const EEntityAspects aspect, const uint8 profile, const int flags)
@@ -130,8 +182,8 @@ void CTOSTrooper::ProcessJump(const CMovementRequest& request)
 
 	//pe_action_impulse impulse;
 	SCharacterMoveRequest animCharRequest;
-	animCharRequest.jumping = false;
-	animCharRequest.type    = eCMT_JumpInstant; //eCMT_Impulse //eCMT_JumpAccumulate;
+	animCharRequest.jumping = true;
+	animCharRequest.type = eCMT_JumpInstant; //eCMT_JumpAccumulate;//eCMT_JumpInstant; //eCMT_Impulse //eCMT_JumpAccumulate;
 
 	Vec3 jumpVec(0, 0, 0);
 
@@ -144,23 +196,9 @@ void CTOSTrooper::ProcessJump(const CMovementRequest& request)
 
 	if (pActorStats)
 	{
-		//float jumpHeight = 2.0f;
-		//float gravity = pCurrentStats->gravity.len();
-		//float t = 0.0f;
-
-		//if (gravity > 0.0f)
-		//{
-		//	t = cry_sqrtf(2.0f * gravity * jumpHeight) / gravity - inAir;
-		//}
-
-		//os.vJumpDir +=GetBaseMtx().GetColumn2() * gravity * t;
-
-		//const float inAir = pActorStats->inAir;
 		const float     onGround  = pActorStats->onGround;
-
 		const float		jumpPressDur = pSlaveStats->chargingJumpPressDur;
-		const float jumpForce = 6.0f;
-		//const float		finalOnceJumpForce = clamp(jumpForce * (jumpPressDur * 2), 5, 15);
+		const float		jumpForce = 6.0f;
 		const float		finalOnceJumpForce = jumpPressDur > TOS_Console::GetSafeFloatVar("tos_sv_chargingJumpInputTime") ? jumpForce + 4.0f : jumpForce;
 
 		const float doubleJumpCost = TOS_Console::GetSafeFloatVar("tos_tr_double_jump_energy_cost");

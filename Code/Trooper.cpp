@@ -175,9 +175,7 @@ void CTrooper::InitHeightVariance(SmartScriptTable& rTable)
 
 	if (rTable->GetValue("heightVarianceLow", m_heightVarianceLow) && rTable->GetValue("heightVarianceHigh", m_heightVarianceHigh))
 		m_heightVarianceRandomize = cry_rand() / static_cast<float>(RAND_MAX);
-	/*		float range = m_heightVarianceHigh - m_heightVarianceLow;
-	m_heightVarianceLow = m_heightVarianceLow-range/2;
-	m_heightVarianceHigh = m_heightVarianceLow+range/2;*/
+
 	if (rTable->GetValue("heightVarianceOscMin", freqMin) && rTable->GetValue("heightVarianceOscMax", freqMax))
 		m_heightVarianceFreq = freqMin + (cry_rand() / static_cast<float>(RAND_MAX)) * (freqMax - freqMin);
 }
@@ -329,7 +327,10 @@ void CTrooper::UpdateStats(float frameTime)
 			newGravity.gravity = m_baseMtx.GetColumn(2) * -9.81f;
 			pPhysEnt->SetParams(&newGravity);
 		}
-		else { m_stats.isFloating = true; }
+		else 
+		{ 
+			m_stats.isFloating = true; 
+		}
 	}
 	else
 	{
@@ -351,50 +352,6 @@ void CTrooper::ProcessRotation(float frameTime)
 		frameTime = 0.2f;
 
 	float rotSpeed(10.5f);
-	/*
-		if (m_input.viewVector.len2()>0.0f)
-		{
-			m_eyeMtx.SetRotationVDir(m_input.viewVector.GetNormalizedSafe());
-		}
-	*/
-	if (m_input.viewVector.len2() > 0.0f)
-	{
-		/*const SAnimationTarget * pAnimTarget = GetAnimationGraphState()->GetAnimationTarget();
-		if (!(pAnimTarget != NULL ))
-			m_viewMtx.SetRotationVDir(m_input.viewVector.GetNormalizedSafe());*/
-	}
-	else
-	{
-		/* TODO: check, rotation is done in SetDesiredDirection
-		Ang3 desiredAngVel(m_input.deltaRotation.x * rotSpeed,0,m_input.deltaRotation.z * rotSpeed);
-
-		//rollage
-		if (m_input.actions & ACTION_LEANLEFT)
-			desiredAngVel.y -= 10.0f * rotSpeed;
-		if (m_input.actions & ACTION_LEANRIGHT)
-			desiredAngVel.y += 10.0f * rotSpeed;
-
-		Interpolate(m_angularVel,desiredAngVel,3.5f,frameTime);
-
-		Matrix33 yawMtx;
-		Matrix33 pitchMtx;
-		Matrix33 rollMtx;
-
-		//yaw
-		yawMtx.SetRotationZ(m_angularVel.z * gf_PI/180.0f);
-		//pitch
-		pitchMtx.SetRotationX(m_angularVel.x * gf_PI/180.0f);
-		//roll
-		if (fabs(m_angularVel.y) > 0.001f)
-			rollMtx.SetRotationY(m_angularVel.y * gf_PI/180.0f);
-		else
-			rollMtx.SetIdentity();
-		//
-
-		m_viewMtx = m_viewMtx * yawMtx * pitchMtx * rollMtx;
-		m_viewMtx.OrthonormalizeFast();
-		*/
-	}
 
 	//now build the base matrix
 	Vec3 forward(m_viewMtx.GetColumn(1));
@@ -404,6 +361,7 @@ void CTrooper::ProcessRotation(float frameTime)
 		Vec3 forwardMove(m_stats.velocity.GetNormalizedSafe());
 		if (forwardMove.IsZero())
 			forwardMove = forward;
+
 		Vec3 forwardMoveXY(forwardMove.x, forwardMove.y, 0);
 		forwardMoveXY.NormalizeSafe();
 
@@ -412,12 +370,7 @@ void CTrooper::ProcessRotation(float frameTime)
 
 		float roll = 0;
 		float rollx = 0;
-		/*
-		IPhysicalEntity *phys = GetEntity()->GetPhysics();
-		pe_status_dynamics	dyn;
-		if(phys)
-			phys->GetStatus(&dyn);
-		*/
+
 		Vec3 up(m_viewMtx.GetColumn2());
 
 		int oldDir = m_stats.movementDir;
@@ -431,18 +384,19 @@ void CTrooper::ProcessRotation(float frameTime)
 			else
 				m_stats.movementDir = 0;
 
-
 			IEntity*       pEntity = GetEntity();
 			IAIObject*     pAIObject;
 			IUnknownProxy* pProxy;
-			if (pEntity && (pAIObject = pEntity->GetAI()) && (pProxy = pAIObject->GetProxy()))
+
+			//TheOtherSide
+			//if (pEntity && (pAIObject = pEntity->GetAI()) && (pProxy = pAIObject->GetProxy()))
+			if (pEntity)
 			{
 				IAnimationGraphState* pAGState = GetAnimationGraphState();
 				if (pAGState)
 					pAGState->SetInput(m_idMovementInput, m_stats.movementDir);
 			}
-			//if (m_stats.inAir<0.2f)
-			//			forward = m_viewMtx.GetColumn(1);
+			//~TheOtherSide
 
 			IPhysicalEntity* pPhysEnt = GetEntity()->GetPhysics();
 			if (m_bExactPositioning)
@@ -520,44 +474,52 @@ void CTrooper::ProcessRotation(float frameTime)
 				rollx = min(max(-DEG2RAD(15.0f),rollx),DEG2RAD(7.5f));
 				*/
 
-				// tilt the trooper more like the ground
+				// Наклон тропера так, чтобы он соответствовал наклону земли
 				pe_status_living livStat;
 				if (pPhysEnt)
 				{
+					// Получение статуса физической сущности
 					pPhysEnt->GetStatus(&livStat);
-					Vec3 groundNormal((up + livStat.groundSlope).GetNormalizedSafe());
-					Vec3 localUp(invViewMtx * (Vec3Constants<float>::fVec3_OneZ * Matrix33::CreateRotationXYZ(Ang3(rollx, roll, 0))));
-					Vec3 localGroundN(invViewMtx * groundNormal);
+
+					// Вычисление нормали к поверхности земли
+					Vec3 groundNormal = (up + livStat.groundSlope).GetNormalizedSafe();
+
+					// Преобразование векторов в локальную систему координат
+					Vec3 localUp = invViewMtx * (Vec3Constants<float>::fVec3_OneZ * Matrix33::CreateRotationXYZ(Ang3(rollx, roll, 0)));
+					Vec3 localGroundN = invViewMtx * groundNormal;
+
+					// Разложение векторов на компоненты
 					Vec3 localUpx(localUp.x, 0, localUp.z);
 					Vec3 localUpy(0, localUp.y, localUp.z);
 					Vec3 localGroundNx(localGroundN.x, 0, localGroundN.z);
 					Vec3 localGroundNy(0, localGroundN.y, localGroundN.z);
+
+					// Нормализация векторов
 					localUpx.NormalizeSafe();
 					localUpy.NormalizeSafe();
 					localGroundNx.NormalizeSafe();
 					localGroundNy.NormalizeSafe();
 
+					// Вычисление углов наклона
 					float dotNy = localUpy.Dot(localGroundNy);
 					float dotNx = localUpx.Dot(localGroundNx);
-					if (dotNy > 1)
-						dotNy = 1;
-					if (dotNx > 1)
-						dotNx = 1;
+					dotNy = std::min(dotNy, 1.0f);
+					dotNx = std::min(dotNx, 1.0f);
 
 					float angley = cry_acosf(dotNx) * sgn(localGroundN.x - localUp.x);
 					float anglex = cry_acosf(dotNy) * sgn(localUp.y - localGroundN.y);
 
+					// Округление углов до заданной точности
 					static const float BANK_PRECISION = 100.f;
 					anglex = floor(anglex * BANK_PRECISION) / BANK_PRECISION;
 					angley = floor(angley * BANK_PRECISION) / BANK_PRECISION;
-					//y =angley;
+
+					// Применение вычисленных углов наклона
 					rollx += anglex;
 					roll += angley;
 				}
 			}
 
-			//bool bRollYMatch = InterpolatePrecise(m_Roll, roll,2.0f,frameTime,0.001f,3.0f);
-			//bool bRollXMatch = InterpolatePrecise(m_Rollx, rollx,2.0f,frameTime,0.001f,3.0f);
 			Interpolate(m_Roll, roll, 2.0f, frameTime, 3.0f);
 			Interpolate(m_Rollx, rollx, 2.0f, frameTime, 3.0f);
 
@@ -572,26 +534,38 @@ void CTrooper::ProcessRotation(float frameTime)
 			//			Quat goalQuat(Matrix33::CreateIdentity() * Matrix33::CreateRotationXYZ(Ang3(m_Rollx,m_Roll,0)));
 			//			goalQuat.Normalize();
 
+			// Получение максимальной скорости для текущей стойки
 			float maxSpeed = GetStanceInfo(m_stance)->maxSpeed;
-			float rotSpeed; // = m_params.rotSpeed_min + (1.0f - (max(maxSpeed - max(m_stats.speed - m_params.speed_min,0.0f),0.0f) / maxSpeed)) * (m_params.rotSpeed_max - m_params.rotSpeed_min);
+			float rotSpeed; // Скорость вращения
 
-			//	SMovementState state;
-			//	GetMovementController()->GetMovementState(state);
+			// Получение статистики актера
 			SActorStats* pStats = GetActorStats();
 
+			// Если актер стреляет более 8.5 секунд, используем максимальную скорость вращения
 			if (pStats && pStats->inFiring > 8.5f)
+			{
 				rotSpeed = m_params.rotSpeed_max;
+			}
+			// Если требуется точное позиционирование, увеличиваем скорость вращения в три раза
 			else if (m_bExactPositioning)
+			{
 				rotSpeed = m_params.rotSpeed_max * 3;
+			}
+			// В противном случае вычисляем скорость вращения на основе текущей скорости
 			else
-				rotSpeed = m_params.rotSpeed_min + (max(maxSpeed - max(m_stats.speed - m_params.speed_min, 0.0f), 0.0f) / maxSpeed) * (m_params.rotSpeed_max - m_params.rotSpeed_min);
+			{
+				// Показатель от 0 до 1 насколько скорость максимальна
+				float speedFactor = max(maxSpeed - max(m_stats.speed - m_params.speed_min, 0.0f), 0.0f) / maxSpeed;
+				rotSpeed = m_params.rotSpeed_min + speedFactor * (m_params.rotSpeed_max - m_params.rotSpeed_min);
+			}
 
-			Interpolate(m_turnSpeed, rotSpeed, 2.5f, frameTime);
-			//m_turnSpeed = rotSpeed;
+			//TheOtherSide
+			//Interpolate(m_turnSpeed, rotSpeed, 2.5f, frameTime);
+			m_turnSpeed = rotSpeed;
+			//~TheOtherSide
 
 			m_modelQuat = Quat::CreateSlerp(currRotation, currQuat, min(1.0f, frameTime * m_turnSpeed));
 			m_modelQuat.Normalize();
-
 
 			m_moveRequest.rotation = currRotation.GetInverted() * m_modelQuat;
 			m_moveRequest.rotation.Normalize();
@@ -603,21 +577,29 @@ void CTrooper::ProcessRotation(float frameTime)
 			Vec3 goal = (m_stats.isRagDoll ? Vec3(0, 0, 0) : GetStanceInfo(m_stance)->modelOffset);
 			Interpolate(m_modelOffset, goal, 5.0f, frameTime);
 
-			//			m_modelAddQuat.SetIdentity();
+			// Установка локальной матрицы персонажа в единичное состояние
 			m_charLocalMtx.SetIdentity();
+
 			pe_player_dimensions params;
+
 			if (pPhysEnt->GetParams(&params))
 			{
-				// rotate the character around the collider center
+				// Вращение персонажа вокруг центра коллайдера
 				m_charLocalMtx.SetRotationXYZ(Ang3(m_Rollx, m_Roll, 0));
+
+				// Определение точки вращения на основе высоты коллайдера
 				Vec3 pivot(0, 0, params.heightCollider);
+
+				// Преобразование точки вращения с учетом текущей матрицы персонажа
 				Vec3 trans(m_charLocalMtx.TransformVector(pivot));
+
+				// Корректировка позиции по оси Z
 				trans.z -= pivot.z;
+
+				// Установка новой позиции персонажа с учетом смещения модели
 				m_charLocalMtx.SetTranslation(-trans + m_modelOffset + m_modelOffsetAdd);
-				//				float transx = heightPivot * tan(m_Rollx);
-				//				float transy = heightPivot * tan(m_Roll);
-				//				m_modelAddQuat.SetTranslation(Vec3(-transy, -transx,0) + m_modelOffset+m_modelOffsetAdd);
 			}
+
 			//m_modelAddQuat = QuatT(Matrix33::CreateIdentity() * Matrix33::CreateRotationXYZ(Ang3(m_Rollx,m_Roll,0)));//goalQuat;
 
 			//m_charLocalMtx = Matrix34(m_modelAddQuat);
@@ -650,7 +632,10 @@ void CTrooper::ProcessRotation(float frameTime)
 			gEnv->pRenderer->GetIRenderAuxGeom()->DrawLine(basepos, ColorB(255,255,255,255), basepos + forward * 3.0f, ColorB(255,255,255,255));
 			*/
 		}
-		else { m_moveRequest.rotation.SetIdentity(); }
+		else 
+		{ 
+			m_moveRequest.rotation.SetIdentity();
+		}
 	}
 }
 
@@ -764,7 +749,6 @@ void CTrooper::ProcessMovement(float frameTime)
 	IPhysicalEntity*      phys = GetEntity()->GetPhysics();
 
 	if (!m_bExactPositioning) // && 
-	//(gEnv->pSystem->GetITimer()->GetFrameStartTime() - m_lastExactPositioningTime).GetSeconds() > 0.5f)
 	{
 		if (m_jumpParams.bTrigger)
 		{

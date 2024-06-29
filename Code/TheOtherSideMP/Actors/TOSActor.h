@@ -95,6 +95,7 @@ struct STOSNetBodyInfo
 		bodyTarget(ZERO),
 		fireTarget(ZERO),
 		deltaMov(ZERO),
+		worldPos(ZERO),
 		//pseudoSpeed(ZERO), grunt штука
 		desiredSpeed(ZERO),
 		//alertness(ZERO), grunt штука
@@ -115,6 +116,7 @@ struct STOSNetBodyInfo
 		ser.Value("lookTarget", lookTarget, 'wrld');
 		ser.Value("bodyTarget", bodyTarget, 'wrld');
 		ser.Value("fireTarget", fireTarget, 'wrld');
+		ser.Value("world_position", worldPos, 'wrld');
 		ser.Value("deltaMov", deltaMov, 'pMov');
 		//ser.Value("pseudoSpeed", pseudoSpeed); grunt штука
 		ser.Value("desiredSpeed", desiredSpeed);
@@ -141,6 +143,7 @@ struct STOSNetBodyInfo
 		bodyTarget = Vec3(0, 0, 0);
 		fireTarget = Vec3(0, 0, 0);
 		deltaMov = Vec3(0, 0, 0);
+		worldPos = Vec3(0, 0, 0);
 
 		//pseudoSpeed;
 		desiredSpeed = 0;
@@ -161,6 +164,8 @@ struct STOSNetBodyInfo
 	Vec3 bodyTarget;
 	Vec3 fireTarget;
 	Vec3 deltaMov;
+
+	Vec3 worldPos;
 
 	//float pseudoSpeed;
 	float desiredSpeed;
@@ -215,7 +220,6 @@ public:
 	void NetReviveAt(const Vec3& pos, const Quat& rot, int teamId) ;
 	void NetReviveInVehicle(EntityId vehicleId, int seatId, int teamId) ;
 	void NetSimpleKill() ;
-
 	// ~CActor
 
 	//ITOSMasterControllable
@@ -229,7 +233,7 @@ public:
 	virtual Matrix33 GetBaseMtx() { return Matrix33(); };
 	virtual Matrix33 GetEyeMtx() { return Matrix33(); };
 	
-
+	virtual bool ShouldUsePhysicsMovement();
 
 	//Новые функции сюда
 	//const Vec3& FilterDeltaMovement(const Vec3& deltaMov);
@@ -276,12 +280,12 @@ protected:
 	// Сделать мастером или рабом на стороне сервера
 	bool SetMeSlave(bool value);
 	bool SetMeMaster(bool value);
+	string m_debugName;
 
 private:
 	// Скрыть актера на стороне клиента
 	bool HideMe(bool value);
 
-	string m_debugName;
 	string m_sLastNetworkedAnim;
 
 	Quat m_lastSpawnPointRotation;
@@ -307,6 +311,9 @@ private:
 
 	DECLARE_SERVER_RMI_NOATTACH(SvRequestHideMe, NetHideMeParams, eNRT_ReliableOrdered);
 	DECLARE_CLIENT_RMI_NOATTACH(ClMarkHideMe, NetHideMeParams, eNRT_ReliableOrdered);
+
+	DECLARE_CLIENT_RMI_NOATTACH_FAST(ClTOSJump, NoParams, eNRT_ReliableUnordered);
+	DECLARE_SERVER_RMI_NOATTACH_FAST(SvRequestTOSJump, NoParams, eNRT_ReliableUnordered);
 
 protected:
 	bool m_chargingJump;///< Если *true, то высота прыжка зависит от длительности нажатия на дейсвие прыжка [jump]

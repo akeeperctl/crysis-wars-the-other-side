@@ -259,35 +259,47 @@ bool CTOSMasterClient::OnActionJump(CTOSActor* pActor, const ActionId& actionId,
 	// потому что сделать двойной прыжок за трупера при заряжаемом прыжке нужно быстро а не ждать,
 	// пока пройдет заряд.
 
+// Проверка наличия возможности заряженного прыжка и контакта с землей
 	if (pActor->IsHaveChargingJump() && pActor->GetActorStats()->onGround > 0.0f)
 	{
+		// Получение времени удержания кнопки и задержки для прыжка
 		const float holdTime = stl::find_in_map(m_actionPressedDuration, actionId, 0.0f);
 		const float jumpDelay = TOS_Console::GetSafeFloatVar("tos_sv_chargingJumpInputTime");
 
+		// Автопрыжок при удержании клавиши прыжка
 		if (activationMode == eAAM_OnHold && holdTime > jumpDelay)
 		{
-			// Akeeper 28/01/2024
-			// Напонимание: Чистка флагов должна происходит в *MovementController'ах, куда приходит m_movementRequest
-			// В этом блоке описан автопрыжок при зажатии клавиши прыжка
-
+			// Установка запроса на прыжок и обнуление длительности нажатия
 			m_movementRequest.SetJump();
 			pActor->GetSlaveStats().chargingJumpPressDur = holdTime;
-
 			m_actionPressedDuration[actionId] = 0;
+
+			// Отправка запроса на сервер
+			pActor->GetGameObject()->InvokeRMI(CTOSActor::SvRequestTOSJump(), CActor::NoParams(), eRMI_ToServer);
 		}
+		// Обработка отпускания клавиши прыжка
 		else if (activationMode == eAAM_OnRelease && holdTime <= jumpDelay)
 		{
 			m_movementRequest.SetJump();
 			pActor->GetSlaveStats().chargingJumpPressDur = 0;
+
+			// Отправка запроса на сервер
+			pActor->GetGameObject()->InvokeRMI(CTOSActor::SvRequestTOSJump(), CActor::NoParams(), eRMI_ToServer);
 		}
 	}
+	// Обработка прыжка без заряда
 	else
 	{
+		// Установка запроса на прыжок при нажатии клавиши
 		if (activationMode == eAAM_OnPress && value > 0.0f)
 		{
 			m_movementRequest.SetJump();
 			pActor->GetSlaveStats().chargingJumpPressDur = 0;
+
+			// Отправка запроса на сервер
+			pActor->GetGameObject()->InvokeRMI(CTOSActor::SvRequestTOSJump(), CActor::NoParams(), eRMI_ToServer);
 		}
+		// Очистка запроса на прыжок при отпускании клавиши
 		else if (activationMode == eAAM_OnRelease)
 		{
 			if (m_movementRequest.ShouldJump())
@@ -296,8 +308,6 @@ bool CTOSMasterClient::OnActionJump(CTOSActor* pActor, const ActionId& actionId,
 			}
 		}
 	}
-
-	
 
 	return true;
 }

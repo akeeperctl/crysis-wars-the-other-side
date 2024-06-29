@@ -74,6 +74,7 @@ History:
 #include "TheOtherSideMP/Helpers/TOS_Console.h"
 #include <stdexcept>
 #include <TheOtherSideMP/Actors/Player/TOSPlayer.h>
+#include <NetInputChainDebug.h>
 //~TheOtherSide
 
 // enable this to check nan's on position updates... useful for debugging some weird crashes
@@ -1040,6 +1041,11 @@ void CPlayer::Update(SEntityUpdateContext& ctx, int updateSlot)
 	}
 
 	UpdateSounds(ctx.fFrameTime);
+
+	//TheOtherSide
+	NETINPUT_TRACE(GetEntityId(), m_stats.inAir);
+	NETINPUT_TRACE(GetEntityId(), m_stats.onGround);
+	//~TheOtherSide
 }
 
 void CPlayer::UpdateSounds(float fFrameTime)
@@ -1192,7 +1198,9 @@ bool CPlayer::ShouldUsePhysicsMovement()
 		return true;
 
 	//players
-	if (IsPlayer())
+	//TheOtherSide
+	//if (IsPlayer())
+	if (IsPlayer() || IsSlave())
 	{
 		//the client will be use physics always but when in thirdperson
 		if (IsClient())
@@ -1206,6 +1214,8 @@ bool CPlayer::ShouldUsePhysicsMovement()
 		//other clients will use physics always
 		return true;
 	}
+	//~TheOtherSide
+
 
 	//in demo playback - use physics for recorded entities
 	if(IsDemoPlayback())

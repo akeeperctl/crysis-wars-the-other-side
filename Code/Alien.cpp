@@ -407,14 +407,24 @@ void CAlien::BindInputs(IAnimationGraphState* pAGState)
 
 void CAlien::ProcessEvent(SEntityEvent& event)
 {
-	if (event.event == ENTITY_EVENT_HIDE || event.event == ENTITY_EVENT_UNHIDE) { CreateScriptEvent("hide", event.event == ENTITY_EVENT_HIDE ? 1 : 0); }
+	if (event.event == ENTITY_EVENT_HIDE || event.event == ENTITY_EVENT_UNHIDE) 
+	{ 
+		CreateScriptEvent("hide", event.event == ENTITY_EVENT_HIDE ? 1 : 0); 
+	}
 	else if (event.event == ENTITY_EVENT_XFORM)
 	{
 		const int flags = event.nParam[0];
 		if (flags & ENTITY_XFORM_ROT && !(flags & (ENTITY_XFORM_USER | ENTITY_XFORM_PHYSICS_STEP)))
 			m_baseMtx = m_viewMtx = m_eyeMtx = Matrix33(GetEntity()->GetRotation());
 	}
-	else if (event.event == ENTITY_EVENT_PREPHYSICSUPDATE) { PrePhysicsUpdate(); }
+	else if (event.event == ENTITY_EVENT_PREPHYSICSUPDATE) 
+	{
+		//TheOtherSide
+		//IEntityRenderProxy* pRenderProxy = (IEntityRenderProxy*)(GetEntity()->GetProxy(ENTITY_PROXY_RENDER));
+		//if ((pRenderProxy != NULL) && pRenderProxy->IsCharactersUpdatedBeforePhysics()) //~TheOtherSide
+			PrePhysicsUpdate();
+		
+	}
 
 	//TheOtherSide
 	//CTOSActor::ProcessEvent(event);

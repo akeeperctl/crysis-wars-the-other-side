@@ -19,6 +19,12 @@ CTOSAlien::~CTOSAlien()
 void CTOSAlien::PostInit(IGameObject* pGameObject)
 {
 	CAlien::PostInit(pGameObject);
+
+	IEntityRenderProxy* pRenderProxy = (IEntityRenderProxy*)(GetEntity()->GetProxy(ENTITY_PROXY_RENDER));
+	if (pRenderProxy)
+	{
+		//pRenderProxy->UpdateCharactersBeforePhysics(true);
+	}
 }
 
 void CTOSAlien::Update(SEntityUpdateContext& ctx, const int updateSlot)
@@ -36,15 +42,6 @@ bool CTOSAlien::NetSerialize(TSerialize ser, const EEntityAspects aspect, const 
 	{
 		ser.Value("health", m_health);
 		ser.Value("maxHealth", m_maxHealth);
-
-		//if (ser.IsWriting())
-		//{
-		//	CryLogAlways("WRITE HEALTH %1.f", m_health);
-		//}
-		//else
-		//{
-		//	CryLogAlways("READ HEALTH %1.f", m_health);
-		//}
 	}
 
 	if (aspect == TOS_NET::CLIENT_ASPECT_DYNAMIC || aspect == TOS_NET::SERVER_ASPECT_DYNAMIC)
@@ -53,8 +50,8 @@ bool CTOSAlien::NetSerialize(TSerialize ser, const EEntityAspects aspect, const 
 
 		if (ser.IsReading())
 		{
-			// Скопировано из CCoopAlien::UpdateMovementState()
 
+			// Скопировано из CCoopAlien::UpdateMovementState()
 			CMovementRequest request;
 
 			const auto pTrooper = dynamic_cast<CTOSTrooper*>(this);
@@ -87,6 +84,14 @@ bool CTOSAlien::NetSerialize(TSerialize ser, const EEntityAspects aspect, const 
 
 			GetMovementController()->RequestMovement(request);
 		}
+
+		//if (m_stats.inAir > 0.01)
+		//{
+			//float z = m_netBodyInfo.worldPos.z;
+			//Vec3 orig_pos = GetEntity()->GetWorldPos();
+			//orig_pos.z = z;
+			//GetEntity()->SetWorldTM(Matrix34::CreateTranslationMat(orig_pos));
+		//}
 
 		/*
 		if (ser.IsWriting())
@@ -146,7 +151,6 @@ void CTOSAlien::ProcessEvent(SEntityEvent& event)
 void CTOSAlien::PrePhysicsUpdate()
 {
 	CAlien::PrePhysicsUpdate();
-
 	// если раскомментировать, то сервер будет только считывать
 	// если оставить как есть, то сервер будет и считывать и записывать (отрицательно не влияет на геймплей)
 	//if (!gEnv->bClient)
@@ -229,6 +233,9 @@ void CTOSAlien::PrePhysicsUpdate()
 		//m_netBodyInfo.hasAimTarget = currentState.isAiming;
 	}
 
+	if (gEnv->bClient)
+		m_netBodyInfo.worldPos = GetEntity()->GetWorldPos();
+
 	//TheOtherSide
 	//if (gEnv->bClient)
 	//{
@@ -240,6 +247,17 @@ void CTOSAlien::PrePhysicsUpdate()
 	//}
 	//~TheOtherSide
 
+	//ICharacterInstance* pCharacter = GetEntity() ? GetEntity()->GetCharacter(0) : NULL;
+	//if (pCharacter)
+	//{
+	//	if (IsLocalSlave() || (IsSlave() && gEnv->bServer))
+	//		pCharacter->GetISkeletonPose()->SetForceSkeletonUpdate(4);
+	//}
+	
+	//float frameTime = gEnv->pTimer->GetFrameTime();
+
+	//if (m_pMovementController)
+	//	m_pMovementController->PostUpdate(frameTime);
 }
 
 void CTOSAlien::SetHealth(const int health)

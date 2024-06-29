@@ -70,6 +70,9 @@ void CTOSActor::PostInit(IGameObject* pGameObject)
 	// отравки запроса на движение в MasterClient. 
 	GetGameObject()->EnablePrePhysicsUpdate(ePPU_Always);
 	m_debugName = GetEntity()->GetName();
+
+	if (ICharacterInstance* pCharacter = GetEntity()->GetCharacter(0))
+		pCharacter->SetFlags(pCharacter->GetFlags() | CS_FLAG_UPDATE_ALWAYS);
 }
 
 void CTOSActor::InitClient(const int channelId)
@@ -557,6 +560,40 @@ bool CTOSActor::ResetActorWeapons(int delayMilliseconds)
 	return false;
 }
 
+bool CTOSActor::ShouldUsePhysicsMovement()
+{
+	//swimming use physics, for everyone
+	//if (m_stats.inWaterTimer > 0.01f)
+	//	return true;
+
+	if (GetActorStats()->inAir > 0.01f || InZeroG())
+		return true;
+
+	//players
+	if (IsPlayer() || IsSlave())
+	{
+		//the client will be use physics always but when in thirdperson
+		if (IsClient())
+		{
+			if (!IsThirdPerson()/* || m_stats.inAir>0.01f*/)
+				return true;
+			else
+				return false;
+		}
+
+		//other clients will use physics always
+		return true;
+	}
+
+
+	//in demo playback - use physics for recorded entities
+	if (IsDemoPlayback())
+		return true;
+
+	//AIs in normal conditions are supposed to use LM
+	return false;
+}
+
 //void CTOSActor::QueueAnimationEvent(const SQueuedAnimEvent& sEvent)
 //{
 //	if (!gEnv->bServer || gEnv->bEditor)
@@ -890,5 +927,33 @@ IMPLEMENT_RMI(CTOSActor, ClMarkHideMe)
 	// Описываем здесь всё, что будет выполняться на клиенте
 
 	HideMe(params.hide);
+	return true;
+}
+
+//------------------------------------------------------------------------
+IMPLEMENT_RMI(CTOSActor, ClTOSJump)
+{
+	CMovementRequest request;
+	request.SetJump();
+	GetMovementController()->RequestMovement(request);
+
+	return true;
+}
+
+//------------------------------------------------------------------------
+IMPLEMENT_RMI(CTOSActor, SvRequestTOSJump)
+{
+	auto channelId = g_pGame->GetIGameFramework()->GetGameChannelId(pNetChannel);
+	GetGameObject()->InvokeRMI(ClTOSJump(), params, eRMI_ToOtherClients | eRMI_NoLocalCalls, channelId);
+	GetGameObject()->Pulse('bang');
+
+	if ((IsSlave() && !IsLocalSlave()) || IsClient())
+	{
+		CMovementRequest request;
+		request.SetJump();
+		GetMovementController()->RequestMovement(request);
+		CryLogAlways("<C++> Actor '%s' request jump to channel %i", m_debugName, channelId);
+	}
+
 	return true;
 }
