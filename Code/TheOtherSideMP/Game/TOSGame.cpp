@@ -111,7 +111,7 @@ void CTOSGame::OnLoadingStart(ILevelInfo* pLevel)
 {
 	m_pMasterModule->Reset();
 
-	TOS_RECORD_EVENT(0, STOSGameEvent(eEGE_OnLevelLoadingStart, pLevel->GetName(), true));
+	TOS_RECORD_EVENT(0, STOSGameEvent(eEGE_OnLevelLoadingStart, pLevel ? pLevel->GetName() : "", true));
 }
 
 void CTOSGame::CacheAssets()

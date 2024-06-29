@@ -202,7 +202,7 @@ CScriptBind_Actor::~CScriptBind_Actor()
 //TheOtherSide
 int CScriptBind_Actor::IsMaster(IFunctionHandler* pH)
 {
-	const auto pActor = dynamic_cast<CTOSActor*>(GetActor(pH));
+	const auto pActor = static_cast<CTOSActor*>(GetActor(pH));
 	if (!pActor)
 		return pH->EndFunction();
 
@@ -214,7 +214,7 @@ int CScriptBind_Actor::IsMaster(IFunctionHandler* pH)
 
 int CScriptBind_Actor::IsSlave(IFunctionHandler* pH)
 {
-	const auto pActor = dynamic_cast<CTOSActor*>(GetActor(pH));
+	const auto pActor = static_cast<CTOSActor*>(GetActor(pH));
 	if (!pActor)
 		return pH->EndFunction();
 
@@ -227,7 +227,7 @@ int CScriptBind_Actor::IsSlave(IFunctionHandler* pH)
 
 int CScriptBind_Actor::GetMasterId(IFunctionHandler* pH)
 {
-	const auto pActor = dynamic_cast<CTOSActor*>(GetActor(pH));
+	const auto pActor = static_cast<CTOSActor*>(GetActor(pH));
 	if (!pActor)
 		return pH->EndFunction();
 
@@ -245,7 +245,7 @@ int CScriptBind_Actor::GetMasterId(IFunctionHandler* pH)
 
 int CScriptBind_Actor::GetSlaveId(IFunctionHandler* pH)
 {
-	const auto pActor = dynamic_cast<CTOSActor*>(GetActor(pH));
+	const auto pActor = static_cast<CTOSActor*>(GetActor(pH));
 	if (!pActor)
 		return pH->EndFunction();
 
@@ -276,7 +276,7 @@ int CScriptBind_Actor::GetSlaveId(IFunctionHandler* pH)
 
 int CScriptBind_Actor::GetConsumerEnergy(IFunctionHandler* pH)
 {
-	const auto pActor = dynamic_cast<CTOSActor*>(GetActor(pH));
+	const auto pActor = static_cast<CTOSActor*>(GetActor(pH));
 	if (!pActor)
 		return pH->EndFunction();
 
@@ -289,7 +289,7 @@ int CScriptBind_Actor::GetConsumerEnergy(IFunctionHandler* pH)
 
 int CScriptBind_Actor::SetConsumerEnergy(IFunctionHandler* pH, int energy)
 {
-	const auto pActor = dynamic_cast<CTOSActor*>(GetActor(pH));
+	const auto pActor = static_cast<CTOSActor*>(GetActor(pH));
 	if (!pActor)
 		return pH->EndFunction();
 

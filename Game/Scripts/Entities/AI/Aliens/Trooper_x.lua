@@ -713,8 +713,11 @@ function Trooper_x:Kill(ragdoll, shooterId, weaponId)
 
     -- Получаем физические характеристики тропера
     local stats = self:GetPhysicalStats();
+
+	--TheOtherSide
     -- Применяем импульс к троперу
     self:AddImpulse(-1, pos, vel, stats.mass * 5, 1);
+	--~TheOtherSide
 
     -- Если установлен таймер звука, убиваем его
     if (self.iSoundTimer) then
