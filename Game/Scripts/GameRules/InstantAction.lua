@@ -1111,7 +1111,7 @@ function InstantAction.Server:OnPlayerKilled(hit)
 	local target=hit.target;
 	target.death_time=_time;
 	target.death_pos=target:GetWorldPos(target.death_pos);
-	
+
 	self.game:KillPlayer(hit.targetId, true, true, hit.shooterId, hit.weaponId, hit.damage, hit.materialId, hit.typeId, hit.dir);
 	self:ProcessScores(hit);
 end
@@ -1321,23 +1321,57 @@ function InstantAction:KillPlayer(player)
 	self:ProcessDeath(hit);
 end
 
+--TheOtherSide
+function ReplaceByMasterIfSlave(hit)
 
+
+end
+--~TheOtherSide
 ----------------------------------------------------------------------------------------------------
 function InstantAction:ProcessDeath(hit)
-	--TheOtherSide
-	--self.Server.OnPlayerKilled(self, hit);
 
-	if (hit.target.actor:IsPlayer()) then
-		self.Server.OnPlayerKilled(self, hit);
+	--TheOtherSide
+
+	-- замена раба на мастера
+	if self.isServer then
+		if hit.shooter.actor:IsSlave() then	
+			local masterId = hit.shooter.actor:GetMasterId()
+			local master = System.GetEntity(masterId)
+	
+			Log("<lua> Hit shooter '"..hit.shooter:GetName().."' replaced by master '"..master:GetName().."'")
+	
+			hit.shooter = master
+			hit.shooterId = masterId
+	
+		elseif hit.target.actor:IsSlave() then
+			local masterId = hit.target.actor:GetMasterId()
+			local master = System.GetEntity(masterId)
+
+			hit.target:Kill(true, hit.shooterId, hit.weaponId);
+	
+			Log("<lua> Hit target '"..hit.target:GetName().."' replaced by master '"..master:GetName().."'")
+	
+			hit.target = master
+			hit.targetId = masterId
+		end
+	end
+	
+	-- Игроки
+	if hit.target.actor:IsPlayer() then
+		self.Server.OnPlayerKilled(self, hit)
+		Log("<lua> Process player '"..hit.target:GetName().."' death")
+	-- НИПы
 	else
 		hit.target:Kill(true, hit.shooterId, hit.weaponId);
-		
+
 		if (self.isServer) then
 			self:ReleaseCorpseItem(hit.target);
 		end
-	end
 
-	--TheOtherSide
+		Log("<lua> Process non-player actor '"..hit.target:GetName().."' death")
+
+	end
+	--~TheOtherSide
 end
 
 ----------------------------------------------------------------------------------------------------
@@ -1393,8 +1427,10 @@ end
 
 ----------------------------------------------------------------------------------------------------
 function InstantAction:ProcessScores(hit)
-	if (self:GetState()=="PostGame") then return; end
 
+	if (self:GetState()=="PostGame") then
+		return;
+	end
 
 	local target=hit.target;
 	local shooter=hit.shooter;
@@ -1412,6 +1448,11 @@ function InstantAction:ProcessScores(hit)
 	if (shooter and shooter.actor and shooter.actor:IsPlayer()) then
 		if (target ~= shooter) then
 			self:Award(shooter, 0, 1, h);
+
+			--TheOtherSide
+			System.LogAlways("<lua> Add +1 to '"..shooter:GetName().."' kills")
+			--~TheOtherSide
+
 		else
 			self:Award(shooter, 0, -1, 0);
 		end

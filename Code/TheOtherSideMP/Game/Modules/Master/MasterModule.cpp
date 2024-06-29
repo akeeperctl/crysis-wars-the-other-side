@@ -360,18 +360,18 @@ void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEven
 
 			if (pSlaveEntity && pMasterEntity)
 			{
-				IActor* const pMasterActor = g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pMasterEntity->GetId());
-				if (pMasterActor)
-				{
-					const EntityId id = pMasterActor->GetEntityId();
+				//IActor* const pMasterActor = g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pMasterEntity->GetId());
+				//if (pMasterActor)
+				//{
+				//	const EntityId id = pMasterActor->GetEntityId();
 
-					HitInfo info;
-					info.SetDamage(9999);
-					info.shooterId = id;
-					info.targetId = id;
+				//	HitInfo info;
+				//	info.SetDamage(9999);
+				//	info.shooterId = id;
+				//	info.targetId = id;
 
-					g_pGame->GetGameRules()->ServerHit(info);
-				}
+				//	//g_pGame->GetGameRules()->ServerHit(info);
+				//}
 			}
 			else
 			{

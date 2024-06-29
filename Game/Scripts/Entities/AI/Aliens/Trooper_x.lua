@@ -1,5 +1,6 @@
 Script.ReloadScript("SCRIPTS/Entities/AI/Shared/BasicAI.lua");
 Script.ReloadScript("scripts/entities/actor/basicalien.lua");
+System.LogAlways("<lua> load script 'Scripts/Entities/AI/Aliens/Trooper_x.lua'" )
 
 TrTimerVector1 = { x = 0, y = 0, z = 0 };
 TrTimerVector2 = { x = 0, y = 0, z = 0 };
@@ -706,6 +707,9 @@ function Trooper_x:Kill(ragdoll, shooterId, weaponId)
 	--TheOtherSide
     -- Применяем импульс к троперу
     self:AddImpulse(-1, pos, vel, stats.mass * 5, 1);
+	local isServer = CryAction.IsServer()
+
+	System.LogAlways("<lua> server: "..tostring(isServer).." trooper '"..self:GetName().."' add impulse pos: "..Vec2Str(pos).." vel: "..Vec2Str(vel))
 	--~TheOtherSide
 
     -- Если установлен таймер звука, убиваем его
