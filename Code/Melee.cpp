@@ -588,24 +588,26 @@ void CMelee::Hit(const Vec3 &pt, const Vec3 &dir, const Vec3 &normal, IPhysicalE
 }
 
 //------------------------------------------------------------------------
-void CMelee::Impulse(const Vec3 &pt, const Vec3 &dir, const Vec3 &normal, IPhysicalEntity *pCollider, int partId, int ipart, int surfaceIdx, float impulseScale)
+// Функция Impulse добавляет импульс объекту в физической симуляции
+void CMelee::Impulse(const Vec3& pt, const Vec3& dir, const Vec3& normal, IPhysicalEntity* pCollider, int partId, int ipart, int surfaceIdx, float impulseScale)
 {
-	if(m_noImpulse)
+	// Если импульс не должен быть применен, выходим из функции
+	if (m_noImpulse)
 	{
 		m_noImpulse = false;
 		return;
 	}
 
-	if (pCollider && m_meleeparams.impulse>0.001f)
+	// Применяем импульс, если коллайдер существует и параметр импульса больше заданного порога
+	if (pCollider && m_meleeparams.impulse > 0.001f)
 	{
-		bool  strengthMode = false;
+		bool strengthMode = false; // Режим силы для нанокостюма
 
-		//TheOtherSide
+		// Получаем актера, владеющего оружием, и проверяем, включен ли режим силы
 		auto pPlayer = dynamic_cast<CTOSPlayer*>(m_pWeapon->GetOwnerActor());
-		//~TheOtherSide
-		if(pPlayer)
+		if (pPlayer)
 		{
-			if (CNanoSuit *pSuit = pPlayer->GetNanoSuit())
+			if (CNanoSuit* pSuit = pPlayer->GetNanoSuit())
 			{
 				ENanoMode curMode = pSuit->GetMode();
 				if (curMode == NANOMODE_STRENGTH)
@@ -613,35 +615,37 @@ void CMelee::Impulse(const Vec3 &pt, const Vec3 &dir, const Vec3 &normal, IPhysi
 			}
 		}
 
+		// Получаем динамические параметры коллайдера
 		pe_status_dynamics dyn;
-		float auxScale = 1.0f;
+		float auxScale = 1.0f; // Вспомогательный масштаб для импульса
 
+		// Если не удается получить статус динамики, увеличиваем масштаб импульса в режиме силы
 		if (!pCollider->GetStatus(&dyn))
 		{
-			if(strengthMode)
+			if (strengthMode)
 				impulseScale *= 3.0f;
 		}
 		else
 		{
-			auto              pIEntity = static_cast<IEntity*>(pCollider->GetForeignData(PHYS_FOREIGN_ID_ENTITY));
+			// Если удается получить статус, корректируем масштаб импульса в зависимости от массы
+			auto pIEntity = static_cast<IEntity*>(pCollider->GetForeignData(PHYS_FOREIGN_ID_ENTITY));
 			IPhysicalEntity* pMainPhys;
-			float             mass0 = dyn.mass;
-			if (pIEntity && (pMainPhys=pIEntity->GetPhysics()) && pMainPhys!=pCollider && pMainPhys->GetStatus(&dyn))
-				auxScale = dyn.mass ? mass0/dyn.mass:0;
+			float mass0 = dyn.mass;
+			if (pIEntity && (pMainPhys = pIEntity->GetPhysics()) && pMainPhys != pCollider && pMainPhys->GetStatus(&dyn))
+				auxScale = dyn.mass ? mass0 / dyn.mass : 0;
 			impulseScale *= clamp((dyn.mass * 0.01f), 1.0f, 15.0f);
 		}
-		
-		//[kirill] add impulse to phys proxy - to make sure it's applied to cylinder as well (not only skeleton) - so that entity gets pushed
-		// if no pEntity - do it old way
-		auto pEntity = static_cast<IEntity*>(pCollider->GetForeignData(PHYS_FOREIGN_ID_ENTITY));
 
-		if(gEnv->bMultiplayer && pEntity)
+		// Добавляем импульс к физическому прокси, чтобы убедиться, что он применяется к цилиндру, а не только к скелету
+		auto pEntity = static_cast<IEntity*>(pCollider->GetForeignData(PHYS_FOREIGN_ID_ENTITY));
+		if (gEnv->bMultiplayer && pEntity)
 		{
-			if(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pEntity->GetId()) == NULL)
+			if (g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pEntity->GetId()) == NULL)
 				impulseScale *= 0.33f;
 		}
 
-		if(pEntity)
+		// Применяем импульс, если объект не является "crap doll"
+		if (pEntity)
 		{
 			bool crapDollFilter = false;
 #ifdef CRAPDOLLS
@@ -649,28 +653,28 @@ void CMelee::Impulse(const Vec3 &pt, const Vec3 &dir, const Vec3 &normal, IPhysi
 			if (pEntity->GetClass() == pDeadBodyClass)
 				crapDollFilter = true;
 #endif //CRAPDOLLS
+
 			if (!crapDollFilter)
 			{
 				IEntityPhysicalProxy* pPhysicsProxy = static_cast<IEntityPhysicalProxy*>(pEntity->GetProxy(ENTITY_PROXY_PHYSICS));
-				CActor*               pActor = static_cast<CActor*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pEntity->GetId()));
+				CActor* pActor = static_cast<CActor*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pEntity->GetId()));
 
+				// Если актер находится в состоянии "ragdoll", корректируем масштаб импульса
 				if (pActor)
 				{
 					SActorStats* pAS = pActor->GetActorStats();
 					if (pAS && pAS->isRagDoll)
 					{
-						//marcok: talk to me before touching this
-						impulseScale = 1.0f; //jan: melee impulses were scaled down, I made sure it still "barely moves"
+						impulseScale = 1.0f; // Импульс был уменьшен, убедитесь, что он "едва двигается"
 #ifdef CRAPDOLLS
-							crapDollFilter = true;
+						crapDollFilter = true;
 #endif //CRAPDOLLS
 					}
 				}
 
-				// scale impulse up a bit for player 
+				// Увеличиваем импульс для игрока и ограничиваем его по оси Z
 				if (!crapDollFilter)
 				{
-					// prevent huge z impulse
 					Vec3 impulse = dir * m_meleeparams.impulse * impulseScale * m_meleeScale;
 					impulse.z = clamp(impulse.z, -40.0f, 40.0f);
 					pPhysicsProxy->AddImpulse(partId, pt, impulse, true, auxScale);
@@ -679,50 +683,40 @@ void CMelee::Impulse(const Vec3 &pt, const Vec3 &dir, const Vec3 &normal, IPhysi
 		}
 		else
 		{
+			// Если нет pEntity, применяем импульс старым способом
 			pe_action_impulse ai;
 			ai.partid = partId;
 			ai.ipart = ipart;
 			ai.point = pt;
 			ai.iApplyTime = 0;
-			ai.impulse = dir*(m_meleeparams.impulse*impulseScale*m_meleeScale);
+			ai.impulse = dir * (m_meleeparams.impulse * impulseScale * m_meleeScale);
 			pCollider->Action(&ai);
 		}
 
-		ISurfaceTypeManager *pSurfaceTypeManager = gEnv->p3DEngine->GetMaterialManager()->GetSurfaceTypeManager();
+		// Создаем физическое столкновение для разрушения деревьев
+		ISurfaceTypeManager* pSurfaceTypeManager = gEnv->p3DEngine->GetMaterialManager()->GetSurfaceTypeManager();
 		int invId = pSurfaceTypeManager->GetSurfaceTypeByName("mat_invulnerable")->GetId();
 
-		// create a physical collision to break trees
 		pe_action_register_coll_event collision;
-
-		collision.collMass = 0.005f; // this is actually ignored
+		collision.collMass = 0.005f; // Это значение фактически игнорируется
 		collision.partid[1] = partId;
-
-		// collisions involving partId<-1 are to be ignored by game's damage calculations
-		// usually created articially to make stuff break.
-		collision.partid[0] = -2;
+		collision.partid[0] = -2; // Столкновения с partId<-1 игнорируются при расчете урона в игре
 		collision.idmat[1] = surfaceIdx;
 		collision.idmat[0] = invId;
 		collision.n = normal;
 		collision.pt = pt;
-	
-		// scar bullet
-		// m = 0.0125
-		// v = 800
-		// energy: 4000
-		// in this case the mass of the active collider is a player part
-		// so we must solve for v given the same energy as a scar bullet
-		Vec3	v = dir;
-		float speed = cry_sqrtf(4000.0f/(80.0f*0.5f)); // 80.0f is the mass of the player
 
-		// [marco] Check if an object. Should take lots of time to break stuff if not in nanosuit strength mode;
-		// and still creates a very low impulse for stuff that might depend on receiving an impulse.
+		// Рассчитываем скорость для создания эффекта столкновения, аналогичного пуле SCAR
+		Vec3 v = dir;
+		float speed = cry_sqrtf(4000.0f / (80.0f * 0.5f)); // 80.0f - масса игрока
+
+		// Проверяем, является ли объект кистью, и корректируем скорость в зависимости от режима нанокостюма
 		auto pBrush = static_cast<IRenderNode*>(pCollider->GetForeignData(PHYS_FOREIGN_ID_STATIC));
 		if (pBrush)
 		{
-			CActor *pActor = m_pWeapon->GetOwnerActor();
+			CActor* pActor = m_pWeapon->GetOwnerActor();
 			if (pActor && (pActor->GetActorClass() == CPlayer::GetActorClassType()))
 			{
-				//TheOtherSide
 				if (pPlayer)
 				{
 					if (CNanoSuit* pSuit = pPlayer->GetNanoSuit())
@@ -732,23 +726,22 @@ void CMelee::Impulse(const Vec3 &pt, const Vec3 &dir, const Vec3 &normal, IPhysi
 							speed = 0.003f;
 					}
 				}
-				//~TheOtherSide
 			}
 		}
 
-		collision.vSelf = (v.normalized()*speed*m_meleeScale);
-		collision.v = Vec3(0,0,0);
+		collision.vSelf = (v.normalized() * speed * m_meleeScale);
+		collision.v = Vec3(0, 0, 0);
 		collision.pCollider = pCollider;
 
-		IEntity *pOwner = m_pWeapon->GetOwner();
+		// Применяем столкновение к физике скелета, если она существует
+		IEntity* pOwner = m_pWeapon->GetOwner();
 		if (pOwner && pOwner->GetCharacter(0) && pOwner->GetCharacter(0)->GetISkeletonPose()->GetCharacterPhysics())
 		{
-			if (ISkeletonPose *pSkeletonPose=pOwner->GetCharacter(0)->GetISkeletonPose())
+			if (ISkeletonPose* pSkeletonPose = pOwner->GetCharacter(0)->GetISkeletonPose())
 			{
 				if (pSkeletonPose && pSkeletonPose->GetCharacterPhysics())
 					pSkeletonPose->GetCharacterPhysics()->Action(&collision);
 			}
-
 		}
 	}
 }

@@ -143,8 +143,8 @@ void InitGameFactory(IGameFramework *pFramework)
   REGISTER_FACTORY(pFramework, "Player", CTOSPlayer, false);
   //~TheOtherSide
 
-  REGISTER_FACTORY(pFramework, "Grunt", CPlayer, true);
-  REGISTER_FACTORY(pFramework, "Civilian", CPlayer, true);
+  REGISTER_FACTORY(pFramework, "Grunt", CTOSPlayer, true);
+  REGISTER_FACTORY(pFramework, "Civilian", CTOSPlayer, true);
 
   // Items
   REGISTER_FACTORY(pFramework, "Item", CItem, false);
@@ -197,7 +197,7 @@ void InitGameFactory(IGameFramework *pFramework)
 
 #ifndef SP_DEMO
   //aliens
-  REGISTER_FACTORY(pFramework, "AlienPlayer", CAlien, false);
+  REGISTER_FACTORY(pFramework, "AlienPlayer", CTOSAlien, false);
 //  REGISTER_FACTORY(pFramework, "Aliens/Observer", CObserver, true);
   
   //TheOtherSide

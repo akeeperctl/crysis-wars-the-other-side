@@ -151,7 +151,7 @@ ActorShared =
 			{
 				{
 					direction = {x=0,y=0,z=1},
-					strength = 600,
+					--strength = 600,
 					use_strength = true,
 					partId = -1,
 					strength = 10,
@@ -1468,7 +1468,7 @@ function BasicActor:HealthChanged()
 end
 
 function BasicActor.Server:OnDeadHit(hit)
-	--Log("BasicActor.Server:OnDeadHit()");
+	Log("BasicActor.Server:OnDeadHit()");
 	local frameID = System.GetFrameID();
 	if ((frameID - self.lastDeathImpulse) > 10) then
 		--marcok: talk to me before touching this
@@ -1830,7 +1830,9 @@ function BasicActor:OnPostFreeze(freeze)
 end
 
 
-function tf(n) g_gameRules.game:FreezeEntity(g_localActorId or EntityNamed(n).id, true, true); end
+function TF(n) 
+	g_gameRules.game:FreezeEntity(g_localActorId or EntityNamed(n).id, true, true); 
+end
 
 
 
@@ -2601,11 +2603,14 @@ function BasicActor.Client:OnTimer(timerId,mSec)
 	elseif (timerId == NANOSUIT_MODE_TIMER) then
 		self.actor:SetNanoSuitMode(self.AI.NanoSuitMode);
 	elseif (timerId == NANOSUIT_CLOAK_TIMER) then
+		--TheOtherSide
 		if(self.AI.NanoSuitCloak) then 
-			entity.actor:SetNanoSuitMode(NANOMODE_CLOAK);
+			self.actor:SetNanoSuitMode(NANOMODE_CLOAK);
 		else
-			entity.actor:SetNanoSuitMode(NANOMODE_DEFENSE);
+			self.actor:SetNanoSuitMode(NANOMODE_DEFENSE);
 		end
+		--~TheOtherSide
+
 	elseif (timerId == COLLISION_TIMER) then
 		self.AI.Colliding = false;
 	elseif (timerId == ACTOREFFECTS_TIMER) then

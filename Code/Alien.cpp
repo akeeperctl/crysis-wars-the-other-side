@@ -1807,29 +1807,35 @@ void CAlien::RagDollize(const bool fallAndPlay)
 	CTOSActor::RagDollize(fallAndPlay);
 
 	IPhysicalEntity* pPhysEnt = GetEntity()->GetPhysics();
-
 	if (pPhysEnt)
 	{
+		// Установка флагов для физической сущности
 		pe_params_flags flags;
-		flags.flagsOR = pef_log_collisions;
+		flags.flagsOR = pef_log_collisions; // Включение логирования столкновений
 		pPhysEnt->SetParams(&flags);
 
+		// Параметры симуляции
 		pe_simulation_params sp;
-		sp.damping = 1.0f;
-		sp.dampingFreefall = 0.0f;
-		sp.mass = m_stats.mass;
+		sp.damping = 1.0f; // Затухание
+		sp.dampingFreefall = 0.0f; // Затухание при свободном падении
+		sp.mass = m_stats.mass; // Масса, полученная из статистики
+
+		// Проверка и корректировка массы
 		if (sp.mass <= 0)
 		{
-			CryWarning(VALIDATOR_MODULE_GAME, VALIDATOR_WARNING, "Tried ragdollizing alien with 0 mass.");
-			sp.mass = 200.0f;
+			CryWarning(VALIDATOR_MODULE_GAME, VALIDATOR_WARNING,
+				"Tried ragdollizing alien with 0 mass.");
+			sp.mass = 200.0f; // Установка дефолтной массы, если текущая масса <= 0
 		}
 		pPhysEnt->SetParams(&sp);
 
+		// Параметры артикулированного тела
 		pe_params_articulated_body pa;
-		pa.dampingLyingMode = 5.5f;
-		//pa.scaleBounceResponse = 0.1f;
+		pa.dampingLyingMode = 5.5f; // Затухание в режиме лежания
+		// pa.scaleBounceResponse = 0.1f; // Масштаб отклика отскока (закомментировано)
 		pPhysEnt->SetParams(&pa);
 	}
+
 
 	if (gEnv->pSystem->IsSerializingFile())
 		//the finish physicalization

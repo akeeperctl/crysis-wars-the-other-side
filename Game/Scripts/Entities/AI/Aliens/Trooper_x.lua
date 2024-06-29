@@ -1,16 +1,6 @@
 Script.ReloadScript("SCRIPTS/Entities/AI/Shared/BasicAI.lua");
 Script.ReloadScript("scripts/entities/actor/basicalien.lua");
 
-
---if(BulletTypeClass==nil) then
---	BulletTypeClass  = {};
---	BulletTypeClass[0] = "Incendiary";
---	BulletTypeClass[1] = "Shotgun";
---	BulletTypeClass[2] = "Normal";
---	BulletTypeClass[3] = "Sniper";
---	BulletTypeClass[4] = "Gauss";
---end
-
 TrTimerVector1 = { x = 0, y = 0, z = 0 };
 TrTimerVector2 = { x = 0, y = 0, z = 0 };
 
@@ -29,7 +19,6 @@ Trooper_x = {
 
 	PropertiesInstance = {
 		aibehavior_behaviour = "TrooperIdle",
-		--		aibehavior_behaviour = "Job_StandIdle",
 		bAutoDisable = 1,
 	},
 
@@ -1003,15 +992,21 @@ end
 --end
 
 function Trooper_x:SetGroupFireModes()
+	
 	local groupCount = AI.GetGroupCount(self.id);
 	if (groupCount > 1) then
+		
 		local i = random(0, 1);
+		
 		for k = 1, groupCount do
-			local member = AI.GetGroupMember(self.id, k, GROUP_ENABLED, AIOBJECT_PUPPET);
+			local member = AI.GetGroupMember(self.id, k, GROUP_ENABLED, AIOBJECT_PUPPET);		
 			if (member) then
 				local item = member.inventory:GetCurrentItem();
 				if (item.weapon) then
-					entity.AI.FireMode = i;
+					--TheOtherSide
+					--entity.AI.FireMode = i;
+					self.AI.FireMode = i;
+					--~TheOtherSide
 					if (i == 1) then
 						item.weapon:SetCurrentFireMode("Automatic");
 					else
@@ -1455,14 +1450,15 @@ function Trooper_x:Event_EnableCloaked(params)
 	self:Event_Cloak();
 end
 
---function Trooper_x:Event_EnablePhysics(params)
---	self.actor:SetPhysicalizationProfile("ragdoll");
---end
---
---function Trooper_x:Event_DisablePhysics(params)
---	self.actor:SetPhysicalizationProfile("unragdoll");
---end
+--TheOtherSide
+function Trooper_x:Event_TurnRagdoll()
+	self.actor:SetPhysicalizationProfile("ragdoll");
+end
 
+function Trooper_x:Event_TurnAlive()
+	self.actor:SetPhysicalizationProfile("alive");
+end
+--~TheOtherSide
 
 function Trooper_x:AnimationEvent(event, value)
 	if (event == "Jump") then
@@ -1540,15 +1536,19 @@ Trooper_x.FlowEvents =
 		EnableCloaked = { Trooper_x.Event_EnableCloaked, "bool" },
 		Cloak = { BasicAlien.Event_Cloak, "bool" },
 		JumpAt = { Trooper_x.Event_Jump, "vec3" },
-		--		EnablePhysics = { Trooper_x.Event_EnablePhysics, "bool" },
-		--		DisablePhysics = { Trooper_x.Event_DisablePhysics, "bool" },
+		--TheOtherSide
+		TurnRagdoll = { Trooper_x.Event_TurnRagdoll, "bool" },
+		TurnAlive = { Trooper_x.Event_TurnAlive, "bool" },
+		--~TheOtherSide
 	},
 	Outputs =
 	{
 		EnableCloaked = "bool",
 		Cloak = "bool",
 		Land = "bool",
-		--		EnablePhysics = "bool",
-		--		DisablePhysics = "bool",
+		--TheOtherSide
+		TurnRagdoll = "bool",
+		TurnAlive = "bool",
+		--~TheOtherSide
 	},
 }

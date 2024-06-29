@@ -36,6 +36,8 @@ History:
 #include <StlUtils.h>
 
 // TheOtherSide
+#include "TheOtherSideMP/Game/TOSGame.h"
+#include "TheOtherSideMP/Game/Modules/Master/MasterClient.h"
 #include "TheOtherSideMP/Game/TOSGameEventRecorder.h"
 #include "TheOtherSideMP/HUD/TOSCrosshair.h"
 // ~TheOtherSide
@@ -60,44 +62,57 @@ void CGameRules::ClientSimpleHit(const SimpleHitInfo &simpleHitInfo)
 }
 
 //------------------------------------------------------------------------
-void CGameRules::ClientHit(const HitInfo &hitInfo)
+// Обработка попадания клиента в игре
+void CGameRules::ClientHit(const HitInfo& hitInfo)
 {
 	FUNCTION_PROFILER(GetISystem(), PROFILE_GAME);
 
-	IActor *pClientActor = g_pGame->GetIGameFramework()->GetClientActor();
-	IEntity *pTarget = m_pEntitySystem->GetEntity(hitInfo.targetId);
-	IEntity *pShooter =	m_pEntitySystem->GetEntity(hitInfo.shooterId);
-	IVehicle *pVehicle = g_pGame->GetIGameFramework()->GetIVehicleSystem()->GetVehicle(hitInfo.targetId);
-	IActor *pActor = g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(hitInfo.targetId);
-	bool dead = pActor?(pActor->GetHealth()<=0):false;
+	// Получение актера клиента, цели и стрелка из информации о попадании
+	IActor* pClientActor = g_pGame->GetIGameFramework()->GetClientActor();
+	IEntity* pTarget = m_pEntitySystem->GetEntity(hitInfo.targetId);
+	IEntity* pShooter = m_pEntitySystem->GetEntity(hitInfo.shooterId);
 
-	if((pClientActor && pClientActor->GetEntity()==pShooter) && pTarget && (pVehicle || pActor) && !dead)
+	// Проверка, является ли цель транспортным средством или актером
+	IVehicle* pVehicle = g_pGame->GetIGameFramework()->GetIVehicleSystem()->GetVehicle(hitInfo.targetId);
+	IActor* pActor = g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(hitInfo.targetId);
+
+	// Проверка, мертва ли цель
+	bool dead = pActor ? (pActor->GetHealth() <= 0) : false;
+
+	//TheOtherSide
+	IEntity* const pClientSlave = pClientActor ? g_pTOSGame->GetMasterModule()->GetMasterClient()->GetSlaveEntity() : nullptr;
+	const bool shooterIsSlave = pClientSlave && pClientSlave == pShooter ? true : false;
+	 
+	// Проверка, является ли стрелок клиентом или его подчиненным
+	const bool isShooterClientOrSlave = pClientActor && (pClientActor->GetEntity() == pShooter || shooterIsSlave);
+
+	// Проверка, является ли цель актером или транспортным средством
+	const bool isTargetValid = pTarget && (pVehicle || pActor);
+
+	// Обновление HUD, если стрелок - клиент или его подчиненный, цель действительна и не мертва
+	if (isShooterClientOrSlave && isTargetValid && !dead)
 	{
 		SAFE_HUD_FUNC(GetCrosshair()->CrosshairHit());
-		SAFE_HUD_FUNC(GetTagNames()->AddEnemyTagName(pActor?pActor->GetEntityId():pVehicle->GetEntityId()));
+		SAFE_HUD_FUNC(GetTagNames()->AddEnemyTagName(pActor ? pActor->GetEntityId() : pVehicle->GetEntityId()));
+	}
+	//~TheOtherSide
+
+	// Если цель - это клиент, создаем событие обратной связи
+	if (pActor == pClientActor)
+	{
+		if (gEnv->pInput)
+			gEnv->pInput->ForceFeedbackEvent(SFFOutputEvent(eDI_XI, eFF_Rumble_Basic, 0.5f * hitInfo.damage * 0.01f, hitInfo.damage * 0.02f, 0.0f));
 	}
 
-	if(pActor == pClientActor)
-		if (gEnv->pInput) gEnv->pInput->ForceFeedbackEvent( SFFOutputEvent(eDI_XI, eFF_Rumble_Basic, 0.5f * hitInfo.damage * 0.01f, hitInfo.damage * 0.02f, 0.0f));
-
-/*	if (gEnv->pAISystem && !gEnv->bMultiplayer)
-	{
-		static int htMelee = GetHitTypeId("melee");
-		if (pShooter && hitInfo.type != htMelee)
-		{
-			ISurfaceType *pSurfaceType = GetHitMaterial(hitInfo.material);
-			const ISurfaceType::SSurfaceTypeAIParams* pParams = pSurfaceType ? pSurfaceType->GetAIParams() : 0;
-			const float radius = pParams ? pParams->fImpactRadius : 5.0f;
-			gEnv->pAISystem->BulletHitEvent(hitInfo.pos, radius, pShooter->GetAI());
-		}
-	}*/
-
+	// Создание информации о попадании для скрипта и вызов соответствующего метода
 	CreateScriptHitInfo(m_scriptHitInfo, hitInfo);
 	CallScript(m_clientStateScript, "OnHit", m_scriptHitInfo);
 
-	bool backface = hitInfo.dir.Dot(hitInfo.normal)>0;
+	// Проверка, не является ли попадание обратной стороной и не удаленным
+	bool backface = hitInfo.dir.Dot(hitInfo.normal) > 0;
 	if (!hitInfo.remote && hitInfo.targetId && !backface)
 	{
+		// Если мы не на сервере, отправляем запрос на сервер, иначе обрабатываем попадание на сервере
 		if (!gEnv->bServer)
 			GetGameObject()->InvokeRMI(SvRequestHit(), hitInfo, eRMI_ToServer);
 		else
