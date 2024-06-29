@@ -64,7 +64,7 @@ namespace TOS_Debug
 	//	}
 	//}
 
-	inline void LogEntityFlags(const IEntity* pEntity)
+	inline void DumpEntityFlags(const IEntity* pEntity)
 	{
 		assert(pEntity);
 		if (!pEntity)

@@ -75,16 +75,15 @@ void CTOSMasterModule::InitCCommands(IConsole* pConsole)
 {
 	CTOSGenericModule::InitCCommands(pConsole);
 
-	pConsole->AddCommand("tos_cmd_getmasterslist", CmdGetMastersList);
+	pConsole->AddCommand("tos_cmd_dumpmasterslist", CmdDumpMastersList);
+	pConsole->AddCommand("tos_cmd_dumpdudeitems", CmdDumpDudeItems);
+	pConsole->AddCommand("tos_cmd_dumpactoritems", CmdDumpActorItems);
 	pConsole->AddCommand("tos_cmd_ismaster", CmdIsMaster);
-	pConsole->AddCommand("tos_cmd_mc_stopcontrol", CmdMCStopControl);
-	pConsole->AddCommand("tos_cmd_getdudeitems", CmdGetDudeItems);
-	pConsole->AddCommand("tos_cmd_getactoritems", CmdGetActorItems);
+	pConsole->AddCommand("tos_cmd_stopcontrol", CmdMCStopControl);
 	pConsole->AddCommand("tos_cmd_setactorhealth", CmdSetActorHealth);
 	pConsole->AddCommand("tos_cmd_getactorhealth", CmdGetActorHealth);
 	pConsole->AddCommand("tos_cmd_getactorcurrentitem", CmdGetActorCurrentItem);
 	pConsole->AddCommand("tos_cmd_playsound2d", CmdPlaySound2D);
-
 }
 
 void CTOSMasterModule::ReleaseCVars()
@@ -110,7 +109,21 @@ void CTOSMasterModule::ReleaseCCommands()
 	pConsole->RemoveCommand("tos_cmd_ismaster");
 }
 
-void CTOSMasterModule::CmdGetMastersList(IConsoleCmdArgs* pArgs)
+void CTOSMasterModule::OnHit(const HitInfo& info)
+{
+	IEntity* const pShooter = TOS_GET_ENTITY(info.shooterId);
+	CTOSActor* const pTargetActor = static_cast<CTOSActor*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(info.targetId));
+
+	if (!pShooter || !pTargetActor)
+		return;
+
+	if (pShooter->GetId() != pTargetActor->GetEntityId())
+	{
+		pTargetActor->UpdateLastShooterId(pShooter->GetId());
+	}
+}
+
+void CTOSMasterModule::CmdDumpMastersList(IConsoleCmdArgs* pArgs)
 {
 	ONLY_SERVER_CMD;
 
@@ -139,23 +152,13 @@ void CTOSMasterModule::CmdGetMastersList(IConsoleCmdArgs* pArgs)
 void CTOSMasterModule::CmdIsMaster(IConsoleCmdArgs* pArgs)
 {
 	ONLY_SERVER_CMD;
-
-	const char* strPlayerId = pArgs->GetArg(1);
-	const EntityId playerId = atoi(strPlayerId);
-
-	const auto pEntity = gEnv->pEntitySystem->GetEntity(playerId);
-	//assert(pEntity);
-	if (!pEntity)
-	{
-		CryLogAlways("IsMaster failed: not found entity with id (%i)", strPlayerId);
-		return;
-	}
+	GET_ENTITY_FROM_FIRST_ARG;
 
 
 	const bool isMaster = g_pTOSGame->GetMasterModule()->IsMaster(pEntity);
 	const char* result = isMaster ? "Yes" : "No";
 
-	CryLogAlways("Result: (%i|%s)", playerId, result);
+	CryLogAlways("Result: '%s' is master: %s", name, result);
 }
 
 void CTOSMasterModule::CmdMCStopControl(IConsoleCmdArgs* pArgs)
@@ -168,7 +171,7 @@ void CTOSMasterModule::CmdMCStopControl(IConsoleCmdArgs* pArgs)
 	pLocalMC->StopControl();
 }
 
-void CTOSMasterModule::CmdGetDudeItems(IConsoleCmdArgs* pArgs)
+void CTOSMasterModule::CmdDumpDudeItems(IConsoleCmdArgs* pArgs)
 {
 	ONLY_CLIENT_CMD;
 
@@ -191,20 +194,16 @@ void CTOSMasterModule::CmdGetDudeItems(IConsoleCmdArgs* pArgs)
 			const auto pItemEnt = TOS_GET_ENTITY(itemId);
 			const char* name = pItemEnt ? pItemEnt->GetClass()->GetName() : "<UNDEFINED>";
 
-			CryLogAlways("	%i) %s", i, name);
+			CryLogAlways("	%i. %s", i, name);
 		}
 	}
 }
 
-void CTOSMasterModule::CmdGetActorItems(IConsoleCmdArgs* pArgs)
+void CTOSMasterModule::CmdDumpActorItems(IConsoleCmdArgs* pArgs)
 {
-	//ONLY_SERVER_CMD;
+	GET_ENTITY_FROM_FIRST_ARG;
 
-	const char* strPlayerId = pArgs->GetArg(1);
-	const EntityId playerId = atoi(strPlayerId);
-
-	const auto pActor = (g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(playerId));
-	//assert(pActor);
+	const auto pActor = (g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pEntity->GetId()));
 	if (!pActor)
 	{
 		CryLogAlways("Failed: not found actor");
@@ -222,19 +221,19 @@ void CTOSMasterModule::CmdGetActorItems(IConsoleCmdArgs* pArgs)
 			const auto pItemEnt = TOS_GET_ENTITY(itemId);
 			const char* name = pItemEnt ? pItemEnt->GetClass()->GetName() : "<UNDEFINED>";
 
-			CryLogAlways("	%i) %s", i, name);
+			CryLogAlways("	%i. %s", i, name);
 		}
 	}
 }
 
 void CTOSMasterModule::CmdSetActorHealth(IConsoleCmdArgs* pArgs)
 {
-	const char* strId = pArgs->GetArg(1);
+	GET_ENTITY_FROM_FIRST_ARG;
+
 	const char* strHP = pArgs->GetArg(2);
-	const EntityId Id = atoi(strId);
 	const int HP = atoi(strHP);
 
-	const auto pActor = (g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(Id));
+	const auto pActor = (g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pEntity->GetId()));
 	//assert(pActor);
 	if (!pActor)
 	{
@@ -247,10 +246,9 @@ void CTOSMasterModule::CmdSetActorHealth(IConsoleCmdArgs* pArgs)
 
 void CTOSMasterModule::CmdGetActorHealth(IConsoleCmdArgs* pArgs)
 {
-	const char* strId = pArgs->GetArg(1);
-	const EntityId Id = atoi(strId);
+	GET_ENTITY_FROM_FIRST_ARG;
 
-	const auto pActor = (g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(Id));
+	const auto pActor = (g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pEntity->GetId()));
 	if (!pActor)
 	{
 		CryLogAlways("Failed: not found actor");
@@ -262,10 +260,9 @@ void CTOSMasterModule::CmdGetActorHealth(IConsoleCmdArgs* pArgs)
 
 void CTOSMasterModule::CmdGetActorCurrentItem(IConsoleCmdArgs* pArgs)
 {
-	const char* strId = pArgs->GetArg(1);
-	const EntityId Id = atoi(strId);
+	GET_ENTITY_FROM_FIRST_ARG;
 
-	const auto pActor = (g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(Id));
+	const auto pActor = (g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pEntity->GetId()));
 	if (!pActor)
 	{
 		CryLogAlways("Failed: not found actor");

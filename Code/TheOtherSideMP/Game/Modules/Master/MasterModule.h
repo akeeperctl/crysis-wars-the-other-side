@@ -174,11 +174,11 @@ public:
 	void     DebugDraw(const Vec2& screenPos = Vec2(20,300), float fontSize = 1.2f, float interval = 20.0f, int maxElemNum = 5);
 
 	//Console command's functions
-	static void CmdGetMastersList(IConsoleCmdArgs* pArgs);
+	static void CmdDumpMastersList(IConsoleCmdArgs* pArgs);
 	static void CmdIsMaster(IConsoleCmdArgs* pArgs);
 	static void CmdMCStopControl(IConsoleCmdArgs* pArgs);
-	static void CmdGetDudeItems(IConsoleCmdArgs* pArgs);
-	static void CmdGetActorItems(IConsoleCmdArgs* pArgs);
+	static void CmdDumpDudeItems(IConsoleCmdArgs* pArgs);
+	static void CmdDumpActorItems(IConsoleCmdArgs* pArgs);
 	static void CmdSetActorHealth(IConsoleCmdArgs* pArgs);
 	static void CmdGetActorHealth(IConsoleCmdArgs* pArgs);
 	static void CmdGetActorCurrentItem(IConsoleCmdArgs* pArgs);

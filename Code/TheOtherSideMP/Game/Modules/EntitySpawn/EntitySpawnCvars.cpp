@@ -15,10 +15,10 @@ void CTOSEntitySpawnModule::InitCCommands(IConsole* pConsole)
 	CTOSGenericModule::InitCCommands(pConsole);
 
 	pConsole->AddCommand("spawnentity", CmdSpawnEntity);
-	pConsole->AddCommand("removeentity", CmdRemoveEntityById);
-	pConsole->AddCommand("removeentityforced", CmdRemoveEntityByIdForced);
-	pConsole->AddCommand("getlistsavedentites", CmdGetListEntities);
-	pConsole->AddCommand("getentrot", CmdGetEntityRot);
+	pConsole->AddCommand("removeentity", CmdRemoveEntity);
+	pConsole->AddCommand("removeentityforced", CmdRemoveEntityForced);
+	pConsole->AddCommand("dumpspawned", CmdDumpSpawned);
+	pConsole->AddCommand("dumpentityrotation", CmdDumpEntityRotation);
 }
 
 void CTOSEntitySpawnModule::ReleaseCVars()
@@ -32,27 +32,39 @@ void CTOSEntitySpawnModule::ReleaseCCommands()
 	const auto pConsole = gEnv->pConsole;
 
 	pConsole->RemoveCommand("spawnentity");
-	pConsole->RemoveCommand("removeentitybyid");
-	pConsole->RemoveCommand("removeentitybyidforced");
-	pConsole->RemoveCommand("getlistsavedentites");
-	pConsole->RemoveCommand("getentrot");
+	pConsole->RemoveCommand("removeentity");
+	pConsole->RemoveCommand("removeentityforced");
+	pConsole->RemoveCommand("dumpspawned");
+	pConsole->RemoveCommand("dumpentityrotation");
 }
 
 void CTOSEntitySpawnModule::CmdSpawnEntity(IConsoleCmdArgs* pArgs)
 {
 	ONLY_SERVER_CMD;
 
-	const auto pClass = gEnv->pEntitySystem->GetClassRegistry()->FindClass(pArgs->GetArg(1));
+	string arg1 = pArgs->GetArg(1);
+	if (arg1.empty())
+	{
+		CryLogAlways("<c++> Spawn failed: empty class of entity");
+		return;
+	}
+
+	const auto pClass = gEnv->pEntitySystem->GetClassRegistry()->FindClass(arg1);
 	assert(pClass);
 
-	const string newEntName = pArgs->GetArg(2);
+	string newEntName = pArgs->GetArg(2);
+	if (newEntName.empty())
+	{
+		newEntName = "spawned";
+	}
+
 	const string plName = pArgs->GetArg(3);
 
 	const auto pPlayerEntity = gEnv->pEntitySystem->FindEntityByName(plName.c_str());
 	assert(pPlayerEntity);
 	if (!pPlayerEntity)
 	{
-		CryLogAlways("Spawn failed: player entity %(s) not found", plName.c_str());
+		CryLogAlways("<c++> Spawn failed: player entity %(s) not found", plName.c_str());
 		return;
 	}
 
@@ -68,39 +80,25 @@ void CTOSEntitySpawnModule::CmdSpawnEntity(IConsoleCmdArgs* pArgs)
 	CTOSEntitySpawnModule::SpawnEntity(params);
 }
 
-void CTOSEntitySpawnModule::CmdRemoveEntityById(IConsoleCmdArgs* pArgs)
+void CTOSEntitySpawnModule::CmdRemoveEntity(IConsoleCmdArgs* pArgs)
 {
 	ONLY_SERVER_CMD;
+	GET_ENTITY_FROM_FIRST_ARG;
 
-	const EntityId id = atoi(pArgs->GetArg(1));
 
-	const auto pEntity = gEnv->pEntitySystem->GetEntity(id);
-	if (!pEntity)
-	{
-		CryLogAlways("Failed: wrong 1 arg entityId");
-		return;
-	}
-
-	gEnv->pEntitySystem->RemoveEntity(id);
+	gEnv->pEntitySystem->RemoveEntity(pEntity->GetId());
 }
 
-void CTOSEntitySpawnModule::CmdRemoveEntityByIdForced(IConsoleCmdArgs* pArgs)
+void CTOSEntitySpawnModule::CmdRemoveEntityForced(IConsoleCmdArgs* pArgs)
 {
 	ONLY_SERVER_CMD;
+	GET_ENTITY_FROM_FIRST_ARG;
 
-	const EntityId id = atoi(pArgs->GetArg(1));
 
-	const auto pEntity = gEnv->pEntitySystem->GetEntity(id);
-	if (!pEntity)
-	{
-		CryLogAlways("Failed: wrong 1 arg entityId");
-		return;
-	}
-
-	RemoveEntityForced(id);
+	RemoveEntityForced(pEntity->GetId());
 }
 
-void CTOSEntitySpawnModule::CmdGetListEntities(IConsoleCmdArgs* pArgs)
+void CTOSEntitySpawnModule::CmdDumpSpawned(IConsoleCmdArgs* pArgs)
 {
 	ONLY_SERVER_CMD;
 
@@ -140,16 +138,10 @@ void CTOSEntitySpawnModule::CmdGetListEntities(IConsoleCmdArgs* pArgs)
 	}
 }
 
-void CTOSEntitySpawnModule::CmdGetEntityRot(IConsoleCmdArgs* pArgs)
+void CTOSEntitySpawnModule::CmdDumpEntityRotation(IConsoleCmdArgs* pArgs)
 {
-	const EntityId id = atoi(pArgs->GetArg(1));
+	GET_ENTITY_FROM_FIRST_ARG;
 
-	const auto pEntity = gEnv->pEntitySystem->GetEntity(id);
-	if (!pEntity)
-	{
-		CryLogAlways("Failed: wrong 1 arg entityId");
-		return;
-	}
 
 	CryLogAlways("Result: ");
 

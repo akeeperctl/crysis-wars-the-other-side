@@ -1244,8 +1244,10 @@ void CGame::CmdReloadItems(IConsoleCmdArgs *pArgs)
 //------------------------------------------------------------------------
 void CGame::CmdReloadGameRules(IConsoleCmdArgs *pArgs)
 {
+	//TheOtherSide
   //if (gEnv->bMultiplayer)
   //  return;
+	//~TheOtherSide
 
 	// Получение интерфейса системы правил игры
 	IGameRulesSystem* pGameRulesSystem = g_pGame->GetIGameFramework()->GetIGameRulesSystem();

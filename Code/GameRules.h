@@ -281,11 +281,11 @@ public:
 	virtual void OnChatMessage(EChatMessageType type, EntityId sourceId, EntityId targetId, const char *msg, bool teamChatOnly);
 	virtual void OnKillMessage(EntityId targetId, EntityId shooterId, const char *weaponClassName, float damage, int material, int hit_type);
 
-	CActor *GetActorByChannelId(int channelId) const;
-	CActor *GetActorByEntityId(EntityId entityId) const;
+	CTOSActor*GetActorByChannelId(int channelId) const;
+	CTOSActor*GetActorByEntityId(EntityId entityId) const;
 	ILINE const char *GetActorNameByEntityId(EntityId entityId) const
 	{
-		CActor *pActor=GetActorByEntityId(entityId);
+		CTOSActor*pActor=GetActorByEntityId(entityId);
 		if (pActor)
 			return pActor->GetEntity()->GetName();
 		return 0;

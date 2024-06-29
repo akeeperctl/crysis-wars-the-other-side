@@ -44,10 +44,9 @@ void STOSCvars::InitCCommands(IConsole* pConsole)
 	//SERVER COMMANDS
 	pConsole->AddCommand("netchname", CmdNetChName);
 	pConsole->AddCommand("getentitiesbyclass", CmdGetEntitiesByClass);
-	pConsole->AddCommand("getsyncs", CmdGetSyncs);
-	pConsole->AddCommand("getentitybyid", CmdGetEntityById);
 	pConsole->AddCommand("getentityscriptvalue", CmdGetEntityScriptValue);
-	pConsole->AddCommand("getentityscriptvalue", CmdGetEntityScriptValue);
+	pConsole->AddCommand("dumpsynchronizers", CmdDumpSynchronizers);
+	pConsole->AddCommand("dumpentityinfo", CmdDumpEntityInfo);
 	pConsole->AddCommand("dumpactorinfo", CmdDumpActorInfo);
 
 	// Отладочные команды потребителя энергии
@@ -56,7 +55,7 @@ void STOSCvars::InitCCommands(IConsole* pConsole)
 	pConsole->AddCommand("consumersetdebugentname", CmdConsumerSetDebugEntityName);
 
 	//CLIENT COMMANDS
-	pConsole->AddCommand("getlocalname", CmdGetLocalName);
+	pConsole->AddCommand("getdudename", CmdGetDudeName);
 
 	for (std::vector<ITOSGameModule*>::iterator it = g_pTOSGame->m_modules.begin(); it != g_pTOSGame->m_modules.end(); ++it)
 		(*it)->InitCCommands(pConsole);
@@ -130,16 +129,9 @@ void STOSCvars::CmdDumpActorInfo(IConsoleCmdArgs* pArgs)
 
 	ONLY_SERVER_CMD;
 
-	const EntityId id = atoi(pArgs->GetArg(1));
+	GET_ENTITY_FROM_FIRST_ARG;
 
-	const auto pEntity = gEnv->pEntitySystem->GetEntity(id);
-	if (!pEntity)
-	{
-		CryLogAlways("Failed: wrong 1 arg entityId");
-		return;
-	}
-
-	auto pActor = dynamic_cast<CTOSActor*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(id));
+	auto pActor = dynamic_cast<CTOSActor*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pEntity->GetId()));
 	if (!pActor)
 	{
 		CryLogAlways("Failed: nullptr pActor");
@@ -151,16 +143,7 @@ void STOSCvars::CmdDumpActorInfo(IConsoleCmdArgs* pArgs)
 
 void STOSCvars::CmdGetEntityScriptValue(IConsoleCmdArgs* pArgs)
 {
-	const EntityId id = atoi(pArgs->GetArg(1));
-	const char* pathToValue = pArgs->GetArg(2);
-	//const char* valueName =  pArgs->GetArg(3);
-
-	const auto pEntity = gEnv->pEntitySystem->GetEntity(id);
-	if (!pEntity)
-	{
-		CryLogAlways("Failed: wrong 1 arg entityId");
-		return;
-	}
+	GET_ENTITY_FROM_FIRST_ARG;
 
 	const auto pScriptTable = pEntity->GetScriptTable();
 	if (!pScriptTable)
@@ -169,14 +152,7 @@ void STOSCvars::CmdGetEntityScriptValue(IConsoleCmdArgs* pArgs)
 		return;
 	}
 
-	//ScriptAnyValue value;
-	//auto ok = GetLuaVarRecursive(tableName, value);
-	//if (!ok)
-	//{
-	//	CryLogAlways("Failed: something wrong in getting value of script table in full path", ok);
-	//	return;
-	//}
-
+	const char* pathToValue = pArgs->GetArg(2);
 	const string tokenStream(pathToValue);
 	int curPos = 0;
 
@@ -243,30 +219,25 @@ void STOSCvars::CmdGetEntityScriptValue(IConsoleCmdArgs* pArgs)
 	}
 }
 
-void STOSCvars::CmdGetEntityById(IConsoleCmdArgs* pArgs)
+void STOSCvars::CmdDumpEntityInfo(IConsoleCmdArgs* pArgs)
 {
 	ONLY_SERVER_CMD;
 
-	const EntityId id = atoi(pArgs->GetArg(1));
-	const EntityId playerId = atoi(pArgs->GetArg(2));
+	GET_ENTITY_FROM_FIRST_ARG;
 
-	const auto pEntity = gEnv->pEntitySystem->GetEntity(id);
-	if (!pEntity)
+	const string playerName = pArgs->GetArg(1);
+	const auto pPlayerEntity = gEnv->pEntitySystem->FindEntityByName(playerName);
+	if (!pPlayerEntity)
 	{
-		CryLogAlways("Failed: wrong 1 arg entityId");
+		CryLogAlways("Failed: cant find player with name %s", playerName.c_str());
 		return;
 	}
 
-	const auto pPlayer = g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(playerId);
-	if (!pPlayer)
-	{
-		CryLogAlways("Failed: wrong 2 arg playerId");
-		return;
-	}
-
+	const auto pPlayer = g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pPlayerEntity->GetId());
 	const auto playerChannelId = pPlayer->GetChannelId();
 	const auto pPlayerNetChannel = g_pGame->GetIGameFramework()->GetNetChannel(playerChannelId);
-	const auto isAuth = g_pGame->GetIGameFramework()->GetNetContext()->RemoteContextHasAuthority(pPlayerNetChannel, id);
+
+	const auto isAuth = g_pGame->GetIGameFramework()->GetNetContext()->RemoteContextHasAuthority(pPlayerNetChannel, pEntity->GetId());
 
 	const char* strName = pEntity ? pEntity->GetName() : "NULL";
 	const char* strAuth = isAuth ? "True" : "False";
@@ -275,7 +246,7 @@ void STOSCvars::CmdGetEntityById(IConsoleCmdArgs* pArgs)
 	CryLogAlways("	Name: %s", strName);
 	CryLogAlways("	Authority: %s", strAuth);
 
-	TOS_Debug::LogEntityFlags(pEntity);
+	TOS_Debug::DumpEntityFlags(pEntity);
 }
 
 void STOSCvars::CmdGetEntitiesByClass(IConsoleCmdArgs* pArgs)
@@ -299,7 +270,7 @@ void STOSCvars::CmdGetEntitiesByClass(IConsoleCmdArgs* pArgs)
 	}
 }
 
-void STOSCvars::CmdGetSyncs(IConsoleCmdArgs* pArgs)
+void STOSCvars::CmdDumpSynchronizers(IConsoleCmdArgs* pArgs)
 {
 	CryLogAlways("Result: (name|id)");
 
@@ -319,70 +290,53 @@ void STOSCvars::CmdConsumerSetEnergy(IConsoleCmdArgs* pArgs)
 {
 	ONLY_SERVER_CMD;
 
-	const EntityId id = atoi(pArgs->GetArg(1));
-	const int energyVal = atoi(pArgs->GetArg(2));
+	GET_ENTITY_FROM_FIRST_ARG;
 
-	const auto pEntity = gEnv->pEntitySystem->GetEntity(id);
-	if (!pEntity)
-	{
-		CryLogAlways("Failed: wrong 1 arg entityId");
-		return;
-	}
-
-	const auto pActor = dynamic_cast<CTOSActor*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(id));
+	const auto pActor = dynamic_cast<CTOSActor*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pEntity->GetId()));
 	if (!pActor)
 	{
 		CryLogAlways("Failed: actor not found");
 		return;
 	}
 
-	pActor->GetEnergyConsumer()->SetEnergy(energyVal);
+	const string energyStr = pArgs->GetArg(2);
+	const int energy = atoi(energyStr.empty() ? 0 : energyStr);
+	pActor->GetEnergyConsumer()->SetEnergy(energy);
 }
 
 void STOSCvars::CmdConsumerSetDrain(IConsoleCmdArgs* pArgs)
 {
 	ONLY_SERVER_CMD;
+	GET_ENTITY_FROM_FIRST_ARG;
 
-	const EntityId id = atoi(pArgs->GetArg(1));
-	const int energyVal = atoi(pArgs->GetArg(2));
+	const string energyStr = pArgs->GetArg(2);
+	const int energy = atoi(energyStr.empty() ? 0 : energyStr);
 
-	const auto pEntity = gEnv->pEntitySystem->GetEntity(id);
-	if (!pEntity)
-	{
-		CryLogAlways("Failed: wrong 1 arg entityId");
-		return;
-	}
-
-	const auto pActor = dynamic_cast<CTOSActor*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(id));
+	const auto pActor = dynamic_cast<CTOSActor*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pEntity->GetId()));
 	if (!pActor)
 	{
 		CryLogAlways("Failed: actor not found");
 		return;
 	}
 
-	pActor->GetEnergyConsumer()->SetDrainValue(energyVal);
+	pActor->GetEnergyConsumer()->SetDrainValue(energy);
 }
 
 void STOSCvars::CmdConsumerSetDebugEntityName(IConsoleCmdArgs* pArgs)
 {
 	ONLY_CLIENT_CMD;
+	GET_ENTITY_FROM_FIRST_ARG;
 
-	const auto pEntity = gEnv->pEntitySystem->FindEntityByName(pArgs->GetArg(1));
-	if (!pEntity)
-	{
-		CryLogAlways("Failed: wrong 1 arg name");
-		return;
-	}
 
 	CTOSEnergyConsumer::SetDebugEntityName(pEntity->GetName());
 }
 
-void STOSCvars::CmdGetLocalName(IConsoleCmdArgs* pArgs)
+void STOSCvars::CmdGetDudeName(IConsoleCmdArgs* pArgs)
 {
 	ONLY_CLIENT_CMD;
 
 	const auto pPlayer = g_pGame->GetIGameFramework()->GetClientActor();
 	assert(pPlayer);
 
-	CryLogAlways("Result: (%s)", pPlayer->GetEntity()->GetName());
+	CryLogAlways("Result: %s", pPlayer->GetEntity()->GetName());
 }

@@ -480,22 +480,23 @@ void CGameRules::PostUpdate(float frameTime)
 	}
 }
 
+//TheOtherSide
 //------------------------------------------------------------------------
-CActor* CGameRules::GetActorByChannelId(const int channelId) const
+CTOSActor* CGameRules::GetActorByChannelId(const int channelId) const
 {
-	return dynamic_cast<CActor*>(m_pGameFramework->GetIActorSystem()->GetActorByChannelId(channelId));
+	return dynamic_cast<CTOSActor*>(m_pGameFramework->GetIActorSystem()->GetActorByChannelId(channelId));
 }
 
 //------------------------------------------------------------------------
-CActor* CGameRules::GetActorByEntityId(const EntityId entityId) const
+CTOSActor* CGameRules::GetActorByEntityId(const EntityId entityId) const
 {
-	return dynamic_cast<CActor*>(m_pGameFramework->GetIActorSystem()->GetActor(entityId));
+	return dynamic_cast<CTOSActor*>(m_pGameFramework->GetIActorSystem()->GetActor(entityId));
 }
 
 //------------------------------------------------------------------------
 int CGameRules::GetChannelId(const EntityId entityId) const
 {
-	const CActor* pActor = dynamic_cast<CActor*>(m_pGameFramework->GetIActorSystem()->GetActor(entityId));
+	const CTOSActor* pActor = dynamic_cast<CTOSActor*>(m_pGameFramework->GetIActorSystem()->GetActor(entityId));
 	if (pActor)
 		return pActor->GetChannelId();
 
@@ -505,7 +506,7 @@ int CGameRules::GetChannelId(const EntityId entityId) const
 //------------------------------------------------------------------------
 bool CGameRules::IsDead(const EntityId id) const
 {
-	if (const CActor* pActor = GetActorByEntityId(id))
+	if (const CTOSActor* pActor = GetActorByEntityId(id))
 		return (pActor->GetHealth() <= 0);
 
 	return false;
@@ -514,11 +515,12 @@ bool CGameRules::IsDead(const EntityId id) const
 //------------------------------------------------------------------------
 bool CGameRules::IsSpectator(const EntityId id) const
 {
-	if (const CActor* pActor = GetActorByEntityId(id))
+	if (const CTOSActor* pActor = GetActorByEntityId(id))
 		return (pActor->GetSpectatorMode() != 0);
 
 	return false;
 }
+//~TheOtherSide
 
 //------------------------------------------------------------------------
 bool CGameRules::ShouldKeepClient(int channelId, const EDisconnectionCause cause, const char* desc) const
@@ -1156,7 +1158,7 @@ void CGameRules::KillPlayer(CTOSActor *pActor, const bool dropItem, const bool r
 	int shooterhealth = 100;
 	if (shooterId)
 	{
-		const CActor* shooter = GetActorByEntityId(shooterId);
+		const CTOSActor* shooter = GetActorByEntityId(shooterId);
 		if (shooter)
 			shooterhealth = shooter->GetHealth();
 	}

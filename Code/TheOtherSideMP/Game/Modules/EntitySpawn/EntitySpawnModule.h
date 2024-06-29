@@ -124,10 +124,10 @@ public:
 
 	//Console command's functions
 	static void CmdSpawnEntity(IConsoleCmdArgs* pArgs);
-	static void CmdRemoveEntityById(IConsoleCmdArgs* pArgs);
-	static void CmdRemoveEntityByIdForced(IConsoleCmdArgs* pArgs);
-	static void CmdGetListEntities(IConsoleCmdArgs* pArgs);
-	static void CmdGetEntityRot(IConsoleCmdArgs* pArgs);
+	static void CmdRemoveEntity(IConsoleCmdArgs* pArgs);
+	static void CmdRemoveEntityForced(IConsoleCmdArgs* pArgs);
+	static void CmdDumpSpawned(IConsoleCmdArgs* pArgs);
+	static void CmdDumpEntityRotation(IConsoleCmdArgs* pArgs);
 
 	/**
 	 * \brief Создаёт сущность по определенным параметрам

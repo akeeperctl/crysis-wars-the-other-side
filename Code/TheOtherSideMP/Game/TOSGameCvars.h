@@ -15,6 +15,16 @@ if (!gEnv->bClient)\
 	return;\
 }\
 
+#define GET_ENTITY_FROM_FIRST_ARG \
+const string name = pArgs->GetArg(1);\
+const auto pEntity = gEnv->pEntitySystem->FindEntityByName(name.c_str());\
+if (!pEntity)\
+{\
+	CryLogAlways("Failed: cant find entity with name %s", name.c_str());\
+	return;\
+}
+
+
 struct IConsole;
 struct SCVars;
 
@@ -42,9 +52,9 @@ struct STOSCvars  // NOLINT(cppcoreguidelines-special-member-functions)
 
 	static void CmdDumpActorInfo(IConsoleCmdArgs* pArgs);
 	static void CmdGetEntityScriptValue(IConsoleCmdArgs* pArgs);
-	static void CmdGetEntityById(IConsoleCmdArgs* pArgs);
+	static void CmdDumpEntityInfo(IConsoleCmdArgs* pArgs);
 	static void CmdGetEntitiesByClass(IConsoleCmdArgs* pArgs);
-	static void CmdGetSyncs(IConsoleCmdArgs* pArgs);
+	static void CmdDumpSynchronizers(IConsoleCmdArgs* pArgs);
 
 	static void CmdConsumerSetEnergy(IConsoleCmdArgs* pArgs);
 	static void CmdConsumerSetDrain(IConsoleCmdArgs* pArgs);
@@ -52,7 +62,7 @@ struct STOSCvars  // NOLINT(cppcoreguidelines-special-member-functions)
 
 
 	// CLIENT COMMANDS
-	static void CmdGetLocalName(IConsoleCmdArgs *pArgs);
+	static void CmdGetDudeName(IConsoleCmdArgs *pArgs);
 
 	// Правило написания консольных значений
 	// мод_среда_ОписаниеДействия
