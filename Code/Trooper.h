@@ -43,13 +43,12 @@ struct STrooperBeam
 };
 
 
-class CTrooper :
-	//TheOtherSide
-	//public CAlien
-	public CTOSAlien
-	//~TheOtherSide
+class CTrooper : public CTOSAlien //TheOtherSide
 {
 public:
+	CTrooper();
+
+	//~TheOtherSide
 	enum EJumpState {
 		JS_None,
 		JS_JumpStart,
@@ -63,6 +62,10 @@ public:
 
 	struct SJumpParams 
 	{
+		//TheOtherSide feature
+		float remainingTime;
+		//~TheOtherSide
+
 		Vec3 dest;
 		Vec3 velocity;
 		float duration;
@@ -96,6 +99,10 @@ public:
 		void Serialize (TSerialize ser )
 		{
 			ser.BeginGroup("JumpParams");
+			//TheOtherSide feature
+			ser.Value("remainingTime", remainingTime);
+			//~TheOtherSide feature
+
 			ser.Value("dest",dest);
 			ser.Value("velocity",velocity);
 			ser.Value("curVelocity",curVelocity);
@@ -125,6 +132,10 @@ public:
 
 		void Reset()
 		{
+			//TheOtherSide feature
+			remainingTime = ZERO;
+			//~TheOtherSide feature
+
 			dest = ZERO;
 			velocity = ZERO;
 			curVelocity = ZERO;
@@ -150,18 +161,6 @@ public:
 			bUseLandEvent = false;
 		}
 	};
-	//TheOtherSide
-	//CTrooper() : CAlien(),
-	CTrooper() : CTOSAlien(),
-	//~TheOtherSide
-		m_heightVariance(0),	
-		m_heightVarianceLow(0),	
-		m_heightVarianceHigh(0),
-		m_heightVarianceFreq(0),
-		m_heightVarianceRandomize(0)
-	{
-		m_modelQuat.SetIdentity();
-	}
 
 	void Revive(bool fromInit = false) ;
 

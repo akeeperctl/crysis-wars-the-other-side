@@ -39,7 +39,7 @@
 #include "HUD/HUDCrosshair.h"
 #include "HUD/HUDTextChat.h"
 
-//TheOtherSide
+//TheOtherSide feature
 #include "TheOtherSideMP/Actors/player/TOSPlayer.h"
 #include "TheOtherSideMP/Game/TOSGameEventRecorder.h"
 #include "TheOtherSideMP/Game/Modules/Master/MasterModule.h"

@@ -48,6 +48,9 @@ void CTOSTrooper::Update(SEntityUpdateContext& ctx, const int updateSlot)
 	NETINPUT_TRACE(GetEntityId(), m_jumpParams.state);
 	NETINPUT_TRACE(GetEntityId(), m_jumpParams.duration);
 	NETINPUT_TRACE(GetEntityId(), m_jumpParams.prevInAir);
+	NETINPUT_TRACE(GetEntityId(), m_jumpParams.landPreparationTime);
+	NETINPUT_TRACE(GetEntityId(), m_jumpParams.defaultLandPreparationTime);
+	NETINPUT_TRACE(GetEntityId(), m_jumpParams.remainingTime);
 
 	IEntityRenderProxy* pRenderProxy = (IEntityRenderProxy*)(GetEntity()->GetProxy(ENTITY_PROXY_RENDER));
 	if ((pRenderProxy == NULL) || !pRenderProxy->IsCharactersUpdatedBeforePhysics())
@@ -121,12 +124,10 @@ void CTOSTrooper::ProcessMovement(const float frameTime)
 
 		if (IsSlave())
 		{
-			// ПОФИКСИЛИ РАССИНХРОН bUseLandAnim == True + RMI
-
 			m_jumpParams.bTrigger = true;
 			m_jumpParams.bRelative = true;
-			m_jumpParams.bUseLandEvent = true;
-			m_jumpParams.duration = 0.4f;
+			m_jumpParams.bUseLandAnim = true; // ПОФИКШЕН РАССИНХРОН bUseLandAnim == True + RMI
+			m_jumpParams.duration = 0.4f; // подбиралось эмпирически. Через 0.4 сек переход из flying в approach landing
 
 			STOSSlaveStats* pSlaveStats = &GetSlaveStats();
 
@@ -150,14 +151,9 @@ void CTOSTrooper::ProcessMovement(const float frameTime)
 				pSlaveStats->jumpCount++;
 				jumpVec.z = upDir.z * finalOnceJumpForce; //400.0f
 
-				//GetEntity()->GetPhysics()->Action(&impulse);
 				m_jumpParams.velocity += jumpVec;
-				//m_pAnimatedCharacter->AddMovement(animCharRequest);
 
 				pSlaveStats->chargingJumpPressDur = 0.0f;
-
-				//TODO
-				//NetPlayAnimAction("CTRL_JumpStart", false);
 			}
 			else if (pSlaveStats->jumpCount > 0 && m_stats.inAir > 0.0f && energy > doubleJumpCost)
 			{
@@ -165,9 +161,6 @@ void CTOSTrooper::ProcessMovement(const float frameTime)
 
 				if (currentRequest.HasDeltaMovement() && !currentRequest.GetDeltaMovement().IsZero())
 				{
-					//jumpVec += request.GetDeltaMovement().x * 300.f * rightDir / 1.5f;
-					//jumpVec += request.GetDeltaMovement().y * 300.f * forwardDir / 1.5f;
-
 					jumpVec += currentRequest.GetDeltaMovement().x * jumpForce * rightDir / 1.5f;
 					jumpVec += currentRequest.GetDeltaMovement().y * jumpForce * forwardDir / 1.5f;
 				}
@@ -203,7 +196,6 @@ void CTOSTrooper::ProcessMovement(const float frameTime)
 	}
 
 	CTrooper::ProcessMovement(frameTime);
-
 	ProcessJumpFlyControl(m_moveRequest.velocity, frameTime);
 }
 

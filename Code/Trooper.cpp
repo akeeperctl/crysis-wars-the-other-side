@@ -30,6 +30,18 @@ const float CTrooper::CMaxHeadFOR = 0.5 * 3.14159f;
 const float CTrooper::ClandDuration = 1.f;
 const float CTrooper::ClandStiffnessMultiplier = 10;
 
+//TheOtherSide refactoring
+CTrooper::CTrooper() : CTOSAlien(),
+	m_heightVariance(0),
+	m_heightVarianceLow(0),
+	m_heightVarianceHigh(0),
+	m_heightVarianceFreq(0),
+	m_heightVarianceRandomize(0)
+{
+	m_modelQuat.SetIdentity();
+}
+//~TheOtherSide
+
 void CTrooper::Revive(bool fromInit)
 {
 	m_customLookIKBlends[0] = 0;
@@ -864,14 +876,14 @@ void CTrooper::ProcessJump(CTimeValue& currTime, IAnimationGraphState* pAGState,
 			if (m_jumpParams.bUseLandAnim)
 			{
 				// Вычисляем оставшееся время до приземления
-				float remainingTime = -1;
+				m_jumpParams.remainingTime = -1;
 				Vec3 normalizedVelocity(m_stats.velocity / (m_stats.speed > 0 ? m_stats.speed : 1));
 
 				// Проверяем, не находится ли объект в свободном падении
 				if (!m_jumpParams.bFreeFall)
 				{
 					// Если нет, вычисляем оставшееся время полёта
-					remainingTime = m_jumpParams.duration - (currTime - m_jumpParams.startTime).GetSeconds();
+					m_jumpParams.remainingTime = m_jumpParams.duration - (currTime - m_jumpParams.startTime).GetSeconds();
 				}
 				else
 				{
@@ -937,13 +949,13 @@ void CTrooper::ProcessJump(CTimeValue& currTime, IAnimationGraphState* pAGState,
 								if (discriminant >= 0)
 								{
 									float sqrtDiscriminant = sqrt(discriminant);
-									remainingTime = (-initialVelocity + sqrtDiscriminant) / (2 * acceleration);
+									m_jumpParams.remainingTime = (-initialVelocity + sqrtDiscriminant) / (2 * acceleration);
 									float alternativeTime = (-initialVelocity - sqrtDiscriminant) / (2 * acceleration);
 
 									// Выбираем наименьшее положительное время
-									if (remainingTime < 0 || (alternativeTime >= 0 && alternativeTime < remainingTime))
+									if (m_jumpParams.remainingTime < 0 || (alternativeTime >= 0 && alternativeTime < m_jumpParams.remainingTime))
 									{
-										remainingTime = alternativeTime;
+										m_jumpParams.remainingTime = alternativeTime;
 									}
 								}
 							}
@@ -951,7 +963,7 @@ void CTrooper::ProcessJump(CTimeValue& currTime, IAnimationGraphState* pAGState,
 					}
 				}
 
-				if (remainingTime >= 0 && remainingTime < 2 * frameTime)
+				if (m_jumpParams.remainingTime >= 0 && m_jumpParams.remainingTime < 2 * frameTime)
 				{
 					m_jumpParams.state = JS_Landing;
 					m_jumpParams.startTime = currTime;
@@ -959,7 +971,7 @@ void CTrooper::ProcessJump(CTimeValue& currTime, IAnimationGraphState* pAGState,
 					m_jumpParams.landDepth = m_jumpParams.curVelocity.GetNormalizedSafe().z;
 				}
 
-				if (remainingTime >= 0 && remainingTime < m_jumpParams.landPreparationTime && !m_bOverrideFlyActionAnim)
+				if (m_jumpParams.remainingTime >= 0 && m_jumpParams.remainingTime < m_jumpParams.landPreparationTime && !m_bOverrideFlyActionAnim)
 				{
 					//IAnimationGraphState* pAGState = GetAnimationGraphState();
 					if (pAGState)
