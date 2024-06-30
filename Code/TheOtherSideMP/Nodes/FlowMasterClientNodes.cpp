@@ -172,16 +172,16 @@ public:
 
 				uint flags = 0;
 				if (GetPortBool(pActInfo, EIP_BeamDude))
-					flags |= TOS_DUDE_FLAG_BEAM_MODEL;
+					flags |= CTOSMasterClient::TOS_DUDE_FLAG_BEAM_MODEL;
 
 				//if (GetPortBool(pActInfo, EIP_HideDude))
 				//	flags |= TOS_DUDE_FLAG_HIDE_MODEL;
 
 				if (GetPortBool(pActInfo, EIP_DisableSuit))
-					flags |= TOS_DUDE_FLAG_DISABLE_SUIT;
+					flags |= CTOSMasterClient::TOS_DUDE_FLAG_DISABLE_SUIT;
 
 				if (GetPortBool(pActInfo, EIP_DisableActions))
-					flags |= TOS_DUDE_FLAG_ENABLE_ACTION_FILTER;
+					flags |= CTOSMasterClient::TOS_DUDE_FLAG_ENABLE_ACTION_FILTER;
 
 				pMC->StartControl(pInputEntity, flags, true);
 

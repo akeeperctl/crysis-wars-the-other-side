@@ -1352,7 +1352,7 @@ void CPlayer::PrePhysicsUpdate()
 				}		
 			}
 		}
-  }
+	}
 
 	bool client(IsClient());
 	float frameTime = gEnv->pTimer->GetFrameTime();
@@ -1404,18 +1404,8 @@ void CPlayer::PrePhysicsUpdate()
 		SActorFrameMovementParams frameMovementParams;
 		if (m_pMovementController->Update(frameTime, frameMovementParams))
 		{
-/*
-#ifdef _DEBUG
-			if(m_pMovementDebug)
-				m_pMovementDebug->AddValue(frameMovementParams.desiredVelocity.len());
-			if(m_pDeltaXDebug)
-				m_pDeltaXDebug->AddValue(frameMovementParams.desiredVelocity.x);
-			if(m_pDeltaYDebug)
-				m_pDeltaYDebug->AddValue(frameMovementParams.desiredVelocity.y);
-#endif
-*/
 
-      if (m_linkStats.CanRotate())
+			if (m_linkStats.CanRotate())
 			{
 				Quat baseQuatBackup(m_baseQuat);
 
@@ -2603,14 +2593,14 @@ void CPlayer::UpdateStats(float frameTime)
 		}
 		else
 		{
-      if (m_stats.isOnLadder)
-      {
-        assert((m_stats.ladderTop - m_stats.ladderBottom).GetLengthSquared() > 0.0001f);
-			  m_stats.upVector = (m_stats.ladderTop - m_stats.ladderBottom).GetNormalized();
-      }
+			if (m_stats.isOnLadder)
+			{
+				assert((m_stats.ladderTop - m_stats.ladderBottom).GetLengthSquared() > 0.0001f);
+						m_stats.upVector = (m_stats.ladderTop - m_stats.ladderBottom).GetNormalized();
+			}
       
-      if(!ShouldSwim())
-				shouldReturn = true;
+			  if(!ShouldSwim())
+					shouldReturn = true;
 		}
 
 		if(shouldReturn)
@@ -2618,7 +2608,6 @@ void CPlayer::UpdateStats(float frameTime)
 			//UpdateDrowning(frameTime);
 			return;
 		}
-
 	}
 
 	//retrieve some information about the status of the player
@@ -4240,7 +4229,9 @@ bool CPlayer::NetSerialize( TSerialize ser, EEntityAspects aspect, uint8 profile
 	{
 		SSerializedPlayerInput serializedInput;
 		if (m_pPlayerInput.get() && ser.IsWriting())
+		{
 			m_pPlayerInput->GetState(serializedInput);
+		}
 
 		serializedInput.Serialize(ser);
 

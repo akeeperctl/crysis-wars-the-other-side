@@ -19,8 +19,15 @@ void CCompatibilityAlienMovementController::Reset()
 
 bool CCompatibilityAlienMovementController::Update( float frameTime, SActorFrameMovementParams& params )
 {
-	UpdateCurMovementState( params );
-	return false;
+	ICharacterInstance* pCharacter = m_pAlien->GetEntity()->GetCharacter(0);
+	if (!pCharacter)
+		return false;
+
+	// Params здесь не используется.
+	// Заполняется m_currentMovementState
+	UpdateCurMovementState(params);
+
+	return true;
 }
 
 void CCompatibilityAlienMovementController::Release()
@@ -60,12 +67,17 @@ bool CCompatibilityAlienMovementController::RequestMovement( CMovementRequest& r
 
 	if (request.ShouldJump())
 	{
-		auto pTrooper = dynamic_cast<CTOSTrooper*>(m_pAlien);
-		if (pTrooper)
-		{
-			pTrooper->ProcessJump(request);
-			request.ClearJump();
-		}
+		// Задаем SetJump для реагирование на него в будущем
+		m_currentMovementRequest.SetJump();
+
+		//auto pTrooper = dynamic_cast<CTOSTrooper*>(m_pAlien);
+		//if (pTrooper)
+		//{
+		//	pTrooper->ProcessJump(request);
+		//	request.ClearJump();
+		//}
+
+		request.ClearJump();
 
 		//TODO: обработать прыжок как движение вверх у Scout и Alien
 	}
@@ -76,8 +88,9 @@ bool CCompatibilityAlienMovementController::RequestMovement( CMovementRequest& r
 
 	if(pAnimationGraphState)
 	{
-		if (const SAnimationTarget * pTarget = pAnimationGraphState->GetAnimationTarget())
+		if (const SAnimationTarget* pTarget = pAnimationGraphState->GetAnimationTarget())
 		{
+			// Если цель анимации готовится, настраиваем точное позиционирование
 			if (pTarget->preparing)
 			{
 				os.bExactPositioning = true;
@@ -87,60 +100,49 @@ bool CCompatibilityAlienMovementController::RequestMovement( CMovementRequest& r
 				os.remainingPath.push_back(p);
 			}
 
-			// workaround: DistanceToPathEnd is bogus values. Using true distance to anim target pos instead.
-			//pAnimTarget->allowActivation = m_state.GetDistanceToPathEnd() < 5.0f;
+			// Определяем, двигается ли AI в трехмерном пространстве
 			bool b3D = false;
 			IAIActor* pAIActor = CastToIAIActorSafe(m_pAlien->GetEntity()->GetAI());
-			// sort of working, would fail if the AI moved in 2D while being able to do it in 3D
-			if(pAIActor)
+			if (pAIActor)
 				b3D = pAIActor->GetMovementAbility().b3DMove;
 
+			// Вычисляем расстояние до цели анимации
 			Vec3 targetDisp(pTarget->position - currentPos);
 			float distance = b3D ? targetDisp.GetLength() : targetDisp.GetLength2D();
 
-			Vec3 targetDir(pTarget->orientation.GetColumn1()) ;
+			// Вычисляем направление к цели анимации
+			Vec3 targetDir(pTarget->orientation.GetColumn1());
 			float diffRot = targetDir.Dot(m_pAlien->GetEntity()->GetWorldTM().GetColumn1());
-			if ( distance < 2.0f)
+
+			// Если расстояние меньше 2 метров, настраиваем скорость и направление движения
+			if (distance < 2.0f)
 			{
-				if(os.fDesiredSpeed == 0.0f )
+				if (os.fDesiredSpeed == 0.0f)
 				{
-					os.fDesiredSpeed = max(0.1f,(distance/2)*0.8f);
+					os.fDesiredSpeed = max(0.1f, (distance / 2) * 0.8f);
 					os.vMoveDir = pTarget->position - currentPos;
-					if ( !b3D )
+					if (!b3D)
 						os.vMoveDir.z = 0;
 					os.vMoveDir.NormalizeSafe(FORWARD_DIRECTION);
 				}
-				// slow down if alien is pretty much close and not enough oriented like target
-				if(diffRot<0.7f)
+
+				// Замедляем скорость, если пришелец близок к цели, но не достаточно ориентирован
+				if (diffRot < 0.7f)
 				{
-					os.fDesiredSpeed *= max(distance/2,0.f);
+					os.fDesiredSpeed *= max(distance / 2, 0.f);
 				}
-				/*if(distance>0)
-				{
-					if ( !b3D )
-						targetDisp.z=0;
-					targetDisp.NormalizeSafe(FORWARD_DIRECTION);
-					float diffDisp = targetDir.Dot(targetDisp);
-					if(diffDisp<0.9f)
-					{
-						os.vMoveDir = (pTarget->position - targetDir*0.3f) - currentPos;
-						if ( !b3D )
-							os.vMoveDir.z = 0;
-						os.vMoveDir.NormalizeSafe(FORWARD_DIRECTION);
-					}
-				}*/
 			}
 
+			// Регулируем скорость движения в соответствии с временем кадра
 			float frameTime = gEnv->pTimer->GetFrameTime();
-			if(frameTime>0)
+			if (frameTime > 0)
 			{
-				float expectedSpeed = distance/frameTime;
-				if(os.fDesiredSpeed > expectedSpeed)
+				float expectedSpeed = distance / frameTime;
+				if (os.fDesiredSpeed > expectedSpeed)
 					os.fDesiredSpeed = expectedSpeed;
 			}
-			//ColorB sd;
-			//gEnv->pRenderer->GetIRenderAuxGeom()->DrawLine(currentPos,ColorB(255,255,255,255),currentPos+os.vMoveDir*2,ColorB(255,255,255,255));
 
+			// Разрешаем активацию анимации, если расстояние меньше начального
 			static float startDistance = 5.0f;
 			pTarget->allowActivation = distance < startDistance;
 		}
@@ -148,34 +150,47 @@ bool CCompatibilityAlienMovementController::RequestMovement( CMovementRequest& r
 
 	m_pAlien->SetActorMovement(os);
 
-	if(pAnimationGraphState)
+	if (pAnimationGraphState)
 	{
+		// Обработка цели актора, если она есть
 		if (request.HasActorTarget())
 		{
-			// clear any action which might mess up the incoming exact positioning related AG states
-			//pAnimationGraphState->SetInput("Action","idle");
-
+			// Получаем параметры цели актора
 			const SActorTargetParams& p = request.GetActorTarget();
 			SAnimationTargetRequest req;
+
+			// Устанавливаем позицию и радиус для запроса анимационной цели
 			req.position = p.location;
 			req.positionRadius = p.locationRadius;
+
+			// Устанавливаем направление и радиус для запроса анимационной цели
 			req.direction = p.direction;
 			req.directionRadius = p.directionRadius;
+
+			// Устанавливаем радиус подготовки и проекцию конца для запроса анимационной цели
 			req.prepareRadius = 3.0f;
 			req.projectEnd = p.projectEnd;
-			IAnimationSpacialTrigger * pTrigger = pAnimationGraphState->SetTrigger(req, p.triggerUser, p.pQueryStart, p.pQueryEnd);
+
+			// Создаем триггер анимации и устанавливаем его параметры
+			IAnimationSpacialTrigger* pTrigger = pAnimationGraphState->SetTrigger(req, p.triggerUser, p.pQueryStart, p.pQueryEnd);
+			
 			if (!p.vehicleName.empty())
 			{
-				pTrigger->SetInput( "Vehicle", p.vehicleName.c_str() );
-				pTrigger->SetInput( "VehicleSeat", p.vehicleSeat );
+				pTrigger->SetInput("Vehicle", p.vehicleName.c_str());
+				pTrigger->SetInput("VehicleSeat", p.vehicleSeat);
 			}
-			pTrigger->SetInput( "DesiredSpeed", p.speed );
-			pTrigger->SetInput( "DesiredTurnAngleZ", 0 );
+
+			// Устанавливаем желаемую скорость и угол поворота для триггера анимации
+			pTrigger->SetInput("DesiredSpeed", p.speed);
+			pTrigger->SetInput("DesiredTurnAngleZ", 0);
+			
+			// Если анимация задана, устанавливаем соответствующий входной сигнал
 			if (!p.animation.empty())
 			{
-				pTrigger->SetInput( p.signalAnimation? "Signal" : "Action", p.animation.c_str() );
+				pTrigger->SetInput(p.signalAnimation ? "Signal" : "Action", p.animation.c_str());
 			}
 		}
+		// Если есть запрос на удаление цели актора, очищаем триггер
 		else if (request.RemoveActorTarget())
 		{
 			pAnimationGraphState->ClearTrigger(eAGTU_AI);
@@ -196,60 +211,64 @@ bool CCompatibilityAlienMovementController::RequestMovement( CMovementRequest& r
 
 	return true;
 }
-
 void CCompatibilityAlienMovementController::UpdateCurMovementState(const SActorFrameMovementParams& params)
 {
-	SMovementState& state(m_currentMovementState);
+	// Заполнение структуры информацией о пришельце
 	CAlien::SBodyInfo bodyInfo;
-	m_pAlien->GetActorInfo( bodyInfo );
-	//state.maxSpeed = bodyInfo.maxSpeed;
-	//state.minSpeed = bodyInfo.minSpeed;
-	//state.normalSpeed = bodyInfo.normalSpeed;
+	m_pAlien->GetActorInfo(bodyInfo);
+
+	// Получение текущего состояния движения
+	SMovementState& state(m_currentMovementState);
+
+	// Установка состояния и размеров стойки
 	state.stance = bodyInfo.stance;
-	state.m_StanceSize		= bodyInfo.m_stanceSizeAABB;
-	state.m_ColliderSize	= bodyInfo.m_colliderSizeAABB;
+	state.m_StanceSize = bodyInfo.m_stanceSizeAABB;
+	state.m_ColliderSize = bodyInfo.m_colliderSizeAABB;
+
+	// Установка направлений взгляда и анимации глаз
 	state.eyeDirection = bodyInfo.vEyeDir;
 	state.animationEyeDirection = bodyInfo.vEyeDirAnim;
+
+	// Установка позиций глаз и оружия
 	state.eyePosition = bodyInfo.vEyePos;
 	state.weaponPosition = bodyInfo.vFirePos;
+
+	// Установка направлений движения и вверх
 	state.movementDirection = bodyInfo.vFwdDir;
 	state.upDirection = bodyInfo.vUpDir;
+
+	// Проверка, достиг ли пришелец цели движения
 	state.atMoveTarget = m_atTarget;
-	state.bodyDirection = m_pAlien->GetEntity()->GetWorldRotation() * Vec3(0,1,0);
-	/*	if (IItem * pItem = gEnv->pGame->GetIGameFramework()->GetIItemSystem()->GetItem( itemEntity ))
-	if (const IWeapon * pWeapon = pItem->GetIWeapon())
-	state.weaponPosition = pWeapon->GetFiringPos(Vec3(0,0,0));*/
-	
-	if(m_currentMovementRequest.HasAimTarget())
-		state.aimDirection = (m_currentMovementRequest.GetAimTarget()-state.weaponPosition).GetNormalizedSafe();
+
+	// Установка направления тела пришельца
+	state.bodyDirection = m_pAlien->GetEntity()->GetWorldRotation() * Vec3(0, 1, 0);
+
+	// Расчет направления прицеливания
+	if (m_currentMovementRequest.HasAimTarget())
+		state.aimDirection = (m_currentMovementRequest.GetAimTarget() - state.weaponPosition).GetNormalizedSafe();
 	else
 		state.aimDirection = bodyInfo.vFireDir.GetNormalizedSafe();
 
-	if(m_currentMovementRequest.HasFireTarget())
-		state.fireDirection = (m_currentMovementRequest.GetFireTarget()-state.weaponPosition).GetNormalizedSafe(state.aimDirection);
+	// Расчет направления стрельбы
+	if (m_currentMovementRequest.HasFireTarget())
+		state.fireDirection = (m_currentMovementRequest.GetFireTarget() - state.weaponPosition).GetNormalizedSafe(state.aimDirection);
 	else
 		state.fireDirection = state.aimDirection;
 
-	state.isAlive = (m_pAlien->GetHealth()>0);
-	// get weapon position -----------------------
-	//IInventory * pInventory = m_pAlien->GetInventory();
-	//if (!pInventory)
-	//	return;
-	//EntityId itemEntity = pInventory->GetCurrentItem();
+	// Проверка, жив ли пришелец
+	state.isAlive = (m_pAlien->GetHealth() > 0);
 
-
-	//---------------------------------------------
-	//FIXME
+	// FIXME: Состояние прицеливания всегда истинно - возможно, это временная заглушка
 	state.isAiming = true;
-	/*Vec3	fireDir(outShootTargetPos - m_pShooter->GetFirePos());
-	fireDir.normalize();
-	if(fireDir.Dot(bodyInfo.vFireDir) < cry_cosf(DEG2RAD(10.0)) )*/
 
-	state.isFiring = (m_pAlien->GetActorStats()->inFiring>0.001f);
+	// Проверка, стреляет ли пришелец
+	state.isFiring = (m_pAlien->GetActorStats()->inFiring > 0.001f);
 
-	if(m_currentMovementRequest.HasFireTarget())
+	// Установка цели стрельбы, если она есть
+	if (m_currentMovementRequest.HasFireTarget())
 		state.fireTarget = m_currentMovementRequest.GetFireTarget();
 }
+
 
 bool CCompatibilityAlienMovementController::GetStanceState(EStance stance, float lean, bool defaultPose, SStanceState& state)
 {

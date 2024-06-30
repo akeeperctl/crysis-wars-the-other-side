@@ -681,7 +681,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">true</ExcludedFromBuild>
     </ClInclude>
-    <ClInclude Include="TheOtherSideMP\Extensions\EnergyРЎonsumer.h" />
+    <ClInclude Include="TheOtherSideMP\Extensions\EnergyConsumer.h" />
     <ClInclude Include="TheOtherSideMP\Game\Modules\Abilities\AbilitiesSystem.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">true</ExcludedFromBuild>

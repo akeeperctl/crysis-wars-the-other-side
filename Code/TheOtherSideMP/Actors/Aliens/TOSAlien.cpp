@@ -23,7 +23,7 @@ void CTOSAlien::PostInit(IGameObject* pGameObject)
 	IEntityRenderProxy* pRenderProxy = (IEntityRenderProxy*)(GetEntity()->GetProxy(ENTITY_PROXY_RENDER));
 	if (pRenderProxy)
 	{
-		//pRenderProxy->UpdateCharactersBeforePhysics(true);
+		pRenderProxy->UpdateCharactersBeforePhysics(false);
 	}
 }
 

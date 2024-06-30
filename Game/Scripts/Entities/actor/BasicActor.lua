@@ -1788,7 +1788,7 @@ function BasicActor:ApplyDeathImpulse()
 		--self:SetTimer(DEATH_REIMPULSE_TIMER,math.random(300,900));
 	end
 	
-	--Log(self:GetName()..":DeathImpulse("..partId..","..Vec2Str(dir)..","..impulse..")");	
+	Log(self:GetName()..":DeathImpulse("..partId..","..Vec2Str(dir)..","..impulse..")");	
 end
 
 function BasicActor:TurnRagdoll(param)

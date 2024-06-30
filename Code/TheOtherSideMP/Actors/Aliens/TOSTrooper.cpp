@@ -7,6 +7,7 @@
 #include "TheOtherSideMP/Extensions/EnergyСonsumer.h"
 #include "TheOtherSideMP/Helpers/TOS_Console.h"
 #include <TheOtherSideMP/Helpers/TOS_NET.h>
+#include <CompatibilityAlienMovementController.h>
 
 CTOSTrooper::CTOSTrooper() {};
 
@@ -30,6 +31,10 @@ void CTOSTrooper::PostInit(IGameObject* pGameObject)
 
 void CTOSTrooper::Update(SEntityUpdateContext& ctx, const int updateSlot)
 {
+	IEntityRenderProxy* pRenderProxy = (IEntityRenderProxy*)(GetEntity()->GetProxy(ENTITY_PROXY_RENDER));
+	if ((pRenderProxy == NULL) || !pRenderProxy->IsCharactersUpdatedBeforePhysics())
+		PrePhysicsUpdate();
+
 	CTrooper::Update(ctx, updateSlot);
 
 	const float regenStartDelay = m_pEnergyConsumer->GetRegenStartDelay();
@@ -105,6 +110,95 @@ bool CTOSTrooper::NetSerialize(const TSerialize ser, const EEntityAspects aspect
 
 void CTOSTrooper::ProcessMovement(const float frameTime)
 {
+	//TheOtherSide
+	// Обработка прыжка
+	auto pMovementController = static_cast<CCompatibilityAlienMovementController*>(GetMovementController());
+	auto& currentRequest = pMovementController->GetCurrentMovementRequest();
+	if (currentRequest.ShouldJump())
+	{
+		currentRequest.ClearJump();
+
+		if (IsSlave())
+		{
+			m_jumpParams.bTrigger = true;
+			m_jumpParams.bRelative = false;
+			m_jumpParams.bUseStartAnim = false;
+			m_jumpParams.bUseLandAnim = true;
+
+			STOSSlaveStats* pSlaveStats = &GetSlaveStats();
+
+			const float     onGround = m_stats.onGround;
+			const float		jumpPressDur = pSlaveStats->chargingJumpPressDur;
+			const float		jumpForce = 6.0f;
+			const float		finalOnceJumpForce = jumpPressDur > TOS_Console::GetSafeFloatVar("tos_sv_chargingJumpInputTime") ? jumpForce + 4.0f : jumpForce;
+
+			const float doubleJumpCost = TOS_Console::GetSafeFloatVar("tos_tr_double_jump_energy_cost");
+			const float energy = TOS_SAFE_GET_ENERGY(this);
+
+			Vec3 jumpVec(0, 0, 0);
+
+			const Vec3& upDir = GetEntity()->GetWorldTM().GetColumn(2);
+			const Vec3& forwardDir = GetEntity()->GetWorldTM().GetColumn(1);
+			const Vec3& rightDir = GetEntity()->GetWorldTM().GetColumn(0);
+
+			// Одиночный прыжок
+			if (onGround > 0.25f)
+			{
+				pSlaveStats->jumpCount++;
+				jumpVec.z = upDir.z * finalOnceJumpForce; //400.0f
+
+				//GetEntity()->GetPhysics()->Action(&impulse);
+				m_jumpParams.velocity += jumpVec;
+				//m_pAnimatedCharacter->AddMovement(animCharRequest);
+
+				pSlaveStats->chargingJumpPressDur = 0.0f;
+
+				//TODO
+				//NetPlayAnimAction("CTRL_JumpStart", false);
+			}
+			else if (pSlaveStats->jumpCount > 0 && m_stats.inAir > 0.0f && energy > doubleJumpCost)
+			{
+				// Двойной прыжок
+
+				if (currentRequest.HasDeltaMovement() && !currentRequest.GetDeltaMovement().IsZero())
+				{
+					//jumpVec += request.GetDeltaMovement().x * 300.f * rightDir / 1.5f;
+					//jumpVec += request.GetDeltaMovement().y * 300.f * forwardDir / 1.5f;
+
+					jumpVec += currentRequest.GetDeltaMovement().x * jumpForce * rightDir / 1.5f;
+					jumpVec += currentRequest.GetDeltaMovement().y * jumpForce * forwardDir / 1.5f;
+				}
+				else
+				{
+					jumpVec = forwardDir * jumpForce; //300.f;
+				}
+				jumpVec.z = upDir.z * 2.5f; // 250.f;
+
+				//TODO
+				//NetSpawnParticleEffect("alien_special.Trooper.doubleJumpAttack");
+
+				//TODO
+				//SubEnergy(TROOPER_JUMP_ENERGY_COST);
+
+				m_jumpParams.velocity += jumpVec;
+				//m_pAnimatedCharacter->AddMovement(animCharRequest);
+
+				TOS_SAFE_ADD_ENERGY(this, -doubleJumpCost);
+
+				pSlaveStats->jumpCount = 0;
+
+				//TODO
+				//The controlled trooper cannot to do jump attack after double jump
+				//m_trooper.canJumpMelee = false;
+			}
+
+			if (IsLocalSlave())
+			{
+				GetGameObject()->InvokeRMI(CTOSActor::SvRequestTOSJump(), CActor::NoParams(), eRMI_ToServer);
+			}
+		}
+	}
+
 	CTrooper::ProcessMovement(frameTime);
 
 	ProcessJumpFlyControl(m_moveRequest.velocity, frameTime);
@@ -178,6 +272,8 @@ void CTOSTrooper::UpdateMasterView(SViewParams& viewParams, Vec3& offsetX, Vec3&
 
 void CTOSTrooper::ProcessJump(const CMovementRequest& request)
 {
+	//throw std::logic_error("Функция не актуальна");
+
 	TOS_CHECK_CONSUMER_EXISTING(this);
 
 	//pe_action_impulse impulse;
@@ -253,10 +349,6 @@ void CTOSTrooper::ProcessJump(const CMovementRequest& request)
 			//TODO
 			//The controlled trooper cannot to do jump attack after double jump
 			//m_trooper.canJumpMelee = false;
-		}
-		else
-		{
-			//slaveStats->jumpCount = 0;
 		}
 	}
 }

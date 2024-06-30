@@ -11,21 +11,6 @@
 
 #include "MasterModule.h"
 
-enum ETOSDudePrepareFlags
-{
-	//TOS_DUDE_FLAG_HIDE_MODEL           = BIT(0),
-	TOS_DUDE_FLAG_BEAM_MODEL           = BIT(1),
-	//TOS_DUDE_FLAG_CLEAR_INVENTORY      = BIT(2),
-	TOS_DUDE_FLAG_DISABLE_SUIT         = BIT(2),
-	TOS_DUDE_FLAG_ENABLE_ACTION_FILTER = BIT(3)
-};
-
-enum ETOSActionFlags
-{
-	TOS_PRESSED = BIT(0),
-	TOS_HOLD = BIT(1),
-};
-
 class CTOSHUDCrosshair;
 class CTOSAIActionTracker;
 class CTOSMasterClient;
@@ -60,6 +45,21 @@ class CTOSMasterClient  : public IActionListener
 public:
 	explicit CTOSMasterClient(CTOSPlayer* pPlayer);
 	~CTOSMasterClient();
+
+	enum ETOSDudePrepareFlags
+	{
+		//TOS_DUDE_FLAG_HIDE_MODEL           = BIT(0),
+		TOS_DUDE_FLAG_BEAM_MODEL = BIT(1),
+		//TOS_DUDE_FLAG_CLEAR_INVENTORY      = BIT(2),
+		TOS_DUDE_FLAG_DISABLE_SUIT = BIT(2),
+		TOS_DUDE_FLAG_ENABLE_ACTION_FILTER = BIT(3)
+	};
+
+	enum ETOSActionFlags
+	{
+		TOS_PRESSED = BIT(0),
+		TOS_HOLD = BIT(1),
+	};
 
 	struct SCrosshairInfo
 	{
@@ -197,7 +197,7 @@ private:
 
 	void OnActionDelayReleased(const ActionId action, float pressedTimeLen);
 
-	void SendMovementRequest(IMovementController* pController);
+	void SendMovementRequest(IMovementController* pController, CMovementRequest& request);
 
 	//void ProcessMeleeDamage() const;
 	void UpdateMeleeTarget(const IEntity* pSlaveEntity, const int rayFlags, const unsigned entityFlags, const SMovementState& state);
@@ -217,9 +217,8 @@ private:
 
 	CTOSPlayer* m_pLocalDude; ///< Указатель на локального персонажа с именем \a Dude. \n Появляется в одиночной игре. \n Задаётся при вызове InitLocalPlayer у CTOSPlayer
 	IEntity*    m_pSlaveEntity; ///< Указатель на сущность раба, которую контролирует локальный персонаж.
-	//MCSaved m_dudeSavedParams; ///< Хранит сохраненные параметры лок. персонажа \n для их применения перед/после начала управления рабом
-	//CTOSHUDCrosshair* m_pHUDCrosshair;
 
+	uint m_actions;
 	uint m_dudeFlags;
 	CMovementRequest m_movementRequest;
 

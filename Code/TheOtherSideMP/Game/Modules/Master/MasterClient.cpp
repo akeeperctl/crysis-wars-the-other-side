@@ -41,61 +41,15 @@ if ( (actionId) == (checkActionId) )\
 CTOSMasterClient::CTOSMasterClient(CTOSPlayer* pPlayer)
 	: m_pLocalDude(pPlayer),
 	m_pSlaveEntity(nullptr),
-	m_dudeFlags(0)
-	//m_pWorldCamera(&gEnv->pSystem->GetViewCamera())
+	m_dudeFlags(0),
+	m_actions(0)
 {
 	assert(pPlayer);
-
-    // в редакторе вылетает
-  //  if (!gEnv->bEditor)
-  //  {
-		//m_pHUDCrosshair = g_pGame->GetHUD()->GetCrosshair();
-		//assert(m_pHUDCrosshair);
-  //  }
-
     m_deltaMovement.zero();
-
-	if (gEnv->bClient)
-	{
-		//const char* clientChannelName = g_pGame->GetIGameFramework()->GetClientChannel()->GetName();
-		//const char* netChName = _player->GetEntity()->;
-
-		//CryLogAlways(" ");
-		//CryLogAlways("[C++][CallConstructor][CTOSMasterClient] Player: %s, ClientChName: %s",
-		//	_player->GetEntity()->GetName(), clientChannelName);
-		//[C++][CallConstructor][CTOSMasterClient] Player: Akeeper, ClientChName: lmlicenses.wip4.adobe.com:64100
-
-		//g_pTOSGame->GetModuleMasterSystem()->MasterAdd(m_pLocalDude->GetEntity());
-
-		//InvokeRMI(ClTempRadarEntity(), params, eRMI_ToClientChannel, GetChannelId(*it));
-
-		//auto pSender = g_pTOSGame->GetMasterModule()->GetRMISender();
-		//assert(pSender);
-
-		//MasterAddingParams params;
-		//params.entityId = m_pLocalDude->GetEntityId();
-
-		//pSender->RMISend(CTOSMasterRMISender::SvRequestMasterAdd(), params, eRMI_ToServer);
-	}
 }
 
 CTOSMasterClient::~CTOSMasterClient()
 {
-	//g_pTOSGame->GetModuleMasterSystem()->MasterRemove(m_pLocalDude->GetEntity());
-
-	// delete this;
-
-	//Case 1 not work
-	//if (gEnv->bClient)
-	//{
-	//	auto pSender = g_pTOSGame->GetMasterModule()->GetRMISender();
-	//	assert(pSender);
-
-	//	MasterAddingParams params;
-	//	params.entityId = m_pLocalDude->GetEntityId();
-
-	//	pSender->RMISend(CTOSMasterRMISender::SvRequestMasterRemove(), params, eRMI_ToServer);
-	//}
 }
 
 void CTOSMasterClient::OnEntityEvent(IEntity* pEntity, const SEntityEvent& event)
@@ -270,21 +224,24 @@ bool CTOSMasterClient::OnActionJump(CTOSActor* pActor, const ActionId& actionId,
 		if (activationMode == eAAM_OnHold && holdTime > jumpDelay)
 		{
 			// Установка запроса на прыжок и обнуление длительности нажатия
-			m_movementRequest.SetJump();
+			//m_movementRequest.SetJump(); // перемещен в PrePhysicsUpdate
+			m_actions |= ACTION_JUMP;
 			pActor->GetSlaveStats().chargingJumpPressDur = holdTime;
 			m_actionPressedDuration[actionId] = 0;
 
+			// Надо переместить в PrePhysicsUpdate
 			// Отправка запроса на сервер
-			pActor->GetGameObject()->InvokeRMI(CTOSActor::SvRequestTOSJump(), CActor::NoParams(), eRMI_ToServer);
+			//pActor->GetGameObject()->InvokeRMI(CTOSActor::SvRequestTOSJump(), CActor::NoParams(), eRMI_ToServer);
 		}
 		// Обработка отпускания клавиши прыжка
 		else if (activationMode == eAAM_OnRelease && holdTime <= jumpDelay)
 		{
-			m_movementRequest.SetJump();
+			m_actions |= ACTION_JUMP;
+			//m_movementRequest.SetJump(); // перемещен в PrePhysicsUpdate
 			pActor->GetSlaveStats().chargingJumpPressDur = 0;
 
 			// Отправка запроса на сервер
-			pActor->GetGameObject()->InvokeRMI(CTOSActor::SvRequestTOSJump(), CActor::NoParams(), eRMI_ToServer);
+			//pActor->GetGameObject()->InvokeRMI(CTOSActor::SvRequestTOSJump(), CActor::NoParams(), eRMI_ToServer);
 		}
 	}
 	// Обработка прыжка без заряда
@@ -293,19 +250,25 @@ bool CTOSMasterClient::OnActionJump(CTOSActor* pActor, const ActionId& actionId,
 		// Установка запроса на прыжок при нажатии клавиши
 		if (activationMode == eAAM_OnPress && value > 0.0f)
 		{
-			m_movementRequest.SetJump();
+			//m_movementRequest.SetJump(); // перемещен в PrePhysicsUpdate
+			m_actions |= ACTION_JUMP;
 			pActor->GetSlaveStats().chargingJumpPressDur = 0;
 
 			// Отправка запроса на сервер
-			pActor->GetGameObject()->InvokeRMI(CTOSActor::SvRequestTOSJump(), CActor::NoParams(), eRMI_ToServer);
+			//pActor->GetGameObject()->InvokeRMI(CTOSActor::SvRequestTOSJump(), CActor::NoParams(), eRMI_ToServer);
 		}
 		// Очистка запроса на прыжок при отпускании клавиши
 		else if (activationMode == eAAM_OnRelease)
 		{
-			if (m_movementRequest.ShouldJump())
+			if (m_actions & ACTION_JUMP)
 			{
-				m_movementRequest.ClearJump();
+				m_actions &= ~ACTION_JUMP;
 			}
+
+			//if (m_movementRequest.ShouldJump()) // перемещен в PrePhysicsUpdate
+			//{
+			//	m_movementRequest.ClearJump();
+			//}
 		}
 	}
 
@@ -331,9 +294,18 @@ void CTOSMasterClient::PrePhysicsUpdate()
 	const auto pController = pSlaveActor->GetMovementController();
     assert(pController);
 
+	if (m_actions & ACTION_JUMP)
+	{
+		m_movementRequest.SetJump();
+		m_actions &= ~ACTION_JUMP;
+	}
+
+	m_movementRequest.SetLookTarget(m_lookfireInfo.lookTargetPos);
+	m_movementRequest.SetFireTarget(m_lookfireInfo.fireTargetPos);
+
 	// В сетевой игре отправка запроса отсюда работает прекрасно
 	// В одиночной игре отправка запроса не работает
-	SendMovementRequest(pController);
+	SendMovementRequest(pController, m_movementRequest);
 }
 
 void CTOSMasterClient::Update(float frametime)
@@ -408,8 +380,9 @@ void CTOSMasterClient::Update(float frametime)
 	const auto pController = pSlaveActor->GetMovementController();
 	assert(pController);
 
-	if (!gEnv->bMultiplayer)
-		SendMovementRequest(pController);
+	// Возможно будет работать метод через 
+	//if (!gEnv->bMultiplayer)
+		//SendMovementRequest(pController);
 
 	// Подсчет времени, сколько была нажата определенная клавиша в сек.
 	std::map<ActionId, uint>::iterator it = m_actionFlags.begin();
@@ -502,7 +475,7 @@ void CTOSMasterClient::OnActionDelayReleased(const ActionId action, float presse
 	CryLog("[%s] is released with time %f", action, pressedTimeLen);
 }
 
-void CTOSMasterClient::SendMovementRequest(IMovementController* pController)
+void CTOSMasterClient::SendMovementRequest(IMovementController* pController, CMovementRequest& request)
 {
 	assert(pController);
 	if (!pController)
@@ -515,9 +488,6 @@ void CTOSMasterClient::SendMovementRequest(IMovementController* pController)
 
 	if (disableRequest > 0)
 		return;
-
-	m_movementRequest.SetLookTarget(m_lookfireInfo.lookTargetPos);
-	m_movementRequest.SetFireTarget(m_lookfireInfo.fireTargetPos);
 
 	pController->RequestMovement(m_movementRequest);
 }

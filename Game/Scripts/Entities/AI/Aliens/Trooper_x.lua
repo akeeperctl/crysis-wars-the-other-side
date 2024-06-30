@@ -183,6 +183,7 @@ Trooper_x = {
 				viewOffset = { x = 0, y = 0.0, z = 1.3 },
 				weaponOffset = { x = 0, y = 0.25, z = 1.3 },
 				name = "vert",
+				bUseCapsule = 1,
 			},
 			{
 				stanceId = STANCE_PRONE,
@@ -196,6 +197,7 @@ Trooper_x = {
 				viewOffset = { x = 0, y = 0, z = 1 },
 				weaponOffset = { x = 0, y = 0.25, z = 1 },
 				name = "prone",
+				bUseCapsule = 1,
 			},
 			{
 				stanceId = STANCE_CROUCH,
@@ -210,6 +212,7 @@ Trooper_x = {
 				viewOffset = { x = 0, y = 0.0, z = 0.3 },
 				weaponOffset = { x = 0, y = 0.25, z = 0.3 },
 				name = "vert",
+				bUseCapsule = 1,
 			},
 			{
 				stanceId = STANCE_RELAXED,
@@ -223,6 +226,7 @@ Trooper_x = {
 				viewOffset = { x = 0, y = 0.0, z = 1.3 },
 				weaponOffset = { x = 0, y = 0.25, z = 1.3 },
 				name = "vert",
+				bUseCapsule = 1,
 			},
 			{
 				stanceId = STANCE_STEALTH,
@@ -237,6 +241,7 @@ Trooper_x = {
 				viewOffset = { x = 0, y = 0.0, z = 1.3 },
 				weaponOffset = { x = 0, y = 0.25, z = 1.3 },
 				name = "stealth",
+				bUseCapsule = 1,
 			},
 			{
 				stanceId = STANCE_SWIM,
@@ -251,6 +256,7 @@ Trooper_x = {
 				viewOffset = { x = 0, y = 0.0, z = 1.3 },
 				weaponOffset = { x = 0, y = 0.25, z = 1.3 },
 				name = "vert",
+				bUseCapsule = 1,
 			},
 		},
 

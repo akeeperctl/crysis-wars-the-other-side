@@ -137,9 +137,9 @@ IMPLEMENT_RMI(CTOSMasterSynchronizer, ClMasterClientStartControl)
 			return true;
 
 		const uint flags =
-			TOS_DUDE_FLAG_BEAM_MODEL |
-			TOS_DUDE_FLAG_DISABLE_SUIT |
-			TOS_DUDE_FLAG_ENABLE_ACTION_FILTER;
+			CTOSMasterClient::TOS_DUDE_FLAG_BEAM_MODEL |
+			CTOSMasterClient::TOS_DUDE_FLAG_DISABLE_SUIT |
+			CTOSMasterClient::TOS_DUDE_FLAG_ENABLE_ACTION_FILTER;
 
 		// В данном случае params.masterId равен 0, т.к. мы уже на локальной машине,
 		// который имеет мастер-клиент и локального игрока

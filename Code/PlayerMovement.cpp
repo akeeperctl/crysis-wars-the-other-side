@@ -60,33 +60,66 @@ void CPlayerMovement::Process(CPlayer& player)
 {
 	//FUNCTION_PROFILER(GetISystem(), PROFILE_GAME);
 
-	if (m_stats.spectatorMode || m_stats.flyMode) { ProcessFlyMode(); }
-	else if (m_stats.isOnLadder) { ProcessMovementOnLadder(player); }
-	else if (/*m_stats.inAir &&*/ m_stats.inZeroG) { ProcessFlyingZeroG(); }
+// Обработка различных режимов движения персонажа
+	if (m_stats.spectatorMode || m_stats.flyMode)
+	{
+		// Режим наблюдателя или полета
+		ProcessFlyMode();
+	}
+	else if (m_stats.isOnLadder)
+	{
+		// Движение по лестнице
+		ProcessMovementOnLadder(player);
+	}
+	else if (m_stats.inZeroG)
+	{
+		// Движение в условиях нулевой гравитации
+		ProcessFlyingZeroG();
+	}
 	else if (m_stats.inFreefall.Value() == 1)
 	{
+		// Состояние свободного падения без парашюта
 		m_request.type = eCMT_Normal;
 		m_request.velocity.zero();
 	}
-	else if (m_stats.inFreefall.Value() == 2) { ProcessParachute(); }
-	else if (player.ShouldSwim()) { ProcessSwimming(); }
-	else { ProcessOnGroundOrJumping(player); }
+	else if (m_stats.inFreefall.Value() == 2)
+	{
+		// Состояние свободного падения с парашютом
+		ProcessParachute();
+	}
+	else if (player.ShouldSwim())
+	{
+		// Плавание
+		ProcessSwimming();
+	}
+	else
+	{
+		// Обработка движения по земле или прыжков
+		ProcessOnGroundOrJumping(player);
+	}
 
-	// if (!m_player.GetLinkedEntity() && !m_player.GetEntity()->GetParent()) // Leipzig hotfix, these can get out of sync
+	// Обработка поворота персонажа, если он не связан с другим объектом
 	if (player.m_linkStats.CanRotate())
+	{
 		ProcessTurning();
+	}
 }
 
 void CPlayerMovement::Commit(CPlayer& player)
 {
 	if (player.m_pAnimatedCharacter)
 	{
+		// Не обнаружил, чтобы это на что-то влияло в MP
+		// на игрока
 		m_request.allowStrafe = m_movement.allowStrafe;
 		m_request.prediction = m_movement.prediction;
 
 		NETINPUT_TRACE(m_player.GetEntityId(), m_request.rotation * FORWARD_DIRECTION);
 		NETINPUT_TRACE(m_player.GetEntityId(), m_request.velocity);
 
+		// Не обнаружил, чтобы этот флаг на что-то влиял.
+		// Будет ли прыжок, определяется спец. типом
+		// в m_request.type
 		m_request.jumping = m_stats.jumped;
 
 		m_player.DebugGraph_AddValue("ReqVelo", m_request.velocity.GetLength());
@@ -1064,20 +1097,12 @@ void CPlayerMovement::ProcessOnGroundOrJumping(CPlayer& player)
 		}
 
 	bool isRemoteClient = !gEnv->bServer && !m_player.IsClient();
-	/*
-			// TODO: Graph has broken, appearantly, so we can't use this atm.
-			// Also, there's already a delay between jumps.
-			const char* AGAllowJump = player.GetAnimationGraphState()->QueryOutput("AllowJump");
-			if (strcmp(AGAllowJump, "1") != 0)
-				allowJump = false;
-	*/
 	bool debugJumping = (g_pGameCVars->pl_debug_jumping != 0);
 
 	if (m_movement.jump && allowJump)
+	{
 		if ((m_stats.onGround > 0.2f || dt_jumpCondition) && m_player.GetStance() != STANCE_PRONE)
 		{
-			//float verticalMult(max(0.75f,1.0f-min(1.0f,m_stats.flatSpeed / GetStanceMaxSpeed(STANCE_STAND) * m_params.sprintMultiplier)));
-			//mul * gravity * jump height
 			float mult = 1.0f;
 			//this is used to easily find steep ground
 			float slopeDelta = (m_stats.inZeroG) ? 0.0f : (m_stats.upVector - m_stats.groundNormal).len();
@@ -1101,25 +1126,19 @@ void CPlayerMovement::ProcessOnGroundOrJumping(CPlayer& player)
 				}
 			}
 
-			/*
-			if(m_stats.inZeroG)
-				m_request.type = eCMT_Impulse;//eCMT_JumpAccumulate;
-			else
-*/
-			{
-				m_request.type = eCMT_JumpAccumulate; //eCMT_Fly;
-				float g = m_stats.gravity.len();
-				float t = 0.0f;
-				if (g > 0.0f)
-					t = cry_sqrtf(2.0f * g * m_params.jumpHeight * mult) / g - m_stats.inAir * 0.5f;
-				jumpVec += m_baseQuat.GetColumn2() * g * t; // * verticalMult;
+			m_request.type = eCMT_JumpAccumulate; //eCMT_Fly;
+				
+			float g = m_stats.gravity.len();
+			float t = 0.0f;
+			if (g > 0.0f)
+				t = cry_sqrtf(2.0f * g * m_params.jumpHeight * mult) / g - m_stats.inAir * 0.5f;
+			jumpVec += m_baseQuat.GetColumn2() * g * t; // * verticalMult;
 
-				if (m_stats.groundNormal.len2() > 0.0f)
-				{
-					float vertical = CLAMP((m_stats.groundNormal.z - 0.25f) / 0.5f, 0.0f, 1.0f);
-					Vec3  modifiedJumpDirection = LERP(m_stats.groundNormal, Vec3(0,0,1), vertical);
-					jumpVec = modifiedJumpDirection * jumpVec.len();
-				}
+			if (m_stats.groundNormal.len2() > 0.0f)
+			{
+				float vertical = CLAMP((m_stats.groundNormal.z - 0.25f) / 0.5f, 0.0f, 1.0f);
+				Vec3  modifiedJumpDirection = LERP(m_stats.groundNormal, Vec3(0, 0, 1), vertical);
+				jumpVec = modifiedJumpDirection * jumpVec.len();
 			}
 
 			// Don't speed up...
@@ -1132,15 +1151,19 @@ void CPlayerMovement::ProcessOnGroundOrJumping(CPlayer& player)
 				m_onGroundWBoots = -0.5f;
 				jumpVec += m_baseQuat.GetColumn2() * cry_sqrtf(2.0f * 9.81f * m_params.jumpHeight);
 			}
-			else { m_jumped = true; }
+			else 
+			{ 
+				m_jumped = true; 
+			}
 
 			// Set ag action 'jumpMP' cleared in CPlayer::UpdateStats()
 			player.GetAnimationGraphState()->SetInput(player.GetAnimationGraphState()->GetInputId("Action"), ((pSuit->GetMode() == NANOMODE_STRENGTH) && !m_player.m_stats.bIgnoreSprinting && (mult > 1.0f)) ? "jumpMPStrength" : "jumpMP");
 
 			bool       bNormalJump = true;
-			CPlayer*   pPlayer = &m_player;
+			CPlayer* pPlayer = &m_player;
 			CNanoSuit* pSuit = m_player.GetNanoSuit();
 			if (pSuit && pSuit->GetMode() == NANOMODE_STRENGTH)
+			{
 				if (pSuit->GetSuitEnergy() >= 70.0f)
 				{
 					if (m_stats.inZeroG) { pSuit->SetSuitEnergy(pSuit->GetSuitEnergy() - 10.0f); }
@@ -1162,10 +1185,13 @@ void CPlayerMovement::ProcessOnGroundOrJumping(CPlayer& player)
 						bNormalJump = false;
 					}
 				}
+			}
 
 			if (pSuit && pSuit->GetMode() == NANOMODE_SPEED)
+			{
 				if ((m_actions & ACTION_SPRINT) && !m_player.m_stats.bIgnoreSprinting /*&& m_stats.speedFlat > 0.5f*//* && slopeDelta < 0.7f*/)
 					pSuit->SetSuitEnergy(pSuit->GetSuitEnergy() - 10.0f);
+			}
 
 			if (bNormalJump)
 			{
@@ -1179,6 +1205,7 @@ void CPlayerMovement::ProcessOnGroundOrJumping(CPlayer& player)
 			if (m_player.IsClient())
 				m_player.GetGameObject()->InvokeRMI(CPlayer::SvRequestJump(), CPlayer::JumpParams(!bNormalJump), eRMI_ToServer);
 		}
+	}
 
 	if (m_player.IsClient() && !gEnv->bMultiplayer)
 		move *= g_pGameCVars->g_walkMultiplier; //global speed adjuster used by level design
@@ -1195,30 +1222,22 @@ void CPlayerMovement::ProcessOnGroundOrJumping(CPlayer& player)
 	{
 		desiredVel = move;
 
-		/*
-				// This was causing the vertical jumping speed to be much slower.
-				if (m_stats.jumpLock>0.001f)
-					desiredVel *= 0.3f;
-		/**/
+		// Shallow water speed slowdown
+		float shallowWaterMultiplier = 1.0f;
+		if (player.IsPlayer())
+			shallowWaterMultiplier = g_pGameCVars->cl_shallowWaterSpeedMulPlayer;
+		else
+			shallowWaterMultiplier = g_pGameCVars->cl_shallowWaterSpeedMulAI;
+		shallowWaterMultiplier = CLAMP(shallowWaterMultiplier, 0.1f, 1.0f);
 
+		if ((shallowWaterMultiplier < 1.0f) && (m_stats.relativeBottomDepth > 0.0f))
 		{
-			// Shallow water speed slowdown
-			float shallowWaterMultiplier = 1.0f;
-			if (player.IsPlayer())
-				shallowWaterMultiplier = g_pGameCVars->cl_shallowWaterSpeedMulPlayer;
-			else
-				shallowWaterMultiplier = g_pGameCVars->cl_shallowWaterSpeedMulAI;
-			shallowWaterMultiplier = CLAMP(shallowWaterMultiplier, 0.1f, 1.0f);
-
-			if ((shallowWaterMultiplier < 1.0f) && (m_stats.relativeBottomDepth > 0.0f))
-			{
-				float shallowWaterDepthSpan = (g_pGameCVars->cl_shallowWaterDepthHi - g_pGameCVars->cl_shallowWaterDepthLo);
-				shallowWaterDepthSpan = max(0.1f, shallowWaterDepthSpan);
-				float slowdownFraction = (m_stats.relativeBottomDepth - g_pGameCVars->cl_shallowWaterDepthLo) / shallowWaterDepthSpan;
-				slowdownFraction = CLAMP(slowdownFraction, 0.0f, 1.0f);
-				shallowWaterMultiplier = LERP(1.0f, shallowWaterMultiplier, slowdownFraction);
-				desiredVel *= shallowWaterMultiplier;
-			}
+			float shallowWaterDepthSpan = (g_pGameCVars->cl_shallowWaterDepthHi - g_pGameCVars->cl_shallowWaterDepthLo);
+			shallowWaterDepthSpan = max(0.1f, shallowWaterDepthSpan);
+			float slowdownFraction = (m_stats.relativeBottomDepth - g_pGameCVars->cl_shallowWaterDepthLo) / shallowWaterDepthSpan;
+			slowdownFraction = CLAMP(slowdownFraction, 0.0f, 1.0f);
+			shallowWaterMultiplier = LERP(1.0f, shallowWaterMultiplier, slowdownFraction);
+			desiredVel *= shallowWaterMultiplier;
 		}
 	}
 	else if (move.len2() > 0.01f) //"passive" air control, the player can air control as long as it is to decelerate
@@ -1313,9 +1332,24 @@ void CPlayerMovement::ProcessOnGroundOrJumping(CPlayer& player)
 
 	NETINPUT_TRACE(m_player.GetEntityId(), jumpVec);
 
+	// Установка вектора скорости с учетом желаемой скорости и вектора прыжка
 	m_request.velocity = desiredVel + jumpVec;
-	if (!m_stats.inZeroG && (m_movement.jump && (g_pGameCVars->dt_enable && m_stats.inAir > 0.3f)) && m_request.velocity.len() > 22.0f) //cap maximum velocity when jumping (limits speed jump length)
-		m_request.velocity = m_request.velocity.normalized() * 22.0f;
+
+	// Проверка условий для ограничения максимальной скорости при прыжке
+	if (!m_stats.inZeroG) // Если персонаж не в нулевой гравитации
+	{
+		bool isJumping = m_movement.jump; // Персонаж выполняет прыжок
+		bool isDTEnabled = g_pGameCVars->dt_enable; // Игровая переменная dt_enable включена
+		bool isInAirLongEnough = m_stats.inAir > 0.3f; // Персонаж в воздухе достаточно долго
+		bool isVelocityHigh = m_request.velocity.len() > 22.0f; // Скорость прыжка высока
+
+		// Если все условия выполняются, ограничиваем скорость
+		if (isJumping && isDTEnabled && isInAirLongEnough && isVelocityHigh)
+		{
+			// Нормализация вектора скорости и ограничение его длины до 22
+			m_request.velocity = m_request.velocity.normalized() * 22.0f;
+		}
+	}
 
 	if (debugJumping)
 	{

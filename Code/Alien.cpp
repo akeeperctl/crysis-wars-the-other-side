@@ -407,6 +407,11 @@ void CAlien::BindInputs(IAnimationGraphState* pAGState)
 
 void CAlien::ProcessEvent(SEntityEvent& event)
 {
+	//TheOtherSide
+	//CTOSActor::ProcessEvent(event);
+	CTOSActor::ProcessEvent(event);
+	//~TheOtherSide
+
 	if (event.event == ENTITY_EVENT_HIDE || event.event == ENTITY_EVENT_UNHIDE) 
 	{ 
 		CreateScriptEvent("hide", event.event == ENTITY_EVENT_HIDE ? 1 : 0); 
@@ -420,16 +425,10 @@ void CAlien::ProcessEvent(SEntityEvent& event)
 	else if (event.event == ENTITY_EVENT_PREPHYSICSUPDATE) 
 	{
 		//TheOtherSide
-		//IEntityRenderProxy* pRenderProxy = (IEntityRenderProxy*)(GetEntity()->GetProxy(ENTITY_PROXY_RENDER));
-		//if ((pRenderProxy != NULL) && pRenderProxy->IsCharactersUpdatedBeforePhysics()) //~TheOtherSide
-			PrePhysicsUpdate();
-		
+		IEntityRenderProxy* pRenderProxy = (IEntityRenderProxy*)(GetEntity()->GetProxy(ENTITY_PROXY_RENDER));
+		if ((pRenderProxy != NULL) && pRenderProxy->IsCharactersUpdatedBeforePhysics()) //~TheOtherSide
+			PrePhysicsUpdate();	
 	}
-
-	//TheOtherSide
-	//CTOSActor::ProcessEvent(event);
-	CTOSActor::ProcessEvent(event);
-	//~TheOtherSide
 }
 
 bool CAlien::CreateCodeEvent(SmartScriptTable& rTable)
@@ -632,9 +631,14 @@ void CAlien::UpdateAnimGraph(IAnimationGraphState* pState)
 
 void CAlien::PrePhysicsUpdate()
 {
-	const IEntity* pEnt = GetEntity();
-	if (pEnt->IsHidden())
+	//TheOtherSide
+	if (!m_pAnimatedCharacter)
 		return;
+
+	IEntity* pEnt = GetEntity();
+	if (pEnt->IsHidden() && !(GetEntity()->GetFlags() & ENTITY_FLAG_UPDATE_HIDDEN))
+		return;
+	//~TheOtherSide
 
 	const float frameTime = gEnv->pTimer->GetFrameTime();
 
@@ -645,24 +649,15 @@ void CAlien::PrePhysicsUpdate()
 		// pvl Probably obsolete more or less.
 
 		// marcok: moved out
-		const Vec3  desiredMovement(m_input.posTarget - pEnt->GetWorldPos());
-		const float distance = desiredMovement.len();
+		Vec3  desiredMovement(m_input.posTarget - pEnt->GetWorldPos());
+		float distance = desiredMovement.len();
 
 		//FIXME:maybe find a better position for this?
 		//when the player is supposed to reach some precise position/direction
 		if (m_input.posTarget.len2() > 0.0f)
 		{
-			const Vec3 desiredMovement(m_input.posTarget - pEnt->GetWorldPos());
-
-			float distance = desiredMovement.len();
-
-			/*		if (distance > 0.01f)
-					{
-						// normalize it
-						desiredMovement /= distance;
-						desiredMovement *= m_input.speedTarget;
-						SetDesiredSpeed(desiredMovement);        		
-					}	    */
+			desiredMovement = Vec3(m_input.posTarget - pEnt->GetWorldPos());
+			distance = desiredMovement.len();
 		}
 
 		if (m_input.dirTarget.len2() > 0.0f)
@@ -673,11 +668,15 @@ void CAlien::PrePhysicsUpdate()
 			SetDesiredDirection(desiredDir);
 		}
 
+		//TheOtherSide
 		if (m_pMovementController)
 		{
+			// Обновляется 
 			SActorFrameMovementParams params;
-			m_pMovementController->Update(frameTime, params);
+			if (!m_pMovementController->Update(frameTime, params))
+				return;
 		}
+		//~TheOtherSide
 
 		assert(m_moveRequest.rotation.IsValid());
 		assert(m_moveRequest.velocity.IsValid());
@@ -721,8 +720,8 @@ void CAlien::PrePhysicsUpdate()
 				m_moveRequest.prediction.states[0].position = pEnt->GetWorldPos();
 				m_moveRequest.prediction.states[0].orientation = pEnt->GetWorldRotation();
 
-				assert(m_moveRequest.rotation.IsValid());
-				assert(m_moveRequest.velocity.IsValid());
+				//assert(m_moveRequest.rotation.IsValid());
+				//assert(m_moveRequest.velocity.IsValid());
 
 				int frameID = gEnv->pRenderer->GetFrameID();
 				DebugGraph_AddValue("EntID", pEnt->GetId());
@@ -742,19 +741,23 @@ void CAlien::PrePhysicsUpdate()
 
 void CAlien::Update(SEntityUpdateContext& ctx, const int updateSlot)
 {
-	IEntity* pEnt = GetEntity();
-	if (pEnt->IsHidden())
-		return;
-
 	FUNCTION_PROFILER(GetISystem(), PROFILE_GAME);
 
 	//TheOtherSide
+	IEntityRenderProxy* pRenderProxy = (IEntityRenderProxy*)(GetEntity()->GetProxy(ENTITY_PROXY_RENDER));
+	if ((pRenderProxy == NULL) || !pRenderProxy->IsCharactersUpdatedBeforePhysics())
+		PrePhysicsUpdate();
+	
+	IEntity* pEnt = GetEntity();
+	if (pEnt->IsHidden() && !(GetEntity()->GetFlags() & ENTITY_FLAG_UPDATE_HIDDEN))
+		return;
+
 	CTOSActor::Update(ctx, updateSlot);
 	//~TheOtherSide
 
 	const float frameTime = ctx.fFrameTime;
 
-	if (!m_stats.isRagDoll && GetHealth() > 0)
+	if (!m_stats.isRagDoll /*&& GetHealth() > 0*/)
 	{
 		//animation processing
 		ProcessAnimation(pEnt->GetCharacter(0), frameTime);
@@ -893,7 +896,7 @@ void CAlien::UpdateView(SViewParams& viewParams)
 	viewParams.rotation = GetQuatFromMat33(viewMtx);
 }
 
-//FIXME:at some point, unify this with CPlayer via CTOSActor
+//FIXME:at some point, unify this with CPlayer via CActor
 void CAlien::UpdateStats(float frameTime)
 {
 	IPhysicalEntity* pPhysEnt = GetEntity()->GetPhysics();
@@ -2179,18 +2182,18 @@ void CAlien::SetActorMovementCommon(SMovementRequestParams& control)
 	if (m_pAnimatedCharacter)
 		m_pAnimatedCharacter->GetAnimationGraphState()->SetInput(m_inputAiming, control.aimLook ? 1 : 0);
 
-	// draw pathpoints
-	/*if (nPoints)
+	 //draw pathpoints
+	if (nPoints)
 	{ 
-	  IRenderAuxGeom *pGeom = gEnv->pRenderer->GetIRenderAuxGeom();
-	  float size = 0.25f;
+		IRenderAuxGeom *pGeom = gEnv->pRenderer->GetIRenderAuxGeom();
+		float size = 0.25f;
   
-	  for (PATHPOINTVECTOR::iterator it = control.path.begin(); it != control.path.end(); ++it)
-	  {        
-	    pGeom->DrawSphere((*it).vPos, size, ColorB(0,255,0,128));
-	    size += 0.1f;
-	  }
-	}*/
+		for (PATHPOINTVECTOR::iterator it = control.remainingPath.begin(); it != control.remainingPath.end(); ++it)
+		{        
+			pGeom->DrawSphere((*it).vPos, size, ColorB(0,255,0,128));
+			size += 0.1f;
+		}
+	}
 }
 
 //---------------------------------

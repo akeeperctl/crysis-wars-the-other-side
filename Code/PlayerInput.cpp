@@ -1,20 +1,20 @@
 #include "StdAfx.h"
-#include "PlayerInput.h"
-#include "Player.h"
+#include "Fists.h"
 #include "Game.h"
-#include "GameCVars.h"
 #include "GameActions.h"
+#include "GameCVars.h"
+#include "GameRules.h"
+#include "HUD/HUD.h"
+#include "IVehicleSystem.h"
+#include "OffHand.h"
+#include "Player.h"
+#include "PlayerInput.h"
+#include "VehicleClient.h"
 #include "Weapon.h"
 #include "WeaponSystem.h"
-#include "IVehicleSystem.h"
-#include "VehicleClient.h"
-#include "OffHand.h"
-#include "Fists.h"
-#include "HUD/HUD.h"
-#include "GameRules.h"
 
-#include <IWorldQuery.h>
 #include <IInteractor.h>
+#include <IWorldQuery.h>
 
 //TheOtherSide
 #include "TheOtherSideMP/Actors/Player/TOSPlayer.h"
@@ -147,7 +147,7 @@ void CPlayerInput::ApplyMovement(Vec3 delta)
 void CPlayerInput::OnAction( const ActionId& actionId, int activationMode, float value )
 {
 	//TheOtherSide
-	const auto pTOSPlayer = dynamic_cast<CTOSPlayer*>(m_pPlayer);
+	const auto pTOSPlayer = static_cast<CTOSPlayer*>(m_pPlayer);
 	assert(pTOSPlayer);
 
 	if (pTOSPlayer)
@@ -802,7 +802,7 @@ void CPlayerInput::PreUpdate()
 	if (!m_pStats->isFrozen.Value() && !animControlled)  
 		request.AddDeltaMovement( FilterMovement(m_deltaMovement) );
 
-  m_deltaMovementPrev = m_deltaMovement;
+	m_deltaMovementPrev = m_deltaMovement;
 
 	// handle actions
 	if (m_actions & ACTION_JUMP)

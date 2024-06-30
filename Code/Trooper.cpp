@@ -135,7 +135,9 @@ void CTrooper::SetParams(SmartScriptTable& rTable, bool resetFirst)
 	}
 
 	m_jumpParams.addVelocity = ZERO;
-	if (rTable->GetValue("jumpTo", m_jumpParams.dest) && !m_jumpParams.dest.IsZero() || rTable->GetValue("addVelocity", m_jumpParams.addVelocity))
+	if (rTable->GetValue("jumpTo", m_jumpParams.dest) && 
+		!m_jumpParams.dest.IsZero() || 
+		rTable->GetValue("addVelocity", m_jumpParams.addVelocity))
 	{
 		rTable->GetValue("jumpVelocity", m_jumpParams.velocity);
 		rTable->GetValue("jumpTime", m_jumpParams.duration);
@@ -730,7 +732,7 @@ void CTrooper::ProcessMovement(float frameTime)
 	GetMovementVector(move, reqSpeed, maxSpeed);
 
 	// NOTE Jan 18, 2007: <pvl> preserve unmodified AI request for later use
-	Vec3 ai_requested_movement = move;
+	//Vec3 ai_requested_movement = move;
 
 	CTimeValue currTime = gEnv->pSystem->GetITimer()->GetFrameStartTime();
 
@@ -746,70 +748,108 @@ void CTrooper::ProcessMovement(float frameTime)
 		m_lastExactPositioningTime = currTime;
 
 	IAnimationGraphState* pAGState = GetAnimationGraphState();
-	IPhysicalEntity*      phys = GetEntity()->GetPhysics();
+	if (!pAGState)
+		return;
 
-	if (!m_bExactPositioning) // && 
+	IPhysicalEntity*      phys = GetEntity()->GetPhysics();
+	if (!phys)
+		return;
+
+	if (!m_bExactPositioning) 
 	{
 		if (m_jumpParams.bTrigger)
 		{
 			m_jumpParams.bTrigger = false;
 			m_jumpParams.state = JS_JumpStart;
 			m_jumpParams.startTime = currTime;
-			//m_moveRequest.type = eCMT_JumpAccumulate;
+
 			if (pAGState && m_jumpParams.bUseStartAnim)
 			{
-				Vec3 vN(m_jumpParams.velocity);
-				Vec3 vNx(vN);
-				vN.NormalizeSafe();
-				vNx.z = 0;
-				vNx.NormalizeSafe();
-				float dot = vN.Dot(vNx);
-				float anglex = RAD2DEG(cry_acosf(CLAMP(dot,-1.f,1.f)));
-				if (m_viewMtx.GetColumn1().Dot(m_jumpParams.velocity) < -0.001) // jump backwards
-					anglex = 180 - anglex;
+				// Нормализация вектора скорости для вычисления углов
+				Vec3 jumpVelocity = m_jumpParams.velocity;
+				Vec3 jumpDirection = jumpVelocity;
+				jumpVelocity.NormalizeSafe();
 
-				pAGState->SetInput(m_idAngleXInput, anglex);
+				// Горизонтальная составляющая скорости
+				jumpDirection.z = 0;
+				jumpDirection.NormalizeSafe();
 
-				Vec3 viewDir(m_viewMtx.GetColumn(1));
-				dot = vNx.Dot(viewDir);
-				float anglez = RAD2DEG(cry_acosf(CLAMP(dot,-1.f,1.f))*sgn(vNx.Cross(viewDir).z));
-				pAGState->SetInput(m_idAngleZInput, anglez);
+				// Вычисление угла по оси X
+				float dotProduct = jumpVelocity.Dot(jumpDirection);
+				float angleX = RAD2DEG(cry_acosf(CLAMP(dotProduct, -1.f, 1.f)));
+				
+				if (m_viewMtx.GetColumn1().Dot(m_jumpParams.velocity) < -0.001) // Если прыжок назад
+				{
+					angleX = 180 - angleX;
+				}
+				pAGState->SetInput(m_idAngleXInput, angleX);
 
+				// Вычисление угла по оси Z
+				Vec3 viewDirection = m_viewMtx.GetColumn(1);
+				dotProduct = jumpDirection.Dot(viewDirection);
+				float angleZ = RAD2DEG(cry_acosf(CLAMP(dotProduct, -1.f, 1.f)) * sgn(jumpDirection.Cross(viewDirection).z));
+				pAGState->SetInput(m_idAngleZInput, angleZ);
+
+				// Установка анимации в зависимости от параметров прыжка
 				if (m_jumpParams.bUseSpecialAnim && m_jumpParams.specialAnimType == JUMP_ANIM_FLY)
+				{
 					pAGState->SetInput(m_idActionInput, m_jumpParams.specialAnimAGInputValue);
+				}
 				else
+				{
 					pAGState->SetInput(m_idActionInput, "fly");
+				}
 			}
 		}
 
 		if (m_jumpParams.state == JS_JumpStart)
-			if ((!m_jumpParams.bUseStartAnim && !m_jumpParams.bUseAnimEvent) || (currTime - m_jumpParams.startTime).GetSeconds() > 0.9f)
+		{
+			//Это условие используется для определения, 
+			// когда персонаж должен начать прыжок.
+			// Т.е как только проигралась анимация или после 0.9 секунд
+			if ((!m_jumpParams.bUseStartAnim && !m_jumpParams.bUseAnimEvent) ||
+				(currTime - m_jumpParams.startTime).GetSeconds() > 0.9f)
+			{
 				Jump();
+			}
+		}
 
 		//TheOtherSide
-		//else if (m_jumpParams.state == JS_ApplyImpulse)
+		// Проверяем состояние прыжка для применения импульса
 		if (m_jumpParams.state == JS_ApplyImpulse)
-		//~TheOtherSide
 		{
-			// actual impulse will be applied now
+			//~TheOtherSide
+			
+			// Если физический объект существует, настраиваем параметры плавания
 			if (phys)
 			{
 				pe_player_dynamics simParSet;
 				simParSet.bSwimming = true;
 				phys->SetParams(&simParSet);
 			}
+
+			// Устанавливаем тип движения на мгновенный прыжок
 			m_moveRequest.type = eCMT_JumpInstant;
 
+			// Получаем динамическое состояние для расчета импульса
 			pe_status_dynamics dyn;
 			if (!m_jumpParams.velocity.IsZero() && phys && phys->GetStatus(&dyn))
 			{
-				Vec3 vel(m_jumpParams.bRelative ? m_jumpParams.velocity : m_jumpParams.velocity - dyn.v);
-				move = (vel + m_jumpParams.addVelocity);
-				m_jumpParams.state = JS_Flying; //JS_JumpStart;
+				// Рассчитываем вектор движения с учетом относительности скорости
+				Vec3 vel = m_jumpParams.bRelative ? m_jumpParams.velocity : m_jumpParams.velocity - dyn.v;
+				move = vel + m_jumpParams.addVelocity;
+
+				// Переходим в состояние полета и активируем эффект прыжка
+				m_jumpParams.state = JS_Flying;
 				JumpEffect();
 			}
-			else { m_jumpParams.state = JS_None; }
+			else
+			{
+				// Если условия не выполнены, сбрасываем состояние прыжка
+				m_jumpParams.state = JS_None;
+			}
 
+			// Обнуляем параметры прыжка и устанавливаем время начала
 			m_jumpParams.velocity = ZERO;
 			m_jumpParams.startTime = currTime;
 		}
@@ -824,113 +864,197 @@ void CTrooper::ProcessMovement(float frameTime)
 			phys->SetParams(&simParSet);
 		}
 
-		if (m_stats.inAir > 0.0f && !InZeroG() && !GetEntity()->GetParent() && m_jumpParams.state != JS_ApproachLanding && m_jumpParams.state != JS_Landing)
+		//TheOtherSide
+		bool isInAir = m_stats.inAir > 0.0f;
+		bool isNotInZeroG = !InZeroG();
+		bool hasNoParent = !GetEntity()->GetParent();
+		bool isNotApproachingLanding = m_jumpParams.state != JS_ApproachLanding;
+		bool isNotLanding = m_jumpParams.state != JS_Landing;
+		//~TheOtherSide
+
+		if (isInAir && isNotInZeroG && hasNoParent && isNotApproachingLanding && isNotLanding)
 		{
 			m_jumpParams.curVelocity = m_stats.velocity;
+
 			//check free fall
 			if ((currTime - m_lastTimeOnGround).GetSeconds() > 0.1f)
 			{
 				if (m_jumpParams.state == JS_None || /*m_jumpParams.state ==JS_Landing ||*/ m_jumpParams.state == JS_Landed)
-				{
-					//IAnimationGraphState* pAGState = GetAnimationGraphState();
+				{					
 					bool bUseSpecialFlyAnim = (m_bOverrideFlyActionAnim || m_jumpParams.bUseSpecialAnim && m_jumpParams.specialAnimType == JUMP_ANIM_FLY);
+					
 					if (pAGState && !bUseSpecialFlyAnim)
 						pAGState->SetInput(m_idActionInput, m_bOverrideFlyActionAnim ? m_overrideFlyAction : "flyNoStart");
+					
 					m_jumpParams.state = JS_Flying;
+
 					if (!bUseSpecialFlyAnim)
 						m_jumpParams.bUseLandAnim = true;
+
 					m_jumpParams.bFreeFall = true;
 				}
 
-				//IPhysicalEntity *phys = GetEntity()->GetPhysics();
-				if (phys)
-					if (m_jumpParams.bUseLandAnim)
+				if (m_jumpParams.bUseLandAnim)
+				{
+					// Вычисляем оставшееся время до приземления
+					float remainingTime = -1;
+					Vec3 normalizedVelocity(m_stats.velocity / (m_stats.speed > 0 ? m_stats.speed : 1));
+
+					// Проверяем, не находится ли объект в свободном падении
+					if (!m_jumpParams.bFreeFall)
 					{
-						// computing remaining time to land
-						float t = -1;
-						Vec3  vN(m_stats.velocity / (m_stats.speed > 0 ? m_stats.speed : 1));
-						if (!m_jumpParams.bFreeFall) //&& t > 0.4f) // avoid raycast when expected left fly time is high enough
+						// Если нет, вычисляем оставшееся время полёта
+						remainingTime = m_jumpParams.duration - (currTime - m_jumpParams.startTime).GetSeconds();
+					}
+					else
+					{
+						// Если объект движется вниз
+						if (normalizedVelocity.z < -0.05f)
 						{
-							t = m_jumpParams.duration - (currTime - m_jumpParams.startTime).GetSeconds();
-						}
-						else
-						{
-							if (vN.z < -0.05f) // going down
+							IPhysicalWorld* physicalWorld = gEnv->pPhysicalWorld;
+
+							// Определяем направление луча
+							Vec3 rayDirection;
+							if (normalizedVelocity.z < 0)
 							{
-								ray_hit hit;
-								int     rayFlags = rwi_stop_at_pierceable | (geom_colltype_player << rwi_colltype_bit);
-								Vec3    pos(GetEntity()->GetWorldPos());
-								if (gEnv->pPhysicalWorld->RayWorldIntersection(pos, (vN.z < 0 ? vN : -Vec3Constants<float>::fVec3_OneZ) * 20, ent_terrain | ent_static | ent_rigid, rayFlags, &hit, 1, &phys, 1))
+								rayDirection = normalizedVelocity;
+							}
+							else
+							{
+								rayDirection = -Vec3Constants<float>::fVec3_OneZ;
+							}
+
+							// Масштабируем направление луча
+							rayDirection *= 20;
+
+							// Устанавливаем флаги для проверки столкновений
+							int rayFlags = rwi_stop_at_pierceable | (geom_colltype_player << rwi_colltype_bit);
+
+							// Получаем текущую позицию пришельца
+							Vec3 currentPosition = GetEntity()->GetWorldPos();
+
+							// Определяем типы объектов, с которыми может столкнуться луч
+							int collisionTypes = ent_terrain | ent_static | ent_rigid;
+
+							// Выполняем проверку столкновения с помощью луча
+							ray_hit hit;
+							bool hitDetected = physicalWorld->RayWorldIntersection(
+								currentPosition, // начальная точка луча
+								rayDirection,    // направление луча
+								collisionTypes,  // типы объектов для проверки
+								rayFlags,        // флаги проверки столкновений
+								&hit,            // информация о столкновении
+								1,               // количество игнорируемых объектов
+								&phys,           // игнорируемый объект
+								1                // количество результатов
+							);
+
+							if (hitDetected)
+							{
+								// Находим приблизительное время приземления с учётом текущей скорости
+								Vec3 position(GetEntity()->GetWorldPos());
+								Vec3 distanceToGround(position - hit.pt);
+
+								// Используем текущую фактическую гравитацию объекта
+								pe_player_dynamics dynamics;
+								if (phys->GetParams(&dynamics))
 								{
-									// find approximate time of landing with given velocity
-									Vec3 dist(pos - hit.pt); //Distance::Point_Point(pos,hit.pt);
-									// use current actual gravity	of the object
-									pe_player_dynamics dyn;
-									if (phys->GetParams(&dyn))
+									// Решаем квадратное уравнение для вычисления времени приземления
+									float acceleration = dynamics.gravity.z / 2;
+									float initialVelocity = m_stats.velocity.z;
+									float distance = distanceToGround.z;
+
+									// Квадратное уравнение: \( ax^2 + bx + c = 0 \)
+									float discriminant = initialVelocity * initialVelocity - 4 * acceleration * distance;
+
+									// Проверяем, есть ли реальные корни
+									if (discriminant >= 0)
 									{
-										float a = dyn.gravity.z / 2;
-										float b = m_stats.velocity.z;
-										float c = dist.z;
-										float d = b * b - 4 * a * c;
-										if (d >= 0)
+										float sqrtDiscriminant = sqrt(discriminant);
+										remainingTime = (-initialVelocity + sqrtDiscriminant) / (2 * acceleration);
+										float alternativeTime = (-initialVelocity - sqrtDiscriminant) / (2 * acceleration);
+
+										// Выбираем наименьшее положительное время
+										if (remainingTime < 0 || (alternativeTime >= 0 && alternativeTime < remainingTime))
 										{
-											float sqrtd = sqrt(d);
-											t = (-b + sqrtd) / (2 * a);
-											float t1 = (-b - sqrtd) / (2 * a);
-											if (t < 0 || t1 >= 0 && t1 < t)
-												t = t1;
+											remainingTime = alternativeTime;
 										}
 									}
 								}
 							}
 						}
-						if (t >= 0 && t < 2 * frameTime)
+					}
+
+					if (remainingTime >= 0 && remainingTime < 2 * frameTime)
+					{
+						m_jumpParams.state = JS_Landing;
+						m_jumpParams.startTime = currTime;
+						m_jumpParams.initLandVelocity = m_jumpParams.curVelocity;
+						m_jumpParams.landDepth = m_jumpParams.curVelocity.GetNormalizedSafe().z;
+					}
+
+					if (remainingTime >= 0 && remainingTime < m_jumpParams.landPreparationTime && !m_bOverrideFlyActionAnim)
+					{
+						//IAnimationGraphState* pAGState = GetAnimationGraphState();
+						if (pAGState)
 						{
-							m_jumpParams.state = JS_Landing;
-							m_jumpParams.startTime = currTime;
-							m_jumpParams.initLandVelocity = m_jumpParams.curVelocity;
-							m_jumpParams.landDepth = m_jumpParams.curVelocity.GetNormalizedSafe().z;
-						}
-						if (t >= 0 && t < m_jumpParams.landPreparationTime && !m_bOverrideFlyActionAnim)
-						{
-							//IAnimationGraphState* pAGState = GetAnimationGraphState();
-							if (pAGState)
+							// Создаем копию вектора скорости без учета вертикальной составляющей
+							Vec3 horizontalVelocity(normalizedVelocity);
+							horizontalVelocity.z = 0;
+							horizontalVelocity.NormalizeSafe();
+
+							// Вычисляем угол между векторами скорости и горизонтальной скорости
+							float velocityDotProduct = normalizedVelocity.Dot(horizontalVelocity);
+							float angleXDegrees = RAD2DEG(cry_acosf(CLAMP(velocityDotProduct, -1.f, 1.f)));
+
+							// Если персонаж приземляется задом наперед, корректируем угол
+							if (m_viewMtx.GetColumn1().Dot(normalizedVelocity) < -0.001) // land backwards
 							{
-								Vec3 vNx(vN);
-								vNx.z = 0;
-								vNx.NormalizeSafe();
-								float dot = vN.Dot(vNx);
-								float anglex = RAD2DEG(cry_acosf(CLAMP(dot,-1.f,1.f)));
-								if (m_viewMtx.GetColumn1().Dot(vN) < -0.001) // land backwards
-									anglex = 180 - anglex;
-
-								pAGState->SetInput(m_idAngleXInput, anglex);
-
-								Vec3 viewDir(m_viewMtx.GetColumn(1));
-								dot = vNx.Dot(viewDir);
-								float anglez = RAD2DEG(cry_acosf(CLAMP(dot,-1.f,1.f))*sgn(vNx.Cross(viewDir).z));
-								pAGState->SetInput(m_idAngleZInput, anglez);
-
-								if (m_jumpParams.bUseSpecialAnim && m_jumpParams.specialAnimType == JUMP_ANIM_LAND)
-								{
-									if (m_jumpParams.specialAnimAGInput == AIANIM_ACTION) { pAGState->SetInput(m_idActionInput, m_jumpParams.specialAnimAGInputValue); }
-									else
-									{
-										pAGState->SetInput(m_idActionInput, "idle");
-										pAGState->SetInput(m_idSignalInput, m_jumpParams.specialAnimAGInputValue);
-									}
-									m_jumpParams.bPlayingSpecialAnim = true;
-								}
-								else { pAGState->SetInput(m_idActionInput, "idle"); }
+								angleXDegrees = 180 - angleXDegrees;
 							}
 
-							//m_bOverrideFlyActionAnim = false;
-							m_jumpParams.bFreeFall = false;
-							m_jumpParams.bUseLandAnim = false;
-							//if(m_jumpParams.state !=JS_Landing)
-							m_jumpParams.state = JS_ApproachLanding;
+							// Устанавливаем угол по оси X
+							pAGState->SetInput(m_idAngleXInput, angleXDegrees);
+
+							// Вычисляем направление взгляда из матрицы вида
+							Vec3 viewDirection = m_viewMtx.GetColumn(1);
+
+							// Вычисляем угол между направлением взгляда и горизонтальной скоростью
+							velocityDotProduct = horizontalVelocity.Dot(viewDirection);
+							float angleZDegrees = RAD2DEG(cry_acosf(CLAMP(velocityDotProduct, -1.f, 1.f)) * sgn(horizontalVelocity.Cross(viewDirection).z));
+
+							// Устанавливаем угол по оси Z
+							pAGState->SetInput(m_idAngleZInput, angleZDegrees);
+
+							// Проверяем, нужно ли использовать специальную анимацию для приземления
+							if (m_jumpParams.bUseSpecialAnim && m_jumpParams.specialAnimType == JUMP_ANIM_LAND)
+							{
+								// Устанавливаем соответствующий ввод для анимации
+								if (m_jumpParams.specialAnimAGInput == AIANIM_ACTION)
+								{
+									pAGState->SetInput(m_idActionInput, m_jumpParams.specialAnimAGInputValue);
+								}
+								else
+								{
+									pAGState->SetInput(m_idActionInput, "idle");
+									pAGState->SetInput(m_idSignalInput, m_jumpParams.specialAnimAGInputValue);
+								}
+								m_jumpParams.bPlayingSpecialAnim = true;
+							}
+							else
+							{
+								// Если специальная анимация не требуется, устанавливаем состояние "idle"
+								pAGState->SetInput(m_idActionInput, "idle");
+							}
 						}
+
+						//m_bOverrideFlyActionAnim = false;
+						m_jumpParams.bFreeFall = false;
+						m_jumpParams.bUseLandAnim = false;
+						//if(m_jumpParams.state !=JS_Landing)
+						m_jumpParams.state = JS_ApproachLanding;
 					}
+				}				
 			}
 		}
 
@@ -941,8 +1065,8 @@ void CTrooper::ProcessMovement(float frameTime)
 			//m_bOverrideFlyActionAnim = false;
 			IAISignalExtraData* pData = nullptr;
 			if (m_jumpParams.bUseSpecialAnim && m_jumpParams.specialAnimType == JUMP_ANIM_LAND && !m_jumpParams.bPlayingSpecialAnim)
+			{
 				//TheOtherSide
-
 				//pData = gEnv->pAISystem->CreateSignalExtraData();
 				//pData->iValue = 1;
 
@@ -952,17 +1076,13 @@ void CTrooper::ProcessMovement(float frameTime)
 					pData = gEnv->pAISystem->CreateSignalExtraData();
 					pData->iValue = 1;
 				}
-
-			//~TheOtherSide
-			// send land event/signal
+				//~TheOtherSide
+			}
 
 			//TheOtherSide
-
 			//gEnv->pAISystem->SendSignal(SIGNALFILTER_SENDER, 1, "OnLand", GetEntity()->GetAI(), pData);
-
 			if (gEnv->pAISystem && GetEntity()->GetAI())
 				gEnv->pAISystem->SendSignal(SIGNALFILTER_SENDER, 1, "OnLand", GetEntity()->GetAI(), pData);
-
 			//~TheOtherSide
 
 			if (m_jumpParams.bUseLandEvent)
@@ -974,6 +1094,7 @@ void CTrooper::ProcessMovement(float frameTime)
 				event.nParam[2] = reinterpret_cast<INT_PTR>(&bValue);
 				GetEntity()->SendEvent(event);
 			}
+
 			m_jumpParams.bUseLandEvent = false;
 
 			if (!(m_jumpParams.bUseSpecialAnim && m_jumpParams.specialAnimAGInput == AIANIM_ACTION && m_jumpParams.specialAnimType == JUMP_ANIM_LAND))
@@ -986,7 +1107,10 @@ void CTrooper::ProcessMovement(float frameTime)
 				m_jumpParams.initLandVelocity = m_jumpParams.curVelocity;
 				m_jumpParams.landDepth = m_jumpParams.curVelocity.GetNormalizedSafe().z;
 			}
-			else { m_jumpParams.state = JS_None; }
+			else 
+			{ 
+				m_jumpParams.state = JS_None; 
+			}
 
 			m_jumpParams.bUseSpecialAnim = false;
 

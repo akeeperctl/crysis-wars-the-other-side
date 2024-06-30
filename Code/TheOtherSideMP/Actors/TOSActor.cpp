@@ -73,6 +73,12 @@ void CTOSActor::PostInit(IGameObject* pGameObject)
 
 	if (ICharacterInstance* pCharacter = GetEntity()->GetCharacter(0))
 		pCharacter->SetFlags(pCharacter->GetFlags() | CS_FLAG_UPDATE_ALWAYS);
+
+	IEntityRenderProxy* pRenderProxy = (IEntityRenderProxy*)(GetEntity()->GetProxy(ENTITY_PROXY_RENDER));
+	if (pRenderProxy)
+	{
+		pRenderProxy->UpdateCharactersBeforePhysics(true);
+	}
 }
 
 void CTOSActor::InitClient(const int channelId)

@@ -100,40 +100,52 @@ void CPlayerMovementController::Reset()
 
 bool CPlayerMovementController::RequestMovement( CMovementRequest& request )
 {
+	// Проверка, является ли сущность игроком
 	if (!m_pPlayer->IsPlayer())
 	{
-		if (IVehicle* pVehicle = m_pPlayer->GetLinkedVehicle())
+		// Получение связанного транспортного средства
+		IVehicle* pVehicle = m_pPlayer->GetLinkedVehicle();
+		if (pVehicle)
 		{
-			if (IMovementController* pController = pVehicle->GetPassengerMovementController(m_pPlayer->GetEntityId()))
+			// Получение контроллера движения для пассажира
+			IMovementController* pController = pVehicle->GetPassengerMovementController(m_pPlayer->GetEntityId());
+			if (pController)
 			{
-        IVehicleSeat* pSeat = pVehicle->GetSeatForPassenger(m_pPlayer->GetEntityId());
-        if (!pSeat->IsDriver())
-				  pController->RequestMovement(request);
+				// Проверка, не является ли пассажир водителем
+				IVehicleSeat* pSeat = pVehicle->GetSeatForPassenger(m_pPlayer->GetEntityId());
+				if (pSeat && !pSeat->IsDriver())
+				{
+					// Запрос на движение
+					pController->RequestMovement(request);
+				}
 			}
 		}
 	}
-	// because we're not allowed to "commit" values here, we make a backup,
-	// perform modifications, and then copy the modifications make if everything
-	// was successful
-	CMovementRequest state = m_state;
-	// we have to process right through and not early out, because otherwise we
-	// won't modify request to a "close but correct" state
-	bool ok = true;
 
+	// Создание копии текущего состояния движения
+	CMovementRequest state = m_state;
+	bool ok = true; // Флаг успешности операции
+
+	// Обработка состояния бездействия
 	bool idleCheck = m_idleChecker.Process(m_currentMovementState, m_state, request);
 
+	// Обработка цели движения
 	if (request.HasMoveTarget())
 	{
-		// TODO: check validity of getting to that target
-		state.SetMoveTarget( request.GetMoveTarget() );
+		// Установка цели движения
+		state.SetMoveTarget(request.GetMoveTarget());
 		m_atTarget = false;
 
-		float distanceToEnd(request.GetDistanceToPathEnd());
-		if (distanceToEnd>0.001f)
+		// Установка расстояния до конца пути
+		float distanceToEnd = request.GetDistanceToPathEnd();
+		if (distanceToEnd > 0.001f)
+		{
 			state.SetDistanceToPathEnd(distanceToEnd);
+		}
 	}
 	else if (request.RemoveMoveTarget())
 	{
+		// Очистка цели движения и связанных параметров
 		state.ClearMoveTarget();
 		state.ClearDesiredSpeed();
 		state.ClearDistanceToPathEnd();
@@ -148,8 +160,11 @@ bool CPlayerMovementController::RequestMovement( CMovementRequest& request )
 		state.ClearStance();
 	}
 
+	// Обработка желаемой скорости
 	if (request.HasDesiredSpeed())
 	{
+		// Если цель движения не установлена и желаемая скорость больше нуля,
+		// устанавливаем желаемую скорость в ноль и помечаем запрос как неудачный
 		if (!state.HasMoveTarget() && request.GetDesiredSpeed() > 0.0f)
 		{
 			request.SetDesiredSpeed(0.0f);
@@ -157,11 +172,13 @@ bool CPlayerMovementController::RequestMovement( CMovementRequest& request )
 		}
 		else
 		{
-			state.SetDesiredSpeed( request.GetDesiredSpeed() );
+			// В противном случае устанавливаем желаемую скорость из запроса
+			state.SetDesiredSpeed(request.GetDesiredSpeed());
 		}
 	}
 	else if (request.RemoveDesiredSpeed())
 	{
+		// Если запрос на удаление желаемой скорости, то удаляем её
 		state.RemoveDesiredSpeed();
 	}
 
@@ -185,20 +202,26 @@ bool CPlayerMovementController::RequestMovement( CMovementRequest& request )
 		//state.SetNoBodying();
 	}
 
+	// Обработка цели стрельбы
 	if (request.HasFireTarget())
 	{
-		state.SetFireTarget( request.GetFireTarget() );
-		//forcing fire target here, can not wait for it to be set in the dateNormalate.
-		//if don't do it - first shot of the weapon might be in some undefined direction (ProsessShooting is done right after this 
-		//call in AIProxy). This is particularly problem for RPG shooting
+		// Установка цели стрельбы
+		state.SetFireTarget(request.GetFireTarget());
+
+		// Принудительная установка цели стрельбы, необходимая для корректного направления первого выстрела
+		// Это особенно важно для стрельбы из РПГ, где первый выстрел не должен быть в неопределенном направлении
 		m_currentMovementState.fireTarget = request.GetFireTarget();
-		// the weaponPosition is from last update - might be different at this moment, but should not be too much
+
+		// Вычисление направления стрельбы на основе текущего положения оружия
+		// Позиция оружия может немного отличаться от последнего обновления, но разница не должна быть значительной
 		m_currentMovementState.fireDirection = (m_currentMovementState.fireTarget - m_currentMovementState.weaponPosition).GetNormalizedSafe();
 	}
 	else if (request.RemoveFireTarget())
 	{
+		// Очистка цели стрельбы, если она больше не актуальна
 		state.ClearFireTarget();
-		//state.SetNoAiming();
+		// Закомментированный код ниже может быть использован для установки состояния "без прицеливания"
+		// state.SetNoAiming();
 	}
 
 	if (request.HasLookTarget())
