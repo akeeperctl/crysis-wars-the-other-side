@@ -172,6 +172,7 @@ public:
 	void SetParams(SmartScriptTable &rTable,bool resetFirst) ;
 
 	void ProcessRotation(float frameTime) ;
+	void ProcessJump(CTimeValue& currTime, IAnimationGraphState* pAGState, IPhysicalEntity*& phys, Vec3& move, float frameTime);
 	void ProcessMovement(float frameTime) ;
 
 	void ProcessAnimation(ICharacterInstance *pCharacter,float frameTime) ;

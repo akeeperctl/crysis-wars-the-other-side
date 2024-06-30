@@ -1241,6 +1241,7 @@ function Trooper_x.Client:OnTimer(timerId, mSec)
             -- Условие для помещений или навигации по точкам
             if (self.Properties.bIndoor == 1 or AI.GetNavigationType(self.id) == NAV_WAYPOINT_HUMAN) then
                 self.actor:SetPhysicalizationProfile("unragdoll");
+				System.LogAlways("<lua> trooper '"..self:GetName().."' DEPHYSICALIZED")
             end
         else
             -- Перезапуск таймера дефизикализации

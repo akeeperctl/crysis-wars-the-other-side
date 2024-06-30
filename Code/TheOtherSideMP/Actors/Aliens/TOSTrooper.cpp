@@ -31,31 +31,7 @@ void CTOSTrooper::PostInit(IGameObject* pGameObject)
 
 void CTOSTrooper::Update(SEntityUpdateContext& ctx, const int updateSlot)
 {
-	IEntityRenderProxy* pRenderProxy = (IEntityRenderProxy*)(GetEntity()->GetProxy(ENTITY_PROXY_RENDER));
-	if ((pRenderProxy == NULL) || !pRenderProxy->IsCharactersUpdatedBeforePhysics())
-		PrePhysicsUpdate();
-
-	CTrooper::Update(ctx, updateSlot);
-
 	const float regenStartDelay = m_pEnergyConsumer->GetRegenStartDelay();
-
-	IPhysicalEntity* pPhysEnt = GetEntity()->GetPhysics();
-
-	pe_status_dynamics dynStat;
-	pe_status_living livStat;
-
-	int dynStatType = dynStat.type;
-	memset(&dynStat, 0, sizeof(pe_status_dynamics));
-	dynStat.type = dynStatType;
-
-	int livStatType = livStat.type;
-	memset(&livStat, 0, sizeof(pe_status_living));
-	livStat.groundSlope = Vec3(0, 0, 1);
-	livStat.type = livStatType;
-
-	pPhysEnt->GetStatus(&dynStat);
-	pPhysEnt->GetStatus(&livStat);
-
 
 	NETINPUT_TRACE(GetEntityId(), regenStartDelay);
 	NETINPUT_TRACE(GetEntityId(), m_input.deltaMovement);
@@ -68,22 +44,47 @@ void CTOSTrooper::Update(SEntityUpdateContext& ctx, const int updateSlot)
 	NETINPUT_TRACE(GetEntityId(), m_stats.onGround);
 	NETINPUT_TRACE(GetEntityId(), m_jumpParams.bFreeFall);
 	NETINPUT_TRACE(GetEntityId(), m_jumpParams.velocity);
+	NETINPUT_TRACE(GetEntityId(), m_jumpParams.curVelocity);
 	NETINPUT_TRACE(GetEntityId(), m_jumpParams.state);
-	NETINPUT_TRACE(GetEntityId(), dynStat.mass);
-	NETINPUT_TRACE(GetEntityId(), dynStat.a);
-	NETINPUT_TRACE(GetEntityId(), dynStat.v);
-	NETINPUT_TRACE(GetEntityId(), livStat.bFlying);
-	NETINPUT_TRACE(GetEntityId(), livStat.bStuck);
-	NETINPUT_TRACE(GetEntityId(), livStat.timeFlying);
-	NETINPUT_TRACE(GetEntityId(), livStat.velRequested);
-	NETINPUT_TRACE(GetEntityId(), livStat.velUnconstrained);
-	NETINPUT_TRACE(GetEntityId(), livStat.groundHeight);
-	NETINPUT_TRACE(GetEntityId(), InZeroG());
+	NETINPUT_TRACE(GetEntityId(), m_jumpParams.duration);
+	NETINPUT_TRACE(GetEntityId(), m_jumpParams.prevInAir);
 
-	// Трупер не синхрон физику после смерти
-	//NETINPUT_TRACE(GetEntityId(), m_currentPhysProfile);
-	//NETINPUT_TRACE(GetEntityId(), GetActorStats()->mass);
-	//NETINPUT_TRACE(GetEntityId(), m_stats.mass);
+	IEntityRenderProxy* pRenderProxy = (IEntityRenderProxy*)(GetEntity()->GetProxy(ENTITY_PROXY_RENDER));
+	if ((pRenderProxy == NULL) || !pRenderProxy->IsCharactersUpdatedBeforePhysics())
+		PrePhysicsUpdate();
+
+	CTrooper::Update(ctx, updateSlot);
+
+	IPhysicalEntity* pPhysEnt = GetEntity()->GetPhysics();
+	if (pPhysEnt)
+	{
+		pe_status_dynamics dynStat;
+		pe_status_living livStat;
+
+		int dynStatType = dynStat.type;
+		memset(&dynStat, 0, sizeof(pe_status_dynamics));
+		dynStat.type = dynStatType;
+
+		int livStatType = livStat.type;
+		memset(&livStat, 0, sizeof(pe_status_living));
+		livStat.groundSlope = Vec3(0, 0, 1);
+		livStat.type = livStatType;
+
+		pPhysEnt->GetStatus(&dynStat);
+		pPhysEnt->GetStatus(&livStat);
+
+		NETINPUT_TRACE(GetEntityId(), dynStat.mass);
+		NETINPUT_TRACE(GetEntityId(), dynStat.a);
+		NETINPUT_TRACE(GetEntityId(), dynStat.v);
+		NETINPUT_TRACE(GetEntityId(), livStat.bFlying);
+		NETINPUT_TRACE(GetEntityId(), livStat.bStuck);
+		NETINPUT_TRACE(GetEntityId(), livStat.timeFlying);
+		NETINPUT_TRACE(GetEntityId(), livStat.velRequested);
+		NETINPUT_TRACE(GetEntityId(), livStat.velUnconstrained);
+		NETINPUT_TRACE(GetEntityId(), livStat.groundHeight);
+	}
+
+	NETINPUT_TRACE(GetEntityId(), InZeroG());
 	NETINPUT_TRACE(GetEntityId(), IsSlave());
 
 	//~TheOtherSide
@@ -120,10 +121,12 @@ void CTOSTrooper::ProcessMovement(const float frameTime)
 
 		if (IsSlave())
 		{
+			// ПОФИКСИЛИ РАССИНХРОН bUseLandAnim == True + RMI
+
 			m_jumpParams.bTrigger = true;
-			m_jumpParams.bRelative = false;
-			m_jumpParams.bUseStartAnim = false;
-			m_jumpParams.bUseLandAnim = true;
+			m_jumpParams.bRelative = true;
+			m_jumpParams.bUseLandEvent = true;
+			m_jumpParams.duration = 0.4f;
 
 			STOSSlaveStats* pSlaveStats = &GetSlaveStats();
 
