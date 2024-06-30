@@ -80,7 +80,7 @@ void CTOSActor::InitClient(const int channelId)
 	//CryLogAlways("[C++][%s][%s][CTOSActor::InitClient] Actor: %s|%i|ch:%i",
 	//	TOS_Debug::GetEnv(), TOS_Debug::GetAct(1), GetEntity()->GetName(), GetEntity()->GetId(), channelId);
 
-	TOS_RECORD_EVENT(GetEntityId(), STOSGameEvent(eEGE_ActorInitClient, "", true, false, nullptr, 0.0f, channelId));
+	TOS_RECORD_EVENT(GetEntityId(), STOSGameEvent(eEGE_InitClient, "", true, false, nullptr, 0.0f, channelId));
 
 	CActor::InitClient(channelId);
 }

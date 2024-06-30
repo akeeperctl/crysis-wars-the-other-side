@@ -70,12 +70,20 @@ void STOSCvars::ReleaseCCommands()
 
 	pConsole->RemoveCommand("netchname");
 	pConsole->RemoveCommand("getlocalname");
-
 	pConsole->RemoveCommand("consumersetenergy");
 	pConsole->RemoveCommand("consumersetdrain");
 	pConsole->RemoveCommand("consumersetdebugentname");
-
 	pConsole->RemoveCommand("dumpactorinfo");
+	pConsole->RemoveCommand("netchname");
+	pConsole->RemoveCommand("getentitiesbyclass");
+	pConsole->RemoveCommand("getentityscriptvalue");
+	pConsole->RemoveCommand("dumpsynchronizers");
+	pConsole->RemoveCommand("dumpentityinfo");
+	pConsole->RemoveCommand("dumpactorinfo");
+	pConsole->RemoveCommand("consumersetenergy");
+	pConsole->RemoveCommand("consumersetdrain");
+	pConsole->RemoveCommand("consumersetdebugentname");
+	pConsole->RemoveCommand("getdudename");
 }
 
 void STOSCvars::ReleaseCVars()
@@ -91,12 +99,20 @@ void STOSCvars::ReleaseCVars()
 	//pConsole->UnregisterVariable("tos_debug_log_all", true);
 	//pConsole->UnregisterVariable("tos_show_version", true);
 	//pConsole->UnregisterVariable("tos_cl_SlaveEntityClass", true);
-	pConsole->UnregisterVariable("tos_cl_JoinAsMaster", true);
-	pConsole->UnregisterVariable("tos_cl_DisableSlaveRequestMovement", true);
 
+	//pConsole->UnregisterVariable("tos_cl_JoinAsMaster", true);
+	pConsole->UnregisterVariable("tos_cl_DisableSlaveRequestMovement", true);
 	pConsole->UnregisterVariable("tos_any_EventRecorderLogVanilla", true);
+
 	pConsole->UnregisterVariable("tos_sv_EnableShotValidator", true);
 	pConsole->UnregisterVariable("tos_sv_EnableMPStealthOMeterForTeam", true);
+	pConsole->UnregisterVariable("tos_sv_chargingJumpInputTime", true);
+
+	pConsole->UnregisterVariable("tos_sv_AlienMPEquipPack", true);
+	pConsole->UnregisterVariable("tos_sv_HunterMPEquipPack", true);
+	pConsole->UnregisterVariable("tos_sv_ScoutMPEquipPack", true);
+	pConsole->UnregisterVariable("tos_sv_TrooperMPEquipPack", true);
+	pConsole->UnregisterVariable("tos_sv_HumanGruntMPEquipPack", true);
 }
 
 void STOSCvars::CmdNetChName(IConsoleCmdArgs* pArgs)

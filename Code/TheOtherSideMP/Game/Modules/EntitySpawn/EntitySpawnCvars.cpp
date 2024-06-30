@@ -10,6 +10,11 @@ void CTOSEntitySpawnModule::InitCVars(IConsole* pConsole)
 	CTOSGenericModule::InitCVars(pConsole);
 }
 
+void CTOSEntitySpawnModule::ReleaseCVars()
+{
+	CTOSGenericModule::ReleaseCVars();
+}
+
 void CTOSEntitySpawnModule::InitCCommands(IConsole* pConsole)
 {
 	CTOSGenericModule::InitCCommands(pConsole);
@@ -21,10 +26,6 @@ void CTOSEntitySpawnModule::InitCCommands(IConsole* pConsole)
 	pConsole->AddCommand("dumpentityrotation", CmdDumpEntityRotation);
 }
 
-void CTOSEntitySpawnModule::ReleaseCVars()
-{
-	CTOSGenericModule::ReleaseCVars();
-}
 void CTOSEntitySpawnModule::ReleaseCCommands()
 {
 	CTOSGenericModule::ReleaseCCommands();

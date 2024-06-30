@@ -35,7 +35,7 @@ enum EExtraGameplayEvent
 	eEGE_ActorGrab, //NOT USED
 	eEGE_ActorDrop, //NOT USED
 	eEGE_ActorPostInit,
-	eEGE_ActorInitClient,
+	eEGE_InitClient,
 	eEGE_ActorRelease,
 	eEGE_ActorDead,
 
@@ -260,8 +260,8 @@ public:
 			return "eEGE_ActorRelease";
 		case eEGE_ActorPostInit:
 			return "eEGE_ActorPostInit";
-		case eEGE_ActorInitClient:
-			return "eEGE_ActorInitClient";
+		case eEGE_InitClient:
+			return "eEGE_InitClient";
 		case eEGE_ActorDead:
 			return "eEGE_ActorDead";
 		case eEGE_GamerulesReset:

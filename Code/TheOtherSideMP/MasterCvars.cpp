@@ -71,6 +71,36 @@ void CTOSMasterModule::InitCVars(IConsole* pConsole)
 		"Modify energy recharge for Trooper in singleplayer.");
 }
 
+void CTOSMasterModule::ReleaseCVars()
+{
+	CTOSGenericModule::ReleaseCVars();
+
+	const auto pConsole = gEnv->pConsole;
+
+	//pConsole->UnregisterVariable("tos_cl_SlaveEntityClass", true);
+	pConsole->UnregisterVariable("tos_cl_JoinAsMaster", true);
+	pConsole->UnregisterVariable("tos_cl_playerFeedbackSoundsVersion", true);
+	pConsole->UnregisterVariable("tos_cl_nanosuitSoundsVersion", true);
+
+	pConsole->UnregisterVariable("tos_sv_SlaveSpawnDelay", true);
+	pConsole->UnregisterVariable("tos_sv_MasterStartControlDelay", true);
+	pConsole->UnregisterVariable("tos_sv_pl_inputAccel", true);
+	pConsole->UnregisterVariable("tos_sv_mc_StartControlDelay");
+	pConsole->UnregisterVariable("tos_sv_pl_inputAccel", true);
+	pConsole->UnregisterVariable("tos_sv_mc_LookDebugDraw", true);
+
+	pConsole->UnregisterVariable("tos_tr_melee_energy_costs", true);
+	pConsole->UnregisterVariable("tos_tr_double_jump_energy_cost", true);
+	pConsole->UnregisterVariable("tos_tr_double_jump_melee_energy_cost", true);
+	pConsole->UnregisterVariable("tos_tr_double_jump_melee_rest_seconds", true);
+	pConsole->UnregisterVariable("tos_tr_regen_energy_start_delay_sp", true);
+	pConsole->UnregisterVariable("tos_tr_regen_energy_start_delay_mp", true);
+	pConsole->UnregisterVariable("tos_tr_regen_energy_start_delay_20boundary", true);
+	pConsole->UnregisterVariable("tos_tr_regen_energy_recharge_time_mp", true);
+	pConsole->UnregisterVariable("tos_tr_regen_energy_recharge_time_sp", true);
+
+}
+
 void CTOSMasterModule::InitCCommands(IConsole* pConsole)
 {
 	CTOSGenericModule::InitCCommands(pConsole);
@@ -86,19 +116,6 @@ void CTOSMasterModule::InitCCommands(IConsole* pConsole)
 	pConsole->AddCommand("tos_cmd_playsound2d", CmdPlaySound2D);
 }
 
-void CTOSMasterModule::ReleaseCVars()
-{
-	CTOSGenericModule::ReleaseCVars();
-
-	const auto pConsole = gEnv->pConsole;
-
-	//pConsole->UnregisterVariable("tos_cl_SlaveEntityClass", true);
-	pConsole->UnregisterVariable("tos_cl_JoinAsMaster", true);
-	pConsole->UnregisterVariable("tos_sv_SlaveSpawnDelay", true);
-	pConsole->UnregisterVariable("tos_sv_MasterStartControlDelay", true);
-	pConsole->UnregisterVariable("tos_sv_pl_inputAccel", true);
-}
-
 void CTOSMasterModule::ReleaseCCommands()
 {
 	CTOSGenericModule::ReleaseCCommands();
@@ -107,6 +124,16 @@ void CTOSMasterModule::ReleaseCCommands()
 
 	pConsole->RemoveCommand("tos_cmd_getmasterslist");
 	pConsole->RemoveCommand("tos_cmd_ismaster");
+	pConsole->RemoveCommand("tos_cmd_dumpmasterslist");
+	pConsole->RemoveCommand("tos_cmd_dumpdudeitems");
+	pConsole->RemoveCommand("tos_cmd_dumpactoritems");
+	pConsole->RemoveCommand("tos_cmd_ismaster");
+	pConsole->RemoveCommand("tos_cmd_stopcontrol");
+	pConsole->RemoveCommand("tos_cmd_setactorhealth");
+	pConsole->RemoveCommand("tos_cmd_getactorhealth");
+	pConsole->RemoveCommand("tos_cmd_getactorcurrentitem");
+	pConsole->RemoveCommand("tos_cmd_playsound2d");
+
 }
 
 void CTOSMasterModule::OnHit(const HitInfo& info)
