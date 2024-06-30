@@ -843,15 +843,38 @@ void CTrooper::ProcessJump(CTimeValue& currTime, IAnimationGraphState* pAGState,
 		phys->SetParams(&simParSet);
 	}
 
-	//TheOtherSide
-	bool isInAir = m_stats.inAir > 0.0f;
+	//TheOtherSide fix #15
+	if (m_jumpParams.state == JS_ApproachLanding && m_stats.inAir == 0 && m_stats.onGround > 0.2f)
+	{
+		// Скопировано снизу
+		if (!(m_jumpParams.bUseSpecialAnim && m_jumpParams.specialAnimAGInput == AIANIM_ACTION && m_jumpParams.specialAnimType == JUMP_ANIM_LAND))
+		{
+			IAnimationGraphState* pAGState = GetAnimationGraphState();
+			if (pAGState && !m_bOverrideFlyActionAnim)
+				pAGState->SetInput(m_idActionInput, "idle");
+
+			m_jumpParams.state = JS_Landed;
+			m_jumpParams.startTime = currTime;
+
+			// Чем больше здесь вектор, тем меньше модель будет смещаться при падении
+			m_jumpParams.initLandVelocity = m_jumpParams.curVelocity * 5;
+		}
+		else
+		{
+			m_jumpParams.state = JS_None;
+		}
+	}
+	//~TheOtherSide fix
+
+	//TheOtherSide refactor
+	bool isInAir = m_stats.inAir > 0.2f;
 	bool isNotInZeroG = !InZeroG();
 	bool hasNoParent = !GetEntity()->GetParent();
-	bool isNotApproachingLanding = m_jumpParams.state != JS_ApproachLanding;
+	//bool isNotApproachingLanding = m_jumpParams.state != JS_ApproachLanding;
 	bool isNotLanding = m_jumpParams.state != JS_Landing;
-	//~TheOtherSide
+	//~TheOtherSide refactor
 
-	if (isInAir && isNotInZeroG && hasNoParent && isNotApproachingLanding && isNotLanding)
+	if (isInAir && isNotInZeroG && hasNoParent /*&& isNotApproachingLanding*/ && isNotLanding)
 	{
 		m_jumpParams.curVelocity = m_stats.velocity;
 

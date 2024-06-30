@@ -22,7 +22,7 @@ public:
 	void UpdateMasterView(SViewParams& viewParams, Vec3& offsetX, Vec3& offsetY, Vec3& offsetZ, Vec3& target, Vec3& current, float& currentFov) ;
 	//~ITOSMasterControllable
 
-	void ProcessJump(const CMovementRequest& request);
+	//void ProcessJump(const CMovementRequest& request);
 
 protected:
 private:

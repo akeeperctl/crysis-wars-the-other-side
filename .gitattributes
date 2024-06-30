@@ -60,4 +60,4 @@
 *.pak filter=lfs diff=lfs merge=lfs -text
 #*.cry filter=lfs diff=lfs merge=lfs -text
 
-*.* working-tree-encoding=UTF-8    eol=CRLF
+*.* working-tree-encoding=CP1251    eol=CRLF

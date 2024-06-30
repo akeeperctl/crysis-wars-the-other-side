@@ -51,6 +51,7 @@ void CTOSTrooper::Update(SEntityUpdateContext& ctx, const int updateSlot)
 	NETINPUT_TRACE(GetEntityId(), m_jumpParams.landPreparationTime);
 	NETINPUT_TRACE(GetEntityId(), m_jumpParams.defaultLandPreparationTime);
 	NETINPUT_TRACE(GetEntityId(), m_jumpParams.remainingTime);
+	NETINPUT_TRACE(GetEntityId(), m_lastTimeOnGround.GetSeconds());
 
 	IEntityRenderProxy* pRenderProxy = (IEntityRenderProxy*)(GetEntity()->GetProxy(ENTITY_PROXY_RENDER));
 	if ((pRenderProxy == NULL) || !pRenderProxy->IsCharactersUpdatedBeforePhysics())
@@ -58,34 +59,34 @@ void CTOSTrooper::Update(SEntityUpdateContext& ctx, const int updateSlot)
 
 	CTrooper::Update(ctx, updateSlot);
 
-	IPhysicalEntity* pPhysEnt = GetEntity()->GetPhysics();
-	if (pPhysEnt)
-	{
-		pe_status_dynamics dynStat;
-		pe_status_living livStat;
+	//IPhysicalEntity* pPhysEnt = GetEntity()->GetPhysics();
+	//if (pPhysEnt)
+	//{
+	//	pe_status_dynamics dynStat;
+	//	pe_status_living livStat;
 
-		int dynStatType = dynStat.type;
-		memset(&dynStat, 0, sizeof(pe_status_dynamics));
-		dynStat.type = dynStatType;
+	//	int dynStatType = dynStat.type;
+	//	memset(&dynStat, 0, sizeof(pe_status_dynamics));
+	//	dynStat.type = dynStatType;
 
-		int livStatType = livStat.type;
-		memset(&livStat, 0, sizeof(pe_status_living));
-		livStat.groundSlope = Vec3(0, 0, 1);
-		livStat.type = livStatType;
+	//	int livStatType = livStat.type;
+	//	memset(&livStat, 0, sizeof(pe_status_living));
+	//	livStat.groundSlope = Vec3(0, 0, 1);
+	//	livStat.type = livStatType;
 
-		pPhysEnt->GetStatus(&dynStat);
-		pPhysEnt->GetStatus(&livStat);
+	//	pPhysEnt->GetStatus(&dynStat);
+	//	pPhysEnt->GetStatus(&livStat);
 
-		NETINPUT_TRACE(GetEntityId(), dynStat.mass);
-		NETINPUT_TRACE(GetEntityId(), dynStat.a);
-		NETINPUT_TRACE(GetEntityId(), dynStat.v);
-		NETINPUT_TRACE(GetEntityId(), livStat.bFlying);
-		NETINPUT_TRACE(GetEntityId(), livStat.bStuck);
-		NETINPUT_TRACE(GetEntityId(), livStat.timeFlying);
-		NETINPUT_TRACE(GetEntityId(), livStat.velRequested);
-		NETINPUT_TRACE(GetEntityId(), livStat.velUnconstrained);
-		NETINPUT_TRACE(GetEntityId(), livStat.groundHeight);
-	}
+	//	NETINPUT_TRACE(GetEntityId(), dynStat.mass);
+	//	NETINPUT_TRACE(GetEntityId(), dynStat.a);
+	//	NETINPUT_TRACE(GetEntityId(), dynStat.v);
+	//	NETINPUT_TRACE(GetEntityId(), livStat.bFlying);
+	//	NETINPUT_TRACE(GetEntityId(), livStat.bStuck);
+	//	NETINPUT_TRACE(GetEntityId(), livStat.timeFlying);
+	//	NETINPUT_TRACE(GetEntityId(), livStat.velRequested);
+	//	NETINPUT_TRACE(GetEntityId(), livStat.velUnconstrained);
+	//	NETINPUT_TRACE(GetEntityId(), livStat.groundHeight);
+	//}
 
 	NETINPUT_TRACE(GetEntityId(), InZeroG());
 	NETINPUT_TRACE(GetEntityId(), IsSlave());
@@ -265,85 +266,85 @@ void CTOSTrooper::UpdateMasterView(SViewParams& viewParams, Vec3& offsetX, Vec3&
 	offsetZ = GetViewRotation().GetColumn2() * current.z;
 }
 
-void CTOSTrooper::ProcessJump(const CMovementRequest& request)
-{
-	//throw std::logic_error("Функция не актуальна");
-
-	TOS_CHECK_CONSUMER_EXISTING(this);
-
-	//pe_action_impulse impulse;
-	SCharacterMoveRequest animCharRequest;
-	animCharRequest.jumping = true;
-	animCharRequest.type = eCMT_JumpInstant; //eCMT_JumpAccumulate;//eCMT_JumpInstant; //eCMT_Impulse //eCMT_JumpAccumulate;
-
-	Vec3 jumpVec(0, 0, 0);
-
-	const Vec3& upDir      = GetEntity()->GetWorldTM().GetColumn(2);
-	const Vec3& forwardDir = GetEntity()->GetWorldTM().GetColumn(1);
-	const Vec3& rightDir   = GetEntity()->GetWorldTM().GetColumn(0);
-
-	STOSSlaveStats* pSlaveStats = &GetSlaveStats();
-	const auto      pActorStats = GetActorStats();
-
-	if (pActorStats)
-	{
-		const float     onGround  = pActorStats->onGround;
-		const float		jumpPressDur = pSlaveStats->chargingJumpPressDur;
-		const float		jumpForce = 6.0f;
-		const float		finalOnceJumpForce = jumpPressDur > TOS_Console::GetSafeFloatVar("tos_sv_chargingJumpInputTime") ? jumpForce + 4.0f : jumpForce;
-
-		const float doubleJumpCost = TOS_Console::GetSafeFloatVar("tos_tr_double_jump_energy_cost");
-		const float energy = TOS_SAFE_GET_ENERGY(this);
-
-		// Одиночный прыжок
-		if (onGround > 0.25f)
-		{
-			pSlaveStats->jumpCount++;
-			jumpVec.z = upDir.z * finalOnceJumpForce; //400.0f
-
-			//GetEntity()->GetPhysics()->Action(&impulse);
-			animCharRequest.velocity += jumpVec;
-			m_pAnimatedCharacter->AddMovement(animCharRequest);
-
-			pSlaveStats->chargingJumpPressDur = 0.0f;
-
-			//TODO
-			//NetPlayAnimAction("CTRL_JumpStart", false);
-		}
-		else if (pSlaveStats->jumpCount > 0 && pActorStats->inAir > 0.0f && energy > doubleJumpCost)
-		{
-			// Двойной прыжок
-
-			if (request.HasDeltaMovement() && !request.GetDeltaMovement().IsZero())
-			{
-				//jumpVec += request.GetDeltaMovement().x * 300.f * rightDir / 1.5f;
-				//jumpVec += request.GetDeltaMovement().y * 300.f * forwardDir / 1.5f;
-
-				jumpVec += request.GetDeltaMovement().x * jumpForce * rightDir / 1.5f;
-				jumpVec += request.GetDeltaMovement().y * jumpForce * forwardDir / 1.5f;
-			}
-			else
-			{
-				jumpVec = forwardDir * jumpForce; //300.f;
-			}
-			jumpVec.z = upDir.z * 2.5f; // 250.f;
-
-			//TODO
-			//NetSpawnParticleEffect("alien_special.Trooper.doubleJumpAttack");
-
-			//TODO
-			//SubEnergy(TROOPER_JUMP_ENERGY_COST);
-
-			animCharRequest.velocity += jumpVec;
-			m_pAnimatedCharacter->AddMovement(animCharRequest);
-
-			TOS_SAFE_ADD_ENERGY(this, -doubleJumpCost);
-
-			pSlaveStats->jumpCount = 0;
-
-			//TODO
-			//The controlled trooper cannot to do jump attack after double jump
-			//m_trooper.canJumpMelee = false;
-		}
-	}
-}
+//void CTOSTrooper::ProcessJump(const CMovementRequest& request)
+//{
+//	//throw std::logic_error("Функция не актуальна");
+//
+//	TOS_CHECK_CONSUMER_EXISTING(this);
+//
+//	//pe_action_impulse impulse;
+//	SCharacterMoveRequest animCharRequest;
+//	animCharRequest.jumping = true;
+//	animCharRequest.type = eCMT_JumpInstant; //eCMT_JumpAccumulate;//eCMT_JumpInstant; //eCMT_Impulse //eCMT_JumpAccumulate;
+//
+//	Vec3 jumpVec(0, 0, 0);
+//
+//	const Vec3& upDir      = GetEntity()->GetWorldTM().GetColumn(2);
+//	const Vec3& forwardDir = GetEntity()->GetWorldTM().GetColumn(1);
+//	const Vec3& rightDir   = GetEntity()->GetWorldTM().GetColumn(0);
+//
+//	STOSSlaveStats* pSlaveStats = &GetSlaveStats();
+//	const auto      pActorStats = GetActorStats();
+//
+//	if (pActorStats)
+//	{
+//		const float     onGround  = pActorStats->onGround;
+//		const float		jumpPressDur = pSlaveStats->chargingJumpPressDur;
+//		const float		jumpForce = 6.0f;
+//		const float		finalOnceJumpForce = jumpPressDur > TOS_Console::GetSafeFloatVar("tos_sv_chargingJumpInputTime") ? jumpForce + 4.0f : jumpForce;
+//
+//		const float doubleJumpCost = TOS_Console::GetSafeFloatVar("tos_tr_double_jump_energy_cost");
+//		const float energy = TOS_SAFE_GET_ENERGY(this);
+//
+//		// Одиночный прыжок
+//		if (onGround > 0.25f)
+//		{
+//			pSlaveStats->jumpCount++;
+//			jumpVec.z = upDir.z * finalOnceJumpForce; //400.0f
+//
+//			//GetEntity()->GetPhysics()->Action(&impulse);
+//			animCharRequest.velocity += jumpVec;
+//			m_pAnimatedCharacter->AddMovement(animCharRequest);
+//
+//			pSlaveStats->chargingJumpPressDur = 0.0f;
+//
+//			//TODO
+//			//NetPlayAnimAction("CTRL_JumpStart", false);
+//		}
+//		else if (pSlaveStats->jumpCount > 0 && pActorStats->inAir > 0.0f && energy > doubleJumpCost)
+//		{
+//			// Двойной прыжок
+//
+//			if (request.HasDeltaMovement() && !request.GetDeltaMovement().IsZero())
+//			{
+//				//jumpVec += request.GetDeltaMovement().x * 300.f * rightDir / 1.5f;
+//				//jumpVec += request.GetDeltaMovement().y * 300.f * forwardDir / 1.5f;
+//
+//				jumpVec += request.GetDeltaMovement().x * jumpForce * rightDir / 1.5f;
+//				jumpVec += request.GetDeltaMovement().y * jumpForce * forwardDir / 1.5f;
+//			}
+//			else
+//			{
+//				jumpVec = forwardDir * jumpForce; //300.f;
+//			}
+//			jumpVec.z = upDir.z * 2.5f; // 250.f;
+//
+//			//TODO
+//			//NetSpawnParticleEffect("alien_special.Trooper.doubleJumpAttack");
+//
+//			//TODO
+//			//SubEnergy(TROOPER_JUMP_ENERGY_COST);
+//
+//			animCharRequest.velocity += jumpVec;
+//			m_pAnimatedCharacter->AddMovement(animCharRequest);
+//
+//			TOS_SAFE_ADD_ENERGY(this, -doubleJumpCost);
+//
+//			pSlaveStats->jumpCount = 0;
+//
+//			//TODO
+//			//The controlled trooper cannot to do jump attack after double jump
+//			//m_trooper.canJumpMelee = false;
+//		}
+//	}
+//}
