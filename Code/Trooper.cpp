@@ -211,9 +211,11 @@ void CTrooper::Update(SEntityUpdateContext& ctx, int updateSlot)
 		//animation processing
 		ProcessAnimation(pEnt->GetCharacter(0), frameTime);
 
+		//TheOtherSide feature
 		//reset the input for the next frame
-		if (IsClient())
+		if (IsClient() || IsSlave())
 			m_input.ResetDeltas();
+		//~TheOtherSide feature
 
 		//update tentacles blending
 		Vec3 refVec(-m_viewMtx.GetColumn(1) * max(0.1f, m_params.forceView) + -m_desiredVelocity);
@@ -1157,8 +1159,23 @@ void CTrooper::ProcessMovement(float frameTime)
 	if (!m_stats.isFloating)
 		move -= move * (m_baseMtx * Matrix33::CreateScale(Vec3Constants<float>::fVec3_OneZ)); //make it flat
 
-	if (m_stats.sprintLeft)
-		move *= m_params.sprintMultiplier;
+	//TheOtherSide sprint feature
+	//if (m_stats.sprintLeft)
+	//	move *= m_params.sprintMultiplier;
+	if (IsSlave())
+	{
+		if (m_input.actions & ACTION_SPRINT)
+			move *= m_params.sprintMultiplier;
+	}
+	else
+	{
+		if (m_stats.sprintLeft)
+			move *= m_params.sprintMultiplier;
+	}
+
+	NETINPUT_TRACE(GetEntityId(), m_stats.sprintLeft);
+	NETINPUT_TRACE(GetEntityId(), m_params.speedMultiplier);
+	//TheOtherSide
 
 	m_moveRequest.type = eCMT_Normal;
 
@@ -1387,33 +1404,33 @@ void CTrooper::SetActorMovement(SMovementRequestParams& control)
 
 	SetDesiredSpeed(control.vMoveDir * control.fDesiredSpeed);
 
-	//	m_input.actions = control.m_desiredActions;
-	int actions;
-	switch (control.bodystate)
+	//TheOtherSide feature, мне нужны экшены!!!
+	if (!IsSlave())
 	{
-	case 1:
-		actions = ACTION_CROUCH;
-		break;
-	case 2:
-		actions = ACTION_PRONE;
-		break;
-	case 3:
-		actions = ACTION_RELAXED;
-		break;
-	case 4:
-		actions = ACTION_STEALTH;
-		break;
-	default:
-		actions = 0;
-		break;
+		int actions;
+		switch (control.bodystate)
+		{
+		case 1:
+			actions = ACTION_CROUCH;
+			break;
+		case 2:
+			actions = ACTION_PRONE;
+			break;
+		case 3:
+			actions = ACTION_RELAXED;
+			break;
+		case 4:
+			actions = ACTION_STEALTH;
+			break;
+		default:
+			actions = 0;
+			break;
+		}
+
+		m_input.actions = actions;
 	}
+	//~TheOtherSide feature
 
-	// Override the stance based on special behavior.
-	//SetActorStance(control, actions);
-
-	//	SetTilt(control,actions);
-
-	m_input.actions = actions;
 
 	Vec3 fireDir = GetEntity()->GetWorldRotation() * FORWARD_DIRECTION;
 	if (!control.vAimTargetPos.IsZero())
@@ -1421,6 +1438,7 @@ void CTrooper::SetActorMovement(SMovementRequestParams& control)
 		fireDir = control.vAimTargetPos - state.weaponPosition;
 		fireDir.NormalizeSafe();
 	}
+
 	if (IScriptTable* pScriptTable = GetEntity()->GetScriptTable())
 		pScriptTable->SetValue("fireDir", fireDir);
 

@@ -31,6 +31,10 @@
 #include "GameUtils.h"
 #include "IDebrisMgr.h"
 
+//TheOtherSide feature
+#include <NetInputChainDebug.h>
+//~TheOtherSide
+
 // ----------------------------------------------------------------------
 
 CDebrisSpawner::CDebrisSpawner()
@@ -723,6 +727,8 @@ void CAlien::PrePhysicsUpdate()
 				//assert(m_moveRequest.rotation.IsValid());
 				//assert(m_moveRequest.velocity.IsValid());
 
+				NETINPUT_TRACE(GetEntityId(), m_moveRequest.velocity);
+
 				int frameID = gEnv->pRenderer->GetFrameID();
 				DebugGraph_AddValue("EntID", pEnt->GetId());
 				DebugGraph_AddValue("ReqVelo", m_moveRequest.velocity.GetLength());
@@ -762,10 +768,12 @@ void CAlien::Update(SEntityUpdateContext& ctx, const int updateSlot)
 		//animation processing
 		ProcessAnimation(pEnt->GetCharacter(0), frameTime);
 
+		//TheOtherSide feature
 		//reset the input for the next frame
-		if (IsClient())
+		if (IsClient() || IsSlave())
 			m_input.ResetDeltas();
-
+		//~TheOtherSide feature
+		
 		//update tentacles blending
 		Vec3 refVec(-m_viewMtx.GetColumn(1) * max(0.1f, m_params.forceView) + -m_desiredVelocity);
 		refVec.NormalizeSafe();
@@ -972,7 +980,10 @@ void CAlien::UpdateStats(float frameTime)
 			m_stats.inAir = 0.0f;
 		}
 	}
-	else { m_stats.inWaterTimer = 0.0f; }
+	else 
+	{ 
+		m_stats.inWaterTimer = 0.0f; 
+	}
 
 	m_oldGravity = simPar.gravity;
 	m_stats.gravity = simPar.gravity;
@@ -999,6 +1010,7 @@ void CAlien::UpdateStats(float frameTime)
 		const float slowdownPercent = 0.8f;
 		if (m_stats.speed < m_stats.sprintMaxSpeed * slowdownPercent)
 			m_stats.sprintTreshold = m_stats.sprintMaxSpeed * slowdownPercent;
+
 		m_stats.sprintLeft = m_params.sprintDuration;
 	}
 
@@ -1147,9 +1159,24 @@ void CAlien::ProcessMovement(float frameTime)
 	float reqSpeedNormalized(reqSpeed);
 	reqSpeedNormalized /= maxSpeed;
 
-	if (m_stats.sprintLeft)
-		move *= m_params.sprintMultiplier;
+	//TheOtherSide sprint feature
+	//if (m_stats.sprintLeft)
+	//	move *= m_params.sprintMultiplier;
+	if (IsSlave())
+	{
+		if (m_input.actions & ACTION_SPRINT)
+			move *= m_params.sprintMultiplier;
+	}
+	else
+	{
+		if (m_stats.sprintLeft)
+			move *= m_params.sprintMultiplier;
+	}
 
+	NETINPUT_TRACE(GetEntityId(), m_stats.sprintLeft);
+	NETINPUT_TRACE(GetEntityId(), m_params.speedMultiplier);
+	//~TheOtherSide
+	
 	//FIXME:testing
 	Interpolate(m_stats.physicsAnimationRatio, min(reqSpeedNormalized * g_pGameCVars->g_alienPhysicsAnimRatio, 1.0f), 3.3f, frameTime, 1.0f);
 

@@ -131,6 +131,7 @@ private:
 	bool OnActionMoveRight(CTOSActor* pActor,const ActionId& actionId, int activationMode, float value, float pressedDur = 0);
 	bool OnActionJump(CTOSActor* pActor,const ActionId& actionId, int activationMode, float value, float pressedDur = 0);
 	bool OnActionHoldTest(CTOSActor* pActor,const ActionId& actionId, int activationMode, float value, float pressedDur = 0);
+	bool OnActionSprint(CTOSActor* pActor,const ActionId& actionId, int activationMode, float value, float pressedDur = 0);
 
 public:
 

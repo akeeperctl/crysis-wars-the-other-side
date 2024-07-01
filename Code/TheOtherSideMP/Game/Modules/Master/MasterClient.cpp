@@ -115,6 +115,7 @@ void CTOSMasterClient::OnAction(const ActionId& action, const int activationMode
 	ASSING_ACTION(pSlaveActor, action, activationMode, pressedDuration, rGA.moveleft, OnActionMoveLeft);
 	ASSING_ACTION(pSlaveActor, action, activationMode, pressedDuration, rGA.moveright, OnActionMoveRight);
 	ASSING_ACTION(pSlaveActor, action, activationMode, pressedDuration, rGA.jump, OnActionJump);
+	ASSING_ACTION(pSlaveActor, action, activationMode, pressedDuration, rGA.sprint, OnActionSprint);
 }
 
 // ReSharper disable once CppMemberFunctionMayBeConst
@@ -280,6 +281,20 @@ bool CTOSMasterClient::OnActionHoldTest(CTOSActor* pActor, const ActionId& actio
 	if (activationMode == eAAM_OnHold)
 	{
 		CryLogAlways("KEY HOLDING: VALUE = %f", value);
+	}
+
+	return true;
+}
+
+bool CTOSMasterClient::OnActionSprint(CTOSActor* pActor, const ActionId& actionId, int activationMode, float value, float pressedDur)
+{
+	if (value > 0.0f)
+	{
+		m_actions |= ACTION_SPRINT;
+	}
+	else
+	{
+		m_actions &= ~ACTION_SPRINT;
 	}
 
 	return true;
