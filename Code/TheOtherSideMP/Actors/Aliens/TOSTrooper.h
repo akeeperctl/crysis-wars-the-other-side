@@ -22,7 +22,10 @@ public:
 	void UpdateMasterView(SViewParams& viewParams, Vec3& offsetX, Vec3& offsetY, Vec3& offsetZ, Vec3& target, Vec3& current, float& currentFov) ;
 	//~ITOSMasterControllable
 
+	bool ApplyActions(int actions); // нужна для поддержки m_actions не только в игроке
+
 	//void ProcessJump(const CMovementRequest& request);
+
 
 protected:
 private:

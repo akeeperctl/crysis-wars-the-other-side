@@ -289,6 +289,12 @@ void CTOSAlien::Kill()
 	CTOSActor::Kill();
 }
 
+bool CTOSAlien::ApplyActions(int actions)
+{
+	m_input.actions = actions;
+	return true;
+}
+
 void CTOSAlien::ApplyMasterMovement(const Vec3& delta)
 {
 	//m_input.deltaMovement = FilterDeltaMovement(delta);

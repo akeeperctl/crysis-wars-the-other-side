@@ -713,32 +713,35 @@ void CScout::SetActorMovement(SMovementRequestParams &control)
 		}
 	}
 
-	int actions;
-
-	switch(control.bodystate)
+	//TheOtherSide feature, мне нужны экшены!!!
+	if (!IsSlave())
 	{
-	case 1:
-		actions = ACTION_CROUCH;
-		break;
-	case 2:
-		actions = ACTION_PRONE;
-		break;
-	case 3:
-		actions = ACTION_RELAXED;
-		break;
-	case 4:
-		actions = ACTION_STEALTH;
-		break;
-	default:
-		actions = 0;
-		break;
+		int actions;
+		switch (control.bodystate)
+		{
+		case 1:
+			actions = ACTION_CROUCH;
+			break;
+		case 2:
+			actions = ACTION_PRONE;
+			break;
+		case 3:
+			actions = ACTION_RELAXED;
+			break;
+		case 4:
+			actions = ACTION_STEALTH;
+			break;
+		default:
+			actions = 0;
+			break;
+		}
+
+		// Override the stance based on special behavior.
+		SetActorStance(control, actions);
+
+		m_input.actions = actions;
 	}
-
-	// Override the stance based on special behavior.
-	SetActorStance(control, actions);
-
-	m_input.actions = actions;
-
+	//~TheOtherSide feature
 }
 
 void CScout::FullSerialize(TSerialize ser)

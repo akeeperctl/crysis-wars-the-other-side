@@ -186,6 +186,7 @@ class CTOSActor:
 public:
 
 	friend class CTOSMasterModule;
+	friend class CTOSMasterClient;
 
 	enum MPTimers
 	{
@@ -193,7 +194,6 @@ public:
 		eMPTIMER_REMOVEWEAPONSDELAY = 0x111,
 	};
 
-	friend class CTOSMasterClient;
 
 	CTOSActor();
 	~CTOSActor() ;
@@ -234,6 +234,7 @@ public:
 	virtual Matrix33 GetEyeMtx() { return Matrix33(); };
 	
 	virtual bool ShouldUsePhysicsMovement();
+	virtual bool ApplyActions(int actions); // нужна для поддержки m_actions не только в игроке
 
 	//Новые функции сюда
 	//const Vec3& FilterDeltaMovement(const Vec3& deltaMov);

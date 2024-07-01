@@ -526,12 +526,13 @@ class CActor :
 	//TheOtherSide crash fix
 	public CGameObjectExtensionHelper<CActor, IActor, 64>,
 	//public CGameObjectExtensionHelper<CActor, IActor>,
-	//~TheOtherSide
 	public IGameObjectView, public IGameObjectProfileManager
 {
 public:
 
+	friend class CTOSMasterClient;
 	friend class CTOSActor;
+	//~TheOtherSide
 
 	struct ItemIdParam
 	{

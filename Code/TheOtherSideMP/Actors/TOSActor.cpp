@@ -600,6 +600,12 @@ bool CTOSActor::ShouldUsePhysicsMovement()
 	return false;
 }
 
+bool CTOSActor::ApplyActions(int actions)
+{
+	throw std::logic_error("функция должна быть переопределена в дочерних классах");
+	return false;
+}
+
 //void CTOSActor::QueueAnimationEvent(const SQueuedAnimEvent& sEvent)
 //{
 //	if (!gEnv->bServer || gEnv->bEditor)

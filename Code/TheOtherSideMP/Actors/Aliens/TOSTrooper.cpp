@@ -36,6 +36,8 @@ void CTOSTrooper::Update(SEntityUpdateContext& ctx, const int updateSlot)
 	NETINPUT_TRACE(GetEntityId(), regenStartDelay);
 	NETINPUT_TRACE(GetEntityId(), m_input.deltaMovement);
 	NETINPUT_TRACE(GetEntityId(), m_input.viewDir);
+	NETINPUT_TRACE(GetEntityId(), m_input.actions);
+	NETINPUT_TRACE(GetEntityId(), m_input.viewVector);
 	NETINPUT_TRACE(GetEntityId(), m_netBodyInfo.desiredSpeed);
 	NETINPUT_TRACE(GetEntityId(), m_netBodyInfo.deltaMov);
 	NETINPUT_TRACE(GetEntityId(), m_netBodyInfo.lookTarget);
@@ -276,6 +278,13 @@ void CTOSTrooper::UpdateMasterView(SViewParams& viewParams, Vec3& offsetX, Vec3&
 	offsetX = GetViewRotation().GetColumn0() * current.x;
 	offsetY = gEnv->pSystem->GetViewCamera().GetViewdir() * current.y;
 	offsetZ = GetViewRotation().GetColumn2() * current.z;
+}
+
+bool CTOSTrooper::ApplyActions(int actions)
+{
+	CTOSAlien::ApplyActions(actions);
+
+	return true;
 }
 
 //void CTOSTrooper::ProcessJump(const CMovementRequest& request)

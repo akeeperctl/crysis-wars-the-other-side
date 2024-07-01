@@ -46,6 +46,7 @@ public:
 	Matrix33 GetViewMtx() ;
 	Matrix33 GetBaseMtx() ;
 	Matrix33 GetEyeMtx() ;
+	bool	 ApplyActions(int actions);
 	//~CTOSActor
 
 	CTOSMasterClient* GetMasterClient() const;

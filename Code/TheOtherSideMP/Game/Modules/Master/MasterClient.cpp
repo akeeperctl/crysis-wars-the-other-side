@@ -303,6 +303,8 @@ void CTOSMasterClient::PrePhysicsUpdate()
 	m_movementRequest.SetLookTarget(m_lookfireInfo.lookTargetPos);
 	m_movementRequest.SetFireTarget(m_lookfireInfo.fireTargetPos);
 
+	pSlaveActor->ApplyActions(m_actions);
+
 	// В сетевой игре отправка запроса отсюда работает прекрасно
 	// В одиночной игре отправка запроса не работает
 	SendMovementRequest(pController, m_movementRequest);

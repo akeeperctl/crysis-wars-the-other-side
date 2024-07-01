@@ -249,6 +249,12 @@ Matrix33 CTOSPlayer::GetEyeMtx()
 
 }
 
+bool CTOSPlayer::ApplyActions(int actions)
+{
+	m_actions = actions;
+	return true;
+}
+
 CTOSMasterClient* CTOSPlayer::GetMasterClient() const
 {
 	assert(m_pMasterClient);

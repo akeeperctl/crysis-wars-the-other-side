@@ -20,6 +20,7 @@ public:
 	Matrix33 GetBaseMtx() ;
 	Matrix33 GetEyeMtx() ;
 	void	 Kill() ;
+	bool	 ApplyActions(int actions);
 	//~CTOSActor
 
 	//ITOSMasterControllable
