@@ -153,8 +153,8 @@ void CTrooper::SetParams(SmartScriptTable& rTable, bool resetFirst)
 	{
 		rTable->GetValue("jumpVelocity", m_jumpParams.velocity);
 		rTable->GetValue("jumpTime", m_jumpParams.duration);
-		m_jumpParams.bUseStartAnim = false;
-		rTable->GetValue("jumpStart", m_jumpParams.bUseStartAnim);
+		m_jumpParams.bUseAdvancedStartAnim = false;
+		rTable->GetValue("jumpStart", m_jumpParams.bUseAdvancedStartAnim);
 		m_jumpParams.bUseSpecialAnim = false;
 		rTable->GetValue("useSpecialAnim", m_jumpParams.bUseSpecialAnim);
 		m_jumpParams.bUseAnimEvent = false;
@@ -736,13 +736,25 @@ void CTrooper::SetAnimTentacleParams(pe_params_rope& pRope, float physicBlend)
 //TheOtherSide refactoring
 void CTrooper::ProcessJump(CTimeValue& currTime, IAnimationGraphState* pAGState, IPhysicalEntity*& phys, Vec3& move, float frameTime)
 { 
+	//TheOtherSide refactoring
+	if (!pAGState)
+	{
+		assert(pAGState);
+		return;
+	}
+	//~TheOtherSide refactoring
+
+	const string defaultIdleAction= "idle";
+	const string defaultFlyAction = "flyNoStart";
+	const string defaultStartJumpAction = "CTRL_JumpStart";
+
 	if (m_jumpParams.bTrigger)
 	{
 		m_jumpParams.bTrigger = false;
 		m_jumpParams.state = JS_JumpStart;
 		m_jumpParams.startTime = currTime;
 
-		if (pAGState && m_jumpParams.bUseStartAnim)
+		if (m_jumpParams.bUseAdvancedStartAnim)
 		{
 			// Нормализация вектора скорости для вычисления углов
 			Vec3 jumpVelocity = m_jumpParams.velocity;
@@ -777,6 +789,7 @@ void CTrooper::ProcessJump(CTimeValue& currTime, IAnimationGraphState* pAGState,
 			else
 			{
 				pAGState->SetInput(m_idActionInput, "fly");
+				//CryLogAlways("<c++> trooper angleX = %1.f, angleZ = %1.f", angleX, angleZ);
 			}
 		}
 	}
@@ -786,7 +799,9 @@ void CTrooper::ProcessJump(CTimeValue& currTime, IAnimationGraphState* pAGState,
 		//Это условие используется для определения, 
 		// когда персонаж должен начать прыжок.
 		// Т.е как только проигралась анимация или после 0.9 секунд
-		if ((!m_jumpParams.bUseStartAnim && !m_jumpParams.bUseAnimEvent) ||
+
+		if (m_jumpParams.bUseInstantJumping || // TheOtherSide feature
+			(!m_jumpParams.bUseAdvancedStartAnim && !m_jumpParams.bUseAnimEvent) ||
 			(currTime - m_jumpParams.startTime).GetSeconds() > 0.9f)
 		{
 			Jump();
@@ -851,9 +866,9 @@ void CTrooper::ProcessJump(CTimeValue& currTime, IAnimationGraphState* pAGState,
 		{
 			IAnimationGraphState* pAGState = GetAnimationGraphState();
 			if (pAGState && !m_bOverrideFlyActionAnim)
-				pAGState->SetInput(m_idActionInput, "idle");
-
-			m_jumpParams.state = JS_Landed;
+				pAGState->SetInput(m_idActionInput, defaultIdleAction);
+			
+			m_jumpParams.state = JS_None;
 			m_jumpParams.startTime = currTime;
 
 			// Чем больше здесь вектор, тем меньше модель будет смещаться при падении
@@ -886,7 +901,7 @@ void CTrooper::ProcessJump(CTimeValue& currTime, IAnimationGraphState* pAGState,
 				bool bUseSpecialFlyAnim = (m_bOverrideFlyActionAnim || m_jumpParams.bUseSpecialAnim && m_jumpParams.specialAnimType == JUMP_ANIM_FLY);
 
 				if (pAGState && !bUseSpecialFlyAnim)
-					pAGState->SetInput(m_idActionInput, m_bOverrideFlyActionAnim ? m_overrideFlyAction : "flyNoStart");
+					pAGState->SetInput(m_idActionInput, m_bOverrideFlyActionAnim ? m_overrideFlyAction : defaultFlyAction);
 
 				m_jumpParams.state = JS_Flying;
 
@@ -996,57 +1011,53 @@ void CTrooper::ProcessJump(CTimeValue& currTime, IAnimationGraphState* pAGState,
 
 				if (m_jumpParams.remainingTime >= 0 && m_jumpParams.remainingTime < m_jumpParams.landPreparationTime && !m_bOverrideFlyActionAnim)
 				{
-					//IAnimationGraphState* pAGState = GetAnimationGraphState();
-					if (pAGState)
+					// Создаем копию вектора скорости без учета вертикальной составляющей
+					Vec3 horizontalVelocity(normalizedVelocity);
+					horizontalVelocity.z = 0;
+					horizontalVelocity.NormalizeSafe();
+
+					// Вычисляем угол между векторами скорости и горизонтальной скорости
+					float velocityDotProduct = normalizedVelocity.Dot(horizontalVelocity);
+					float angleXDegrees = RAD2DEG(cry_acosf(CLAMP(velocityDotProduct, -1.f, 1.f)));
+
+					// Если персонаж приземляется задом наперед, корректируем угол
+					if (m_viewMtx.GetColumn1().Dot(normalizedVelocity) < -0.001) // land backwards
 					{
-						// Создаем копию вектора скорости без учета вертикальной составляющей
-						Vec3 horizontalVelocity(normalizedVelocity);
-						horizontalVelocity.z = 0;
-						horizontalVelocity.NormalizeSafe();
+						angleXDegrees = 180 - angleXDegrees;
+					}
 
-						// Вычисляем угол между векторами скорости и горизонтальной скорости
-						float velocityDotProduct = normalizedVelocity.Dot(horizontalVelocity);
-						float angleXDegrees = RAD2DEG(cry_acosf(CLAMP(velocityDotProduct, -1.f, 1.f)));
+					// Устанавливаем угол по оси X
+					pAGState->SetInput(m_idAngleXInput, angleXDegrees);
 
-						// Если персонаж приземляется задом наперед, корректируем угол
-						if (m_viewMtx.GetColumn1().Dot(normalizedVelocity) < -0.001) // land backwards
+					// Вычисляем направление взгляда из матрицы вида
+					Vec3 viewDirection = m_viewMtx.GetColumn(1);
+
+					// Вычисляем угол между направлением взгляда и горизонтальной скоростью
+					velocityDotProduct = horizontalVelocity.Dot(viewDirection);
+					float angleZDegrees = RAD2DEG(cry_acosf(CLAMP(velocityDotProduct, -1.f, 1.f)) * sgn(horizontalVelocity.Cross(viewDirection).z));
+
+					// Устанавливаем угол по оси Z
+					pAGState->SetInput(m_idAngleZInput, angleZDegrees);
+
+					// Проверяем, нужно ли использовать специальную анимацию для приземления
+					if (m_jumpParams.bUseSpecialAnim && m_jumpParams.specialAnimType == JUMP_ANIM_LAND)
+					{
+						// Устанавливаем соответствующий ввод для анимации
+						if (m_jumpParams.specialAnimAGInput == AIANIM_ACTION)
 						{
-							angleXDegrees = 180 - angleXDegrees;
-						}
-
-						// Устанавливаем угол по оси X
-						pAGState->SetInput(m_idAngleXInput, angleXDegrees);
-
-						// Вычисляем направление взгляда из матрицы вида
-						Vec3 viewDirection = m_viewMtx.GetColumn(1);
-
-						// Вычисляем угол между направлением взгляда и горизонтальной скоростью
-						velocityDotProduct = horizontalVelocity.Dot(viewDirection);
-						float angleZDegrees = RAD2DEG(cry_acosf(CLAMP(velocityDotProduct, -1.f, 1.f)) * sgn(horizontalVelocity.Cross(viewDirection).z));
-
-						// Устанавливаем угол по оси Z
-						pAGState->SetInput(m_idAngleZInput, angleZDegrees);
-
-						// Проверяем, нужно ли использовать специальную анимацию для приземления
-						if (m_jumpParams.bUseSpecialAnim && m_jumpParams.specialAnimType == JUMP_ANIM_LAND)
-						{
-							// Устанавливаем соответствующий ввод для анимации
-							if (m_jumpParams.specialAnimAGInput == AIANIM_ACTION)
-							{
-								pAGState->SetInput(m_idActionInput, m_jumpParams.specialAnimAGInputValue);
-							}
-							else
-							{
-								pAGState->SetInput(m_idActionInput, "flyNoStart"); // устанавливаем состояние "idle"
-								pAGState->SetInput(m_idSignalInput, m_jumpParams.specialAnimAGInputValue);
-							}
-							m_jumpParams.bPlayingSpecialAnim = true;
+							pAGState->SetInput(m_idActionInput, m_jumpParams.specialAnimAGInputValue);
 						}
 						else
 						{
-							// Если специальная анимация не требуется, устанавливаем состояние "idle"
-							pAGState->SetInput(m_idActionInput, "flyNoStart");
+							pAGState->SetInput(m_idActionInput, defaultFlyAction); // устанавливаем состояние "idle"
+							pAGState->SetInput(m_idSignalInput, m_jumpParams.specialAnimAGInputValue);
 						}
+						m_jumpParams.bPlayingSpecialAnim = true;
+					}
+					else
+					{
+						// Если специальная анимация не требуется, устанавливаем состояние "idle"
+						pAGState->SetInput(m_idActionInput, defaultFlyAction);
 					}
 
 					//m_bOverrideFlyActionAnim = false;
@@ -1102,7 +1113,8 @@ void CTrooper::ProcessJump(CTimeValue& currTime, IAnimationGraphState* pAGState,
 		{
 			IAnimationGraphState* pAGState = GetAnimationGraphState();
 			if (pAGState && !m_bOverrideFlyActionAnim)
-				pAGState->SetInput(m_idActionInput, "idle");
+				pAGState->SetInput(m_idActionInput, defaultIdleAction);
+
 			m_jumpParams.state = JS_Landing;
 			m_jumpParams.startTime = currTime;
 			m_jumpParams.initLandVelocity = m_jumpParams.curVelocity;
@@ -1121,6 +1133,7 @@ void CTrooper::ProcessJump(CTimeValue& currTime, IAnimationGraphState* pAGState,
 			simParSet.bSwimming = false;
 			phys->SetParams(&simParSet);
 		}
+
 		JumpEffect();
 	}
 }
@@ -1343,13 +1356,18 @@ void CTrooper::SetActorMovement(SMovementRequestParams& control)
 	if ((pAnimTarget != nullptr) && pAnimTarget->preparing)
 	{
 		float offset = 3.0f;
+		
 		Vec3  bodyTarget = pAnimTarget->position + offset * (pAnimTarget->orientation * FORWARD_DIRECTION); // + Vec3(0, 0, 1.5);
 		Vec3  bodyDir(bodyTarget - mypos);
+		
 		bodyDir.z = 0;
 		bodyDir = bodyDir.GetNormalizedSafe(pAnimTarget->orientation * FORWARD_DIRECTION);
+		
 		//gEnv->pRenderer->GetIRenderAuxGeom()->DrawLine(mypos, ColorB(255,128,128,255), mypos + bodyDir * 10.0f, ColorB(255,255,255,255), 5.0f);
 		//gEnv->pRenderer->GetIRenderAuxGeom()->DrawSphere(bodyTarget, 0.2f, ColorB(255, 255, 255, 255), true);
+		
 		SetDesiredDirection(bodyDir);
+		
 		/*
 		float dist = Distance::Point_Point(state.weaponPosition,pAnimTarget->position);
 		float coeff = pAnimTarget->maxRadius - dist;

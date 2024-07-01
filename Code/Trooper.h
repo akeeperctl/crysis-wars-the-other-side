@@ -64,6 +64,8 @@ public:
 	{
 		//TheOtherSide feature
 		float remainingTime;
+		bool bUseAdvancedStartAnim;// анимация зависит от угла прыжка
+		bool bUseInstantJumping;// импульс будет применен сразу после старта прыжка, не дожидаясь анимации или времени
 		//~TheOtherSide
 
 		Vec3 dest;
@@ -73,7 +75,7 @@ public:
 		EJumpState state;
 		CTimeValue startTime;
 		bool bUseLandAnim;
-		bool bUseStartAnim;
+		//bool bUseStartAnim;
 		bool bFreeFall;
 		bool bUseAnimEvent;
 		bool bRelative;
@@ -101,6 +103,8 @@ public:
 			ser.BeginGroup("JumpParams");
 			//TheOtherSide feature
 			ser.Value("remainingTime", remainingTime);
+			ser.Value("bUseAdvancedStartAnim", bUseAdvancedStartAnim);
+			ser.Value("bUseInstantJumping", bUseInstantJumping);
 			//~TheOtherSide feature
 
 			ser.Value("dest",dest);
@@ -113,7 +117,6 @@ public:
 			ser.Value("bTrigger",bTrigger);
 			ser.Value("startTime",startTime);
 			ser.Value("bUseLandAnim",bUseLandAnim);
-			ser.Value("bUseStartAnim",bUseStartAnim);
 			ser.Value("bUseAnimEvent",bUseAnimEvent);
 			ser.Value("bUseSpecialAnim",bUseSpecialAnim);
 			ser.EnumValue("specialAnimType",specialAnimType,JUMP_ANIM_FLY,JUMP_ANIM_LAND);
@@ -134,6 +137,8 @@ public:
 		{
 			//TheOtherSide feature
 			remainingTime = ZERO;
+			bUseAdvancedStartAnim = false;
+			bUseInstantJumping = false;
 			//~TheOtherSide feature
 
 			dest = ZERO;
@@ -146,7 +151,6 @@ public:
 			startTime = 0.f;
 			bUseLandAnim = false;
 			bFreeFall = false;
-			bUseStartAnim = false;
 			bUseAnimEvent = false;
 			bRelative = false;
 			bTrigger = false;

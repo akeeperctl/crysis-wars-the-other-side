@@ -48,8 +48,6 @@ void CTOSTrooper::Update(SEntityUpdateContext& ctx, const int updateSlot)
 	NETINPUT_TRACE(GetEntityId(), m_jumpParams.state);
 	NETINPUT_TRACE(GetEntityId(), m_jumpParams.duration);
 	NETINPUT_TRACE(GetEntityId(), m_jumpParams.prevInAir);
-	NETINPUT_TRACE(GetEntityId(), m_jumpParams.landPreparationTime);
-	NETINPUT_TRACE(GetEntityId(), m_jumpParams.defaultLandPreparationTime);
 	NETINPUT_TRACE(GetEntityId(), m_jumpParams.remainingTime);
 	NETINPUT_TRACE(GetEntityId(), m_lastTimeOnGround.GetSeconds());
 
@@ -123,19 +121,19 @@ void CTOSTrooper::ProcessMovement(const float frameTime)
 	{
 		currentRequest.ClearJump();
 
-		if (IsSlave())
+		STOSSlaveStats* pSlaveStats = &GetSlaveStats();
+
+		const float onGround = m_stats.onGround;
+
+		if (onGround > 0.25f && IsSlave())
 		{
 			m_jumpParams.bTrigger = true;
-			m_jumpParams.bRelative = true;
 			m_jumpParams.bUseLandAnim = true; // ПОФИКШЕН РАССИНХРОН bUseLandAnim == True + RMI
 			m_jumpParams.duration = 0.4f; // подбиралось эмпирически. Через 0.4 сек переход из flying в approach landing
-
-			STOSSlaveStats* pSlaveStats = &GetSlaveStats();
-
-			const float     onGround = m_stats.onGround;
-			const float		jumpPressDur = pSlaveStats->chargingJumpPressDur;
-			const float		jumpForce = 6.0f;
-			const float		finalOnceJumpForce = jumpPressDur > TOS_Console::GetSafeFloatVar("tos_sv_chargingJumpInputTime") ? jumpForce + 4.0f : jumpForce;
+			
+			const float	jumpPressDur = pSlaveStats->chargingJumpPressDur;
+			const float	jumpForce = 6.0f;
+			const float	finalOnceJumpForce = jumpPressDur > TOS_Console::GetSafeFloatVar("tos_sv_chargingJumpInputTime") ? jumpForce + 4.0f : jumpForce;
 
 			const float doubleJumpCost = TOS_Console::GetSafeFloatVar("tos_tr_double_jump_energy_cost");
 			const float energy = TOS_SAFE_GET_ENERGY(this);
@@ -146,48 +144,57 @@ void CTOSTrooper::ProcessMovement(const float frameTime)
 			const Vec3& forwardDir = GetEntity()->GetWorldTM().GetColumn(1);
 			const Vec3& rightDir = GetEntity()->GetWorldTM().GetColumn(0);
 
-			// Одиночный прыжок
-			if (onGround > 0.25f)
+			// Первый прыжок, который от земли
+			if (pSlaveStats->jumpCount == 0)
 			{
-				pSlaveStats->jumpCount++;
+				// прыжки, используя анимации и углы в итоге получается так, 
+				//что приш. прыгает не туда куда хочет игрок
+				m_jumpParams.bUseAdvancedStartAnim = true;
+				m_jumpParams.bUseInstantJumping = true;
+
+				pe_status_dynamics dynStat;
+				auto pPhysEnt = GetEntity()->GetPhysics();
+				pPhysEnt->GetStatus(&dynStat);
+
+				//pSlaveStats->jumpCount++; временное
 				jumpVec.z = upDir.z * finalOnceJumpForce; //400.0f
 
-				m_jumpParams.velocity += jumpVec;
+				m_jumpParams.velocity += jumpVec + dynStat.v;
 
 				pSlaveStats->chargingJumpPressDur = 0.0f;
 			}
-			else if (pSlaveStats->jumpCount > 0 && m_stats.inAir > 0.0f && energy > doubleJumpCost)
-			{
-				// Двойной прыжок
+			//else if (pSlaveStats->jumpCount > 0 && m_stats.inAir > 0.0f && energy > doubleJumpCost)
+			//{
+			//	// Двойной прыжок
 
-				if (currentRequest.HasDeltaMovement() && !currentRequest.GetDeltaMovement().IsZero())
-				{
-					jumpVec += currentRequest.GetDeltaMovement().x * jumpForce * rightDir / 1.5f;
-					jumpVec += currentRequest.GetDeltaMovement().y * jumpForce * forwardDir / 1.5f;
-				}
-				else
-				{
-					jumpVec = forwardDir * jumpForce; //300.f;
-				}
-				jumpVec.z = upDir.z * 2.5f; // 250.f;
+			//	if (currentRequest.HasDeltaMovement() && !currentRequest.GetDeltaMovement().IsZero())
+			//	{
+			//		jumpVec += currentRequest.GetDeltaMovement().x * jumpForce * rightDir / 1.5f;
+			//		jumpVec += currentRequest.GetDeltaMovement().y * jumpForce * forwardDir / 1.5f;
+			//	}
+			//	else
+			//	{
+			//		jumpVec = forwardDir * jumpForce; //300.f;
+			//	}
+			//	jumpVec.z = upDir.z * 2.5f; // 250.f;
 
-				//TODO
-				//NetSpawnParticleEffect("alien_special.Trooper.doubleJumpAttack");
+			//	//TODO
+			//	//NetSpawnParticleEffect("alien_special.Trooper.doubleJumpAttack");
 
-				//TODO
-				//SubEnergy(TROOPER_JUMP_ENERGY_COST);
+			//	//TODO
+			//	//SubEnergy(TROOPER_JUMP_ENERGY_COST);
 
-				m_jumpParams.velocity += jumpVec;
-				//m_pAnimatedCharacter->AddMovement(animCharRequest);
+			//	m_jumpParams.velocity += jumpVec;
+			//	//m_pAnimatedCharacter->AddMovement(animCharRequest);
 
-				TOS_SAFE_ADD_ENERGY(this, -doubleJumpCost);
+			//	TOS_SAFE_ADD_ENERGY(this, -doubleJumpCost);
 
-				pSlaveStats->jumpCount = 0;
+			//	pSlaveStats->jumpCount = 0;
 
-				//TODO
-				//The controlled trooper cannot to do jump attack after double jump
-				//m_trooper.canJumpMelee = false;
-			}
+			//	//TODO
+			//	//The controlled trooper cannot to do jump attack after double jump
+			//	//m_trooper.canJumpMelee = false;
+			//}
 
 			if (IsLocalSlave())
 			{
@@ -198,6 +205,11 @@ void CTOSTrooper::ProcessMovement(const float frameTime)
 
 	CTrooper::ProcessMovement(frameTime);
 	ProcessJumpFlyControl(m_moveRequest.velocity, frameTime);
+
+	// Сброс параметров для следующего кадра
+	m_jumpParams.bRelative = false;
+	m_jumpParams.bUseInstantJumping = false;
+	m_jumpParams.duration = 0.0f;
 }
 
 void CTOSTrooper::ProcessJumpFlyControl(const Vec3& move, const float frameTime)
