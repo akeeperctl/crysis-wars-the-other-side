@@ -54,7 +54,7 @@ void CTOSTrooper::Update(SEntityUpdateContext& ctx, const int updateSlot)
 	NETINPUT_TRACE(GetEntityId(), m_lastTimeOnGround.GetSeconds());
 
 	IEntityRenderProxy* pRenderProxy = (IEntityRenderProxy*)(GetEntity()->GetProxy(ENTITY_PROXY_RENDER));
-	if ((pRenderProxy == NULL) || !pRenderProxy->IsCharactersUpdatedBeforePhysics())
+	if ((pRenderProxy == nullptr) || !pRenderProxy->IsCharactersUpdatedBeforePhysics())
 		PrePhysicsUpdate();
 
 	CTrooper::Update(ctx, updateSlot);
@@ -91,18 +91,19 @@ void CTOSTrooper::Update(SEntityUpdateContext& ctx, const int updateSlot)
 	NETINPUT_TRACE(GetEntityId(), InZeroG());
 	NETINPUT_TRACE(GetEntityId(), IsSlave());
 
-	//~TheOtherSide
+	EAutoDisablePhysicsMode adpm = eADPM_WhenAIDeactivated; // Значение по умолчанию
 
-	EAutoDisablePhysicsMode adpm = eADPM_Never;
-	if (m_stats.isRagDoll)
+	if (m_stats.isRagDoll || IsLocalSlave() || (gEnv->bMultiplayer && gEnv->bServer)) 
+	{
 		adpm = eADPM_Never;
-	else if (IsLocalSlave() || (gEnv->bMultiplayer && gEnv->bServer))
-		adpm = eADPM_Never;
-	else if (IsPlayer())
+	}
+	else if (IsPlayer() || IsSlave()) 
+	{
 		adpm = eADPM_WhenInvisibleAndFarAway;
-	else
-		adpm = eADPM_WhenAIDeactivated;
+	}
+
 	GetGameObject()->SetAutoDisablePhysicsMode(adpm);
+	//~TheOtherSide
 }
 
 bool CTOSTrooper::NetSerialize(const TSerialize ser, const EEntityAspects aspect, const uint8 profile, const int flags)
@@ -117,7 +118,7 @@ void CTOSTrooper::ProcessMovement(const float frameTime)
 {
 	//TheOtherSide
 	// Обработка прыжка
-	auto pMovementController = static_cast<CCompatibilityAlienMovementController*>(GetMovementController());
+	const auto pMovementController = static_cast<CCompatibilityAlienMovementController*>(GetMovementController());
 	auto& currentRequest = pMovementController->GetCurrentMovementRequest();
 	if (currentRequest.ShouldJump())
 	{
@@ -155,7 +156,7 @@ void CTOSTrooper::ProcessMovement(const float frameTime)
 				m_jumpParams.bUseInstantJumping = true;
 
 				pe_status_dynamics dynStat;
-				auto pPhysEnt = GetEntity()->GetPhysics();
+				const auto         pPhysEnt = GetEntity()->GetPhysics();
 				pPhysEnt->GetStatus(&dynStat);
 
 				//pSlaveStats->jumpCount++; временное
