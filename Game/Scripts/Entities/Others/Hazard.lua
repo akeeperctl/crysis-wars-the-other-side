@@ -162,13 +162,13 @@ end;
 function Hazard:HandleEntity(ent)
     local props = self.Properties.Damage
 
-    -- РџСЂРѕРІРµСЂСЏРµРј, С‡С‚Рѕ СЃСѓС‰РЅРѕСЃС‚СЊ Рё Р°РєС‚РµСЂ СЃСѓС‰РµСЃС‚РІСѓСЋС‚
+    -- Проверяем, что сущность и актер существуют
     if ent and ent.actor then
         local haveSlave = ent.actor:GetSlaveId() ~= nil
         local isPlayer = ent.actor:IsPlayer()
 
 		--TheOtherSide
-        -- Р•СЃР»Рё СѓСЂРѕРЅ РЅР°РЅРѕСЃРёС‚СЃСЏ С‚РѕР»СЊРєРѕ РёРіСЂРѕРєР°Рј РёР»Рё СЂР°Р±Р°Рј, Рё СЃСѓС‰РЅРѕСЃС‚СЊ РЅРµ СЏРІР»СЏРµС‚СЃСЏ РЅРё С‚РµРј, РЅРё РґСЂСѓРіРёРј, РІС‹С…РѕРґРёРј
+        -- Если урон наносится только игрокам или рабам, и сущность не является ни тем, ни другим, выходим
         if self.Properties.Damage.bOnlyPlayerOrSlave == 1 and not (isPlayer or haveSlave) then
             return
         end
@@ -177,10 +177,10 @@ function Hazard:HandleEntity(ent)
         local dmg = self.Properties.Damage.fDamage
 
 		--TheOtherSide
-        -- Р•СЃР»Рё СЃСѓС‰РЅРѕСЃС‚СЊ - РёРіСЂРѕРє Рё Сѓ РЅРµРіРѕ РЅРµС‚ СЂР°Р±Р°
+        -- Если сущность - игрок и у него нет раба
         if isPlayer and not haveSlave then
             local nanoSuitMode = ent.actor:GetNanoSuitMode()
-            -- РЈРјРЅРѕР¶Р°РµРј СѓСЂРѕРЅ РІ Р·Р°РІРёСЃРёРјРѕСЃС‚Рё РѕС‚ СЂРµР¶РёРјР° РЅР°РЅРѕРєРѕСЃС‚СЋРјР°
+            -- Умножаем урон в зависимости от режима нанокостюма
             if nanoSuitMode == 0 then -- Speed
                 dmg = dmg * props.SuitMultipliers.fSpeedMode
             elseif nanoSuitMode == 1 then -- Strength
@@ -190,13 +190,13 @@ function Hazard:HandleEntity(ent)
             elseif nanoSuitMode == 3 then -- Armor
                 dmg = dmg * props.SuitMultipliers.fArmorMode
             end
-        -- Р•СЃР»Рё СЃСѓС‰РЅРѕСЃС‚СЊ - РёРіСЂРѕРє Рё Сѓ РЅРµРіРѕ РµСЃС‚СЊ СЂР°Р±
+        -- Если сущность - игрок и у него есть раб
         elseif isPlayer and haveSlave then
             ent = System.GetEntity(ent.actor:GetSlaveId())
         end
 		--~TheOtherSide
 
-        -- РќР°РЅРѕСЃРёРј СѓСЂРѕРЅ, РµСЃР»Рё РѕРЅ Р±РѕР»СЊС€Рµ РЅСѓР»СЏ
+        -- Наносим урон, если он больше нуля
         if dmg > 0 then
             g_gameRules:CreateHit(ent.id, self.id, self.id, dmg, nil, nil, nil, "fire")
         end
