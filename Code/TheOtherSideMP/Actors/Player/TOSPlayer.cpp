@@ -11,6 +11,8 @@
 #include "TheOtherSideMP/Game/TOSGameEventRecorder.h"
 #include <Claymore.h>
 
+#include "NetInputChainDebug.h"
+
 CTOSPlayer::CTOSPlayer()
 	: m_pMasterClient(nullptr)
 {
@@ -142,6 +144,10 @@ void CTOSPlayer::SetSpectatorMode(uint8 mode, EntityId targetId)
 void CTOSPlayer::Update(SEntityUpdateContext& ctx, int updateSlot)
 {
 	CPlayer::Update(ctx,updateSlot);
+
+	NETINPUT_TRACE(GetEntityId(), m_stats.velocity);
+	NETINPUT_TRACE(GetEntityId(), m_stats.speed);
+	NETINPUT_TRACE(GetEntityId(), GetEntity()->GetWorldPos());
 }
 
 // ReSharper disable once CppParameterMayBeConst

@@ -1025,15 +1025,18 @@ void CTOSMasterClient::PrepareDude(const bool toStartControl, const uint dudeFla
 
 			m_pLocalDude->GetEntity()->SetWorldTM(Matrix34::CreateTranslationMat(slavePos), 0);
 
-			// Привязка работает от клиента к серверу без исп. RMI
-			m_pSlaveEntity->AttachChild(m_pLocalDude->GetEntity(), ENTITY_XFORM_USER | IEntity::ATTACHMENT_KEEP_TRANSFORMATION);
-			//m_pLocalDude->LinkToEntity(m_pSlaveEntity->GetId(), true);
-		
-			SAnimatedCharacterParams params = m_pLocalDude->GetAnimatedCharacter()->GetParams();
-			params.flags &= ~eACF_EnableMovementProcessing;
-			params.flags |= eACF_NoLMErrorCorrection;
+			// Привязка НЕ работает от клиента к серверу без исп. RMI
+			//m_pSlaveEntity->AttachChild(m_pLocalDude->GetEntity(), ENTITY_XFORM_USER | IEntity::ATTACHMENT_KEEP_TRANSFORMATION);
 
-			m_pLocalDude->GetAnimatedCharacter()->SetParams(params);
+			CTOSActor::NetAttachChild params;
+			params.flags = ENTITY_XFORM_USER | IEntity::ATTACHMENT_KEEP_TRANSFORMATION;
+			params.id = m_pLocalDude->GetEntityId();
+			GetSlaveActor()->GetGameObject()->InvokeRMI(CTOSActor::SvRequestAttachChild(), params, eRMI_ToServer);
+
+			SAnimatedCharacterParams anparams = m_pLocalDude->GetAnimatedCharacter()->GetParams();
+			anparams.flags &= ~eACF_EnableMovementProcessing;
+			anparams.flags |= eACF_NoLMErrorCorrection;
+			m_pLocalDude->GetAnimatedCharacter()->SetParams(anparams);
 
 			m_pLocalDude->SetViewRotation(slaveRot);
 			//m_pLocalDude->SetAngles(Ang3(slaveRot));

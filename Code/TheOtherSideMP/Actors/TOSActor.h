@@ -194,6 +194,22 @@ public:
 		eMPTIMER_REMOVEWEAPONSDELAY = 0x111,
 	};
 
+	struct NetAttachChild
+	{
+		NetAttachChild()
+			: id(0), flags(0)
+		{}
+
+		EntityId id;
+		uint flags;
+
+		void SerializeWith(TSerialize ser)
+		{
+			CryLogAlways("<c++> call %f", __FUNCTION__);
+			ser.Value("childId", id, 'eid');
+			ser.Value("flags", flags, 'ui8');
+		}
+	};
 
 	CTOSActor();
 	~CTOSActor() ;
@@ -315,6 +331,9 @@ private:
 
 	DECLARE_CLIENT_RMI_NOATTACH_FAST(ClTOSJump, NoParams, eNRT_ReliableUnordered);
 	DECLARE_SERVER_RMI_NOATTACH_FAST(SvRequestTOSJump, NoParams, eNRT_ReliableUnordered);
+
+	DECLARE_CLIENT_RMI_POSTATTACH(ClAttachChild, NetAttachChild, eNRT_ReliableUnordered);
+	DECLARE_SERVER_RMI_POSTATTACH(SvRequestAttachChild, NetAttachChild, eNRT_ReliableUnordered);
 
 protected:
 	bool m_chargingJump;///< Если *true, то высота прыжка зависит от длительности нажатия на дейсвие прыжка [jump]

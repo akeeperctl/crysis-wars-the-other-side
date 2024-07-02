@@ -22,6 +22,8 @@
 #include "HUD/HUDRadar.h"
 #include "HUD/HUDTagNames.h"
 
+#include "TheOtherSideMP/Control/ControlSystem.h"
+
 CTOSActor::CTOSActor()
 	:
 	//m_filteredDeltaMovement(ZERO),
@@ -966,6 +968,34 @@ IMPLEMENT_RMI(CTOSActor, SvRequestTOSJump)
 		GetMovementController()->RequestMovement(request);
 		CryLogAlways("<C++> Actor '%s' request jump to channel %i", m_debugName, channelId);
 	}
+
+	return true;
+}
+
+//------------------------------------------------------------------------
+IMPLEMENT_RMI(CTOSActor, ClAttachChild)
+{
+	IEntity* pChild = TOS_GET_ENTITY(params.id);
+	if(pChild)
+	{
+		CryLogAlways("<c++> Actor '%s' attach child '%s' on client", m_debugName, pChild->GetName());
+		GetEntity()->AttachChild(pChild, params.flags);
+	}
+
+	return true;
+}
+
+//------------------------------------------------------------------------
+IMPLEMENT_RMI(CTOSActor, SvRequestAttachChild)
+{
+	IEntity* pChild = TOS_GET_ENTITY(params.id);
+	if(pChild)
+	{
+		CryLogAlways("<c++> Actor '%s' attach child '%s' on server", m_debugName, pChild->GetName());
+		GetEntity()->AttachChild(pChild, params.flags);
+	}
+
+	GetGameObject()->InvokeRMI(ClAttachChild(), params, eRMI_ToRemoteClients);
 
 	return true;
 }
