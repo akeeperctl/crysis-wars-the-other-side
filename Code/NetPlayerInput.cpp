@@ -45,83 +45,111 @@ CNetPlayerInput::CNetPlayerInput( CPlayer * pPlayer ) : m_pPlayer(pPlayer)
 
 void CNetPlayerInput::PreUpdate()
 {
-	IPhysicalEntity * pPhysEnt = m_pPlayer->GetEntity()->GetPhysics();
+	IPhysicalEntity* pPhysEnt = m_pPlayer->GetEntity()->GetPhysics();
 	if (!pPhysEnt)
-		return;
+	    return;
 
 	CMovementRequest moveRequest;
 	SMovementState moveState;
 	m_pPlayer->GetMovementController()->GetMovementState(moveState);
-	Quat worldRot = m_pPlayer->GetBaseQuat(); // m_pPlayer->GetEntity()->GetWorldRotation();
-	Vec3 deltaMovement = worldRot.GetInverted().GetNormalized() * m_curInput.deltaMovement;
-	// absolutely ensure length is correct
-	deltaMovement = deltaMovement.GetNormalizedSafe(ZERO) * m_curInput.deltaMovement.GetLength();
-	moveRequest.AddDeltaMovement( deltaMovement );
-	if( IsDemoPlayback() )
+
+	// Получаем обратную кватернионную ротацию и нормализуем её
+	Quat invWorldRot = m_pPlayer->GetBaseQuat().GetInverted().GetNormalized();
+	// Применяем обратную ротацию к движению и нормализуем результат
+	Vec3 deltaMovement = invWorldRot * m_curInput.deltaMovement;
+	deltaMovement.NormalizeSafe(ZERO);
+	deltaMovement *= m_curInput.deltaMovement.GetLength();
+	moveRequest.AddDeltaMovement(deltaMovement);
+
+	if (IsDemoPlayback())
 	{
-		Vec3 localVDir(m_pPlayer->GetViewQuatFinal().GetInverted() * m_curInput.lookDirection);
-		Ang3 deltaAngles(asin(localVDir.z),0,cry_atan2f(-localVDir.x,localVDir.y));
-		moveRequest.AddDeltaRotation(deltaAngles*gEnv->pTimer->GetFrameTime());
+	    // Получаем локальное направление взгляда
+	    Vec3 localVDir = m_pPlayer->GetViewQuatFinal().GetInverted() * m_curInput.lookDirection;
+	    localVDir.NormalizeSafe();
+
+	    // Вычисляем углы поворота и применяем их с учётом времени кадра
+	    Ang3 deltaAngles(asin(localVDir.z), 0, cry_atan2f(-localVDir.x, localVDir.y));
+	    moveRequest.AddDeltaRotation(deltaAngles * gEnv->pTimer->GetFrameTime());
 	}
-	//else
+
+	Vec3 distantTarget = moveState.eyePosition + 1000.0f * m_curInput.lookDirection;
+	Vec3 lookTarget = distantTarget;
+
+	// Проверяем, является ли клиент видимым
+	if (gEnv->bClient && m_pPlayer->GetGameObject()->IsProbablyVisible())
 	{
-		Vec3 distantTarget = moveState.eyePosition + 1000.0f * m_curInput.lookDirection;
-		Vec3 lookTarget = distantTarget;
-		if (gEnv->bClient && m_pPlayer->GetGameObject()->IsProbablyVisible())
-		{
-			// post-process aim direction	
-			ray_hit hit;
-			static const int obj_types = ent_all; // ent_terrain|ent_static|ent_rigid|ent_sleeping_rigid|ent_living;
-			static const unsigned int flags = rwi_stop_at_pierceable|rwi_colltype_any;
-			bool rayHitAny = 0 != gEnv->pPhysicalWorld->RayWorldIntersection( moveState.eyePosition, 150.0f * m_curInput.lookDirection, obj_types, flags, &hit, 1, pPhysEnt );
-			if (rayHitAny)
-			{
-				lookTarget = hit.pt;
-			}
+	    // Инициализация для проверки пересечения луча
+	    ray_hit hit;
+	    static const int obj_types = ent_all; // Все типы объектов
+	    static const unsigned int flags = rwi_stop_at_pierceable|rwi_colltype_any;
+	    
+	    // Проверка пересечения луча для определения цели взгляда
+	    bool rayHitAny = gEnv->pPhysicalWorld->RayWorldIntersection(
+	        moveState.eyePosition, 150.0f * m_curInput.lookDirection, 
+	        obj_types, flags, &hit, 1, pPhysEnt
+	    ) != 0;
+	    
+	    // Если есть пересечение, обновляем цель взгляда
+	    if (rayHitAny)
+	    {
+	        lookTarget = hit.pt;
+	    }
 
-			static float proneDist = 1.0f;
-			static float crouchDist = 0.6f;
-			static float standDist = 0.3f;
+	    // Расстояния для разных стоек
+	    static float proneDist = 1.0f; // Лёжа
+	    static float crouchDist = 0.6f; // Сидя
+	    static float standDist = 0.3f; // Стоя
 
-			float dist = standDist;
-			if(m_pPlayer->GetStance() == STANCE_CROUCH)
-				dist = crouchDist;
-			else if(m_pPlayer->GetStance() == STANCE_PRONE)
-				dist = proneDist;
+	    // Выбор расстояния в зависимости от стойки
+	    float dist = (m_pPlayer->GetStance() == STANCE_CROUCH) ? crouchDist :
+	                 (m_pPlayer->GetStance() == STANCE_PRONE) ? proneDist : standDist;
 
-			if((lookTarget - moveState.eyePosition).GetLength2D() < dist)
-			{
-				Vec3 eyeToTarget2d = lookTarget - moveState.eyePosition;
-				eyeToTarget2d.z = 0.0f;
-				eyeToTarget2d.NormalizeSafe();
-				eyeToTarget2d *= dist;
-				ray_hit newhit;
-				bool rayHitAny = 0 != gEnv->pPhysicalWorld->RayWorldIntersection( moveState.eyePosition + eyeToTarget2d, 3 * Vec3(0,0,-1), obj_types, flags, &newhit, 1, pPhysEnt );
-				if (rayHitAny)
-				{
-					lookTarget = newhit.pt;
-				}
-			}
+	    // Проверка дистанции до цели взгляда
+	    if ((lookTarget - moveState.eyePosition).GetLength2D() < dist)
+	    {
+	        Vec3 eyeToTarget2d = lookTarget - moveState.eyePosition;
+	        eyeToTarget2d.z = 0.0f;
+	        eyeToTarget2d.NormalizeSafe();
+	        eyeToTarget2d *= dist;
 
-			// SNH: new approach. Make sure the aimTarget is at least 1.5m away,
-			//	if not, pick a point 1m down the vector instead.
-			Vec3 dir = lookTarget - moveState.eyePosition;
-			static float minDist = 1.5f;
-			if(dir.GetLengthSquared() < minDist)
-			{
-				lookTarget = moveState.eyePosition + dir.GetNormalizedSafe();
-			}
+	        // Повторная проверка пересечения луча
+	        ray_hit newhit;
+	        rayHitAny = gEnv->pPhysicalWorld->RayWorldIntersection(
+	            moveState.eyePosition + eyeToTarget2d, 3 * Vec3(0,0,-1), 
+	            obj_types, flags, &newhit, 1, pPhysEnt
+	        ) != 0;
+	        
+	        // Обновление цели взгляда, если есть новое пересечение
+	        if (rayHitAny)
+	        {
+	            lookTarget = newhit.pt;
+	        }
+	    }
 
-			// draw eye pos for comparison
-			//gEnv->pRenderer->GetIRenderAuxGeom()->DrawSphere(moveState.eyePosition, 0.04f, ColorF(0.3f,0.2f,0.7f,1.0f));
-		}
+	    // Убеждаемся, что цель взгляда находится на безопасном расстоянии
+	    Vec3 dir = lookTarget - moveState.eyePosition;
+	    static float minDist = 1.5f; // Минимальное расстояние
+	    if (dir.GetLengthSquared() < minDist)
+	    {
+	        lookTarget = moveState.eyePosition + dir.GetNormalizedSafe();
+	    }
 
-		moveRequest.SetLookTarget( lookTarget );
-		moveRequest.SetAimTarget( lookTarget );
-		if (m_curInput.deltaMovement.GetLengthSquared() > sqr(0.2f)) // 0.2f is almost stopped
-			moveRequest.SetBodyTarget( distantTarget );
-		else
-			moveRequest.ClearBodyTarget();
+	    // Визуализация позиции глаз для сравнения (отключено)
+	    // gEnv->pRenderer->GetIRenderAuxGeom()->DrawSphere(moveState.eyePosition, 0.04f, ColorF(0.3f,0.2f,0.7f,1.0f));
+	}
+
+	// Установка целей для движения и прицеливания
+	moveRequest.SetLookTarget(lookTarget);
+	moveRequest.SetAimTarget(lookTarget);
+
+	// Установка цели для тела, если движение достаточно велико
+	if (m_curInput.deltaMovement.GetLengthSquared() > sqr(0.2f)) // 0.2f - почти неподвижность
+	{
+	    moveRequest.SetBodyTarget(distantTarget);
+	}
+	else
+	{
+	    moveRequest.ClearBodyTarget(); // Очистка цели для тела, если движение минимально
 	}
 	moveRequest.SetAllowStrafing(true);
 
@@ -165,10 +193,12 @@ void CNetPlayerInput::PreUpdate()
 	{
 		IPersistantDebug * pPD = gEnv->pGame->GetIGameFramework()->GetIPersistantDebug();
 		pPD->Begin( string("update_player_input_") + m_pPlayer->GetEntity()->GetName(), true );
+
 		Vec3 wp = m_pPlayer->GetEntity()->GetWorldPos();
 		wp.z += 2.0f;
+
 		pPD->AddSphere( moveRequest.GetLookTarget(), 0.5f, ColorF(1,0,1,0.3f), 1.0f );
-		//		pPD->AddSphere( moveRequest.GetMoveTarget(), 0.5f, ColorF(1,1,0,0.3f), 1.0f );
+		pPD->AddSphere( moveRequest.GetMoveTarget(), 0.5f, ColorF(1,1,0,0.3f), 1.0f );
 		pPD->AddDirection( m_pPlayer->GetEntity()->GetWorldPos() + Vec3(0,0,2), 1, m_curInput.deltaMovement, ColorF(1,0,0,0.3f), 1.0f );
 	}
 
@@ -235,11 +265,9 @@ void CNetPlayerInput::DoSetState(const SSerializedPlayerInput& input )
 		Ang3 deltaAngles(asin(localVDir.z),0,cry_atan2f(-localVDir.x,localVDir.y));
 		moveRequest.AddDeltaRotation(deltaAngles*gEnv->pTimer->GetFrameTime());
 	}
-	//else
-	{
-		moveRequest.SetLookTarget( m_pPlayer->GetEntity()->GetWorldPos() + 10.0f * m_curInput.lookDirection );
-		moveRequest.SetAimTarget(moveRequest.GetLookTarget());
-	}
+
+	moveRequest.SetLookTarget( m_pPlayer->GetEntity()->GetWorldPos() + 10.0f * m_curInput.lookDirection );
+	moveRequest.SetAimTarget(moveRequest.GetLookTarget());
 
 	float pseudoSpeed = 0.0f;
 	if (m_curInput.deltaMovement.len2() > 0.0f)
