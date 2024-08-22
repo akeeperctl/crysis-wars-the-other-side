@@ -241,28 +241,46 @@ void STOSCvars::CmdDumpEntityInfo(IConsoleCmdArgs* pArgs)
 
 	GET_ENTITY_FROM_FIRST_ARG;
 
-	const string playerName = pArgs->GetArg(1);
+	const string playerName = pArgs->GetArg(2);
 	const auto pPlayerEntity = gEnv->pEntitySystem->FindEntityByName(playerName);
 	if (!pPlayerEntity)
 	{
 		CryLogAlways("Failed: cant find player with name %s", playerName.c_str());
-		return;
 	}
-
-	const auto pPlayer = g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pPlayerEntity->GetId());
-	const auto playerChannelId = pPlayer->GetChannelId();
-	const auto pPlayerNetChannel = g_pGame->GetIGameFramework()->GetNetChannel(playerChannelId);
-
-	const auto isAuth = g_pGame->GetIGameFramework()->GetNetContext()->RemoteContextHasAuthority(pPlayerNetChannel, pEntity->GetId());
-
 	const char* strName = pEntity ? pEntity->GetName() : "NULL";
-	const char* strAuth = isAuth ? "True" : "False";
 
 	CryLogAlways("Result: ");
 	CryLogAlways("	Name: %s", strName);
-	CryLogAlways("	Authority: %s", strAuth);
+
+	if (pPlayerEntity)
+	{
+		const auto pPlayer = g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pPlayerEntity->GetId());
+		const auto playerChannelId = pPlayer->GetChannelId();
+		const auto pPlayerNetChannel = g_pGame->GetIGameFramework()->GetNetChannel(playerChannelId);
+
+		const auto isAuth = g_pGame->GetIGameFramework()->GetNetContext()->RemoteContextHasAuthority(pPlayerNetChannel, pEntity->GetId());
+
+		const char* strAuth = isAuth ? "True" : "False";
+		CryLogAlways("	Authority: %s", strAuth);
+	}
 
 	TOS_Debug::DumpEntityFlags(pEntity);
+
+	IEntityRenderProxy *pRenderProxy = static_cast<IEntityRenderProxy *>(pEntity->GetProxy(ENTITY_PROXY_RENDER));
+
+	if (pRenderProxy)
+	{
+		IRenderNode *pRenderNode = pRenderProxy?pRenderProxy->GetRenderNode():0;
+
+		if (pRenderNode)
+		{
+			//pRenderNode->SetViewDistRatio(255);
+			//pRenderNode->SetLodRatio(80); //IVO: changed to fix LOD problem in MP
+
+			CryLogAlways("	LodRatio: %i", pRenderNode->GetLodRatio());
+			CryLogAlways("	ViewDistRatio: %i", pRenderNode->GetViewDistRatio());
+		}
+	}
 }
 
 void STOSCvars::CmdGetEntitiesByClass(IConsoleCmdArgs* pArgs)
