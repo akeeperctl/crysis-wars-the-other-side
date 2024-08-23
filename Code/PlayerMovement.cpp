@@ -1128,17 +1128,31 @@ void CPlayerMovement::ProcessOnGroundOrJumping(CPlayer& player)
 
 			m_request.type = eCMT_JumpAccumulate; //eCMT_Fly;
 				
-			float g = m_stats.gravity.len();
-			float t = 0.0f;
-			if (g > 0.0f)
-				t = cry_sqrtf(2.0f * g * m_params.jumpHeight * mult) / g - m_stats.inAir * 0.5f;
-			jumpVec += m_baseQuat.GetColumn2() * g * t; // * verticalMult;
+			// Рассчитать величину силы тяжести
+			float gravityMagnitude = m_stats.gravity.len();
 
-			if (m_stats.groundNormal.len2() > 0.0f)
+			// Инициализировать время прыжка
+			float jumpTime = 0.0f;
+
+			// Если сила тяжести не равна нулю, рассчитать время прыжка
+			if (gravityMagnitude > 0.0f) 
 			{
-				float vertical = CLAMP((m_stats.groundNormal.z - 0.25f) / 0.5f, 0.0f, 1.0f);
-				Vec3  modifiedJumpDirection = LERP(m_stats.groundNormal, Vec3(0, 0, 1), vertical);
-				jumpVec = modifiedJumpDirection * jumpVec.len();
+			    jumpTime = cry_sqrtf(2.0f * gravityMagnitude * m_params.jumpHeight * mult) / gravityMagnitude - m_stats.inAir * 0.5f;
+			}
+
+			// Добавить вертикальную компоненту к вектору прыжка
+			jumpVec += m_baseQuat.GetColumn2() * gravityMagnitude * jumpTime;
+
+			// Если нормаль поверхности не равна нулю, скорректировать вектор прыжка
+			if (m_stats.groundNormal.len2() > 0.0f) {
+			    // Рассчитать коэффициент отклонения нормали от вертикали
+			    float vertical = CLAMP((m_stats.groundNormal.z - 0.25f) / 0.5f, 0.0f, 1.0f);
+
+			    // Интерполировать между нормалью поверхности и вертикальным вектором
+			    Vec3 modifiedJumpDirection = LERP(m_stats.groundNormal, Vec3(0, 0, 1), vertical);
+
+			    // Заменить вектор прыжка на новый вектор направления прыжка
+			    jumpVec = modifiedJumpDirection * jumpVec.len();
 			}
 
 			// Don't speed up...

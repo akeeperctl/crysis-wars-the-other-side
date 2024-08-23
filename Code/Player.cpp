@@ -1043,8 +1043,28 @@ void CPlayer::Update(SEntityUpdateContext& ctx, int updateSlot)
 	UpdateSounds(ctx.fFrameTime);
 
 	//TheOtherSide
-	NETINPUT_TRACE(GetEntityId(), m_stats.inAir);
-	NETINPUT_TRACE(GetEntityId(), m_stats.onGround);
+	//NETINPUT_TRACE(GetEntityId(), m_stats.inAir);
+	//NETINPUT_TRACE(GetEntityId(), m_stats.onGround);
+	auto pPhysEnt = GetEntity()->GetPhysics();
+	if (pPhysEnt)
+	{
+		pe_player_dynamics paramsGet;
+		if (pPhysEnt->GetParams(&paramsGet))
+		{
+			auto collideMode = GetAnimatedCharacter()->GetPhysicalColliderMode();
+			auto charParams =  GetAnimatedCharacter()->GetParams();
+
+			NETINPUT_TRACE(GetEntityId(), paramsGet.bActive);
+			NETINPUT_TRACE(GetEntityId(), paramsGet.kInertia);
+			NETINPUT_TRACE(GetEntityId(), paramsGet.kInertiaAccel);
+			NETINPUT_TRACE(GetEntityId(), paramsGet.kAirControl);
+			NETINPUT_TRACE(GetEntityId(), paramsGet.kAirResistance);
+			NETINPUT_TRACE(GetEntityId(), charParams.inertia);
+			NETINPUT_TRACE(GetEntityId(), charParams.inertiaAccel);
+			NETINPUT_TRACE(GetEntityId(), collideMode);
+		}
+	}
+
 	//~TheOtherSide
 }
 
