@@ -43,6 +43,11 @@ public:
 	ILINE bool ShouldStrengthJump() const { return m_strengthJump; };
 	ILINE void ClearStrengthJump() { m_strengthJump=false; };
 
+	//TheOtherSide
+	CMovementRequest GetMovementReqState() { return m_state; }
+	//TheOtherSide
+		
+
 protected:
 	bool UpdateNormal( float frameTime, SActorFrameMovementParams& params );
 	virtual void UpdateMovementState( SMovementState& state );

@@ -410,6 +410,8 @@
     <ClCompile Include="TheOtherSideMP\Actors\Aliens\TOSAlien.cpp" />
     <ClCompile Include="TheOtherSideMP\Actors\Aliens\TOSTrooper.cpp" />
     <ClCompile Include="TheOtherSideMP\Actors\Animation\AnimationGraphState.cpp" />
+    <ClCompile Include="TheOtherSideMP\Actors\Player\TOSGrunt.cpp" />
+    <ClCompile Include="TheOtherSideMP\Actors\Player\TOSGruntMovementController.cpp" />
     <ClCompile Include="TheOtherSideMP\Actors\Player\TOSPlayer.cpp" />
     <ClCompile Include="TheOtherSideMP\Actors\TOSActor.cpp" />
     <ClCompile Include="TheOtherSideMP\AI\AITrackerCvars.cpp" />
@@ -469,6 +471,7 @@
     <ClCompile Include="TheOtherSideMP\HUD\TOSCrosshair.cpp" />
     <ClCompile Include="TheOtherSideMP\MasterCvars.cpp" />
     <ClCompile Include="TheOtherSideMP\Nodes\FlowMasterClientNodes.cpp" />
+    <ClCompile Include="TheOtherSideMP\Utilities\DedicatedServerHackScope.cpp" />
     <ClCompile Include="Throw.cpp" />
     <ClCompile Include="ThrowableWeapon.cpp" />
     <ClCompile Include="TracerManager.cpp" />
@@ -655,6 +658,8 @@
     <ClInclude Include="TheOtherSideMP\Actors\Aliens\TOSTrooper.h" />
     <ClInclude Include="TheOtherSideMP\Actors\Animation\AnimationGraphState.h" />
     <ClInclude Include="TheOtherSideMP\Actors\ITOSMasterControllable.h" />
+    <ClInclude Include="TheOtherSideMP\Actors\Player\TOSGrunt.h" />
+    <ClInclude Include="TheOtherSideMP\Actors\Player\TOSGruntMovementController.h" />
     <ClInclude Include="TheOtherSideMP\Actors\Player\TOSPlayer.h" />
     <ClInclude Include="TheOtherSideMP\Actors\TOSActor.h" />
     <ClInclude Include="TheOtherSideMP\AI\AITrackerModule.h">
@@ -726,6 +731,7 @@
     <ClInclude Include="TheOtherSideMP\Helpers\TOS_Vehicle.h" />
     <ClInclude Include="TheOtherSideMP\HUD\TOSCrosshair.h" />
     <ClInclude Include="TheOtherSideMP\TOSSmartStruct.h" />
+    <ClInclude Include="TheOtherSideMP\Utilities\DedicatedServerHackScope.h" />
     <ClInclude Include="Throw.h" />
     <ClInclude Include="ThrowableWeapon.h" />
     <ClInclude Include="TracerManager.h" />

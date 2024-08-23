@@ -81,6 +81,7 @@
 #include <IGameRulesSystem.h>
 
 //TheOtherSide
+#include "TheOtherSideMP/Actors/player/TOSGrunt.h"
 #include "TheOtherSideMP/Actors/player/TOSPlayer.h"
 #include "TheOtherSideMP/Actors/aliens/TOSAlien.h"
 #include "TheOtherSideMP/Actors/aliens/TOSTrooper.h"
@@ -141,10 +142,10 @@ void InitGameFactory(IGameFramework *pFramework)
   //TheOtherSide
   //REGISTER_FACTORY(pFramework, "Player", CPlayer, false);
   REGISTER_FACTORY(pFramework, "Player", CTOSPlayer, false);
+  REGISTER_FACTORY(pFramework, "Grunt", CTOSGrunt, true);
+  REGISTER_FACTORY(pFramework, "Civilian", CTOSGrunt, true);
   //~TheOtherSide
 
-  REGISTER_FACTORY(pFramework, "Grunt", CTOSPlayer, true);
-  REGISTER_FACTORY(pFramework, "Civilian", CTOSPlayer, true);
 
   // Items
   REGISTER_FACTORY(pFramework, "Item", CItem, false);

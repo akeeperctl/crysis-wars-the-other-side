@@ -157,6 +157,9 @@
     <Filter Include="TheOtherSideMP\Nodes">
       <UniqueIdentifier>{88c01848-c065-43da-a29d-5a4aa136ed7f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="TheOtherSideMP\Utilities">
+      <UniqueIdentifier>{50de5404-39d9-4768-ba3b-7778fd68030d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Actor.cpp">
@@ -833,6 +836,15 @@
     <ClCompile Include="TheOtherSideMP\Nodes\FlowMasterClientNodes.cpp">
       <Filter>TheOtherSideMP\Nodes</Filter>
     </ClCompile>
+    <ClCompile Include="TheOtherSideMP\Actors\Player\TOSGrunt.cpp">
+      <Filter>TheOtherSideMP\Actors\player</Filter>
+    </ClCompile>
+    <ClCompile Include="TheOtherSideMP\Utilities\DedicatedServerHackScope.cpp">
+      <Filter>TheOtherSideMP\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="TheOtherSideMP\Actors\Player\TOSGruntMovementController.cpp">
+      <Filter>TheOtherSideMP\Actors\player</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor.h">
@@ -1480,6 +1492,15 @@
     </ClInclude>
     <ClInclude Include="TheOtherSideMP\Helpers\TOS_MasterModule.h">
       <Filter>TheOtherSideMP\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="TheOtherSideMP\Actors\Player\TOSGrunt.h">
+      <Filter>TheOtherSideMP\Actors\player</Filter>
+    </ClInclude>
+    <ClInclude Include="TheOtherSideMP\Utilities\DedicatedServerHackScope.h">
+      <Filter>TheOtherSideMP\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="TheOtherSideMP\Actors\Player\TOSGruntMovementController.h">
+      <Filter>TheOtherSideMP\Actors\player</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
