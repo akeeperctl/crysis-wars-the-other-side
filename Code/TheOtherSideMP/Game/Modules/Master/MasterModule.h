@@ -179,6 +179,7 @@ public:
 	static void CmdMCStopControl(IConsoleCmdArgs* pArgs);
 	static void CmdDumpDudeItems(IConsoleCmdArgs* pArgs);
 	static void CmdDumpActorItems(IConsoleCmdArgs* pArgs);
+	static void CmdSetPhysProfile(IConsoleCmdArgs* pArgs);
 	static void CmdSetActorHealth(IConsoleCmdArgs* pArgs);
 	static void CmdGetActorHealth(IConsoleCmdArgs* pArgs);
 	static void CmdGetActorCurrentItem(IConsoleCmdArgs* pArgs);
@@ -227,6 +228,9 @@ public:
 	float  tos_sv_pl_inputAccel;
 
 	//trooper server variables
+	float tos_tr_jump_force;
+	float tos_tr_double_jump_force;
+	float tos_tr_charged_jump_mul;
 	float tos_tr_double_jump_energy_cost;
 	float tos_tr_double_jump_melee_energy_cost;
 	float tos_tr_double_jump_melee_rest_seconds;

@@ -219,7 +219,7 @@ bool CTOSMasterClient::OnActionJump(CTOSActor* pActor, const ActionId& actionId,
 	{
 		// Получение времени удержания кнопки и задержки для прыжка
 		const float holdTime = stl::find_in_map(m_actionPressedDuration, actionId, 0.0f);
-		const float jumpDelay = TOS_Console::GetSafeFloatVar("tos_sv_chargingJumpInputTime");
+		const float jumpDelay = TOS_Console::GetSafeFloatVar("tos_tr_charging_jump_input_time");
 
 		// Автопрыжок при удержании клавиши прыжка
 		if (activationMode == eAAM_OnHold && holdTime > jumpDelay)

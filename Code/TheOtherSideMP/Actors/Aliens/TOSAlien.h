@@ -12,15 +12,14 @@ public:
 	
 	//CTOSActor
 	void ProcessEvent(SEntityEvent& event) ;
-	void PrePhysicsUpdate() ;
-
-
+	void PrePhysicsUpdate();
 	void     SetHealth(int health) ;
 	Matrix33 GetViewMtx() ;
 	Matrix33 GetBaseMtx() ;
 	Matrix33 GetEyeMtx() ;
 	void	 Kill() ;
 	bool	 ApplyActions(int actions);
+	void SetParams(SmartScriptTable& rTable, bool resetFirst);
 	//~CTOSActor
 
 	//ITOSMasterControllable

@@ -43,6 +43,15 @@ void CTOSMasterModule::InitCVars(IConsole* pConsole)
 			"Display look debug of the controlled character");
 
 	// Trooper консольные значения
+	pConsole->Register("tos_tr_jump_force", &tos_tr_jump_force, 4000.0f, VF_CHEAT,
+		"The higher the value, the higher the trooper's jump.");
+
+	pConsole->Register("tos_tr_double_jump_force", &tos_tr_double_jump_force, 1000.0f, VF_CHEAT,
+		"The higher the value, the higher the trooper's second jump.");
+
+	pConsole->Register("tos_tr_charged_jump_mul", &tos_tr_charged_jump_mul, 3.0f, VF_CHEAT,
+		"Charged jump multiplier, normal jump comes with 1");
+
 	pConsole->Register("tos_tr_melee_energy_costs", &tos_tr_melee_energy_costs, 15.0f, VF_CHEAT,
 		"The amount of energy a trooper spends when do melee attack on ground");
 
@@ -89,6 +98,9 @@ void CTOSMasterModule::ReleaseCVars()
 	pConsole->UnregisterVariable("tos_sv_pl_inputAccel", true);
 	pConsole->UnregisterVariable("tos_sv_mc_LookDebugDraw", true);
 
+	pConsole->UnregisterVariable("tos_tr_jump_force", true);
+	pConsole->UnregisterVariable("tos_tr_double_jump_force", true);
+	pConsole->UnregisterVariable("tos_tr_charged_jump_mul", true);
 	pConsole->UnregisterVariable("tos_tr_melee_energy_costs", true);
 	pConsole->UnregisterVariable("tos_tr_double_jump_energy_cost", true);
 	pConsole->UnregisterVariable("tos_tr_double_jump_melee_energy_cost", true);
@@ -108,6 +120,7 @@ void CTOSMasterModule::InitCCommands(IConsole* pConsole)
 	pConsole->AddCommand("tos_cmd_dumpmasterslist", CmdDumpMastersList);
 	pConsole->AddCommand("tos_cmd_dumpdudeitems", CmdDumpDudeItems);
 	pConsole->AddCommand("tos_cmd_dumpactoritems", CmdDumpActorItems);
+	pConsole->AddCommand("tos_cmd_setphysprofile", CmdSetPhysProfile);
 	pConsole->AddCommand("tos_cmd_ismaster", CmdIsMaster);
 	pConsole->AddCommand("tos_cmd_stopcontrol", CmdMCStopControl);
 	pConsole->AddCommand("tos_cmd_setactorhealth", CmdSetActorHealth);
@@ -126,6 +139,7 @@ void CTOSMasterModule::ReleaseCCommands()
 	pConsole->RemoveCommand("tos_cmd_ismaster");
 	pConsole->RemoveCommand("tos_cmd_dumpmasterslist");
 	pConsole->RemoveCommand("tos_cmd_dumpdudeitems");
+	pConsole->RemoveCommand("tos_cmd_setphysprofile");
 	pConsole->RemoveCommand("tos_cmd_dumpactoritems");
 	pConsole->RemoveCommand("tos_cmd_ismaster");
 	pConsole->RemoveCommand("tos_cmd_stopcontrol");
@@ -250,6 +264,73 @@ void CTOSMasterModule::CmdDumpActorItems(IConsoleCmdArgs* pArgs)
 
 			CryLogAlways("	%i. %s", i, name);
 		}
+	}
+}
+
+void CTOSMasterModule::CmdSetPhysProfile(IConsoleCmdArgs* pArgs)
+{
+	GET_ENTITY_FROM_FIRST_ARG;
+
+	string profile = pArgs->GetArg(2);
+	CTOSActor* pActor = static_cast<CTOSActor*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pEntity->GetId()));
+	if (!pActor)
+	{
+		CryLogAlways("Failed: not found actor");
+		return;
+	}
+
+	uint p = 0;
+	if (profile == "alive0")
+	{
+		// при использовании на клиенте 1, то у клиента 1 трупер будет двигаться нормально
+		pActor->Physicalize(STANCE_NULL);
+	}
+	else if (profile == "alive1")
+	{
+		// при использовании на клиенте 1, то у клиента 1 трупер будет двигаться нормально
+		pActor->GetAnimatedCharacter()->RequestPhysicalColliderMode(eColliderMode_NonPushable, eColliderModeLayer_Game, "CMDSetPhysProfile");
+	}
+	else if (profile == "alive2")
+	{
+		pActor->GetAnimatedCharacter()->RequestPhysicalColliderMode( eColliderMode_Undefined, eColliderModeLayer_Game, "Actor::SetAspectProfile");
+		if (IPhysicalEntity *pPhysics=pActor->GetEntity()->GetPhysics())
+		{
+			if (ICharacterInstance *pCharacter=pActor->GetEntity()->GetCharacter(0))
+			{
+				pCharacter->GetISkeletonPose()->DestroyCharacterPhysics(2);
+
+				if (IPhysicalEntity *pCharPhysics=pCharacter->GetISkeletonPose()->GetCharacterPhysics())
+				{
+					pe_params_articulated_body body;
+					body.pHost=pPhysics;
+					pCharPhysics->SetParams(&body);
+				}
+			}
+		}
+	}
+	else if (profile == "alive3")
+	{
+		if (ICharacterInstance *pCharacter=pActor->GetEntity()->GetCharacter(0))
+			pCharacter->GetISkeletonPose()->DestroyCharacterPhysics(1);
+
+		pActor->GetAnimatedCharacter()->ForceRefreshPhysicalColliderMode();
+		pActor->GetAnimatedCharacter()->RequestPhysicalColliderMode( eColliderMode_Spectator, eColliderModeLayer_Game, "Actor::SetAspectProfile");		
+	}	
+	else if (profile == "alive4")
+	{
+		if (pActor->GetAnimatedCharacter())
+			pActor->GetAnimatedCharacter()->ResetState();
+	}
+	else if (profile == "unragdoll")
+	{
+		SEntityPhysicalizeParams params;
+		params.type = PE_NONE;
+		pActor->GetEntity()->Physicalize(params);
+	}
+	else
+	{
+		CryLogAlways("Failed: invalid physics profile");
+		return;
 	}
 }
 

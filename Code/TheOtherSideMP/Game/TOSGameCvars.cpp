@@ -26,7 +26,7 @@ void STOSCvars::InitCVars(IConsole* pConsole)
 	pConsole->Register("tos_cl_DisableSlaveRequestMovement", &tos_cl_DisableSlaveRequestMovement, 0, VF_RESTRICTEDMODE | VF_NOT_NET_SYNCED, "Disable slave entity look at crosshair");
 	pConsole->Register("tos_any_EventRecorderLogVanilla", &tos_any_EventRecorderLogVanilla, 0, 0, "Log vanilla events to the console (eGE_ prefix) 1 - yes, 0 - no");
 	pConsole->Register("tos_sv_EnableShotValidator", &tos_sv_EnableShotValidator, 1, 0, "Enable shot validator in multiplayer 1 - yes, 0 - no");
-	pConsole->Register("tos_sv_chargingJumpInputTime", &tos_sv_chargingJumpInputTime, 0.20f, 0, "Time between press jump and jump action confirm");
+	pConsole->Register("tos_tr_charging_jump_input_time", &tos_tr_charging_jump_input_time, 0.20f, 0, "Time between press jump and jump action confirm");
 
 	tos_sv_AlienMPEquipPack =  pConsole->RegisterString("tos_sv_AlienMPEquipPack",    "Alien_naked", 0, "");
 	tos_sv_HunterMPEquipPack = pConsole->RegisterString("tos_sv_HunterMPEquipPack",   "Alien_Hunter", 0, "");
@@ -106,7 +106,7 @@ void STOSCvars::ReleaseCVars()
 
 	pConsole->UnregisterVariable("tos_sv_EnableShotValidator", true);
 	pConsole->UnregisterVariable("tos_sv_EnableMPStealthOMeterForTeam", true);
-	pConsole->UnregisterVariable("tos_sv_chargingJumpInputTime", true);
+	pConsole->UnregisterVariable("tos_tr_charging_jump_input_time", true);
 
 	pConsole->UnregisterVariable("tos_sv_AlienMPEquipPack", true);
 	pConsole->UnregisterVariable("tos_sv_HunterMPEquipPack", true);

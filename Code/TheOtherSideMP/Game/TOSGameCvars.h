@@ -84,7 +84,7 @@ struct STOSCvars  // NOLINT(cppcoreguidelines-special-member-functions)
 	int tos_cl_DisableSlaveRequestMovement;
 
 	int tos_cl_ShowModVersion;
-	float tos_sv_chargingJumpInputTime;
+	float tos_tr_charging_jump_input_time;
 };
 
 extern STOSCvars* g_pTOSGameCvars;

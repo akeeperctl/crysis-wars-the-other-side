@@ -8,6 +8,7 @@
 #include "TheOtherSideMP/Helpers/TOS_Console.h"
 #include <TheOtherSideMP/Helpers/TOS_NET.h>
 #include <CompatibilityAlienMovementController.h>
+#include <utility>
 
 CTOSTrooper::CTOSTrooper() {};
 
@@ -27,6 +28,21 @@ void CTOSTrooper::PostInit(IGameObject* pGameObject)
 		m_pEnergyConsumer->SetRechargeTimeMP(TOS_Console::GetSafeFloatVar("tos_tr_regen_energy_recharge_time_mp"));
 	}
 
+}
+
+void CTOSTrooper::PostPhysicalize()
+{
+	CAlien::PostPhysicalize();
+
+	// Это фиксит проблему с инерцией и дерганой синхронизацией
+	if (m_pAnimatedCharacter)
+	{
+		SAnimatedCharacterParams params = m_pAnimatedCharacter->GetParams();
+		params.SetInertia(m_params.speedInertia, m_params.speedInertia);
+		params.timeImpulseRecover = GetTimeImpulseRecover();
+		params.flags |= eACF_EnableMovementProcessing | eACF_ZCoordinateFromPhysics | eACF_ConstrainDesiredSpeedToXY;
+		m_pAnimatedCharacter->SetParams(params);
+	}
 }
 
 void CTOSTrooper::Update(SEntityUpdateContext& ctx, const int updateSlot)
@@ -135,8 +151,12 @@ void CTOSTrooper::ProcessMovement(const float frameTime)
 			m_jumpParams.duration = 0.4f; // подбиралось эмпирически. Через 0.4 сек переход из flying в approach landing
 			
 			const float	jumpPressDur = pSlaveStats->chargingJumpPressDur;
-			const float	jumpForce = 6.0f;
-			const float	finalOnceJumpForce = jumpPressDur > TOS_Console::GetSafeFloatVar("tos_sv_chargingJumpInputTime") ? jumpForce + 4.0f : jumpForce;
+			const float	jumpForce = TOS_Console::GetSafeFloatVar("tos_tr_jump_force", 4000.0f);
+			//const float	jumpForceAdd = TOS_Console::GetSafeFloatVar("tos_tr_double_jump_force", 4.0f);
+			const float chargingTime = TOS_Console::GetSafeFloatVar("tos_tr_charging_jump_input_time", 0.20f);
+			const float chargingMul = TOS_Console::GetSafeFloatVar("tos_tr_charged_jump_mul", 2.7f);
+			//const float	finalOnceJumpForce = jumpPressDur > chargingTime ? jumpForce + jumpForceAdd : jumpForce;
+			const float	mult = jumpPressDur > chargingTime ? chargingMul : 1.0f;
 
 			const float doubleJumpCost = TOS_Console::GetSafeFloatVar("tos_tr_double_jump_energy_cost");
 			const float energy = TOS_SAFE_GET_ENERGY(this);
@@ -146,6 +166,8 @@ void CTOSTrooper::ProcessMovement(const float frameTime)
 			const Vec3& upDir = GetEntity()->GetWorldTM().GetColumn(2);
 			const Vec3& forwardDir = GetEntity()->GetWorldTM().GetColumn(1);
 			const Vec3& rightDir = GetEntity()->GetWorldTM().GetColumn(0);
+
+			pe_action_impulse impulse;
 
 			// Первый прыжок, который от земли
 			if (pSlaveStats->jumpCount == 0)
@@ -160,9 +182,19 @@ void CTOSTrooper::ProcessMovement(const float frameTime)
 				pPhysEnt->GetStatus(&dynStat);
 
 				//pSlaveStats->jumpCount++; временное
-				jumpVec.z = upDir.z * finalOnceJumpForce; //400.0f
 
-				m_jumpParams.velocity += jumpVec + dynStat.v;
+				const float gravityMagnitude = m_stats.gravity.len();
+				float jumpTime = 0.0f;
+
+				// Если сила тяжести не равна нулю, рассчитать время прыжка
+				if (gravityMagnitude > 0.0f) 
+				{
+				    jumpTime = cry_sqrtf(2.0f * gravityMagnitude * jumpForce * mult) / gravityMagnitude - m_stats.inAir * 0.5f;
+				}
+
+				jumpVec.z = upDir.z * gravityMagnitude * jumpTime;
+				impulse.impulse = jumpVec;
+				pPhysEnt->Action(&impulse);
 
 				pSlaveStats->chargingJumpPressDur = 0.0f;
 			}
@@ -257,6 +289,53 @@ void CTOSTrooper::ProcessJumpFlyControl(const Vec3& move, const float frameTime)
 	}
 }
 
+void CTOSTrooper::UpdateStats(float frameTime)
+{
+	CTrooper::UpdateStats(frameTime);
+
+	const auto pPhysEnt = GetEntity()->GetPhysics();
+
+	//if (gEnv->pSystem->IsDedicated())
+	//{
+	//	if (pPhysEnt)
+	//	{
+	//		// leipzig: force inactive (was active on ded. servers)
+	//		pe_player_dynamics paramsGet;
+	//		if (pPhysEnt->GetParams(&paramsGet))
+	//		{
+	//			if (!paramsGet.bActive && m_pAnimatedCharacter)
+	//			{
+	//				m_pAnimatedCharacter->ForceRefreshPhysicalColliderMode();
+	//				m_pAnimatedCharacter->RequestPhysicalColliderMode(eColliderMode_Undefined, eColliderModeLayer_Game, "CTOSTrooper::UpdateStats");
+	//			}
+	//		}			
+	//	}
+	//}
+
+	if (pPhysEnt)
+	{
+		pe_player_dynamics paramsGet;
+		if (pPhysEnt->GetParams(&paramsGet))
+		{
+			const auto collideMode = GetAnimatedCharacter()->GetPhysicalColliderMode();
+			const auto charParams  = GetAnimatedCharacter()->GetParams();
+
+			NETINPUT_TRACE(GetEntityId(), paramsGet.bActive);
+			NETINPUT_TRACE(GetEntityId(), paramsGet.bNetwork);
+			NETINPUT_TRACE(GetEntityId(), paramsGet.collTypes);
+			NETINPUT_TRACE(GetEntityId(), paramsGet.iRequestedTime);
+			NETINPUT_TRACE(GetEntityId(), paramsGet.kAirControl);
+			NETINPUT_TRACE(GetEntityId(), paramsGet.kAirResistance);
+			NETINPUT_TRACE(GetEntityId(), paramsGet.kInertia);
+			NETINPUT_TRACE(GetEntityId(), charParams.inertia);
+			NETINPUT_TRACE(GetEntityId(), m_params.speedInertia);
+			NETINPUT_TRACE(GetEntityId(), paramsGet.timeImpulseRecover);
+			NETINPUT_TRACE(GetEntityId(), paramsGet.type);
+			NETINPUT_TRACE(GetEntityId(), collideMode);
+		}
+	}
+}
+
 void CTOSTrooper::UpdateMasterView(SViewParams& viewParams, Vec3& offsetX, Vec3& offsetY, Vec3& offsetZ, Vec3& target, Vec3& current, float& currentFov)
 {
 	//CTrooper::UpdateMasterView(viewParams, offsetY, target, currentFov);
@@ -313,7 +392,7 @@ bool CTOSTrooper::ApplyActions(int actions)
 //		const float     onGround  = pActorStats->onGround;
 //		const float		jumpPressDur = pSlaveStats->chargingJumpPressDur;
 //		const float		jumpForce = 6.0f;
-//		const float		finalOnceJumpForce = jumpPressDur > TOS_Console::GetSafeFloatVar("tos_sv_chargingJumpInputTime") ? jumpForce + 4.0f : jumpForce;
+//		const float		finalOnceJumpForce = jumpPressDur > TOS_Console::GetSafeFloatVar("tos_tr_charging_jump_input_time") ? jumpForce + 4.0f : jumpForce;
 //
 //		const float doubleJumpCost = TOS_Console::GetSafeFloatVar("tos_tr_double_jump_energy_cost");
 //		const float energy = TOS_SAFE_GET_ENERGY(this);

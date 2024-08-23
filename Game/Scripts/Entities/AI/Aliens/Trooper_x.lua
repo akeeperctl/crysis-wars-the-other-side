@@ -261,6 +261,11 @@ Trooper_x = {
 		},
 
 		speedInertia = 3.1, --the more, the faster the speed change: 1 is very slow, 10 is very fast already
+		--TheOtherSide
+		--speedInertia = 3.1, --the more, the faster the speed change: 1 is very slow, 10 is very fast already
+		speedInertia = 11., --the more, the faster the speed change: 1 is very slow, 10 is very fast already
+		--~TheOtherSide
+
 		steerInertia = 0.3, -- this inertia applies when there is change of velocity - it displaces temporarily the model,
 		-- around the entity position, without changing the latter
 		rollAmount = 2.3, --3.0,

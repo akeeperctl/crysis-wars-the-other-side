@@ -286,13 +286,18 @@ Matrix33 CTOSAlien::GetEyeMtx()
 
 void CTOSAlien::Kill()
 {
-	CTOSActor::Kill();
+	CAlien::Kill();
 }
 
 bool CTOSAlien::ApplyActions(int actions)
 {
 	m_input.actions = actions;
 	return true;
+}
+
+void CTOSAlien::SetParams(SmartScriptTable& rTable, bool resetFirst)
+{
+	CAlien::SetParams(rTable, resetFirst);
 }
 
 void CTOSAlien::ApplyMasterMovement(const Vec3& delta)

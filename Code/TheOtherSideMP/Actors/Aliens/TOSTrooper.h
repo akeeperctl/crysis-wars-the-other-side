@@ -12,10 +12,12 @@ public:
 
 	//CTrooper
 	void PostInit(IGameObject* pGameObject) ;
+	void PostPhysicalize();
 	void Update(SEntityUpdateContext& ctx, int updateSlot) ;
 	bool NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int flags) ;
 	void ProcessMovement(float frameTime) ;
 	void ProcessJumpFlyControl(const Vec3& move, float frameTime);
+	void UpdateStats(float frameTime);
 	//~CTrooper
 
 	//ITOSMasterControllable
