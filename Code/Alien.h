@@ -130,6 +130,11 @@ struct SAlienStats : public SActorStats
 
 struct SAlienParams : public SActorParams
 {
+	//TheOtherSide
+	float inertia;
+	float inertiaAccel;
+	//~TheOtherSide
+
 	float speedInertia;
 	float rollAmount;
 	float rollSpeed;
@@ -187,6 +192,11 @@ struct SAlienParams : public SActorParams
 	SAlienParams()
 	{
 		memset(this,0,sizeof(SAlienParams));
+			
+		//TheOtherSide
+		inertia = 1.0f;
+		inertiaAccel = 2.0f;
+		//~TheOtherSide
 
 		speedInertia = 3.0f;
 		rollAmount = 1.0f;

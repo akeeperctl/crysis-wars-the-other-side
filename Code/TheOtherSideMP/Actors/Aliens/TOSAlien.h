@@ -18,6 +18,7 @@ public:
 	Matrix33 GetBaseMtx() ;
 	Matrix33 GetEyeMtx() ;
 	void	 Kill() ;
+	void	 Revive(bool fromInit) ;
 	bool	 ApplyActions(int actions);
 	void SetParams(SmartScriptTable& rTable, bool resetFirst);
 	//~CTOSActor
@@ -26,7 +27,8 @@ public:
 	void ApplyMasterMovement(const Vec3& delta) ;
 	//~ITOSMasterControllable
 
-	void PostInit(IGameObject* pGameObject) ;
+	void PostInit(IGameObject* pGameObject);
+	void PostPhysicalize();
 	void Update(SEntityUpdateContext& ctx, int updateSlot) ;
 	bool NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int flags) ;
 

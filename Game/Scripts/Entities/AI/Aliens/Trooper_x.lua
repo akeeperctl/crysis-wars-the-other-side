@@ -160,8 +160,8 @@ Trooper_x = {
 			mass = 50,
 			k_air_control = 0, -- makes them use physics only when flying
 			gravity = 9.8,
-			inertia = 1.1,
-			inertiaAccel = 2.1,
+			inertia = 10.1,
+			inertiaAccel = 20.1,
 		},
 	},
 
@@ -260,10 +260,10 @@ Trooper_x = {
 			},
 		},
 
-		speedInertia = 3.1, --the more, the faster the speed change: 1 is very slow, 10 is very fast already
+		--speedInertia = 3.1, --the more, the faster the speed change: 1 is very slow, 10 is very fast already
 		--TheOtherSide
 		--speedInertia = 3.1, --the more, the faster the speed change: 1 is very slow, 10 is very fast already
-		speedInertia = 11., --the more, the faster the speed change: 1 is very slow, 10 is very fast already
+		speedInertia = 3.1, --the more, the faster the speed change: 1 is very slow, 10 is very fast already
 		--~TheOtherSide
 
 		steerInertia = 0.3, -- this inertia applies when there is change of velocity - it displaces temporarily the model,

@@ -32,13 +32,13 @@ void CTOSTrooper::PostInit(IGameObject* pGameObject)
 
 void CTOSTrooper::PostPhysicalize()
 {
-	CAlien::PostPhysicalize();
+	CTOSAlien::PostPhysicalize();
 
 	// Это фиксит проблему с инерцией и дерганой синхронизацией
 	if (m_pAnimatedCharacter)
 	{
 		SAnimatedCharacterParams params = m_pAnimatedCharacter->GetParams();
-		params.SetInertia(m_params.speedInertia, m_params.speedInertia);
+		params.SetInertia(m_params.inertia, m_params.inertiaAccel);
 		params.timeImpulseRecover = GetTimeImpulseRecover();
 		params.flags |= eACF_EnableMovementProcessing | eACF_ZCoordinateFromPhysics | eACF_ConstrainDesiredSpeedToXY;
 		m_pAnimatedCharacter->SetParams(params);
@@ -193,8 +193,9 @@ void CTOSTrooper::ProcessMovement(const float frameTime)
 				}
 
 				jumpVec.z = upDir.z * gravityMagnitude * jumpTime;
-				impulse.impulse = jumpVec;
-				pPhysEnt->Action(&impulse);
+				//impulse.impulse = jumpVec;
+				//pPhysEnt->Action(&impulse);
+				m_jumpParams.velocity += jumpVec + dynStat.v;
 
 				pSlaveStats->chargingJumpPressDur = 0.0f;
 			}

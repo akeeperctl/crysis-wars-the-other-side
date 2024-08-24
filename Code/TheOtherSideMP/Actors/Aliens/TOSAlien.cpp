@@ -27,6 +27,26 @@ void CTOSAlien::PostInit(IGameObject* pGameObject)
 	}
 }
 
+void CTOSAlien::PostPhysicalize()
+{	
+	CAlien::PostPhysicalize();
+
+	IScriptTable* pScriptTable = GetEntity()->GetScriptTable();
+	if (!pScriptTable)
+		return;
+
+	SmartScriptTable physicsParams;
+	if (pScriptTable->GetValue("physicsParams", physicsParams))
+	{
+		SmartScriptTable livingTab;
+		if (physicsParams->GetValue("Living", livingTab))
+		{
+			livingTab->GetValue("inertia",m_params.inertia);
+			livingTab->GetValue("inertiaAccel",m_params.inertiaAccel);
+		}
+	}
+}
+
 void CTOSAlien::Update(SEntityUpdateContext& ctx, const int updateSlot)
 {
 	CAlien::Update(ctx, updateSlot);
@@ -287,6 +307,11 @@ Matrix33 CTOSAlien::GetEyeMtx()
 void CTOSAlien::Kill()
 {
 	CAlien::Kill();
+}
+
+void CTOSAlien::Revive(bool fromInit)
+{
+	CAlien::Revive(fromInit);
 }
 
 bool CTOSAlien::ApplyActions(int actions)

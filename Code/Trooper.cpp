@@ -52,7 +52,7 @@ void CTrooper::Revive(bool fromInit)
 
 	m_steerInertia = 0;
 
-	CAlien::Revive(fromInit);
+	CTOSAlien::Revive(fromInit);
 
 	m_modelQuat.SetIdentity();
 	//m_modelAddQuat.SetIdentity();
@@ -175,7 +175,7 @@ void CTrooper::SetParams(SmartScriptTable& rTable, bool resetFirst)
 	else
 	{
 		m_jumpParams.state = JS_None;
-		CAlien::SetParams(rTable, resetFirst);
+		CTOSAlien::SetParams(rTable, resetFirst);
 		InitHeightVariance(rTable);
 	}
 
@@ -202,7 +202,7 @@ void CTrooper::Update(SEntityUpdateContext& ctx, int updateSlot)
 
 	FUNCTION_PROFILER(GetISystem(), PROFILE_GAME);
 
-	CActor::Update(ctx, updateSlot);
+	CTOSActor::Update(ctx, updateSlot);
 
 	const float frameTime = ctx.fFrameTime;
 
@@ -326,7 +326,7 @@ void CTrooper::Update(SEntityUpdateContext& ctx, int updateSlot)
 
 void CTrooper::UpdateStats(float frameTime)
 {
-	CAlien::UpdateStats(frameTime);
+	CTOSAlien::UpdateStats(frameTime);
 
 	IPhysicalEntity* pPhysEnt = GetEntity()->GetPhysics();
 	if (!pPhysEnt)
@@ -657,7 +657,7 @@ void CTrooper::ProcessRotation(float frameTime)
 
 void CTrooper::UpdateAnimGraph(IAnimationGraphState* pState)
 {
-	CActor::UpdateAnimGraph(pState);
+	CTOSActor::UpdateAnimGraph(pState);
 
 	if (pState)
 	{
@@ -739,6 +739,9 @@ void CTrooper::SetAnimTentacleParams(pe_params_rope& pRope, float physicBlend)
 void CTrooper::ProcessJump(CTimeValue& currTime, IAnimationGraphState* pAGState, IPhysicalEntity*& phys, Vec3& move, float frameTime)
 { 
 	//TheOtherSide refactoring
+	if (!m_pAnimatedCharacter)
+		return;
+
 	if (!pAGState)
 	{
 		assert(pAGState);
@@ -816,16 +819,18 @@ void CTrooper::ProcessJump(CTimeValue& currTime, IAnimationGraphState* pAGState,
 	{
 		//~TheOtherSide
 
-		// Если физический объект существует, настраиваем параметры плавания
-		if (phys)
-		{
-			pe_player_dynamics simParSet;
-			simParSet.bSwimming = true;
-			phys->SetParams(&simParSet);
-		}
+		// ГОВНО ЛОМАЕТ ПРЫЖОК С ИНЕРЦИЕЙ
+		//if (phys)
+		//{
+		//	pe_player_dynamics simParSet;
+		//	simParSet.bSwimming = true;
+		//	phys->SetParams(&simParSet);
+		//}
 
 		// Устанавливаем тип движения на мгновенный прыжок
 		m_moveRequest.type = eCMT_JumpInstant;
+		//m_moveRequest.type = eCMT_Impulse;
+		//m_moveRequest.type = eCMT_JumpAccumulate;
 
 		// Получаем динамическое состояние для расчета импульса
 		pe_status_dynamics dyn;
@@ -851,7 +856,9 @@ void CTrooper::ProcessJump(CTimeValue& currTime, IAnimationGraphState* pAGState,
 	}
 
 	if (m_stats.inAir <= 0)
+	{
 		m_lastTimeOnGround = currTime;
+	}
 
 	if (m_stats.inAir > 0.3f && phys)
 	{
@@ -1554,7 +1561,7 @@ void CTrooper::ResetAnimations()
 
 void CTrooper::BindInputs(IAnimationGraphState* pAGState)
 {
-	CAlien::BindInputs(pAGState);
+	CTOSAlien::BindInputs(pAGState);
 	if (pAGState)
 	{
 		m_idAngleXInput = pAGState->GetInputId("AngleX");
@@ -1567,7 +1574,7 @@ void CTrooper::BindInputs(IAnimationGraphState* pAGState)
 
 void CTrooper::FullSerialize(TSerialize ser)
 {
-	CAlien::FullSerialize(ser);
+	CTOSAlien::FullSerialize(ser);
 	ser.Value("m_modelQuat", m_modelQuat);
 	ser.Value("m_lastNotMovingTime", m_lastNotMovingTime);
 	ser.Value("m_oldSpeed", m_oldSpeed);
