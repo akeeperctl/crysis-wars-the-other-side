@@ -216,12 +216,12 @@ bool CTOSMasterClient::OnActionJump(CTOSActor* pActor, const ActionId& actionId,
 	//Пояснение: заряжаемый прыжок доступен ТОЛЬКО когда актёр на твердой поверхности,
 	// потому что сделать двойной прыжок за трупера при заряжаемом прыжке нужно быстро а не ждать,
 	// пока пройдет заряд.
+	const float holdTime = stl::find_in_map(m_actionPressedDuration, actionId, 0.0f);
 
-// Проверка наличия возможности заряженного прыжка и контакта с землей
+	// Проверка наличия возможности заряженного прыжка и контакта с землей
 	if (pActor->IsHaveChargingJump() && pActor->GetActorStats()->onGround > 0.0f)
 	{
 		// Получение времени удержания кнопки и задержки для прыжка
-		const float holdTime = stl::find_in_map(m_actionPressedDuration, actionId, 0.0f);
 		const float jumpDelay = TOS_Console::GetSafeFloatVar("tos_tr_charging_jump_input_time");
 
 		// Автопрыжок при удержании клавиши прыжка
@@ -232,10 +232,6 @@ bool CTOSMasterClient::OnActionJump(CTOSActor* pActor, const ActionId& actionId,
 			m_actions |= ACTION_JUMP;
 			pActor->GetSlaveStats().chargingJumpPressDur = holdTime;
 			m_actionPressedDuration[actionId] = 0;
-
-			// Надо переместить в PrePhysicsUpdate
-			// Отправка запроса на сервер
-			//pActor->GetGameObject()->InvokeRMI(CTOSActor::SvRequestTOSJump(), CActor::NoParams(), eRMI_ToServer);
 		}
 		// Обработка отпускания клавиши прыжка
 		else if (activationMode == eAAM_OnRelease && holdTime <= jumpDelay)
@@ -243,23 +239,25 @@ bool CTOSMasterClient::OnActionJump(CTOSActor* pActor, const ActionId& actionId,
 			m_actions |= ACTION_JUMP;
 			//m_movementRequest.SetJump(); // перемещен в PrePhysicsUpdate
 			pActor->GetSlaveStats().chargingJumpPressDur = 0;
-
-			// Отправка запроса на сервер
-			//pActor->GetGameObject()->InvokeRMI(CTOSActor::SvRequestTOSJump(), CActor::NoParams(), eRMI_ToServer);
 		}
 	}
 	// Обработка прыжка без заряда
 	else
 	{
+		// Автопрыжок при удержании клавиши прыжка
+		if (activationMode == eAAM_OnHold)
+		{
+			// Установка запроса на прыжок и обнуление длительности нажатия
+			//m_movementRequest.SetJump(); // перемещен в PrePhysicsUpdate
+			m_actions |= ACTION_JUMP;
+			m_actionPressedDuration[actionId] = 0;
+		}
+
 		// Установка запроса на прыжок при нажатии клавиши
-		if (activationMode == eAAM_OnPress && value > 0.0f)
+		if ((activationMode == eAAM_OnHold || activationMode == eAAM_OnPress) && value > 0.0f)
 		{
 			//m_movementRequest.SetJump(); // перемещен в PrePhysicsUpdate
 			m_actions |= ACTION_JUMP;
-			pActor->GetSlaveStats().chargingJumpPressDur = 0;
-
-			// Отправка запроса на сервер
-			//pActor->GetGameObject()->InvokeRMI(CTOSActor::SvRequestTOSJump(), CActor::NoParams(), eRMI_ToServer);
 		}
 		// Очистка запроса на прыжок при отпускании клавиши
 		else if (activationMode == eAAM_OnRelease)
@@ -326,6 +324,9 @@ void CTOSMasterClient::PrePhysicsUpdate()
 	// В сетевой игре отправка запроса отсюда работает прекрасно
 	// В одиночной игре отправка запроса не работает
 	SendMovementRequest(pController, m_movementRequest);
+
+	if (m_movementRequest.ShouldJump())
+		m_movementRequest.ClearJump();
 }
 
 void CTOSMasterClient::Update(float frametime)
