@@ -862,7 +862,7 @@ namespace TOS_AI
 				if (!player)
 					Script::CallMethod(pTable, "RegisterAI");
 				else
-					Script::CallMethod(pTable, "RegisterPlayerAI");
+					Script::CallMethod(pTable, "RegisterAIasPlayer");
 			}
 		}
 	}

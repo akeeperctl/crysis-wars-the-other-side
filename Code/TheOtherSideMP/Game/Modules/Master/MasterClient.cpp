@@ -1157,9 +1157,7 @@ bool CTOSMasterClient::PrepareNextSlave(CTOSActor* pNextActor) const
     //Re-register controlled actor in AI System as AI Player
     if (pAI->GetAIType() == AIOBJECT_PUPPET)
 	{
-		IScriptTable* pTable = pNextActor->GetEntity()->GetScriptTable();
-		if (pTable)
-			Script::CallMethod(pTable, "RegisterAIasPlayer");
+		TOS_AI::RegisterAI(pNextActor->GetEntity(), true);
 	}
 	
 	//Restore AI values to new ai pointer
@@ -1200,9 +1198,7 @@ bool CTOSMasterClient::PreparePrevSlave(CTOSActor* pPrevActor) const
     {
 		if (pAI->GetAIType() == AIOBJECT_PLAYER)
 		{
-			IScriptTable* pTable = pPrevActor->GetEntity()->GetScriptTable();
-			if (pTable)
-				Script::CallMethod(pTable, "RegisterAI");
+			TOS_AI::RegisterAI(pPrevActor->GetEntity(), false);
 		}
     }
 
