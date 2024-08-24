@@ -1035,6 +1035,8 @@ function Trooper_x:SetGroupFireModes()
 end
 
 function Trooper_x:MeleeAttack(entity)
+	System.LogAlways("<lua> Trooper '"..self:GetName().."' melee attack target '"..entity:GetName().."'")
+
 	if (not self.AI.meleeImpulse) then
 		self.AI.meleeImpulse = { x = 0, y = 0, z = 0 };
 		CopyVector(self.AI.meleeImpulse, self:GetDirectionVector(1));
@@ -1077,9 +1079,11 @@ end
 
 
 function Trooper_x:MeleeDamage(impulse, meleeType)
+
     -- Получаем цель для ближнего боя
     local entity = self.AI.meleeTarget
     local radius
+
 
     -- Если цель существует
     if entity then
@@ -1142,9 +1146,9 @@ function Trooper_x:MeleeDamage(impulse, meleeType)
                     hit.damage = melee.damage * 4 -- Смертельный урон без нанокостюма
                 elseif entity == g_localActor then
                     -- Урон по игроку с учетом его положения
-                    local dir = FastDifferenceVectors(g_Vectors.temp, self:GetWorldPos(), entity:GetWorldPos())
-                    local playerDir = g_localActor.actor:GetHeadDir(g_Vectors.temp_v1)
-                    local dot = dotproduct2d(dir, playerDir)
+                    FastDifferenceVectors(g_Vectors.temp, self:GetWorldPos(), entity:GetWorldPos())
+                    local playerDir = g_localActor.actor:GetHeadDir(g_Vectors.temp)
+                    local dot = dotproduct2d(g_Vectors.temp, playerDir)
                     hit.damage = CalculatePlayerDamage(dot, melee, hit.damage)
                 end
 
@@ -1166,6 +1170,8 @@ function Trooper_x:MeleeDamage(impulse, meleeType)
 
                 -- Завершаем атаку
                 self:SelectPipe(0, "tr_end_melee")
+
+				System.LogAlways("<lua> Trooper '"..self:GetName().."' damage with'"..hit.damage.."' target '"..entity:GetName().."'")
             end
         end
     end
