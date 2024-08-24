@@ -95,7 +95,7 @@ public:
 		static const SInputPortConfig inputs[] = {
 			InputPortConfig_Void("Start", _HELP("Trigger to start controlling input actor")),
 			InputPortConfig_Void("Cancel", _HELP("Trigger to cancel controlling of input actor")),
-			InputPortConfig<int>("Priority", 0, _HELP("Master - the faction is taken from the master and applied to the slave."), "Priority", _UICONFIG("enum_int:Master=0,Slave=1")),
+			InputPortConfig<int>("Priority", 0, _HELP("Master - the faction is taken from the master and applied to the slave."), "Faction", _UICONFIG("enum_int:Master=0,Slave=1")),
 			InputPortConfig<bool>("BeamDude", true,_HELP("Beam dude to input actor position")),
 			InputPortConfig<bool>("DisableSuit", true,_HELP("Disable dude's nanosuit")),
 			InputPortConfig<bool>("DisableActions", true,_HELP("Disable dude's human actions")),

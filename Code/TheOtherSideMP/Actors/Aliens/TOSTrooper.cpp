@@ -151,10 +151,10 @@ void CTOSTrooper::ProcessMovement(const float frameTime)
 			m_jumpParams.duration = 0.4f; // подбиралось эмпирически. Через 0.4 сек переход из flying в approach landing
 			
 			const float	jumpPressDur = pSlaveStats->chargingJumpPressDur;
-			const float	jumpForce = TOS_Console::GetSafeFloatVar("tos_tr_jump_force", 4000.0f);
+			const float	jumpHeight = TOS_Console::GetSafeFloatVar("tos_tr_jump_height", 3);
 			//const float	jumpForceAdd = TOS_Console::GetSafeFloatVar("tos_tr_double_jump_force", 4.0f);
 			const float chargingTime = TOS_Console::GetSafeFloatVar("tos_tr_charging_jump_input_time", 0.20f);
-			const float chargingMul = TOS_Console::GetSafeFloatVar("tos_tr_charged_jump_mul", 2.7f);
+			const float chargingMul = TOS_Console::GetSafeFloatVar("tos_tr_charged_jump_mul", 2);
 			//const float	finalOnceJumpForce = jumpPressDur > chargingTime ? jumpForce + jumpForceAdd : jumpForce;
 			const float	mult = jumpPressDur > chargingTime ? chargingMul : 1.0f;
 
@@ -189,7 +189,7 @@ void CTOSTrooper::ProcessMovement(const float frameTime)
 				// Если сила тяжести не равна нулю, рассчитать время прыжка
 				if (gravityMagnitude > 0.0f) 
 				{
-				    jumpTime = cry_sqrtf(2.0f * gravityMagnitude * jumpForce * mult) / gravityMagnitude - m_stats.inAir * 0.5f;
+				    jumpTime = cry_sqrtf(2.0f * gravityMagnitude * jumpHeight * mult) / gravityMagnitude - m_stats.inAir * 0.5f;
 				}
 
 				jumpVec.z = upDir.z * gravityMagnitude * jumpTime;

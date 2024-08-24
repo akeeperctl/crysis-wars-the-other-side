@@ -43,13 +43,13 @@ void CTOSMasterModule::InitCVars(IConsole* pConsole)
 			"Display look debug of the controlled character");
 
 	// Trooper консольные значения
-	pConsole->Register("tos_tr_jump_force", &tos_tr_jump_force, 4000.0f, VF_CHEAT,
+	pConsole->Register("tos_tr_jump_height", &tos_tr_jump_height, 3, VF_CHEAT,
 		"The higher the value, the higher the trooper's jump.");
 
 	pConsole->Register("tos_tr_double_jump_force", &tos_tr_double_jump_force, 1000.0f, VF_CHEAT,
 		"The higher the value, the higher the trooper's second jump.");
 
-	pConsole->Register("tos_tr_charged_jump_mul", &tos_tr_charged_jump_mul, 3.0f, VF_CHEAT,
+	pConsole->Register("tos_tr_charged_jump_mul", &tos_tr_charged_jump_mul, 2.0f, VF_CHEAT,
 		"Charged jump multiplier, normal jump comes with 1");
 
 	pConsole->Register("tos_tr_melee_energy_costs", &tos_tr_melee_energy_costs, 15.0f, VF_CHEAT,
@@ -98,7 +98,7 @@ void CTOSMasterModule::ReleaseCVars()
 	pConsole->UnregisterVariable("tos_sv_pl_inputAccel", true);
 	pConsole->UnregisterVariable("tos_sv_mc_LookDebugDraw", true);
 
-	pConsole->UnregisterVariable("tos_tr_jump_force", true);
+	pConsole->UnregisterVariable("tos_tr_jump_height", true);
 	pConsole->UnregisterVariable("tos_tr_double_jump_force", true);
 	pConsole->UnregisterVariable("tos_tr_charged_jump_mul", true);
 	pConsole->UnregisterVariable("tos_tr_melee_energy_costs", true);

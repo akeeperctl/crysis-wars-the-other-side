@@ -228,7 +228,7 @@ public:
 	float  tos_sv_pl_inputAccel;
 
 	//trooper server variables
-	float tos_tr_jump_force;
+	float tos_tr_jump_height;
 	float tos_tr_double_jump_force;
 	float tos_tr_charged_jump_mul;
 	float tos_tr_double_jump_energy_cost;
