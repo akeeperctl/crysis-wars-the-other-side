@@ -77,6 +77,7 @@ struct STOSCvars  // NOLINT(cppcoreguidelines-special-member-functions)
 	ICVar* tos_sv_HunterMPEquipPack;
 	ICVar* tos_sv_EnableMPStealthOMeterForTeam;
 
+	int tos_sv_PlayerAlwaysAiming;
 	int tos_sv_EnableShotValidator;
 
 	int tos_any_EventRecorderLogVanilla;

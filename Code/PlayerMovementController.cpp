@@ -113,11 +113,14 @@ bool CPlayerMovementController::RequestMovement( CMovementRequest& request )
 			{
 				// Проверка, не является ли пассажир водителем
 				IVehicleSeat* pSeat = pVehicle->GetSeatForPassenger(m_pPlayer->GetEntityId());
-				if (pSeat && !pSeat->IsDriver())
+				//TheOtherSide
+				//if (!pSeat->IsDriver
+				if (pSeat && !pSeat->IsDriver() || (gEnv->bClient && gEnv->bMultiplayer))
 				{
 					// Запрос на движение
 					pController->RequestMovement(request);
 				}
+				//~TheOtherSide
 			}
 		}
 	}

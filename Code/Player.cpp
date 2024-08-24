@@ -1045,6 +1045,7 @@ void CPlayer::Update(SEntityUpdateContext& ctx, int updateSlot)
 	//TheOtherSide
 	//NETINPUT_TRACE(GetEntityId(), m_stats.inAir);
 	//NETINPUT_TRACE(GetEntityId(), m_stats.onGround);
+	NETINPUT_TRACE(GetEntityId(), Vec3(m_viewAnglesOffset));
 	auto pPhysEnt = GetEntity()->GetPhysics();
 	if (pPhysEnt)
 	{
@@ -1603,13 +1604,20 @@ void CPlayer::SetIK( const SActorFrameMovementParams& frameMovementParams )
 
 		Vec3 aimTarget = frameMovementParams.aimTarget;
 		bool aimEnabled = frameMovementParams.aimIK && (!GetAnimatedCharacter() || GetAnimatedCharacter()->IsLookIkAllowed());
-		if (IsPlayer())
+
+		//TheOtherSide
+		if (IsPlayer() || IsSlave())
 		{
+		//~TheOtherSide
+
 			SMovementState info;
 			m_pMovementController->GetMovementState(info);
 			aimTarget = info.eyePosition + info.aimDirection * 5.0f; // If this is too close the aiming will fade out.
-			aimEnabled = true;
 
+			//TheOtherSide
+			aimEnabled = TOS_Console::GetSafeIntVar("tos_sv_PlayerAlwaysAiming", 1);
+			//~TheOtherSide
+			// 
 			// TODO: This should probably be moved somewhere else and not done every frame.
 			ICharacterInstance* pCharacter = GetEntity()->GetCharacter(0);
 			if (pCharacter)
