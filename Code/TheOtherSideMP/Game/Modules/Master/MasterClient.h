@@ -236,7 +236,7 @@ private:
 	CMovementRequest m_movementRequest;
 
 	Vec3 m_deltaMovement;///< направление движения. От -1 до 1. Не сбрасывается до 0 когда действие не выполняется.
-	CPlayerInput* m_pPlayerGruntInput;
+	//CPlayerInput* m_pPlayerGruntInput;
 
 	//CCamera* m_pWorldCamera;
 	SMeleeInfo m_meleeInfo;

@@ -85,7 +85,7 @@ void CTOSMasterClient::OnAction(const ActionId& action, const int activationMode
 
 	float pressedDuration = 0.0f;
 
-	m_pPlayerGruntInput->OnAction(action, activationMode, value);
+	//m_pPlayerGruntInput->OnAction(action, activationMode, value);
 
 	// Здесь описана логика удержания клавиши нажатой и как долго она была в таком состоянии
 	// Используется, когда высота прыжка зависит от длительности нажатия на действие прыжка [jump]
@@ -625,127 +625,6 @@ void CTOSMasterClient::AnimationEvent(IEntity* pEntity, ICharacterInstance* pCha
         //ProcessMeleeDamage();
     }
 }
-/*
-void CTOSMasterClient::ProcessMeleeDamage() const
-{
-    //TODO:
-    //Получить цель в прицеле targetId
-    //Нанести урон
-
-
-	const IEntity* pEntityTarget = gEnv->pEntitySystem->GetEntity(m_meleeInfo.targetId);
-    CRY_ASSERT_MESSAGE(pEntityTarget, "[CTOSMasterClient::ProcessMeleeDamage] pEntityTarget equal nullptr");
-	if (!pEntityTarget)
-		return;
-
-    const auto targetId = pEntityTarget->GetId();
-
-	const auto pWeapon = GetCurrentWeapon(GetSlaveActor());
-	CRY_ASSERT_MESSAGE(pWeapon, "[CTOSMasterClient::ProcessMeleeDamage] pWeapon equal nullptr");
-	if (!pWeapon)
-		return;
-
-	const IActor* pActorTarget = g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(targetId);
-	const IVehicle* pVehicleTarget = g_pGame->GetIGameFramework()->GetIVehicleSystem()->GetVehicle(targetId);
-
-    const string slaveCls = m_pSlaveEntity->GetClass()->GetName();
-
-	if (slaveCls == "Trooper")
-	{
-		const Vec3 slavePos = m_pSlaveEntity->GetWorldPos();
-		const Vec3 toTargetDir(m_meleeInfo.targetPos - slavePos);
-		const float attackRadius = 2.5f;
-
-		const float dist = toTargetDir.GetLength();
-		if (dist < attackRadius)
-		{
-			//Vec3 dirx = GetEntity()->GetWorldTM().GetColumn(0);
-			//Vec3 diry = GetEntity()->GetWorldTM().GetColumn(1);
-			//Vec3 dirz = GetEntity()->GetWorldTM().GetColumn(2);
-			//Vec3 damageBoxOffset(0, 0, 0);
-
-			const float damage = 80.0f; //g_pGameCVars->g_trooperMeleeDamage;
-			const float damageMultiplier = 1.2f;//g_pGameCVars->g_trooperMeleeDamageMultiplier;
-
-			bool isHaveNanosuit = false;
-
-			SmartScriptTable meleeTable;
-			IScriptTable* pTargetTable = pEntityTarget->GetScriptTable();
-			if (pTargetTable)
-			{
-				SmartScriptTable propertiesTable;
-				if (pTargetTable->GetValue("Properties", propertiesTable))
-					propertiesTable->GetValue("bNanoSuit", isHaveNanosuit);
-			}
-
-			//pos.x += dirx.x * damageBoxOffset.x + diry.x * damageBoxOffset.y + dirz.x * damageBoxOffset.z;
-			//pos.y += dirx.y * damageBoxOffset.x + diry.y * damageBoxOffset.y + dirz.y * damageBoxOffset.z;
-			//pos.z += dirx.z * damageBoxOffset.x + diry.z * damageBoxOffset.y + dirz.z * damageBoxOffset.z;
-
-			//const EntityId slaveId = m_pSlaveEntity->GetId();
-
-			//HitInfo hit;
-			//hit.shooterId = slaveId;
-			//hit.weaponId = slaveId;
-			//hit.targetId = targetId;
-			//hit.type = g_pGame->GetGameRules()->GetHitTypeId("melee");
-
-			//if (pVehicleTarget)
-			//{
-			//	const float vehicleMultiplier = 0.35f;
-			//	hit.SetDamage(damage * damageMultiplier * vehicleMultiplier);
-			//}
-			//else if (pActorTarget)
-			//{
-			//	if (!isHaveNanosuit)
-			//	{
-			//		const float noNanosuitMultiplier = 4.0f;
-			//		hit.SetDamage(damage * damageMultiplier * noNanosuitMultiplier);
-			//	}
-			//	else if (isHaveNanosuit)
-			//	{
-			//		hit.SetDamage(damage * damageMultiplier);
-			//	}
-			//}
-
-			//For melee point impulse
-			//IFireMode* meleeFM = pWeapon->GetMeleeFireMode();
-			//if (meleeFM)
-				//meleeFM->NetShootEx(m_meleeInfo.targetPos, m_cameraInfo.viewDir, Vec3(0, 0, 0), Vec3(0, 0, 0), 0, 0);
-
-			//For dealing melee damage to target
-			//g_pGame->GetGameRules()->ClientHit(hit);
-
-			//Попробуем по-другому
-			//pWeapon->RequestMeleeAttack(true, m_meleeInfo.targetPos, m_cameraInfo.viewDir, 0); //TODO: не добавляется melee firemode у оружия трупера
-
-
-			//SNetCamShakeParams params;
-			//params.angle = 45;
-			//params.duration = 0.3f;
-			//params.frequency = 0.13f;
-			//params.shift = 0;
-			//params.pos = Vec3{ 0,0,0 };
-
-			//if (pActorTarget && pActorTarget->IsPlayer())
-			//{
-			//	if (gEnv->bClient)
-			//		pActorTarget->GetGameObject()->InvokeRMI(SvRequestCameraShake(), params, eRMI_ToServer);
-			//}
-		}
-	}
-
-}
-*/
-
-//void CTOSMasterClient::Update(IEntity* pEntity)
-//{
-//	if (m_pSlaveEntity != nullptr && pEntity == m_pSlaveEntity)
-//	{
-//		//m_deltaMovement.zero();
-//	}
-//		
-//}
 
 void CTOSMasterClient::StartControl(IEntity* pEntity, uint dudeFlags, bool fromFG, EFactionPriority priority)
 {
@@ -848,6 +727,7 @@ void CTOSMasterClient::StopControl(bool callFromFG /*= false*/)
 	}
 
 	PrepareDude(false, m_dudeFlags);
+	PreparePrevSlave(GetSlaveActor());
     ClearSlaveEntity();
 
 	m_movementRequest.RemoveDeltaMovement();
@@ -874,15 +754,15 @@ bool CTOSMasterClient::SetSlaveEntity(IEntity* pEntity, const char* cls)
 	const auto pSlaveActor = GetSlaveActor();
 	assert(pSlaveActor);
 
-	string className = m_pSlaveEntity->GetClass()->GetName();
-	if (className == "Grunt" && pSlaveActor)
-	{
-		CTOSPlayer* pPlayerGrunt = static_cast<CTOSPlayer*>(pSlaveActor);
-		pPlayerGrunt->m_pPlayerInput.reset(new CPlayerInput(pPlayerGrunt));
-		m_pPlayerGruntInput =  static_cast<CPlayerInput*>(pPlayerGrunt->m_pPlayerInput.get());
-	}
-	else
-		m_pPlayerGruntInput = nullptr;
+	//string className = m_pSlaveEntity->GetClass()->GetName();
+	//if (className == "Grunt" && pSlaveActor)
+	//{
+	//	CTOSPlayer* pPlayerGrunt = static_cast<CTOSPlayer*>(pSlaveActor);
+	//	pPlayerGrunt->m_pPlayerInput.reset(new CPlayerInput(pPlayerGrunt));
+	//	m_pPlayerGruntInput =  static_cast<CPlayerInput*>(pPlayerGrunt->m_pPlayerInput.get());
+	//}
+	//else
+	//	m_pPlayerGruntInput = nullptr;
 
 	TOS_RECORD_EVENT(m_pSlaveEntity->GetId(), STOSGameEvent(eEGE_MasterClientOnSetSlave, "", true));
 	return true;
