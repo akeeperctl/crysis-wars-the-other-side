@@ -303,6 +303,23 @@ IActorMovementController* CTOSGrunt::CreateMovementController()
 	return new CTOSGruntMovementController(this);
 }
 
+void CTOSGrunt::UpdateMasterView(SViewParams& viewParams, Vec3& offsetX, Vec3& offsetY, Vec3& offsetZ, Vec3& target, Vec3& current, float& currentFov)
+{
+	currentFov = 75.0f;
+	target(0.7f, -2.8f, 1.75f);
+
+	offsetX = GetViewRotation().GetColumn0() * current.x;
+	offsetY = gEnv->pSystem->GetViewCamera().GetViewdir() * current.y;
+	offsetZ = GetViewRotation().GetColumn2() * current.z;
+}
+
+void CTOSGrunt::ApplyMasterMovement(const Vec3& delta)
+{
+	CMovementRequest request;
+	request.AddDeltaMovement(delta);
+	GetMovementController()->RequestMovement(request);
+}
+
 bool CTOSGrunt::NetSerialize( TSerialize ser, EEntityAspects aspect, uint8 profile, int flags )
 {
 	if (!CTOSActor::NetSerialize(ser, aspect, profile, flags))

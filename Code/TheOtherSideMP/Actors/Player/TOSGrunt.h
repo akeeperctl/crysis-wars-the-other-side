@@ -19,6 +19,12 @@ public:
 	virtual IActorMovementController * CreateMovementController();
 	//~CTOSPlayer
 
+	//ITOSMasterControllable
+	void UpdateMasterView(SViewParams& viewParams, Vec3& offsetX, Vec3& offsetY, Vec3& offsetZ, Vec3& target, Vec3& current, float& currentFov);
+	void ApplyMasterMovement(const Vec3& delta);
+	//~ITOSMasterControllable
+
+
 	enum CoopTimers
 	{
 		eTIMER_WEAPONDELAY	= 0x110

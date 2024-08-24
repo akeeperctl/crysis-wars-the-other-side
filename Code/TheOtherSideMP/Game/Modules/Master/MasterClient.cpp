@@ -84,6 +84,8 @@ void CTOSMasterClient::OnAction(const ActionId& action, const int activationMode
 
 	float pressedDuration = 0.0f;
 
+	m_pPlayerGruntInput->OnAction(action, activationMode, value);
+
 	// Здесь описана логика удержания клавиши нажатой и как долго она была в таком состоянии
 	// Используется, когда высота прыжка зависит от длительности нажатия на действие прыжка [jump]
 	if (activationMode == eAAM_OnPress)
@@ -398,8 +400,8 @@ void CTOSMasterClient::Update(float frametime)
 	assert(pController);
 
 	// Возможно будет работать метод через 
-	//if (!gEnv->bMultiplayer)
-		//SendMovementRequest(pController);
+	if (!gEnv->bMultiplayer)
+		PrePhysicsUpdate();
 
 	// Подсчет времени, сколько была нажата определенная клавиша в сек.
 	std::map<ActionId, uint>::iterator it = m_actionFlags.begin();
@@ -857,12 +859,18 @@ bool CTOSMasterClient::SetSlaveEntity(IEntity* pEntity, const char* cls)
 {
 	assert(pEntity);
 	m_pSlaveEntity = pEntity;
-
 	const auto pSlaveActor = GetSlaveActor();
 	assert(pSlaveActor);
 
-	//pSlaveActor->NetMarkMeSlave(true);
-	//m_pLocalDude->NetMarkMeMaster(true);
+	string className = m_pSlaveEntity->GetClass()->GetName();
+	if (className == "Grunt" && pSlaveActor)
+	{
+		CTOSPlayer* pPlayerGrunt = static_cast<CTOSPlayer*>(pSlaveActor);
+		pPlayerGrunt->m_pPlayerInput.reset(new CPlayerInput(pPlayerGrunt));
+		m_pPlayerGruntInput =  static_cast<CPlayerInput*>(pPlayerGrunt->m_pPlayerInput.get());
+	}
+	else
+		m_pPlayerGruntInput = nullptr;
 
 	TOS_RECORD_EVENT(m_pSlaveEntity->GetId(), STOSGameEvent(eEGE_MasterClientOnSetSlave, "", true));
 	return true;

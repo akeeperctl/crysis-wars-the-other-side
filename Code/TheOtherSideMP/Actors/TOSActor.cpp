@@ -966,7 +966,7 @@ IMPLEMENT_RMI(CTOSActor, SvRequestTOSJump)
 		CMovementRequest request;
 		request.SetJump();
 		GetMovementController()->RequestMovement(request);
-		CryLogAlways("<C++> Actor '%s' request jump to channel %i", m_debugName, channelId);
+		CryLogAlways("<c++> Actor '%s' request jump to channel %i", m_debugName, channelId);
 	}
 
 	return true;

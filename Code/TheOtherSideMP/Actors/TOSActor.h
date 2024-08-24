@@ -205,7 +205,6 @@ public:
 
 		void SerializeWith(TSerialize ser)
 		{
-			CryLogAlways("<c++> call %f", __FUNCTION__);
 			ser.Value("childId", id, 'eid');
 			ser.Value("flags", flags, 'ui8');
 		}
