@@ -1171,7 +1171,11 @@ void CPlayerMovement::ProcessOnGroundOrJumping(CPlayer& player)
 			}
 
 			// Set ag action 'jumpMP' cleared in CPlayer::UpdateStats()
-			player.GetAnimationGraphState()->SetInput(player.GetAnimationGraphState()->GetInputId("Action"), ((pSuit->GetMode() == NANOMODE_STRENGTH) && !m_player.m_stats.bIgnoreSprinting && (mult > 1.0f)) ? "jumpMPStrength" : "jumpMP");
+			//TheOtherSide
+			player.GetAnimationGraphState()->SetInput(
+				player.GetAnimationGraphState()->GetInputId("Action"), 
+				((pSuit && pSuit->GetMode() == NANOMODE_STRENGTH) && !m_player.m_stats.bIgnoreSprinting && (mult > 1.0f)) ? "jumpMPStrength" : "jumpMP");
+			//~TheOtherSide
 
 			bool       bNormalJump = true;
 			CPlayer* pPlayer = &m_player;
