@@ -1,8 +1,7 @@
 #include "StdAfx.h"
-#include "TOSAlien.h"
 
-#include "CompatibilityAlienMovementController.h"
-#include "Player.h"
+#include "TOSAlien.h"
+#include "TOSAlienMovementController.h"
 #include "TOSTrooper.h"
 
 #include "TheOtherSideMP/Game/Modules/Master/MasterClient.h"
@@ -336,4 +335,46 @@ void CTOSAlien::ApplyMasterMovement(const Vec3& delta)
 	m_input.deltaMovement.x = (delta.x < 0.0f || delta.x > 0.0f) ? m_input.deltaMovement.x : 0;
 	m_input.deltaMovement.y = (delta.y < 0.0f || delta.y > 0.0f) ? m_input.deltaMovement.y : 0;
 	m_input.deltaMovement.z = (delta.z < 0.0f || delta.z > 0.0f) ? m_input.deltaMovement.z : 0;
+}
+
+IActorMovementController* CTOSAlien::CreateMovementController()
+{
+	return new CTOSAlienMovementController(this);
+}
+
+void CTOSAlien::SendSpecialMovementRequest(uint32 reqFlags, const SActorTargetParams& targetParams)
+{
+	if (targetParams.animation.c_str() && targetParams.animation.c_str()[0] != 0)
+		CryLog("[%s] Sending actor target with %s animation %s.", GetEntity()->GetName(), targetParams.signalAnimation ? "signal" : "action", targetParams.animation.c_str());
+	else
+		CryLog("[%s] Sending actor target removal.", GetEntity()->GetName());
+	
+	GetGameObject()->InvokeRMI(ClSpecialMovementRequest(), SSpecialMovementRequestParams(reqFlags, targetParams, targetParams.animation), eRMI_ToAllClients | eRMI_NoLocalCalls);
+}
+
+IMPLEMENT_RMI(CTOSAlien, ClSpecialMovementRequest)
+{
+	if (params.targetParams.animation.c_str() != nullptr && params.targetParams.animation.c_str()[0] != 0)
+		CryLog("[%s] Received actor target with %s animation %s.", GetEntity()->GetName(), params.targetParams.signalAnimation ? "signal" : "action", params.targetParams.animation.c_str());
+	else
+		CryLog("[%s] Received actor target removal.", GetEntity()->GetName());
+
+	if (!gEnv->bServer)
+	{
+		CMovementRequest movRequest = CMovementRequest();
+		if ((params.flags & CMovementRequest::eMRF_ActorTarget) != 0)
+		{
+			movRequest.SetActorTarget(params.targetParams);
+		}
+		else if ((params.flags & CMovementRequest::eMRF_RemoveActorTarget) != 0)
+		{
+			movRequest.ClearActorTarget();
+		}
+
+
+		this->GetMovementController()->RequestMovement(movRequest);
+	}
+	
+
+	return true;
 }

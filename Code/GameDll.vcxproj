@@ -408,6 +408,7 @@
     <ClCompile Include="TacLauncher.cpp" />
     <ClCompile Include="TagBullet.cpp" />
     <ClCompile Include="TheOtherSideMP\Actors\Aliens\TOSAlien.cpp" />
+    <ClCompile Include="TheOtherSideMP\Actors\Aliens\TOSAlienMovementController.cpp" />
     <ClCompile Include="TheOtherSideMP\Actors\Aliens\TOSTrooper.cpp" />
     <ClCompile Include="TheOtherSideMP\Actors\Animation\AnimationGraphState.cpp" />
     <ClCompile Include="TheOtherSideMP\Actors\Player\TOSGrunt.cpp" />
@@ -655,8 +656,10 @@
     <ClInclude Include="TacLauncher.h" />
     <ClInclude Include="TagBullet.h" />
     <ClInclude Include="TheOtherSideMP\Actors\Aliens\TOSAlien.h" />
+    <ClInclude Include="TheOtherSideMP\Actors\Aliens\TOSAlienMovementController.h" />
     <ClInclude Include="TheOtherSideMP\Actors\Aliens\TOSTrooper.h" />
     <ClInclude Include="TheOtherSideMP\Actors\Animation\AnimationGraphState.h" />
+    <ClInclude Include="TheOtherSideMP\Actors\DummyTargetPointVerifier.h" />
     <ClInclude Include="TheOtherSideMP\Actors\ITOSMasterControllable.h" />
     <ClInclude Include="TheOtherSideMP\Actors\Player\TOSGrunt.h" />
     <ClInclude Include="TheOtherSideMP\Actors\Player\TOSGruntMovementController.h" />

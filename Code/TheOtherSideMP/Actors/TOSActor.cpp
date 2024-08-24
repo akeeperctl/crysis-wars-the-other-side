@@ -23,6 +23,9 @@
 #include "HUD/HUDTagNames.h"
 
 #include "TheOtherSideMP/Control/ControlSystem.h"
+#include "DummyTargetPointVerifier.h"
+
+CDummyTargetPointVerifier CDummyTargetPointVerifier::Instance = CDummyTargetPointVerifier();
 
 CTOSActor::CTOSActor()
 	:

@@ -845,6 +845,9 @@
     <ClCompile Include="TheOtherSideMP\Actors\Player\TOSGruntMovementController.cpp">
       <Filter>TheOtherSideMP\Actors\player</Filter>
     </ClCompile>
+    <ClCompile Include="TheOtherSideMP\Actors\Aliens\TOSAlienMovementController.cpp">
+      <Filter>TheOtherSideMP\Actors\aliens</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor.h">
@@ -1501,6 +1504,12 @@
     </ClInclude>
     <ClInclude Include="TheOtherSideMP\Actors\Player\TOSGruntMovementController.h">
       <Filter>TheOtherSideMP\Actors\player</Filter>
+    </ClInclude>
+    <ClInclude Include="TheOtherSideMP\Actors\Aliens\TOSAlienMovementController.h">
+      <Filter>TheOtherSideMP\Actors\aliens</Filter>
+    </ClInclude>
+    <ClInclude Include="TheOtherSideMP\Actors\DummyTargetPointVerifier.h">
+      <Filter>TheOtherSideMP\Actors</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
