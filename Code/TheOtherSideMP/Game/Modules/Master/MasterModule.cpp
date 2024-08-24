@@ -525,22 +525,7 @@ void CTOSMasterModule::Update(float frametime)
 
 void CTOSMasterModule::Serialize(TSerialize ser)
 {
-	if (ser.GetSerializationTarget() == eST_Network)
-	{
 
-	}
-}
-
-bool CTOSMasterModule::NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int flags)
-{
-	if (!CTOSGenericModule::NetSerialize(ser, aspect, profile, flags))
-		return false;
-
-	// Вызывает вылет 24/06/2024
-	//ser.Value("m_masters", m_masters);
-
-
-	return true;
 }
 
 void CTOSMasterModule::MasterAdd(const IEntity* pMasterEntity, const char* slaveDesiredClass)

@@ -34,11 +34,6 @@ void CTOSMasterSynchronizer::FullSerialize(TSerialize ser)
 
 bool CTOSMasterSynchronizer::NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int flags)
 {
-	if (!CTOSGenericSynchronizer::NetSerialize(ser,aspect,profile,flags))
-		return false;
-
-	g_pTOSGame->GetMasterModule()->NetSerialize(ser,aspect, profile, flags);
-
 	return true;
 }
 

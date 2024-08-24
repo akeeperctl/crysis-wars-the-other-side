@@ -22,7 +22,7 @@ public:
 	void        Init() ;
 	void        Update(float frametime) ;
 	void        Serialize(TSerialize ser) ;
-	bool		NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int flags) ;
+	//bool		NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int flags) ;
 
 	int GetDebugLog()  { return m_debugLogMode; }
 
@@ -30,7 +30,6 @@ public:
 	void InitCCommands(IConsole* pConsole)  {};
 	void ReleaseCVars()  {};
 	void ReleaseCCommands()  {};
-
 	//~ITOSGameModule
 
 	virtual CTOSGenericSynchronizer* GetSynchronizer() const;

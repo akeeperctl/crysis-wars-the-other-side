@@ -30,6 +30,7 @@ CTOSGame::~CTOSGame()
 
 	SAFE_DELETE(m_pMasterModule);
 	SAFE_DELETE(m_pEntitySpawnModule);
+	SAFE_DELETE(m_pZeusModule);
 
 	//~Modules
 
@@ -57,6 +58,7 @@ void CTOSGame::Init()
 
 	m_pEntitySpawnModule = new CTOSEntitySpawnModule();
 	m_pMasterModule = new CTOSMasterModule();
+	m_pZeusModule = new CTOSZeusModule();
 
 	//~Modules
 
@@ -167,6 +169,11 @@ CTOSGameEventRecorder* CTOSGame::GetEventRecorder() const
 CTOSMasterModule* CTOSGame::GetMasterModule() const
 {
 	return m_pMasterModule;
+}
+
+CTOSZeusModule* CTOSGame::GetZeusModule() const
+{
+	return m_pZeusModule;
 }
 
 CTOSEntitySpawnModule* CTOSGame::GetEntitySpawnModule() const

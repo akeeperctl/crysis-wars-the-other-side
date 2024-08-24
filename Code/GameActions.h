@@ -32,6 +32,7 @@ public:
 
 	//TheOtherSide
 	ILINE IActionFilter*	FilterMasterControlSlave() const {	return m_pFilterMasterControlSlave;	}
+	ILINE IActionFilter*	FilterZeus() const {	return m_pFilterZeus;	}
 	//~TheOtherSide
 
 private:
@@ -52,7 +53,9 @@ private:
 
 	//TheOtherSide
 	void	CreateFilterMasterControlSlave();
+	void	CreateFilterZeus();
 	IActionFilter* m_pFilterMasterControlSlave;
+	IActionFilter* m_pFilterZeus;
 	//~TheOtherSide
 
 

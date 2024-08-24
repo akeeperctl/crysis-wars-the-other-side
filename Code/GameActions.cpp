@@ -42,6 +42,7 @@ void CGameActions::Init()
 
 	//TheOtherSide
 	CreateFilterMasterControlSlave();
+	CreateFilterZeus();
 	//~TheOtherSide
 }
 
@@ -375,4 +376,33 @@ void CGameActions::CreateFilterMasterControlSlave()
 	m_pFilterMasterControlSlave->Filter(hud_suit_menu);
 	m_pFilterMasterControlSlave->Filter(hud_suit_mod);
 	m_pFilterMasterControlSlave->Filter(hud_weapon_mod);
+}
+
+void CGameActions::CreateFilterZeus()
+{
+	IActionMapManager* pActionMapMan = g_pGame->GetIGameFramework()->GetIActionMapManager();
+
+	m_pFilterZeus = pActionMapMan->CreateActionFilter("zeus", eAFT_ActionFail);
+
+	m_pFilterZeus->Filter(prone);
+	m_pFilterZeus->Filter(togglestance);
+	m_pFilterZeus->Filter(leanleft);
+	m_pFilterZeus->Filter(leanright);
+	m_pFilterZeus->Filter(thirdperson);
+
+	m_pFilterZeus->Filter(flymode);
+	m_pFilterZeus->Filter(grenade);
+	m_pFilterZeus->Filter(xi_grenade);
+
+	m_pFilterZeus->Filter(speedmode);
+	m_pFilterZeus->Filter(strengthmode);
+	m_pFilterZeus->Filter(suitmode);
+	m_pFilterZeus->Filter(suitcloak);
+	m_pFilterZeus->Filter(suitsave);
+	m_pFilterZeus->Filter(suitload);
+	m_pFilterZeus->Filter(suitskin);
+
+	m_pFilterZeus->Filter(hud_suit_menu);
+	m_pFilterZeus->Filter(hud_suit_mod);
+	m_pFilterZeus->Filter(hud_weapon_mod);
 }

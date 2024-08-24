@@ -160,6 +160,9 @@
     <Filter Include="TheOtherSideMP\Utilities">
       <UniqueIdentifier>{50de5404-39d9-4768-ba3b-7778fd68030d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="TheOtherSideMP\Game\Modules\Zeus">
+      <UniqueIdentifier>{186141cc-3590-466d-9314-5b53dabd664a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Actor.cpp">
@@ -848,6 +851,12 @@
     <ClCompile Include="TheOtherSideMP\Actors\Aliens\TOSAlienMovementController.cpp">
       <Filter>TheOtherSideMP\Actors\aliens</Filter>
     </ClCompile>
+    <ClCompile Include="TheOtherSideMP\Game\Modules\Zeus\ZeusModule.cpp">
+      <Filter>TheOtherSideMP\Game\Modules\Zeus</Filter>
+    </ClCompile>
+    <ClCompile Include="TheOtherSideMP\Game\Modules\Zeus\ZeusNodes.cpp">
+      <Filter>TheOtherSideMP\Game\Modules\Zeus</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor.h">
@@ -1510,6 +1519,12 @@
     </ClInclude>
     <ClInclude Include="TheOtherSideMP\Actors\DummyTargetPointVerifier.h">
       <Filter>TheOtherSideMP\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="TheOtherSideMP\Helpers\TOS_Zeus.h">
+      <Filter>TheOtherSideMP\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="TheOtherSideMP\Game\Modules\Zeus\ZeusModule.h">
+      <Filter>TheOtherSideMP\Game\Modules\Zeus</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

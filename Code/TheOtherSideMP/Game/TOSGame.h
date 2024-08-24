@@ -6,6 +6,7 @@
 #include <IGameplayRecorder.h>
 #include <ILevelSystem.h>
 #include <IInput.h>
+#include "Modules\Zeus\ZeusModule.h"
 
 class СTOSAIModule;
 class CControlClient;
@@ -131,6 +132,7 @@ public:
 
 	CTOSGameEventRecorder* GetEventRecorder() const;
 	CTOSMasterModule*      GetMasterModule() const;
+	CTOSZeusModule*       GetZeusModule() const;
 	CTOSEntitySpawnModule* GetEntitySpawnModule() const;
 	СTOSAIModule*          GetAITrackerModule() const;
 
@@ -148,6 +150,7 @@ private:
 
 	CTOSGameEventRecorder* m_pEventRecorder;
 	CTOSMasterModule* m_pMasterModule;
+	CTOSZeusModule* m_pZeusModule;
 	CTOSEntitySpawnModule* m_pEntitySpawnModule;
 
 	std::vector<ITOSGameModule*> m_modules;

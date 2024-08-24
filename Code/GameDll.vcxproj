@@ -466,6 +466,8 @@
     <ClCompile Include="TheOtherSideMP\Game\Modules\Master\MasterClient.cpp" />
     <ClCompile Include="TheOtherSideMP\Game\Modules\Master\MasterModule.cpp" />
     <ClCompile Include="TheOtherSideMP\Game\Modules\Master\MasterSynchronizer.cpp" />
+    <ClCompile Include="TheOtherSideMP\Game\Modules\Zeus\ZeusModule.cpp" />
+    <ClCompile Include="TheOtherSideMP\Game\Modules\Zeus\ZeusNodes.cpp" />
     <ClCompile Include="TheOtherSideMP\Game\TOSGame.cpp" />
     <ClCompile Include="TheOtherSideMP\Game\TOSGameCvars.cpp" />
     <ClCompile Include="TheOtherSideMP\Game\TOSGameEventRecorder.cpp" />
@@ -715,6 +717,7 @@
     <ClInclude Include="TheOtherSideMP\Game\Modules\Master\MasterClient.h" />
     <ClInclude Include="TheOtherSideMP\Game\Modules\Master\MasterModule.h" />
     <ClInclude Include="TheOtherSideMP\Game\Modules\Master\MasterSynchronizer.h" />
+    <ClInclude Include="TheOtherSideMP\Game\Modules\Zeus\ZeusModule.h" />
     <ClInclude Include="TheOtherSideMP\Game\TOSGame.h" />
     <ClInclude Include="TheOtherSideMP\Game\TOSGameCvars.h" />
     <ClInclude Include="TheOtherSideMP\Game\TOSGameEventRecorder.h" />
@@ -732,6 +735,7 @@
     <ClInclude Include="TheOtherSideMP\Helpers\TOS_Sounds.h" />
     <ClInclude Include="TheOtherSideMP\Helpers\TOS_STL.h" />
     <ClInclude Include="TheOtherSideMP\Helpers\TOS_Vehicle.h" />
+    <ClInclude Include="TheOtherSideMP\Helpers\TOS_Zeus.h" />
     <ClInclude Include="TheOtherSideMP\HUD\TOSCrosshair.h" />
     <ClInclude Include="TheOtherSideMP\TOSSmartStruct.h" />
     <ClInclude Include="TheOtherSideMP\Utilities\DedicatedServerHackScope.h" />

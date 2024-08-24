@@ -121,7 +121,7 @@ public:
 	void Init() ;
 	void Update(float frametime) ;
 	void Serialize(TSerialize ser) ;
-	bool NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int flags) ;
+	//bool NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int flags) ;
 	void InitCVars(IConsole* pConsole) ;
 	void InitCCommands(IConsole* pConsole) ;
 	void ReleaseCVars() ;
