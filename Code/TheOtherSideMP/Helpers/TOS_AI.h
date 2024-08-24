@@ -869,7 +869,7 @@ namespace TOS_AI
 
 	inline void SetSpecies(IAIObject* pAI, const int species)
 	{
-		if (pAI && gEnv->bServer && gEnv->pAISystem->IsEnabled())
+		if (pAI && gEnv->bServer && gEnv->pAISystem && gEnv->pAISystem->IsEnabled())
 		{
 			AgentParameters playerParams = pAI->CastToIAIActor()->GetParameters();
 			playerParams.m_nSpecies = species;

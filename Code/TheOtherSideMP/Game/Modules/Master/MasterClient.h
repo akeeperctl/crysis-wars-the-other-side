@@ -10,6 +10,7 @@
 #include <TheOtherSideMP/Game/Modules/ITOSGameModule.h>
 
 #include "MasterModule.h"
+#include <PlayerInput.h>
 
 class CTOSHUDCrosshair;
 class CTOSAIActionTracker;
@@ -22,6 +23,13 @@ class CVehicleMovementBase;
 
 struct IHardwareMouseEventListener;
 struct IHitListener;
+
+enum EFactionPriority
+{
+	eFP_Master, // команда и фракция берутся с мастера и применяются на раба
+	eFP_Slave, // команда и фракция берутся с раба и применяются на мастера
+	eFP_Last
+};
 
  /**
  * TOS MasterClient
@@ -137,7 +145,7 @@ public:
 
 	void OnEntityEvent(IEntity* pEntity, const SEntityEvent& event);
 
-	void StartControl(IEntity* pEntity, uint dudeFlags = 0, bool callFromFG = false);
+	void StartControl(IEntity* pEntity, uint dudeFlags = 0, bool fromFG = false, EFactionPriority priority = eFP_Master);
 	void StopControl(bool callFromFG = false);
 
 	/**
@@ -216,6 +224,10 @@ private:
 	void PrepareDude(bool toStartControl, uint dudeFlags) const;
 
 
+	bool PrepareNextSlave(CTOSActor* pNextActor) const;
+	bool PreparePrevSlave(CTOSActor* pPrevActor) const;
+
+
 	CTOSPlayer* m_pLocalDude; ///< Указатель на локального персонажа с именем \a Dude. \n Появляется в одиночной игре. \n Задаётся при вызове InitLocalPlayer у CTOSPlayer
 	IEntity*    m_pSlaveEntity; ///< Указатель на сущность раба, которую контролирует локальный персонаж.
 
@@ -224,7 +236,7 @@ private:
 	CMovementRequest m_movementRequest;
 
 	Vec3 m_deltaMovement;///< направление движения. От -1 до 1. Не сбрасывается до 0 когда действие не выполняется.
-
+	CPlayerInput* m_pPlayerGruntInput;
 
 	//CCamera* m_pWorldCamera;
 	SMeleeInfo m_meleeInfo;

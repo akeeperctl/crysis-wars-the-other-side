@@ -1,9 +1,8 @@
 #pragma once
 
 #include <IGameObject.h>
-
+#include "MasterClient.h"
 #include "MasterModule.h"
-
 #include "../GenericSynchronizer.h"
 
 struct NetMasterClientSavedParams
@@ -58,6 +57,7 @@ struct NetMasterStartControlParams
 	EntityId slaveId;
 	EntityId masterId;
 	uint masterFlags;
+	EFactionPriority factionPriority;
 
 	NetMasterStartControlParams()
 		: slaveId(0), masterId(0), masterFlags(0) {}
@@ -67,6 +67,7 @@ struct NetMasterStartControlParams
 		ser.Value("slaveId", slaveId, 'eid');
 		ser.Value("masterId", masterId, 'eid');
 		ser.Value("masterFlags", masterFlags);
+		ser.EnumValue("factionPriority", factionPriority, eFP_Master, eFP_Last);
 	}
 };
 

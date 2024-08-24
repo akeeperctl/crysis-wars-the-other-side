@@ -254,6 +254,7 @@ void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEven
 
 			NetMasterStartControlParams params;
 			params.slaveId = entId;
+			params.factionPriority = eFP_Master;
 
 			assert(m_pSynchonizer);
 			m_pSynchonizer->RMISend(
@@ -462,6 +463,7 @@ void CTOSMasterModule::Update(float frametime)
 		{
 			NetMasterStartControlParams params;
 			params.slaveId = slaveId;
+			params.factionPriority = eFP_Master;
 
 			assert(m_pSynchonizer);
 			m_pSynchonizer->RMISend(

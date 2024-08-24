@@ -1241,4 +1241,17 @@ IMPLEMENT_RMI(CGameRules, SvRequestForceSetTeam)
 		SetTeam(params.teamId, params.entityId);
 	return true;
 }
+
+IMPLEMENT_RMI(CGameRules, SvRequestForceSetSpecies)
+{
+	if (gEnv->bServer)
+	{
+		SetSpecies(params.speciesIdx, params.entityId);
+
+		auto pEntity = gEnv->pEntitySystem->GetEntity(params.entityId);
+		if (pEntity)
+			CryLog("<c++> Entity %s set species to %i", pEntity->GetName(), params.speciesIdx);
+	}
+	return true;
+}
 //~TheOtherSide

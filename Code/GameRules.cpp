@@ -45,6 +45,8 @@
 #include "TheOtherSideMP/Game/Modules/Master/MasterModule.h"
 #include "TheOtherSideMP/Helpers/TOS_MasterModule.h"
 #include "TheOtherSideMP/HUD/TOSCrosshair.h"
+#include "TheOtherSideMP/Helpers/TOS_AI.h"
+#include <TheOtherSideMP\Helpers\TOS_Entity.h>
 //TheOtherSide
 
 DbgPlotter g_dbgPlotter;
@@ -4724,5 +4726,33 @@ bool CGameRules::IsSpawnUsed(const EntityId spawnId) const
 	return false;
 }
 
+
 //
 //-------------------------------------------------------------------------------------------
+void CGameRules::SetSpecies(int speciesIdx, EntityId entityId)
+{
+	auto pEntity = TOS_GET_ENTITY(entityId);
+	if (!pEntity)
+		return;
+
+	auto pAI = pEntity->GetAI();
+	if (!pAI)
+		return;
+
+	TOS_AI::SetSpecies(pAI, speciesIdx);
+}
+
+//
+//-------------------------------------------------------------------------------------------
+int CGameRules::GetSpecies(EntityId entityId)
+{
+	auto pEntity = TOS_GET_ENTITY(entityId);
+	if (!pEntity)
+		return -1;
+
+	auto pAI = pEntity->GetAI();
+	if (!pAI)
+		return -1;
+
+	return TOS_AI::GetSpecies(pAI, false);
+}

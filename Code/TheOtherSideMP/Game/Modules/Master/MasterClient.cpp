@@ -2,6 +2,7 @@
 // ReSharper disable CppInconsistentNaming
 // ReSharper disable CppVariableCanBeMadeConstexpr
 #include "StdAfx.h"
+#include "IAgent.h"
 
 //#include "HUD/HUD.h"
 //#include "HUD/HUDScopes.h"
@@ -746,20 +747,53 @@ void CTOSMasterClient::ProcessMeleeDamage() const
 //		
 //}
 
-void CTOSMasterClient::StartControl(IEntity* pEntity, uint dudeFlags /*= 0*/, bool callFromFG /*= false*/)
+void CTOSMasterClient::StartControl(IEntity* pEntity, uint dudeFlags, bool fromFG, EFactionPriority priority)
 {
 	assert(pEntity);
+    if (!pEntity)
+		return;
 
-    m_dudeFlags = dudeFlags;
+	const auto pGameRules = g_pGame->GetGameRules();
+	if (!pGameRules)
+		return;
 
-	// 13.01.2023 Akeeper: Я изменил порядок вызова функций.
-	// Подписанные номера это старая последовательность вызова по возрастанию
-    SetSlaveEntity(pEntity, pEntity->GetClass()->GetName());//2
-	PrepareDude(true, m_dudeFlags);//1
+	m_dudeFlags = dudeFlags;
+
+	const auto dudeId = m_pLocalDude->GetEntityId();
+	const auto slaveId = pEntity->GetId();
+
+	if (gEnv->bClient)
+	{
+		CGameRules::ChangeTeamParams teamParams;
+		teamParams.entityId = priority == eFP_Master ? slaveId : dudeId;
+		teamParams.teamId = pGameRules->GetTeam(priority == eFP_Master ? dudeId : slaveId);
+		pGameRules->GetGameObject()->InvokeRMIWithDependentObject(CGameRules::SvRequestForceSetTeam(), teamParams, eRMI_ToServer, teamParams.entityId);
+
+		CGameRules::ChangeSpeciesParams speciesParams;
+		speciesParams.entityId = priority == eFP_Master ? slaveId : dudeId;;
+		speciesParams.speciesIdx = pGameRules->GetSpecies(priority == eFP_Master ? dudeId : slaveId);
+		pGameRules->GetGameObject()->InvokeRMIWithDependentObject(CGameRules::SvRequestForceSetSpecies(), speciesParams, eRMI_ToServer, speciesParams.entityId);
+	}
+
+	auto pNextSlaveActor = static_cast<CTOSActor*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pEntity->GetId()));
+
+	//TODO: нужно протестить переключение м/у юнитами
+	//const IEntity* const oldSlaveEnt = m_pSlaveEntity;
+	if (m_pSlaveEntity == nullptr)
+	{
+		PrepareNextSlave(pNextSlaveActor);
+	}
+	else if (m_pSlaveEntity && m_pSlaveEntity != pEntity)
+	{
+		PreparePrevSlave(GetSlaveActor());
+		PrepareNextSlave(pNextSlaveActor);
+	}
+
+	SetSlaveEntity(pEntity, pEntity->GetClass()->GetName());
+	PrepareDude(true, m_dudeFlags);
 
 	const auto pSlaveActor = GetSlaveActor();
 	const auto pHUD = g_pGame->GetHUD();
-
 	if (pHUD)
 	{
 		const auto pSlaveConsumer = pSlaveActor->GetEnergyConsumer();
@@ -768,29 +802,9 @@ void CTOSMasterClient::StartControl(IEntity* pEntity, uint dudeFlags /*= 0*/, bo
 			pHUD->TOSSetEnergyConsumer(pSlaveConsumer);
 	}
 
-	const auto pGameRules = g_pGame->GetGameRules();
-	if (pGameRules)
-	{
-		const int dudeTeam = pGameRules->GetTeam(m_pLocalDude->GetEntityId());
-		//pGameRules->ChangeTeam(pSlaveActor, dudeTeam);
-
-		if (gEnv->bClient)
-		{
-			CGameRules::ChangeTeamParams params;
-			params.entityId = m_pSlaveEntity->GetId();
-			params.teamId = dudeTeam;
-
-			pGameRules->GetGameObject()->InvokeRMIWithDependentObject(CGameRules::SvRequestForceSetTeam(), params, eRMI_ToServer, params.entityId);
-		}
-		else
-		{
-			//pGameRules->SetTeam(dudeTeam, m_pSlaveEntity->GetId());
-		}
-	}
-
 	// Запросить права на изменение сущности, если вызов функции был из Flow Graph
 	// Т.к. при вызове через FG не происходит передача прав мастеру на изменение контролируемого раба
-	if (callFromFG)
+	if (fromFG)
 	{
 		const auto pSynch = g_pTOSGame->GetMasterModule()->GetSynchronizer();
 		assert(pSynch);
@@ -817,9 +831,7 @@ void CTOSMasterClient::StartControl(IEntity* pEntity, uint dudeFlags /*= 0*/, bo
 
 	// Событие вызывает RMI, которая отправляется на сервер
 	// Смотреть CTOSMasterModule::OnExtraGameplayEvent()
-
 	auto void_dudeFlags = static_cast<void*>(new uint(m_dudeFlags));
-
 	TOS_RECORD_EVENT(m_pSlaveEntity->GetId(), STOSGameEvent(eEGE_MasterClientOnStartControl, "", true, false, void_dudeFlags));
 }
 
@@ -1242,4 +1254,77 @@ void CTOSMasterClient::PrepareDude(const bool toStartControl, const uint dudeFla
 		pParams->vLimitRangeV = pParams->vLimitRangeVDown = pParams->vLimitRangeVUp = 0;
 
     }
+}
+
+bool CTOSMasterClient::PrepareNextSlave(CTOSActor* pNextActor) const
+{
+	if (!pNextActor)
+		return false;
+
+	//AI
+	/////////////////////////////////////////////
+	auto pAI = pNextActor->GetEntity()->GetAI();
+	if (!pAI)
+		return false;
+
+	auto pAIActor = pAI->CastToIAIActor();
+	if (!pAIActor)
+		return false;
+
+    //Save AI values
+    AgentParameters params = pAI->CastToIAIActor()->GetParameters();
+
+    //Re-register controlled actor in AI System as AI Player
+    if (pAI->GetAIType() == AIOBJECT_PUPPET)
+	{
+		IScriptTable* pTable = pNextActor->GetEntity()->GetScriptTable();
+		if (pTable)
+			Script::CallMethod(pTable, "RegisterAIasPlayer");
+	}
+	
+	//Restore AI values to new ai pointer
+    pAI = pNextActor->GetEntity()->GetAI();
+    if (!pAI)
+		return false;
+
+	pAIActor = pAI->CastToIAIActor();
+	if (!pAIActor)
+		return false;
+
+	pAIActor->SetParameters(params);
+
+	//Weapons
+	/////////////////////////////////////////////
+	if (CWeapon* pWeapon = GetCurrentWeapon(pNextActor))
+	{
+		if (pWeapon->IsFiring())
+			pWeapon->StopFire();
+	}
+}
+
+bool CTOSMasterClient::PreparePrevSlave(CTOSActor* pPrevActor) const
+{
+	if (!pPrevActor)
+		return false;
+
+	if (pPrevActor->GetHealth() <= 0)
+		return false;
+
+    if (CWeapon* pWeapon = GetCurrentWeapon(pPrevActor))
+    {
+        if (pWeapon->IsFiring())
+            pWeapon->StopFire();
+    }
+
+    if (const IAIObject* pAI = pPrevActor->GetEntity()->GetAI())
+    {
+		if (pAI->GetAIType() == AIOBJECT_PLAYER)
+		{
+			IScriptTable* pTable = pPrevActor->GetEntity()->GetScriptTable();
+			if (pTable)
+				Script::CallMethod(pTable, "RegisterAI");
+		}
+    }
+
+    return true;
 }

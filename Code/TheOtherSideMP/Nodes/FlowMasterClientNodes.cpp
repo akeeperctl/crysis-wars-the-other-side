@@ -1,9 +1,7 @@
 #include "StdAfx.h"
 
 #include "Game.h"
-
 #include "Nodes/G2FlowBaseNode.h"
-
 #include "TheOtherSideMP/Game/Modules/Master/MasterClient.h"
 #include "TheOtherSideMP/Game/Modules/Master/MasterModule.h"
 
@@ -32,6 +30,7 @@ public:
 	{
 		EIP_Start = 0,
 		EIP_Cancel,
+		EIP_PriorityFaction,
 		EIP_BeamDude,
 		EIP_DisableSuit,
 		EIP_DisableActions,
@@ -96,10 +95,11 @@ public:
 		static const SInputPortConfig inputs[] = {
 			InputPortConfig_Void("Start", _HELP("Trigger to start controlling input actor")),
 			InputPortConfig_Void("Cancel", _HELP("Trigger to cancel controlling of input actor")),
-			InputPortConfig<bool>("BeamDude", _HELP("Beam dude to input actor position")),
-			InputPortConfig<bool>("DisableSuit", _HELP("Disable dude's nanosuit")),
-			InputPortConfig<bool>("DisableActions", _HELP("Disable dude's human actions")),
-			InputPortConfig<bool>("SaveItems", _HELP("Save/load dude's inventory items before/after start control")),
+			InputPortConfig<int>("Priority", 0, _HELP("Master - the faction is taken from the master and applied to the slave."), "Priority", _UICONFIG("enum_int:Master=0,Slave=1")),
+			InputPortConfig<bool>("BeamDude", true,_HELP("Beam dude to input actor position")),
+			InputPortConfig<bool>("DisableSuit", true,_HELP("Disable dude's nanosuit")),
+			InputPortConfig<bool>("DisableActions", true,_HELP("Disable dude's human actions")),
+			InputPortConfig<bool>("SaveItems", true,_HELP("Save/load dude's inventory items before/after start control")),
 			{nullptr}
 		};
 		static const SOutputPortConfig outputs[] = {
@@ -183,7 +183,9 @@ public:
 				if (GetPortBool(pActInfo, EIP_DisableActions))
 					flags |= CTOSMasterClient::TOS_DUDE_FLAG_ENABLE_ACTION_FILTER;
 
-				pMC->StartControl(pInputEntity, flags, true);
+				const auto factionPriority = EFactionPriority(GetPortInt(pActInfo, EIP_PriorityFaction));				
+
+				pMC->StartControl(pInputEntity, flags, true, factionPriority);
 
 				ActivateOutput(pActInfo, EOP_Started, 1);
 			}

@@ -950,6 +950,30 @@ public:
 		}
 	};
 
+	//TheOtherSide
+	virtual void SetSpecies(int speciesIdx, EntityId entityId);
+	virtual int GetSpecies(EntityId entityId);
+
+	struct ChangeSpeciesParams
+	{
+		EntityId	entityId;
+		int			speciesIdx;
+
+		ChangeSpeciesParams() {};
+		ChangeSpeciesParams(EntityId _entityId, int _speciesIdx)
+			: entityId(_entityId),
+				speciesIdx(_speciesIdx)
+		{
+		}
+
+		void SerializeWith(TSerialize ser)
+		{
+			ser.Value("entityId", entityId, 'eid');
+			ser.Value("speciesIdx", speciesIdx, 'team');
+		}
+	};
+	//TheOtherSide
+
 	DECLARE_SERVER_RMI_NOATTACH_FAST(SvRequestSimpleHit, SimpleHitInfo, eNRT_ReliableUnordered);
 	DECLARE_SERVER_RMI_NOATTACH_FAST(SvRequestHit, HitInfo, eNRT_ReliableUnordered);
 	DECLARE_CLIENT_RMI_NOATTACH_FAST(ClExplosion, ExplosionInfo, eNRT_ReliableUnordered);
@@ -1239,6 +1263,7 @@ protected:
 //TheOtherSide
 	public:
 		DECLARE_SERVER_RMI_NOATTACH(SvRequestForceSetTeam, ChangeTeamParams, eNRT_ReliableOrdered);
+		DECLARE_SERVER_RMI_NOATTACH(SvRequestForceSetSpecies, ChangeSpeciesParams, eNRT_ReliableOrdered);
 
 //~TheOtherSide
 };
