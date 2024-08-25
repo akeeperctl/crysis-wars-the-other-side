@@ -44,7 +44,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v100</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
@@ -466,6 +466,7 @@
     <ClCompile Include="TheOtherSideMP\Game\Modules\Master\MasterClient.cpp" />
     <ClCompile Include="TheOtherSideMP\Game\Modules\Master\MasterModule.cpp" />
     <ClCompile Include="TheOtherSideMP\Game\Modules\Master\MasterSynchronizer.cpp" />
+    <ClCompile Include="TheOtherSideMP\Game\Modules\Zeus\ZeusClient.cpp" />
     <ClCompile Include="TheOtherSideMP\Game\Modules\Zeus\ZeusModule.cpp" />
     <ClCompile Include="TheOtherSideMP\Game\Modules\Zeus\ZeusNodes.cpp" />
     <ClCompile Include="TheOtherSideMP\Game\TOSGame.cpp" />

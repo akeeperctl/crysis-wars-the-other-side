@@ -5,6 +5,15 @@
 
 #include "TheOtherSideMP/Game/TOSGameEventRecorder.h"
 
+// Akeeper 28.01.2024:
+// Проблема: действия будут отпускаться 2 раза подряд. Может вызвать баги.
+// Решение: если режим активации - отпустить, то вызывать другую функцию, которая будет вызывать уже эту
+// с указанным временем нажатия.
+#define ASSING_ACTION(pActor, actionId, activationMode, pressedDuration, checkActionId, func)\
+if ( (actionId) == (checkActionId) )\
+	func( (pActor), (actionId), (activationMode), value, (pressedDuration))\
+
+
 class CTOSGenericModule : public ITOSGameModule // NOLINT(cppcoreguidelines-special-member-functions)
 {
 public:

@@ -9,8 +9,9 @@
 #include <TheOtherSideMP\Helpers\TOS_Inventory.h>
 
 CTOSZeusModule::CTOSZeusModule()
+	: m_zeus(nullptr),
+	m_zeusFlags(0)
 {
-	m_zeus = nullptr;
 }
 
 CTOSZeusModule::~CTOSZeusModule()
@@ -98,6 +99,23 @@ void CTOSZeusModule::ShowHUD(bool show)
 	}
 }
 
+void CTOSZeusModule::SetZeusFlag(uint flag, bool value)
+{
+	if (value)
+	{
+		m_zeusFlags |= flag; // установить бит
+	}
+	else
+	{
+		m_zeusFlags &= ~flag; // сбросить бит
+	}
+}
+
+bool CTOSZeusModule::GetZeusFlag(uint flag) const
+{
+    return (m_zeusFlags & flag) != 0;
+}
+
 void CTOSZeusModule::ApplyZeusProperties(IActor* pPlayer)
 {
 	auto pTOSPlayer = static_cast<CTOSPlayer*>(pPlayer);
@@ -126,10 +144,9 @@ void CTOSZeusModule::ApplyZeusProperties(IActor* pPlayer)
 	if (gEnv->bClient)
 		pTOSPlayer->GetGameObject()->InvokeRMI(CTOSActor::SvRequestHideMe(), NetHideMeParams(true), eRMI_ToServer);
 	else if (gEnv->bServer)
-	{
-		pTOSPlayer->GetGameObject()->SetAspectProfile(eEA_Physics, eAP_Spectator);
 		pTOSPlayer->GetGameObject()->InvokeRMI(CTOSActor::ClMarkHideMe(), NetHideMeParams(true), eRMI_ToAllClients | eRMI_NoLocalCalls);
-	}
+
+	pTOSPlayer->GetGameObject()->SetAspectProfile(eEA_Physics, eAP_Spectator);
 
 	// Режим полета со столкновениями
 	pTOSPlayer->SetFlyMode(1);
@@ -159,4 +176,7 @@ void CTOSZeusModule::ApplyZeusProperties(IActor* pPlayer)
 	{
 		TOS_AI::SendEvent(pAI, AIEVENT_DISABLE);
 	}
+
+	pTOSPlayer->GetAnimatedCharacter()->ForceRefreshPhysicalColliderMode();
+	pTOSPlayer->GetAnimatedCharacter()->RequestPhysicalColliderMode(eColliderMode_Spectator, eColliderModeLayer_Game, "CTOSZeusModule::ApplyZeusProperties");
 }

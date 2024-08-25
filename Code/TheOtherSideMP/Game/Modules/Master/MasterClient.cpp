@@ -111,7 +111,8 @@ void CTOSMasterClient::OnAction(const ActionId& action, const int activationMode
 		m_actionFlags[action] |= TOS_HOLD;
 	}
 
-	ASSING_ACTION(pSlaveActor, action, activationMode, pressedDuration, rGA.attack1, OnActionAttack);
+	ASSING_ACTION(pSlaveActor, action, activationMode, pressedDuration, rGA.attack1, OnActionAttack1);
+	ASSING_ACTION(pSlaveActor, action, activationMode, pressedDuration, rGA.attack2, OnActionAttack2);
 	ASSING_ACTION(pSlaveActor, action, activationMode, pressedDuration, rGA.special, OnActionSpecial);// it is melee
 	ASSING_ACTION(pSlaveActor, action, activationMode, pressedDuration, rGA.moveforward, OnActionMoveForward);
 	ASSING_ACTION(pSlaveActor, action, activationMode, pressedDuration, rGA.moveback, OnActionMoveBack);
@@ -122,7 +123,7 @@ void CTOSMasterClient::OnAction(const ActionId& action, const int activationMode
 }
 
 // ReSharper disable once CppMemberFunctionMayBeConst
-bool CTOSMasterClient::OnActionAttack(const CTOSActor* pActor, const ActionId& actionId, int activationMode, float value, float pressedDur)
+bool CTOSMasterClient::OnActionAttack1(const CTOSActor* pActor, const ActionId& actionId, int activationMode, float value, float pressedDur)
 {
 	const auto pInventory = pActor->GetInventory();
     CRY_ASSERT_MESSAGE(pInventory, "[OnActionAttack] pInventory pointer is NULL");
@@ -142,6 +143,11 @@ bool CTOSMasterClient::OnActionAttack(const CTOSActor* pActor, const ActionId& a
     pWeapon->OnAction(pActor->GetEntityId(), actionId, activationMode, value);
 
     return true;
+}
+
+bool CTOSMasterClient::OnActionAttack2(const CTOSActor* pActor, const ActionId& actionId, int activationMode, float value, float pressedDur)
+{
+	return true;
 }
 
 bool CTOSMasterClient::OnActionSpecial(CTOSActor* pActor, const ActionId& actionId, int activationMode, float value, float pressedDur)

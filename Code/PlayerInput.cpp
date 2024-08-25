@@ -158,6 +158,12 @@ void CPlayerInput::OnAction( const ActionId& actionId, int activationMode, float
 		{
 			pMC->OnAction(actionId, activationMode, value);
 		}
+
+		const auto pZM = g_pTOSGame->GetZeusModule();
+		if (pZM)
+		{
+			pZM->OnAction(actionId, activationMode, value);
+		}
 	}
 	//~TheOtherSide
 

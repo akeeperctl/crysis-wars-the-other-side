@@ -4,6 +4,11 @@
 #include "GameCVars.h"
 #include "Item.h"
 
+//TheOtherSide
+#include <TheOtherSideMP\Game\TOSGame.h>
+#include <TheOtherSideMP\Game\Modules\Zeus\ZeusModule.h>
+//~TheOtherSide
+
 #define ENABLE_NAN_CHECK
 
 #ifdef ENABLE_NAN_CHECK
@@ -570,6 +575,19 @@ void CPlayerRotation::ClampAngles()
 
 void CPlayerRotation::ProcessNormal()
 {
+	//TheOtherSide
+
+	bool canRotate = g_pTOSGame->GetZeusModule()->GetZeusFlag(eZF_CanRotateCamera);
+	bool zeus = m_player.IsZeus();
+	bool isMaster = m_player.IsMaster();
+	bool inVehicle = m_player.GetLinkedVehicle() != nullptr;
+
+	if (zeus && !canRotate && !isMaster && !inVehicle)
+	{
+		return;
+	}
+	//~TheOtherSide
+
 	m_upVector = Vec3::CreateSlerp(m_upVector,m_stats.upVector,min(5.0f*m_frameTime, 1.0f));
 
 	//create a matrix perpendicular to the ground
