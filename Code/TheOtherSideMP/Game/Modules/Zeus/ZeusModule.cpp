@@ -6,6 +6,7 @@
 #include <TheOtherSideMP\Helpers\TOS_AI.h>
 #include <TheOtherSideMP\Helpers\TOS_Console.h>
 #include <TheOtherSideMP\Helpers\TOS_NET.h>
+#include <TheOtherSideMP\Helpers\TOS_Inventory.h>
 
 CTOSZeusModule::CTOSZeusModule()
 {
@@ -118,6 +119,7 @@ void CTOSZeusModule::ApplyZeusProperties(IActor* pPlayer)
 	{
 		pInventory->HolsterItem(true);
 		pInventory->RemoveAllItems();
+		TOS_Inventory::GiveItem(pTOSPlayer, "NightVision", false, false, false);
 	}
 
 	// Скрываем игрока

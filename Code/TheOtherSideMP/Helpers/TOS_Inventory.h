@@ -92,4 +92,9 @@ namespace TOS_Inventory
 			g_pGame->GetIGameFramework()->GetIItemSystem()->GiveItem(pActor, primaryItemName, false, true, false);
 		}
 	};
+
+	inline EntityId GiveItem(IActor* pActor, string weaponName, bool sound, bool select, bool keephistory)
+	{
+		return g_pGame->GetIGameFramework()->GetIItemSystem()->GiveItem(pActor, weaponName, sound, select, keephistory);
+	}
 }
