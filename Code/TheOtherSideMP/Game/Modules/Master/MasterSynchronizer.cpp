@@ -67,10 +67,10 @@ IMPLEMENT_RMI(CTOSMasterSynchronizer, SvRequestMasterAdd)
 
 	if (gEnv->bServer)
 	{
-		CryLog("[C++][%s][%s][SvRequestMasterAdd]", TOS_Debug::GetEnv(), TOS_Debug::GetAct(3));
-
 		const auto pEntity = gEnv->pEntitySystem->GetEntity(params.entityId);
 		assert(pEntity);
+
+		CryLog("<c++> [SvRequestMasterAdd] entity '%s' slave class '%s'", pEntity->GetName(), params.desiredSlaveClassName);
 
 		g_pTOSGame->GetMasterModule()->MasterAdd(pEntity, params.desiredSlaveClassName);
 	}
@@ -84,10 +84,10 @@ IMPLEMENT_RMI(CTOSMasterSynchronizer, SvRequestMasterRemove)
 
 	if (gEnv->bServer)
 	{
-		CryLog("[C++][%s][%s][SvRequestMasterRemove]", TOS_Debug::GetEnv(), TOS_Debug::GetAct(3));
-
 		const auto pEntity = gEnv->pEntitySystem->GetEntity(params.entityId);
 		assert(pEntity);
+
+		CryLog("<c++> [SvRequestMasterRemove] entity '%s'", pEntity->GetName());
 
 		g_pTOSGame->GetMasterModule()->MasterRemove(pEntity);
 	}

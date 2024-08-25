@@ -34,6 +34,7 @@ public:
 		EIP_BeamDude,
 		EIP_DisableSuit,
 		EIP_DisableActions,
+		EIP_SaveLoadParams,
 		EIP_SaveItems,
 	};
 
@@ -99,6 +100,7 @@ public:
 			InputPortConfig<bool>("BeamDude", true,_HELP("Beam dude to input actor position")),
 			InputPortConfig<bool>("DisableSuit", true,_HELP("Disable dude's nanosuit")),
 			InputPortConfig<bool>("DisableActions", true,_HELP("Disable dude's human actions")),
+			InputPortConfig<bool>("SaveLoadParams", true,_HELP("Save/Load pos, rot, species, inventory, suit energy and mode")),
 			InputPortConfig<bool>("SaveItems", true,_HELP("Save/load dude's inventory items before/after start control")),
 			{nullptr}
 		};
@@ -174,19 +176,17 @@ public:
 				if (GetPortBool(pActInfo, EIP_BeamDude))
 					flags |= CTOSMasterClient::TOS_DUDE_FLAG_BEAM_MODEL;
 
-				//if (GetPortBool(pActInfo, EIP_HideDude))
-				//	flags |= TOS_DUDE_FLAG_HIDE_MODEL;
-
 				if (GetPortBool(pActInfo, EIP_DisableSuit))
 					flags |= CTOSMasterClient::TOS_DUDE_FLAG_DISABLE_SUIT;
 
 				if (GetPortBool(pActInfo, EIP_DisableActions))
 					flags |= CTOSMasterClient::TOS_DUDE_FLAG_ENABLE_ACTION_FILTER;
 
+				if (GetPortBool(pActInfo, EIP_SaveLoadParams))
+					flags |= CTOSMasterClient::TOS_DUDE_FLAG_SAVELOAD_PARAMS;
+
 				const auto factionPriority = EFactionPriority(GetPortInt(pActInfo, EIP_PriorityFaction));				
-
 				pMC->StartControl(pInputEntity, flags, true, factionPriority);
-
 				ActivateOutput(pActInfo, EOP_Started, 1);
 			}
 			else if (IsPortActive(pActInfo, EIP_Cancel))

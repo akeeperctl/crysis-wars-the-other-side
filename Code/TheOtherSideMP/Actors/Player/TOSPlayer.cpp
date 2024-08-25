@@ -161,33 +161,6 @@ bool CTOSPlayer::NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profi
 
 void CTOSPlayer::Release()
 {
-	//if (gEnv->bServer)
-	//	CryLogAlways("[C++][SERVER][FUNC CALL][CTOSPlayer::Release] PlayerId: %i", GetEntityId());
-	//else if (gEnv->bClient)
-	//	CryLogAlways("[C++][CLIENT][FUNC CALL][CTOSPlayer::Release] PlayerId: %i", GetEntityId());
-
-	//Case 2 not work
-	/*if (gEnv->bClient)
-	{
-		auto pSender = g_pTOSGame->GetMasterModule()->GetRMISender();
-		assert(pSender);
-
-		MasterAddingParams params;
-		params.entityId = 3323;
-
-		pSender->RMISend(CTOSMasterRMISender::SvRequestMasterAdd(), params, eRMI_ToServer);
-	}*/
-
-	//Case 3 not work
-	//auto pSender = g_pTOSGame->GetMasterModule()->GetRMISender();
-	//assert(pSender);
-	//
-	//PintestParams params;
-	//params.commentary = "[CTOSPlayer::Release]";
-
-	//if (gEnv->bClient)
-	//	pSender->RMISend(CTOSMasterRMISender::SvRequestPintest(), params, eRMI_ToServer);
-
 	SAFE_DELETE(m_pMasterClient);
 
 	// Если локальный игрок, то снимает удаляем мастер-клиент на локальной машине 

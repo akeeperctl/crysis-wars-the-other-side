@@ -11,6 +11,8 @@
 
 #include "TheOtherSideMP/Actors/Player/TOSPlayer.h"
 #include "TheOtherSideMP/Game/TOSGame.h"
+#include "TheOtherSideMP/Game/Modules/GenericModule.h"
+#include "TheOtherSideMP/Game/Modules/Zeus/ZeusModule.h"
 
 //#include "PlayerInput.h"
 
@@ -31,13 +33,6 @@
 #include "TheOtherSideMP/Helpers/TOS_Console.h"
 #include "TheOtherSideMP/HUD/TOSCrosshair.h"
 
-// Akeeper 28.01.2024:
-// Проблема: действия будут отпускаться 2 раза подряд. Может вызвать баги.
-// Решение: если режим активации - отпустить, то вызывать другую функцию, которая будет вызывать уже эту
-// с указанным временем нажатия.
-#define ASSING_ACTION(pActor, actionId, activationMode, pressedDuration, checkActionId, func)\
-if ( (actionId) == (checkActionId) )\
-	func( (pActor), (actionId), (activationMode), value, (pressedDuration))\
 
 CTOSMasterClient::CTOSMasterClient(CTOSPlayer* pPlayer)
 	: m_pLocalDude(pPlayer),
@@ -694,23 +689,19 @@ void CTOSMasterClient::StartControl(IEntity* pEntity, uint dudeFlags, bool fromF
 	{
 		const auto pSynch = g_pTOSGame->GetMasterModule()->GetSynchronizer();
 		assert(pSynch);
-		if (pSynch)
+		if (pSynch && gEnv->bClient)
 		{
-			NetDelegateAuthorityParams params1;
-			params1.masterChannelId = m_pLocalDude->GetChannelId();
-			params1.slaveId = m_pSlaveEntity->GetId();
-
-			pSynch->RMISend(CTOSMasterSynchronizer::SvRequestDelegateAuthority(), params1, eRMI_ToServer);
-
-
-			//const auto pSlaveEntClsCvar = gEnv->pConsole->GetCVar("tos_cl_SlaveEntityClass");
-			//assert(pSlaveEntClsCvar);
+			if (gEnv->bMultiplayer)
+			{
+				NetDelegateAuthorityParams params1;
+				params1.masterChannelId = m_pLocalDude->GetChannelId();
+				params1.slaveId = m_pSlaveEntity->GetId();
+				pSynch->RMISend(CTOSMasterSynchronizer::SvRequestDelegateAuthority(), params1, eRMI_ToServer);
+			}
 
 			NetMasterAddingParams params2;
 			params2.entityId = m_pLocalDude->GetEntityId();
-			//params2.desiredSlaveClassName = pSlaveEntClsCvar->GetString();
 			params2.desiredSlaveClassName = "Trooper";
-
 			pSynch->RMISend(CTOSMasterSynchronizer::SvRequestMasterAdd(), params2, eRMI_ToServer);
 		}
 	}
@@ -723,8 +714,6 @@ void CTOSMasterClient::StartControl(IEntity* pEntity, uint dudeFlags, bool fromF
 
 void CTOSMasterClient::StopControl(bool callFromFG /*= false*/)
 {
-	TOS_RECORD_EVENT(0, STOSGameEvent(eEGE_MasterClientOnStopControl, callFromFG ? "from FG" : "", true));
-
 	const auto pHUD = g_pGame->GetHUD();
 	if (pHUD)
 	{
@@ -752,6 +741,8 @@ void CTOSMasterClient::StopControl(bool callFromFG /*= false*/)
 			pSynch->RMISend(CTOSMasterSynchronizer::SvRequestMasterRemove(), params2, eRMI_ToServer);
 		}
 	}
+
+	TOS_RECORD_EVENT(0, STOSGameEvent(eEGE_MasterClientOnStopControl, callFromFG ? "from FG" : "", true));
 }
 
 bool CTOSMasterClient::SetSlaveEntity(IEntity* pEntity, const char* cls)
@@ -897,11 +888,7 @@ void CTOSMasterClient::PrepareDude(const bool toStartControl, const uint dudeFla
 
 	if (toStartControl)
     {
-		//if (gEnv->bEditor)
-		//{
-		//	g_pTOSGame->GetMasterModule()->SaveMasterClientParams(m_pLocalDude->GetEntity());
-		//}
-		//else
+		if (dudeFlags & TOS_DUDE_FLAG_SAVELOAD_PARAMS)
 		{
 			pSynch->RMISend(
 				CTOSMasterSynchronizer::SvRequestSaveMCParams(), 
@@ -1019,17 +1006,17 @@ void CTOSMasterClient::PrepareDude(const bool toStartControl, const uint dudeFla
     }
     else
     {
-		//if (gEnv->bEditor)
-		//{
-		//	g_pTOSGame->GetMasterModule()->ApplyMasterClientParams(m_pLocalDude->GetEntity());
-		//}
-		//else
+		if (dudeFlags & TOS_DUDE_FLAG_SAVELOAD_PARAMS)
 		{
 			pSynch->RMISend(
 				CTOSMasterSynchronizer::SvRequestApplyMCSavedParams(),
 				NetMasterIdParams(m_pLocalDude->GetEntityId()),
 				eRMI_ToServer);
 		}
+
+		auto pAI = m_pLocalDude->GetEntity()->GetAI();
+		if (pAI)
+			TOS_AI::SendEvent(pAI, AIEVENT_ENABLE);
 
         if (dudeFlags & TOS_DUDE_FLAG_ENABLE_ACTION_FILTER)
         {
@@ -1073,12 +1060,6 @@ void CTOSMasterClient::PrepareDude(const bool toStartControl, const uint dudeFla
 		}
         SAFE_HUD_FUNC(TOSSetWeaponName(""))
 
-        //g_pControlSystem->GetSquadSystem()->AnySquadClientLeft();
-
-        //auto* pSquad = g_pControlSystem->GetSquadSystem()->GetSquadFromMember(m_pLocalDude, true);
-        //if (pSquad && pSquad->GetLeader() != nullptr)
-        //    pSquad->OnPlayerAdded();
-
         //Clean the OnUseData from player .lua script
         IScriptTable* pTable = m_pLocalDude->GetEntity()->GetScriptTable();
         if (pTable)
@@ -1116,10 +1097,6 @@ void CTOSMasterClient::PrepareDude(const bool toStartControl, const uint dudeFla
 
             if (g_pGame->GetHUD())
             {
-                //TODO: 10/11/2023, 07:35 Нужно написать функции, меняющие интерфейс жизней и инвентаря
-                //SetAmmoHealthHUD(m_pLocalDude, "Libs/UI/HUD_AmmoHealthEnergySuit.gfx");
-                //SetInventoryHUD(m_pLocalDude, "Libs/UI/HUD_WeaponSelection.gfx");
-
 				SAFE_HUD_FUNC(TOSSetAmmoHealthHUD(m_pLocalDude, "Libs/UI/HUD_AmmoHealthEnergySuit.gfx"));
 				SAFE_HUD_FUNC(TOSSetInventoryHUD(m_pLocalDude, "Libs/UI/HUD_WeaponSelection.gfx"));
 
@@ -1148,15 +1125,9 @@ void CTOSMasterClient::PrepareDude(const bool toStartControl, const uint dudeFla
 
         }
 
-        //if (dudeFlags & TOS_DUDE_FLAG_CLEAR_INVENTORY)
-        //{
-        //    //TODO Загрузка инвентаря
-        //}
-
 		SActorParams* pParams = m_pLocalDude->GetActorParams();
 		pParams->vLimitRangeH = 0;
 		pParams->vLimitRangeV = pParams->vLimitRangeVDown = pParams->vLimitRangeVUp = 0;
-
     }
 }
 

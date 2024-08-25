@@ -532,16 +532,16 @@ void CTOSMasterModule::MasterAdd(const IEntity* pMasterEntity, const char* slave
 {
 	if (gEnv->bServer && pMasterEntity)
 	{
+		const EntityId id = pMasterEntity->GetId();
+		auto pActor = static_cast<CTOSActor*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(id));
+
 		if (!IsMaster(pMasterEntity))
 		{
-			const EntityId id = pMasterEntity->GetId();
-
 			auto info = STOSMasterInfo();
 			info.desiredSlaveClassName = slaveDesiredClass;
 
 			m_masters[id] = info;
 
-			auto pActor = static_cast<CTOSActor*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(id));
 			if (pActor)
 			{
 				pActor->SetMeMaster(true);
@@ -549,6 +549,16 @@ void CTOSMasterModule::MasterAdd(const IEntity* pMasterEntity, const char* slave
 			}
 
 			TOS_RECORD_EVENT(id, STOSGameEvent(eEGE_MasterAdd, "", true));
+		}
+
+		// Почему то в одиночной игре в редакторе IsMaster срабатывает не так как нужно
+		if (!gEnv->bMultiplayer)
+		{
+			if (pActor)
+			{
+				pActor->SetMeMaster(true);
+				pActor->GetGameObject()->ChangedNetworkState(TOS_NET::SERVER_ASPECT_STATIC);
+			}
 		}
 	}
 }
@@ -848,10 +858,6 @@ void CTOSMasterModule::ApplyMasterClientParams(IEntity* pMasterEntity)
 		STOSMasterInfo info;
 		GetMasterInfo(pMasterEntity, info);
 
-		IAIObject* pAI = pMasterEntity->GetAI();
-		if (pAI)
-			pAI->Event(AIEVENT_ENABLE, nullptr);
-
 		const auto& saved = info.mcSavedParams;
 		if (!saved.dirty)
 			return;
@@ -876,6 +882,7 @@ void CTOSMasterModule::ApplyMasterClientParams(IEntity* pMasterEntity)
 			pSuit->SetMode(static_cast<ENanoMode>(suitMode));
 		}
 
+		IAIObject* pAI = pMasterEntity->GetAI();
 		if (pAI)
 			TOS_AI::SetSpecies(pAI, species);
 

@@ -60,7 +60,8 @@ public:
 		TOS_DUDE_FLAG_BEAM_MODEL = BIT(1),
 		//TOS_DUDE_FLAG_CLEAR_INVENTORY      = BIT(2),
 		TOS_DUDE_FLAG_DISABLE_SUIT = BIT(2),
-		TOS_DUDE_FLAG_ENABLE_ACTION_FILTER = BIT(3)
+		TOS_DUDE_FLAG_ENABLE_ACTION_FILTER = BIT(3),
+		TOS_DUDE_FLAG_SAVELOAD_PARAMS = BIT(4),
 	};
 
 	enum ETOSActionFlags
@@ -131,7 +132,8 @@ public:
 	// ~IActionListener
 
 private:
-	bool OnActionAttack(const CTOSActor* pActor, const ActionId& actionId, int activationMode, float value, float pressedDur = 0);
+	bool OnActionAttack1(const CTOSActor* pActor, const ActionId& actionId, int activationMode, float value, float pressedDur = 0);
+	bool OnActionAttack2(const CTOSActor* pActor, const ActionId& actionId, int activationMode, float value, float pressedDur = 0);
 	bool OnActionSpecial(CTOSActor* pActor, const ActionId& actionId, int activationMode, float value, float pressedDur = 0);
 	bool OnActionMoveForward(CTOSActor* pActor, const ActionId& actionId, int activationMode, float value, float pressedDur = 0);
 	bool OnActionMoveBack(CTOSActor* pActor,const ActionId& actionId, int activationMode, float value, float pressedDur = 0);
