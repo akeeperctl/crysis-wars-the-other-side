@@ -1496,7 +1496,7 @@ end
 function BasicActor.Server:OnHit(hit)
 	--TheOtherSide
 	--if (self.actor:GetSpectatorMode()~=0) then
-	if (self.actor:GetSpectatorMode()~=0 or g_gameRules:IsInvulnerable(self.id)) then
+	if (self.actor:GetSpectatorMode()~=0 or g_gameRules.game:IsInvulnerable(self.id)) then
 		return;
 	end
 	--~TheOtherSide
