@@ -18,8 +18,11 @@ void CTOSHUDCrosshair::Update(const float fDeltaTime)
 void CTOSHUDCrosshair::UpdateCrosshair()
 {
 	CHUDCrosshair::UpdateCrosshair();
+}
 
-
+void CTOSHUDCrosshair::Show(bool show)
+{
+	m_animCrossHair.SetVisible(show);
 }
 
 void CTOSHUDCrosshair::ShowFriendCross(const bool show)

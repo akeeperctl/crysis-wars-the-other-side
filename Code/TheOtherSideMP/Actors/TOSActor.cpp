@@ -32,6 +32,7 @@ CTOSActor::CTOSActor()
 	//m_filteredDeltaMovement(ZERO),
 	m_isSlave(false),
 	m_isMaster(false),
+	m_isZeus(false),
 	m_chargingJump(false),
 	m_lastShooterId(0),
 	m_pEnergyConsumer(nullptr)
@@ -190,6 +191,7 @@ bool CTOSActor::NetSerialize(TSerialize ser, const EEntityAspects aspect, const 
 		// Персонаж мастера всегда должен быть невидим
 		ser.Value("is_master", m_isMaster, 'bool');
 		ser.Value("is_slave", m_isSlave, 'bool');
+		ser.Value("is_zeus", m_isZeus, 'bool');
 
 		if (ser.IsReading())
 		{
@@ -294,6 +296,7 @@ void CTOSActor::Update(SEntityUpdateContext& ctx, const int updateSlot)
 
 	NETINPUT_TRACE(GetEntityId(), m_isMaster);
 	NETINPUT_TRACE(GetEntityId(), m_isSlave);
+	NETINPUT_TRACE(GetEntityId(), m_isZeus);
 }
 
 void CTOSActor::Release()

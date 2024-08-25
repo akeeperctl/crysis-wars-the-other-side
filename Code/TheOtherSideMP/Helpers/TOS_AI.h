@@ -22,6 +22,12 @@ namespace TOS_AI
 	//functions forward declaration
 	inline void EnableCombat(IAIObject* pAI, bool enable, bool toFirst, const char* solution);
 
+	inline void SendEvent(IAIObject* pAI, int eventIdx)
+	{
+		if (pAI)
+			pAI->Event(eventIdx, 0);
+	}
+
 	inline void PauseAction(IAIObject* pAI)
 	{
 		if (pAI)

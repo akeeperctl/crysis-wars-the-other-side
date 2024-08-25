@@ -121,7 +121,22 @@ void CHUD::OnSubtitlePanoramicHeightCVarChanged(ICVar *pCVar)
 
 //-----------------------------------------------------------------------------------------------------
 
-CHUD::CHUD() 
+void CHUD::ShowPlayerStats(bool show)
+{
+	m_animPlayerStats.SetVisible(show);
+}
+
+void CHUD::ShowRadar(bool show)
+{
+	m_animRadarCompassStealth.SetVisible(show);
+}
+
+void CHUD::ShowCrosshair(bool show)
+{
+	m_pHUDCrosshair->Show(show);
+}
+
+CHUD::CHUD()
 {
 	CFlashMenuObject::GetFlashMenuObject()->SetColorChanged();
 	// CHUDCommon constructor runs first
@@ -4134,7 +4149,7 @@ void CHUD::TOSSetAmmoHealthHUD(IActor* pActor, const char* filePath)
 
 	//Health, Energy, Ammo
 	m_animPlayerStats.Unload();
-	m_animPlayerStats.Load(filePath, eFD_Right, eFAF_Visible | eFAF_ThisHandler);
+	m_animPlayerStats.Load(filePath, eFD_Right, eFAF_ThisHandler);
 
 	const int health = (pActor->GetHealth() / pActor->GetMaxHealth()) * 100 + 1;
 	int		  energy = 0;
@@ -4170,7 +4185,7 @@ void CHUD::TOSSetInventoryHUD(IActor* pActor, const char* filePath) const
 		return;
 
 	pHUD->m_animWeaponSelection.Unload();
-	pHUD->m_animWeaponSelection.Load(filePath, eFD_Right, eFAF_Visible | eFAF_ThisHandler);
+	pHUD->m_animWeaponSelection.Load(filePath, eFD_Right, eFAF_ThisHandler);
 
 	TOS_HUD::ShowInventory(pActor, "null", "null");
 }

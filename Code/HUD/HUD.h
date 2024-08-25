@@ -158,6 +158,12 @@ public:
 
 	typedef std::map<string, SHudObjective> THUDObjectiveList;
 
+	//TheOtherSide
+	void ShowPlayerStats(bool show);
+	void ShowRadar(bool show);
+	void ShowCrosshair(bool show);
+	//~TheOtherSide
+
 	CHUD();
 	virtual	~	CHUD();
 

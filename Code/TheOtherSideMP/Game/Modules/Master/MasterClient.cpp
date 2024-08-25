@@ -1002,6 +1002,8 @@ void CTOSMasterClient::PrepareDude(const bool toStartControl, const uint dudeFla
     }
     else
     {
+		bool zeus = m_pLocalDude->IsZeus();
+
 		if (!gEnv->bMultiplayer)
 		{
 			pSynch->RMISend(
@@ -1015,10 +1017,10 @@ void CTOSMasterClient::PrepareDude(const bool toStartControl, const uint dudeFla
 			g_pGameActions->FilterMasterControlSlave()->Enable(false);
         }
 
-		//if (dudeFlags & TOS_DUDE_FLAG_HIDE_MODEL)
-		//{
-		m_pLocalDude->GetGameObject()->InvokeRMI(CTOSActor::SvRequestHideMe(), NetHideMeParams(false), eRMI_ToServer);
-		//}
+		if (!zeus)
+		{
+			m_pLocalDude->GetGameObject()->InvokeRMI(CTOSActor::SvRequestHideMe(), NetHideMeParams(false), eRMI_ToServer);
+		}
 
 		if (dudeFlags & TOS_DUDE_FLAG_BEAM_MODEL)
 		{

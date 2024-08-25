@@ -32,6 +32,8 @@ public:
 	//~ITOSGameModule
 
 	void NetMakePlayerZeus(IActor* pPlayer);
+	void ShowHUD(bool show);
 private:
+	void ApplyZeusProperties(IActor* pPlayer);
 	CTOSPlayer* m_zeus;
 };

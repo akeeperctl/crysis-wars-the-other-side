@@ -1493,10 +1493,13 @@ function BasicActor.Server:OnDeadHit(hit)
 end
 
 
-function BasicActor.Server:OnHit(hit)	
-	if (self.actor:GetSpectatorMode()~=0) then
+function BasicActor.Server:OnHit(hit)
+	--TheOtherSide
+	--if (self.actor:GetSpectatorMode()~=0) then
+	if (self.actor:GetSpectatorMode()~=0 or g_gameRules:IsInvulnerable(self.id)) then
 		return;
 	end
+	--~TheOtherSide
 
 	if (hit.damage>=1) then
 		if (g_gameRules and hit.target and hit.target.actor and hit.target.actor:IsPlayer()) then

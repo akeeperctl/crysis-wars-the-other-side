@@ -28,6 +28,7 @@ void STOSCvars::InitCVars(IConsole* pConsole)
 	pConsole->Register("tos_sv_EnableShotValidator", &tos_sv_EnableShotValidator, 1, 0, "Enable shot validator in multiplayer 1 - yes, 0 - no");
 	pConsole->Register("tos_tr_charging_jump_input_time", &tos_tr_charging_jump_input_time, 0.20f, 0, "Time between press jump and jump action confirm");
 	pConsole->Register("tos_sv_PlayerAlwaysAiming", &tos_sv_PlayerAlwaysAiming, 1, 0, "");
+	pConsole->Register("tos_temp_var", &tos_temp_var, 0, 0, "");
 
 	tos_sv_AlienMPEquipPack =  pConsole->RegisterString("tos_sv_AlienMPEquipPack",    "Alien_naked", 0, "");
 	tos_sv_HunterMPEquipPack = pConsole->RegisterString("tos_sv_HunterMPEquipPack",   "Alien_Hunter", 0, "");
@@ -102,6 +103,7 @@ void STOSCvars::ReleaseCVars()
 	//pConsole->UnregisterVariable("tos_cl_SlaveEntityClass", true);
 
 	//pConsole->UnregisterVariable("tos_cl_JoinAsMaster", true);
+	pConsole->UnregisterVariable("tos_temp_var", true);
 	pConsole->UnregisterVariable("tos_sv_PlayerAlwaysAiming", true);
 	pConsole->UnregisterVariable("tos_cl_DisableSlaveRequestMovement", true);
 	pConsole->UnregisterVariable("tos_any_EventRecorderLogVanilla", true);

@@ -29,7 +29,7 @@ public:
 	void UpdateCrosshair() ;
 	// ~CHUDCrosshair
 
-
+	void Show(bool show);
 	void ShowFriendCross(bool show);
 
 protected:

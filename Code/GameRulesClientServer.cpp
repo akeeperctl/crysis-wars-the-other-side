@@ -123,13 +123,19 @@ void CGameRules::ClientHit(const HitInfo& hitInfo)
 //------------------------------------------------------------------------
 void CGameRules::ServerSimpleHit(const SimpleHitInfo &simpleHitInfo)
 {
+	//TheOtherSide
+	CTOSActor *pActor = GetActorByEntityId(simpleHitInfo.targetId);
+	if (pActor && pActor->IsZeus())
+		return;
+	//~TheOtherSide
+
 	switch (simpleHitInfo.type)
 	{
 	case 0: // tag
 		{
 			if (!simpleHitInfo.targetId)
 				return;
-
+			
 			// tagged entities are temporary in MP, not in SP.
 //			bool temp = gEnv->bMultiplayer;
 			//kirill: - not anymore - design says must stay on
@@ -262,9 +268,17 @@ void CGameRules::ProcessServerHit(HitInfo &hitInfo)
 
 	if (hitInfo.targetId)
 	{
-		CActor *pTarget=GetActorByEntityId(hitInfo.targetId);
-		if (pTarget && pTarget->GetSpectatorMode())
-			ok=false;
+		CTOSActor *pTarget=GetActorByEntityId(hitInfo.targetId);
+		//TheOtherSide
+		//if (pTarget && pTarget->GetSpectatorMode())
+		if (pTarget)
+		{
+			if (pTarget->GetSpectatorMode())
+				ok=false;
+			else if (pTarget->IsZeus())
+				ok=false;
+		}
+		//~TheOtherSide
 	}
 
 	if (ok)

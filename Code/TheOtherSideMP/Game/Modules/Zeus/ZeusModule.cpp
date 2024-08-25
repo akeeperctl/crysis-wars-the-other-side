@@ -3,6 +3,9 @@
 #include "GameActions.h"
 #include "ZeusModule.h"
 #include <TheOtherSideMP\HUD\TOSCrosshair.h>
+#include <TheOtherSideMP\Helpers\TOS_AI.h>
+#include <TheOtherSideMP\Helpers\TOS_Console.h>
+#include <TheOtherSideMP\Helpers\TOS_NET.h>
 
 CTOSZeusModule::CTOSZeusModule()
 {
@@ -15,7 +18,33 @@ CTOSZeusModule::~CTOSZeusModule()
 
 void CTOSZeusModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event)
 {
+	switch (event.event)
+	{
+		case eEGE_ActorRevived:
+		{
+			if (m_zeus && m_zeus->GetEntityId() == pEntity->GetId())
+			{
+				m_zeus->m_isZeus = false;
+				m_zeus = nullptr;
+			}
+			break;
+		}
+		case eEGE_MasterClientOnStartControl:
+		{
+			if(m_zeus)
+				ShowHUD(true);
+			break;
+		}
+		case eEGE_MasterClientOnStopControl:
+		{
+			if(m_zeus)
+				ApplyZeusProperties(m_zeus);
+			break;
+		}
 
+		default:
+			break;
+	}
 }
 
 void CTOSZeusModule::GetMemoryStatistics(ICrySizer* s)
@@ -48,10 +77,43 @@ void CTOSZeusModule::NetMakePlayerZeus(IActor* pPlayer)
 	if (!pPlayer)
 		return;
 
+	if (m_zeus)
+		return;
+
 	m_zeus = static_cast<CTOSPlayer*>(pPlayer);
+	ApplyZeusProperties(m_zeus);
+}
+
+void CTOSZeusModule::ShowHUD(bool show)
+{
+	const auto pHUD = g_pGame->GetHUD();
+	if (pHUD)
+	{
+		// HP
+		pHUD->ShowPlayerStats(show);
+
+		pHUD->ShowRadar(show);
+		pHUD->ShowCrosshair(show);
+	}
+}
+
+void CTOSZeusModule::ApplyZeusProperties(IActor* pPlayer)
+{
+	auto pTOSPlayer = static_cast<CTOSPlayer*>(pPlayer);
+
+	// Сбрасываем статы
+	pTOSPlayer->GetActorStats()->inAir = 0.0f;
+	pTOSPlayer->GetActorStats()->onGround = 0.0f;
+
+	if (gEnv->bServer)
+	{
+		// Становимся неуязвимым к урону
+		pTOSPlayer->m_isZeus = true;
+		pTOSPlayer->GetGameObject()->ChangedNetworkState(TOS_NET::SERVER_ASPECT_STATIC);
+	}
 
 	// Отбираем оружие
-	IInventory* pInventory = m_zeus->GetInventory();
+	IInventory* pInventory = pTOSPlayer->GetInventory();
 	if (pInventory)
 	{
 		pInventory->HolsterItem(true);
@@ -60,18 +122,18 @@ void CTOSZeusModule::NetMakePlayerZeus(IActor* pPlayer)
 
 	// Скрываем игрока
 	if (gEnv->bClient)
-		m_zeus->GetGameObject()->InvokeRMI(CTOSActor::SvRequestHideMe(), NetHideMeParams(true), eRMI_ToServer);
+		pTOSPlayer->GetGameObject()->InvokeRMI(CTOSActor::SvRequestHideMe(), NetHideMeParams(true), eRMI_ToServer);
 	else if (gEnv->bServer)
 	{
-		m_zeus->GetGameObject()->SetAspectProfile(eEA_Physics, eAP_Spectator);
-		m_zeus->GetGameObject()->InvokeRMI(CTOSActor::ClMarkHideMe(), NetHideMeParams(true), eRMI_ToAllClients | eRMI_NoLocalCalls);	
+		pTOSPlayer->GetGameObject()->SetAspectProfile(eEA_Physics, eAP_Spectator);
+		pTOSPlayer->GetGameObject()->InvokeRMI(CTOSActor::ClMarkHideMe(), NetHideMeParams(true), eRMI_ToAllClients | eRMI_NoLocalCalls);
 	}
 
 	// Режим полета со столкновениями
-	m_zeus->SetFlyMode(1);
+	pTOSPlayer->SetFlyMode(1);
 
 	// убираем нанокостюм
-	CNanoSuit* pSuit = m_zeus->GetNanoSuit();
+	CNanoSuit* pSuit = pTOSPlayer->GetNanoSuit();
 	if (pSuit)
 	{
 		pSuit->SetMode(NANOMODE_DEFENSE);
@@ -79,17 +141,20 @@ void CTOSZeusModule::NetMakePlayerZeus(IActor* pPlayer)
 		pSuit->SetModeDefect(NANOMODE_SPEED, true);
 		pSuit->SetModeDefect(NANOMODE_STRENGTH, true);
 	}
+	
+	if (pTOSPlayer->IsClient())
+	{
+		// Убираем лишние действия
+		g_pGameActions->FilterZeus()->Enable(true);
 
-	// Убираем лишние действия
-	g_pGameActions->FilterZeus()->Enable(true);
+		// Скрываем HUD
+		ShowHUD(false);
+	}
 
-	// Скрываем прицел
-	const auto pHUD = g_pGame->GetHUD();
-	const auto pHUDCrosshair = pHUD->GetCrosshair();
-	pHUDCrosshair->SetOpacity(0);
-
-	// Скрыть HP
-	// Скрыть Радар
-	// Стать Неуязвимым
-	// Стать Невидимым для ИИ
+	// Становимся невидимым для ИИ
+	auto pAI = pTOSPlayer->GetEntity()->GetAI();
+	if (pAI)
+	{
+		TOS_AI::SendEvent(pAI, AIEVENT_DISABLE);
+	}
 }

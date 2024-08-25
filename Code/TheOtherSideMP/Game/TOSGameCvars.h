@@ -67,6 +67,8 @@ struct STOSCvars  // NOLINT(cppcoreguidelines-special-member-functions)
 	// Правило написания консольных значений
 	// мод_среда_ОписаниеДействия
 
+	int tos_temp_var;
+
 	int tos_sv_AIActionTrackerDebugDraw;
 	int tos_sv_AIActionTrackerDebugLog;
 	int tos_sv_AllDebugLog;

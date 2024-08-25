@@ -2443,12 +2443,20 @@ int CScriptBind_GameRules::IsInvulnerable(IFunctionHandler* pH, ScriptHandle pla
 {
 	CGameRules *pGameRules = GetGameRules(pH);
 
-	CActor* pActor = pGameRules->GetActorByEntityId((EntityId)playerId.n);
+	//TheOtherSide
+	//CActor* pActor = pGameRules->GetActorByEntityId((EntityId)playerId.n);
+	CTOSActor* pActor = pGameRules->GetActorByEntityId((EntityId)playerId.n);
 	if (!pActor || !pActor->IsPlayer())
 		return pH->EndFunction();
+	//~TheOtherSide
 
 	if (pActor->GetActorClass() != CPlayer::GetActorClassType())
 		return pH->EndFunction();
+
+	//TheOtherSide
+	if (pActor->IsZeus())
+		return pH->EndFunction(true);
+	//~TheOtherSide
 
 	CPlayer *pPlayer=static_cast<CPlayer *>(pActor);
 	if (CNanoSuit *pNanoSuit=pPlayer->GetNanoSuit())

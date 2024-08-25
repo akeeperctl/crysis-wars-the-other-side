@@ -56,9 +56,9 @@ void CTOSGame::Init()
 
 	//Modules
 
+	m_pZeusModule = new CTOSZeusModule();
 	m_pEntitySpawnModule = new CTOSEntitySpawnModule();
 	m_pMasterModule = new CTOSMasterModule();
-	m_pZeusModule = new CTOSZeusModule();
 
 	//~Modules
 

@@ -185,6 +185,7 @@ class CTOSActor:
 {
 public:
 
+	friend class CTOSZeusModule;
 	friend class CTOSMasterModule;
 	friend class CTOSMasterClient;
 
@@ -284,6 +285,7 @@ public:
 	STOSSlaveStats& GetSlaveStats() { return m_slaveStats; } ///< Получить статистику раба. Изменять можно.
 	bool IsSlave() const {return m_isSlave;}
 	bool IsMaster() const {return m_isMaster;}
+	bool IsZeus() const {return m_isZeus;}
 	bool IsLocalSlave() const; ///< проверка на локальной машине является ли актёр рабом
 
 	virtual CTOSEnergyConsumer* GetEnergyConsumer() const;
@@ -306,7 +308,7 @@ private:
 
 	Quat m_lastSpawnPointRotation;
 	EntityId m_lastShooterId;
-
+	bool m_isZeus;
 	bool m_isSlave; // сериализованное по сети значение, является ли актёр рабом
 	bool m_isMaster; // сериализованное по сети значение, является ли актёр мастером
 
