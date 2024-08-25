@@ -1796,6 +1796,11 @@ IEntity *CPlayer::LinkToVehicle(EntityId vehicleId)
 		if (IVehicleSeat *pSeat = pVehicle->GetSeatForPassenger(GetEntity()->GetId()))
 		{
 			CALL_PLAYER_EVENT_LISTENERS(OnEnterVehicle(this,pVehicle->GetEntity()->GetClass()->GetName(),pSeat->GetSeatName(),m_stats.isThirdPerson));
+
+			//TheOtherSide
+			string vehName = pVehicle->GetEntity()->GetClass()->GetName();
+			TOS_RECORD_EVENT(GetEntityId(), STOSGameEvent(eEGE_ActorEnterVehicle, vehName.c_str(), true, false, 0, 0, pVehicle->GetEntityId()));
+			//~TheOtherSide
 		}
 
 		// don't interpolate to vehicle camera (otherwise it intersects the vehicle)

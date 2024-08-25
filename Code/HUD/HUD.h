@@ -162,6 +162,7 @@ public:
 	void ShowPlayerStats(bool show);
 	void ShowRadar(bool show);
 	void ShowCrosshair(bool show);
+	bool IsHaveModalHUD();
 	//~TheOtherSide
 
 	CHUD();

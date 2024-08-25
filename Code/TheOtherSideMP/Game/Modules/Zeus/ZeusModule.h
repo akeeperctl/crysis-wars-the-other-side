@@ -47,6 +47,7 @@ protected:
 	bool OnActionAttack2(const CTOSActor* pActor, const ActionId& actionId, int activationMode, float value, float pressedDur = 0);
 
 private:
+	void ShowMouse(bool show);
 	void ApplyZeusProperties(IActor* pPlayer);
 	CTOSPlayer* m_zeus;
 	uint m_zeusFlags;

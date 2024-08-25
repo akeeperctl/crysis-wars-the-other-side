@@ -120,7 +120,7 @@ void CHUD::OnSubtitlePanoramicHeightCVarChanged(ICVar *pCVar)
 }
 
 //-----------------------------------------------------------------------------------------------------
-
+//TheOtherSide
 void CHUD::ShowPlayerStats(bool show)
 {
 	m_animPlayerStats.SetVisible(show);
@@ -135,6 +135,12 @@ void CHUD::ShowCrosshair(bool show)
 {
 	m_pHUDCrosshair->Show(show);
 }
+
+bool CHUD::IsHaveModalHUD()
+{
+	return m_pModalHUD != nullptr;
+}
+//~TheOtherSide
 
 CHUD::CHUD()
 {

@@ -20,6 +20,9 @@ CTOSZeusModule::~CTOSZeusModule()
 
 void CTOSZeusModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event)
 {
+	auto pHUD = g_pGame->GetHUD();
+	bool noModalOrNoHUD = !pHUD || (pHUD && !pHUD->IsHaveModalHUD());
+
 	switch (event.event)
 	{
 		case eEGE_ActorRevived:
@@ -28,20 +31,46 @@ void CTOSZeusModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent&
 			{
 				m_zeus->m_isZeus = false;
 				m_zeus = nullptr;
+
+				if (noModalOrNoHUD)
+					ShowMouse(false);
 			}
 			break;
 		}
 		case eEGE_MasterClientOnStartControl:
 		{
-			if(m_zeus)
+			if (m_zeus)
+			{
 				ShowHUD(true);
+				if (noModalOrNoHUD)
+					ShowMouse(false);
+			}
+			break;
+		}
+		case eEGE_ActorEnterVehicle:
+		{
+			if (m_zeus && m_zeus->GetEntityId() == pEntity->GetId())
+			{
+				if (noModalOrNoHUD)
+					ShowMouse(false);
+			}
+
 			break;
 		}
 		case eEGE_ActorExitVehicle:
+		{
+			if (m_zeus && m_zeus->GetEntityId() == pEntity->GetId())
+			{				
+				ApplyZeusProperties(m_zeus);
+			}
+			break;
+		}
 		case eEGE_MasterClientOnStopControl:
 		{
-			if(m_zeus)
+			if (m_zeus)
+			{				
 				ApplyZeusProperties(m_zeus);
+			}
 			break;
 		}
 		default:
@@ -101,19 +130,28 @@ void CTOSZeusModule::ShowHUD(bool show)
 
 void CTOSZeusModule::SetZeusFlag(uint flag, bool value)
 {
-	if (value)
+	m_zeusFlags = value ? (m_zeusFlags | flag) : (m_zeusFlags & ~flag);
+
+	if (flag == eZF_CanRotateCamera)
 	{
-		m_zeusFlags |= flag; // установить бит
-	}
-	else
-	{
-		m_zeusFlags &= ~flag; // сбросить бит
+		auto pMouse = gEnv->pHardwareMouse;
+		//TODO сделать неперемещаемость курсора во время поворота камеры
 	}
 }
 
 bool CTOSZeusModule::GetZeusFlag(uint flag) const
 {
     return (m_zeusFlags & flag) != 0;
+}
+
+void CTOSZeusModule::ShowMouse(bool show)
+{
+	auto pMouse = gEnv->pHardwareMouse;
+	if (pMouse)
+	{
+		show ? pMouse->IncrementCounter() : pMouse->DecrementCounter();
+		pMouse->ConfineCursor(show);
+	}
 }
 
 void CTOSZeusModule::ApplyZeusProperties(IActor* pPlayer)
@@ -179,4 +217,7 @@ void CTOSZeusModule::ApplyZeusProperties(IActor* pPlayer)
 
 	pTOSPlayer->GetAnimatedCharacter()->ForceRefreshPhysicalColliderMode();
 	pTOSPlayer->GetAnimatedCharacter()->RequestPhysicalColliderMode(eColliderMode_Spectator, eColliderModeLayer_Game, "CTOSZeusModule::ApplyZeusProperties");
+
+	//Включаем мышь
+	ShowMouse(true);
 }
