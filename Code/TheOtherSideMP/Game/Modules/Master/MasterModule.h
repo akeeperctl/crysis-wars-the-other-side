@@ -24,12 +24,25 @@ struct STOSMasterClientSavedParams
 	int                                      species;
 	std::unordered_map<unsigned int, string> inventoryItems;
 	string                                   currentItemClass;
+	bool                                     dirty;
 
 	STOSMasterClientSavedParams()
 		: masterId(0),
 		suitEnergy(0),
 		suitMode(0),
-		species(-1) {};
+		species(-1),
+		dirty(false) {};
+
+	STOSMasterClientSavedParams(const STOSMasterClientSavedParams& other)
+	: masterId(other.masterId),
+		pos(other.pos),
+		rot(other.rot),
+		suitEnergy(other.suitEnergy),
+		suitMode(other.suitMode),
+		species(other.species),
+		inventoryItems(other.inventoryItems),
+		currentItemClass(other.currentItemClass) 
+	{}
 };
 
 
@@ -110,6 +123,7 @@ class CTOSMasterModule  :
 	public IHitListener
 {
 	friend class CTOSMasterSynchronizer;
+	friend class CTOSMasterClient;
 
 public:
 	CTOSMasterModule();
@@ -189,15 +203,15 @@ public:
 	static void CVarSetDesiredSlaveCls(ICVar* pVar);
 
 	bool GetMasterInfo(const IEntity* pMasterEntity, STOSMasterInfo& info);
-
-private:
-
-	/**
+protected:
+		/**
 	 * \brief Берёт параметры сущности с сервера и сохраняет их там-же на сервере
 	 * \param pMasterEntity - указатель на сущность мастера
 	 */
 	void SaveMasterClientParams(IEntity* pMasterEntity);
 	void ApplyMasterClientParams(IEntity* pMasterEntity);
+
+private:
 
 	/**
 	 * \brief Функция предназначена дял конкретного случая на сервере. \n Она планирует отправку RMI'шку на клиент, \n когда тот будет полностью готов её принять.

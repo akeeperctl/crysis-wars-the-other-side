@@ -891,10 +891,17 @@ void CTOSMasterClient::PrepareDude(const bool toStartControl, const uint dudeFla
 
 	if (toStartControl)
     {
-        pSynch->RMISend(
-            CTOSMasterSynchronizer::SvRequestSaveMCParams(), 
-            NetMasterIdParams(m_pLocalDude->GetEntityId()), 
-            eRMI_ToServer);
+		//if (gEnv->bEditor)
+		//{
+		//	g_pTOSGame->GetMasterModule()->SaveMasterClientParams(m_pLocalDude->GetEntity());
+		//}
+		//else
+		{
+			pSynch->RMISend(
+				CTOSMasterSynchronizer::SvRequestSaveMCParams(), 
+				NetMasterIdParams(m_pLocalDude->GetEntityId()), 
+				eRMI_ToServer);
+		}
 
         m_pLocalDude->ResetScreenFX();
 
@@ -1006,17 +1013,17 @@ void CTOSMasterClient::PrepareDude(const bool toStartControl, const uint dudeFla
     }
     else
     {
-		if (!gEnv->bMultiplayer)
+		//if (gEnv->bEditor)
+		//{
+		//	g_pTOSGame->GetMasterModule()->ApplyMasterClientParams(m_pLocalDude->GetEntity());
+		//}
+		//else
 		{
 			pSynch->RMISend(
 				CTOSMasterSynchronizer::SvRequestApplyMCSavedParams(),
 				NetMasterIdParams(m_pLocalDude->GetEntityId()),
 				eRMI_ToServer);
 		}
-
-		auto pAI = m_pLocalDude->GetEntity()->GetAI();
-		if (pAI)
-			TOS_AI::SendEvent(pAI, AIEVENT_ENABLE);
 
         if (dudeFlags & TOS_DUDE_FLAG_ENABLE_ACTION_FILTER)
         {
@@ -1084,6 +1091,7 @@ void CTOSMasterClient::PrepareDude(const bool toStartControl, const uint dudeFla
             if (dudeHP > 0 || inSpectatorMode)
             {
 				pSuit->Reset(m_pLocalDude);
+				pSuit->SetSuitEnergy(m_pLocalDude->GetEnergyConsumer()->GetMaxEnergy());
             }
 
             if (dudeFlags & TOS_DUDE_FLAG_DISABLE_SUIT)

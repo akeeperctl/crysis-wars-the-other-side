@@ -775,71 +775,71 @@ void CTOSMasterModule::SaveMasterClientParams(IEntity* pMasterEntity)
 {
 	assert(pMasterEntity);
 
-	if (IsMaster(pMasterEntity))
+	IAIObject* pAI = pMasterEntity->GetAI();
+	if (pAI)
+		pAI->Event(AIEVENT_DISABLE, nullptr);
+
+	auto &params = m_masters[pMasterEntity->GetId()].mcSavedParams;
+	params.dirty = true;
+
+	params.pos = pMasterEntity->GetWorldPos();
+	params.rot = static_cast<Quat>(pMasterEntity->GetWorldAngles());
+
+	if (pAI)
+		params.species = TOS_AI::GetSpecies(pAI, false);
+
+	const auto pPlayer = dynamic_cast<CTOSPlayer*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pMasterEntity->GetId()));
+	assert(pPlayer);
+
+	const auto pSuit = pPlayer->GetNanoSuit();
+	assert(pSuit);
+
+	params.suitEnergy = pSuit->GetSuitEnergy();
+	params.suitMode = pSuit->GetMode();
+
+	pSuit->SetMode(NANOMODE_DEFENSE);
+
+	// Сохраняем инвентарь и очищаем
+	IInventory* pInventory = pPlayer->GetInventory();
+	if (pInventory)
 	{
-		auto &params = m_masters[pMasterEntity->GetId()].mcSavedParams;
+		params.inventoryItems.clear();
 
-		params.pos = pMasterEntity->GetWorldPos();
-		params.rot = static_cast<Quat>(pMasterEntity->GetWorldAngles());
+		const auto itemsNum = pInventory->GetCount();
 
-		IAIObject* pAI = pMasterEntity->GetAI();
-		if (pAI)
+		//Push items id values to massive
+		for (int slot = itemsNum; slot >= 0; slot--)
 		{
-			pAI->Event(AIEVENT_DISABLE, nullptr);
-			params.species = TOS_AI::GetSpecies(pAI, false);
-		}
-
-		const auto pPlayer = dynamic_cast<CTOSPlayer*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pMasterEntity->GetId()));
-		assert(pPlayer);
-
-		const auto pSuit = pPlayer->GetNanoSuit();
-		assert(pSuit);
-
-		params.suitEnergy = pSuit->GetSuitEnergy();
-		params.suitMode = pSuit->GetMode();
-
-		pSuit->SetMode(NANOMODE_DEFENSE);
-
-		// Сохраняем инвентарь и очищаем
-		IInventory* pInventory = pPlayer->GetInventory();
-		if (pInventory)
-		{
-			params.inventoryItems.clear();
-
-			const auto itemsNum = pInventory->GetCount();
-
-			//Push items id values to massive
-			for (int slot = itemsNum; slot >= 0; slot--)
+			const EntityId itemId = pInventory->GetItem(slot);
+			const auto     pItemEnt = TOS_GET_ENTITY(itemId);
+			if (pItemEnt)
 			{
-				const EntityId itemId = pInventory->GetItem(slot);
-				const auto     pItemEnt = TOS_GET_ENTITY(itemId);
-				if (pItemEnt)
-				{
-					const char* name = pItemEnt->GetClass()->GetName();
+				const char* name = pItemEnt->GetClass()->GetName();
 
-					params.inventoryItems[slot] = name;
-					//CryLogAlways("SAVE ITEM %s", name);
-				}
-
+				params.inventoryItems[slot] = name;
+				//CryLogAlways("SAVE ITEM %s", name);
 			}
 
-			const auto curItemId = pInventory->GetCurrentItem();
-			const auto pCurEnt = TOS_GET_ENTITY(curItemId);
-			if (pCurEnt)
-			{
-				params.currentItemClass = pCurEnt->GetClass()->GetName();
-			}
-
-			pInventory->RemoveAllItems();
 		}
 
-		//pSuit->SetModeDefect(NANOMODE_CLOAK, true);
-		//pSuit->SetModeDefect(NANOMODE_SPEED, true);
-		//pSuit->SetModeDefect(NANOMODE_STRENGTH, true);
+		const auto curItemId = pInventory->GetCurrentItem();
+		const auto pCurEnt = TOS_GET_ENTITY(curItemId);
+		if (pCurEnt)
+		{
+			params.currentItemClass = pCurEnt->GetClass()->GetName();
+		}
+
+		pInventory->RemoveAllItems();
 	}
+
+	//pSuit->SetModeDefect(NANOMODE_CLOAK, true);
+	//pSuit->SetModeDefect(NANOMODE_SPEED, true);
+	//pSuit->SetModeDefect(NANOMODE_STRENGTH, true);
+	CryLog("<c++> [SaveMasterClientParams] pos(%1.f,%1.f,%1.f), rot(%1.f,%1.f,%1.f), species '%i', energy '%1.f', suitMode '%i'",
+			params.pos.x, params.pos.y, params.pos.z, params.rot.v.x, params.rot.v.y, params.rot.v.z, params.species, params.suitEnergy, params.suitMode);
 }
 
-void CTOSMasterModule::ApplyMasterClientParams(IEntity* pMasterEntity)
+void CTOSMasterModule::ApplyMasterClientParams(IEntity* pMasterEntity)    
 {
 	assert(pMasterEntity);
 
@@ -848,7 +848,13 @@ void CTOSMasterModule::ApplyMasterClientParams(IEntity* pMasterEntity)
 		STOSMasterInfo info;
 		GetMasterInfo(pMasterEntity, info);
 
+		IAIObject* pAI = pMasterEntity->GetAI();
+		if (pAI)
+			pAI->Event(AIEVENT_ENABLE, nullptr);
+
 		const auto& saved = info.mcSavedParams;
+		if (!saved.dirty)
+			return;
 
 		const auto pPlayer = dynamic_cast<CTOSPlayer*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pMasterEntity->GetId()));
 		assert(pPlayer);
@@ -870,12 +876,8 @@ void CTOSMasterModule::ApplyMasterClientParams(IEntity* pMasterEntity)
 			pSuit->SetMode(static_cast<ENanoMode>(suitMode));
 		}
 
-		IAIObject* pAI = pMasterEntity->GetAI();
 		if (pAI)
-		{
-			pAI->Event(AIEVENT_ENABLE, nullptr);
 			TOS_AI::SetSpecies(pAI, species);
-		}
 
 		const IInventory* pInventory = pPlayer->GetInventory();
 		if (!pInventory)
@@ -906,6 +908,9 @@ void CTOSMasterModule::ApplyMasterClientParams(IEntity* pMasterEntity)
 
 			}
 		}
+
+		CryLog("<c++> [ApplyMCSavedParams] pos(%1.f,%1.f,%1.f), rot(%1.f,%1.f,%1.f), species '%i', energy '%1.f', suitMode '%i'",
+			   pos.x, pos.y, pos.z, rot.v.x, rot.v.y, rot.v.z, species, suitEnergy, suitMode);
 	}
 }
 

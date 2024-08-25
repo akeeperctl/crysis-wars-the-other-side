@@ -267,9 +267,6 @@ IMPLEMENT_RMI(CTOSMasterSynchronizer, SvRequestApplyMCSavedParams)
 
 	if (gEnv->bServer)
 	{
-		CryLog("[C++][%s][%s][SvRequestApplyMCSavedParams]",
-			TOS_Debug::GetEnv(), TOS_Debug::GetAct(3));
-
 		const auto pMasterEntity = gEnv->pEntitySystem->GetEntity(params.masterId);
 		assert(pMasterEntity);
 
