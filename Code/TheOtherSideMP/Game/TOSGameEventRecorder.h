@@ -107,7 +107,7 @@ enum EExtraGameplayEvent
 	eEGE_ActorRevived,
 	eEGE_OnLevelLoadingStart,
 	eEGE_OnServerStartRestarting,
-	eEGE_Example4,
+	eEGE_ActorExitVehicle,
 	eEGE_Example5,
 
 	//eEGE_TOSGame_Init,
@@ -362,8 +362,8 @@ public:
 			return "eEGE_OnLevelLoadingStart";		
 		case eEGE_OnServerStartRestarting:
 			return "eEGE_OnServerStartRestarting";		
-		case eEGE_Example4:
-			return "eEGE_Example4";		
+		case eEGE_ActorExitVehicle:
+			return "eEGE_ActorExitVehicle";		
 		case eEGE_Example5:
 			return "eEGE_Example5";
 		case eEGE_Last:

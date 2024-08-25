@@ -74,6 +74,7 @@ History:
 #include "TheOtherSideMP/Helpers/TOS_Console.h"
 #include <stdexcept>
 #include <TheOtherSideMP/Actors/Player/TOSPlayer.h>
+#include <TheOtherSideMP/Game/TOSGameEventRecorder.h>
 #include <NetInputChainDebug.h>
 //~TheOtherSide
 
@@ -1811,6 +1812,10 @@ IEntity *CPlayer::LinkToVehicle(EntityId vehicleId)
 
 		CALL_PLAYER_EVENT_LISTENERS(OnExitVehicle(this));
 		m_vehicleViewDir.Set(0,1,0);
+
+		//TheOtherSide
+		TOS_RECORD_EVENT(GetEntityId(), STOSGameEvent(eEGE_ActorExitVehicle, "", true, false, 0, 0, 0));
+		//~TheOtherSide
 
 		// don't interpolate back from vehicle camera (otherwise you see your own legs)
 		if(IsClient())

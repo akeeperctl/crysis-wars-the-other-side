@@ -36,13 +36,13 @@ void CTOSZeusModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent&
 				ShowHUD(true);
 			break;
 		}
+		case eEGE_ActorExitVehicle:
 		case eEGE_MasterClientOnStopControl:
 		{
 			if(m_zeus)
 				ApplyZeusProperties(m_zeus);
 			break;
 		}
-
 		default:
 			break;
 	}

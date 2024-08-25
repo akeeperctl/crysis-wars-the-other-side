@@ -898,6 +898,10 @@ void CTOSMasterClient::PrepareDude(const bool toStartControl, const uint dudeFla
 
         m_pLocalDude->ResetScreenFX();
 
+		auto pAI = m_pLocalDude->GetEntity()->GetAI();
+		if (pAI)
+			TOS_AI::SendEvent(pAI, AIEVENT_DISABLE);
+
         if (dudeFlags & TOS_DUDE_FLAG_DISABLE_SUIT)
         {
 			if (pSuit)
@@ -1002,8 +1006,6 @@ void CTOSMasterClient::PrepareDude(const bool toStartControl, const uint dudeFla
     }
     else
     {
-		bool zeus = m_pLocalDude->IsZeus();
-
 		if (!gEnv->bMultiplayer)
 		{
 			pSynch->RMISend(
@@ -1012,11 +1014,16 @@ void CTOSMasterClient::PrepareDude(const bool toStartControl, const uint dudeFla
 				eRMI_ToServer);
 		}
 
+		auto pAI = m_pLocalDude->GetEntity()->GetAI();
+		if (pAI)
+			TOS_AI::SendEvent(pAI, AIEVENT_ENABLE);
+
         if (dudeFlags & TOS_DUDE_FLAG_ENABLE_ACTION_FILTER)
         {
 			g_pGameActions->FilterMasterControlSlave()->Enable(false);
         }
 
+		bool zeus = m_pLocalDude->IsZeus();
 		if (!zeus)
 		{
 			m_pLocalDude->GetGameObject()->InvokeRMI(CTOSActor::SvRequestHideMe(), NetHideMeParams(false), eRMI_ToServer);

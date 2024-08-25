@@ -4149,29 +4149,17 @@ void CHUD::TOSSetAmmoHealthHUD(IActor* pActor, const char* filePath)
 
 	//Health, Energy, Ammo
 	m_animPlayerStats.Unload();
-	m_animPlayerStats.Load(filePath, eFD_Right, eFAF_ThisHandler);
+	m_animPlayerStats.Load(filePath, eFD_Right, eFAF_Visible | eFAF_ThisHandler);
 
 	const int health = (pActor->GetHealth() / pActor->GetMaxHealth()) * 100 + 1;
 	int		  energy = 0;
 
 	if (const auto pNewActor = dynamic_cast<CTOSActor*>(pActor))
 	{
+		if (pNewActor->IsZeus())
+			m_animPlayerStats.SetVisible(false);
+
 		energy = pNewActor->GetEnergyConsumer()->GetEnergy() / pNewActor->GetEnergyConsumer()->GetMaxEnergy() * 100 + 1;
-
-		/*
-
-		if (pNewActor->IsAlien())
-		{
-			//auto* pAlien = dynamic_cast<CAlien*>(pNewActor);
-			//fEnergy = (pAlien->GetAlienEnergy() / pAlien->GetMaxAlienEnergy()) * 100.0f + 1.0f;
-		}
-		else
-		{
-			const auto pPlayer = dynamic_cast<CTOSPlayer*>(pActor);
-			if (pPlayer->GetNanoSuit())
-				fEnergy = pPlayer->GetNanoSuit()->GetSuitEnergy() * 0.5f + 1.0f;
-		}
-		*/
 	}
 
 	m_animPlayerStats.Invoke("setHealth", health);
@@ -4185,7 +4173,7 @@ void CHUD::TOSSetInventoryHUD(IActor* pActor, const char* filePath) const
 		return;
 
 	pHUD->m_animWeaponSelection.Unload();
-	pHUD->m_animWeaponSelection.Load(filePath, eFD_Right, eFAF_ThisHandler);
+	pHUD->m_animWeaponSelection.Load(filePath, eFD_Right, eFAF_Visible | eFAF_ThisHandler);
 
 	TOS_HUD::ShowInventory(pActor, "null", "null");
 }
