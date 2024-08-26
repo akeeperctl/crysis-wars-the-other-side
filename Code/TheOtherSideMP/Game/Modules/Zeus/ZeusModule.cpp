@@ -8,8 +8,9 @@
 #include <TheOtherSideMP\Helpers\TOS_Console.h>
 #include <TheOtherSideMP\Helpers\TOS_NET.h>
 #include <TheOtherSideMP\Helpers\TOS_Inventory.h>
-#include <Cry_Camera.h>
 #include <TheOtherSideMP\Helpers\TOS_Entity.h>
+#include <TheOtherSideMP\Helpers\TOS_Vehicle.h>
+#include <Cry_Camera.h>
 
 CTOSZeusModule::CTOSZeusModule()
 	: m_zeus(nullptr),
@@ -43,6 +44,14 @@ bool CTOSZeusModule::OnInputEvent(const SInputEvent& event)
 				m_ctrlModifier = true;
 			else if (event.state == eIS_Released)
 				m_ctrlModifier = false;
+		}
+		else if (event.keyId == EKeyId::eKI_End)
+		{
+			ExecuteCommand(eZC_KillSelected);
+		}
+		else if (event.keyId == EKeyId::eKI_Delete)
+		{
+			ExecuteCommand(eZC_RemoveSelected);
 		}
 	}
 
@@ -533,4 +542,45 @@ void CTOSZeusModule::ApplyZeusProperties(IActor* pPlayer)
 
 	//Включаем мышь
 	ShowMouse(true);
+}
+
+bool CTOSZeusModule::ExecuteCommand(EZeusCommands command)
+{
+	auto it = m_selectedEntities.begin();
+	auto end = m_selectedEntities.end();
+	while (it != end)
+	{
+		EntityId id = *it;
+		IVehicle* pVehicle = g_pGame->GetIGameFramework()->GetIVehicleSystem()->GetVehicle(id);
+		//IActor* pActor = g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(id);
+
+		switch (command)
+		{
+			case eZC_KillSelected:
+			{
+				string hitType = "normal";
+
+				HitInfo info;
+				info.SetDamage(99999.0f);
+				info.targetId = id;
+				info.type = g_pGame->GetGameRules()->GetHitTypeId(hitType.c_str());
+
+				g_pGame->GetGameRules()->ClientHit(info);
+				TOS_Vehicle::Destroy(pVehicle);
+				break;
+			}
+			case eZC_RemoveSelected:
+			{
+				gEnv->pEntitySystem->RemoveEntity(id);
+				m_selectedEntities.erase(it);
+				end = m_selectedEntities.end();
+				break;
+			}
+			default:
+				break;
+		}
+	}
+
+
+	return true;
 }
