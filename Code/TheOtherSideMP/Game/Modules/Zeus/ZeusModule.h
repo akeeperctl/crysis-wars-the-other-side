@@ -26,7 +26,6 @@ public:
 	void        Init() ;
 	void        Update(float frametime) ;
 	void        Serialize(TSerialize ser) ;
-	bool		NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int flags) ;
 
 	int GetDebugLog()  { return m_debugLogMode; }
 
@@ -51,4 +50,5 @@ private:
 	void ApplyZeusProperties(IActor* pPlayer);
 	CTOSPlayer* m_zeus;
 	uint m_zeusFlags;
+	Vec2 m_anchoredMousePos;
 };

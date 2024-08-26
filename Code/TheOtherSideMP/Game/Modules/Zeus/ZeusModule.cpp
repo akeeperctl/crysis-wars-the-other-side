@@ -10,7 +10,8 @@
 
 CTOSZeusModule::CTOSZeusModule()
 	: m_zeus(nullptr),
-	m_zeusFlags(0)
+	m_zeusFlags(0),
+	m_anchoredMousePos(ZERO)
 {
 }
 
@@ -91,16 +92,30 @@ void CTOSZeusModule::Init()
 void CTOSZeusModule::Update(float frametime)
 {
 
+	if (m_zeusFlags & eZF_CanRotateCamera)
+	{
+		auto pMouse = gEnv->pHardwareMouse;
+
+		if (m_anchoredMousePos == Vec2(0,0))
+		{
+			Vec2 mousePos;
+			pMouse->GetHardwareMousePosition(&mousePos.x, &mousePos.y);
+
+			m_anchoredMousePos = mousePos;
+		}
+
+		pMouse->SetHardwareMousePosition(m_anchoredMousePos.x, m_anchoredMousePos.y);
+	}
+	else
+	{
+		if (m_anchoredMousePos != Vec2(0,0))
+			m_anchoredMousePos.zero();
+	}
 }
 
 void CTOSZeusModule::Serialize(TSerialize ser)
 {
 
-}
-
-bool CTOSZeusModule::NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int flags)
-{
-	return true;
 }
 
 void CTOSZeusModule::NetMakePlayerZeus(IActor* pPlayer)
@@ -134,7 +149,6 @@ void CTOSZeusModule::SetZeusFlag(uint flag, bool value)
 
 	if (flag == eZF_CanRotateCamera)
 	{
-		auto pMouse = gEnv->pHardwareMouse;
 		//TODO сделать неперемещаемость курсора во время поворота камеры
 	}
 }
