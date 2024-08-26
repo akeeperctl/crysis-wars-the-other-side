@@ -546,6 +546,8 @@ void CTOSZeusModule::ApplyZeusProperties(IActor* pPlayer)
 
 bool CTOSZeusModule::ExecuteCommand(EZeusCommands command)
 {
+	bool needUpdateIter = true;
+
 	auto it = m_selectedEntities.begin();
 	auto end = m_selectedEntities.end();
 	while (it != end)
@@ -566,19 +568,27 @@ bool CTOSZeusModule::ExecuteCommand(EZeusCommands command)
 				info.type = g_pGame->GetGameRules()->GetHitTypeId(hitType.c_str());
 
 				g_pGame->GetGameRules()->ClientHit(info);
-				TOS_Vehicle::Destroy(pVehicle);
+
+				if (pVehicle)
+					TOS_Vehicle::Destroy(pVehicle);
+
 				break;
 			}
 			case eZC_RemoveSelected:
 			{
 				gEnv->pEntitySystem->RemoveEntity(id);
 				m_selectedEntities.erase(it);
+				needUpdateIter = false;
+
 				end = m_selectedEntities.end();
 				break;
 			}
 			default:
 				break;
 		}
+
+		if (needUpdateIter)
+			it++;
 	}
 
 
