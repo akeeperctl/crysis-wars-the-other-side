@@ -142,15 +142,15 @@ namespace TOS_Debug
 	{
 		switch (type)
 		{
-		case 1:
-			return "func call";
-		case 2:
-			return "constr call";
-		case 3:
-			return "rmi received";
-		default:
-			return "undefined";
-			break;
+			case 1:
+				return "func call";
+			case 2:
+				return "constr call";
+			case 3:
+				return "rmi received";
+			default:
+				return "undefined";
+				break;
 		}
 	}
 

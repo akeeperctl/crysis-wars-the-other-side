@@ -4,20 +4,20 @@
 
 #define DECL_ACTION(name) name = #name;
 CGameActions::CGameActions()
-: m_pFilterNoMove(0)
-, m_pFilterNoMouse(0)
-, m_pFilterNoGrenades(0)
-, m_pFilterInVehicleSuitMenu(0)
-, m_pFilterSuitMenu(0)
-, m_pFilterFreezeTime(0)
-, m_pFilterNoVehicleExit(0)
-, m_pFilterMPRadio(0)
-, m_pFilterCutscene(0)
-, m_pFilterCutsceneNoPlayer(0)
-, m_pFilterNoMapOpen(0)
-, m_pFilterNoObjectivesOpen(0)
-, m_pFilterVehicleNoSeatChangeAndExit(0)
-, m_pFilterNoConnectivity(0)
+	: m_pFilterNoMove(0)
+	, m_pFilterNoMouse(0)
+	, m_pFilterNoGrenades(0)
+	, m_pFilterInVehicleSuitMenu(0)
+	, m_pFilterSuitMenu(0)
+	, m_pFilterFreezeTime(0)
+	, m_pFilterNoVehicleExit(0)
+	, m_pFilterMPRadio(0)
+	, m_pFilterCutscene(0)
+	, m_pFilterCutsceneNoPlayer(0)
+	, m_pFilterNoMapOpen(0)
+	, m_pFilterNoObjectivesOpen(0)
+	, m_pFilterVehicleNoSeatChangeAndExit(0)
+	, m_pFilterNoConnectivity(0)
 {
 #include "GameActions.actions"
 }
@@ -105,7 +105,7 @@ void CGameActions::CreateFilterNoMouse()
 	m_pFilterNoMouse->Filter(jump);
 	m_pFilterNoMouse->Filter(zoom_in);
 	m_pFilterNoMouse->Filter(zoom_out);
-	
+
 }
 
 void CGameActions::CreateFilterInVehicleSuitMenu()
@@ -285,7 +285,7 @@ void CGameActions::CreateFilterCutscene()
 {
 	IActionMapManager* pActionMapMan = g_pGame->GetIGameFramework()->GetIActionMapManager();
 
-	m_pFilterCutscene = pActionMapMan->CreateActionFilter("cutscene", eAFT_ActionFail);	
+	m_pFilterCutscene = pActionMapMan->CreateActionFilter("cutscene", eAFT_ActionFail);
 	m_pFilterCutscene->Filter(binoculars);
 	m_pFilterCutscene->Filter(hud_night_vision);
 	m_pFilterCutscene->Filter(hud_show_multiplayer_scoreboard);
@@ -384,6 +384,8 @@ void CGameActions::CreateFilterZeus()
 
 	m_pFilterZeus = pActionMapMan->CreateActionFilter("zeus", eAFT_ActionFail);
 
+	m_pFilterZeus->Filter(jump);
+	m_pFilterZeus->Filter(crouch);
 	m_pFilterZeus->Filter(prone);
 	m_pFilterZeus->Filter(togglestance);
 	m_pFilterZeus->Filter(leanleft);
