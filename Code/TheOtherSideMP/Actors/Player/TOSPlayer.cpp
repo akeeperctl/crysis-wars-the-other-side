@@ -201,6 +201,21 @@ void CTOSPlayer::Kill()
 	CTOSActor::Kill();
 }
 
+IEntity* CTOSPlayer::LinkToVehicle(EntityId vehicleId)
+{
+	return CPlayer::LinkToVehicle(vehicleId);
+}
+
+IEntity* CTOSPlayer::LinkToEntity(EntityId entityId, bool bKeepTransformOnDetach)
+{
+	return CPlayer::LinkToEntity(entityId, bKeepTransformOnDetach);
+}
+
+void CTOSPlayer::LinkToMountedWeapon(EntityId weaponId)
+{
+	CPlayer::LinkToMountedWeapon(weaponId);
+}
+
 Matrix33 CTOSPlayer::GetViewMtx()
 {
 	//TODO: 10/05/2023, 15:56 проверить правильность конвертации

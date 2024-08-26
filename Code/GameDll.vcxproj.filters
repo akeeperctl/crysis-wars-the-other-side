@@ -1394,9 +1394,6 @@
     <ClInclude Include="TheOtherSideMP\Helpers\TOS_Debug.h">
       <Filter>TheOtherSideMP\Helpers</Filter>
     </ClInclude>
-    <ClInclude Include="TheOtherSideMP\Helpers\TOS_Enums.h">
-      <Filter>TheOtherSideMP\Helpers</Filter>
-    </ClInclude>
     <ClInclude Include="TheOtherSideMP\Helpers\TOS_HUD.h">
       <Filter>TheOtherSideMP\Helpers</Filter>
     </ClInclude>
@@ -1522,9 +1519,6 @@
     </ClInclude>
     <ClInclude Include="TheOtherSideMP\Actors\DummyTargetPointVerifier.h">
       <Filter>TheOtherSideMP\Actors</Filter>
-    </ClInclude>
-    <ClInclude Include="TheOtherSideMP\Helpers\TOS_Zeus.h">
-      <Filter>TheOtherSideMP\Helpers</Filter>
     </ClInclude>
     <ClInclude Include="TheOtherSideMP\Game\Modules\Zeus\ZeusModule.h">
       <Filter>TheOtherSideMP\Game\Modules\Zeus</Filter>

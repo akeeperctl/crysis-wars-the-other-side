@@ -727,7 +727,6 @@
     <ClInclude Include="TheOtherSideMP\Helpers\TOS_Console.h" />
     <ClInclude Include="TheOtherSideMP\Helpers\TOS_Debug.h" />
     <ClInclude Include="TheOtherSideMP\Helpers\TOS_Entity.h" />
-    <ClInclude Include="TheOtherSideMP\Helpers\TOS_Enums.h" />
     <ClInclude Include="TheOtherSideMP\Helpers\TOS_HUD.h" />
     <ClInclude Include="TheOtherSideMP\Helpers\TOS_Inventory.h" />
     <ClInclude Include="TheOtherSideMP\Helpers\TOS_MasterModule.h" />
@@ -736,7 +735,6 @@
     <ClInclude Include="TheOtherSideMP\Helpers\TOS_Sounds.h" />
     <ClInclude Include="TheOtherSideMP\Helpers\TOS_STL.h" />
     <ClInclude Include="TheOtherSideMP\Helpers\TOS_Vehicle.h" />
-    <ClInclude Include="TheOtherSideMP\Helpers\TOS_Zeus.h" />
     <ClInclude Include="TheOtherSideMP\HUD\TOSCrosshair.h" />
     <ClInclude Include="TheOtherSideMP\TOSSmartStruct.h" />
     <ClInclude Include="TheOtherSideMP\Utilities\DedicatedServerHackScope.h" />

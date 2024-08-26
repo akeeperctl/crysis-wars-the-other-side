@@ -38,6 +38,7 @@ public:
 	void AttachTo(CActor *pActor);
 
 	//TheOtherSide
+	virtual int IsZeus(IFunctionHandler *pH);
 	virtual int IsMaster(IFunctionHandler *pH);
 	virtual int IsSlave(IFunctionHandler *pH);
 	virtual int GetMasterId(IFunctionHandler *pH);

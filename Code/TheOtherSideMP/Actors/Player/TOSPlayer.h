@@ -40,6 +40,11 @@ public:
 	void UpdateView(SViewParams& viewParams) ;
 	void PostUpdateView(SViewParams& viewParams) ;
 	void Kill() ;
+
+	IEntity *LinkToVehicle(EntityId vehicleId);
+	IEntity *LinkToEntity(EntityId entityId, bool bKeepTransformOnDetach=true);
+	void LinkToMountedWeapon(EntityId weaponId);
+
 	//~CPlayer
 
 	//CTOSActor

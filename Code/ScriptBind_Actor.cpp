@@ -190,6 +190,7 @@ CScriptBind_Actor::CScriptBind_Actor(ISystem *pSystem)
 	SCRIPT_REG_FUNC(GetSlaveId);
 	SCRIPT_REG_FUNC(IsSlave);
 	SCRIPT_REG_FUNC(IsMaster);
+	SCRIPT_REG_FUNC(IsZeus);
 
 	//~TheOtherSide
 }
@@ -200,6 +201,18 @@ CScriptBind_Actor::~CScriptBind_Actor()
 }
 
 //TheOtherSide
+int CScriptBind_Actor::IsZeus(IFunctionHandler* pH)
+{
+	const auto pActor = static_cast<CTOSActor*>(GetActor(pH));
+	if (!pActor)
+		return pH->EndFunction();
+
+	if (pActor->IsZeus())
+		return pH->EndFunction(1);
+
+	return pH->EndFunction();
+}
+
 int CScriptBind_Actor::IsMaster(IFunctionHandler* pH)
 {
 	const auto pActor = static_cast<CTOSActor*>(GetActor(pH));

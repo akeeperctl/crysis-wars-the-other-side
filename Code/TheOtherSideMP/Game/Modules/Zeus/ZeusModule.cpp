@@ -32,6 +32,7 @@ void CTOSZeusModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent&
 			{
 				m_zeus->m_isZeus = false;
 				m_zeus = nullptr;
+				m_zeusFlags = 0;
 
 				if (noModalOrNoHUD)
 					ShowMouse(false);
@@ -45,24 +46,8 @@ void CTOSZeusModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent&
 				ShowHUD(true);
 				if (noModalOrNoHUD)
 					ShowMouse(false);
-			}
-			break;
-		}
-		case eEGE_ActorEnterVehicle:
-		{
-			if (m_zeus && m_zeus->GetEntityId() == pEntity->GetId())
-			{
-				if (noModalOrNoHUD)
-					ShowMouse(false);
-			}
 
-			break;
-		}
-		case eEGE_ActorExitVehicle:
-		{
-			if (m_zeus && m_zeus->GetEntityId() == pEntity->GetId())
-			{				
-				ApplyZeusProperties(m_zeus);
+				SetZeusFlag(eZF_Possessing, true);
 			}
 			break;
 		}
@@ -71,9 +56,28 @@ void CTOSZeusModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent&
 			if (m_zeus)
 			{				
 				ApplyZeusProperties(m_zeus);
+				SetZeusFlag(eZF_Possessing, false);
 			}
 			break;
 		}
+		//case eEGE_ActorEnterVehicle:
+		//{
+		//	if (m_zeus && m_zeus->GetEntityId() == pEntity->GetId())
+		//	{
+		//		if (noModalOrNoHUD)
+		//			ShowMouse(false);
+		//	}
+
+		//	break;
+		//}
+		//case eEGE_ActorExitVehicle:
+		//{
+		//	if (m_zeus && m_zeus->GetEntityId() == pEntity->GetId())
+		//	{				
+		//		//ApplyZeusProperties(m_zeus);
+		//	}
+		//	break;
+		//}
 		default:
 			break;
 	}
@@ -91,8 +95,10 @@ void CTOSZeusModule::Init()
 
 void CTOSZeusModule::Update(float frametime)
 {
+	if (!m_zeus)
+		return;
 
-	if (m_zeusFlags & eZF_CanRotateCamera)
+	if (m_zeusFlags & eZF_CanRotateCamera && !(m_zeusFlags & eZF_Possessing))
 	{
 		auto pMouse = gEnv->pHardwareMouse;
 
@@ -146,11 +152,6 @@ void CTOSZeusModule::ShowHUD(bool show)
 void CTOSZeusModule::SetZeusFlag(uint flag, bool value)
 {
 	m_zeusFlags = value ? (m_zeusFlags | flag) : (m_zeusFlags & ~flag);
-
-	if (flag == eZF_CanRotateCamera)
-	{
-		//TODO сделать неперемещаемость курсора во время поворота камеры
-	}
 }
 
 bool CTOSZeusModule::GetZeusFlag(uint flag) const

@@ -6,6 +6,7 @@
 enum EZeusFlags
 {
 	eZF_CanRotateCamera = BIT(0),
+	eZF_Possessing = BIT(1) // зевс вселился в кого-то
 };
 
 /**
