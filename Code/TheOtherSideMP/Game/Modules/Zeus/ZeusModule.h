@@ -64,6 +64,12 @@ protected:
 	bool OnActionAttack2(const CTOSActor* pActor, const ActionId& actionId, int activationMode, float value, float pressedDur = 0);
 
 private:
+	/// @brief Проекция координат мыши в мир от камеры
+	/// @param ray - структура луча
+	/// @param mouseWorldPos - мировые координаты мыши, которые будут спроецированы на некоторое расстояние от камеры
+	/// @return 0 - попаданий не было, > 0 - есть попадания
+	int	MouseProjectToWorld(ray_hit& ray, const Vec3& mouseWorldPos);
+
 	/// Можно ли выбрать сущности выделением нескольких сразу?
 	bool CanSelectMultiplyWithBox() const;
 
@@ -82,14 +88,19 @@ private:
 	Vec3 m_worldProjectedMousePos; // проекция от камеры на позицию курсора
 	Vec2i m_mouseIPos;
 	Vec2 m_selectStartPos;
+	Vec3 m_worldProjectedSelectStartPos;
 	Vec2 m_selectStopPos;
+	Vec3 m_draggingDelta;
 	std::vector<EntityId> m_selectedEntities;
+	std::map<EntityId, Vec3> m_selectStartEntitiesPositions;
 	EntityId m_curClickedEntityId;
 	EntityId m_lastClickedEntityId;
 
 	float m_mouseDownDurationSec;
 	bool m_select;
+	bool m_dragging;
 	bool m_ctrlModifier;
+	bool m_altModifier;
 
 	// Консольные значения
 	float tos_sv_zeus_mass_selection_hold_sec;
