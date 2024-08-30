@@ -68,7 +68,7 @@ private:
 	/// @param ray - структура луча
 	/// @param mouseWorldPos - мировые координаты мыши, которые будут спроецированы на некоторое расстояние от камеры
 	/// @return 0 - попаданий не было, > 0 - есть попадания
-	int	MouseProjectToWorld(ray_hit& ray, const Vec3& mouseWorldPos);
+	int	MouseProjectToWorld(ray_hit& ray, const Vec3& mouseWorldPos, uint entityFlags);
 
 	/// Можно ли выбрать сущности выделением нескольких сразу?
 	bool CanSelectMultiplyWithBox() const;
@@ -83,6 +83,8 @@ private:
 
 	CTOSPlayer* m_zeus;
 	uint m_zeusFlags;
+	ray_hit m_mouseRay;
+	uint m_mouseRayEntityFlags;
 	Vec2 m_anchoredMousePos;
 	Vec3 m_worldMousePos;//TODO
 	Vec3 m_worldProjectedMousePos; // проекция от камеры на позицию курсора

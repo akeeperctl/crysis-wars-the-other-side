@@ -12,6 +12,9 @@
 #include <TheOtherSideMP\Helpers\TOS_Vehicle.h>
 #include <Cry_Camera.h>
 
+const uint DEFAULT_MOUSE_ENT_FLAGS = ent_living | ent_rigid | ent_static | ent_terrain | ent_sleeping_rigid | ent_independent;
+const uint DRAGGING_MOUSE_ENT_FLAGS = ent_static | ent_terrain;
+
 CTOSZeusModule::CTOSZeusModule()
 	: m_zeus(nullptr),
 	m_zeusFlags(0),
@@ -26,6 +29,7 @@ CTOSZeusModule::CTOSZeusModule()
 	m_lastClickedEntityId(0),
 	m_curClickedEntityId(0),
 	m_mouseDownDurationSec(0),
+	m_mouseRayEntityFlags(DEFAULT_MOUSE_ENT_FLAGS),
 	m_ctrlModifier(false),
 	m_altModifier(false),
 	m_select(false),
@@ -118,10 +122,9 @@ void CTOSZeusModule::OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eH
 			m_selectStartPos = Vec2i(iX, iY);
 
 			// Сейчас позиция старта и позиция в мире мыши связаны
-			ray_hit ray;
-			const int hitNum = MouseProjectToWorld(ray, m_worldMousePos);
+			const int hitNum = MouseProjectToWorld(m_mouseRay, m_worldMousePos, m_mouseRayEntityFlags);
 			if (hitNum)
-				m_worldProjectedSelectStartPos = ray.pt;
+				m_worldProjectedSelectStartPos = m_mouseRay.pt;
 
 			m_lastClickedEntityId = m_curClickedEntityId;
 			m_curClickedEntityId = GetMouseEntityId();
@@ -167,6 +170,7 @@ void CTOSZeusModule::OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eH
 		{
 			if (m_select && m_curClickedEntityId != 0)
 			{
+				// Сохраняем начальное положение каждой выделенной сущности
 				if (m_dragging == false)
 				{
 					m_selectStartEntitiesPositions.clear();
@@ -190,29 +194,6 @@ void CTOSZeusModule::OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eH
 					}
 				}
 				m_dragging = true;
-
-				//ray_hit ray;
-				//const int hitNum = MouseProjectToWorld(ray, m_worldMousePos);
-				//if (hitNum)
-				//{
-					//const Vec3& curWorldMousePos = m_worldProjectedMousePos;
-					//Vec3 delta = (curWorldMousePos - m_worldProjectedSelectStartPos).GetNormalizedSafe();
-					////Vec3 delta = m_selectStartPos - m_mouseIPos;
-
-					//auto it = m_selectedEntities.begin();
-					//auto end = m_selectedEntities.end();
-					//while (it != end)
-					//{
-					//	auto pEntity = TOS_GET_ENTITY(*it);
-					//	if (pEntity)
-					//	{
-					//		const Vec3& curPos = pEntity->GetWorldPos();
-					//		const Vec3 newPos = Vec3(curPos.x + delta.x, curPos.y + delta.y, curPos.z);
-					//		pEntity->SetWorldTM(Matrix34::CreateTranslationMat(newPos));
-					//	}
-					//	it++;
-					//}
-				//}
 			}
 		}
 	}
@@ -381,13 +362,12 @@ void CTOSZeusModule::Init()
 		gEnv->pHardwareMouse->AddListener(this);
 }
 
-int CTOSZeusModule::MouseProjectToWorld(ray_hit& ray, const Vec3& mouseWorldPos)
+int CTOSZeusModule::MouseProjectToWorld(ray_hit& ray, const Vec3& mouseWorldPos, uint entityFlags)
 {
 	const auto pPhys = m_zeus->GetEntity()->GetPhysics();
 	const Vec3 camWorldPos = gEnv->pSystem->GetViewCamera().GetPosition();
 	const Vec3 camToMouseDir = (mouseWorldPos - camWorldPos).GetNormalizedSafe() * 5000;
 	const int rayFlags = (COLLISION_RAY_PIERCABILITY & rwi_pierceability_mask);
-	const unsigned entityFlags = ent_living | ent_rigid | ent_static | ent_terrain | ent_sleeping_rigid | ent_independent;
 
 	return gEnv->pPhysicalWorld->RayWorldIntersection(mouseWorldPos, camToMouseDir, entityFlags, rayFlags, &ray, 1, pPhys, 0);
 }
@@ -419,14 +399,24 @@ void CTOSZeusModule::Update(float frametime)
 			m_anchoredMousePos.zero();
 	}
 
-	m_select ? m_mouseDownDurationSec += frametime : m_mouseDownDurationSec = 0.0f;
+	if (m_select)
+		m_mouseDownDurationSec += frametime;
+	else
+		m_mouseDownDurationSec = 0.0f;
 
-	if (m_dragging)
+	pe_status_dynamics zeus_dyn;
+	const auto pZeusPhys = m_zeus->GetEntity()->GetPhysics();
+	if (pZeusPhys)
+		pZeusPhys->GetStatus(&zeus_dyn);
+
+	const bool zeusMoving = zeus_dyn.v.len() > 0.1f;
+
+	if (m_dragging && !zeusMoving)
 	{
-		//const Vec3& curWorldMousePos = m_worldProjectedMousePos;
-		//m_draggingDir = (curWorldMousePos - m_worldProjectedSelectStartPos);
-		m_draggingDelta = (m_worldProjectedMousePos - m_worldProjectedSelectStartPos);
-		//Vec3 delta = m_selectStartPos - m_mouseIPos;
+		const bool individualEntHeight = true; // Расчет высоты для каждой сущности отдельно
+
+		m_mouseRayEntityFlags = DRAGGING_MOUSE_ENT_FLAGS;
+		m_draggingDelta = m_worldProjectedMousePos - m_worldProjectedSelectStartPos;
 
 		auto it = m_selectedEntities.begin();
 		auto end = m_selectedEntities.end();
@@ -435,21 +425,40 @@ void CTOSZeusModule::Update(float frametime)
 			auto pEntity = TOS_GET_ENTITY(*it);
 			if (pEntity)
 			{
-				Vec3 curPos = m_selectStartEntitiesPositions[*it];
-				Vec3 newPos = Vec3(curPos.x + m_draggingDelta.x, curPos.y + m_draggingDelta.y, curPos.z);
-				pEntity->SetWorldTM(Matrix34::CreateTranslationMat(newPos));
+				Matrix34 mat34 = pEntity->GetWorldTM();
+				const Vec3 curPos = mat34.GetTranslation();
+				const Vec3 startPos = m_selectStartEntitiesPositions[*it];
+
+				Vec3 newPos = Vec3(startPos.x + m_draggingDelta.x, startPos.y + m_draggingDelta.y, m_mouseRay.pt.z);
+
+				if (individualEntHeight)
+				{
+					const Vec3 entToGroundDir = (Vec3(curPos.x, curPos.y, curPos.z - 2) - curPos).GetNormalizedSafe() * gEnv->p3DEngine->GetMaxViewDistance();
+					const int rayFlags = (COLLISION_RAY_PIERCABILITY & rwi_pierceability_mask);
+					ray_hit ray;
+
+					const int hitNum = gEnv->pPhysicalWorld->RayWorldIntersection(curPos, entToGroundDir, m_mouseRayEntityFlags, rayFlags, &ray, 1, pZeusPhys, 0);
+					if (hitNum)
+						newPos.z = ray.pt.z;
+				}
+
+				mat34.SetTranslation(newPos);
+				pEntity->SetWorldTM(mat34);
 			}
 			it++;
 		}
 	}
+	else
+	{
+		m_mouseRayEntityFlags = DEFAULT_MOUSE_ENT_FLAGS;
+	}
 
 	if (m_zeus->IsClient())
 	{
-		ray_hit ray;
-		int hitNum = MouseProjectToWorld(ray, m_worldMousePos);
+		const int hitNum = MouseProjectToWorld(m_mouseRay, m_worldMousePos, m_mouseRayEntityFlags);
 		if (hitNum)
 		{
-			m_worldProjectedMousePos = ray.pt;
+			m_worldProjectedMousePos = m_mouseRay.pt;
 		}
 
 		// Отрисовка позиции мыши в реальном мире
@@ -527,7 +536,7 @@ void CTOSZeusModule::Update(float frametime)
 		auto end = m_selectedEntities.cend();
 		for (; it != end; it++)
 		{
-			auto pEntity = TOS_GET_ENTITY(*it);
+			const auto pEntity = TOS_GET_ENTITY(*it);
 			if (!pEntity)
 				continue;
 
@@ -539,11 +548,12 @@ void CTOSZeusModule::Update(float frametime)
 			pRAG->DrawAABB(entityBox, true, ColorB(0, 0, 255, 65), eBBD_Faceted);
 		}
 
-		// Отрисовка границ выделенных сущностей
+		// Вывод текстового дебага
 		///////////////////////////////////////////////////////////////////////
-
 		float color[] = {1,1,1,1};
-		gEnv->pRenderer->Draw2dLabel(100, 100, 1.2f, color, false, "m_ctrlModifier = %i", int(m_ctrlModifier));
+		gEnv->pRenderer->Draw2dLabel(100, 100, 1.3f, color, false, "m_ctrlModifier = %i", int(m_ctrlModifier));
+		gEnv->pRenderer->Draw2dLabel(100, 120, 1.3f, color, false, "zeus_dyn.v = (%1.f,%1.f,%1.f)", zeus_dyn.v.x, zeus_dyn.v.y, zeus_dyn.v.z);
+		gEnv->pRenderer->Draw2dLabel(100, 140, 1.3f, color, false, "zeusMoving = %i", zeusMoving);
 	}
 }
 
