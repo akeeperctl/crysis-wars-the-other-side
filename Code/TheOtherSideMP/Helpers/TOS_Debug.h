@@ -134,10 +134,48 @@ namespace TOS_Debug
 			CryLogAlways("	%s", "ENTITY_FLAG_AI_HIDEABLE");
 	}
 
-	// Summary
-	//   Get string of type of action
-	// Parameters
-	//   type - type of action: 1 - FUNC CALL, 2 - CONSTR CALL, 3 - RMI RECEIVED.
+	/// @brief 
+	///   Отображает имена сущностей в 2D-тексте на экране.
+	/// @tparam Container 
+	///   Тип контейнера, содержащего идентификаторы сущностей.
+	/// @param startX 
+	///   Начальная координата X для отображения текста.
+	/// @param startY 
+	///   Начальная координата Y для отображения текста.
+	/// @param deltaY 
+	///   Вертикальное расстояние между строками текста.
+	/// @param headerTextSize 
+	///   Размер шрифта для заголовка.
+	/// @param enumTextSize 
+	///   Размер шрифта для имен сущностей.
+	/// @param header 
+	///   Текст заголовка, отображаемый вверху списка.
+	/// @param container 
+	///   Контейнер, содержащий идентификаторы сущностей для отображения.
+	template <typename Container>
+	inline void DrawEntitiesName2DLabel(const Container& container, const char* header, int startX = 100, int startY = 100, int deltaY = 20, float headerTextSize = 1.4f, float enumTextSize = 1.3f)
+	{
+		float color[] = {1,1,1,1};
+		gEnv->pRenderer->Draw2dLabel(startX, startY, headerTextSize, color, false, "%s", header);
+
+		for (auto it = container.cbegin(); it != container.cend(); it++)
+		{
+			const auto pEntity = gEnv->pEntitySystem->GetEntity(*it);
+			if (!pEntity)
+				continue;
+
+			const char* name = pEntity->GetName();
+			const int index = std::distance(container.cbegin(), it);
+
+			const int y = startY + deltaY + index * deltaY;
+			gEnv->pRenderer->Draw2dLabel(startX, y, enumTextSize, color, false, "	%i) %s", index, name);
+		}
+	}
+
+	// Описание
+	//   Получить строку с типом действия
+	// Параметры
+	//   type - тип действия: 1 - ВЫЗОВ ФУНКЦИИ, 2 - ВЫЗОВ КОНСТРУКТОРА, 3 - ПОЛУЧЕН RMI.
 	inline const char* GetAct(int type)
 	{
 		switch (type)
@@ -176,6 +214,22 @@ namespace TOS_Debug
 		return "env_null";
 	}
 
+	/// @brief Возвращает строковое представление цвета для логирования.
+	/// 
+	/// Эта функция принимает параметр перечисления ELogColor и возвращает строку,
+	/// которая используется для визуального выделения сообщений в логах с помощью цвета.
+	/// 
+	/// @param colorenum Перечисление ELogColor, представляющее цвет.
+	/// @return Строка, представляющая цвет в формате "$N", где N — код цвета.
+	///
+	/// @li Синий: "\$2"
+	/// @li Зеленый: "\$3"
+	/// @li Красный: "\$4"
+	/// @li Голубой: "\$5"
+	/// @li Желтый: "\$6"
+	/// @li Фиолетовый: "\$7"
+	/// @li Коричневый: "\$8"
+	/// @li Серый: "\$9"
 	inline const char* GetLogColor(ELogColor colorenum)
 	{
 		const char* color = 0;
@@ -212,8 +266,6 @@ namespace TOS_Debug
 		{
 			color = "$6";
 		}
-
-
 		return color;
 	}
 }
