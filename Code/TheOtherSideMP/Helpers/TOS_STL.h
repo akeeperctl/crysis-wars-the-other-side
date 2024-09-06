@@ -42,23 +42,23 @@ namespace TOS_STL
 	//	return containter[0];
 	//}
 
-	template <class Container>
-	typename std::enable_if<!std::is_void<decltype(*std::begin(std::declval<Container>()))>::value, decltype(*std::begin(std::declval<Container>()))>::type
-		GetRandomFromSTL(const Container& container) 
+	template <typename Container>
+	typename Container::value_type GetRandomFromSTL(const Container& container)
 	{
-		size_t itemsCount = std::distance(std::begin(container), std::end(container));
+		typedef typename Container::const_iterator ConstIterator;
 
-		if (itemsCount == 0) {
+		size_t itemsCount = std::distance(container.begin(), container.end());
+
+		if (itemsCount == 0)
+		{
 			// Возвращаем значение по умолчанию для типа элементов контейнера.
-			return decltype(*std::begin(container))();
+			return typename Container::value_type();
 		}
 
-		static std::random_device rd;
-		static std::mt19937 gen(rd());
-		std::uniform_int_distribution<> dis(0, itemsCount - 1);
+		size_t randomIndex = cry_rand() % itemsCount; // Генерация случайных чисел
 
-		auto it = std::begin(container);
-		std::advance(it, dis(gen));
+		ConstIterator it = container.begin();
+		std::advance(it, randomIndex);
 
 		return *it;
 	}
