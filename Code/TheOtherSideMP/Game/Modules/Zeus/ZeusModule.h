@@ -108,5 +108,6 @@ private:
 	// Консольные значения
 	float tos_sv_zeus_mass_selection_hold_sec;
 	int tos_sv_zeus_always_select_parent;
+	int tos_sv_zeus_can_drag_dead_bodies;
 	int tos_cl_zeus_dragging_draw_debug;
 };

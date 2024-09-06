@@ -260,7 +260,7 @@ void CTOSZeusModule::GetSelectedEntities()
 
 				// допустимые сущности
 				const auto type = physEnt->GetType();
-				if (!(type == PE_LIVING || type == PE_RIGID || type == PE_STATIC || type == PE_WHEELEDVEHICLE))
+				if (!(type == PE_LIVING || type == PE_RIGID || type == PE_STATIC || type == PE_WHEELEDVEHICLE || PE_ARTICULATED))
 					continue;
 			}
 
@@ -479,6 +479,14 @@ void CTOSZeusModule::Update(float frametime)
 			auto pEntity = TOS_GET_ENTITY(*it);
 			if (pEntity)
 			{
+				IActor* pActor = g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pEntity->GetId());
+				if (pActor)
+				{
+					// Пропускаем убитых актеров
+					if (TOS_Console::GetSafeIntVar("tos_sv_zeus_can_drag_dead_bodies", 0) < 1 && pActor->GetHealth() < 0.0f)
+						continue;
+				}
+
 				Matrix34 mat34 = pEntity->GetWorldTM();
 				const Vec3 curPos = mat34.GetTranslation();
 				const Vec3 startPos = m_selectStartEntitiesPositions[*it];

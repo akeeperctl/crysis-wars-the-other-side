@@ -15,6 +15,9 @@ void CTOSZeusModule::InitCVars(IConsole* pConsole)
 
 	pConsole->Register("tos_sv_zeus_always_select_parent", &tos_sv_zeus_always_select_parent, 1, VF_CHEAT,
 					   "When ZEUS selects child entities, only the parent will be selected");
+
+	pConsole->Register("tos_sv_zeus_can_drag_dead_bodies", &tos_sv_zeus_can_drag_dead_bodies, 0, VF_CHEAT,
+					   "");
 }
 
 void CTOSZeusModule::ReleaseCVars()
@@ -25,6 +28,7 @@ void CTOSZeusModule::ReleaseCVars()
 	pConsole->UnregisterVariable("tos_sv_zeus_mass_selection_hold_sec", true);
 	pConsole->UnregisterVariable("tos_cl_zeus_dragging_draw_debug", true);
 	pConsole->UnregisterVariable("tos_sv_zeus_always_select_parent", true);
+	pConsole->UnregisterVariable("tos_sv_zeus_can_drag_dead_bodies", true);
 }
 
 void CTOSZeusModule::InitCCommands(IConsole* pConsole)
