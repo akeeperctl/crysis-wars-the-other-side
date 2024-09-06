@@ -161,7 +161,7 @@ void CTOSZeusModule::OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eH
 			m_select = false;
 			m_selectStopPos = Vec2i(iX, iY);
 
-			if (CanSelectMultiplyWithBox() && !m_dragging)
+			if (!m_dragging && CanSelectMultiplyWithBox())
 				GetSelectedEntities();
 			else
 			{
@@ -176,10 +176,10 @@ void CTOSZeusModule::OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eH
 					if (m_curClickedEntityId != 0)
 						m_selectedEntities.insert(m_curClickedEntityId);
 				}
-				// Множественное выделение
+				// Множественное выделение c зажатым модификатором
 				else
 				{
-					if (m_curClickedEntityId != 0 && !m_dragging)
+					if (!m_dragging && m_curClickedEntityId != 0)
 					{
 						if (m_selectedEntities.count(m_curClickedEntityId) > 0)
 						{
@@ -190,6 +190,26 @@ void CTOSZeusModule::OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eH
 							m_selectedEntities.insert(m_curClickedEntityId);
 						}
 					}
+				}
+			}
+
+			// Пинаем физику выделенных сущностей после того как закончили их перетаскивать
+			if (m_dragging)
+			{
+				for (auto it = m_selectedEntities.begin(); it != m_selectedEntities.end(); it++)
+				{
+					auto pEntity = TOS_GET_ENTITY(*it);
+					if (!pEntity)
+						continue;
+
+					auto pPhys = pEntity->GetPhysics();
+					if (!pPhys)
+						continue;
+
+					pe_action_awake awake;
+					awake.bAwake = 1;
+
+					pPhys->Action(&awake);
 				}
 			}
 
