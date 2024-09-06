@@ -93,7 +93,7 @@ private:
 	Vec3 m_worldProjectedSelectStartPos;
 	Vec2 m_selectStopPos;
 	Vec3 m_draggingDelta;
-	std::vector<EntityId> m_selectedEntities;
+	std::set<EntityId> m_selectedEntities;
 	std::map<EntityId, Vec3> m_selectStartEntitiesPositions;
 	EntityId m_curClickedEntityId;
 	EntityId m_lastClickedEntityId;
@@ -103,7 +103,10 @@ private:
 	bool m_dragging;
 	bool m_ctrlModifier;
 	bool m_altModifier;
+	bool m_debugZModifier;
 
 	// Консольные значения
 	float tos_sv_zeus_mass_selection_hold_sec;
+	int tos_sv_zeus_always_select_parent;
+	int tos_cl_zeus_dragging_draw_debug;
 };

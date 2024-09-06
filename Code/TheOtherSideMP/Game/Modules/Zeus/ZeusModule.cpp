@@ -32,6 +32,7 @@ CTOSZeusModule::CTOSZeusModule()
 	m_mouseRayEntityFlags(DEFAULT_MOUSE_ENT_FLAGS),
 	m_ctrlModifier(false),
 	m_altModifier(false),
+	m_debugZModifier(false),
 	m_select(false),
 	m_dragging(false)
 {}
@@ -59,6 +60,13 @@ bool CTOSZeusModule::OnInputEvent(const SInputEvent& event)
 				m_altModifier = true;
 			else if (event.state == eIS_Released)
 				m_altModifier = false;
+		}
+		else if (event.keyId == EKeyId::eKI_Z)
+		{
+			if (event.state == eIS_Pressed)
+				m_debugZModifier = true;
+			else if (event.state == eIS_Released)
+				m_debugZModifier = false;
 		}
 		else if (event.keyId == EKeyId::eKI_End)
 		{
@@ -157,18 +165,43 @@ void CTOSZeusModule::OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eH
 				GetSelectedEntities();
 			else
 			{
-				if (!m_ctrlModifier && m_curClickedEntityId != m_lastClickedEntityId || m_curClickedEntityId == 0)
-					m_selectedEntities.clear();
+				// Одиночное выделение
+				if (!m_ctrlModifier)
+				{
+					// При каждом клике без CTRL снимаем выделение если кликнули не на последнюю кликнутую сущность
+					if (m_curClickedEntityId != m_lastClickedEntityId || m_curClickedEntityId == 0)
+						m_selectedEntities.clear();
 
-				if (m_curClickedEntityId != 0)
-					stl::push_back_unique(m_selectedEntities, m_curClickedEntityId);
+					// После чистки всех выделенных сущностей, выделяем кликнутую сущность
+					if (m_curClickedEntityId != 0)
+						m_selectedEntities.insert(m_curClickedEntityId);
+				}
+				// Множественное выделение
+				else
+				{
+					if (m_curClickedEntityId != 0 && !m_dragging)
+					{
+						if (m_selectedEntities.count(m_curClickedEntityId) > 0)
+						{
+							stl::binary_erase(m_selectedEntities, m_curClickedEntityId);
+						}
+						else
+						{
+							m_selectedEntities.insert(m_curClickedEntityId);
+						}
+					}
+				}
 			}
 
 			m_dragging = false;
 		}
 		else if (eHardwareMouseEvent == HARDWAREMOUSEEVENT_MOVE)
 		{
-			if (m_select && m_curClickedEntityId != 0)
+			// При перетаскивании кликнутая сущность должна быть выделена
+			const auto iter = stl::binary_find(m_selectedEntities.begin(), m_selectedEntities.end(), m_curClickedEntityId);
+			const bool clickedSelected = iter != m_selectedEntities.end();
+
+			if (m_select && m_curClickedEntityId != 0 && clickedSelected)
 			{
 				// Сохраняем начальное положение каждой выделенной сущности
 				if (m_dragging == false)
@@ -201,7 +234,7 @@ void CTOSZeusModule::OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eH
 
 void CTOSZeusModule::GetSelectedEntities()
 {
-	//clear previously stored entity id's if left or right CTRL is not pressed
+	//clear previously stored entity id's if left CTRL is not pressed
 	if (!m_ctrlModifier)
 		m_selectedEntities.clear();
 
@@ -210,72 +243,80 @@ void CTOSZeusModule::GetSelectedEntities()
 	{
 		if (IEntity* pEntity = pIt->Next())
 		{
-			//skip useless entities (gamerules, fists etc.)
-			if (IPhysicalEntity* physEnt = pEntity->GetPhysics())
+			// выделяем только родительскую сущность
+			if (TOS_Console::GetSafeIntVar("tos_sv_zeus_always_select_parent", 1) && pEntity->GetParent())
+				pEntity = pEntity->GetParent();
+
+			if (m_debugZModifier == false)
 			{
-				IActor* pClientActor = g_pGame->GetIGameFramework()->GetClientActor();
-
-				if (!pClientActor)
-					return;
-
-				//skip the client actor entity
-				if (physEnt == pClientActor->GetEntity()->GetPhysics())
+				// пропускаем мусор (при удалении сущности, в редакторе остается мусор от сущности, который можно выделить повторно)
+				if (pEntity->IsGarbage())
 					continue;
 
-				AABB worldBounds;
-				pEntity->GetWorldBounds(worldBounds);
-
-				//skip further calculations if the entity is not visible at all...
-				if (gEnv->pSystem->GetViewCamera().IsAABBVisible_F(worldBounds) == CULL_EXCLUSION)
+				//skip useless entities (gamerules, fists etc.)
+				IPhysicalEntity* physEnt = pEntity->GetPhysics();
+				if (!physEnt)
 					continue;
 
-				Vec3 wpos = pEntity->GetWorldPos();
-				Quat rot = pEntity->GetWorldRotation();
-				AABB localBounds;
+				// допустимые сущности
+				const auto type = physEnt->GetType();
+				if (!(type == PE_LIVING || type == PE_RIGID || type == PE_STATIC || type == PE_WHEELEDVEHICLE))
+					continue;
+			}
 
-				pEntity->GetLocalBounds(localBounds);
+			IActor* pClientActor = g_pGame->GetIGameFramework()->GetClientActor();
+			if (!pClientActor)
+				return;
 
-				//get min and max values of the entity bounding box (local positions)
-				static Vec3 points[2];
-				points[0] = wpos + rot * localBounds.min;
-				points[1] = wpos + rot * localBounds.max;
+			// пропускаем сущность актера клиента
+			if (pEntity->GetId() == pClientActor->GetEntityId())
+				continue;
 
-				static Vec3 pointsProjected[2];
+			AABB worldBounds;
+			pEntity->GetWorldBounds(worldBounds);
 
-				//project the bounding box min max values to screen positions
-				for (int i = 0; i < 2; ++i)
+			//skip further calculations if the entity is not visible at all...
+			if (gEnv->pSystem->GetViewCamera().IsAABBVisible_F(worldBounds) == CULL_EXCLUSION)
+				continue;
+
+			const Vec3 wpos = pEntity->GetWorldPos();
+			const Quat rot = pEntity->GetWorldRotation();
+			AABB localBounds;
+
+			pEntity->GetLocalBounds(localBounds);
+
+			//get min and max values of the entity bounding box (local positions)
+			static Vec3 points[2];
+			points[0] = wpos + rot * localBounds.min;
+			points[1] = wpos + rot * localBounds.max;
+
+			static Vec3 pointsProjected[2];
+
+			//project the bounding box min max values to screen positions
+			for (int i = 0; i < 2; ++i)
+			{
+				gEnv->pRenderer->ProjectToScreen(points[i].x, points[i].y, points[i].z, &pointsProjected[i].x, &pointsProjected[i].y, &pointsProjected[i].z);
+				const float fWidth = gEnv->pRenderer->GetWidth();
+				const float fHeight = gEnv->pRenderer->GetHeight();
+
+				//scale projected values to the actual screen resolution
+				pointsProjected[i].x *= 0.01f * fWidth;
+				pointsProjected[i].y *= 0.01f * fHeight;
+			}
+
+			//check if the projected bounding box min max values are fully or partly inside the screen selection 
+			if ((m_selectStartPos.x <= pointsProjected[0].x && pointsProjected[0].x <= m_selectStopPos.x) ||
+				(m_selectStartPos.x >= pointsProjected[0].x && m_selectStopPos.x <= pointsProjected[1].x) ||
+				(m_selectStartPos.x <= pointsProjected[1].x && m_selectStopPos.x >= pointsProjected[1].x) ||
+				(m_selectStartPos.x <= pointsProjected[0].x && m_selectStopPos.x >= pointsProjected[1].x))
+			{
+				if ((m_selectStartPos.y <= pointsProjected[0].y && m_selectStopPos.y >= pointsProjected[0].y) ||
+					(m_selectStartPos.y <= pointsProjected[1].y && m_selectStopPos.y >= pointsProjected[0].y) ||
+					(m_selectStartPos.y <= pointsProjected[1].y && m_selectStopPos.y >= pointsProjected[1].y))
 				{
-					gEnv->pRenderer->ProjectToScreen(points[i].x, points[i].y, points[i].z, &pointsProjected[i].x, &pointsProjected[i].y, &pointsProjected[i].z);
-					const float fWidth = gEnv->pRenderer->GetWidth();
-					const float fHeight = gEnv->pRenderer->GetHeight();
-
-					//scale projected values to the actual screen resolution
-					pointsProjected[i].x *= 0.01f * fWidth;
-					pointsProjected[i].y *= 0.01f * fHeight;
-				}
-
-				//check if the projected bounding box min max values are fully or partly inside the screen selection 
-				if ((m_selectStartPos.x <= pointsProjected[0].x && pointsProjected[0].x <= m_selectStopPos.x) ||
-					(m_selectStartPos.x >= pointsProjected[0].x && m_selectStopPos.x <= pointsProjected[1].x) ||
-					(m_selectStartPos.x <= pointsProjected[1].x && m_selectStopPos.x >= pointsProjected[1].x) ||
-					(m_selectStartPos.x <= pointsProjected[0].x && m_selectStopPos.x >= pointsProjected[1].x))
-				{
-					if ((m_selectStartPos.y <= pointsProjected[0].y && m_selectStopPos.y >= pointsProjected[0].y) ||
-						(m_selectStartPos.y <= pointsProjected[1].y && m_selectStopPos.y >= pointsProjected[0].y) ||
-						(m_selectStartPos.y <= pointsProjected[1].y && m_selectStopPos.y >= pointsProjected[1].y))
-					{
-						//finally we have an entity id
-						//if left or right CTRL is not pressed we can directly add every entity id, old entity id's are already deleted
-						if (!m_ctrlModifier)
-						{
-							m_selectedEntities.push_back(pEntity->GetId());
-						}
-						else
-						{
-							//check for previously added entity id's first
-							stl::push_back_unique(m_selectedEntities, pEntity->GetId());
-						}
-					}
+					//finally we have an entity id
+					//if left or right CTRL is not pressed we can directly add every entity id, old entity id's are already deleted
+					m_selectedEntities.insert(pEntity->GetId());
 				}
 			}
 		}
@@ -300,6 +341,7 @@ void CTOSZeusModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent&
 				m_dragging = false;
 				m_ctrlModifier = false;
 				m_altModifier = false;
+				m_debugZModifier = false;
 				m_selectedEntities.clear();
 
 				if (noModalOrNoHUD)
@@ -364,17 +406,26 @@ void CTOSZeusModule::Init()
 
 int CTOSZeusModule::MouseProjectToWorld(ray_hit& ray, const Vec3& mouseWorldPos, uint entityFlags)
 {
-	const auto pPhys = m_zeus->GetEntity()->GetPhysics();
+	if (!m_zeus || !m_zeus->GetEntity() || !m_zeus->GetEntity()->GetPhysics())
+		return 0;
+
+	const auto pClickedEntity = TOS_GET_ENTITY(m_curClickedEntityId);
+
+	IPhysicalEntity* pSkipEnts[2] = {m_zeus->GetEntity()->GetPhysics(), nullptr};
+	if (pClickedEntity)
+		pSkipEnts[1] = pClickedEntity->GetPhysics();
+
+	const int nSkip = sizeof(pSkipEnts) / sizeof(pSkipEnts[0]);
 	const Vec3 camWorldPos = gEnv->pSystem->GetViewCamera().GetPosition();
-	const Vec3 camToMouseDir = (mouseWorldPos - camWorldPos).GetNormalizedSafe() * 5000;
+	const Vec3 camToMouseDir = (mouseWorldPos - camWorldPos).GetNormalizedSafe() * gEnv->p3DEngine->GetMaxViewDistance();
 	const int rayFlags = (COLLISION_RAY_PIERCABILITY & rwi_pierceability_mask);
 
-	return gEnv->pPhysicalWorld->RayWorldIntersection(mouseWorldPos, camToMouseDir, entityFlags, rayFlags, &ray, 1, pPhys, 0);
+	return gEnv->pPhysicalWorld->RayWorldIntersection(mouseWorldPos, camToMouseDir, entityFlags, rayFlags, &ray, 1, pSkipEnts, nSkip);
 }
 
 void CTOSZeusModule::Update(float frametime)
 {
-	if (!m_zeus)
+	if (!m_zeus || !m_zeus->IsClient())
 		return;
 
 	// Привязка мыши к позиции, когда крутится камера
@@ -411,9 +462,12 @@ void CTOSZeusModule::Update(float frametime)
 
 	const bool zeusMoving = zeus_dyn.v.len() > 0.1f;
 
+	//Перенос выделенных сущностей
+	///////////////////////////////////////////////////////////////////////
 	if (m_dragging && !zeusMoving)
 	{
 		const bool individualEntHeight = true; // Расчет высоты для каждой сущности отдельно
+		const auto pClickedEntity = TOS_GET_ENTITY(m_curClickedEntityId);
 
 		m_mouseRayEntityFlags = DRAGGING_MOUSE_ENT_FLAGS;
 		m_draggingDelta = m_worldProjectedMousePos - m_worldProjectedSelectStartPos;
@@ -437,9 +491,18 @@ void CTOSZeusModule::Update(float frametime)
 					const int rayFlags = (COLLISION_RAY_PIERCABILITY & rwi_pierceability_mask);
 					ray_hit ray;
 
-					const int hitNum = gEnv->pPhysicalWorld->RayWorldIntersection(curPos, entToGroundDir, m_mouseRayEntityFlags, rayFlags, &ray, 1, pZeusPhys, 0);
+					IPhysicalEntity* pSkipEnts[3];
+					pSkipEnts[0] = pZeusPhys;
+					pSkipEnts[1] = pEntity->GetPhysics();
+
+					if (pClickedEntity)
+						pSkipEnts[2] = pClickedEntity->GetPhysics();
+
+					const int nSkip = sizeof(pSkipEnts) / sizeof(pSkipEnts[0]);
+
+					const int hitNum = gEnv->pPhysicalWorld->RayWorldIntersection(Vec3(curPos.x, curPos.y, curPos.z + 1), entToGroundDir, m_mouseRayEntityFlags, rayFlags, &ray, 1, pSkipEnts, nSkip);
 					if (hitNum)
-						newPos.z = ray.pt.z;
+						newPos.z = ray.pt.z + 0.01f;
 				}
 
 				mat34.SetTranslation(newPos);
@@ -453,107 +516,99 @@ void CTOSZeusModule::Update(float frametime)
 		m_mouseRayEntityFlags = DEFAULT_MOUSE_ENT_FLAGS;
 	}
 
-	if (m_zeus->IsClient())
+	const int hitNum = MouseProjectToWorld(m_mouseRay, m_worldMousePos, m_mouseRayEntityFlags);
+	if (hitNum)
 	{
-		const int hitNum = MouseProjectToWorld(m_mouseRay, m_worldMousePos, m_mouseRayEntityFlags);
-		if (hitNum)
+		m_worldProjectedMousePos = m_mouseRay.pt;
+	}
+
+	// Отрисовка отладки
+	///////////////////////////////////////////////////////////////////////
+	IPersistantDebug* pPD = gEnv->pGame->GetIGameFramework()->GetIPersistantDebug();
+	pPD->Begin("ZeusModule", true);
+	const auto blue = ColorF(0, 0, 1, 1);
+	const auto green = ColorF(0, 1, 0, 1);
+	const auto red = ColorF(1, 0, 0, 1);
+
+	// Отрисовка отладки позиции мыши в реальном мире
+	///////////////////////////////////////////////////////////////////////
+	//pPD->AddSphere(m_worldMousePos, 0.25f, green, 1.0f);
+	pPD->AddSphere(m_worldProjectedMousePos, 0.20f, blue, 1.0f);
+	pPD->AddSphere(m_worldProjectedSelectStartPos, 0.20f, green, 1.0f);
+
+	if (TOS_Console::GetSafeIntVar("tos_cl_zeus_dragging_draw_debug", 0) > 0 && m_dragging)
+	{
+		pPD->AddDirection(m_worldProjectedSelectStartPos, 1.0f, m_worldProjectedMousePos - m_worldProjectedSelectStartPos, green, 1.0f);
+
+		const auto pEntity = TOS_GET_ENTITY(m_curClickedEntityId);
+		if (pEntity)
 		{
-			m_worldProjectedMousePos = m_mouseRay.pt;
+			const Vec3 curPos = pEntity->GetWorldPos();
+			const Vec3 newPos = Vec3(curPos.x + m_draggingDelta.x, curPos.y + m_draggingDelta.y, curPos.z);
+			pPD->AddSphere(newPos, 0.20f, red, 1.0f);
+			pPD->AddLine(curPos, newPos, red, 1.0f);
 		}
 
-		// Отрисовка позиции мыши в реальном мире
-		///////////////////////////////////////////////////////////////////////
-		IPersistantDebug* pPD = gEnv->pGame->GetIGameFramework()->GetIPersistantDebug();
-		pPD->Begin("ZeusModule", true);
-		const auto blue = ColorF(0, 0, 1, 1);
-		const auto green = ColorF(0, 1, 0, 1);
-		const auto red = ColorF(1, 0, 0, 1);
+		pPD->AddLine(m_worldProjectedSelectStartPos, m_worldProjectedMousePos, green, 1.0f);
+		pPD->AddText(m_mouseIPos.x, m_mouseIPos.y, 1.4f, green, 1.0f, "delta (%1.f, %1.f, %1.f)",
+					 m_draggingDelta.x, m_draggingDelta.y, m_draggingDelta.z);
+	}
 
-		//pPD->AddSphere(m_worldMousePos, 0.25f, green, 1.0f);
-		pPD->AddSphere(m_worldProjectedMousePos, 0.20f, blue, 1.0f);
-		pPD->AddSphere(m_worldProjectedSelectStartPos, 0.20f, green, 1.0f);
-
-		if (m_dragging)
+	// Отрисовка границ выделения
+	///////////////////////////////////////////////////////////////////////
+	if (m_select && CanSelectMultiplyWithBox() && !m_dragging)
+	{
+		if (IRenderAuxGeom* pGeom = gEnv->pRenderer->GetIRenderAuxGeom())
 		{
-			//pPD->AddDirection(m_worldProjectedSelectStartPos, 1.0f, m_worldProjectedMousePos - m_worldProjectedSelectStartPos, green, 1.0f);
+			//calculate the four selection boundary points
+			Vec3 vTopLeft(m_selectStartPos.x, m_selectStartPos.y, 0.0f);
+			Vec3 vTopRight(m_mouseIPos.x, m_selectStartPos.y, 0.0f);
+			Vec3 vBottomLeft(m_selectStartPos.x, m_mouseIPos.y, 0.0f);
+			Vec3 vBottomRight(m_mouseIPos.x, m_mouseIPos.y, 0.0f);
 
-			//auto pEntity = TOS_GET_ENTITY(m_curClickedEntityId);
-			//if (pEntity)
-			//{
-			//	Vec3 curPos = pEntity->GetWorldPos();
-			//	Vec3 newPos = Vec3(curPos.x + m_draggingDelta.x, curPos.y + m_draggingDelta.y, curPos.z);
-			//	pPD->AddSphere(newPos, 0.20f, red, 1.0f);
-			//	pPD->AddLine(curPos, newPos, red, 1.0f);
-			//}
+			gEnv->pRenderer->Set2DMode(true, gEnv->pRenderer->GetWidth(), gEnv->pRenderer->GetHeight());
 
-			//pPD->AddLine(m_worldProjectedSelectStartPos, m_worldProjectedMousePos, green, 1.0f);
-			//pPD->AddText(m_mouseIPos.x, m_mouseIPos.y, 1.4f, green, 1.0f, "delta (%1.f, %1.f, %1.f)",
-			//			 m_draggingDelta.x, m_draggingDelta.y, m_draggingDelta.z);
+			//set boundary color: white
+			ColorB col(255, 255, 255, 255);
+
+			pGeom->DrawLine(vTopLeft, col, vTopRight, col);
+			pGeom->DrawLine(vTopRight, col, vBottomRight, col);
+			pGeom->DrawLine(vTopLeft, col, vBottomLeft, col);
+			pGeom->DrawLine(vBottomLeft, col, vBottomRight, col);
+
+			gEnv->pRenderer->Set2DMode(false, 0, 0);
 		}
+	}
 
-		// Отрисовка границ выделенной сущности
-		///////////////////////////////////////////////////////////////////////
-		//if (m_lastClickedEntityId != 0)
-		//{
-		//	IRenderAuxGeom* pRAG = gEnv->pRenderer->GetIRenderAuxGeom();
-		//	pRAG->SetRenderFlags(e_Mode3D | e_AlphaBlended | e_DrawInFrontOff | e_FillModeSolid | e_CullModeNone);
+	// Отрисовка квадрата выделенных сущностей
+	///////////////////////////////////////////////////////////////////////
+	for (auto it = m_selectedEntities.cbegin(); it != m_selectedEntities.cend(); it++)
+	{
+		const auto pEntity = TOS_GET_ENTITY(*it);
+		if (!pEntity)
+			continue;
 
-		//	AABB entityBox;
-		//	auto pEntity = TOS_GET_ENTITY(m_lastClickedEntityId);
-		//	pEntity->GetWorldBounds(entityBox);
-		//	pRAG->DrawAABB(entityBox, true, ColorB(0, 0, 255, 65), eBBD_Faceted);
-		//}
+		IRenderAuxGeom* pRAG = gEnv->pRenderer->GetIRenderAuxGeom();
+		pRAG->SetRenderFlags(e_Mode3D | e_AlphaBlended | e_DrawInFrontOff | e_FillModeSolid | e_CullModeNone);
 
-		// Отрисовка границ выделения
-		///////////////////////////////////////////////////////////////////////
-		if (m_select && CanSelectMultiplyWithBox() && !m_dragging)
-		{
-			if (IRenderAuxGeom* pGeom = gEnv->pRenderer->GetIRenderAuxGeom())
-			{
-				//calculate the four selection boundary points
-				Vec3 vTopLeft(m_selectStartPos.x, m_selectStartPos.y, 0.0f);
-				Vec3 vTopRight(m_mouseIPos.x, m_selectStartPos.y, 0.0f);
-				Vec3 vBottomLeft(m_selectStartPos.x, m_mouseIPos.y, 0.0f);
-				Vec3 vBottomRight(m_mouseIPos.x, m_mouseIPos.y, 0.0f);
+		AABB entityBox;
+		pEntity->GetWorldBounds(entityBox);
+		pRAG->DrawAABB(entityBox, true, ColorB(0, 0, 255, 65), eBBD_Faceted);
+	}
 
-				gEnv->pRenderer->Set2DMode(true, gEnv->pRenderer->GetWidth(), gEnv->pRenderer->GetHeight());
+	// Вывод текстовой отладки
+	///////////////////////////////////////////////////////////////////////
+	float color[] = {1,1,1,1};
+	const int startY = 100;
+	const int deltaY = 20;
+	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 0, 1.3f, color, false, "m_ctrlModifier = %i", int(m_ctrlModifier));
+	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 1, 1.3f, color, false, "m_debugZModifier = %i", int(m_debugZModifier));
+	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 2, 1.3f, color, false, "zeus_dyn.v = (%1.f,%1.f,%1.f)", zeus_dyn.v.x, zeus_dyn.v.y, zeus_dyn.v.z);
+	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 3, 1.3f, color, false, "zeusMoving = %i", zeusMoving);
 
-				//set boundary color: white
-				ColorB col(255, 255, 255, 255);
-
-				pGeom->DrawLine(vTopLeft, col, vTopRight, col);
-				pGeom->DrawLine(vTopRight, col, vBottomRight, col);
-				pGeom->DrawLine(vTopLeft, col, vBottomLeft, col);
-				pGeom->DrawLine(vBottomLeft, col, vBottomRight, col);
-
-				gEnv->pRenderer->Set2DMode(false, 0, 0);
-			}
-		}
-
-		// Отрисовка границ выделенных сущностей
-		///////////////////////////////////////////////////////////////////////
-		auto it = m_selectedEntities.cbegin();
-		auto end = m_selectedEntities.cend();
-		for (; it != end; it++)
-		{
-			const auto pEntity = TOS_GET_ENTITY(*it);
-			if (!pEntity)
-				continue;
-
-			IRenderAuxGeom* pRAG = gEnv->pRenderer->GetIRenderAuxGeom();
-			pRAG->SetRenderFlags(e_Mode3D | e_AlphaBlended | e_DrawInFrontOff | e_FillModeSolid | e_CullModeNone);
-
-			AABB entityBox;
-			pEntity->GetWorldBounds(entityBox);
-			pRAG->DrawAABB(entityBox, true, ColorB(0, 0, 255, 65), eBBD_Faceted);
-		}
-
-		// Вывод текстового дебага
-		///////////////////////////////////////////////////////////////////////
-		float color[] = {1,1,1,1};
-		gEnv->pRenderer->Draw2dLabel(100, 100, 1.3f, color, false, "m_ctrlModifier = %i", int(m_ctrlModifier));
-		gEnv->pRenderer->Draw2dLabel(100, 120, 1.3f, color, false, "zeus_dyn.v = (%1.f,%1.f,%1.f)", zeus_dyn.v.x, zeus_dyn.v.y, zeus_dyn.v.z);
-		gEnv->pRenderer->Draw2dLabel(100, 140, 1.3f, color, false, "zeusMoving = %i", zeusMoving);
+	if (!m_selectedEntities.empty())
+	{
+		TOS_Debug::DrawEntitiesName2DLabel(m_selectedEntities, "Selected Entities: ", 100, startY + deltaY * 4, deltaY);
 	}
 }
 
@@ -708,10 +763,9 @@ bool CTOSZeusModule::ExecuteCommand(EZeusCommands command)
 			case eZC_RemoveSelected:
 			{
 				gEnv->pEntitySystem->RemoveEntity(id);
-				m_selectedEntities.erase(it);
+				it = m_selectedEntities.erase(it);
 				needUpdateIter = false;
 
-				end = m_selectedEntities.end();
 				break;
 			}
 			default:
