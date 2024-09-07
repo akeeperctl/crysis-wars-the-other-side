@@ -76,9 +76,11 @@ private:
 	/// Можно ли выбрать сущности выделением нескольких сразу?
 	bool CanSelectMultiplyWithBox() const;
 
+	/// @brief Получить сущности, находящиеся в границах выделенной через мышь области 
 	void GetSelectedEntities();
 	EntityId GetMouseEntityId();
 	void ShowMouse(bool show);
+
 	void ApplyZeusProperties(IActor* pPlayer);
 
 	//Выполнить команду всем выделенным сущностям
@@ -112,5 +114,7 @@ private:
 	float tos_sv_zeus_mass_selection_hold_sec;
 	int tos_sv_zeus_always_select_parent;
 	int tos_sv_zeus_can_drag_dead_bodies;
+	int tos_sv_zeus_dragging_entities_auto_height;
+	int tos_sv_zeus_dragging_entities_height_type;
 	int tos_cl_zeus_dragging_draw_debug;
 };

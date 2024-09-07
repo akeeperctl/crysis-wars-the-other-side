@@ -492,7 +492,7 @@ void CTOSZeusModule::Update(float frametime)
 	///////////////////////////////////////////////////////////////////////
 	if (m_dragging && !zeusMoving)
 	{
-		const bool individualEntHeight = true; // Расчет высоты для каждой сущности отдельно
+		const bool autoEntitiesHeight = TOS_Console::GetSafeIntVar("tos_sv_zeus_dragging_entities_auto_height", 1); // Расчет высоты для каждой сущности отдельно
 		const auto pClickedEntity = TOS_GET_ENTITY(m_curClickedEntityId);
 
 		m_mouseRayEntityFlags = DRAGGING_MOUSE_ENT_FLAGS;
@@ -517,9 +517,14 @@ void CTOSZeusModule::Update(float frametime)
 				const Vec3 curPos = mat34.GetTranslation();
 				const Vec3 startPos = m_selectStartEntitiesPositions[*it];
 
-				Vec3 newPos = Vec3(startPos.x + m_draggingDelta.x, startPos.y + m_draggingDelta.y, m_mouseRay.pt.z);
+				float height = startPos.z;
+				const int heightType = TOS_Console::GetSafeIntVar("tos_sv_zeus_dragging_entities_height_type", 0);
+				if (heightType == 1)
+					height = m_mouseRay.pt.z;
 
-				if (individualEntHeight)
+				Vec3 newPos = Vec3(startPos.x + m_draggingDelta.x, startPos.y + m_draggingDelta.y, height);
+
+				if (autoEntitiesHeight)
 				{
 					const Vec3 entToGroundDir = (Vec3(curPos.x, curPos.y, curPos.z - 2) - curPos).GetNormalizedSafe() * gEnv->p3DEngine->GetMaxViewDistance();
 					const int rayFlags = (COLLISION_RAY_PIERCABILITY & rwi_pierceability_mask);
@@ -556,43 +561,6 @@ void CTOSZeusModule::Update(float frametime)
 		m_worldProjectedMousePos = m_mouseRay.pt;
 	}
 
-	// Отрисовка отладки
-	///////////////////////////////////////////////////////////////////////
-	UpdateDebug(zeusMoving, zeus_dyn.v);
-}
-
-void CTOSZeusModule::UpdateDebug(bool zeusMoving, const Vec3& zeusDynVec)
-{
-	IPersistantDebug* pPD = gEnv->pGame->GetIGameFramework()->GetIPersistantDebug();
-	pPD->Begin("ZeusModule", true);
-	const auto blue = ColorF(0, 0, 1, 1);
-	const auto green = ColorF(0, 1, 0, 1);
-	const auto red = ColorF(1, 0, 0, 1);
-
-	// Отрисовка отладки позиции мыши в реальном мире
-	///////////////////////////////////////////////////////////////////////
-	//pPD->AddSphere(m_worldMousePos, 0.25f, green, 1.0f);
-	pPD->AddSphere(m_worldProjectedMousePos, 0.20f, blue, 1.0f);
-	pPD->AddSphere(m_worldProjectedSelectStartPos, 0.20f, green, 1.0f);
-
-	if (TOS_Console::GetSafeIntVar("tos_cl_zeus_dragging_draw_debug", 0) > 0 && m_dragging)
-	{
-		pPD->AddDirection(m_worldProjectedSelectStartPos, 1.0f, m_worldProjectedMousePos - m_worldProjectedSelectStartPos, green, 1.0f);
-
-		const auto pEntity = TOS_GET_ENTITY(m_curClickedEntityId);
-		if (pEntity)
-		{
-			const Vec3 curPos = pEntity->GetWorldPos();
-			const Vec3 newPos = Vec3(curPos.x + m_draggingDelta.x, curPos.y + m_draggingDelta.y, curPos.z);
-			pPD->AddSphere(newPos, 0.20f, red, 1.0f);
-			pPD->AddLine(curPos, newPos, red, 1.0f);
-		}
-
-		pPD->AddLine(m_worldProjectedSelectStartPos, m_worldProjectedMousePos, green, 1.0f);
-		pPD->AddText(m_mouseIPos.x, m_mouseIPos.y, 1.4f, green, 1.0f, "delta (%1.f, %1.f, %1.f)",
-					 m_draggingDelta.x, m_draggingDelta.y, m_draggingDelta.z);
-	}
-
 	// Отрисовка границ выделения
 	///////////////////////////////////////////////////////////////////////
 	if (m_select && CanSelectMultiplyWithBox() && !m_dragging)
@@ -617,6 +585,44 @@ void CTOSZeusModule::UpdateDebug(bool zeusMoving, const Vec3& zeusDynVec)
 
 			gEnv->pRenderer->Set2DMode(false, 0, 0);
 		}
+	}
+
+
+	// Отрисовка отладки
+	///////////////////////////////////////////////////////////////////////
+	UpdateDebug(zeusMoving, zeus_dyn.v);
+}
+
+void CTOSZeusModule::UpdateDebug(bool zeusMoving, const Vec3& zeusDynVec)
+{
+	IPersistantDebug* pPD = gEnv->pGame->GetIGameFramework()->GetIPersistantDebug();
+	pPD->Begin("ZeusModule", true);
+	const auto blue = ColorF(0, 0, 1, 1);
+	const auto green = ColorF(0, 1, 0, 1);
+	const auto red = ColorF(1, 0, 0, 1);
+
+	// Отрисовка отладки позиции мыши в реальном мире
+	///////////////////////////////////////////////////////////////////////
+	pPD->AddSphere(m_worldProjectedMousePos, 0.20f, blue, 1.0f);
+
+	if (TOS_Console::GetSafeIntVar("tos_cl_zeus_dragging_draw_debug", 0) > 0 && m_dragging)
+	{
+		// Отрисовка фактических координат сущности
+		const auto pEntity = TOS_GET_ENTITY(m_curClickedEntityId);
+		if (pEntity)
+		{
+			const Vec3 startPos = m_selectStartEntitiesPositions[pEntity->GetId()];
+			const Vec3 newPos = Vec3(startPos.x + m_draggingDelta.x, startPos.y + m_draggingDelta.y, startPos.z);
+			pPD->AddSphere(newPos, 0.20f, red, 1.0f);
+			pPD->AddLine(startPos, newPos, red, 1.0f);
+		}
+
+		// Отрисовка точки начала выделения сущностей
+		///////////////////////////////////////////////////////////////////////
+		pPD->AddText(m_mouseIPos.x, m_mouseIPos.y, 1.4f, green, 1.0f, "m_draggingDelta (%1.f, %1.f, %1.f)",
+					 m_draggingDelta.x, m_draggingDelta.y, m_draggingDelta.z);
+		pPD->AddSphere(m_worldProjectedSelectStartPos, 0.20f, green, 1.0f);
+		pPD->AddLine(m_worldProjectedSelectStartPos, m_worldProjectedMousePos, green, 1.0f);
 	}
 
 	// Отрисовка квадрата выделенных сущностей
@@ -646,18 +652,19 @@ void CTOSZeusModule::UpdateDebug(bool zeusMoving, const Vec3& zeusDynVec)
 	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 0, 1.3f, color, false, "lastClickedEntity = %s", pLastClickedEntity ? pLastClickedEntity->GetName() : "");
 	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 1, 1.3f, color, false, "currClickedEntity  = %s", pCurrClickedEntity ? pCurrClickedEntity->GetName() : "");
 
-	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 2, 1.3f, color, false, "m_mouseDownDurationSec = %1.f", m_mouseDownDurationSec);
-	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 3, 1.3f, color, false, "m_select = %i", int(m_select));
-	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 4, 1.3f, color, false, "m_dragging = %i", int(m_dragging));
-	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 5, 1.3f, color, false, "m_ctrlModifier = %i", int(m_ctrlModifier));
-	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 6, 1.3f, color, false, "m_debugZModifier = %i", int(m_debugZModifier));
+	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 2, 1.3f, color, false, "m_mouseIPos = (%i, %i)", m_mouseIPos.x, m_mouseIPos.y);
+	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 3, 1.3f, color, false, "m_mouseDownDurationSec = %1.f", m_mouseDownDurationSec);
+	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 4, 1.3f, color, false, "m_select = %i", int(m_select));
+	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 5, 1.3f, color, false, "m_dragging = %i", int(m_dragging));
+	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 6, 1.3f, color, false, "m_ctrlModifier = %i", int(m_ctrlModifier));
+	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 7, 1.3f, color, false, "m_debugZModifier = %i", int(m_debugZModifier));
 
-	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 7, 1.3f, color, false, "zeusDynVec = (%1.f,%1.f,%1.f)", zeusDynVec.x, zeusDynVec.y, zeusDynVec.z);
-	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 8, 1.3f, color, false, "zeusMoving = %i", zeusMoving);
+	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 8, 1.3f, color, false, "zeusDynVec = (%1.f,%1.f,%1.f)", zeusDynVec.x, zeusDynVec.y, zeusDynVec.z);
+	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 9, 1.3f, color, false, "zeusMoving = %i", zeusMoving);
 
 	if (!m_selectedEntities.empty())
 	{
-		TOS_Debug::DrawEntitiesName2DLabel(m_selectedEntities, "Selected Entities: ", 100, startY + deltaY * 9, deltaY);
+		TOS_Debug::DrawEntitiesName2DLabel(m_selectedEntities, "Selected Entities: ", 100, startY + deltaY * 10, deltaY);
 	}
 }
 

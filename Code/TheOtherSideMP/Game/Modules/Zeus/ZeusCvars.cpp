@@ -18,6 +18,12 @@ void CTOSZeusModule::InitCVars(IConsole* pConsole)
 
 	pConsole->Register("tos_sv_zeus_can_drag_dead_bodies", &tos_sv_zeus_can_drag_dead_bodies, 0, VF_CHEAT,
 					   "");
+
+	pConsole->Register("tos_sv_zeus_dragging_entities_auto_height", &tos_sv_zeus_dragging_entities_auto_height, 1, VF_CHEAT,
+					   "0 - it will not \n1 - the height of the entity in 3D space will be automatically calculated for each selected entity");
+
+	pConsole->Register("tos_sv_zeus_dragging_entities_height_type", &tos_sv_zeus_dragging_entities_height_type, 0, VF_CHEAT,
+					   "0 - keep the start height \n1 - use the height of the mouse click point in 3D space");
 }
 
 void CTOSZeusModule::ReleaseCVars()
@@ -29,6 +35,8 @@ void CTOSZeusModule::ReleaseCVars()
 	pConsole->UnregisterVariable("tos_cl_zeus_dragging_draw_debug", true);
 	pConsole->UnregisterVariable("tos_sv_zeus_always_select_parent", true);
 	pConsole->UnregisterVariable("tos_sv_zeus_can_drag_dead_bodies", true);
+	pConsole->UnregisterVariable("tos_sv_zeus_dragging_entities_auto_height", true);
+	pConsole->UnregisterVariable("tos_sv_zeus_dragging_entities_height_type", true);
 }
 
 void CTOSZeusModule::InitCCommands(IConsole* pConsole)
