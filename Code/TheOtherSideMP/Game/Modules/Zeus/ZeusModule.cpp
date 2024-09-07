@@ -29,6 +29,7 @@ CTOSZeusModule::CTOSZeusModule()
 	m_lastClickedEntityId(0),
 	m_curClickedEntityId(0),
 	m_mouseDownDurationSec(0),
+	m_draggingMoveStartTimer(0),
 	m_mouseRayEntityFlags(DEFAULT_MOUSE_ENT_FLAGS),
 	m_ctrlModifier(false),
 	m_altModifier(false),
@@ -205,14 +206,14 @@ void CTOSZeusModule::OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eH
 
 			if (m_select && m_curClickedEntityId != 0 && clickedSelected)
 			{
-				// Сохраняем начальное положение каждой выделенной сущности
+				// Перед тем как начать перемещение сущностей...
 				if (m_dragging == false)
 				{
+					// Сохраняем начальное положение каждой выделенной сущности
+					///////////////////////////////////////////////////////////////////////
 					m_selectStartEntitiesPositions.clear();
 
-					auto it = m_selectedEntities.begin();
-					auto end = m_selectedEntities.end();
-					while (it != end)
+					for (auto it = m_selectedEntities.begin(); it != m_selectedEntities.end(); it++)
 					{
 						EntityId id = *it;
 
@@ -225,9 +226,11 @@ void CTOSZeusModule::OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eH
 								m_selectStartEntitiesPositions[id] = pEntity->GetWorldPos();
 							}
 						}
-						it++;
 					}
+					// Запуск таймера 
+					m_draggingMoveStartTimer = TOS_Console::GetSafeFloatVar("tos_sv_zeus_dragging_move_start_delay", 0.05f);
 				}
+
 				m_dragging = true;
 			}
 		}
@@ -359,6 +362,11 @@ void CTOSZeusModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent&
 			}
 			break;
 		}
+		case eEGE_HUDInit:
+		{
+			//m_animUnitIcon.Load("HUD_Zeus_UnitIcon.gfx", eFD_Center, eFAF_Visible | eFAF_ThisHandler);
+			break;
+		}
 		//case eEGE_ActorEnterVehicle:
 		//{
 		//	if (m_zeus && m_zeus->GetEntityId() == pEntity->GetId())
@@ -409,6 +417,8 @@ void CTOSZeusModule::Init()
 {
 	if (gEnv->pHardwareMouse)
 		gEnv->pHardwareMouse->AddListener(this);
+
+	Reset();
 }
 
 int CTOSZeusModule::MouseProjectToWorld(ray_hit& ray, const Vec3& mouseWorldPos, uint entityFlags)
@@ -471,9 +481,17 @@ void CTOSZeusModule::Update(float frametime)
 
 	const bool zeusMoving = zeus_dyn.v.len() > 0.1f;
 
-	//Перенос выделенных сущностей
+	// Обработка таймера задержки перемещения выделенных сущностей
 	///////////////////////////////////////////////////////////////////////
-	if (m_dragging && !zeusMoving)
+	if (m_dragging && m_draggingMoveStartTimer > 0.0f)
+		m_draggingMoveStartTimer -= frametime;
+
+	if (m_draggingMoveStartTimer <= 0.0f)
+		m_draggingMoveStartTimer = 0.0f;
+
+	//Перемещение выделенных сущностей
+	///////////////////////////////////////////////////////////////////////
+	if (m_dragging && !zeusMoving && m_draggingMoveStartTimer == 0.0f)
 	{
 		const bool autoEntitiesHeight = TOS_Console::GetSafeIntVar("tos_sv_zeus_dragging_entities_auto_height", 1); // Расчет высоты для каждой сущности отдельно
 		const auto pClickedEntity = TOS_GET_ENTITY(m_curClickedEntityId);
@@ -571,6 +589,11 @@ void CTOSZeusModule::Update(float frametime)
 	}
 
 
+	for (auto it = m_selectedEntities.begin(); it != m_selectedEntities.end(); it++)
+	{
+		SAFE_HUD_FUNC(UpdateMissionObjectiveIcon(*it, 0, eOS_Purchase, true, Vec3(0, 0, 0), false, true));
+	}
+
 	// Отрисовка отладки
 	///////////////////////////////////////////////////////////////////////
 	UpdateDebug(zeusMoving, zeus_dyn.v);
@@ -639,19 +662,20 @@ void CTOSZeusModule::UpdateDebug(bool zeusMoving, const Vec3& zeusDynVec)
 	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 0, 1.3f, color, false, "lastClickedEntity = %s", pLastClickedEntity ? pLastClickedEntity->GetName() : "");
 	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 1, 1.3f, color, false, "currClickedEntity  = %s", pCurrClickedEntity ? pCurrClickedEntity->GetName() : "");
 
-	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 2, 1.3f, color, false, "m_mouseIPos = (%i, %i)", m_mouseIPos.x, m_mouseIPos.y);
-	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 3, 1.3f, color, false, "m_mouseDownDurationSec = %1.f", m_mouseDownDurationSec);
-	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 4, 1.3f, color, false, "m_select = %i", int(m_select));
-	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 5, 1.3f, color, false, "m_dragging = %i", int(m_dragging));
-	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 6, 1.3f, color, false, "m_ctrlModifier = %i", int(m_ctrlModifier));
-	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 7, 1.3f, color, false, "m_debugZModifier = %i", int(m_debugZModifier));
+	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 2, 1.3f, color, false, "m_draggingMoveStartTimer = %f", m_draggingMoveStartTimer);
+	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 3, 1.3f, color, false, "m_mouseIPos = (%i, %i)", m_mouseIPos.x, m_mouseIPos.y);
+	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 4, 1.3f, color, false, "m_mouseDownDurationSec = %1.f", m_mouseDownDurationSec);
+	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 5, 1.3f, color, false, "m_select = %i", int(m_select));
+	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 6, 1.3f, color, false, "m_dragging = %i", int(m_dragging));
+	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 7, 1.3f, color, false, "m_ctrlModifier = %i", int(m_ctrlModifier));
+	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 8, 1.3f, color, false, "m_debugZModifier = %i", int(m_debugZModifier));
 
-	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 8, 1.3f, color, false, "zeusDynVec = (%1.f,%1.f,%1.f)", zeusDynVec.x, zeusDynVec.y, zeusDynVec.z);
-	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 9, 1.3f, color, false, "zeusMoving = %i", zeusMoving);
+	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 9, 1.3f, color, false, "zeusDynVec = (%1.f,%1.f,%1.f)", zeusDynVec.x, zeusDynVec.y, zeusDynVec.z);
+	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 10, 1.3f, color, false, "zeusMoving = %i", zeusMoving);
 
 	if (!m_selectedEntities.empty())
 	{
-		TOS_Debug::DrawEntitiesName2DLabel(m_selectedEntities, "Selected Entities: ", 100, startY + deltaY * 10, deltaY);
+		TOS_Debug::DrawEntitiesName2DLabel(m_selectedEntities, "Selected Entities: ", 100, startY + deltaY * 11, deltaY);
 	}
 }
 

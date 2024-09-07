@@ -24,6 +24,12 @@ void CTOSZeusModule::InitCVars(IConsole* pConsole)
 
 	pConsole->Register("tos_sv_zeus_dragging_entities_height_type", &tos_sv_zeus_dragging_entities_height_type, 0, VF_CHEAT,
 					   "0 - keep the start height \n1 - use the height of the mouse click point in 3D space");
+
+	pConsole->Register("tos_sv_zeus_dragging_move_start_delay", &tos_sv_zeus_dragging_move_start_delay, 0.05f, VF_CHEAT,
+					   "Delay in sec in starting to move entities after enabling drag and drop");
+
+	pConsole->Register("tos_sv_zeus_force_on_screen_icons", &tos_sv_zeus_force_on_screen_icons, 1, VF_CHEAT,
+					   "");
 }
 
 void CTOSZeusModule::ReleaseCVars()

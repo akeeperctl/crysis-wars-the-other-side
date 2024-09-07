@@ -103,6 +103,8 @@ private:
 	EntityId m_curClickedEntityId;
 	EntityId m_lastClickedEntityId;
 
+
+	float m_draggingMoveStartTimer; /// Таймер начала перемещения сущностей после включения перетаскивания
 	float m_mouseDownDurationSec; /// используется для включения режима выделения нескольких объектов одновременно
 	bool m_select;
 	bool m_dragging;
@@ -114,7 +116,9 @@ private:
 	float tos_sv_zeus_mass_selection_hold_sec;
 	int tos_sv_zeus_always_select_parent;
 	int tos_sv_zeus_can_drag_dead_bodies;
+	float tos_sv_zeus_dragging_move_start_delay;
 	int tos_sv_zeus_dragging_entities_auto_height;
 	int tos_sv_zeus_dragging_entities_height_type;
+	int tos_sv_zeus_force_on_screen_icons;
 	int tos_cl_zeus_dragging_draw_debug;
 };
