@@ -58,6 +58,7 @@ public:
 
 	void SetZeusFlag(uint flag, bool value);
 	bool GetZeusFlag(uint flag) const;
+	void Reset();
 
 	void OnAction(const ActionId& action, int activationMode, float value);
 protected:

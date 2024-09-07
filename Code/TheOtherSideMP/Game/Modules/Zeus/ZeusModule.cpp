@@ -137,6 +137,18 @@ void CTOSZeusModule::OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eH
 			m_lastClickedEntityId = m_curClickedEntityId;
 			m_curClickedEntityId = GetMouseEntityId();
 
+			// Одиночное выделение
+			if (!m_ctrlModifier)
+			{
+				// При каждом клике без CTRL снимаем выделение если кликнули не на последнюю кликнутую сущность
+				if (m_curClickedEntityId != m_lastClickedEntityId || m_curClickedEntityId == 0)
+					m_selectedEntities.clear();
+
+				// После чистки всех выделенных сущностей, выделяем кликнутую сущность
+				if (m_curClickedEntityId != 0)
+					m_selectedEntities.insert(m_curClickedEntityId);
+			}
+
 			//const auto clickedEntityId = GetMouseEntityId();
 			//if (clickedEntityId != m_lastClickedEntityId)
 			//{
@@ -165,19 +177,8 @@ void CTOSZeusModule::OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eH
 				GetSelectedEntities();
 			else
 			{
-				// Одиночное выделение
-				if (!m_ctrlModifier)
-				{
-					// При каждом клике без CTRL снимаем выделение если кликнули не на последнюю кликнутую сущность
-					if (m_curClickedEntityId != m_lastClickedEntityId || m_curClickedEntityId == 0)
-						m_selectedEntities.clear();
-
-					// После чистки всех выделенных сущностей, выделяем кликнутую сущность
-					if (m_curClickedEntityId != 0)
-						m_selectedEntities.insert(m_curClickedEntityId);
-				}
 				// Множественное выделение c зажатым модификатором
-				else
+				if (m_ctrlModifier)
 				{
 					if (!m_dragging && m_curClickedEntityId != 0)
 					{
@@ -254,10 +255,6 @@ void CTOSZeusModule::OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eH
 
 void CTOSZeusModule::GetSelectedEntities()
 {
-	//clear previously stored entity id's if left CTRL is not pressed
-	if (!m_ctrlModifier)
-		m_selectedEntities.clear();
-
 	IEntityItPtr pIt = gEnv->pEntitySystem->GetEntityIterator();
 	while (!pIt->IsEnd())
 	{
@@ -354,16 +351,7 @@ void CTOSZeusModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent&
 		{
 			if (m_zeus && m_zeus->GetEntityId() == pEntity->GetId())
 			{
-				m_zeus->m_isZeus = false;
-				m_zeus = nullptr;
-				m_zeusFlags = 0;
-				m_select = false;
-				m_dragging = false;
-				m_ctrlModifier = false;
-				m_altModifier = false;
-				m_debugZModifier = false;
-				m_selectedEntities.clear();
-
+				Reset();
 				if (noModalOrNoHUD)
 					ShowMouse(false);
 			}
@@ -411,6 +399,24 @@ void CTOSZeusModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent&
 		default:
 			break;
 	}
+}
+
+void CTOSZeusModule::Reset()
+{
+	if (m_zeus)
+	{
+		m_zeus->m_isZeus = false;
+		m_zeus = nullptr;
+	}
+	m_zeusFlags = 0;
+	m_select = false;
+	m_dragging = false;
+	m_ctrlModifier = false;
+	m_altModifier = false;
+	m_debugZModifier = false;
+	m_selectedEntities.clear();
+	m_selectStartEntitiesPositions.clear();
+	m_lastClickedEntityId = m_curClickedEntityId = 0;
 }
 
 void CTOSZeusModule::GetMemoryStatistics(ICrySizer* s)
