@@ -64,6 +64,8 @@ protected:
 	bool OnActionAttack2(const CTOSActor* pActor, const ActionId& actionId, int activationMode, float value, float pressedDur = 0);
 
 private:
+	void UpdateDebug(bool zeusMoving, const Vec3& zeusDynVec);
+
 	/// @brief Проекция координат мыши в мир от камеры
 	/// @param ray - структура луча
 	/// @param mouseWorldPos - мировые координаты мыши, которые будут спроецированы на некоторое расстояние от камеры
@@ -98,7 +100,7 @@ private:
 	EntityId m_curClickedEntityId;
 	EntityId m_lastClickedEntityId;
 
-	float m_mouseDownDurationSec;
+	float m_mouseDownDurationSec; /// используется для включения режима выделения нескольких объектов одновременно
 	bool m_select;
 	bool m_dragging;
 	bool m_ctrlModifier;

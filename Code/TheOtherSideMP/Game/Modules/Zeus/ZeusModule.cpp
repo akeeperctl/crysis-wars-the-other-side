@@ -552,6 +552,11 @@ void CTOSZeusModule::Update(float frametime)
 
 	// Отрисовка отладки
 	///////////////////////////////////////////////////////////////////////
+	UpdateDebug(zeusMoving, zeus_dyn.v);
+}
+
+void CTOSZeusModule::UpdateDebug(bool zeusMoving, const Vec3& zeusDynVec)
+{
 	IPersistantDebug* pPD = gEnv->pGame->GetIGameFramework()->GetIPersistantDebug();
 	pPD->Begin("ZeusModule", true);
 	const auto blue = ColorF(0, 0, 1, 1);
@@ -629,14 +634,24 @@ void CTOSZeusModule::Update(float frametime)
 	float color[] = {1,1,1,1};
 	const int startY = 100;
 	const int deltaY = 20;
-	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 0, 1.3f, color, false, "m_ctrlModifier = %i", int(m_ctrlModifier));
-	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 1, 1.3f, color, false, "m_debugZModifier = %i", int(m_debugZModifier));
-	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 2, 1.3f, color, false, "zeus_dyn.v = (%1.f,%1.f,%1.f)", zeus_dyn.v.x, zeus_dyn.v.y, zeus_dyn.v.z);
-	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 3, 1.3f, color, false, "zeusMoving = %i", zeusMoving);
+
+	const auto pLastClickedEntity = TOS_GET_ENTITY(m_lastClickedEntityId);
+	const auto pCurrClickedEntity = TOS_GET_ENTITY(m_curClickedEntityId);
+	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 0, 1.3f, color, false, "lastClickedEntity = %s", pLastClickedEntity ? pLastClickedEntity->GetName() : "");
+	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 1, 1.3f, color, false, "currClickedEntity  = %s", pCurrClickedEntity ? pCurrClickedEntity->GetName() : "");
+
+	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 2, 1.3f, color, false, "m_mouseDownDurationSec = %1.f", m_mouseDownDurationSec);
+	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 3, 1.3f, color, false, "m_select = %i", int(m_select));
+	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 4, 1.3f, color, false, "m_dragging = %i", int(m_dragging));
+	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 5, 1.3f, color, false, "m_ctrlModifier = %i", int(m_ctrlModifier));
+	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 6, 1.3f, color, false, "m_debugZModifier = %i", int(m_debugZModifier));
+
+	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 7, 1.3f, color, false, "zeusDynVec = (%1.f,%1.f,%1.f)", zeusDynVec.x, zeusDynVec.y, zeusDynVec.z);
+	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 8, 1.3f, color, false, "zeusMoving = %i", zeusMoving);
 
 	if (!m_selectedEntities.empty())
 	{
-		TOS_Debug::DrawEntitiesName2DLabel(m_selectedEntities, "Selected Entities: ", 100, startY + deltaY * 4, deltaY);
+		TOS_Debug::DrawEntitiesName2DLabel(m_selectedEntities, "Selected Entities: ", 100, startY + deltaY * 9, deltaY);
 	}
 }
 
