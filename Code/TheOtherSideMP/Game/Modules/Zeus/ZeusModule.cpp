@@ -148,25 +148,6 @@ void CTOSZeusModule::OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eH
 				if (m_curClickedEntityId != 0)
 					m_selectedEntities.insert(m_curClickedEntityId);
 			}
-
-			//const auto clickedEntityId = GetMouseEntityId();
-			//if (clickedEntityId != m_lastClickedEntityId)
-			//{
-			//	const auto pSil = SAFE_HUD_FUNC_RET(GetSilhouettes());
-			//	if (pSil)
-			//	{
-			//		auto pClickedEntity = TOS_GET_ENTITY(clickedEntityId);
-			//		if (pClickedEntity)
-			//		{
-			//			pSil->SetSilhouette(pClickedEntity, 1.0f, 1.0f, 1.0f, 1.0f, 90000.0f);
-			//		}
-
-			//		pSil->ResetSilhouette(m_lastClickedEntityId);
-			//	}
-			//}
-
-			//m_lastClickedEntityId = clickedEntityId;
-
 		}
 		else if (eHardwareMouseEvent == HARDWAREMOUSEEVENT_LBUTTONUP)
 		{
@@ -454,6 +435,8 @@ void CTOSZeusModule::Update(float frametime)
 	if (!m_zeus || !m_zeus->IsClient())
 		return;
 
+	//int frameID = gEnv->pRenderer->GetFrameID();
+
 	// Привязка мыши к позиции, когда крутится камера
 	///////////////////////////////////////////////////////////////////////
 	if (m_zeusFlags & eZF_CanRotateCamera && !(m_zeusFlags & eZF_Possessing))
@@ -637,8 +620,12 @@ void CTOSZeusModule::UpdateDebug(bool zeusMoving, const Vec3& zeusDynVec)
 		pRAG->SetRenderFlags(e_Mode3D | e_AlphaBlended | e_DrawInFrontOff | e_FillModeSolid | e_CullModeNone);
 
 		AABB entityBox;
-		pEntity->GetWorldBounds(entityBox);
-		pRAG->DrawAABB(entityBox, true, ColorB(0, 0, 255, 65), eBBD_Faceted);
+		pEntity->GetLocalBounds(entityBox);
+		OBB box;
+		box.SetOBBfromAABB(pEntity->GetWorldRotation(), entityBox);
+
+		//pRAG->DrawAABB(entityBox, false, ColorB(0, 0, 255, 65), eBBD_Extremes_Color_Encoded);
+		gEnv->pRenderer->GetIRenderAuxGeom()->DrawOBB(box, pEntity->GetWorldPos(), false, ColorB(255, 255, 255, 255), eBBD_Faceted);
 	}
 
 	// Вывод текстовой отладки
