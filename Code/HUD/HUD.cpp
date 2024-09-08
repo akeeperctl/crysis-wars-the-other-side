@@ -140,6 +140,171 @@ bool CHUD::IsHaveModalHUD()
 {
 	return m_pModalHUD != nullptr;
 }
+
+void CHUD::TOSSetWeaponName(const char* text)
+{
+	if (m_animPlayerStats.IsLoaded())
+		m_animPlayerStats.Invoke("setWeaponName", text);
+}
+
+void CHUD::TOSUpdateHealth()
+{
+	const auto pActor = g_pTOSGame->GetActualClientActor();
+
+	if (pActor)
+	{
+		float maxHealth = pActor->GetMaxHealth() == 0 ? 1.0f : pActor->GetMaxHealth();
+
+		const float fHealth = pActor->GetHealth() / maxHealth * 100.0f + 1.0f;  // NOLINT(clang-diagnostic-implicit-int-float-conversion)
+
+		//CryLogAlways("[%s] GetHealth() = %i, GetMaxHealth() = %i", pActor->GetEntity()->GetName(), pActor->GetHealth(), pActor->GetMaxHealth());
+
+		if (m_fHealth < fHealth || m_fHealth > fHealth || m_bFirstFrame)
+		{
+			m_animPlayerStats.Invoke("setHealth", static_cast<int>(fHealth));
+		}
+
+		if (m_bFirstFrame)
+			m_fHealth = fHealth;
+
+		m_fHealth = fHealth;
+	}
+}
+
+void CHUD::TOSUpdateEnergy()
+{
+	//assert(m_pEnergyConsumer);
+	if (!m_pEnergyConsumer)
+		return;
+
+	const int energy = m_pEnergyConsumer->GetEnergy() / m_pEnergyConsumer->GetMaxEnergy() * 100 + 1;
+
+	if (m_fSuitEnergy < energy || m_fSuitEnergy > energy || m_bFirstFrame)
+	{
+		m_animPlayerStats.Invoke("setEnergy", energy);
+	}
+
+	if (m_bFirstFrame)
+		m_fSuitEnergy = energy;
+
+	m_fSuitEnergy = energy;
+}
+
+void CHUD::TOSSetAmmoHealthHUD(IActor* pActor, const char* filePath)
+{
+	if (!g_pGame->GetHUD())
+		return;
+
+	//Health, Energy, Ammo
+	m_animPlayerStats.Unload();
+	m_animPlayerStats.Load(filePath, eFD_Right, eFAF_Visible | eFAF_ThisHandler);
+
+	const int health = (pActor->GetHealth() / pActor->GetMaxHealth()) * 100 + 1;
+	int		  energy = 0;
+
+	if (const auto pNewActor = dynamic_cast<CTOSActor*>(pActor))
+	{
+		if (pNewActor->IsZeus())
+			m_animPlayerStats.SetVisible(false);
+
+		energy = pNewActor->GetEnergyConsumer()->GetEnergy() / pNewActor->GetEnergyConsumer()->GetMaxEnergy() * 100 + 1;
+	}
+
+	m_animPlayerStats.Invoke("setHealth", health);
+	m_animPlayerStats.Invoke("setEnergy", energy);
+}
+
+void CHUD::TOSSetInventoryHUD(IActor* pActor, const char* filePath) const
+{
+	const auto pHUD = g_pGame->GetHUD();
+	if (!pHUD || !pActor)
+		return;
+
+	pHUD->m_animWeaponSelection.Unload();
+	pHUD->m_animWeaponSelection.Load(filePath, eFD_Right, eFAF_Visible | eFAF_ThisHandler);
+
+	TOS_HUD::ShowInventory(pActor, "null", "null");
+}
+
+void CHUD::TOSShowInventoryOverview(IActor* pActor, const char* curCategory, const char* curItem, bool grenades)
+{
+	if (!curCategory || !curItem)
+		return;
+
+	if (!pActor)
+		return;
+
+	const IInventory* pInventory = pActor->GetInventory();
+	if (!pInventory)
+		return;
+
+	if (m_pModalHUD == &m_animBuyMenu || m_pModalHUD == &m_animPDA)
+		return;
+
+	HideInventoryOverview();
+
+	std::vector<IEntityClass*> classes;
+
+	if (grenades)
+	{
+		const CTOSPlayer* pPlayer = dynamic_cast<CTOSPlayer*>(pActor);
+		if (pPlayer)
+		{
+			COffHand* pOffHand = dynamic_cast<COffHand*>(pPlayer->GetWeaponByClass(CItem::sOffHandClass));
+			if (pOffHand)
+			{
+				std::vector<string> grenades;
+				pOffHand->GetAvailableGrenades(grenades);
+				std::vector<string>::const_iterator it = grenades.begin();
+				const std::vector<string>::const_iterator end = grenades.end();
+				int count = sizeof(grenades);
+				for (; it != end; ++it)
+				{
+					const SFlashVarValue args[2] = {(*it).c_str(), !strcmp(*it, curItem)};
+					m_animWeaponSelection.Invoke("addLog", args, 2);
+				}
+			}
+		}
+		m_animPlayerStats.Invoke("switchGrenades");
+	}
+	else
+	{
+		const int count = pInventory->GetCount();
+		for (int i = 0; i < count; ++i)
+		{
+			const IEntity* pItemEntity = gEnv->pEntitySystem->GetEntity(pInventory->GetItem(i));
+			const IItem* pItemItem = g_pGame->GetIGameFramework()->GetIItemSystem()->GetItem(pInventory->GetItem(i));
+			if (pItemEntity && pItemEntity->GetClass() && pItemItem && pItemItem->CanSelect())
+			{
+				const char* className = pItemEntity->GetClass()->GetName();
+				const char* categoryName = g_pGame->GetIGameFramework()->GetIItemSystem()->GetItemCategory(className);
+
+				if (!strcmp(categoryName, curCategory))
+				{
+					if (!stl::find(classes, pItemEntity->GetClass()))
+					{
+						const SFlashVarValue args[2] = {className, !strcmp(className, curItem)};
+						m_animWeaponSelection.Invoke("addLog", args, 2);
+						classes.push_back(pItemEntity->GetClass());
+					}
+				}
+			}
+		}
+	}
+}
+
+bool CHUD::TOSSetEnergyConsumer(CTOSEnergyConsumer* pConsumer)
+{
+	assert(pConsumer);
+	if (!pConsumer)
+		return false;
+
+	m_pEnergyConsumer = pConsumer;
+	m_fSuitEnergy = m_pEnergyConsumer->GetEnergy();
+
+	return true;
+}
+
 //~TheOtherSide
 
 CHUD::CHUD()
@@ -2048,7 +2213,7 @@ bool CHUD::OnInputEvent(const SInputEvent& rInputEvent)
 				return true;
 			}
 		}
-	}
+		}
 
 	if (!g_pGame->GetMenu()->IsActive())
 	{
@@ -2158,7 +2323,7 @@ bool CHUD::OnInputEvent(const SInputEvent& rInputEvent)
 	}
 
 	return false;
-}
+	}
 
 //-----------------------------------------------------------------------------------------------------
 
@@ -3230,10 +3395,10 @@ void CHUD::OnPostUpdate(float frameTime)
 				pSeq = pSeqIt->next();
 			}
 			pSeqIt->Release();
-		}
+			}
 		m_bStopCutsceneNextUpdate = false;
 		m_fCutsceneSkipTimer = 0.0f;
-	}
+		}
 	if (m_bCutscenePlaying && m_fCutsceneSkipTimer > 0.0f)
 	{
 		m_fCutsceneSkipTimer -= frameTime;
@@ -3972,7 +4137,7 @@ void CHUD::OnPostUpdate(float frameTime)
 
 	// Modal dialog box must be always rendered last
 	UpdateWarningMessages(frameTime);
-}
+	}
 
 //-----------------------------------------------------------------------------------------------------
 
@@ -4098,170 +4263,6 @@ void CHUD::SetTeamDisplay(const char* team)
 }
 
 //-----------------------------------------------------------------------------------------------------
-
-void CHUD::TOSSetWeaponName(const char* text)
-{
-	if (m_animPlayerStats.IsLoaded())
-		m_animPlayerStats.Invoke("setWeaponName", text);
-}
-
-void CHUD::TOSUpdateHealth()
-{
-	const auto pActor = g_pTOSGame->GetActualClientActor();
-
-	if (pActor)
-	{
-		float maxHealth = pActor->GetMaxHealth() == 0 ? 1.0f : pActor->GetMaxHealth();
-
-		const float fHealth = pActor->GetHealth() / maxHealth * 100.0f + 1.0f;  // NOLINT(clang-diagnostic-implicit-int-float-conversion)
-
-		//CryLogAlways("[%s] GetHealth() = %i, GetMaxHealth() = %i", pActor->GetEntity()->GetName(), pActor->GetHealth(), pActor->GetMaxHealth());
-
-		if (m_fHealth < fHealth || m_fHealth > fHealth || m_bFirstFrame)
-		{
-			m_animPlayerStats.Invoke("setHealth", static_cast<int>(fHealth));
-		}
-
-		if (m_bFirstFrame)
-			m_fHealth = fHealth;
-
-		m_fHealth = fHealth;
-	}
-}
-
-void CHUD::TOSUpdateEnergy()
-{
-	//assert(m_pEnergyConsumer);
-	if (!m_pEnergyConsumer)
-		return;
-
-	const int energy = m_pEnergyConsumer->GetEnergy() / m_pEnergyConsumer->GetMaxEnergy() * 100 + 1;
-
-	if (m_fSuitEnergy < energy || m_fSuitEnergy > energy || m_bFirstFrame)
-	{
-		m_animPlayerStats.Invoke("setEnergy", energy);
-	}
-
-	if (m_bFirstFrame)
-		m_fSuitEnergy = energy;
-
-	m_fSuitEnergy = energy;
-}
-
-void CHUD::TOSSetAmmoHealthHUD(IActor* pActor, const char* filePath)
-{
-	if (!g_pGame->GetHUD())
-		return;
-
-	//Health, Energy, Ammo
-	m_animPlayerStats.Unload();
-	m_animPlayerStats.Load(filePath, eFD_Right, eFAF_Visible | eFAF_ThisHandler);
-
-	const int health = (pActor->GetHealth() / pActor->GetMaxHealth()) * 100 + 1;
-	int		  energy = 0;
-
-	if (const auto pNewActor = dynamic_cast<CTOSActor*>(pActor))
-	{
-		if (pNewActor->IsZeus())
-			m_animPlayerStats.SetVisible(false);
-
-		energy = pNewActor->GetEnergyConsumer()->GetEnergy() / pNewActor->GetEnergyConsumer()->GetMaxEnergy() * 100 + 1;
-	}
-
-	m_animPlayerStats.Invoke("setHealth", health);
-	m_animPlayerStats.Invoke("setEnergy", energy);
-}
-
-void CHUD::TOSSetInventoryHUD(IActor* pActor, const char* filePath) const
-{
-	const auto pHUD = g_pGame->GetHUD();
-	if (!pHUD || !pActor)
-		return;
-
-	pHUD->m_animWeaponSelection.Unload();
-	pHUD->m_animWeaponSelection.Load(filePath, eFD_Right, eFAF_Visible | eFAF_ThisHandler);
-
-	TOS_HUD::ShowInventory(pActor, "null", "null");
-}
-
-void CHUD::TOSShowInventoryOverview(IActor* pActor, const char* curCategory, const char* curItem, bool grenades)
-{
-	if (!curCategory || !curItem)
-		return;
-
-	if (!pActor)
-		return;
-
-	const IInventory* pInventory = pActor->GetInventory();
-	if (!pInventory)
-		return;
-
-	if (m_pModalHUD == &m_animBuyMenu || m_pModalHUD == &m_animPDA)
-		return;
-
-	HideInventoryOverview();
-
-	std::vector<IEntityClass*> classes;
-
-	if (grenades)
-	{
-		const CTOSPlayer* pPlayer = dynamic_cast<CTOSPlayer*>(pActor);
-		if (pPlayer)
-		{
-			COffHand* pOffHand = dynamic_cast<COffHand*>(pPlayer->GetWeaponByClass(CItem::sOffHandClass));
-			if (pOffHand)
-			{
-				std::vector<string> grenades;
-				pOffHand->GetAvailableGrenades(grenades);
-				std::vector<string>::const_iterator it = grenades.begin();
-				const std::vector<string>::const_iterator end = grenades.end();
-				int count = sizeof(grenades);
-				for (; it != end; ++it)
-				{
-					const SFlashVarValue args[2] = {(*it).c_str(), !strcmp(*it, curItem)};
-					m_animWeaponSelection.Invoke("addLog", args, 2);
-				}
-			}
-		}
-		m_animPlayerStats.Invoke("switchGrenades");
-	}
-	else
-	{
-		const int count = pInventory->GetCount();
-		for (int i = 0; i < count; ++i)
-		{
-			const IEntity* pItemEntity = gEnv->pEntitySystem->GetEntity(pInventory->GetItem(i));
-			const IItem* pItemItem = g_pGame->GetIGameFramework()->GetIItemSystem()->GetItem(pInventory->GetItem(i));
-			if (pItemEntity && pItemEntity->GetClass() && pItemItem && pItemItem->CanSelect())
-			{
-				const char* className = pItemEntity->GetClass()->GetName();
-				const char* categoryName = g_pGame->GetIGameFramework()->GetIItemSystem()->GetItemCategory(className);
-
-				if (!strcmp(categoryName, curCategory))
-				{
-					if (!stl::find(classes, pItemEntity->GetClass()))
-					{
-						const SFlashVarValue args[2] = {className, !strcmp(className, curItem)};
-						m_animWeaponSelection.Invoke("addLog", args, 2);
-						classes.push_back(pItemEntity->GetClass());
-					}
-				}
-			}
-		}
-	}
-}
-
-bool CHUD::TOSSetEnergyConsumer(CTOSEnergyConsumer* pConsumer)
-{
-	assert(pConsumer);
-	if (!pConsumer)
-		return false;
-
-	m_pEnergyConsumer = pConsumer;
-	m_fSuitEnergy = m_pEnergyConsumer->GetEnergy();
-
-	return true;
-}
 
 void CHUD::UpdateHealth()
 {
