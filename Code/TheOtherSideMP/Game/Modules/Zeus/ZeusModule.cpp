@@ -40,6 +40,7 @@ CTOSZeusModule::CTOSZeusModule()
 	m_draggingMoveStartTimer(0),
 	m_updateIconOnScreenTimer(0),
 	m_mouseRayEntityFlags(DEFAULT_MOUSE_ENT_FLAGS),
+	m_shiftModifier(false),
 	m_ctrlModifier(false),
 	m_altModifier(false),
 	m_debugZModifier(false),
@@ -70,23 +71,9 @@ bool CTOSZeusModule::OnInputEvent(const SInputEvent& event)
 			{
 				m_altModifier = true;
 				m_select = false;
-				// Обновляем начальное положение каждой выделенной сущности
-				//SaveEntitiesStartPositions();
-
-				//auto pEntity = TOS_GET_ENTITY(m_curClickedEntityId);
-				//if (pEntity)
-				//{
-				//	m_worldProjectedSelectStartPos = pEntity->GetWorldPos();
-				//}
 			}
 			else if (event.state == eIS_Released)
 			{
-				if (m_altModifier)
-				{
-					//m_dragging = false;
-					//m_select = false;
-					//DeselectEntities();
-				}
 				m_altModifier = false;
 			}
 		}
@@ -96,6 +83,13 @@ bool CTOSZeusModule::OnInputEvent(const SInputEvent& event)
 				m_debugZModifier = true;
 			else if (event.state == eIS_Released)
 				m_debugZModifier = false;
+		}
+		else if (event.keyId == EKeyId::eKI_LShift)
+		{
+			if (event.state == eIS_Pressed)
+				m_shiftModifier = true;
+			else if (event.state == eIS_Released)
+				m_shiftModifier = false;
 		}
 		else if (event.keyId == EKeyId::eKI_End)
 		{
@@ -508,6 +502,7 @@ void CTOSZeusModule::Reset()
 	m_dragging = false;
 	m_ctrlModifier = false;
 	m_altModifier = false;
+	m_shiftModifier = false;
 	m_debugZModifier = false;
 	m_selectedEntities.clear();
 	m_selectStartEntitiesPositions.clear();
@@ -654,48 +649,55 @@ void CTOSZeusModule::Update(float frametime)
 				const Vec3 curPos = mat34.GetTranslation();
 				const Vec3 startPos = m_selectStartEntitiesPositions[*it];
 
-				//float height = startPos.z;
-				//const int heightType = TOS_Console::GetSafeIntVar("tos_sv_zeus_dragging_entities_height_type", 0);
-				//if (heightType == 1)
-					//height = m_mouseRay.pt.z;
-
-				Vec3 newPos;
-				if (m_altModifier)
+				if (!m_shiftModifier)
 				{
-					// Перемещение по Z
-					float height = startPos.z + m_draggingDelta.z;
-					m_storedEntitiesPositions[*it].z = height;
+					Vec3 newPos;
+					if (m_altModifier)
+					{
+						// Перемещение по Z
+						float height = startPos.z + m_draggingDelta.z;
+						m_storedEntitiesPositions[*it].z = height;
 
-					newPos = Vec3(curPos.x, curPos.y, height);
+						newPos = Vec3(curPos.x, curPos.y, height);
+					}
+					else
+					{
+						// Перемещение по X, Y с автоприлипанием к поверхности
+						newPos = Vec3(startPos.x + m_draggingDelta.x, startPos.y + m_draggingDelta.y, m_storedEntitiesPositions[*it].z);
+
+						if (autoEntitiesHeight)
+						{
+							const Vec3 entToGroundDir = (Vec3(curPos.x, curPos.y, curPos.z - 2) - curPos).GetNormalizedSafe() * gEnv->p3DEngine->GetMaxViewDistance();
+							const int rayFlags = (COLLISION_RAY_PIERCABILITY & rwi_pierceability_mask);
+							ray_hit ray;
+
+							IPhysicalEntity* pSkipEnts[3];
+							pSkipEnts[0] = pZeusPhys;
+							pSkipEnts[1] = pEntity->GetPhysics();
+
+							if (pClickedEntity)
+								pSkipEnts[2] = pClickedEntity->GetPhysics();
+
+							const int nSkip = sizeof(pSkipEnts) / sizeof(pSkipEnts[0]);
+
+							const int hitNum = gEnv->pPhysicalWorld->RayWorldIntersection(Vec3(curPos.x, curPos.y, curPos.z + 1), entToGroundDir, m_mouseRayEntityFlags, rayFlags, &ray, 1, pSkipEnts, nSkip);
+							if (hitNum)
+								newPos.z = ray.pt.z + 0.01f;
+						}
+					}
+
+					mat34.SetTranslation(newPos);
+					pEntity->SetWorldTM(mat34);
 				}
 				else
 				{
-					// Перемещение по X, Y с автоприлипанием к поверхности
-					newPos = Vec3(startPos.x + m_draggingDelta.x, startPos.y + m_draggingDelta.y, m_storedEntitiesPositions[*it].z);
+					mat34.SetTranslation(Vec3(curPos.x, curPos.y, m_storedEntitiesPositions[*it].z));
+					pEntity->SetWorldTM(mat34);
 
-					if (autoEntitiesHeight)
-					{
-						const Vec3 entToGroundDir = (Vec3(curPos.x, curPos.y, curPos.z - 2) - curPos).GetNormalizedSafe() * gEnv->p3DEngine->GetMaxViewDistance();
-						const int rayFlags = (COLLISION_RAY_PIERCABILITY & rwi_pierceability_mask);
-						ray_hit ray;
-
-						IPhysicalEntity* pSkipEnts[3];
-						pSkipEnts[0] = pZeusPhys;
-						pSkipEnts[1] = pEntity->GetPhysics();
-
-						if (pClickedEntity)
-							pSkipEnts[2] = pClickedEntity->GetPhysics();
-
-						const int nSkip = sizeof(pSkipEnts) / sizeof(pSkipEnts[0]);
-
-						const int hitNum = gEnv->pPhysicalWorld->RayWorldIntersection(Vec3(curPos.x, curPos.y, curPos.z + 1), entToGroundDir, m_mouseRayEntityFlags, rayFlags, &ray, 1, pSkipEnts, nSkip);
-						if (hitNum)
-							newPos.z = ray.pt.z + 0.01f;
-					}
+					Vec3 toMouseDir = (m_worldProjectedMousePos - curPos).GetNormalizedSafe();
+					Quat rot = Quat::CreateRotationVDir(toMouseDir);
+					pEntity->SetRotation(rot);
 				}
-
-				mat34.SetTranslation(newPos);
-				pEntity->SetWorldTM(mat34);
 			}
 			it++;
 		}

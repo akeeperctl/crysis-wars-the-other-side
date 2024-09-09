@@ -191,6 +191,7 @@ private:
 	bool m_select;
 	bool m_dragging;
 	bool m_ctrlModifier;
+	bool m_shiftModifier;
 	bool m_altModifier;
 	bool m_debugZModifier;
 
