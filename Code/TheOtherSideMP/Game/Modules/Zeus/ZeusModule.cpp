@@ -35,6 +35,7 @@ CTOSZeusModule::CTOSZeusModule()
 	m_draggingDelta(ZERO),
 	m_lastClickedEntityId(0),
 	m_curClickedEntityId(0),
+	m_mouseOveredEntityId(0),
 	m_mouseDownDurationSec(0),
 	m_draggingMoveStartTimer(0),
 	m_updateIconOnScreenTimer(0),
@@ -240,10 +241,13 @@ void CTOSZeusModule::OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eH
 			else if (eHardwareMouseEvent == HARDWAREMOUSEEVENT_MOVE)
 			{
 				// При перетаскивании кликнутая сущность должна быть выделена
-				const auto iter = stl::binary_find(m_selectedEntities.begin(), m_selectedEntities.end(), m_curClickedEntityId);
-				const bool clickedSelected = iter != m_selectedEntities.end();
+				const auto clickedIter = stl::binary_find(m_selectedEntities.begin(), m_selectedEntities.end(), m_curClickedEntityId);
+				const bool clickedSelected = clickedIter != m_selectedEntities.end();
 
-				if (m_select && m_curClickedEntityId != 0 && clickedSelected)
+				// Мышь находится в диапазоне иконки кликнутой сущности. True - да
+				const bool clickedOveredByMouse = m_mouseOveredEntityId == m_curClickedEntityId;
+
+				if (m_select && m_curClickedEntityId != 0 && clickedSelected && clickedOveredByMouse)
 				{
 					// Перед тем как начать перемещение сущностей...
 					if (m_dragging == false)
@@ -477,6 +481,7 @@ void CTOSZeusModule::Reset()
 	m_selectedEntities.clear();
 	m_selectStartEntitiesPositions.clear();
 	m_lastClickedEntityId = m_curClickedEntityId = 0;
+	m_mouseOveredEntityId = 0;
 	m_updateIconOnScreenTimer = TOS_Console::GetSafeFloatVar("tos_sv_zeus_on_screen_update_delay", 0.1f);
 }
 

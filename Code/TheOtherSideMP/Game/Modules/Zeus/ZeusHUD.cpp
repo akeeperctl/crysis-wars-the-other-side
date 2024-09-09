@@ -14,13 +14,21 @@ void CTOSZeusModule::HandleFSCommand(const char* pCommand, const char* pArgs)
 {
 	string sCommand = pCommand;
 	string sArgs = pArgs;
-	if (sCommand == "OnPressUnit")
+	if (sCommand == "MousePressOnUnit")
 	{
 		auto pEntity = TOS_GET_ENTITY(atoi(sArgs));
 		if (pEntity)
 		{
 			OnEntityIconPressed(pEntity);
 		}
+	}
+	else if (sCommand == "MouseOverUnit")
+	{
+		m_mouseOveredEntityId = atoi(sArgs);
+	}
+	else if (sCommand == "MouseOutUnit")
+	{
+		m_mouseOveredEntityId = 0;
 	}
 }
 

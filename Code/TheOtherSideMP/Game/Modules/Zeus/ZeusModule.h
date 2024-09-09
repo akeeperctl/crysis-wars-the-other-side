@@ -142,6 +142,7 @@ private:
 	std::set<EntityId> m_selectedEntities;
 	std::map<EntityId, Vec3> m_selectStartEntitiesPositions;
 	std::vector<CHUD::SOnScreenIcon> m_onScreenIcons;
+	EntityId m_mouseOveredEntityId;
 	EntityId m_curClickedEntityId;
 	EntityId m_lastClickedEntityId;
 
