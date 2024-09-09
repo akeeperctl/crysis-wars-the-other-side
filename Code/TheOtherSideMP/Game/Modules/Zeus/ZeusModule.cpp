@@ -67,9 +67,28 @@ bool CTOSZeusModule::OnInputEvent(const SInputEvent& event)
 		else if (event.keyId == EKeyId::eKI_LAlt)
 		{
 			if (event.state == eIS_Pressed)
+			{
 				m_altModifier = true;
+				m_select = false;
+				// Обновляем начальное положение каждой выделенной сущности
+				//SaveEntitiesStartPositions();
+
+				//auto pEntity = TOS_GET_ENTITY(m_curClickedEntityId);
+				//if (pEntity)
+				//{
+				//	m_worldProjectedSelectStartPos = pEntity->GetWorldPos();
+				//}
+			}
 			else if (event.state == eIS_Released)
+			{
+				if (m_altModifier)
+				{
+					//m_dragging = false;
+					//m_select = false;
+					//DeselectEntities();
+				}
 				m_altModifier = false;
+			}
 		}
 		else if (event.keyId == EKeyId::eKI_Z)
 		{
@@ -145,6 +164,10 @@ void CTOSZeusModule::HandleOnceSelection(EntityId id)
 			m_selectedEntities.insert(m_curClickedEntityId);
 		}
 	}
+
+	auto pEntity = TOS_GET_ENTITY(m_curClickedEntityId);
+	if (pEntity)
+		m_worldProjectedSelectStartPos = pEntity->GetWorldPos();
 }
 
 void CTOSZeusModule::OnEntityIconPressed(IEntity* pEntity)
@@ -153,6 +176,26 @@ void CTOSZeusModule::OnEntityIconPressed(IEntity* pEntity)
 		return;
 
 	HandleOnceSelection(pEntity->GetId());
+}
+
+void CTOSZeusModule::SaveEntitiesStartPositions()
+{
+	m_selectStartEntitiesPositions.clear();
+
+	for (auto it = m_selectedEntities.begin(); it != m_selectedEntities.end(); it++)
+	{
+		EntityId id = *it;
+
+		auto pos = stl::find_in_map(m_selectStartEntitiesPositions, id, Vec3(ZERO));
+		if (pos.IsZero())
+		{
+			auto pEntity = TOS_GET_ENTITY(id);
+			if (pEntity)
+			{
+				m_selectStartEntitiesPositions[id] = pEntity->GetWorldPos();
+			}
+		}
+	}
 }
 
 void CTOSZeusModule::OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eHardwareMouseEvent)
@@ -191,9 +234,9 @@ void CTOSZeusModule::OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eH
 				m_selectStartPos = Vec2i(iX, iY);
 
 				// Сейчас позиция старта и позиция в мире мыши связаны
-				const int hitNum = MouseProjectToWorld(m_mouseRay, m_worldMousePos, m_mouseRayEntityFlags);
-				if (hitNum)
-					m_worldProjectedSelectStartPos = m_mouseRay.pt;
+				//const int hitNum = MouseProjectToWorld(m_mouseRay, m_worldMousePos, m_mouseRayEntityFlags);
+				//if (hitNum)
+					//m_worldProjectedSelectStartPos = m_mouseRay.pt;
 
 				HandleOnceSelection(GetMouseEntityId());
 			}
@@ -260,23 +303,8 @@ void CTOSZeusModule::OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eH
 					if (m_dragging == false)
 					{
 						// Сохраняем начальное положение каждой выделенной сущности
-						///////////////////////////////////////////////////////////////////////
-						m_selectStartEntitiesPositions.clear();
+						SaveEntitiesStartPositions();
 
-						for (auto it = m_selectedEntities.begin(); it != m_selectedEntities.end(); it++)
-						{
-							EntityId id = *it;
-
-							auto pos = stl::find_in_map(m_selectStartEntitiesPositions, id, Vec3(ZERO));
-							if (pos.IsZero())
-							{
-								auto pEntity = TOS_GET_ENTITY(id);
-								if (pEntity)
-								{
-									m_selectStartEntitiesPositions[id] = pEntity->GetWorldPos();
-								}
-							}
-						}
 						// Запуск таймера 
 						m_draggingMoveStartTimer = TOS_Console::GetSafeFloatVar("tos_sv_zeus_dragging_move_start_delay", 0.05f);
 					}
@@ -513,18 +541,30 @@ int CTOSZeusModule::MouseProjectToWorld(ray_hit& ray, const Vec3& mouseWorldPos,
 	if (!m_zeus || !m_zeus->GetEntity() || !m_zeus->GetEntity()->GetPhysics())
 		return 0;
 
+	const Vec3 camWorldPos = gEnv->pSystem->GetViewCamera().GetPosition();
+	const Vec3 camToMouseDir = (mouseWorldPos - camWorldPos).GetNormalizedSafe() * gEnv->p3DEngine->GetMaxViewDistance();
+
+	float clickedDistance = 10.0f;
 	const auto pClickedEntity = TOS_GET_ENTITY(m_curClickedEntityId);
 
 	IPhysicalEntity* pSkipEnts[2] = {m_zeus->GetEntity()->GetPhysics(), nullptr};
 	if (pClickedEntity)
+	{
+		clickedDistance = pClickedEntity->GetWorldPos().GetDistance(mouseWorldPos);
 		pSkipEnts[1] = pClickedEntity->GetPhysics();
+	}
 
 	const int nSkip = sizeof(pSkipEnts) / sizeof(pSkipEnts[0]);
-	const Vec3 camWorldPos = gEnv->pSystem->GetViewCamera().GetPosition();
-	const Vec3 camToMouseDir = (mouseWorldPos - camWorldPos).GetNormalizedSafe() * gEnv->p3DEngine->GetMaxViewDistance();
 	const int rayFlags = (COLLISION_RAY_PIERCABILITY & rwi_pierceability_mask);
 
-	return gEnv->pPhysicalWorld->RayWorldIntersection(mouseWorldPos, camToMouseDir, entityFlags, rayFlags, &ray, 1, pSkipEnts, nSkip);
+	if (!m_altModifier)
+	{
+		return gEnv->pPhysicalWorld->RayWorldIntersection(mouseWorldPos, camToMouseDir, entityFlags, rayFlags, &ray, 1, pSkipEnts, nSkip);
+	}
+	else
+	{
+		return gEnv->pPhysicalWorld->RayWorldIntersection(mouseWorldPos, camToMouseDir.GetNormalizedSafe() * clickedDistance, entityFlags, rayFlags, &ray, 1, pSkipEnts, nSkip);
+	}
 }
 
 void CTOSZeusModule::Update(float frametime)
@@ -561,12 +601,16 @@ void CTOSZeusModule::Update(float frametime)
 	else
 		m_mouseDownDurationSec = 0.0f;
 
-	pe_status_dynamics zeus_dyn;
-	const auto pZeusPhys = m_zeus->GetEntity()->GetPhysics();
-	if (pZeusPhys)
-		pZeusPhys->GetStatus(&zeus_dyn);
-
-	const bool zeusMoving = zeus_dyn.v.len() > 0.1f;
+	MouseProjectToWorld(m_mouseRay, m_worldMousePos, m_mouseRayEntityFlags);
+	m_worldProjectedMousePos = m_mouseRay.pt;
+	if (!m_altModifier)
+	{
+		auto pEntity = TOS_GET_ENTITY(m_curClickedEntityId);
+		if (pEntity)
+		{
+			m_worldProjectedMousePos.z = pEntity->GetWorldPos().z;
+		}
+	}
 
 	// Обработка таймера задержки перемещения выделенных сущностей
 	///////////////////////////////////////////////////////////////////////
@@ -575,6 +619,13 @@ void CTOSZeusModule::Update(float frametime)
 
 	if (m_draggingMoveStartTimer <= 0.0f)
 		m_draggingMoveStartTimer = 0.0f;
+
+	pe_status_dynamics zeus_dyn;
+	const auto pZeusPhys = m_zeus->GetEntity()->GetPhysics();
+	if (pZeusPhys)
+		pZeusPhys->GetStatus(&zeus_dyn);
+
+	const bool zeusMoving = zeus_dyn.v.len() > 0.1f;
 
 	//Перемещение выделенных сущностей
 	///////////////////////////////////////////////////////////////////////
@@ -610,26 +661,36 @@ void CTOSZeusModule::Update(float frametime)
 				if (heightType == 1)
 					height = m_mouseRay.pt.z;
 
-				Vec3 newPos = Vec3(startPos.x + m_draggingDelta.x, startPos.y + m_draggingDelta.y, height);
-
-				if (autoEntitiesHeight)
+				Vec3 newPos;
+				if (m_altModifier)
 				{
-					const Vec3 entToGroundDir = (Vec3(curPos.x, curPos.y, curPos.z - 2) - curPos).GetNormalizedSafe() * gEnv->p3DEngine->GetMaxViewDistance();
-					const int rayFlags = (COLLISION_RAY_PIERCABILITY & rwi_pierceability_mask);
-					ray_hit ray;
+					// Перемещение по Z
+					newPos = Vec3(curPos.x, curPos.y, startPos.z + m_draggingDelta.z);
+				}
+				else
+				{
+					// Перемещение по X, Y и Z с автоприлипанием к поверхности
+					newPos = Vec3(startPos.x + m_draggingDelta.x, startPos.y + m_draggingDelta.y, height);
 
-					IPhysicalEntity* pSkipEnts[3];
-					pSkipEnts[0] = pZeusPhys;
-					pSkipEnts[1] = pEntity->GetPhysics();
+					if (autoEntitiesHeight)
+					{
+						const Vec3 entToGroundDir = (Vec3(curPos.x, curPos.y, curPos.z - 2) - curPos).GetNormalizedSafe() * gEnv->p3DEngine->GetMaxViewDistance();
+						const int rayFlags = (COLLISION_RAY_PIERCABILITY & rwi_pierceability_mask);
+						ray_hit ray;
 
-					if (pClickedEntity)
-						pSkipEnts[2] = pClickedEntity->GetPhysics();
+						IPhysicalEntity* pSkipEnts[3];
+						pSkipEnts[0] = pZeusPhys;
+						pSkipEnts[1] = pEntity->GetPhysics();
 
-					const int nSkip = sizeof(pSkipEnts) / sizeof(pSkipEnts[0]);
+						if (pClickedEntity)
+							pSkipEnts[2] = pClickedEntity->GetPhysics();
 
-					const int hitNum = gEnv->pPhysicalWorld->RayWorldIntersection(Vec3(curPos.x, curPos.y, curPos.z + 1), entToGroundDir, m_mouseRayEntityFlags, rayFlags, &ray, 1, pSkipEnts, nSkip);
-					if (hitNum)
-						newPos.z = ray.pt.z + 0.01f;
+						const int nSkip = sizeof(pSkipEnts) / sizeof(pSkipEnts[0]);
+
+						const int hitNum = gEnv->pPhysicalWorld->RayWorldIntersection(Vec3(curPos.x, curPos.y, curPos.z + 1), entToGroundDir, m_mouseRayEntityFlags, rayFlags, &ray, 1, pSkipEnts, nSkip);
+						if (hitNum)
+							newPos.z = ray.pt.z + 0.01f;
+					}
 				}
 
 				mat34.SetTranslation(newPos);
@@ -641,12 +702,6 @@ void CTOSZeusModule::Update(float frametime)
 	else
 	{
 		m_mouseRayEntityFlags = DEFAULT_MOUSE_ENT_FLAGS;
-	}
-
-	const int hitNum = MouseProjectToWorld(m_mouseRay, m_worldMousePos, m_mouseRayEntityFlags);
-	if (hitNum)
-	{
-		m_worldProjectedMousePos = m_mouseRay.pt;
 	}
 
 	// Отрисовка границ выделения
@@ -800,7 +855,12 @@ void CTOSZeusModule::UpdateDebug(bool zeusMoving, const Vec3& zeusDynVec)
 		if (pEntity)
 		{
 			const Vec3 startPos = m_selectStartEntitiesPositions[pEntity->GetId()];
-			const Vec3 newPos = Vec3(startPos.x + m_draggingDelta.x, startPos.y + m_draggingDelta.y, startPos.z);
+			Vec3 newPos = Vec3(startPos.x + m_draggingDelta.x, startPos.y + m_draggingDelta.y, startPos.z);
+			if (m_altModifier)
+			{
+				newPos.z += m_draggingDelta.z;
+			}
+
 			pPD->AddSphere(newPos, 0.20f, red, 1.0f);
 			pPD->AddLine(startPos, newPos, red, 1.0f);
 		}

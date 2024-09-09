@@ -99,6 +99,8 @@ public:
 	void ReleaseCCommands();
 	//~ITOSGameModule
 
+	void SaveEntitiesStartPositions();
+
 	//IHardwareMouseEventListener
 	void OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eHardwareMouseEvent);
 	//~IHardwareMouseEventListener
