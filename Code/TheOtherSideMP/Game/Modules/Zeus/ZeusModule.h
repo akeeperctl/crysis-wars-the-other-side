@@ -97,9 +97,15 @@ private:
 	/// Можно ли выбрать сущности выделением нескольких сразу?
 	bool CanSelectMultiplyWithBox() const;
 
+	void OnEntityIconPressed(IEntity* pEntity);
+
 	/// @brief Получить сущности, находящиеся в границах выделенной через мышь области 
 	void GetSelectedEntities();
 	EntityId GetMouseEntityId();
+
+	/// @brief Обрабатывает однократный выбор сущности.
+	/// @param id Идентификатор выбранной сущности.
+	void HandleOnceSelection(EntityId id);
 	void ShowMouse(bool show);
 
 	void ApplyZeusProperties(IActor* pPlayer);

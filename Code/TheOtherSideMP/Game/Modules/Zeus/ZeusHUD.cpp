@@ -19,7 +19,7 @@ void CTOSZeusModule::HandleFSCommand(const char* pCommand, const char* pArgs)
 		auto pEntity = TOS_GET_ENTITY(atoi(sArgs));
 		if (pEntity)
 		{
-			m_selectedEntities.insert(pEntity->GetId());
+			OnEntityIconPressed(pEntity);
 		}
 	}
 }

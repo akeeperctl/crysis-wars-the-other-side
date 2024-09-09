@@ -95,7 +95,6 @@ bool CTOSZeusModule::CanSelectMultiplyWithBox() const
 	return m_mouseDownDurationSec > TOS_Console::GetSafeFloatVar("tos_sv_zeus_mass_selection_hold_sec", 0.2f);
 }
 
-
 EntityId CTOSZeusModule::GetMouseEntityId()
 {
 	if (!m_zeus)
@@ -120,6 +119,32 @@ EntityId CTOSZeusModule::GetMouseEntityId()
 	}
 
 	return 0;
+}
+
+void CTOSZeusModule::HandleOnceSelection(EntityId id)
+{
+	m_lastClickedEntityId = m_curClickedEntityId;
+	m_curClickedEntityId = id;
+
+	// Одиночное выделение
+	if (!m_ctrlModifier)
+	{
+		// При каждом клике без CTRL снимаем выделение если кликнули не на последнюю кликнутую сущность
+		if (m_curClickedEntityId != m_lastClickedEntityId || m_curClickedEntityId == 0)
+			m_selectedEntities.clear();
+
+		// После чистки всех выделенных сущностей, выделяем кликнутую сущность
+		if (m_curClickedEntityId != 0)
+			m_selectedEntities.insert(m_curClickedEntityId);
+	}
+}
+
+void CTOSZeusModule::OnEntityIconPressed(IEntity* pEntity)
+{
+	if (!pEntity)
+		return;
+
+	HandleOnceSelection(pEntity->GetId());
 }
 
 void CTOSZeusModule::OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eHardwareMouseEvent)
@@ -162,20 +187,7 @@ void CTOSZeusModule::OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eH
 				if (hitNum)
 					m_worldProjectedSelectStartPos = m_mouseRay.pt;
 
-				m_lastClickedEntityId = m_curClickedEntityId;
-				m_curClickedEntityId = GetMouseEntityId();
-
-				// Одиночное выделение
-				if (!m_ctrlModifier)
-				{
-					// При каждом клике без CTRL снимаем выделение если кликнули не на последнюю кликнутую сущность
-					if (m_curClickedEntityId != m_lastClickedEntityId || m_curClickedEntityId == 0)
-						m_selectedEntities.clear();
-
-					// После чистки всех выделенных сущностей, выделяем кликнутую сущность
-					if (m_curClickedEntityId != 0)
-						m_selectedEntities.insert(m_curClickedEntityId);
-				}
+				HandleOnceSelection(GetMouseEntityId());
 			}
 			else if (eHardwareMouseEvent == HARDWAREMOUSEEVENT_LBUTTONUP)
 			{
