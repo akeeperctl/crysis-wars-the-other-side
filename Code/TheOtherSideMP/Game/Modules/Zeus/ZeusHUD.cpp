@@ -10,6 +10,13 @@ void CTOSZeusModule::HUDInit()
 	m_animZeusScreenIcons.GetFlashPlayer()->SetFSCommandHandler(this);
 }
 
+void CTOSZeusModule::HUDSelectEntityIcon(EntityId id, bool select)
+{
+	SFlashVarValue args[2] = {id, select};
+	if (m_animZeusScreenIcons.IsLoaded())
+		m_animZeusScreenIcons.Invoke("makeIconSelectedByZeus", args, 2);
+}
+
 void CTOSZeusModule::HandleFSCommand(const char* pCommand, const char* pArgs)
 {
 	string sCommand = pCommand;

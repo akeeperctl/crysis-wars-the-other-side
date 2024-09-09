@@ -103,6 +103,8 @@ private:
 	void GetSelectedEntities();
 	EntityId GetMouseEntityId();
 
+	void DeselectEntities();
+
 	/// @brief Обрабатывает однократный выбор сущности.
 	/// @param id Идентификатор выбранной сущности.
 	void HandleOnceSelection(EntityId id);
@@ -124,6 +126,7 @@ private:
 	void HUDUpdateZeusUnitIcon(EntityId objective, int friendly, int iconType, const Vec3 localOffset);
 	void HUDUpdateAllZeusUnitIcons();
 	void HUDInit();
+	void HUDSelectEntityIcon(EntityId id, bool select);
 	void HUDInGamePostUpdate(float frametime);
 	void HUDUnloadSimpleAssets(bool unload);
 

@@ -122,6 +122,15 @@ EntityId CTOSZeusModule::GetMouseEntityId()
 	return 0;
 }
 
+void CTOSZeusModule::DeselectEntities()
+{
+	for (auto it = m_selectedEntities.begin(); it != m_selectedEntities.end(); it++)
+	{
+		HUDSelectEntityIcon(*it, false);
+	}
+	m_selectedEntities.clear();
+}
+
 void CTOSZeusModule::HandleOnceSelection(EntityId id)
 {
 	m_lastClickedEntityId = m_curClickedEntityId;
@@ -132,11 +141,14 @@ void CTOSZeusModule::HandleOnceSelection(EntityId id)
 	{
 		// При каждом клике без CTRL снимаем выделение если кликнули не на последнюю кликнутую сущность
 		if (m_curClickedEntityId != m_lastClickedEntityId || m_curClickedEntityId == 0)
-			m_selectedEntities.clear();
+			DeselectEntities();
 
 		// После чистки всех выделенных сущностей, выделяем кликнутую сущность
 		if (m_curClickedEntityId != 0)
+		{
 			m_selectedEntities.insert(m_curClickedEntityId);
+			HUDSelectEntityIcon(m_curClickedEntityId, true);
+		}
 	}
 }
 
@@ -207,10 +219,12 @@ void CTOSZeusModule::OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eH
 							if (m_selectedEntities.count(m_curClickedEntityId) > 0)
 							{
 								stl::binary_erase(m_selectedEntities, m_curClickedEntityId);
+								HUDSelectEntityIcon(m_curClickedEntityId, false);
 							}
 							else
 							{
 								m_selectedEntities.insert(m_curClickedEntityId);
+								HUDSelectEntityIcon(m_curClickedEntityId, true);
 							}
 						}
 					}
@@ -384,6 +398,7 @@ void CTOSZeusModule::GetSelectedEntities()
 				// finally we have an entity id
 				// if left or right CTRL is not pressed we can directly add every entity id, old entity id's are already deleted
 				m_selectedEntities.insert(pEntity->GetId());
+				HUDSelectEntityIcon(pEntity->GetId(), true);
 			}
 		}
 	}
@@ -668,6 +683,8 @@ void CTOSZeusModule::Update(float frametime)
 		}
 	}
 
+	// Отрисовка флэш иконок под сущностями
+	///////////////////////////////////////////////////////////////////////
 	if (m_updateIconOnScreenTimer > 0.0f)
 		m_updateIconOnScreenTimer -= frametime;
 
@@ -747,6 +764,26 @@ void CTOSZeusModule::Update(float frametime)
 		}
 	}
 
+	// Отрисовка квадрата выделенных сущностей
+	///////////////////////////////////////////////////////////////////////
+	for (auto it = m_selectedEntities.cbegin(); it != m_selectedEntities.cend(); it++)
+	{
+		const auto pEntity = TOS_GET_ENTITY(*it);
+		if (!pEntity)
+			continue;
+
+		IRenderAuxGeom* pRAG = gEnv->pRenderer->GetIRenderAuxGeom();
+		pRAG->SetRenderFlags(e_Mode3D | e_AlphaBlended | e_DrawInFrontOff | e_FillModeSolid | e_CullModeNone);
+
+		AABB entityBox;
+		pEntity->GetLocalBounds(entityBox);
+		OBB box;
+		box.SetOBBfromAABB(pEntity->GetWorldRotation(), entityBox);
+
+		//pRAG->DrawAABB(entityBox, false, ColorB(0, 0, 255, 65), eBBD_Extremes_Color_Encoded);
+		gEnv->pRenderer->GetIRenderAuxGeom()->DrawOBB(box, pEntity->GetWorldPos(), false, ColorB(255, 255, 255, 255), eBBD_Faceted);
+	}
+
 	// Отрисовка отладки
 	///////////////////////////////////////////////////////////////////////
 	UpdateDebug(zeusMoving, zeus_dyn.v);
@@ -782,26 +819,6 @@ void CTOSZeusModule::UpdateDebug(bool zeusMoving, const Vec3& zeusDynVec)
 					 m_draggingDelta.x, m_draggingDelta.y, m_draggingDelta.z);
 		pPD->AddSphere(m_worldProjectedSelectStartPos, 0.20f, green, 1.0f);
 		pPD->AddLine(m_worldProjectedSelectStartPos, m_worldProjectedMousePos, green, 1.0f);
-	}
-
-	// Отрисовка квадрата выделенных сущностей
-	///////////////////////////////////////////////////////////////////////
-	for (auto it = m_selectedEntities.cbegin(); it != m_selectedEntities.cend(); it++)
-	{
-		const auto pEntity = TOS_GET_ENTITY(*it);
-		if (!pEntity)
-			continue;
-
-		IRenderAuxGeom* pRAG = gEnv->pRenderer->GetIRenderAuxGeom();
-		pRAG->SetRenderFlags(e_Mode3D | e_AlphaBlended | e_DrawInFrontOff | e_FillModeSolid | e_CullModeNone);
-
-		AABB entityBox;
-		pEntity->GetLocalBounds(entityBox);
-		OBB box;
-		box.SetOBBfromAABB(pEntity->GetWorldRotation(), entityBox);
-
-		//pRAG->DrawAABB(entityBox, false, ColorB(0, 0, 255, 65), eBBD_Extremes_Color_Encoded);
-		gEnv->pRenderer->GetIRenderAuxGeom()->DrawOBB(box, pEntity->GetWorldPos(), false, ColorB(255, 255, 255, 255), eBBD_Faceted);
 	}
 
 	// Вывод текстовой отладки
