@@ -168,9 +168,9 @@ private:
 	uint m_zeusFlags;
 	ray_hit m_mouseRay;
 	uint m_mouseRayEntityFlags;
-	Vec2 m_anchoredMousePos;
-	Vec3 m_worldMousePos;//TODO
-	Vec3 m_worldProjectedMousePos; // проекция от камеры на позицию курсора
+	Vec2 m_anchoredMousePos; // используется при остановке движения мыши, когда вертится камера
+	Vec3 m_worldMousePos;
+	Vec3 m_worldProjectedMousePos; // проекция от камеры до курсора умноженное на некоторое расстояние
 	Vec2i m_mouseIPos;
 	Vec2 m_selectStartPos;
 	Vec3 m_clickedSelectStartPos;

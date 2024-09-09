@@ -563,26 +563,29 @@ void CTOSZeusModule::Update(float frametime)
 
 	//int frameID = gEnv->pRenderer->GetFrameID();
 
-	// Привязка мыши к позиции, когда крутится камера
-	///////////////////////////////////////////////////////////////////////
-	if (m_zeusFlags & eZF_CanRotateCamera && !(m_zeusFlags & eZF_Possessing))
+	auto pMouse = gEnv->pHardwareMouse;
+	if (pMouse)
 	{
-		auto pMouse = gEnv->pHardwareMouse;
-
-		if (m_anchoredMousePos == Vec2(0, 0))
+		// Привязка мыши к позиции, когда крутится камера
+		///////////////////////////////////////////////////////////////////////
+		if (m_zeusFlags & eZF_CanRotateCamera && !(m_zeusFlags & eZF_Possessing))
 		{
-			Vec2 mousePos;
-			pMouse->GetHardwareMousePosition(&mousePos.x, &mousePos.y);
 
-			m_anchoredMousePos = mousePos;
+			if (m_anchoredMousePos == Vec2(0, 0))
+			{
+				Vec2 mousePos;
+				pMouse->GetHardwareMousePosition(&mousePos.x, &mousePos.y);
+
+				m_anchoredMousePos = mousePos;
+			}
+
+			pMouse->SetHardwareMousePosition(m_anchoredMousePos.x, m_anchoredMousePos.y);
 		}
-
-		pMouse->SetHardwareMousePosition(m_anchoredMousePos.x, m_anchoredMousePos.y);
-	}
-	else
-	{
-		if (m_anchoredMousePos != Vec2(0, 0))
-			m_anchoredMousePos.zero();
+		else
+		{
+			if (m_anchoredMousePos != Vec2(0, 0))
+				m_anchoredMousePos.zero();
+		}
 	}
 
 	if (m_select)
@@ -592,14 +595,6 @@ void CTOSZeusModule::Update(float frametime)
 
 	MouseProjectToWorld(m_mouseRay, m_worldMousePos, m_mouseRayEntityFlags);
 	m_worldProjectedMousePos = m_mouseRay.pt;
-	//if (!m_altModifier)
-	//{
-	//	auto pEntity = TOS_GET_ENTITY(m_curClickedEntityId);
-	//	if (pEntity && m_worldProjectedMousePos.z < pEntity->GetWorldPos().z)
-	//	{
-	//		m_worldProjectedMousePos.z = pEntity->GetWorldPos().z;
-	//	}
-	//}
 
 	// Обработка таймера задержки перемещения выделенных сущностей
 	///////////////////////////////////////////////////////////////////////
