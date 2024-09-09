@@ -537,27 +537,23 @@ int CTOSZeusModule::MouseProjectToWorld(ray_hit& ray, const Vec3& mouseWorldPos,
 	const Vec3 camWorldPos = gEnv->pSystem->GetViewCamera().GetPosition();
 	Vec3 camToMouseDir = (mouseWorldPos - camWorldPos).GetNormalizedSafe() * gEnv->p3DEngine->GetMaxViewDistance();
 
-	float clickedDistance = 10.0f;
+	float clickedDistance = 10.0f; // дистанция до кликнутой сущности
 	const auto pClickedEntity = TOS_GET_ENTITY(m_curClickedEntityId);
 
 	IPhysicalEntity* pSkipEnts[2] = {m_zeus->GetEntity()->GetPhysics(), nullptr};
 	if (pClickedEntity)
 	{
 		clickedDistance = pClickedEntity->GetWorldPos().GetDistance(mouseWorldPos);
+		camToMouseDir = camToMouseDir.GetNormalizedSafe() * clickedDistance;
+
 		pSkipEnts[1] = pClickedEntity->GetPhysics();
 	}
+
 
 	const int nSkip = sizeof(pSkipEnts) / sizeof(pSkipEnts[0]);
 	const int rayFlags = (COLLISION_RAY_PIERCABILITY & rwi_stop_at_pierceable);
 
-	if (!m_altModifier)
-	{
-		return gEnv->pPhysicalWorld->RayWorldIntersection(mouseWorldPos, camToMouseDir, entityFlags, rayFlags, &ray, 1, pSkipEnts, nSkip);
-	}
-	else
-	{
-		return gEnv->pPhysicalWorld->RayWorldIntersection(mouseWorldPos, camToMouseDir.GetNormalizedSafe() * clickedDistance, entityFlags, rayFlags, &ray, 1, pSkipEnts, nSkip);
-	}
+	return gEnv->pPhysicalWorld->RayWorldIntersection(mouseWorldPos, camToMouseDir, entityFlags, rayFlags, &ray, 1, pSkipEnts, nSkip);
 }
 
 void CTOSZeusModule::Update(float frametime)
