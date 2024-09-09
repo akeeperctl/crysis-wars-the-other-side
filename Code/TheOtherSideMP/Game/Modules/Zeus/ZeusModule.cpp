@@ -342,20 +342,32 @@ void CTOSZeusModule::GetSelectedEntities()
 				pointsProjected[i].y *= 0.01f * fHeight;
 			}
 
-			//check if the projected bounding box min max values are fully or partly inside the screen selection 
-			if ((m_selectStartPos.x <= pointsProjected[0].x && pointsProjected[0].x <= m_selectStopPos.x) ||
+			// Check if the projected bounding box min max values are fully or partly inside the screen selection 
+			bool isXOverlap =
+				// Полное пересечение по X
+				(m_selectStartPos.x <= pointsProjected[0].x && pointsProjected[1].x <= m_selectStopPos.x) ||
+				// Полное пересечение по X (справа налево)
+				(m_selectStartPos.x >= pointsProjected[0].x && pointsProjected[1].x >= m_selectStopPos.x) ||
+				// Частичное пересечение по X
+				(m_selectStartPos.x <= pointsProjected[0].x && pointsProjected[0].x <= m_selectStopPos.x) ||
 				(m_selectStartPos.x >= pointsProjected[0].x && m_selectStopPos.x <= pointsProjected[1].x) ||
-				(m_selectStartPos.x <= pointsProjected[1].x && m_selectStopPos.x >= pointsProjected[1].x) ||
-				(m_selectStartPos.x <= pointsProjected[0].x && m_selectStopPos.x >= pointsProjected[1].x))
+				(m_selectStartPos.x <= pointsProjected[1].x && m_selectStopPos.x >= pointsProjected[1].x);
+
+			bool isYOverlap =
+				// Полное пересечение по Y
+				(m_selectStartPos.y <= pointsProjected[0].y && pointsProjected[1].y <= m_selectStopPos.y) ||
+				// Полное пересечение по Y (снизу вверх)
+				(m_selectStartPos.y >= pointsProjected[0].y && pointsProjected[1].y >= m_selectStopPos.y) ||
+				// Частичное пересечение по Y
+				(m_selectStartPos.y <= pointsProjected[0].y && m_selectStopPos.y >= pointsProjected[0].y) ||
+				(m_selectStartPos.y <= pointsProjected[1].y && m_selectStopPos.y >= pointsProjected[0].y) ||
+				(m_selectStartPos.y <= pointsProjected[1].y && m_selectStopPos.y >= pointsProjected[1].y);
+
+			if (isXOverlap && isYOverlap)
 			{
-				if ((m_selectStartPos.y <= pointsProjected[0].y && m_selectStopPos.y >= pointsProjected[0].y) ||
-					(m_selectStartPos.y <= pointsProjected[1].y && m_selectStopPos.y >= pointsProjected[0].y) ||
-					(m_selectStartPos.y <= pointsProjected[1].y && m_selectStopPos.y >= pointsProjected[1].y))
-				{
-					//finally we have an entity id
-					//if left or right CTRL is not pressed we can directly add every entity id, old entity id's are already deleted
-					m_selectedEntities.insert(pEntity->GetId());
-				}
+				// finally we have an entity id
+				// if left or right CTRL is not pressed we can directly add every entity id, old entity id's are already deleted
+				m_selectedEntities.insert(pEntity->GetId());
 			}
 		}
 	}
@@ -412,11 +424,6 @@ void CTOSZeusModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent&
 		case eEGE_HUDUnloadSimpleAssets:
 		{
 			HUDUnloadSimpleAssets(event.int_value);
-			break;
-		}
-		case eEGE_HUDHandleFSCommand:
-		{
-			HUDHandleFSCommand(event.description, (const char*)event.extra_data);
 			break;
 		}
 		//case eEGE_ActorEnterVehicle:
