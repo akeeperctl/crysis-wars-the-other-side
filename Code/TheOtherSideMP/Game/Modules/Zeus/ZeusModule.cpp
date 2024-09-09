@@ -633,11 +633,13 @@ void CTOSZeusModule::Update(float frametime)
 			auto pEntity = TOS_GET_ENTITY(*it);
 			if (pEntity)
 			{
+				const string className = pEntity->GetClass()->GetName();
+
 				IActor* pActor = g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pEntity->GetId());
-				if (pActor)
+				if ((pActor && pActor->GetHealth() < 0.0f) || className == "DeadBody")
 				{
-					// Пропускаем убитых актеров
-					if (TOS_Console::GetSafeIntVar("tos_sv_zeus_can_drag_dead_bodies", 0) < 1 && pActor->GetHealth() < 0.0f)
+					// Пропускаем убитых актеров при условии
+					if (TOS_Console::GetSafeIntVar("tos_sv_zeus_can_drag_dead_bodies", 0) < 1)
 						continue;
 				}
 
@@ -687,6 +689,7 @@ void CTOSZeusModule::Update(float frametime)
 				}
 				else
 				{
+					// Чтобы не падали сущности на высоте
 					mat34.SetTranslation(Vec3(curPos.x, curPos.y, m_storedEntitiesPositions[*it].z));
 					pEntity->SetWorldTM(mat34);
 
