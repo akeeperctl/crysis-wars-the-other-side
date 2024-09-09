@@ -12,8 +12,8 @@
 #include <TheOtherSideMP\Helpers\TOS_Vehicle.h>
 #include <Cry_Camera.h>
 
-const uint DEFAULT_MOUSE_ENT_FLAGS = ent_living | ent_rigid | ent_static | ent_terrain | ent_sleeping_rigid | ent_independent;
-const uint DRAGGING_MOUSE_ENT_FLAGS = ent_static | ent_terrain;
+const uint DEFAULT_MOUSE_ENT_FLAGS = ent_terrain; //ent_living | ent_rigid | ent_static | ent_terrain | ent_sleeping_rigid | ent_independent;
+const uint DRAGGING_MOUSE_ENT_FLAGS = ent_terrain;
 enum eScreenIconType
 {
 	eFTI_Grey = 0,
@@ -29,7 +29,7 @@ CTOSZeusModule::CTOSZeusModule()
 	m_worldMousePos(ZERO),
 	m_worldProjectedMousePos(ZERO),
 	m_selectStartPos(ZERO),
-	m_worldProjectedSelectStartPos(ZERO),
+	m_clickedSelectStartPos(ZERO),
 	m_selectStopPos(ZERO),
 	m_mouseIPos(ZERO),
 	m_draggingDelta(ZERO),
@@ -167,7 +167,7 @@ void CTOSZeusModule::HandleOnceSelection(EntityId id)
 
 	auto pEntity = TOS_GET_ENTITY(m_curClickedEntityId);
 	if (pEntity)
-		m_worldProjectedSelectStartPos = pEntity->GetWorldPos();
+		m_clickedSelectStartPos = pEntity->GetWorldPos();
 }
 
 void CTOSZeusModule::OnEntityIconPressed(IEntity* pEntity)
@@ -193,6 +193,7 @@ void CTOSZeusModule::SaveEntitiesStartPositions()
 			if (pEntity)
 			{
 				m_selectStartEntitiesPositions[id] = pEntity->GetWorldPos();
+				m_storedEntitiesPositions[id] = pEntity->GetWorldPos();
 			}
 		}
 	}
@@ -232,11 +233,6 @@ void CTOSZeusModule::OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eH
 			{
 				m_select = true;
 				m_selectStartPos = Vec2i(iX, iY);
-
-				// Сейчас позиция старта и позиция в мире мыши связаны
-				//const int hitNum = MouseProjectToWorld(m_mouseRay, m_worldMousePos, m_mouseRayEntityFlags);
-				//if (hitNum)
-					//m_worldProjectedSelectStartPos = m_mouseRay.pt;
 
 				HandleOnceSelection(GetMouseEntityId());
 			}
@@ -515,6 +511,7 @@ void CTOSZeusModule::Reset()
 	m_debugZModifier = false;
 	m_selectedEntities.clear();
 	m_selectStartEntitiesPositions.clear();
+	m_storedEntitiesPositions.clear();
 	m_lastClickedEntityId = m_curClickedEntityId = 0;
 	m_mouseOveredEntityId = 0;
 	m_updateIconOnScreenTimer = TOS_Console::GetSafeFloatVar("tos_sv_zeus_on_screen_update_delay", 0.1f);
@@ -525,6 +522,7 @@ void CTOSZeusModule::GetMemoryStatistics(ICrySizer* s)
 	s->Add(*this);
 	s->AddContainer(m_selectedEntities);
 	s->AddContainer(m_selectStartEntitiesPositions);
+	s->AddContainer(m_storedEntitiesPositions);
 	s->AddContainer(m_onScreenIcons);
 }
 
@@ -542,7 +540,7 @@ int CTOSZeusModule::MouseProjectToWorld(ray_hit& ray, const Vec3& mouseWorldPos,
 		return 0;
 
 	const Vec3 camWorldPos = gEnv->pSystem->GetViewCamera().GetPosition();
-	const Vec3 camToMouseDir = (mouseWorldPos - camWorldPos).GetNormalizedSafe() * gEnv->p3DEngine->GetMaxViewDistance();
+	Vec3 camToMouseDir = (mouseWorldPos - camWorldPos).GetNormalizedSafe() * gEnv->p3DEngine->GetMaxViewDistance();
 
 	float clickedDistance = 10.0f;
 	const auto pClickedEntity = TOS_GET_ENTITY(m_curClickedEntityId);
@@ -555,7 +553,7 @@ int CTOSZeusModule::MouseProjectToWorld(ray_hit& ray, const Vec3& mouseWorldPos,
 	}
 
 	const int nSkip = sizeof(pSkipEnts) / sizeof(pSkipEnts[0]);
-	const int rayFlags = (COLLISION_RAY_PIERCABILITY & rwi_pierceability_mask);
+	const int rayFlags = (COLLISION_RAY_PIERCABILITY & rwi_stop_at_pierceable);
 
 	if (!m_altModifier)
 	{
@@ -603,14 +601,14 @@ void CTOSZeusModule::Update(float frametime)
 
 	MouseProjectToWorld(m_mouseRay, m_worldMousePos, m_mouseRayEntityFlags);
 	m_worldProjectedMousePos = m_mouseRay.pt;
-	if (!m_altModifier)
-	{
-		auto pEntity = TOS_GET_ENTITY(m_curClickedEntityId);
-		if (pEntity)
-		{
-			m_worldProjectedMousePos.z = pEntity->GetWorldPos().z;
-		}
-	}
+	//if (!m_altModifier)
+	//{
+	//	auto pEntity = TOS_GET_ENTITY(m_curClickedEntityId);
+	//	if (pEntity && m_worldProjectedMousePos.z < pEntity->GetWorldPos().z)
+	//	{
+	//		m_worldProjectedMousePos.z = pEntity->GetWorldPos().z;
+	//	}
+	//}
 
 	// Обработка таймера задержки перемещения выделенных сущностей
 	///////////////////////////////////////////////////////////////////////
@@ -635,7 +633,7 @@ void CTOSZeusModule::Update(float frametime)
 		const auto pClickedEntity = TOS_GET_ENTITY(m_curClickedEntityId);
 
 		m_mouseRayEntityFlags = DRAGGING_MOUSE_ENT_FLAGS;
-		m_draggingDelta = m_worldProjectedMousePos - m_worldProjectedSelectStartPos;
+		m_draggingDelta = m_worldProjectedMousePos - m_clickedSelectStartPos;
 
 		auto it = m_selectedEntities.begin();
 		auto end = m_selectedEntities.end();
@@ -656,21 +654,24 @@ void CTOSZeusModule::Update(float frametime)
 				const Vec3 curPos = mat34.GetTranslation();
 				const Vec3 startPos = m_selectStartEntitiesPositions[*it];
 
-				float height = startPos.z;
-				const int heightType = TOS_Console::GetSafeIntVar("tos_sv_zeus_dragging_entities_height_type", 0);
-				if (heightType == 1)
-					height = m_mouseRay.pt.z;
+				//float height = startPos.z;
+				//const int heightType = TOS_Console::GetSafeIntVar("tos_sv_zeus_dragging_entities_height_type", 0);
+				//if (heightType == 1)
+					//height = m_mouseRay.pt.z;
 
 				Vec3 newPos;
 				if (m_altModifier)
 				{
 					// Перемещение по Z
-					newPos = Vec3(curPos.x, curPos.y, startPos.z + m_draggingDelta.z);
+					float height = startPos.z + m_draggingDelta.z;
+					m_storedEntitiesPositions[*it].z = height;
+
+					newPos = Vec3(curPos.x, curPos.y, height);
 				}
 				else
 				{
-					// Перемещение по X, Y и Z с автоприлипанием к поверхности
-					newPos = Vec3(startPos.x + m_draggingDelta.x, startPos.y + m_draggingDelta.y, height);
+					// Перемещение по X, Y с автоприлипанием к поверхности
+					newPos = Vec3(startPos.x + m_draggingDelta.x, startPos.y + m_draggingDelta.y, m_storedEntitiesPositions[*it].z);
 
 					if (autoEntitiesHeight)
 					{
@@ -869,8 +870,8 @@ void CTOSZeusModule::UpdateDebug(bool zeusMoving, const Vec3& zeusDynVec)
 		///////////////////////////////////////////////////////////////////////
 		pPD->AddText(m_mouseIPos.x, m_mouseIPos.y, 1.4f, green, 1.0f, "m_draggingDelta (%1.f, %1.f, %1.f)",
 					 m_draggingDelta.x, m_draggingDelta.y, m_draggingDelta.z);
-		pPD->AddSphere(m_worldProjectedSelectStartPos, 0.20f, green, 1.0f);
-		pPD->AddLine(m_worldProjectedSelectStartPos, m_worldProjectedMousePos, green, 1.0f);
+		pPD->AddSphere(m_clickedSelectStartPos, 0.20f, green, 1.0f);
+		pPD->AddLine(m_clickedSelectStartPos, m_worldProjectedMousePos, green, 1.0f);
 	}
 
 	// Вывод текстовой отладки

@@ -173,11 +173,13 @@ private:
 	Vec3 m_worldProjectedMousePos; // проекция от камеры на позицию курсора
 	Vec2i m_mouseIPos;
 	Vec2 m_selectStartPos;
-	Vec3 m_worldProjectedSelectStartPos;
+	Vec3 m_clickedSelectStartPos;
 	Vec2 m_selectStopPos;
 	Vec3 m_draggingDelta;
+
 	std::set<EntityId> m_selectedEntities;
 	std::map<EntityId, Vec3> m_selectStartEntitiesPositions;
+	std::map<EntityId, Vec3> m_storedEntitiesPositions;
 	std::vector<SOnScreenIcon> m_onScreenIcons;
 	EntityId m_mouseOveredEntityId;
 	EntityId m_curClickedEntityId;
