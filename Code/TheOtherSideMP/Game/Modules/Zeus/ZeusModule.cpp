@@ -124,10 +124,6 @@ EntityId CTOSZeusModule::GetMouseEntityId()
 
 void CTOSZeusModule::DeselectEntities()
 {
-	for (auto it = m_selectedEntities.begin(); it != m_selectedEntities.end(); it++)
-	{
-		HUDSelectEntityIcon(*it, false);
-	}
 	m_selectedEntities.clear();
 }
 
@@ -147,7 +143,6 @@ void CTOSZeusModule::HandleOnceSelection(EntityId id)
 		if (m_curClickedEntityId != 0)
 		{
 			m_selectedEntities.insert(m_curClickedEntityId);
-			HUDSelectEntityIcon(m_curClickedEntityId, true);
 		}
 	}
 }
@@ -219,12 +214,10 @@ void CTOSZeusModule::OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eH
 							if (m_selectedEntities.count(m_curClickedEntityId) > 0)
 							{
 								stl::binary_erase(m_selectedEntities, m_curClickedEntityId);
-								HUDSelectEntityIcon(m_curClickedEntityId, false);
 							}
 							else
 							{
 								m_selectedEntities.insert(m_curClickedEntityId);
-								HUDSelectEntityIcon(m_curClickedEntityId, true);
 							}
 						}
 					}
@@ -398,7 +391,6 @@ void CTOSZeusModule::GetSelectedEntities()
 				// finally we have an entity id
 				// if left or right CTRL is not pressed we can directly add every entity id, old entity id's are already deleted
 				m_selectedEntities.insert(pEntity->GetId());
-				HUDSelectEntityIcon(pEntity->GetId(), true);
 			}
 		}
 	}

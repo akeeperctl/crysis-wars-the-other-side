@@ -12,9 +12,9 @@ void CTOSZeusModule::HUDInit()
 
 void CTOSZeusModule::HUDSelectEntityIcon(EntityId id, bool select)
 {
-	SFlashVarValue args[2] = {id, select};
-	if (m_animZeusScreenIcons.IsLoaded())
-		m_animZeusScreenIcons.Invoke("makeIconSelectedByZeus", args, 2);
+	//SFlashVarValue args[2] = {id, select};
+	//if (m_animZeusScreenIcons.IsLoaded())
+		//m_animZeusScreenIcons.Invoke("makeIconSelectedByZeus", args, 2);
 }
 
 void CTOSZeusModule::HandleFSCommand(const char* pCommand, const char* pArgs)
@@ -36,6 +36,10 @@ void CTOSZeusModule::HandleFSCommand(const char* pCommand, const char* pArgs)
 	else if (sCommand == "MouseOutUnit")
 	{
 		m_mouseOveredEntityId = 0;
+	}
+	else if (sCommand == "Debug")
+	{
+		CryLogAlways("[Flash] %s", sArgs);
 	}
 }
 
@@ -119,7 +123,10 @@ void CTOSZeusModule::HUDUpdateZeusUnitIcon(EntityId objective, int friendly, int
 
 	static const wchar_t* localizedText = L"";
 
-	CHUD::SOnScreenIcon icon(objective, transX, transY, (int)iconType, friendly, fDist, fSize * fSize, -rotation, healthValue);
+	auto iter = stl::binary_find(m_selectedEntities.cbegin(), m_selectedEntities.cend(), objective);
+	const bool selected = iter != m_selectedEntities.cend();
+
+	SOnScreenIcon icon(objective, transX, transY, (int)iconType, friendly, fDist, fSize * fSize, -rotation, healthValue, (int)selected);
 	localizedText = pHUD->LocalizeWithParams(pObjectiveEntity->GetName(), true);
 	icon.text.append(localizedText);
 
@@ -137,14 +144,16 @@ void CTOSZeusModule::HUDUpdateAllZeusUnitIcons()
 	{
 		pAnim->SetVisible(true);
 
+		const int parametersCount = 9;
+
 		//CW original code
 		std::vector< CryFixedStringT<128> > iconList;
-		iconList.reserve(8 * icons->size());
+		iconList.reserve(parametersCount * icons->size());
 		char tempBuf[128];
-		std::vector<CHUD::SOnScreenIcon>::const_iterator it = icons->begin();
+		auto it = icons->begin();
 		for (; it != icons->end(); ++it)
 		{
-			CHUD::SOnScreenIcon icon = (*it);
+			SOnScreenIcon icon = (*it);
 
 			_snprintf(tempBuf, sizeof(tempBuf), "%d", (int)icon.id);
 			tempBuf[sizeof(tempBuf) - 1] = '\0';
@@ -181,6 +190,10 @@ void CTOSZeusModule::HUDUpdateAllZeusUnitIcons()
 			_snprintf(tempBuf, sizeof(tempBuf), "%d", icon.healthValue);
 			tempBuf[sizeof(tempBuf) - 1] = '\0';
 			iconList.push_back(tempBuf);
+
+			_snprintf(tempBuf, sizeof(tempBuf), "%d", icon.selected);
+			tempBuf[sizeof(tempBuf) - 1] = '\0';
+			iconList.push_back(tempBuf);
 		}
 
 		int size = iconList.size();
@@ -202,7 +215,7 @@ void CTOSZeusModule::HUDUpdateAllZeusUnitIcons()
 
 		for (auto it = icons->begin(); it != icons->end(); ++it)
 		{
-			CHUD::SOnScreenIcon icon = (*it);
+			SOnScreenIcon icon = (*it);
 			iconListWString.push_back(icon.text);
 		}
 

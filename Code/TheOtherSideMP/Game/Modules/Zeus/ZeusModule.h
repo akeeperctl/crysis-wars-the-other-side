@@ -38,6 +38,39 @@ enum EZeusOnScreenIcon
 class CTOSZeusModule : public CTOSGenericModule, IHardwareMouseEventListener, IFSCommandHandler
 {
 public:
+	struct SOnScreenIcon
+	{
+		SOnScreenIcon(EntityId _id, int _x, int _y, int _icontype, int _friendly, float _distance, float _size, float _rotation, int _healthValue, int _selected)
+			: id(_id),
+			x(_x),
+			y(_y),
+			icontype(_icontype),
+			friendly(_friendly),
+			distance(_distance),
+			size(_size),
+			rotation(_rotation),
+			healthValue(_healthValue),
+			selected(_selected)
+		{}
+		EntityId id;
+		int x;
+		int y;
+		int icontype;
+		int friendly;
+		float distance;
+		CryFixedWStringT<64> text;
+		float size;
+		float rotation;
+		int healthValue;
+		int selected;
+
+		bool operator ==(const CHUD::SOnScreenIcon& compare) const
+		{
+			return id == compare.id;
+		}
+
+	};
+
 	CTOSZeusModule();
 	virtual ~CTOSZeusModule();
 
@@ -126,7 +159,6 @@ private:
 	void HUDUpdateZeusUnitIcon(EntityId objective, int friendly, int iconType, const Vec3 localOffset);
 	void HUDUpdateAllZeusUnitIcons();
 	void HUDInit();
-	void HUDSelectEntityIcon(EntityId id, bool select);
 	void HUDInGamePostUpdate(float frametime);
 	void HUDUnloadSimpleAssets(bool unload);
 
@@ -144,7 +176,7 @@ private:
 	Vec3 m_draggingDelta;
 	std::set<EntityId> m_selectedEntities;
 	std::map<EntityId, Vec3> m_selectStartEntitiesPositions;
-	std::vector<CHUD::SOnScreenIcon> m_onScreenIcons;
+	std::vector<SOnScreenIcon> m_onScreenIcons;
 	EntityId m_mouseOveredEntityId;
 	EntityId m_curClickedEntityId;
 	EntityId m_lastClickedEntityId;
