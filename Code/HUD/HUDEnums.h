@@ -46,9 +46,9 @@ enum ESound
 
 enum EHUDBATTLELOG_EVENTTYPE
 {
-	eBLE_Information=2,
-	eBLE_Currency=1,
-	eBLE_Warning=3,
+	eBLE_Information = 2,
+	eBLE_Currency = 1,
+	eBLE_Warning = 3,
 	eBLE_System
 };
 
@@ -77,9 +77,9 @@ enum EQuickMenuButtons
 //locking types
 enum ELockingType
 {
-	eLT_Locking			= 0,
-	eLT_Locked			= 1,
-	eLT_Static			= 2
+	eLT_Locking = 0,
+	eLT_Locked = 1,
+	eLT_Static = 2
 };
 
 enum EHUDGAMERULES

@@ -863,6 +863,12 @@
     <ClCompile Include="TheOtherSideMP\Game\Modules\Zeus\ZeusCvars.cpp">
       <Filter>TheOtherSideMP\Game\Modules\Zeus</Filter>
     </ClCompile>
+    <ClCompile Include="TheOtherSideMP\Nodes\FlowFlashHUD.cpp">
+      <Filter>TheOtherSideMP\Nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="TheOtherSideMP\Game\Modules\Zeus\ZeusHUD.cpp">
+      <Filter>TheOtherSideMP\Game\Modules\Zeus</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor.h">

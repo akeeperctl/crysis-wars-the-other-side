@@ -27,6 +27,7 @@
 //TheOtherSide
 #include "TheOtherSideMP/HUD/TOSCrosshair.h"
 #include "TheOtherSideMP/Helpers/TOS_Console.h"
+
 //~TheOtherSide
 
 void CHUD::QuickMenuSnapToMode(ENanoMode mode)
@@ -142,7 +143,6 @@ void CHUD::AutoSnap()
 
 void CHUD::UpdateMissionObjectiveIcon(EntityId objective, int friendly, FlashOnScreenIcon iconType, bool forceNoOffset, Vec3 rotationTarget, bool characterhead, bool forceshow)
 {
-
 	if (m_pModalHUD == &m_animScoreBoard)
 		return;
 
@@ -409,14 +409,8 @@ void CHUD::UpdateMissionObjectiveIcon(EntityId objective, int friendly, FlashOnS
 
 void CHUD::UpdateAllMissionObjectives()
 {
-	// TheOtherSide
-	//if (m_onScreenIcons.size() && (gEnv->bMultiplayer || m_pHUDScopes->IsBinocularsShown()))
-	auto pClient = static_cast<CTOSActor*>(g_pGame->GetIGameFramework()->GetClientActor());
-	const bool isZeus = pClient && pClient->IsZeus();
-	const bool visible = isZeus && TOS_Console::GetSafeIntVar("tos_sv_zeus_force_on_screen_icons", 1);
-	if (m_onScreenIcons.size() && (gEnv->bMultiplayer || m_pHUDScopes->IsBinocularsShown() || visible))
+	if (m_onScreenIcons.size() && (gEnv->bMultiplayer || m_pHUDScopes->IsBinocularsShown()))
 	{
-		// ~TheOtherSide
 		m_animMissionObjective.SetVisible(true);
 
 		std::vector< CryFixedStringT<128> > iconList;

@@ -468,6 +468,7 @@
     <ClCompile Include="TheOtherSideMP\Game\Modules\Master\MasterSynchronizer.cpp" />
     <ClCompile Include="TheOtherSideMP\Game\Modules\Zeus\ZeusClient.cpp" />
     <ClCompile Include="TheOtherSideMP\Game\Modules\Zeus\ZeusCvars.cpp" />
+    <ClCompile Include="TheOtherSideMP\Game\Modules\Zeus\ZeusHUD.cpp" />
     <ClCompile Include="TheOtherSideMP\Game\Modules\Zeus\ZeusModule.cpp" />
     <ClCompile Include="TheOtherSideMP\Game\Modules\Zeus\ZeusNodes.cpp" />
     <ClCompile Include="TheOtherSideMP\Game\TOSGame.cpp" />
@@ -475,6 +476,7 @@
     <ClCompile Include="TheOtherSideMP\Game\TOSGameEventRecorder.cpp" />
     <ClCompile Include="TheOtherSideMP\HUD\TOSCrosshair.cpp" />
     <ClCompile Include="TheOtherSideMP\MasterCvars.cpp" />
+    <ClCompile Include="TheOtherSideMP\Nodes\FlowFlashHUD.cpp" />
     <ClCompile Include="TheOtherSideMP\Nodes\FlowMasterClientNodes.cpp" />
     <ClCompile Include="TheOtherSideMP\Utilities\DedicatedServerHackScope.cpp" />
     <ClCompile Include="Throw.cpp" />

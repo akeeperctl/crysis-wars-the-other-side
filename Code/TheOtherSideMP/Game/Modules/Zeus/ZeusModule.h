@@ -1,5 +1,6 @@
 #pragma once
-
+#include "HUD/GameFlashAnimation.h"
+#include "HUD/HUD.h"
 #include "TheOtherSideMP\Game\Modules\GenericModule.h"
 #include <TheOtherSideMP\Actors\Player\TOSPlayer.h>
 
@@ -15,10 +16,26 @@ enum EZeusCommands
 	eZC_RemoveSelected,
 };
 
+enum EZeusOnScreenIcon
+{
+	eZSI_Base = 0,
+	eZSI_Car,
+	eZSI_Helicopter,
+	eZSI_Tank,
+	eZSI_Boat,
+	eZSI_Flag,
+	eZSI_Flash,
+	eZSI_Unit,
+	eZSI_Star,
+	eZSI_Circle,
+	eZSI_AlienTrooper,
+	eZSI_AlienScout,
+};
+
 /**
  * \brief Модуль для обработки ситуаций режима игры Zeus
  */
-class CTOSZeusModule : public CTOSGenericModule, IHardwareMouseEventListener
+class CTOSZeusModule : public CTOSGenericModule, IHardwareMouseEventListener, IFSCommandHandler
 {
 public:
 	CTOSZeusModule();
@@ -53,6 +70,10 @@ public:
 	void OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eHardwareMouseEvent);
 	//~IHardwareMouseEventListener
 
+	//IFSCommandHandler
+	void HandleFSCommand(const char* pCommand, const char* pArgs);
+	//~IFSCommandHandler
+
 	void NetMakePlayerZeus(IActor* pPlayer);
 	void ShowHUD(bool show);
 
@@ -86,6 +107,20 @@ private:
 	//Выполнить команду всем выделенным сущностям
 	bool ExecuteCommand(EZeusCommands command);
 
+	/// @brief Обновляет иконку бойца на экране.
+	/// 
+	/// @param objective идентификатор бойца
+	/// @param friendly 0 - серый, 1 - синий, 2 - красный
+	/// @param iconType - номер иконки
+	/// @param localOffset - локальное смещение иконки
+	/// @param distance 
+	/// @param size 
+	void HUDUpdateZeusUnitIcon(EntityId objective, int friendly, int iconType, const Vec3 localOffset);
+	void HUDUpdateAllZeusUnitIcons();
+	void HUDInit();
+	void HUDInGamePostUpdate(float frametime);
+	void HUDUnloadSimpleAssets(bool unload);
+
 	CTOSPlayer* m_zeus;
 	uint m_zeusFlags;
 	ray_hit m_mouseRay;
@@ -100,10 +135,11 @@ private:
 	Vec3 m_draggingDelta;
 	std::set<EntityId> m_selectedEntities;
 	std::map<EntityId, Vec3> m_selectStartEntitiesPositions;
+	std::vector<CHUD::SOnScreenIcon> m_onScreenIcons;
 	EntityId m_curClickedEntityId;
 	EntityId m_lastClickedEntityId;
 
-
+	float m_updateIconOnScreenTimer;
 	float m_draggingMoveStartTimer; /// Таймер начала перемещения сущностей после включения перетаскивания
 	float m_mouseDownDurationSec; /// используется для включения режима выделения нескольких объектов одновременно
 	bool m_select;
@@ -112,6 +148,9 @@ private:
 	bool m_altModifier;
 	bool m_debugZModifier;
 
+	//HUD
+	CGameFlashAnimation m_animZeusScreenIcons;
+
 	// Консольные значения
 	float tos_sv_zeus_mass_selection_hold_sec;
 	int tos_sv_zeus_always_select_parent;
@@ -119,6 +158,16 @@ private:
 	float tos_sv_zeus_dragging_move_start_delay;
 	int tos_sv_zeus_dragging_entities_auto_height;
 	int tos_sv_zeus_dragging_entities_height_type;
+
 	int tos_sv_zeus_force_on_screen_icons;
+	float tos_sv_zeus_on_screen_near_size;
+	float tos_sv_zeus_on_screen_far_size;
+	int tos_sv_zeus_on_screen_near_distance;
+	int tos_sv_zeus_on_screen_far_distance;
+	int tos_sv_zeus_on_screen_offsetX;
+	int tos_sv_zeus_on_screen_offsetY;
+
+	float tos_sv_zeus_on_screen_update_delay;
+
 	int tos_cl_zeus_dragging_draw_debug;
 };

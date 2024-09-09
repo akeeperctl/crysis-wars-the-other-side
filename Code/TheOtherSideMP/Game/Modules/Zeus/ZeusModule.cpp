@@ -14,6 +14,13 @@
 
 const uint DEFAULT_MOUSE_ENT_FLAGS = ent_living | ent_rigid | ent_static | ent_terrain | ent_sleeping_rigid | ent_independent;
 const uint DRAGGING_MOUSE_ENT_FLAGS = ent_static | ent_terrain;
+enum eScreenIconType
+{
+	eFTI_Grey = 0,
+	eFTI_Blue,
+	eFTI_Red,
+	eFTI_Yellow,
+};
 
 CTOSZeusModule::CTOSZeusModule()
 	: m_zeus(nullptr),
@@ -30,6 +37,7 @@ CTOSZeusModule::CTOSZeusModule()
 	m_curClickedEntityId(0),
 	m_mouseDownDurationSec(0),
 	m_draggingMoveStartTimer(0),
+	m_updateIconOnScreenTimer(0),
 	m_mouseRayEntityFlags(DEFAULT_MOUSE_ENT_FLAGS),
 	m_ctrlModifier(false),
 	m_altModifier(false),
@@ -123,118 +131,154 @@ void CTOSZeusModule::OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eH
 	gEnv->pRenderer->UnProjectFromScreen(iX, mod_iY, 0.0f, &m_worldMousePos.x, &m_worldMousePos.y, &m_worldMousePos.z);
 
 	auto pHUD = g_pGame->GetHUD();
-	if (pHUD && !pHUD->IsHaveModalHUD())
+	if (pHUD)
 	{
-		if (eHardwareMouseEvent == HARDWAREMOUSEEVENT_LBUTTONDOWN)
+		SFlashCursorEvent::ECursorState eCursorState = SFlashCursorEvent::eCursorMoved;
+		if (HARDWAREMOUSEEVENT_LBUTTONDOWN == eHardwareMouseEvent)
 		{
-			m_select = true;
-			m_selectStartPos = Vec2i(iX, iY);
-
-			// Сейчас позиция старта и позиция в мире мыши связаны
-			const int hitNum = MouseProjectToWorld(m_mouseRay, m_worldMousePos, m_mouseRayEntityFlags);
-			if (hitNum)
-				m_worldProjectedSelectStartPos = m_mouseRay.pt;
-
-			m_lastClickedEntityId = m_curClickedEntityId;
-			m_curClickedEntityId = GetMouseEntityId();
-
-			// Одиночное выделение
-			if (!m_ctrlModifier)
-			{
-				// При каждом клике без CTRL снимаем выделение если кликнули не на последнюю кликнутую сущность
-				if (m_curClickedEntityId != m_lastClickedEntityId || m_curClickedEntityId == 0)
-					m_selectedEntities.clear();
-
-				// После чистки всех выделенных сущностей, выделяем кликнутую сущность
-				if (m_curClickedEntityId != 0)
-					m_selectedEntities.insert(m_curClickedEntityId);
-			}
+			eCursorState = SFlashCursorEvent::eCursorPressed;
 		}
-		else if (eHardwareMouseEvent == HARDWAREMOUSEEVENT_LBUTTONUP)
+		else if (HARDWAREMOUSEEVENT_LBUTTONUP == eHardwareMouseEvent)
 		{
-			m_select = false;
-			m_selectStopPos = Vec2i(iX, iY);
+			eCursorState = SFlashCursorEvent::eCursorReleased;
+		}
 
-			if (!m_dragging && CanSelectMultiplyWithBox())
-				GetSelectedEntities();
-			else
+		if (m_animZeusScreenIcons.IsLoaded())
+		{
+			int x(iX), y(iY);
+			m_animZeusScreenIcons.GetFlashPlayer()->ScreenToClient(x, y);
+			m_animZeusScreenIcons.GetFlashPlayer()->SendCursorEvent(SFlashCursorEvent(eCursorState, x, y));
+		}
+
+		if (!pHUD->IsHaveModalHUD())
+		{
+			if (eHardwareMouseEvent == HARDWAREMOUSEEVENT_LBUTTONDOWN)
 			{
-				// Множественное выделение c зажатым модификатором
-				if (m_ctrlModifier)
+				m_select = true;
+				m_selectStartPos = Vec2i(iX, iY);
+
+				// Сейчас позиция старта и позиция в мире мыши связаны
+				const int hitNum = MouseProjectToWorld(m_mouseRay, m_worldMousePos, m_mouseRayEntityFlags);
+				if (hitNum)
+					m_worldProjectedSelectStartPos = m_mouseRay.pt;
+
+				m_lastClickedEntityId = m_curClickedEntityId;
+				m_curClickedEntityId = GetMouseEntityId();
+
+				// Одиночное выделение
+				if (!m_ctrlModifier)
 				{
-					if (!m_dragging && m_curClickedEntityId != 0)
-					{
-						if (m_selectedEntities.count(m_curClickedEntityId) > 0)
-						{
-							stl::binary_erase(m_selectedEntities, m_curClickedEntityId);
-						}
-						else
-						{
-							m_selectedEntities.insert(m_curClickedEntityId);
-						}
-					}
+					// При каждом клике без CTRL снимаем выделение если кликнули не на последнюю кликнутую сущность
+					if (m_curClickedEntityId != m_lastClickedEntityId || m_curClickedEntityId == 0)
+						m_selectedEntities.clear();
+
+					// После чистки всех выделенных сущностей, выделяем кликнутую сущность
+					if (m_curClickedEntityId != 0)
+						m_selectedEntities.insert(m_curClickedEntityId);
 				}
 			}
-
-			// Пинаем физику выделенных сущностей после того как закончили их перетаскивать
-			if (m_dragging)
+			else if (eHardwareMouseEvent == HARDWAREMOUSEEVENT_LBUTTONUP)
 			{
-				for (auto it = m_selectedEntities.begin(); it != m_selectedEntities.end(); it++)
+				m_select = false;
+				m_selectStopPos = Vec2i(iX, iY);
+
+				if (!m_dragging && CanSelectMultiplyWithBox())
+					GetSelectedEntities();
+				else
 				{
-					auto pEntity = TOS_GET_ENTITY(*it);
-					if (!pEntity)
-						continue;
-
-					auto pPhys = pEntity->GetPhysics();
-					if (!pPhys)
-						continue;
-
-					pe_action_awake awake;
-					awake.bAwake = 1;
-
-					pPhys->Action(&awake);
-				}
-			}
-
-			m_dragging = false;
-		}
-		else if (eHardwareMouseEvent == HARDWAREMOUSEEVENT_MOVE)
-		{
-			// При перетаскивании кликнутая сущность должна быть выделена
-			const auto iter = stl::binary_find(m_selectedEntities.begin(), m_selectedEntities.end(), m_curClickedEntityId);
-			const bool clickedSelected = iter != m_selectedEntities.end();
-
-			if (m_select && m_curClickedEntityId != 0 && clickedSelected)
-			{
-				// Перед тем как начать перемещение сущностей...
-				if (m_dragging == false)
-				{
-					// Сохраняем начальное положение каждой выделенной сущности
-					///////////////////////////////////////////////////////////////////////
-					m_selectStartEntitiesPositions.clear();
-
-					for (auto it = m_selectedEntities.begin(); it != m_selectedEntities.end(); it++)
+					// Множественное выделение c зажатым модификатором
+					if (m_ctrlModifier)
 					{
-						EntityId id = *it;
-
-						auto pos = stl::find_in_map(m_selectStartEntitiesPositions, id, Vec3(ZERO));
-						if (pos.IsZero())
+						if (!m_dragging && m_curClickedEntityId != 0)
 						{
-							auto pEntity = TOS_GET_ENTITY(id);
-							if (pEntity)
+							if (m_selectedEntities.count(m_curClickedEntityId) > 0)
 							{
-								m_selectStartEntitiesPositions[id] = pEntity->GetWorldPos();
+								stl::binary_erase(m_selectedEntities, m_curClickedEntityId);
+							}
+							else
+							{
+								m_selectedEntities.insert(m_curClickedEntityId);
 							}
 						}
 					}
-					// Запуск таймера 
-					m_draggingMoveStartTimer = TOS_Console::GetSafeFloatVar("tos_sv_zeus_dragging_move_start_delay", 0.05f);
 				}
 
-				m_dragging = true;
+				// Пинаем физику выделенных сущностей после того как закончили их перетаскивать
+				if (m_dragging)
+				{
+					for (auto it = m_selectedEntities.begin(); it != m_selectedEntities.end(); it++)
+					{
+						auto pEntity = TOS_GET_ENTITY(*it);
+						if (!pEntity)
+							continue;
+
+						auto pPhys = pEntity->GetPhysics();
+						if (!pPhys)
+							continue;
+
+						pe_action_awake awake;
+						awake.bAwake = 1;
+
+						pPhys->Action(&awake);
+					}
+				}
+
+				m_dragging = false;
 			}
+			else if (eHardwareMouseEvent == HARDWAREMOUSEEVENT_MOVE)
+			{
+				// При перетаскивании кликнутая сущность должна быть выделена
+				const auto iter = stl::binary_find(m_selectedEntities.begin(), m_selectedEntities.end(), m_curClickedEntityId);
+				const bool clickedSelected = iter != m_selectedEntities.end();
+
+				if (m_select && m_curClickedEntityId != 0 && clickedSelected)
+				{
+					// Перед тем как начать перемещение сущностей...
+					if (m_dragging == false)
+					{
+						// Сохраняем начальное положение каждой выделенной сущности
+						///////////////////////////////////////////////////////////////////////
+						m_selectStartEntitiesPositions.clear();
+
+						for (auto it = m_selectedEntities.begin(); it != m_selectedEntities.end(); it++)
+						{
+							EntityId id = *it;
+
+							auto pos = stl::find_in_map(m_selectStartEntitiesPositions, id, Vec3(ZERO));
+							if (pos.IsZero())
+							{
+								auto pEntity = TOS_GET_ENTITY(id);
+								if (pEntity)
+								{
+									m_selectStartEntitiesPositions[id] = pEntity->GetWorldPos();
+								}
+							}
+						}
+						// Запуск таймера 
+						m_draggingMoveStartTimer = TOS_Console::GetSafeFloatVar("tos_sv_zeus_dragging_move_start_delay", 0.05f);
+					}
+
+					m_dragging = true;
+				}
+			}
+
 		}
 	}
+}
+
+static bool IsPhysicsAllowed(IEntity* pEntity)
+{
+	if (!pEntity)
+		return false;
+
+	IPhysicalEntity* physEnt = pEntity->GetPhysics();
+	if (!physEnt)
+		return false;
+
+	// допустимые сущности
+	const auto type = physEnt->GetType();
+	if (!(type == PE_LIVING || type == PE_RIGID || type == PE_STATIC || type == PE_WHEELEDVEHICLE || PE_ARTICULATED))
+		return false;
 }
 
 void CTOSZeusModule::GetSelectedEntities()
@@ -254,14 +298,7 @@ void CTOSZeusModule::GetSelectedEntities()
 				if (pEntity->IsGarbage())
 					continue;
 
-				//skip useless entities (gamerules, fists etc.)
-				IPhysicalEntity* physEnt = pEntity->GetPhysics();
-				if (!physEnt)
-					continue;
-
-				// допустимые сущности
-				const auto type = physEnt->GetType();
-				if (!(type == PE_LIVING || type == PE_RIGID || type == PE_STATIC || type == PE_WHEELEDVEHICLE || PE_ARTICULATED))
+				if (!IsPhysicsAllowed(pEntity))
 					continue;
 			}
 
@@ -364,7 +401,22 @@ void CTOSZeusModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent&
 		}
 		case eEGE_HUDInit:
 		{
-			//m_animUnitIcon.Load("HUD_Zeus_UnitIcon.gfx", eFD_Center, eFAF_Visible | eFAF_ThisHandler);
+			HUDInit();
+			break;
+		}
+		case eEGE_HUDInGamePostUpdate:
+		{
+			HUDInGamePostUpdate(event.value);
+			break;
+		}
+		case eEGE_HUDUnloadSimpleAssets:
+		{
+			HUDUnloadSimpleAssets(event.int_value);
+			break;
+		}
+		case eEGE_HUDHandleFSCommand:
+		{
+			HUDHandleFSCommand(event.description, (const char*)event.extra_data);
 			break;
 		}
 		//case eEGE_ActorEnterVehicle:
@@ -406,11 +458,15 @@ void CTOSZeusModule::Reset()
 	m_selectedEntities.clear();
 	m_selectStartEntitiesPositions.clear();
 	m_lastClickedEntityId = m_curClickedEntityId = 0;
+	m_updateIconOnScreenTimer = TOS_Console::GetSafeFloatVar("tos_sv_zeus_on_screen_update_delay", 0.1f);
 }
 
 void CTOSZeusModule::GetMemoryStatistics(ICrySizer* s)
 {
 	s->Add(*this);
+	s->AddContainer(m_selectedEntities);
+	s->AddContainer(m_selectStartEntitiesPositions);
+	s->AddContainer(m_onScreenIcons);
 }
 
 void CTOSZeusModule::Init()
@@ -588,10 +644,83 @@ void CTOSZeusModule::Update(float frametime)
 		}
 	}
 
+	if (m_updateIconOnScreenTimer > 0.0f)
+		m_updateIconOnScreenTimer -= frametime;
 
-	for (auto it = m_selectedEntities.begin(); it != m_selectedEntities.end(); it++)
+	if (m_updateIconOnScreenTimer <= 0.0f)
 	{
-		SAFE_HUD_FUNC(UpdateMissionObjectiveIcon(*it, 0, eOS_Purchase, true, Vec3(0, 0, 0), false, true));
+		m_updateIconOnScreenTimer = TOS_Console::GetSafeFloatVar("tos_sv_zeus_on_screen_update_delay", 0.1f);
+
+		IActor* pClientActor = g_pGame->GetIGameFramework()->GetClientActor();
+		if (!pClientActor)
+			return;
+
+		IEntityItPtr pIt = gEnv->pEntitySystem->GetEntityIterator();
+		while (!pIt->IsEnd())
+		{
+			int color = eFTI_Grey;
+			int icon = eZSI_Base;
+
+			if (IEntity* pEntity = pIt->Next())
+			{
+				if (pEntity->IsGarbage())
+					continue;
+
+				if (pEntity->IsHidden())
+					continue;
+
+				if (!IsPhysicsAllowed(pEntity))
+					continue;
+
+				// пропускаем сущность актера клиента
+				if (pEntity->GetId() == pClientActor->GetEntityId())
+					continue;
+
+				AABB worldBounds;
+				pEntity->GetWorldBounds(worldBounds);
+
+				//skip further calculations if the entity is not visible at all...
+				if (gEnv->pSystem->GetViewCamera().IsAABBVisible_F(worldBounds) == CULL_EXCLUSION)
+					continue;
+
+				IVehicle* pVehicle = g_pGame->GetIGameFramework()->GetIVehicleSystem()->GetVehicle(pEntity->GetId());
+				if (pVehicle)
+				{
+					//TODO Танк, VTOL!
+					auto movType = pVehicle->GetMovement()->GetMovementType();
+					if (movType == IVehicleMovement::eVMT_Land)
+						icon = eZSI_Car;
+					else if (movType == IVehicleMovement::eVMT_Air)
+						icon = eZSI_Helicopter;
+					else if (movType == IVehicleMovement::eVMT_Sea || IVehicleMovement::eVMT_Amphibious)
+						icon = eZSI_Boat;
+
+					// не пустые тс должны быть желтые
+					if (pVehicle->GetStatus().passengerCount > 0)
+						color = eFTI_Yellow;
+
+					if (pVehicle->IsDestroyed())
+						color = eFTI_Grey;
+				}
+
+				IActor* pActor = g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pEntity->GetId());
+				if (pActor)
+				{
+					icon = eZSI_Unit;
+
+					if (pActor->GetHealth() > 0)
+						color = eFTI_Yellow;
+				}
+
+				IItem* pItem = g_pGame->GetIGameFramework()->GetIItemSystem()->GetItem(pEntity->GetId());
+				if (pItem)
+				{
+					icon = eZSI_Circle;
+				}
+
+				HUDUpdateZeusUnitIcon(pEntity->GetId(), color, icon, Vec3(0, 0, 0));
+			}
+		}
 	}
 
 	// Отрисовка отладки
@@ -727,6 +856,12 @@ void CTOSZeusModule::ShowMouse(bool show)
 		show ? pMouse->IncrementCounter() : pMouse->DecrementCounter();
 		pMouse->ConfineCursor(show);
 	}
+
+	//auto pHUD = g_pGame->GetHUD();
+	//if (pHUD)
+	//{
+	//	show ? pHUD->CursorIncrementCounter() : pHUD->CursorDecrementCounter();
+	//}
 }
 
 void CTOSZeusModule::ApplyZeusProperties(IActor* pPlayer)

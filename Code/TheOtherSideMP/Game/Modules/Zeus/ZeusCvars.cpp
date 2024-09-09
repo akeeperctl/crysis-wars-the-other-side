@@ -30,6 +30,27 @@ void CTOSZeusModule::InitCVars(IConsole* pConsole)
 
 	pConsole->Register("tos_sv_zeus_force_on_screen_icons", &tos_sv_zeus_force_on_screen_icons, 1, VF_CHEAT,
 					   "");
+
+	pConsole->Register("tos_sv_zeus_on_screen_near_size", &tos_sv_zeus_on_screen_near_size, 1.4f, VF_CHEAT,
+					   "");
+
+	pConsole->Register("tos_sv_zeus_on_screen_far_size", &tos_sv_zeus_on_screen_far_size, 0.7f, VF_CHEAT,
+					   "");
+
+	pConsole->Register("tos_sv_zeus_on_screen_near_distance", &tos_sv_zeus_on_screen_near_distance, 10, VF_CHEAT,
+					   "");
+
+	pConsole->Register("tos_sv_zeus_on_screen_far_distance", &tos_sv_zeus_on_screen_far_distance, 500, VF_CHEAT,
+					   "");
+
+	pConsole->Register("tos_sv_zeus_on_screen_offsetX", &tos_sv_zeus_on_screen_offsetX, 0, VF_CHEAT,
+					   "On screen icon 2d offset on X axis");
+
+	pConsole->Register("tos_sv_zeus_on_screen_offsetY", &tos_sv_zeus_on_screen_offsetY, 0, VF_CHEAT,
+					   "On screen icon 2d offset on Y axis");
+
+	pConsole->Register("tos_sv_zeus_on_screen_update_delay", &tos_sv_zeus_on_screen_update_delay, 0.1f, VF_CHEAT,
+					   "");
 }
 
 void CTOSZeusModule::ReleaseCVars()
@@ -43,6 +64,13 @@ void CTOSZeusModule::ReleaseCVars()
 	pConsole->UnregisterVariable("tos_sv_zeus_can_drag_dead_bodies", true);
 	pConsole->UnregisterVariable("tos_sv_zeus_dragging_entities_auto_height", true);
 	pConsole->UnregisterVariable("tos_sv_zeus_dragging_entities_height_type", true);
+	pConsole->UnregisterVariable("tos_sv_zeus_on_screen_near_size", true);
+	pConsole->UnregisterVariable("tos_sv_zeus_on_screen_far_size", true);
+	pConsole->UnregisterVariable("tos_sv_zeus_on_screen_near_distance", true);
+	pConsole->UnregisterVariable("tos_sv_zeus_on_screen_far_distance", true);
+	pConsole->UnregisterVariable("tos_sv_zeus_on_screen_offsetX", true);
+	pConsole->UnregisterVariable("tos_sv_zeus_on_screen_offsetY", true);
+	pConsole->UnregisterVariable("tos_sv_zeus_on_screen_update_delay", true);
 }
 
 void CTOSZeusModule::InitCCommands(IConsole* pConsole)

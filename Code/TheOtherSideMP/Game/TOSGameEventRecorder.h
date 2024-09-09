@@ -111,6 +111,9 @@ enum EExtraGameplayEvent
 	eEGE_ActorEnterVehicle,
 
 	eEGE_HUDInit,
+	eEGE_HUDHandleFSCommand,
+	eEGE_HUDInGamePostUpdate,
+	eEGE_HUDUnloadSimpleAssets,
 
 	//eEGE_TOSGame_Init,
 
@@ -369,6 +372,12 @@ public:
 				return "eEGE_ActorEnterVehicle";
 			case eEGE_HUDInit:
 				return "eEGE_HUDInit";
+			case eEGE_HUDHandleFSCommand:
+				return "eEGE_HUDHandleFSCommand";
+			case eEGE_HUDInGamePostUpdate:
+				return "eEGE_HUDInGamePostUpdate";
+			case eEGE_HUDUnloadSimpleAssets:
+				return "eEGE_HUDUnloadSimpleAssets";
 			case eEGE_Last:
 				return "eEGE_Last";
 			default:

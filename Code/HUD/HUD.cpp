@@ -141,6 +141,11 @@ bool CHUD::IsHaveModalHUD()
 	return m_pModalHUD != nullptr;
 }
 
+void CHUD::SetModalHUD(CGameFlashAnimation* anim)
+{
+	m_pModalHUD = anim;
+}
+
 void CHUD::TOSSetWeaponName(const char* text)
 {
 	if (m_animPlayerStats.IsLoaded())
@@ -3764,10 +3769,11 @@ void CHUD::OnPostUpdate(float frameTime)
 		Targetting(0, false);
 
 		UpdateHealth();
+
 		//TheOtherSide
 		TOSUpdateEnergy();
+		TOS_RECORD_EVENT(0, STOSGameEvent(eEGE_HUDInGamePostUpdate, "", true, false, 0, frameTime));
 		//~TheOtherSide
-
 
 		// Grenade detector
 		TrackProjectiles(pPlayer);
@@ -5346,6 +5352,10 @@ void CHUD::ResetQuickMenu()
 void CHUD::UnloadSimpleHUDElements(bool unload)
 {
 	//unloads simple assets to save memory (smaller peaks in memory pool)
+
+	//TheOtherSide
+	TOS_RECORD_EVENT(0, STOSGameEvent(eEGE_HUDUnloadSimpleAssets, "", true, false, 0, 0, unload));
+	//~TheOtherSide
 
 	if (!unload)
 	{

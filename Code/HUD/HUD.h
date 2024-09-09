@@ -110,7 +110,16 @@ public:
 
 	struct SOnScreenIcon
 	{
-		SOnScreenIcon(EntityId _id, int _x, int _y, int _icontype, int _friendly, float _distance, float _size, float _rotation, int _healthValue) : id(_id), x(_x), y(_y), icontype(_icontype), friendly(_friendly), distance(_distance), size(_size), rotation(_rotation), healthValue(_healthValue)
+		SOnScreenIcon(EntityId _id, int _x, int _y, int _icontype, int _friendly, float _distance, float _size, float _rotation, int _healthValue)
+			: id(_id),
+			x(_x),
+			y(_y),
+			icontype(_icontype),
+			friendly(_friendly),
+			distance(_distance),
+			size(_size),
+			rotation(_rotation),
+			healthValue(_healthValue)
 		{}
 		EntityId id;
 		int x;
@@ -160,13 +169,6 @@ public:
 	};
 
 	typedef std::map<string, SHudObjective> THUDObjectiveList;
-
-	//TheOtherSide
-	void ShowPlayerStats(bool show);
-	void ShowRadar(bool show);
-	void ShowCrosshair(bool show);
-	bool IsHaveModalHUD();
-	//~TheOtherSide
 
 	CHUD();
 	virtual	~CHUD();
@@ -765,8 +767,6 @@ private:
 
 	//TheOtherSide
 	//CHUDCrosshair* m_pHUDCrosshair;
-	CTOSHUDCrosshair* m_pHUDCrosshair;
-
 	//~TheOtherSide
 
 	bool					m_forceScores;
@@ -1060,22 +1060,19 @@ private:
 
 	//TheOtherSide
 public:
-	/// @brief Обновляет иконку миссии на экране.
-	/// 
-	/// @param objective Идентификатор объекта миссии.
-	/// @param friendly 1 - дружественный, 0 - враждебный.
-	/// @param iconType Тип иконки.
-	/// @param forceNoOffset Игнорировать смещение иконки, по умолчанию false.
-	/// @param rotationTarget Цель вращения иконки, по умолчанию (0, 0, 0).
-	/// @param characterhead Показать иконку над головой персонажа, по умолчанию false.
-	/// @param forceshow Принудительно показать иконку, по умолчанию false.
-	void TOSUpdateMissionObjectiveIcon(EntityId objective, int friendly, FlashOnScreenIcon iconType, bool forceNoOffset = false, const Vec3 rotationTarget = Vec3(0, 0, 0), bool characterhead = false, bool forceshow = false);
+	friend class CTOSZeusModule;
 
 	//ILINE CHUDCrosshair* GetCrosshair() { return m_pHUDCrosshair; }
 	ILINE CTOSHUDCrosshair* GetCrosshair()
 	{
 		return m_pHUDCrosshair;
 	}
+
+	void ShowPlayerStats(bool show);
+	void ShowRadar(bool show);
+	void ShowCrosshair(bool show);
+	bool IsHaveModalHUD();
+	void SetModalHUD(CGameFlashAnimation* anim);
 
 	/**
 	 * \brief Изменяет текст названия оружия под показателем здоровья
@@ -1100,6 +1097,7 @@ public:
 
 private:
 	CTOSEnergyConsumer* m_pEnergyConsumer;
+	CTOSHUDCrosshair* m_pHUDCrosshair;
 	//~TheOtherSide
 
 };
