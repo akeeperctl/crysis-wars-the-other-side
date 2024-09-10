@@ -71,6 +71,23 @@ public:
 
 	};
 
+	struct SOBBWorldPos
+	{
+		SOBBWorldPos()
+		{}
+		SOBBWorldPos(const OBB& _obb, const Vec3& _worldPos)
+		{
+			obb.c = _obb.c;
+			obb.h = _obb.h;
+			obb.m33 = _obb.m33;
+
+			wPos = _worldPos;
+		}
+
+		OBB obb;
+		Vec3 wPos;
+	};
+
 	CTOSZeusModule();
 	virtual ~CTOSZeusModule();
 
@@ -140,6 +157,9 @@ private:
 
 	void DeselectEntities();
 
+	std::set<EntityId>::iterator DeselectEntity(EntityId id);
+	void SelectEntity(EntityId id);
+
 	/// @brief Обрабатывает однократный выбор сущности.
 	/// @param id Идентификатор выбранной сущности.
 	void HandleOnceSelection(EntityId id);
@@ -178,6 +198,7 @@ private:
 	Vec3 m_draggingDelta;
 
 	std::set<EntityId> m_selectedEntities;
+	std::map<EntityId, SOBBWorldPos> m_boxes;
 	std::map<EntityId, Vec3> m_selectStartEntitiesPositions;
 	std::map<EntityId, Vec3> m_storedEntitiesPositions;
 	std::vector<SOnScreenIcon> m_onScreenIcons;

@@ -138,6 +138,34 @@ EntityId CTOSZeusModule::GetMouseEntityId()
 void CTOSZeusModule::DeselectEntities()
 {
 	m_selectedEntities.clear();
+	m_boxes.clear();
+}
+
+std::set<EntityId>::iterator CTOSZeusModule::DeselectEntity(EntityId id)
+{
+	auto it = std::lower_bound(m_selectedEntities.begin(), m_selectedEntities.end(), id);
+	if (it != m_selectedEntities.end() && *it == id)
+	{
+		it = m_selectedEntities.erase(it);
+		m_boxes.erase(id);
+		return it;
+	}
+}
+
+void CTOSZeusModule::SelectEntity(EntityId id)
+{
+	auto pEntity = TOS_GET_ENTITY(id);
+	if (pEntity)
+	{
+		m_selectedEntities.insert(id);
+
+		AABB entityBox;
+		pEntity->GetLocalBounds(entityBox);
+		OBB box;
+		box.SetOBBfromAABB(pEntity->GetWorldRotation(), entityBox);
+		m_boxes[id].obb = box;
+		m_boxes[id].wPos = pEntity->GetWorldPos();
+	}
 }
 
 void CTOSZeusModule::HandleOnceSelection(EntityId id)
@@ -154,9 +182,7 @@ void CTOSZeusModule::HandleOnceSelection(EntityId id)
 
 		// После чистки всех выделенных сущностей, выделяем кликнутую сущность
 		if (m_curClickedEntityId != 0)
-		{
-			m_selectedEntities.insert(m_curClickedEntityId);
-		}
+			SelectEntity(m_curClickedEntityId);
 	}
 
 	auto pEntity = TOS_GET_ENTITY(m_curClickedEntityId);
@@ -246,17 +272,16 @@ void CTOSZeusModule::OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eH
 						{
 							if (m_selectedEntities.count(m_curClickedEntityId) > 0)
 							{
-								stl::binary_erase(m_selectedEntities, m_curClickedEntityId);
+								DeselectEntity(m_curClickedEntityId);
 							}
 							else
 							{
-								m_selectedEntities.insert(m_curClickedEntityId);
+								SelectEntity(m_curClickedEntityId);
 							}
 						}
 					}
 				}
 
-				// Пинаем физику выделенных сущностей после того как закончили их перетаскивать
 				if (m_dragging)
 				{
 					for (auto it = m_selectedEntities.begin(); it != m_selectedEntities.end(); it++)
@@ -265,6 +290,12 @@ void CTOSZeusModule::OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eH
 						if (!pEntity)
 							continue;
 
+						// Применяем сдвинутые позиции боксов на сущности
+						const auto& box = m_boxes[pEntity->GetId()];
+						pEntity->SetWorldTM(Matrix34::CreateTranslationMat(box.wPos));
+						pEntity->SetRotation(Quat(box.obb.m33));
+
+						// Пинаем физику выделенных сущностей после того как закончили их перетаскивать
 						auto pPhys = pEntity->GetPhysics();
 						if (!pPhys)
 							continue;
@@ -408,7 +439,8 @@ void CTOSZeusModule::GetSelectedEntities()
 			{
 				// finally we have an entity id
 				// if left or right CTRL is not pressed we can directly add every entity id, old entity id's are already deleted
-				m_selectedEntities.insert(pEntity->GetId());
+				//m_selectedEntities.insert(pEntity->GetId());
+				SelectEntity(pEntity->GetId());
 			}
 		}
 	}
@@ -507,6 +539,7 @@ void CTOSZeusModule::Reset()
 	m_selectedEntities.clear();
 	m_selectStartEntitiesPositions.clear();
 	m_storedEntitiesPositions.clear();
+	m_boxes.clear();
 	m_lastClickedEntityId = m_curClickedEntityId = 0;
 	m_mouseOveredEntityId = 0;
 	m_updateIconOnScreenTimer = TOS_Console::GetSafeFloatVar("tos_sv_zeus_on_screen_update_delay", 0);
@@ -519,6 +552,7 @@ void CTOSZeusModule::GetMemoryStatistics(ICrySizer* s)
 	s->AddContainer(m_selectStartEntitiesPositions);
 	s->AddContainer(m_storedEntitiesPositions);
 	s->AddContainer(m_onScreenIcons);
+	s->AddContainer(m_boxes);
 }
 
 void CTOSZeusModule::Init()
@@ -537,16 +571,19 @@ int CTOSZeusModule::MouseProjectToWorld(ray_hit& ray, const Vec3& mouseWorldPos,
 	const Vec3 camWorldPos = gEnv->pSystem->GetViewCamera().GetPosition();
 	Vec3 camToMouseDir = (mouseWorldPos - camWorldPos).GetNormalizedSafe() * gEnv->p3DEngine->GetMaxViewDistance();
 
-	float clickedDistance = 10.0f; // дистанция до кликнутой сущности
-	const auto pClickedEntity = TOS_GET_ENTITY(m_curClickedEntityId);
+	float clickedBoxDistance = 10.0f; // дистанция до кликнутой сущности
 
 	IPhysicalEntity* pSkipEnts[2] = {m_zeus->GetEntity()->GetPhysics(), nullptr};
-	if (pClickedEntity)
+	auto obbWP = stl::find_in_map(m_boxes, m_curClickedEntityId, SOBBWorldPos());
+	if (obbWP.wPos.IsZero() == false)
 	{
-		clickedDistance = pClickedEntity->GetWorldPos().GetDistance(mouseWorldPos);
-		camToMouseDir = camToMouseDir.GetNormalizedSafe() * clickedDistance;
+		//clickedBoxDistance = pClickedEntity->GetWorldPos().GetDistance(mouseWorldPos);
+		clickedBoxDistance = obbWP.wPos.GetDistance(mouseWorldPos);
+		camToMouseDir = camToMouseDir.GetNormalizedSafe() * clickedBoxDistance;
 
-		pSkipEnts[1] = pClickedEntity->GetPhysics();
+		const auto pClickedEntity = TOS_GET_ENTITY(m_curClickedEntityId);
+		if (pClickedEntity)
+			pSkipEnts[1] = pClickedEntity->GetPhysics();
 	}
 
 
@@ -639,7 +676,8 @@ void CTOSZeusModule::Update(float frametime)
 				}
 
 				Matrix34 mat34 = pEntity->GetWorldTM();
-				const Vec3 curPos = mat34.GetTranslation();
+				//const Vec3 curPos = mat34.GetTranslation();
+				const Vec3 curPos = m_boxes[*it].wPos;
 				const Vec3 startPos = m_selectStartEntitiesPositions[*it];
 
 				if (!m_shiftModifier)
@@ -679,18 +717,20 @@ void CTOSZeusModule::Update(float frametime)
 						}
 					}
 
-					mat34.SetTranslation(newPos);
-					pEntity->SetWorldTM(mat34);
+					//mat34.SetTranslation(newPos);
+					//pEntity->SetWorldTM(mat34);
+					m_boxes[*it].wPos = newPos;
 				}
 				else
 				{
 					// Чтобы не падали сущности на высоте
-					mat34.SetTranslation(Vec3(curPos.x, curPos.y, m_storedEntitiesPositions[*it].z));
-					pEntity->SetWorldTM(mat34);
+					//mat34.SetTranslation(Vec3(curPos.x, curPos.y, m_storedEntitiesPositions[*it].z));
+					//pEntity->SetWorldTM(mat34);
 
 					Vec3 toMouseDir = (m_worldProjectedMousePos - curPos).GetNormalizedSafe();
 					Quat rot = Quat::CreateRotationVDir(toMouseDir);
-					pEntity->SetRotation(rot);
+					//pEntity->SetRotation(rot);
+					m_boxes[*it].obb.m33 = Matrix33(rot);
 				}
 			}
 			it++;
@@ -810,22 +850,23 @@ void CTOSZeusModule::Update(float frametime)
 
 	// Отрисовка квадрата выделенных сущностей
 	///////////////////////////////////////////////////////////////////////
-	for (auto it = m_selectedEntities.cbegin(); it != m_selectedEntities.cend(); it++)
+	for (auto it = m_boxes.cbegin(); it != m_boxes.cend(); it++)
 	{
-		const auto pEntity = TOS_GET_ENTITY(*it);
-		if (!pEntity)
-			continue;
+		//const auto pEntity = TOS_GET_ENTITY(it->first);
+		//if (!pEntity)
+		//	continue;
 
 		IRenderAuxGeom* pRAG = gEnv->pRenderer->GetIRenderAuxGeom();
 		pRAG->SetRenderFlags(e_Mode3D | e_AlphaBlended | e_DrawInFrontOff | e_FillModeSolid | e_CullModeNone);
 
-		AABB entityBox;
-		pEntity->GetLocalBounds(entityBox);
-		OBB box;
-		box.SetOBBfromAABB(pEntity->GetWorldRotation(), entityBox);
+		//AABB entityBox;
+		//pEntity->GetLocalBounds(entityBox);
+		//OBB box;
+		//box.SetOBBfromAABB(pEntity->GetWorldRotation(), entityBox);
 
 		//pRAG->DrawAABB(entityBox, false, ColorB(0, 0, 255, 65), eBBD_Extremes_Color_Encoded);
-		gEnv->pRenderer->GetIRenderAuxGeom()->DrawOBB(box, pEntity->GetWorldPos(), false, ColorB(255, 255, 255, 255), eBBD_Faceted);
+		//gEnv->pRenderer->GetIRenderAuxGeom()->DrawOBB(it->second, pEntity->GetWorldPos(), false, ColorB(255, 255, 255, 255), eBBD_Faceted);
+		gEnv->pRenderer->GetIRenderAuxGeom()->DrawOBB(it->second.obb, it->second.wPos, false, ColorB(255, 255, 255, 255), eBBD_Faceted);
 	}
 
 	// Отрисовка отладки
@@ -1055,7 +1096,8 @@ bool CTOSZeusModule::ExecuteCommand(EZeusCommands command)
 			case eZC_RemoveSelected:
 			{
 				gEnv->pEntitySystem->RemoveEntity(id);
-				it = m_selectedEntities.erase(it);
+				it = DeselectEntity(id);
+
 				needUpdateIter = false;
 
 				break;
