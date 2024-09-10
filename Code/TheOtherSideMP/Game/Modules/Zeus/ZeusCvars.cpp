@@ -49,7 +49,7 @@ void CTOSZeusModule::InitCVars(IConsole* pConsole)
 	pConsole->Register("tos_sv_zeus_on_screen_offsetY", &tos_sv_zeus_on_screen_offsetY, 0, VF_CHEAT,
 					   "On screen icon 2d offset on Y axis");
 
-	pConsole->Register("tos_sv_zeus_on_screen_update_delay", &tos_sv_zeus_on_screen_update_delay, 0.1f, VF_CHEAT,
+	pConsole->Register("tos_sv_zeus_on_screen_update_delay", &tos_sv_zeus_on_screen_update_delay, 0.0f, VF_CHEAT,
 					   "");
 }
 

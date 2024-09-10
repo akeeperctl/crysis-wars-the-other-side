@@ -509,7 +509,7 @@ void CTOSZeusModule::Reset()
 	m_storedEntitiesPositions.clear();
 	m_lastClickedEntityId = m_curClickedEntityId = 0;
 	m_mouseOveredEntityId = 0;
-	m_updateIconOnScreenTimer = TOS_Console::GetSafeFloatVar("tos_sv_zeus_on_screen_update_delay", 0.1f);
+	m_updateIconOnScreenTimer = TOS_Console::GetSafeFloatVar("tos_sv_zeus_on_screen_update_delay", 0);
 }
 
 void CTOSZeusModule::GetMemoryStatistics(ICrySizer* s)
@@ -734,7 +734,7 @@ void CTOSZeusModule::Update(float frametime)
 
 	if (m_updateIconOnScreenTimer <= 0.0f)
 	{
-		m_updateIconOnScreenTimer = TOS_Console::GetSafeFloatVar("tos_sv_zeus_on_screen_update_delay", 0.1f);
+		m_updateIconOnScreenTimer = TOS_Console::GetSafeFloatVar("tos_sv_zeus_on_screen_update_delay", 0);
 
 		IActor* pClientActor = g_pGame->GetIGameFramework()->GetClientActor();
 		if (!pClientActor)

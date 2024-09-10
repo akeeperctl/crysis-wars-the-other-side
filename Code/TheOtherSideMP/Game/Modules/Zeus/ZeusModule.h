@@ -173,7 +173,7 @@ private:
 	Vec3 m_worldProjectedMousePos; // проекция от камеры до курсора умноженное на некоторое расстояние
 	Vec2i m_mouseIPos;
 	Vec2 m_selectStartPos;
-	Vec3 m_clickedSelectStartPos;
+	Vec3 m_clickedSelectStartPos; // позиция кликнутой сущности во время её выделения
 	Vec2 m_selectStopPos;
 	Vec3 m_draggingDelta;
 
