@@ -3,6 +3,7 @@
 #include "HUD/HUD.h"
 #include "TheOtherSideMP\Game\Modules\GenericModule.h"
 #include <TheOtherSideMP\Actors\Player\TOSPlayer.h>
+#include <TheOtherSideMP\TOSSmartStruct.h>
 
 enum EZeusFlags
 {
@@ -14,6 +15,7 @@ enum EZeusCommands
 {
 	eZC_KillSelected,
 	eZC_RemoveSelected,
+	eZC_CopySelected,
 };
 
 enum EZeusOnScreenIcon
@@ -71,10 +73,12 @@ public:
 
 	};
 
-	struct SOBBWorldPos
+	struct SOBBWorldPos : public STOSSmartStruct
 	{
 		SOBBWorldPos()
-		{}
+		{
+			wPos = Vec3(ZERO);
+		}
 		SOBBWorldPos(const OBB& _obb, const Vec3& _worldPos)
 		{
 			obb.c = _obb.c;
@@ -101,7 +105,7 @@ public:
 	void        GetMemoryStatistics(ICrySizer* s);
 	const char* GetName()
 	{
-		return "CTOSGenericModule";
+		return "CTOSZeusModule";
 	};
 	void        Init();
 	void        Update(float frametime);
@@ -145,6 +149,8 @@ private:
 	/// @param mouseWorldPos - мировые координаты мыши, которые будут спроецированы на некоторое расстояние от камеры
 	/// @return 0 - попаданий не было, > 0 - есть попадания
 	int	MouseProjectToWorld(ray_hit& ray, const Vec3& mouseWorldPos, uint entityFlags);
+
+	bool UpdateDraggedEntity(EntityId id, const IEntity* pClickedEntity, IPhysicalEntity* pZeusPhys, std::map<EntityId, SOBBWorldPos*>& container, bool heightAutoCalc);
 
 	/// Можно ли выбрать сущности выделением нескольких сразу?
 	bool CanSelectMultiplyWithBox() const;
@@ -197,10 +203,14 @@ private:
 	Vec2 m_selectStopPos;
 	Vec3 m_draggingDelta;
 
-	std::set<EntityId> m_selectedEntities;
-	std::map<EntityId, SOBBWorldPos> m_boxes;
+	// std::set<EntityId> m_copiedEntities; /// скопированные сущности
+	// std::map<EntityId, SOBBWorldPos*> m_copiedBoxes; /// боксы скопированных сущностей
+
+	std::set<EntityId> m_selectedEntities; /// выделенные сущности
+	std::map<EntityId, SOBBWorldPos*> m_boxes; /// боксы выделенных сущностей
 	std::map<EntityId, Vec3> m_selectStartEntitiesPositions;
 	std::map<EntityId, Vec3> m_storedEntitiesPositions;
+
 	std::vector<SOnScreenIcon> m_onScreenIcons;
 	EntityId m_mouseOveredEntityId;
 	EntityId m_curClickedEntityId;
@@ -209,6 +219,7 @@ private:
 	float m_updateIconOnScreenTimer;
 	float m_draggingMoveStartTimer; /// Таймер начала перемещения сущностей после включения перетаскивания
 	float m_mouseDownDurationSec; /// используется для включения режима выделения нескольких объектов одновременно
+	bool m_copying;
 	bool m_select;
 	bool m_dragging;
 	bool m_ctrlModifier;

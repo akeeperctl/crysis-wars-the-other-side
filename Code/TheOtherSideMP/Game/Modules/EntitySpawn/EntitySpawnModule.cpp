@@ -19,12 +19,10 @@ TVecEntities CTOSEntitySpawnModule::s_markedForRecreation;
 TMapDelayTOSParams CTOSEntitySpawnModule::s_scheduledSpawnsDelay;
 
 CTOSEntitySpawnModule::CTOSEntitySpawnModule()
-{
-}
+{}
 
 CTOSEntitySpawnModule::~CTOSEntitySpawnModule()
-{
-}
+{}
 
 void CTOSEntitySpawnModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event)
 {
@@ -35,64 +33,64 @@ void CTOSEntitySpawnModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGam
 
 	switch (event.event)
 	{
-	case eEGE_TOSEntityScheduleDelegateAuthority:
-	{
-		const char* playerName = event.description;
-
-		auto it = m_scheduledAuthorities.find(entId);
-		if (it == m_scheduledAuthorities.end())
+		case eEGE_TOSEntityScheduleDelegateAuthority:
 		{
-			m_scheduledAuthorities[entId].forceStartControl = static_cast<bool>(event.int_value);
-			m_scheduledAuthorities[entId].playerName = playerName;
-			m_scheduledAuthorities[entId].scheduledTimeStamp = gEnv->pTimer->GetFrameStartTime().GetSeconds();
+			const char* playerName = event.description;
+
+			auto it = m_scheduledAuthorities.find(entId);
+			if (it == m_scheduledAuthorities.end())
+			{
+				m_scheduledAuthorities[entId].forceStartControl = static_cast<bool>(event.int_value);
+				m_scheduledAuthorities[entId].playerName = playerName;
+				m_scheduledAuthorities[entId].scheduledTimeStamp = gEnv->pTimer->GetFrameStartTime().GetSeconds();
+			}
+
+			break;
 		}
-
-		break;
-	}
-	case eEGE_TOSEntityOnSpawn:
-	{
-		auto pParams = new STOSEntitySpawnParams(*static_cast<STOSEntitySpawnParams*>(event.extra_data));
-		assert(pParams);	
-
-		if (!HaveSavedParams(pEntity))
+		case eEGE_TOSEntityOnSpawn:
 		{
+			auto pParams = new STOSEntitySpawnParams(*static_cast<STOSEntitySpawnParams*>(event.extra_data));
+			assert(pParams);
 
-			// id должен генерироваться
-			pParams->vanilla.id = 0;
+			if (!HaveSavedParams(pEntity))
+			{
 
-			//pParams->sName = pEntity->GetName();
+				// id должен генерироваться
+				pParams->vanilla.id = 0;
 
-			if (gEnv->pSystem->IsDevMode())
-				CryLogAlways("[%s|%s|%id] Create saved params ", pParams->savedName, pEntity->GetName(), entId);
+				//pParams->sName = pEntity->GetName();
 
-			m_savedSpawnParams[entId] = pParams;
+				if (gEnv->pSystem->IsDevMode())
+					CryLogAlways("[%s|%s|%id] Create saved params ", pParams->savedName, pEntity->GetName(), entId);
+
+				m_savedSpawnParams[entId] = pParams;
+			}
+
+			break;
 		}
-
-		break;
-	}
-	case eEGE_EntityOnRemove:
-	{
-		if (HaveSavedParams(pEntity))
+		case eEGE_EntityOnRemove:
 		{
-			//just log
-			TOS_RECORD_EVENT(entId, STOSGameEvent(eEGE_TOSEntityOnRemove, "", true));
-		}
+			if (HaveSavedParams(pEntity))
+			{
+				//just log
+				TOS_RECORD_EVENT(entId, STOSGameEvent(eEGE_TOSEntityOnRemove, "", true));
+			}
 
-		//3
-		if (MustBeRecreated(pEntity))
+			//3
+			if (MustBeRecreated(pEntity))
+			{
+				ScheduleRecreation(pEntity);
+			}
+
+			break;
+		}
+		case eEGE_OnServerStartRestarting:
+		case eEGE_OnLevelLoadingStart:
 		{
-			ScheduleRecreation(pEntity);
+			Reset();
 		}
-
-		break;
-	}
-	case eEGE_OnServerStartRestarting:
-	case eEGE_OnLevelLoadingStart:
-	{
-		Reset();
-	}
-	default: 
-		break;
+		default:
+			break;
 	}
 }
 
@@ -235,8 +233,7 @@ void CTOSEntitySpawnModule::Update(float frametime)
 }
 
 void CTOSEntitySpawnModule::Serialize(TSerialize ser)
-{
-}
+{}
 
 IEntity* CTOSEntitySpawnModule::SpawnEntity(STOSEntitySpawnParams& params, bool sendTosEvent /*= true*/)
 {
@@ -249,7 +246,6 @@ IEntity* CTOSEntitySpawnModule::SpawnEntity(STOSEntitySpawnParams& params, bool 
 	if (!pEntSys)
 		return nullptr;
 
-
 	TMapTOSParams::iterator iter = g_pTOSGame->GetEntitySpawnModule()->m_savedSpawnParams.begin();
 	TMapTOSParams::iterator end = g_pTOSGame->GetEntitySpawnModule()->m_savedSpawnParams.end();
 
@@ -257,7 +253,7 @@ IEntity* CTOSEntitySpawnModule::SpawnEntity(STOSEntitySpawnParams& params, bool 
 	{
 		// Недопустимо чтобы 1 игрок-мастер мог управлять сразу двумя рабами
 
-		bool alreadyHaveSaved = iter->second->authorityPlayerName == params.authorityPlayerName;
+		bool alreadyHaveSaved = !params.authorityPlayerName.empty() && iter->second->authorityPlayerName == params.authorityPlayerName;
 		if (alreadyHaveSaved)
 		{
 			CryLog("%s[C++][SpawnEntity] Slave entity spawn interrupted! The system already has a saved slave for player %s", TOS_COLOR_YELLOW, params.authorityPlayerName);
@@ -270,11 +266,12 @@ IEntity* CTOSEntitySpawnModule::SpawnEntity(STOSEntitySpawnParams& params, bool 
 	const auto pEntity = pEntSys->SpawnEntity(params.vanilla, false);
 	assert(pEntity);
 
-	pEntity->SetName(params.savedName);
-	const EntityId entityId = pEntity->GetId();
-	
+	if (!params.savedName.empty())
+		pEntity->SetName(params.savedName);
+
 	gEnv->pEntitySystem->InitEntity(pEntity, params.vanilla);
 
+	const EntityId entityId = pEntity->GetId();
 	CActor* pActor = static_cast<CActor*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(entityId));
 
 	IEntity* pAuthorityPlayerEnt = gEnv->pEntitySystem->FindEntityByName(params.authorityPlayerName);
@@ -336,8 +333,8 @@ bool CTOSEntitySpawnModule::SpawnEntityDelay(STOSEntityDelaySpawnParams& params,
 		if (alreadyHaveSaved)
 		{
 			if (gEnv->pSystem->IsDevMode())
-				CryLogAlways("%s[C++][SpawnEntityDelay] Warning!!! The system already has a saved slave(id:%i) for player %s", 
-					TOS_COLOR_YELLOW, savedIter->first, params.authorityPlayerName);
+				CryLogAlways("%s[C++][SpawnEntityDelay] Warning!!! The system already has a saved slave(id:%i) for player %s",
+							 TOS_COLOR_YELLOW, savedIter->first, params.authorityPlayerName);
 
 			return false;
 		}
@@ -346,7 +343,7 @@ bool CTOSEntitySpawnModule::SpawnEntityDelay(STOSEntityDelaySpawnParams& params,
 	// Спавнит сразу, если задержка очень маленькая
 	if (params.spawnDelay < 0.001f)
 	{
-		return SpawnEntity(params,sendTosEvent);
+		return SpawnEntity(params, sendTosEvent);
 	}
 
 	// Мы не можем проверить наличие этой записи в map, потому что у нас нет идентификатора записи.
@@ -448,7 +445,7 @@ void CTOSEntitySpawnModule::DebugDraw(const Vec2& screenPos, float fontSize, flo
 
 		const int index = TOS_STL::GetIndexFromMapKey(m_savedSpawnParams, id) + 1;
 
-		float color[] = { 1,1,1,1 };
+		float color[] = {1,1,1,1};
 
 		gEnv->pRenderer->Draw2dLabel(
 			screenPos.x,

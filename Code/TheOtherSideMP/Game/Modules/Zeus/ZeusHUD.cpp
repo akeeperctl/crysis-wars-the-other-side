@@ -75,7 +75,7 @@ void CTOSZeusModule::HUDUpdateZeusUnitIcon(EntityId objective, int friendly, int
 	{
 		auto it = m_boxes.find(pObjectiveEntity->GetId());
 		if (it != m_boxes.end())
-			vWorldPos = it->second.wPos;
+			vWorldPos = it->second->wPos;
 	}
 
 	vWorldPos += localOffset;

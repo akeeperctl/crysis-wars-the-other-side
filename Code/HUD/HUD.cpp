@@ -2218,7 +2218,7 @@ bool CHUD::OnInputEvent(const SInputEvent& rInputEvent)
 				return true;
 			}
 		}
-		}
+	}
 
 	if (!g_pGame->GetMenu()->IsActive())
 	{
@@ -2328,7 +2328,7 @@ bool CHUD::OnInputEvent(const SInputEvent& rInputEvent)
 	}
 
 	return false;
-	}
+}
 
 //-----------------------------------------------------------------------------------------------------
 
@@ -3400,10 +3400,10 @@ void CHUD::OnPostUpdate(float frameTime)
 				pSeq = pSeqIt->next();
 			}
 			pSeqIt->Release();
-			}
+		}
 		m_bStopCutsceneNextUpdate = false;
 		m_fCutsceneSkipTimer = 0.0f;
-		}
+	}
 	if (m_bCutscenePlaying && m_fCutsceneSkipTimer > 0.0f)
 	{
 		m_fCutsceneSkipTimer -= frameTime;
@@ -3772,7 +3772,7 @@ void CHUD::OnPostUpdate(float frameTime)
 
 		//TheOtherSide
 		TOSUpdateEnergy();
-		TOS_RECORD_EVENT(0, STOSGameEvent(eEGE_HUDInGamePostUpdate, "", true, false, 0, frameTime));
+		TOS_RECORD_EVENT(0, STOSGameEvent(eEGE_HUDInGamePostUpdate, "", false, false, 0, frameTime));
 		//~TheOtherSide
 
 		// Grenade detector
@@ -4143,7 +4143,7 @@ void CHUD::OnPostUpdate(float frameTime)
 
 	// Modal dialog box must be always rendered last
 	UpdateWarningMessages(frameTime);
-	}
+}
 
 //-----------------------------------------------------------------------------------------------------
 
