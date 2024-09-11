@@ -287,6 +287,21 @@ void CTOSZeusModule::SaveEntitiesStartPositions()
 	}
 }
 
+static bool IsPhysicsAllowed(const IEntity* pEntity)
+{
+	if (!pEntity)
+		return false;
+
+	IPhysicalEntity* physEnt = pEntity->GetPhysics();
+	if (!physEnt)
+		return false;
+
+	// допустимые сущности
+	const auto type = physEnt->GetType();
+	if (!(type == PE_LIVING || type == PE_RIGID || type == PE_STATIC || type == PE_WHEELEDVEHICLE || PE_ARTICULATED))
+		return false;
+}
+
 void CTOSZeusModule::OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eHardwareMouseEvent)
 {
 	m_mouseIPos.x = iX;
@@ -317,7 +332,71 @@ void CTOSZeusModule::OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eH
 
 		if (!pHUD->IsHaveModalHUD())
 		{
-			if (eHardwareMouseEvent == HARDWAREMOUSEEVENT_LBUTTONDOWN)
+			if (eHardwareMouseEvent == HARDWAREMOUSEEVENT_LBUTTONDOUBLECLICK)
+			{
+				const IActor* pClientActor = g_pGame->GetIGameFramework()->GetClientActor();
+				if (!pClientActor)
+					return;
+
+				const auto pClickedEntity = TOS_GET_ENTITY(m_curClickedEntityId);
+				if (!pClickedEntity)
+					return;
+
+				SmartScriptTable props;
+				int clickedSpecies = -1;
+				pClickedEntity->GetScriptTable()->GetValue("Properties", props);
+				props->GetValue("species", clickedSpecies);
+
+				IEntityItPtr pIt = gEnv->pEntitySystem->GetEntityIterator();
+				while (!pIt->IsEnd())
+				{
+					if (IEntity* pEntity = pIt->Next())
+					{
+						const auto id = pEntity->GetId();
+
+						if (pEntity->IsGarbage())
+							continue;
+
+						if (pEntity->IsHidden())
+							continue;
+
+						if (!IsPhysicsAllowed(pEntity))
+							continue;
+
+						// пропускаем сущность актера клиента
+						if (id == pClientActor->GetEntityId())
+							continue;
+
+						AABB worldBounds;
+						pEntity->GetWorldBounds(worldBounds);
+
+						//skip further calculations if the entity is not visible at all...
+						if (gEnv->pSystem->GetViewCamera().IsAABBVisible_F(worldBounds) == CULL_EXCLUSION)
+							continue;
+
+						if (pEntity->GetClass() != pClickedEntity->GetClass())
+							continue;
+
+						const auto pArchetype = pEntity->GetArchetype();
+						if (pArchetype)
+						{
+							if (string(pArchetype->GetName()) != pClickedEntity->GetArchetype()->GetName())
+								continue;
+						}
+
+						SmartScriptTable props;
+						int species = -1;
+						pClickedEntity->GetScriptTable()->GetValue("Properties", props);
+						props->GetValue("species", species);
+
+						if (species != clickedSpecies)
+							continue;
+
+						SelectEntity(id);
+					}
+				}
+			}
+			else if (eHardwareMouseEvent == HARDWAREMOUSEEVENT_LBUTTONDOWN)
 			{
 				m_select = true;
 				m_selectStartPos = Vec2i(iX, iY);
@@ -418,21 +497,6 @@ void CTOSZeusModule::OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eH
 
 		}
 	}
-}
-
-static bool IsPhysicsAllowed(const IEntity* pEntity)
-{
-	if (!pEntity)
-		return false;
-
-	IPhysicalEntity* physEnt = pEntity->GetPhysics();
-	if (!physEnt)
-		return false;
-
-	// допустимые сущности
-	const auto type = physEnt->GetType();
-	if (!(type == PE_LIVING || type == PE_RIGID || type == PE_STATIC || type == PE_WHEELEDVEHICLE || PE_ARTICULATED))
-		return false;
 }
 
 void CTOSZeusModule::GetSelectedEntities()
