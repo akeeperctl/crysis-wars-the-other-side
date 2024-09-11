@@ -51,6 +51,9 @@ void CTOSZeusModule::InitCVars(IConsole* pConsole)
 
 	pConsole->Register("tos_sv_zeus_on_screen_update_delay", &tos_sv_zeus_on_screen_update_delay, 0.0f, VF_CHEAT,
 					   "");
+
+	pConsole->Register("tos_sv_zeus_dragging_move_boxes_separately", &tos_sv_zeus_dragging_move_boxes_separately, 1, VF_CHEAT,
+					   "0 - entities and selection boxes move together in realtime \n1 - selection boxes move separately from entities");
 }
 
 void CTOSZeusModule::ReleaseCVars()

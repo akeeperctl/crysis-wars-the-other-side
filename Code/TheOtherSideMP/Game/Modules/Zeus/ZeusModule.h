@@ -234,8 +234,9 @@ private:
 	int tos_sv_zeus_on_screen_far_distance;
 	int tos_sv_zeus_on_screen_offsetX;
 	int tos_sv_zeus_on_screen_offsetY;
-
 	float tos_sv_zeus_on_screen_update_delay;
+
+	int tos_sv_zeus_dragging_move_boxes_separately;
 
 	int tos_cl_zeus_dragging_draw_debug;
 };

@@ -290,10 +290,13 @@ void CTOSZeusModule::OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eH
 						if (!pEntity)
 							continue;
 
-						// Применяем сдвинутые позиции боксов на сущности
-						const auto& box = m_boxes[pEntity->GetId()];
-						pEntity->SetWorldTM(Matrix34::CreateTranslationMat(box.wPos));
-						pEntity->SetRotation(Quat(box.obb.m33));
+						if (TOS_Console::GetSafeIntVar("tos_sv_zeus_dragging_move_boxes_separately", 0) == 1)
+						{
+							// Применяем сдвинутые позиции боксов на сущности
+							const auto& box = m_boxes[pEntity->GetId()];
+							pEntity->SetWorldTM(Matrix34::CreateTranslationMat(box.wPos));
+							pEntity->SetRotation(Quat(box.obb.m33));
+						}
 
 						// Пинаем физику выделенных сущностей после того как закончили их перетаскивать
 						auto pPhys = pEntity->GetPhysics();
@@ -717,20 +720,28 @@ void CTOSZeusModule::Update(float frametime)
 						}
 					}
 
-					//mat34.SetTranslation(newPos);
-					//pEntity->SetWorldTM(mat34);
 					m_boxes[*it].wPos = newPos;
+
+					if (TOS_Console::GetSafeIntVar("tos_sv_zeus_dragging_move_boxes_separately", 0) == 0)
+					{
+						mat34.SetTranslation(newPos);
+						pEntity->SetWorldTM(mat34);
+					}
 				}
 				else
 				{
-					// Чтобы не падали сущности на высоте
-					//mat34.SetTranslation(Vec3(curPos.x, curPos.y, m_storedEntitiesPositions[*it].z));
-					//pEntity->SetWorldTM(mat34);
 
 					Vec3 toMouseDir = (m_worldProjectedMousePos - curPos).GetNormalizedSafe();
 					Quat rot = Quat::CreateRotationVDir(toMouseDir);
-					//pEntity->SetRotation(rot);
 					m_boxes[*it].obb.m33 = Matrix33(rot);
+
+					if (TOS_Console::GetSafeIntVar("tos_sv_zeus_dragging_move_boxes_separately", 0) == 0)
+					{
+						// Чтобы не падали сущности на высоте
+						mat34.SetTranslation(Vec3(curPos.x, curPos.y, m_storedEntitiesPositions[*it].z));
+						pEntity->SetWorldTM(mat34);
+						pEntity->SetRotation(rot);
+					}
 				}
 			}
 			it++;
@@ -743,7 +754,11 @@ void CTOSZeusModule::Update(float frametime)
 			const EntityId id = *it;
 			const IEntity* pEntity = TOS_GET_ENTITY(id);
 			if (pEntity)
+			{
 				m_boxes[*it].wPos = pEntity->GetWorldPos();
+				m_boxes[*it].obb.m33 = Matrix33(pEntity->GetRotation());
+			}
+
 		}
 	}
 	else
