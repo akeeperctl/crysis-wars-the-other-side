@@ -574,18 +574,18 @@ int CTOSZeusModule::MouseProjectToWorld(ray_hit& ray, const Vec3& mouseWorldPos,
 	float clickedBoxDistance = 10.0f; // дистанция до кликнутой сущности
 
 	IPhysicalEntity* pSkipEnts[2] = {m_zeus->GetEntity()->GetPhysics(), nullptr};
-	auto obbWP = stl::find_in_map(m_boxes, m_curClickedEntityId, SOBBWorldPos());
-	if (obbWP.wPos.IsZero() == false)
+	const auto pClickedEntity = TOS_GET_ENTITY(m_curClickedEntityId);
+	if (pClickedEntity)
+		pSkipEnts[1] = pClickedEntity->GetPhysics();
+
+	//auto obbWP = stl::find_in_map(m_boxes, m_curClickedEntityId, SOBBWorldPos());
+	auto it = m_boxes.find(m_curClickedEntityId);
+	if (it != m_boxes.end())
 	{
 		//clickedBoxDistance = pClickedEntity->GetWorldPos().GetDistance(mouseWorldPos);
-		clickedBoxDistance = obbWP.wPos.GetDistance(mouseWorldPos);
+		clickedBoxDistance = it->second.wPos.GetDistance(mouseWorldPos);
 		camToMouseDir = camToMouseDir.GetNormalizedSafe() * clickedBoxDistance;
-
-		const auto pClickedEntity = TOS_GET_ENTITY(m_curClickedEntityId);
-		if (pClickedEntity)
-			pSkipEnts[1] = pClickedEntity->GetPhysics();
 	}
-
 
 	const int nSkip = sizeof(pSkipEnts) / sizeof(pSkipEnts[0]);
 	const int rayFlags = (COLLISION_RAY_PIERCABILITY & rwi_stop_at_pierceable);
@@ -648,7 +648,7 @@ void CTOSZeusModule::Update(float frametime)
 
 	const bool zeusMoving = zeus_dyn.v.len() > 0.1f;
 
-	//Перемещение выделенных сущностей
+	//Перемещение боксов выделенных сущностей
 	///////////////////////////////////////////////////////////////////////
 	if (m_dragging && !zeusMoving && m_draggingMoveStartTimer == 0.0f)
 	{
@@ -736,10 +736,22 @@ void CTOSZeusModule::Update(float frametime)
 			it++;
 		}
 	}
+	else if (!m_dragging)
+	{
+		for (auto it = m_selectedEntities.cbegin(); it != m_selectedEntities.cend(); it++)
+		{
+			const EntityId id = *it;
+			const IEntity* pEntity = TOS_GET_ENTITY(id);
+			if (pEntity)
+				m_boxes[*it].wPos = pEntity->GetWorldPos();
+		}
+	}
 	else
 	{
 		m_mouseRayEntityFlags = DEFAULT_MOUSE_ENT_FLAGS;
 	}
+
+
 
 	// Отрисовка границ выделения
 	///////////////////////////////////////////////////////////////////////

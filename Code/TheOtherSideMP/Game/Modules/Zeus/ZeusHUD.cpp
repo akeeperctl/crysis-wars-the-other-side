@@ -56,22 +56,29 @@ void CTOSZeusModule::HUDUnloadSimpleAssets(bool unload)
 
 void CTOSZeusModule::HUDUpdateZeusUnitIcon(EntityId objective, int friendly, int iconType, const Vec3 localOffset)
 {
-	auto pAnim = &m_animZeusScreenIcons;
+	const auto pAnim = &m_animZeusScreenIcons;
 
-	auto pHUD = g_pGame->GetHUD();
+	const auto pHUD = g_pGame->GetHUD();
 	if (!pHUD)
 		return;
 
 	if (pHUD->GetModalHUD() == &pHUD->m_animScoreBoard)
 		return;
 
-	IEntity* pObjectiveEntity = GetISystem()->GetIEntitySystem()->GetEntity(objective);
+	const IEntity* pObjectiveEntity = GetISystem()->GetIEntitySystem()->GetEntity(objective);
 	if (!pObjectiveEntity)
 		return;
 
-	const Vec3 vWorldPos = pObjectiveEntity->GetWorldPos() += localOffset;
+	Vec3 vWorldPos = pObjectiveEntity->GetWorldPos();
+	// При перетаскивании бокса, иконка должна отображаться по координатам бокса
+	if (m_dragging)
+	{
+		auto it = m_boxes.find(pObjectiveEntity->GetId());
+		if (it != m_boxes.end())
+			vWorldPos = it->second.wPos;
+	}
 
-	int healthValue = 100;
+	vWorldPos += localOffset;
 
 	Vec3 vEntityScreenSpace;
 	gEnv->pRenderer->ProjectToScreen(vWorldPos.x, vWorldPos.y, vWorldPos.z, &vEntityScreenSpace.x, &vEntityScreenSpace.y, &vEntityScreenSpace.z);
@@ -81,15 +88,13 @@ void CTOSZeusModule::HUDUpdateZeusUnitIcon(EntityId objective, int friendly, int
 	float fHalfUselessSize = 0.0f;
 	pHUD->GetProjectionScale(pAnim, &fScaleX, &fScaleY, &fHalfUselessSize);
 
-	float rotation = 0.0f;
+	const int	iMinDist = TOS_Console::GetSafeIntVar("tos_sv_zeus_on_screen_near_distance", 10);
+	const int	iMaxDist = TOS_Console::GetSafeIntVar("tos_sv_zeus_on_screen_far_distance", 500);
+	const float	fMinSize = TOS_Console::GetSafeFloatVar("tos_sv_zeus_on_screen_near_size", 1.4f);
+	const float	fMaxSize = TOS_Console::GetSafeFloatVar("tos_sv_zeus_on_screen_far_size", 0.7f);
 
-	int		iMinDist = TOS_Console::GetSafeIntVar("tos_sv_zeus_on_screen_near_distance", 10);
-	int		iMaxDist = TOS_Console::GetSafeIntVar("tos_sv_zeus_on_screen_far_distance", 500);
-	float	fMinSize = TOS_Console::GetSafeFloatVar("tos_sv_zeus_on_screen_near_size", 1.4f);
-	float	fMaxSize = TOS_Console::GetSafeFloatVar("tos_sv_zeus_on_screen_far_size", 0.7f);
-
-	auto pPlayerActor = static_cast<CTOSActor*>(gEnv->pGame->GetIGameFramework()->GetClientActor());
-	float fDist = (vWorldPos - pPlayerActor->GetEntity()->GetWorldPos()).len();
+	const auto pPlayerActor = static_cast<CTOSActor*>(gEnv->pGame->GetIGameFramework()->GetClientActor());
+	const float fDist = (vWorldPos - pPlayerActor->GetEntity()->GetWorldPos()).len();
 	float fSize = 1.0f;
 
 	if (fDist <= iMinDist)
@@ -102,9 +107,9 @@ void CTOSZeusModule::HUDUpdateZeusUnitIcon(EntityId objective, int friendly, int
 	}
 	else if (iMaxDist > iMinDist)
 	{
-		float fA = ((float)iMaxDist - fDist);
-		float fB = (float)(iMaxDist - iMinDist);
-		float fC = (fMinSize - fMaxSize);
+		const float fA = ((float)iMaxDist - fDist);
+		const float fB = (float)(iMaxDist - iMinDist);
+		const float fC = (fMinSize - fMaxSize);
 		fSize = ((fA / fB) * fC) + fMaxSize;
 	}
 
@@ -114,12 +119,15 @@ void CTOSZeusModule::HUDUpdateZeusUnitIcon(EntityId objective, int friendly, int
 	const float transX = vEntityScreenSpace.x * fScaleX + fHalfUselessSize + offsetX;
 	const float transY = vEntityScreenSpace.y * fScaleY + offsetY;
 
-	static const wchar_t* localizedText = L"";
+	const float rotation = 0.0f;
+	const int healthValue = 100;
 
-	auto iter = stl::binary_find(m_selectedEntities.cbegin(), m_selectedEntities.cend(), objective);
+	const auto iter = stl::binary_find(m_selectedEntities.cbegin(), m_selectedEntities.cend(), objective);
 	const bool selected = iter != m_selectedEntities.cend();
 
 	SOnScreenIcon icon(objective, transX, transY, (int)iconType, friendly, fDist, fSize * fSize, -rotation, healthValue, (int)selected);
+
+	static const wchar_t* localizedText = L"";
 	localizedText = pHUD->LocalizeWithParams(pObjectiveEntity->GetName(), true);
 	icon.text.append(localizedText);
 
