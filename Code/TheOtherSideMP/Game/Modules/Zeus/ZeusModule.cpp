@@ -1419,8 +1419,11 @@ bool CTOSZeusModule::ExecuteCommand(EZeusCommands command)
 
 				if (pActor)
 				{
-					//TODO: выход из тс
 					auto pActorVeh = pActor->GetLinkedVehicle();
+					if (pActorVeh)
+					{
+						TOS_Vehicle::Exit(pActor, false, true);
+					}
 				}
 
 				gEnv->pEntitySystem->RemoveEntity(id);
