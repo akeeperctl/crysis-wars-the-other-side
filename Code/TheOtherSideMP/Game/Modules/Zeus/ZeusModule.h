@@ -206,6 +206,7 @@ private:
 	// std::set<EntityId> m_copiedEntities; /// скопированные сущности
 	// std::map<EntityId, SOBBWorldPos*> m_copiedBoxes; /// боксы скопированных сущностей
 
+	std::set<EntityId> m_doubleClickLastSelectedEntities;
 	std::set<EntityId> m_selectedEntities; /// выделенные сущности
 	std::map<EntityId, SOBBWorldPos*> m_boxes; /// боксы выделенных сущностей
 	std::map<EntityId, Vec3> m_selectStartEntitiesPositions;
@@ -219,6 +220,7 @@ private:
 	float m_updateIconOnScreenTimer;
 	float m_draggingMoveStartTimer; /// Таймер начала перемещения сущностей после включения перетаскивания
 	float m_mouseDownDurationSec; /// используется для включения режима выделения нескольких объектов одновременно
+	bool m_doubleClick;
 	bool m_copying;
 	bool m_select;
 	bool m_dragging;

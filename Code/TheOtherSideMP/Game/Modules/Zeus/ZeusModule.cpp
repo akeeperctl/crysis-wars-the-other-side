@@ -43,6 +43,7 @@ CTOSZeusModule::CTOSZeusModule()
 	m_mouseRayEntityFlags(DEFAULT_MOUSE_ENT_FLAGS),
 	m_shiftModifier(false),
 	m_ctrlModifier(false),
+	m_doubleClick(false),
 	m_copying(false),
 	m_altModifier(false),
 	m_debugZModifier(false),
@@ -74,11 +75,14 @@ void CTOSZeusModule::Reset()
 	m_zeusFlags = 0;
 	m_select = false;
 	m_dragging = false;
+	m_doubleClick = false;
 	m_copying = false;
 	m_ctrlModifier = false;
 	m_altModifier = false;
 	m_shiftModifier = false;
 	m_debugZModifier = false;
+
+
 	m_selectedEntities.clear();
 	m_selectStartEntitiesPositions.clear();
 	m_storedEntitiesPositions.clear();
@@ -182,6 +186,7 @@ EntityId CTOSZeusModule::GetMouseEntityId()
 
 void CTOSZeusModule::DeselectEntities()
 {
+	m_doubleClickLastSelectedEntities.clear();
 	m_selectedEntities.clear();
 	m_boxes.clear();
 }
@@ -244,7 +249,7 @@ void CTOSZeusModule::HandleOnceSelection(EntityId id)
 
 			// При каждом клике без CTRL снимаем выделение если кликнули не на последнюю кликнутую сущность
 			//if (m_curClickedEntityId != m_lastClickedEntityId || m_curClickedEntityId == 0)
-			if (m_curClickedEntityId != m_lastClickedEntityId || m_curClickedEntityId == 0)
+			if ((m_curClickedEntityId != m_lastClickedEntityId || m_curClickedEntityId == 0))
 				DeselectEntities();
 
 			// После чистки всех выделенных сущностей, выделяем кликнутую сущность
@@ -302,6 +307,37 @@ static bool IsPhysicsAllowed(const IEntity* pEntity)
 		return false;
 }
 
+static bool EntityIsSimilarToEntity(IEntity* pFirstEntity, IEntity* pSecondEntity)
+{
+	if (!pFirstEntity || !pSecondEntity)
+		return false;
+
+	if (pFirstEntity->GetClass() != pSecondEntity->GetClass())
+		return false;
+
+	const auto pArchetype = pFirstEntity->GetArchetype();
+	if (pArchetype)
+	{
+		if (string(pArchetype->GetName()) != pSecondEntity->GetArchetype()->GetName())
+			return false;
+	}
+
+	int firstSpecies = -1;
+	int secondSpecies = -1;
+
+	SmartScriptTable props;
+	pFirstEntity->GetScriptTable()->GetValue("Properties", props);
+	props->GetValue("species", firstSpecies);
+
+	pSecondEntity->GetScriptTable()->GetValue("Properties", props);
+	props->GetValue("species", secondSpecies);
+
+	if (firstSpecies != secondSpecies)
+		return false;
+
+	return true;
+}
+
 void CTOSZeusModule::OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eHardwareMouseEvent)
 {
 	m_mouseIPos.x = iX;
@@ -334,67 +370,7 @@ void CTOSZeusModule::OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eH
 		{
 			if (eHardwareMouseEvent == HARDWAREMOUSEEVENT_LBUTTONDOUBLECLICK)
 			{
-				const IActor* pClientActor = g_pGame->GetIGameFramework()->GetClientActor();
-				if (!pClientActor)
-					return;
-
-				const auto pClickedEntity = TOS_GET_ENTITY(m_curClickedEntityId);
-				if (!pClickedEntity)
-					return;
-
-				SmartScriptTable props;
-				int clickedSpecies = -1;
-				pClickedEntity->GetScriptTable()->GetValue("Properties", props);
-				props->GetValue("species", clickedSpecies);
-
-				IEntityItPtr pIt = gEnv->pEntitySystem->GetEntityIterator();
-				while (!pIt->IsEnd())
-				{
-					if (IEntity* pEntity = pIt->Next())
-					{
-						const auto id = pEntity->GetId();
-
-						if (pEntity->IsGarbage())
-							continue;
-
-						if (pEntity->IsHidden())
-							continue;
-
-						if (!IsPhysicsAllowed(pEntity))
-							continue;
-
-						// пропускаем сущность актера клиента
-						if (id == pClientActor->GetEntityId())
-							continue;
-
-						AABB worldBounds;
-						pEntity->GetWorldBounds(worldBounds);
-
-						//skip further calculations if the entity is not visible at all...
-						if (gEnv->pSystem->GetViewCamera().IsAABBVisible_F(worldBounds) == CULL_EXCLUSION)
-							continue;
-
-						if (pEntity->GetClass() != pClickedEntity->GetClass())
-							continue;
-
-						const auto pArchetype = pEntity->GetArchetype();
-						if (pArchetype)
-						{
-							if (string(pArchetype->GetName()) != pClickedEntity->GetArchetype()->GetName())
-								continue;
-						}
-
-						SmartScriptTable props;
-						int species = -1;
-						pClickedEntity->GetScriptTable()->GetValue("Properties", props);
-						props->GetValue("species", species);
-
-						if (species != clickedSpecies)
-							continue;
-
-						SelectEntity(id);
-					}
-				}
+				m_doubleClick = true;
 			}
 			else if (eHardwareMouseEvent == HARDWAREMOUSEEVENT_LBUTTONDOWN)
 			{
@@ -415,10 +391,11 @@ void CTOSZeusModule::OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eH
 					// Множественное выделение c зажатым модификатором
 					if (m_ctrlModifier)
 					{
-						if (!m_dragging && m_curClickedEntityId != 0)
+						if (!m_dragging && !m_doubleClick && m_curClickedEntityId != 0)
 						{
 							if (m_selectedEntities.count(m_curClickedEntityId) > 0)
 							{
+								//if (delta <= 0.15f)
 								DeselectEntity(m_curClickedEntityId);
 							}
 							else
@@ -427,6 +404,86 @@ void CTOSZeusModule::OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eH
 							}
 						}
 					}
+				}
+
+				if (m_doubleClick)
+				{
+					const auto pClickedEntity = TOS_GET_ENTITY(m_curClickedEntityId);
+					if (pClickedEntity)
+					{
+						SmartScriptTable props;
+						int clickedSpecies = -1;
+						pClickedEntity->GetScriptTable()->GetValue("Properties", props);
+						props->GetValue("species", clickedSpecies);
+
+						const IActor* pClientActor = g_pGame->GetIGameFramework()->GetClientActor();
+						if (!pClientActor)
+							return;
+
+						const auto clickedIter = stl::binary_find(m_doubleClickLastSelectedEntities.cbegin(), m_doubleClickLastSelectedEntities.cend(), m_curClickedEntityId);
+						const bool clickedSelected = clickedIter != m_doubleClickLastSelectedEntities.cend();
+						if (clickedSelected)
+						{
+							// Снимаем выделение последних выделенных подобных сущностей
+							for (auto it = m_doubleClickLastSelectedEntities.begin(); it != m_doubleClickLastSelectedEntities.end();)
+							{
+								auto pEntity = TOS_GET_ENTITY(*it);
+
+								if (EntityIsSimilarToEntity(pEntity, pClickedEntity) || pEntity == pClickedEntity)
+								{
+									DeselectEntity(*it);
+									it = m_doubleClickLastSelectedEntities.erase(it);
+								}
+								else
+								{
+									it++;
+								}
+							}
+						}
+						else
+						{
+							// Выбираем подобные сущности в поле зрения
+
+							IEntityItPtr pIt = gEnv->pEntitySystem->GetEntityIterator();
+							while (!pIt->IsEnd())
+							{
+								if (IEntity* pEntity = pIt->Next())
+								{
+									const auto id = pEntity->GetId();
+
+									if (pEntity->IsGarbage())
+										continue;
+
+									if (pEntity->IsHidden())
+										continue;
+
+									if (!IsPhysicsAllowed(pEntity))
+										continue;
+
+									// пропускаем сущность актера клиента
+									if (id == pClientActor->GetEntityId())
+										continue;
+
+									AABB worldBounds;
+									pEntity->GetWorldBounds(worldBounds);
+
+									//skip further calculations if the entity is not visible at all...
+									if (gEnv->pSystem->GetViewCamera().IsAABBVisible_F(worldBounds) == CULL_EXCLUSION)
+										continue;
+
+									if (!EntityIsSimilarToEntity(pEntity, pClickedEntity))
+										continue;
+
+									SelectEntity(id);
+									m_doubleClickLastSelectedEntities.insert(id);
+								}
+							}
+						}
+					}
+
+
+
+					m_doubleClick = false;
 				}
 
 				// Перед тем как закончить копирование..
@@ -673,6 +730,7 @@ void CTOSZeusModule::GetMemoryStatistics(ICrySizer* s)
 {
 	s->Add(*this);
 	s->AddContainer(m_selectedEntities);
+	s->AddContainer(m_doubleClickLastSelectedEntities);
 	s->AddContainer(m_selectStartEntitiesPositions);
 	s->AddContainer(m_storedEntitiesPositions);
 	s->AddContainer(m_onScreenIcons);
@@ -1067,22 +1125,30 @@ void CTOSZeusModule::UpdateDebug(bool zeusMoving, const Vec3& zeusDynVec)
 	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 1, 1.3f, color, false, "currClickedEntity  = %s", pCurrClickedEntity ? pCurrClickedEntity->GetName() : "");
 
 	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 2, 1.3f, color, false, "m_draggingMoveStartTimer = %f", m_draggingMoveStartTimer);
+
 	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 3, 1.3f, color, false, "m_mouseIPos = (%i, %i)", m_mouseIPos.x, m_mouseIPos.y);
 	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 4, 1.3f, color, false, "m_mouseDownDurationSec = %1.f", m_mouseDownDurationSec);
-	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 5, 1.3f, color, false, "m_select = %i", int(m_select));
-	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 6, 1.3f, color, false, "m_dragging = %i", int(m_dragging));
-	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 7, 1.3f, color, false, "m_copying = %i", int(m_copying));
-	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 8, 1.3f, color, false, "m_ctrlModifier = %i", int(m_ctrlModifier));
-	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 9, 1.3f, color, false, "m_altModifier = %i", int(m_altModifier));
-	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 10, 1.3f, color, false, "m_debugZModifier = %i", int(m_debugZModifier));
 
-	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 11, 1.3f, color, false, "zeusDynVec = (%1.f,%1.f,%1.f)", zeusDynVec.x, zeusDynVec.y, zeusDynVec.z);
-	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 12, 1.3f, color, false, "zeusMoving = %i", zeusMoving);
+	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 5, 1.3f, color, false, "m_doubleClick = %i", int(m_doubleClick));
+	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 6, 1.3f, color, false, "m_select = %i", int(m_select));
+	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 7, 1.3f, color, false, "m_dragging = %i", int(m_dragging));
+	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 8, 1.3f, color, false, "m_copying = %i", int(m_copying));
+	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 9, 1.3f, color, false, "m_ctrlModifier = %i", int(m_ctrlModifier));
+	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 10, 1.3f, color, false, "m_altModifier = %i", int(m_altModifier));
+	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 11, 1.3f, color, false, "m_debugZModifier = %i", int(m_debugZModifier));
+
+	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 12, 1.3f, color, false, "zeusDynVec = (%1.f,%1.f,%1.f)", zeusDynVec.x, zeusDynVec.y, zeusDynVec.z);
+	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 13, 1.3f, color, false, "zeusMoving = %i", zeusMoving);
 
 	if (!m_selectedEntities.empty())
 	{
-		TOS_Debug::DrawEntitiesName2DLabel(m_selectedEntities, "Selected Entities: ", 100, startY + deltaY * 13, deltaY);
+		TOS_Debug::DrawEntitiesName2DLabel(m_selectedEntities, "Selected Entities: ", 100, startY + deltaY * 14, deltaY);
 	}
+	if (!m_doubleClickLastSelectedEntities.empty())
+	{
+		TOS_Debug::DrawEntitiesName2DLabel(m_doubleClickLastSelectedEntities, "DC Selected Entities: ", 300, startY + deltaY * 14, deltaY);
+	}
+
 }
 
 void CTOSZeusModule::Serialize(TSerialize ser)
@@ -1250,6 +1316,7 @@ bool CTOSZeusModule::ExecuteCommand(EZeusCommands command)
 
 				gEnv->pEntitySystem->RemoveEntity(id);
 				it = DeselectEntity(id);
+				m_doubleClickLastSelectedEntities.erase(id);
 
 				needUpdateIter = false;
 
