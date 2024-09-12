@@ -205,17 +205,26 @@ std::set<EntityId>::iterator CTOSZeusModule::DeselectEntity(EntityId id)
 static CTOSZeusModule::SOBBWorldPos* CreateBoxForEntity(EntityId id)
 {
 	OBB box;
+	AABB entityBox;
 	Vec3 worldPos(ZERO);
 
 	auto pEntity = TOS_GET_ENTITY(id);
 	if (pEntity)
 	{
-		AABB entityBox;
 		pEntity->GetLocalBounds(entityBox);
-		box.SetOBBfromAABB(pEntity->GetWorldRotation(), entityBox);
+		box.SetOBBfromAABB(pEntity->GetRotation(), entityBox);
+
+		worldPos = pEntity->GetWorldPos();
 	}
 
 	auto wbox = new CTOSZeusModule::SOBBWorldPos();
+
+	if (box.c.IsZero())
+	{
+		pEntity->GetWorldBounds(entityBox);
+		box = OBB::CreateOBBfromAABB(pEntity->GetRotation(), entityBox);
+	}
+
 	wbox->obb = box;
 	wbox->wPos = worldPos;
 
@@ -315,10 +324,11 @@ static bool EntityIsSimilarToEntity(IEntity* pFirstEntity, IEntity* pSecondEntit
 	if (pFirstEntity->GetClass() != pSecondEntity->GetClass())
 		return false;
 
-	const auto pArchetype = pFirstEntity->GetArchetype();
-	if (pArchetype)
+	const auto pFirstArchetype = pFirstEntity->GetArchetype();
+	const auto pSecondArchetype = pSecondEntity->GetArchetype();
+	if (pFirstArchetype && pSecondArchetype)
 	{
-		if (string(pArchetype->GetName()) != pSecondEntity->GetArchetype()->GetName())
+		if (string(pFirstArchetype->GetName()) != pSecondArchetype->GetName())
 			return false;
 	}
 
@@ -326,11 +336,19 @@ static bool EntityIsSimilarToEntity(IEntity* pFirstEntity, IEntity* pSecondEntit
 	int secondSpecies = -1;
 
 	SmartScriptTable props;
-	pFirstEntity->GetScriptTable()->GetValue("Properties", props);
-	props->GetValue("species", firstSpecies);
+	const auto pFirstTable = pFirstEntity->GetScriptTable();
+	if (pFirstTable)
+	{
+		pFirstTable->GetValue("Properties", props);
+		props->GetValue("species", firstSpecies);
+	}
 
-	pSecondEntity->GetScriptTable()->GetValue("Properties", props);
-	props->GetValue("species", secondSpecies);
+	const auto pSecondTable = pSecondEntity->GetScriptTable();
+	if (pSecondTable)
+	{
+		pSecondEntity->GetScriptTable()->GetValue("Properties", props);
+		props->GetValue("species", secondSpecies);
+	}
 
 	if (firstSpecies != secondSpecies)
 		return false;
@@ -413,8 +431,12 @@ void CTOSZeusModule::OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eH
 					{
 						SmartScriptTable props;
 						int clickedSpecies = -1;
-						pClickedEntity->GetScriptTable()->GetValue("Properties", props);
-						props->GetValue("species", clickedSpecies);
+						auto pTable = pClickedEntity->GetScriptTable();
+						if (pTable)
+						{
+							pTable->GetValue("Properties", props);
+							props->GetValue("species", clickedSpecies);
+						}
 
 						const IActor* pClientActor = g_pGame->GetIGameFramework()->GetClientActor();
 						if (!pClientActor)
@@ -564,8 +586,14 @@ void CTOSZeusModule::GetSelectedEntities()
 		if (IEntity* pEntity = pIt->Next())
 		{
 			// выделяем только родительскую сущность
-			if (TOS_Console::GetSafeIntVar("tos_sv_zeus_always_select_parent", 1) && pEntity->GetParent())
+			if (TOS_Console::GetSafeIntVar("tos_sv_zeus_always_select_parent", 1) == 1 && pEntity->GetParent())
 				pEntity = pEntity->GetParent();
+
+			if (TOS_Console::GetSafeIntVar("tos_sv_zeus_entities_ignore_default", 1) == 1 &&
+				pEntity->GetClass() == gEnv->pEntitySystem->GetClassRegistry()->GetDefaultClass())
+			{
+				continue;
+			}
 
 			if (m_debugZModifier == false)
 			{
@@ -993,6 +1021,12 @@ void CTOSZeusModule::Update(float frametime)
 			{
 				const auto id = pEntity->GetId();
 
+				if (TOS_Console::GetSafeIntVar("tos_sv_zeus_entities_ignore_default", 1) == 1 &&
+					pEntity->GetClass() == gEnv->pEntitySystem->GetClassRegistry()->GetDefaultClass())
+				{
+					continue;
+				}
+
 				if (pEntity->IsGarbage())
 					continue;
 
@@ -1328,13 +1362,14 @@ bool CTOSZeusModule::ExecuteCommand(EZeusCommands command)
 				if (pEntity)
 				{
 					STOSEntitySpawnParams params;
-					params.vanilla.bStaticEntityId = true;
+					//params.vanilla.bStaticEntityId = true;
 					params.vanilla.nFlags = ENTITY_FLAG_CASTSHADOW | ENTITY_FLAG_ON_RADAR;
 					params.vanilla.pClass = pEntity->GetClass();
 					params.vanilla.vPosition = pEntity->GetWorldPos();
 					params.vanilla.qRotation = pEntity->GetRotation();
-					params.vanilla.sName = string(pEntity->GetName()) + "_copy";
-					params.vanilla.pArchetype = pEntity->GetArchetype();
+
+					if (pEntity->GetArchetype())
+						params.vanilla.pArchetype = pEntity->GetArchetype();
 
 					const auto pScriptTable = pEntity->GetScriptTable();
 					if (pScriptTable)
@@ -1364,6 +1399,10 @@ bool CTOSZeusModule::ExecuteCommand(EZeusCommands command)
 						//m_select = true;
 
 						const auto spawnedId = pSpawned->GetId();
+						char buffer[16];
+						sprintf(buffer, "%i", spawnedId);
+						pSpawned->SetName(string(pSpawned->GetClass()->GetName()) + "_" + buffer);
+
 						m_lastClickedEntityId = id;
 						m_curClickedEntityId = spawnedId;
 						m_mouseOveredEntityId = spawnedId;

@@ -54,6 +54,8 @@ void CTOSZeusModule::InitCVars(IConsole* pConsole)
 
 	pConsole->Register("tos_sv_zeus_dragging_move_boxes_separately", &tos_sv_zeus_dragging_move_boxes_separately, 1, VF_CHEAT,
 					   "0 - entities and selection boxes move together in realtime. Copying with 0 cause move bug \n1 - selection boxes move separately from entities");
+	pConsole->Register("tos_sv_zeus_entities_ignore_default", &tos_sv_zeus_entities_ignore_default, 1, VF_CHEAT,
+					   "0 - zeus will not ignore entities with class Default when selecting \n1 - zeus will ignore entities with class Default when selecting");
 }
 
 void CTOSZeusModule::ReleaseCVars()
@@ -74,6 +76,7 @@ void CTOSZeusModule::ReleaseCVars()
 	pConsole->UnregisterVariable("tos_sv_zeus_on_screen_offsetX", true);
 	pConsole->UnregisterVariable("tos_sv_zeus_on_screen_offsetY", true);
 	pConsole->UnregisterVariable("tos_sv_zeus_on_screen_update_delay", true);
+	pConsole->UnregisterVariable("tos_sv_zeus_entities_ignore_default", true);
 }
 
 void CTOSZeusModule::InitCCommands(IConsole* pConsole)

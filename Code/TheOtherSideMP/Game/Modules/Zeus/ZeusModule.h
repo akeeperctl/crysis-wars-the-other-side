@@ -250,6 +250,7 @@ private:
 	float tos_sv_zeus_on_screen_update_delay;
 
 	int tos_sv_zeus_dragging_move_boxes_separately;
+	int tos_sv_zeus_entities_ignore_default;
 
 	int tos_cl_zeus_dragging_draw_debug;
 };
