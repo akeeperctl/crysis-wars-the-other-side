@@ -327,9 +327,18 @@ namespace TOS_AI
 			agentParams.m_PerceptionParams.forgetfulnessSeek = value;
 			agentParams.m_PerceptionParams.forgetfulnessMemory = value;
 		}
-		else if (strcmp(timeType, FORGETTIME_TARGET) == 0) { agentParams.m_PerceptionParams.forgetfulnessTarget = value; }
-		else if (strcmp(timeType, FORGETTIME_SEEK) == 0) { agentParams.m_PerceptionParams.forgetfulnessSeek = value; }
-		else if (strcmp(timeType, FORGETTIME_MEMORY) == 0) { agentParams.m_PerceptionParams.forgetfulnessMemory = value; }
+		else if (strcmp(timeType, FORGETTIME_TARGET) == 0)
+		{
+			agentParams.m_PerceptionParams.forgetfulnessTarget = value;
+		}
+		else if (strcmp(timeType, FORGETTIME_SEEK) == 0)
+		{
+			agentParams.m_PerceptionParams.forgetfulnessSeek = value;
+		}
+		else if (strcmp(timeType, FORGETTIME_MEMORY) == 0)
+		{
+			agentParams.m_PerceptionParams.forgetfulnessMemory = value;
+		}
 
 		pAI->CastToIAIActor()->SetParameters(agentParams);
 	}
@@ -585,24 +594,24 @@ namespace TOS_AI
 			if (pUser)
 				switch (stance)
 				{
-				case STANCE_STAND:
-					pUser->InsertSubPipe(0, "do_it_standing");
-					break;
-				case STANCE_CROUCH:
-					pUser->InsertSubPipe(0, "do_it_crouched");
-					break;
-				case STANCE_PRONE:
-					pUser->InsertSubPipe(0, "do_it_prone");
-					break;
-				case STANCE_RELAXED:
-					pUser->InsertSubPipe(0, "do_it_relaxed");
-					break;
-				case STANCE_STEALTH:
-					pUser->InsertSubPipe(0, "do_it_stealth");
-					break;
-				default:
-					pUser->InsertSubPipe(0, "do_it_standing");
-					break;
+					case STANCE_STAND:
+						pUser->InsertSubPipe(0, "do_it_standing");
+						break;
+					case STANCE_CROUCH:
+						pUser->InsertSubPipe(0, "do_it_crouched");
+						break;
+					case STANCE_PRONE:
+						pUser->InsertSubPipe(0, "do_it_prone");
+						break;
+					case STANCE_RELAXED:
+						pUser->InsertSubPipe(0, "do_it_relaxed");
+						break;
+					case STANCE_STEALTH:
+						pUser->InsertSubPipe(0, "do_it_stealth");
+						break;
+					default:
+						pUser->InsertSubPipe(0, "do_it_standing");
+						break;
 				}
 		}
 	}
@@ -622,7 +631,10 @@ namespace TOS_AI
 			pAI->CastToIAIActor()->SetSignal(0, "RETURN_TO_FIRST", pAI->GetEntity());
 			sended = 1;
 		}
-		else if (!once) { pAI->CastToIAIActor()->SetSignal(0, "RETURN_TO_FIRST", pAI->GetEntity()); }
+		else if (!once)
+		{
+			pAI->CastToIAIActor()->SetSignal(0, "RETURN_TO_FIRST", pAI->GetEntity());
+		}
 	}
 
 	inline void ReturnToFirstSimple(IAIObject* pAI, const bool saveStance)
@@ -775,20 +787,20 @@ namespace TOS_AI
 				else
 				{
 					//The aliens
-					if (strcmp(character, "Drone") == 0 || 
+					if (strcmp(character, "Drone") == 0 ||
 						strcmp(character, "ScoutMOAC") == 0)
 						SendSignal(pAI, SIGNALFILTER_SENDER, "TO_SCOUTMOAC_IDLE", pAI->GetEntity(), nullptr);
-					else if (strcmp(character, "GuardNeue") == 0 || 
-							strcmp(character, "Hunter") == 0 || 
-							strcmp(character, "HunterNew") == 0)
+					else if (strcmp(character, "GuardNeue") == 0 ||
+							 strcmp(character, "Hunter") == 0 ||
+							 strcmp(character, "HunterNew") == 0)
 						SendSignal(pAI, SIGNALFILTER_SENDER, "TO_IDLE", pAI->GetEntity(), nullptr);
-					else if (strcmp(character, "Trooper") == 0 || 
-							strcmp(character, "TrooperCloak") == 0 ||
-							strcmp(character, "TrooperGuardian") == 0 ||
-							strcmp(character, "TrooperLeader") == 0 || 
-							strcmp(character, "TrooperLeaderMKII") == 0 ||
-							strcmp(character, "TrooperMKII_Sneak") == 0 ||
-							strcmp(character, "TrooperMKII") == 0)
+					else if (strcmp(character, "Trooper") == 0 ||
+							 strcmp(character, "TrooperCloak") == 0 ||
+							 strcmp(character, "TrooperGuardian") == 0 ||
+							 strcmp(character, "TrooperLeader") == 0 ||
+							 strcmp(character, "TrooperLeaderMKII") == 0 ||
+							 strcmp(character, "TrooperMKII_Sneak") == 0 ||
+							 strcmp(character, "TrooperMKII") == 0)
 						SendSignal(pAI, SIGNALFILTER_SENDER, "GO_TO_IDLE", pAI->GetEntity(), nullptr);
 					else //The humans
 						SendSignal(pAI, SIGNALFILTER_SENDER, "GO_TO_IDLE", pAI->GetEntity(), nullptr);
@@ -967,6 +979,20 @@ namespace TOS_AI
 		}
 
 		return radius;
+	}
+
+	inline void MakeHostile(IAIObject* pAI, bool hostile)
+	{
+		if (!pAI)
+			return;
+
+		auto pAIActor = pAI->CastToIAIActor();
+		if (!pAIActor)
+			return;
+
+		auto params = pAIActor->GetParameters();
+		params.m_bSpeciesHostility = hostile;
+		pAIActor->SetParameters(params);
 	}
 
 	//inline float GetDetectionValue(IAIObject* pAI)

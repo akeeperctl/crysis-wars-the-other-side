@@ -609,7 +609,13 @@ void CTOSZeusModule::OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eH
 					{
 						auto pEntity = TOS_GET_ENTITY(*it);
 						if (pEntity)
+						{
 							pEntity->Hide(false);
+
+							bool hostile = true;
+							TOS_Script::GetEntityProperty(pEntity, "bSpeciesHostility", hostile);
+							TOS_AI::MakeHostile(pEntity->GetAI(), hostile);
+						}
 					}
 				}
 
@@ -1523,6 +1529,10 @@ bool CTOSZeusModule::ExecuteCommand(EZeusCommands command)
 					{
 						pSpawned->Hide(true);
 
+						bool hostile = true;
+						TOS_Script::GetEntityProperty(pEntity, "bSpeciesHostility", hostile);
+						TOS_Script::SetEntityProperty(pSpawned, "bSpeciesHostility", hostile);
+
 						it = DeselectEntity(id);
 						needUpdateIter = false;
 
@@ -1535,9 +1545,6 @@ bool CTOSZeusModule::ExecuteCommand(EZeusCommands command)
 						{
 							for (int slot = 0; slot <= savedItemCount; slot++)
 								TOS_Inventory::GiveItem(pActor, savedItems[slot], false, false, false);
-
-							//TOS_Inventory::SelectPrimary(pActor);
-							//TOS_Inventory::SelectItemByClass(pActor, currentItemClass);
 						}
 
 						char buffer[16];
