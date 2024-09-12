@@ -15,6 +15,10 @@
 
 const uint DEFAULT_MOUSE_ENT_FLAGS = ent_terrain; //ent_living | ent_rigid | ent_static | ent_terrain | ent_sleeping_rigid | ent_independent;
 const uint DRAGGING_MOUSE_ENT_FLAGS = ent_terrain;
+
+static void InitSelectionFilterClasses();
+std::map<string, string> CTOSZeusModule::s_classToConsoleVar;
+
 enum eScreenIconType
 {
 	eFTI_Grey = 0,
@@ -62,6 +66,7 @@ void CTOSZeusModule::Init()
 	if (gEnv->pHardwareMouse)
 		gEnv->pHardwareMouse->AddListener(this);
 
+	InitSelectionFilterClasses();
 	Reset();
 }
 
@@ -131,7 +136,18 @@ bool CTOSZeusModule::OnInputEvent(const SInputEvent& event)
 			if (event.state == eIS_Pressed)
 				m_debugZModifier = true;
 			else if (event.state == eIS_Released)
-				m_debugZModifier = false;
+			{
+				if (m_debugZModifier)
+				{
+					m_debugZModifier = false;
+
+					for (auto it = m_selectedEntities.cbegin(); it != m_selectedEntities.cend(); it++)
+					{
+						if (!SelectionFilter(*it))
+							it = DeselectEntity(*it);
+					}
+				}
+			}
 		}
 		else if (event.keyId == EKeyId::eKI_LShift)
 		{
@@ -262,7 +278,7 @@ void CTOSZeusModule::HandleOnceSelection(EntityId id)
 				DeselectEntities();
 
 			// После чистки всех выделенных сущностей, выделяем кликнутую сущность
-			if (m_curClickedEntityId != 0)
+			if (m_curClickedEntityId != 0 && SelectionFilter(m_curClickedEntityId))
 				SelectEntity(m_curClickedEntityId);
 		}
 	}
@@ -356,6 +372,61 @@ static bool EntityIsSimilarToEntity(IEntity* pFirstEntity, IEntity* pSecondEntit
 	return true;
 }
 
+// Карта для сопоставления названий классов с консольными переменными
+static void InitSelectionFilterClasses()
+{
+	CTOSZeusModule::s_classToConsoleVar["BasicEntity"] = "tos_sv_zeus_selection_ignore_basic_entity";
+	CTOSZeusModule::s_classToConsoleVar["RigidBody"] = "tos_sv_zeus_selection_ignore_rigid_body";
+	CTOSZeusModule::s_classToConsoleVar["RigidBodyEx"] = "tos_sv_zeus_selection_ignore_rigid_body";
+	CTOSZeusModule::s_classToConsoleVar["DestroyableObject"] = "tos_sv_zeus_selection_ignore_destroyable_object";
+	CTOSZeusModule::s_classToConsoleVar["BreakableObject"] = "tos_sv_zeus_selection_ignore_breakable_object";
+	CTOSZeusModule::s_classToConsoleVar["AnimObject"] = "tos_sv_zeus_selection_ignore_anim_object";
+	CTOSZeusModule::s_classToConsoleVar["PressurizedObject"] = "tos_sv_zeus_selection_ignore_pressurized_object";
+	CTOSZeusModule::s_classToConsoleVar["Switch"] = "tos_sv_zeus_selection_ignore_switch";
+	CTOSZeusModule::s_classToConsoleVar["SpawnGroup"] = "tos_sv_zeus_selection_ignore_spawn_group";
+	CTOSZeusModule::s_classToConsoleVar["InteractiveEntity"] = "tos_sv_zeus_selection_ignore_interactive_entity";
+	CTOSZeusModule::s_classToConsoleVar["VehiclePartDetached"] = "tos_sv_zeus_selection_ignore_vehicle_part_detached";
+}
+
+bool CTOSZeusModule::SelectionFilter(EntityId id)
+{
+	auto pEntity = TOS_GET_ENTITY(id);
+	if (!pEntity)
+	{
+		return false;
+	}
+
+	if (m_debugZModifier)
+		return true;
+
+	const string className = pEntity->GetClass()->GetName();
+	auto it = s_classToConsoleVar.find(className);
+
+	// Проверяем, есть ли сопоставление для текущего класса
+	if (it != s_classToConsoleVar.end())
+	{
+		// Получаем консольную переменную для текущего класса
+		const string consoleVarName = it->second;
+
+		// Проверяем значение консольной переменной
+		if (TOS_Console::GetSafeIntVar(consoleVarName.c_str(), 1) == 1)
+		{
+			return false;
+		}
+	}
+
+	// Проверяем класс по умолчанию
+	if (pEntity->GetClass() == gEnv->pEntitySystem->GetClassRegistry()->GetDefaultClass())
+	{
+		if (TOS_Console::GetSafeIntVar("tos_sv_zeus_selection_ignore_default", 1) == 1)
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
 void CTOSZeusModule::OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eHardwareMouseEvent)
 {
 	m_mouseIPos.x = iX;
@@ -418,7 +489,8 @@ void CTOSZeusModule::OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eH
 							}
 							else
 							{
-								SelectEntity(m_curClickedEntityId);
+								if (SelectionFilter(m_curClickedEntityId))
+									SelectEntity(m_curClickedEntityId);
 							}
 						}
 					}
@@ -472,6 +544,9 @@ void CTOSZeusModule::OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eH
 								if (IEntity* pEntity = pIt->Next())
 								{
 									const auto id = pEntity->GetId();
+
+									if (!SelectionFilter(id))
+										continue;
 
 									if (pEntity->IsGarbage())
 										continue;
@@ -586,14 +661,11 @@ void CTOSZeusModule::GetSelectedEntities()
 		if (IEntity* pEntity = pIt->Next())
 		{
 			// выделяем только родительскую сущность
-			if (TOS_Console::GetSafeIntVar("tos_sv_zeus_always_select_parent", 1) == 1 && pEntity->GetParent())
+			if (TOS_Console::GetSafeIntVar("tos_sv_zeus_selection_always_select_parent", 1) == 1 && pEntity->GetParent())
 				pEntity = pEntity->GetParent();
 
-			if (TOS_Console::GetSafeIntVar("tos_sv_zeus_entities_ignore_default", 1) == 1 &&
-				pEntity->GetClass() == gEnv->pEntitySystem->GetClassRegistry()->GetDefaultClass())
-			{
+			if (!SelectionFilter(pEntity->GetId()))
 				continue;
-			}
 
 			if (m_debugZModifier == false)
 			{
@@ -807,7 +879,7 @@ bool CTOSZeusModule::UpdateDraggedEntity(EntityId id, const IEntity* pClickedEnt
 	if ((pActor && pActor->GetHealth() < 0.0f) || className == "DeadBody")
 	{
 		// Пропускаем убитых актеров при условии
-		if (TOS_Console::GetSafeIntVar("tos_sv_zeus_can_drag_dead_bodies", 0) < 1)
+		if (TOS_Console::GetSafeIntVar("tos_sv_zeus_dragging_ignore_dead_bodies", 0) < 1)
 			return false;
 	}
 
@@ -1021,11 +1093,8 @@ void CTOSZeusModule::Update(float frametime)
 			{
 				const auto id = pEntity->GetId();
 
-				if (TOS_Console::GetSafeIntVar("tos_sv_zeus_entities_ignore_default", 1) == 1 &&
-					pEntity->GetClass() == gEnv->pEntitySystem->GetClassRegistry()->GetDefaultClass())
-				{
+				if (!SelectionFilter(id))
 					continue;
-				}
 
 				if (pEntity->IsGarbage())
 					continue;
@@ -1428,7 +1497,9 @@ bool CTOSZeusModule::ExecuteCommand(EZeusCommands command)
 	if (command == eZC_CopySelected)
 	{
 		for (auto it = copiedEntities.cbegin(); it != copiedEntities.cend(); it++)
+		{
 			SelectEntity(*it);
+		}
 	}
 
 	return true;

@@ -122,6 +122,9 @@ public:
 
 	void SaveEntitiesStartPositions();
 
+	// Фильтр на сущности. True - сущность можно выбрать, false - нельзя
+	bool SelectionFilter(EntityId id);
+
 	//IHardwareMouseEventListener
 	void OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eHardwareMouseEvent);
 	//~IHardwareMouseEventListener
@@ -190,6 +193,10 @@ private:
 	void HUDInGamePostUpdate(float frametime);
 	void HUDUnloadSimpleAssets(bool unload);
 
+public:
+	static std::map<string, string> s_classToConsoleVar;
+
+private:
 	CTOSPlayer* m_zeus;
 	uint m_zeusFlags;
 	ray_hit m_mouseRay;
@@ -234,13 +241,13 @@ private:
 
 	// Консольные значения
 	float tos_sv_zeus_mass_selection_hold_sec;
-	int tos_sv_zeus_always_select_parent;
-	int tos_sv_zeus_can_drag_dead_bodies;
+	int tos_sv_zeus_selection_always_select_parent;
+	int tos_sv_zeus_dragging_ignore_dead_bodies;
 	float tos_sv_zeus_dragging_move_start_delay;
 	int tos_sv_zeus_dragging_entities_auto_height;
 	int tos_sv_zeus_dragging_entities_height_type;
 
-	int tos_sv_zeus_force_on_screen_icons;
+	int tos_sv_zeus_on_screen_force_show;
 	float tos_sv_zeus_on_screen_near_size;
 	float tos_sv_zeus_on_screen_far_size;
 	int tos_sv_zeus_on_screen_near_distance;
@@ -250,7 +257,17 @@ private:
 	float tos_sv_zeus_on_screen_update_delay;
 
 	int tos_sv_zeus_dragging_move_boxes_separately;
-	int tos_sv_zeus_entities_ignore_default;
+	int tos_sv_zeus_selection_ignore_default;
+	int tos_sv_zeus_selection_ignore_basic_entity;
+	int tos_sv_zeus_selection_ignore_rigid_body;
+	int tos_sv_zeus_selection_ignore_destroyable_object;
+	int tos_sv_zeus_selection_ignore_breakable_object;
+	int tos_sv_zeus_selection_ignore_anim_object;
+	int tos_sv_zeus_selection_ignore_pressurized_object;
+	int tos_sv_zeus_selection_ignore_switch;
+	int tos_sv_zeus_selection_ignore_spawn_group;
+	int tos_sv_zeus_selection_ignore_interactive_entity;
+	int tos_sv_zeus_selection_ignore_vehicle_part_detached;
 
 	int tos_cl_zeus_dragging_draw_debug;
 };

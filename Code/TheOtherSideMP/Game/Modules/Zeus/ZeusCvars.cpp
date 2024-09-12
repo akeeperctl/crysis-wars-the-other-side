@@ -10,14 +10,11 @@ void CTOSZeusModule::InitCVars(IConsole* pConsole)
 	pConsole->Register("tos_sv_zeus_mass_selection_hold_sec", &tos_sv_zeus_mass_selection_hold_sec, 0.2f, VF_CHEAT,
 					   "Delay in sec, how long you need to hold LMB down before the multiple object selection mode is enabled");
 
+	pConsole->Register("tos_sv_zeus_dragging_ignore_dead_bodies", &tos_sv_zeus_dragging_ignore_dead_bodies, 1, VF_CHEAT,
+					   "");
+
 	pConsole->Register("tos_cl_zeus_dragging_draw_debug", &tos_cl_zeus_dragging_draw_debug, 0, VF_CHEAT | VF_NOT_NET_SYNCED,
 					   "ZEUS dragging draw debug");
-
-	pConsole->Register("tos_sv_zeus_always_select_parent", &tos_sv_zeus_always_select_parent, 1, VF_CHEAT,
-					   "When ZEUS selects child entities, only the parent will be selected");
-
-	pConsole->Register("tos_sv_zeus_can_drag_dead_bodies", &tos_sv_zeus_can_drag_dead_bodies, 0, VF_CHEAT,
-					   "");
 
 	pConsole->Register("tos_sv_zeus_dragging_entities_auto_height", &tos_sv_zeus_dragging_entities_auto_height, 1, VF_CHEAT,
 					   "0 - it will not \n1 - the height of the entity in 3D space will be automatically calculated for each selected entity");
@@ -28,7 +25,7 @@ void CTOSZeusModule::InitCVars(IConsole* pConsole)
 	pConsole->Register("tos_sv_zeus_dragging_move_start_delay", &tos_sv_zeus_dragging_move_start_delay, 0.05f, VF_CHEAT,
 					   "Delay in sec in starting to move entities after enabling drag and drop");
 
-	pConsole->Register("tos_sv_zeus_force_on_screen_icons", &tos_sv_zeus_force_on_screen_icons, 1, VF_CHEAT,
+	pConsole->Register("tos_sv_zeus_on_screen_force_show", &tos_sv_zeus_on_screen_force_show, 1, VF_CHEAT,
 					   "");
 
 	pConsole->Register("tos_sv_zeus_on_screen_near_size", &tos_sv_zeus_on_screen_near_size, 1.4f, VF_CHEAT,
@@ -54,8 +51,42 @@ void CTOSZeusModule::InitCVars(IConsole* pConsole)
 
 	pConsole->Register("tos_sv_zeus_dragging_move_boxes_separately", &tos_sv_zeus_dragging_move_boxes_separately, 1, VF_CHEAT,
 					   "0 - entities and selection boxes move together in realtime. Copying with 0 cause move bug \n1 - selection boxes move separately from entities");
-	pConsole->Register("tos_sv_zeus_entities_ignore_default", &tos_sv_zeus_entities_ignore_default, 1, VF_CHEAT,
+
+	pConsole->Register("tos_sv_zeus_selection_ignore_default", &tos_sv_zeus_selection_ignore_default, 1, VF_CHEAT,
 					   "0 - zeus will not ignore entities with class Default when selecting \n1 - zeus will ignore entities with class Default when selecting");
+
+	pConsole->Register("tos_sv_zeus_selection_ignore_basic_entity", &tos_sv_zeus_selection_ignore_basic_entity, 1, VF_CHEAT,
+					   "0 - zeus will not ignore entities with class BasicEntity when selecting \n1 - zeus will ignore entities with class BasicEntity when selecting");
+
+	pConsole->Register("tos_sv_zeus_selection_ignore_rigid_body", &tos_sv_zeus_selection_ignore_rigid_body, 1, VF_CHEAT,
+					   "0 - zeus will not ignore entities with class RigidBody and RigidBodyEx when selecting \n1 - zeus will ignore entities with class RigidBody and RigidBodyEx when selecting");
+
+	pConsole->Register("tos_sv_zeus_selection_ignore_destroyable_object", &tos_sv_zeus_selection_ignore_destroyable_object, 1, VF_CHEAT,
+					   "0 - zeus will not ignore entities with class DestroyableObject when selecting \n1 - zeus will ignore entities with class DestroyableObject when selecting");
+
+	pConsole->Register("tos_sv_zeus_selection_ignore_breakable_object", &tos_sv_zeus_selection_ignore_breakable_object, 1, VF_CHEAT,
+					   "0 - zeus will not ignore entities with class BreakableObject when selecting \n1 - zeus will ignore entities with class BreakableObject when selecting");
+
+	pConsole->Register("tos_sv_zeus_selection_ignore_anim_object", &tos_sv_zeus_selection_ignore_anim_object, 1, VF_CHEAT,
+					   "0 - zeus will not ignore entities with class AnimObject when selecting \n1 - zeus will ignore entities with class AnimObject when selecting");
+
+	pConsole->Register("tos_sv_zeus_selection_ignore_pressurized_object", &tos_sv_zeus_selection_ignore_pressurized_object, 1, VF_CHEAT,
+					   "0 - zeus will not ignore entities with class Pressurized when selecting \n1 - zeus will ignore entities with class Pressurized when selecting");
+
+	pConsole->Register("tos_sv_zeus_selection_ignore_switch", &tos_sv_zeus_selection_ignore_switch, 1, VF_CHEAT,
+					   "0 - zeus will not ignore entities with class Switch when selecting \n1 - zeus will ignore entities with class Switch when selecting");
+
+	pConsole->Register("tos_sv_zeus_selection_ignore_spawn_group", &tos_sv_zeus_selection_ignore_spawn_group, 1, VF_CHEAT,
+					   "0 - zeus will not ignore entities with class SpawnGroup when selecting \n1 - zeus will ignore entities with class SpawnGroup when selecting");
+
+	pConsole->Register("tos_sv_zeus_selection_ignore_interactive_entity", &tos_sv_zeus_selection_ignore_interactive_entity, 1, VF_CHEAT,
+					   "0 - zeus will not ignore entities with class InteractiveEntity when selecting \n1 - zeus will ignore entities with class InteractiveEntity when selecting");
+
+	pConsole->Register("tos_sv_zeus_selection_ignore_vehicle_part_detached", &tos_sv_zeus_selection_ignore_vehicle_part_detached, 1, VF_CHEAT,
+					   "0 - zeus will not ignore entities with class VehiclePartDetached when selecting \n1 - zeus will ignore entities with class VehiclePartDetached when selecting");
+
+	pConsole->Register("tos_sv_zeus_selection_always_select_parent", &tos_sv_zeus_selection_always_select_parent, 1, VF_CHEAT,
+					   "When ZEUS selects child entities, only the parent will be selected");
 }
 
 void CTOSZeusModule::ReleaseCVars()
@@ -64,11 +95,12 @@ void CTOSZeusModule::ReleaseCVars()
 
 	const auto pConsole = gEnv->pConsole;
 	pConsole->UnregisterVariable("tos_sv_zeus_mass_selection_hold_sec", true);
-	pConsole->UnregisterVariable("tos_cl_zeus_dragging_draw_debug", true);
-	pConsole->UnregisterVariable("tos_sv_zeus_always_select_parent", true);
-	pConsole->UnregisterVariable("tos_sv_zeus_can_drag_dead_bodies", true);
+
+	pConsole->UnregisterVariable("tos_sv_zeus_dragging_ignore_dead_bodies", true);
 	pConsole->UnregisterVariable("tos_sv_zeus_dragging_entities_auto_height", true);
 	pConsole->UnregisterVariable("tos_sv_zeus_dragging_entities_height_type", true);
+	pConsole->UnregisterVariable("tos_cl_zeus_dragging_draw_debug", true);
+
 	pConsole->UnregisterVariable("tos_sv_zeus_on_screen_near_size", true);
 	pConsole->UnregisterVariable("tos_sv_zeus_on_screen_far_size", true);
 	pConsole->UnregisterVariable("tos_sv_zeus_on_screen_near_distance", true);
@@ -76,7 +108,19 @@ void CTOSZeusModule::ReleaseCVars()
 	pConsole->UnregisterVariable("tos_sv_zeus_on_screen_offsetX", true);
 	pConsole->UnregisterVariable("tos_sv_zeus_on_screen_offsetY", true);
 	pConsole->UnregisterVariable("tos_sv_zeus_on_screen_update_delay", true);
-	pConsole->UnregisterVariable("tos_sv_zeus_entities_ignore_default", true);
+
+	pConsole->UnregisterVariable("tos_sv_zeus_selection_always_select_parent", true);
+	pConsole->UnregisterVariable("tos_sv_zeus_selection_ignore_default", true);
+	pConsole->UnregisterVariable("tos_sv_zeus_selection_ignore_basic_entity", true);
+	pConsole->UnregisterVariable("tos_sv_zeus_selection_ignore_rigid_body", true);
+	pConsole->UnregisterVariable("tos_sv_zeus_selection_ignore_destroyable_object", true);
+	pConsole->UnregisterVariable("tos_sv_zeus_selection_ignore_breakable_object", true);
+	pConsole->UnregisterVariable("tos_sv_zeus_selection_ignore_anim_object", true);
+	pConsole->UnregisterVariable("tos_sv_zeus_selection_ignore_pressurized_object", true);
+	pConsole->UnregisterVariable("tos_sv_zeus_selection_ignore_switch", true);
+	pConsole->UnregisterVariable("tos_sv_zeus_selection_ignore_spawn_group", true);
+	pConsole->UnregisterVariable("tos_sv_zeus_selection_ignore_interactive_entity", true);
+	pConsole->UnregisterVariable("tos_sv_zeus_selection_ignore_vehicle_part_detached", true);
 }
 
 void CTOSZeusModule::InitCCommands(IConsole* pConsole)

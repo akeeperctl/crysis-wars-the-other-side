@@ -140,7 +140,7 @@ void CTOSZeusModule::HUDUpdateAllZeusUnitIcons()
 
 	//const auto pClient = static_cast<CTOSActor*>(g_pGame->GetIGameFramework()->GetClientActor());
 	//const bool isZeus = pClient && pClient->IsZeus();
-	//const bool visible = isZeus && TOS_Console::GetSafeIntVar("tos_sv_zeus_force_on_screen_icons", 1);
+	//const bool visible = isZeus && TOS_Console::GetSafeIntVar("tos_sv_zeus_on_screen_force_show", 1);
 	if (icons->size())
 	{
 		pAnim->SetVisible(true);
