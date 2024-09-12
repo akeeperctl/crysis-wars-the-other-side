@@ -1391,7 +1391,7 @@ bool CTOSZeusModule::ExecuteCommand(EZeusCommands command)
 		const int index = TOS_STL::GetIndexFromMapKey(m_selectedEntities, id);
 
 		IVehicle* pVehicle = g_pGame->GetIGameFramework()->GetIVehicleSystem()->GetVehicle(id);
-		//IActor* pActor = g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(id);
+		IActor* pActor = TOS_GET_ACTOR(id);
 
 		switch (command)
 		{
@@ -1417,6 +1417,12 @@ bool CTOSZeusModule::ExecuteCommand(EZeusCommands command)
 				m_select = false;
 				m_copying = false;
 
+				if (pActor)
+				{
+					//TODO: выход из тс
+					auto pActorVeh = pActor->GetLinkedVehicle();
+				}
+
 				gEnv->pEntitySystem->RemoveEntity(id);
 				it = DeselectEntity(id);
 				m_doubleClickLastSelectedEntities.erase(id);
@@ -1430,6 +1436,32 @@ bool CTOSZeusModule::ExecuteCommand(EZeusCommands command)
 				const auto pEntity = TOS_GET_ENTITY(id);
 				if (pEntity)
 				{
+					int savedItemCount = 0;
+					std::map<int, string> savedItems;
+					string currentItemClass;
+
+					IActor* pActor = TOS_GET_ACTOR(id);
+					if (pActor)
+					{
+						const IInventory* pInventory = pActor->GetInventory();
+						if (pInventory)
+						{
+							savedItemCount = pInventory->GetCount();
+
+							for (int slot = 0; slot <= savedItemCount; slot++)
+							{
+								const auto pItem = TOS_GET_ENTITY(pInventory->GetItem(slot));
+								if (pItem)
+									savedItems[slot] = pItem->GetClass()->GetName();
+							}
+
+							const auto pCurrentItem = TOS_GET_ENTITY(pInventory->GetCurrentItem());
+							if (pCurrentItem)
+								currentItemClass = pCurrentItem->GetClass()->GetName();
+						}
+					}
+
+
 					STOSEntitySpawnParams params;
 					//params.vanilla.bStaticEntityId = true;
 					params.vanilla.nFlags = ENTITY_FLAG_CASTSHADOW | ENTITY_FLAG_ON_RADAR;
@@ -1468,6 +1500,16 @@ bool CTOSZeusModule::ExecuteCommand(EZeusCommands command)
 						//m_select = true;
 
 						const auto spawnedId = pSpawned->GetId();
+						pActor = TOS_GET_ACTOR(spawnedId);
+						if (pActor)
+						{
+							for (int slot = 0; slot <= savedItemCount; slot++)
+								TOS_Inventory::GiveItem(pActor, savedItems[slot], false, false, false);
+
+							//TOS_Inventory::SelectPrimary(pActor);
+							//TOS_Inventory::SelectItemByClass(pActor, currentItemClass);
+						}
+
 						char buffer[16];
 						sprintf(buffer, "%i", spawnedId);
 						pSpawned->SetName(string(pSpawned->GetClass()->GetName()) + "_" + buffer);

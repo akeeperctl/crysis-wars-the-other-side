@@ -23,6 +23,15 @@ namespace TOS_Inventory
 		return Script::CallMethod(pActor->GetEntity()->GetScriptTable(), "SelectPrimaryWeapon");
 	};
 
+	inline bool SelectItemByClass(IActor* pActor, const string& classname)
+	{
+		if (!pActor)
+			return false;
+
+		g_pGame->GetIGameFramework()->GetIItemSystem()->SetActorItem(pActor, classname);
+		return true;
+	};
+
 	inline bool SelectSecondary(const IActor* pActor)
 	{
 		if (!pActor)

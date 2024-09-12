@@ -5,6 +5,7 @@
 #include "TheOtherSideMP/Game/Modules/EntitySpawn/EntitySpawnModule.h"
 
 #define TOS_GET_ENTITY(entityId) gEnv->pEntitySystem->GetEntity(entityId)
+#define TOS_GET_ACTOR(entityId) g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(entityId)
 
 namespace TOS_Entity
 {
