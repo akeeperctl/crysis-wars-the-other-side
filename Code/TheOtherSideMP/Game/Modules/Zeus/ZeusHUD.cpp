@@ -54,7 +54,7 @@ void CTOSZeusModule::HUDUnloadSimpleAssets(bool unload)
 	}
 }
 
-void CTOSZeusModule::HUDUpdateZeusUnitIcon(EntityId objective, int friendly, int iconType, const Vec3 localOffset)
+void CTOSZeusModule::HUDUpdateOnScreenIcon(EntityId objective, int friendly, int iconType, const Vec3 localOffset)
 {
 	const auto pAnim = &m_animZeusScreenIcons;
 

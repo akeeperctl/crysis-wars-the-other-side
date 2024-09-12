@@ -26,7 +26,7 @@ History:
 
 //------------------------------------------------------------------------
 CVehicleMovementHelicopter::CVehicleMovementHelicopter()
-: m_pRotorHelper(NULL),
+	: m_pRotorHelper(NULL),
 	m_damageActual(0.0f),
 	m_steeringDamage(0.0f),
 	m_mass(0.0f),
@@ -55,48 +55,48 @@ CVehicleMovementHelicopter::CVehicleMovementHelicopter()
 	m_workingUpDir.zero();
 	m_engineUpDir.zero();
 
-	m_netActionSync.PublishActions( CNetworkMovementHelicopter(this) );
+	m_netActionSync.PublishActions(CNetworkMovementHelicopter(this));
 
 	m_playerControls.Init(this);
 }
 
 //------------------------------------------------------------------------
-bool CVehicleMovementHelicopter::Init(IVehicle* pVehicle, const SmartScriptTable &table)
+bool CVehicleMovementHelicopter::Init(IVehicle* pVehicle, const SmartScriptTable& table)
 {
 	if (!CVehicleMovementBase::Init(pVehicle, table))
 		assert(0);
 
 	MOVEMENT_VALUE("engineWarmupDelay", m_engineWarmupDelay);
 
-  // heli abilities
-  MOVEMENT_VALUE("altitudeMax", m_altitudeMax);
-  MOVEMENT_VALUE("rotorDiskTiltScale", m_rotorDiskTiltScale);
-  MOVEMENT_VALUE("pitchResponsiveness", m_pitchResponsiveness);
-  MOVEMENT_VALUE("rollResponsiveness", m_rollResponsiveness);
+	// heli abilities
+	MOVEMENT_VALUE("altitudeMax", m_altitudeMax);
+	MOVEMENT_VALUE("rotorDiskTiltScale", m_rotorDiskTiltScale);
+	MOVEMENT_VALUE("pitchResponsiveness", m_pitchResponsiveness);
+	MOVEMENT_VALUE("rollResponsiveness", m_rollResponsiveness);
 	MOVEMENT_VALUE("yawResponsiveness", m_yawResponsiveness);
 	MOVEMENT_VALUE("enginePowerMax", m_enginePowerMax);
 	MOVEMENT_VALUE("rotationDamping", m_rotationDamping);
 	MOVEMENT_VALUE("yawPerRoll", m_yawPerRoll);
 
-  // high-level controller abilities
-  MOVEMENT_VALUE("maxYawRate", m_maxYawRate);
-  MOVEMENT_VALUE("maxFwdSpeed", m_maxFwdSpeed);
-  MOVEMENT_VALUE("maxLeftSpeed", m_maxLeftSpeed);
-  MOVEMENT_VALUE("maxUpSpeed", m_maxUpSpeed);
-  MOVEMENT_VALUE("basicSpeedFraction", m_basicSpeedFraction);
-  MOVEMENT_VALUE("yawDecreaseWithSpeed", m_yawDecreaseWithSpeed);
-  MOVEMENT_VALUE("tiltPerVelDifference", m_tiltPerVelDifference);
-  MOVEMENT_VALUE("maxTiltAngle", m_maxTiltAngle);
-  MOVEMENT_VALUE("extraRollForTurn", m_extraRollForTurn);
+	// high-level controller abilities
+	MOVEMENT_VALUE("maxYawRate", m_maxYawRate);
+	MOVEMENT_VALUE("maxFwdSpeed", m_maxFwdSpeed);
+	MOVEMENT_VALUE("maxLeftSpeed", m_maxLeftSpeed);
+	MOVEMENT_VALUE("maxUpSpeed", m_maxUpSpeed);
+	MOVEMENT_VALUE("basicSpeedFraction", m_basicSpeedFraction);
+	MOVEMENT_VALUE("yawDecreaseWithSpeed", m_yawDecreaseWithSpeed);
+	MOVEMENT_VALUE("tiltPerVelDifference", m_tiltPerVelDifference);
+	MOVEMENT_VALUE("maxTiltAngle", m_maxTiltAngle);
+	MOVEMENT_VALUE("extraRollForTurn", m_extraRollForTurn);
 	MOVEMENT_VALUE("rollForTurnForce", m_rollForTurnForce);
-  MOVEMENT_VALUE("yawPerRoll", m_yawPerRoll);
+	MOVEMENT_VALUE("yawPerRoll", m_yawPerRoll);
 	MOVEMENT_VALUE("pitchActionPerTilt", m_pitchActionPerTilt);
 	MOVEMENT_VALUE("pitchInputConst", m_pitchInputConst);
-  MOVEMENT_VALUE("powerInputConst", m_powerInputConst);
-  MOVEMENT_VALUE("powerInputDamping", m_powerInputDamping);
+	MOVEMENT_VALUE("powerInputConst", m_powerInputConst);
+	MOVEMENT_VALUE("powerInputDamping", m_powerInputDamping);
 	MOVEMENT_VALUE("relaxForce", m_relaxForce);
-  MOVEMENT_VALUE("yawInputConst", m_yawInputConst);
-  MOVEMENT_VALUE("yawInputDamping", m_yawInputDamping);
+	MOVEMENT_VALUE("yawInputConst", m_yawInputConst);
+	MOVEMENT_VALUE("yawInputDamping", m_yawInputDamping);
 	MOVEMENT_VALUE("maxRollAngle", m_maxRollAngle);
 	MOVEMENT_VALUE("maxPitchAngleMov", m_maxPitchAngleMov);
 
@@ -108,7 +108,7 @@ bool CVehicleMovementHelicopter::Init(IVehicle* pVehicle, const SmartScriptTable
 	m_powerPID.m_kD = 0.01f;
 	m_powerPID.m_kI = 0.0001f;
 
-  m_maxSpeed = 40.f; // empirically determined
+	m_maxSpeed = 40.f; // empirically determined
 
 	m_pRotorAnim = NULL;
 
@@ -126,13 +126,13 @@ bool CVehicleMovementHelicopter::Init(IVehicle* pVehicle, const SmartScriptTable
 	m_yawPID.m_kI = 0.0f;
 	m_yawPID.m_kD = 0.0f;
 
-  // high-level controller
+	// high-level controller
 	Ang3 angles = m_pEntity->GetWorldAngles();
-  m_desiredDir = angles.z;
+	m_desiredDir = angles.z;
 
-  m_desiredHeight = m_pEntity->GetWorldPos().z;
-  m_lastDir = m_desiredDir;
-  m_enginePower = 0.0f;
+	m_desiredHeight = m_pEntity->GetWorldPos().z;
+	m_lastDir = m_desiredDir;
+	m_enginePower = 0.0f;
 
 	m_isTouchingGround = false;
 	m_timeOnTheGround = 50.0f;
@@ -245,13 +245,13 @@ void CVehicleMovementHelicopter::Reset()
 	m_liftPID.Reset();
 	m_yawPID.Reset();
 
-  // high-level controller
+	// high-level controller
 	Ang3 angles = m_pEntity->GetWorldAngles();
-  m_desiredDir = angles.z;
+	m_desiredDir = angles.z;
 
-  m_desiredHeight = m_pEntity->GetWorldPos().z;
-  m_lastDir = m_desiredDir;
-  m_enginePower = 0.0f;
+	m_desiredHeight = m_pEntity->GetWorldPos().z;
+	m_lastDir = m_desiredDir;
+	m_enginePower = 0.0f;
 
 	m_isTouchingGround = false;
 	m_timeOnTheGround = 50.0f;
@@ -292,7 +292,7 @@ bool CVehicleMovementHelicopter::StartEngine(EntityId driverId)
 		return false;
 	}
 
-  m_powerPID.Reset();
+	m_powerPID.Reset();
 
 	if (m_pRotorAnim)
 		m_pRotorAnim->StartAnimation();
@@ -320,21 +320,21 @@ void CVehicleMovementHelicopter::OnEvent(EVehicleMovementEvent event, const SVeh
 
 	if (event == eVME_DamageSteering)
 	{
-		float newSteeringDamage = (((float(cry_rand()) / float(RAND_MAX)) * 2.5f ) + 0.5f);
+		float newSteeringDamage = (((float(cry_rand()) / float(RAND_MAX)) * 2.5f) + 0.5f);
 		m_steeringDamage = max(m_steeringDamage, newSteeringDamage);
 	}
-  else if (event == eVME_Repair)
-  {
-    m_steeringDamage = min(m_steeringDamage, params.fValue);
+	else if (event == eVME_Repair)
+	{
+		m_steeringDamage = min(m_steeringDamage, params.fValue);
 
 		// bit workaround - we never get a repair message for the last bit (as the damage level hasn't changed).
 		//	However, the helicopter only ever sends 1.0 or 0.0 to here...
-		if(params.fValue < 0.25)
+		if (params.fValue < 0.25)
 		{
 			m_damageActual = 0.0f;
 			m_damage = 0.0f;
 		}
-  }
+	}
 	else if (event == eVME_GroundCollision)
 	{
 		const float stopOver = 1.0f;
@@ -352,6 +352,10 @@ void CVehicleMovementHelicopter::OnEvent(EVehicleMovementEvent event, const SVeh
 	else if (event == eVME_WarmUpEngine)
 	{
 		m_enginePower = m_enginePowerMax;
+
+		//TheOtherSide
+		m_desiredHeight = params.fValue;
+		//~TheOtherSide
 	}
 	else if (event == eVME_PlayerSwitchView)
 	{
@@ -363,7 +367,7 @@ void CVehicleMovementHelicopter::OnEvent(EVehicleMovementEvent event, const SVeh
 	}
 	else if (event == eVME_Turbulence)
 	{
- 		m_turbulence = max(m_turbulence, params.fValue);
+		m_turbulence = max(m_turbulence, params.fValue);
 	}
 }
 
@@ -380,7 +384,7 @@ void CVehicleMovementHelicopter::OnAction(const TVehicleActionId actionId, int a
 //------------------------------------------------------------------------
 void CVehicleMovementHelicopter::ProcessActions(const float deltaTime)
 {
-FUNCTION_PROFILER( GetISystem(), PROFILE_GAME );
+	FUNCTION_PROFILER(GetISystem(), PROFILE_GAME);
 
 	UpdateDamages(deltaTime);
 	UpdateEngine(deltaTime);
@@ -394,9 +398,9 @@ FUNCTION_PROFILER( GetISystem(), PROFILE_GAME );
 
 	m_actionYaw = 0.0f;
 
-	Matrix33 tm( m_PhysPos.q);
+	Matrix33 tm(m_PhysPos.q);
 	Ang3 angles = Ang3::GetAnglesXYZ(tm);
-	Vec3 worldPos =  m_PhysPos.pos;
+	Vec3 worldPos = m_PhysPos.pos;
 
 	// +ve pitch means nose up
 	const float& currentPitch = angles.x;
@@ -409,7 +413,7 @@ FUNCTION_PROFILER( GetISystem(), PROFILE_GAME );
 	if (m_maxPitchAngleMov != 0.0 && pitchDeg >= (m_maxPitchAngleMov * 0.5f))
 	{
 		float mult = pitchDeg / (m_maxPitchAngleMov);
-		
+
 		if (mult > 1.0f && m_desiredPitch < 0.0f)
 		{
 			m_desiredPitch *= 0.0f;
@@ -439,9 +443,9 @@ FUNCTION_PROFILER( GetISystem(), PROFILE_GAME );
 		}
 	}
 
-  Vec3 currentVel = m_PhysDyn.v;
-  Vec3 currentVel2D = currentVel;
-  currentVel2D.z = 0.0f;
+	Vec3 currentVel = m_PhysDyn.v;
+	Vec3 currentVel2D = currentVel;
+	currentVel2D.z = 0.0f;
 	if (currentRoll >= DEG2RAD(m_maxRollAngle * 0.5f) && m_desiredRoll > 0.001f)
 	{
 		float r = currentRoll / DEG2RAD(m_maxRollAngle);
@@ -477,8 +481,8 @@ FUNCTION_PROFILER( GetISystem(), PROFILE_GAME );
 	// desired things
 	float turnDecreaseScale = m_yawDecreaseWithSpeed / (m_yawDecreaseWithSpeed + fabs(currentFwdSpeed));
 
-	Vec3 desired_vel2D = 
-		currentFwdDir2D * m_forwardAction * m_maxFwdSpeed * inputMult + 
+	Vec3 desired_vel2D =
+		currentFwdDir2D * m_forwardAction * m_maxFwdSpeed * inputMult +
 		currentLeftDir2D * m_strafeAction * m_maxLeftSpeed * inputMult;
 
 	// calculate the angle changes
@@ -515,7 +519,7 @@ FUNCTION_PROFILER( GetISystem(), PROFILE_GAME );
 
 		float roll = DEG2RAD(m_extraRollForTurn * side) - (currentRoll);
 		m_actionRoll += max(0.0f, abs(roll)) * side * m_rollForTurnForce;
-		
+
 		float pitchComp = abs(currentPitch) / DEG2RAD(2.50f);
 
 		if (pitchComp > 1.0f)
@@ -603,7 +607,7 @@ FUNCTION_PROFILER( GetISystem(), PROFILE_GAME );
 		}
 	}
 
-	if (m_netActionSync.PublishActions( CNetworkMovementHelicopter(this) ))
+	if (m_netActionSync.PublishActions(CNetworkMovementHelicopter(this)))
 		m_pVehicle->GetGameObject()->ChangedNetworkState(eEA_GameClientDynamic);
 }
 
@@ -642,7 +646,7 @@ void CVehicleMovementHelicopter::ProcessActionsLift(float deltaTime)
 		gravity = 9.8f;
 
 	// hovering force
-	
+
 	m_control.impulse += Vec3(m_workingUpDir.x, m_workingUpDir.y, min(1.0f, m_workingUpDir.z)) * gravity * (boost);
 	m_control.impulse += m_workingUpDir * m_enginePower * gravity * liftAction * boost;
 
@@ -694,10 +698,10 @@ void CVehicleMovementHelicopter::Boost(bool enable)
 {
 	// : prevent boosting if helicopter is above the altitude limit
 	//	(prevents players gaining extra height by boosting)
-	if(enable && m_pAltitudeLimitVar)
+	if (enable && m_pAltitudeLimitVar)
 	{
 		float altitudeLimit = m_pAltitudeLimitVar->GetFVal();
-		if(m_PhysPos.pos.z > altitudeLimit)
+		if (m_PhysPos.pos.z > altitudeLimit)
 		{
 			return;
 		}
@@ -717,8 +721,8 @@ void CVehicleMovementHelicopter::Boost(bool enable)
 // NOTE: This function must be thread-safe. Before adding stuff contact MarcoC.
 void CVehicleMovementHelicopter::ProcessAI(const float deltaTime)
 {
-	FUNCTION_PROFILER( GetISystem(), PROFILE_GAME );
-	
+	FUNCTION_PROFILER(GetISystem(), PROFILE_GAME);
+
 	// it's useless to progress further if the engine has yet to be turned on
 	if (!m_isEnginePowered)
 		return;
@@ -727,27 +731,27 @@ void CVehicleMovementHelicopter::ProcessAI(const float deltaTime)
 	ResetActions();
 
 	// Our current state
-	const Vec3 worldPos =  m_PhysPos.pos;
-	const Matrix33 worldMat( m_PhysPos.q);
+	const Vec3 worldPos = m_PhysPos.pos;
+	const Matrix33 worldMat(m_PhysPos.q);
 	const Ang3 worldAngles = Ang3::GetAnglesXYZ(worldMat);
 
 	const Vec3 currentVel = m_PhysDyn.v;
 	const Vec3 currentVel2D(currentVel.x, currentVel.y, 0.0f);
-	
+
 	m_velDamp = 0.15f;
-	
+
 	// +ve direction mean rotation anti-clocwise about the z axis - 0 means along y
 	float currentDir = worldAngles.z;
 
 	// to avoid singularity
 	const Vec3 vWorldDir = worldMat * FORWARD_DIRECTION;
-	const Vec3 vWorldDir2D =  Vec3( vWorldDir.x,  vWorldDir.y, 0.0f ).GetNormalizedSafe();
+	const Vec3 vWorldDir2D = Vec3(vWorldDir.x, vWorldDir.y, 0.0f).GetNormalizedSafe();
 
 	// Our inputs
 	const float desiredSpeed = m_aiRequest.HasDesiredSpeed() ? m_aiRequest.GetDesiredSpeed() : 0.0f;
 	const Vec3 desiredMoveDir = m_aiRequest.HasMoveTarget() ? (m_aiRequest.GetMoveTarget() - worldPos).GetNormalizedSafe() : vWorldDir;
 	const Vec3 desiredMoveDir2D = Vec3(desiredMoveDir.x, desiredMoveDir.y, 0.0f).GetNormalizedSafe(vWorldDir2D);
-	const Vec3 desiredVel = desiredMoveDir * desiredSpeed; 
+	const Vec3 desiredVel = desiredMoveDir * desiredSpeed;
 	const Vec3 desiredVel2D(desiredVel.x, desiredVel.y, 0.0f);
 	const Vec3 desiredLookDir = m_aiRequest.HasLookTarget() ? (m_aiRequest.GetLookTarget() - worldPos).GetNormalizedSafe() : desiredMoveDir;
 	const Vec3 desiredLookDir2D = Vec3(desiredLookDir.x, desiredLookDir.y, 0.0f).GetNormalizedSafe(vWorldDir2D);
@@ -757,10 +761,10 @@ void CVehicleMovementHelicopter::ProcessAI(const float deltaTime)
 
 	float desiredTiltAngle = m_tiltPerVelDifference * desiredVelChange2D.GetLength();
 
-	float powerfactor = desiredSpeed/m_maxSpeed;
-	if ( powerfactor < 1.0f )
-	powerfactor = 1.0f;
-	Limit(desiredTiltAngle, -(m_maxTiltAngle*powerfactor), (m_maxTiltAngle*powerfactor));
+	float powerfactor = desiredSpeed / m_maxSpeed;
+	if (powerfactor < 1.0f)
+		powerfactor = 1.0f;
+	Limit(desiredTiltAngle, -(m_maxTiltAngle * powerfactor), (m_maxTiltAngle * powerfactor));
 
 	if (desiredTiltAngle > 0.0001f)
 	{
@@ -790,7 +794,7 @@ void CVehicleMovementHelicopter::ProcessAI(const float deltaTime)
 	Limit(m_hoveringPower, -1.0f, 1.0f);
 
 	float currentHeight = worldPos.z;
-	if ( m_aiRequest.HasMoveTarget() )
+	if (m_aiRequest.HasMoveTarget())
 	{
 		m_hoveringPower = m_powerPID.Update(currentVel.z, desiredVel.z, -1.0f, 1.0f);
 		m_liftAction = 0.0f;
@@ -826,7 +830,7 @@ void CVehicleMovementHelicopter::PreProcessMovement(const float deltaTime)
 
 	m_engineForce = gravity * m_enginePower;
 
-	const Matrix33 tm( m_PhysPos.q);
+	const Matrix33 tm(m_PhysPos.q);
 	const Ang3 angles = Ang3::GetAnglesXYZ(tm);
 
 	m_workingUpDir = m_engineUpDir;
@@ -844,7 +848,7 @@ void CVehicleMovementHelicopter::PreProcessMovement(const float deltaTime)
 // NOTE: This function must be thread-safe. Before adding stuff contact MarcoC.
 void CVehicleMovementHelicopter::ProcessMovement(const float deltaTime)
 {
-  FUNCTION_PROFILER( GetISystem(), PROFILE_GAME );
+	FUNCTION_PROFILER(GetISystem(), PROFILE_GAME);
 
 	IPhysicalEntity* pPhysics = GetPhysics();
 	assert(pPhysics);
@@ -864,19 +868,19 @@ void CVehicleMovementHelicopter::ProcessMovement(const float deltaTime)
 	if (!m_isEnginePowered)
 		return;
 
-  // This results in either ProcessActions or ProcessAI getting called
+	// This results in either ProcessActions or ProcessAI getting called
 	CVehicleMovementBase::ProcessMovement(deltaTime);
-  
-	const Matrix33 tm( m_PhysPos.q);
+
+	const Matrix33 tm(m_PhysPos.q);
 	Ang3 angles = Ang3::GetAnglesXYZ(tm);
 
-	m_currentFwdDir		= tm * Vec3(0.0f, 1.0f , 0.0f);
-	m_currentLeftDir	= tm * Vec3(-1.0f, 0.0f, 0.0f);
-	m_currentUpDir		= tm * Vec3(0.0f, 0.0f , 1.0f);
+	m_currentFwdDir = tm * Vec3(0.0f, 1.0f, 0.0f);
+	m_currentLeftDir = tm * Vec3(-1.0f, 0.0f, 0.0f);
+	m_currentUpDir = tm * Vec3(0.0f, 0.0f, 1.0f);
 
-	m_mass				= m_PhysDyn.mass;
-	Vec3& velocity		= m_PhysDyn.v;
-	Vec3& angVelocity	= m_PhysDyn.w;
+	m_mass = m_PhysDyn.mass;
+	Vec3& velocity = m_PhysDyn.v;
+	Vec3& angVelocity = m_PhysDyn.w;
 
 	float gravity;
 
@@ -885,7 +889,7 @@ void CVehicleMovementHelicopter::ProcessMovement(const float deltaTime)
 		gravity = abs(paramsSim.gravity.z);
 	else
 		gravity = 9.8f;
-	
+
 	UpdateDamages(deltaTime);
 	UpdateEngine(deltaTime);
 	PreProcessMovement(deltaTime);
@@ -898,7 +902,7 @@ void CVehicleMovementHelicopter::ProcessMovement(const float deltaTime)
 		m_controlDamages.iSource = 3;
 		m_controlDamages.iApplyTime = 0;
 
-		pPhysics->Action(&m_controlDamages,1);
+		pPhysics->Action(&m_controlDamages, 1);
 	}
 
 	if (abs(angles.x) < 0.01f)
@@ -909,7 +913,7 @@ void CVehicleMovementHelicopter::ProcessMovement(const float deltaTime)
 	float turbulenceMult = 1.0f - min(m_turbulenceMultMax, m_turbulence);
 
 	Vec3 engineImpulse;
-	engineImpulse  = m_workingUpDir * m_engineForce * m_hoveringPower;
+	engineImpulse = m_workingUpDir * m_engineForce * m_hoveringPower;
 
 	impulse += (engineImpulse - (velocity * m_velDamp * turbulenceMult));
 	impulse *= deltaTime * m_mass;
@@ -971,16 +975,16 @@ void CVehicleMovementHelicopter::UpdateEngine(float deltaTime)
 // Lookup value from 3 point linear spline.
 // (tn, vn) pairs define the spline values at certain points in time the inbetween values are linearly interpolated.
 //------------------------------------------------------------------------
-inline float LookupSpline( float t, float t0, float v0, float t1, float v1, float t2, float v2 )
+inline float LookupSpline(float t, float t0, float v0, float t1, float v1, float t2, float v2)
 {
-	if( t < t0 )
+	if (t < t0)
 		return v0;
-	if( t > t2 )
+	if (t > t2)
 		return t2;
 
 	float	ts, dt, dv;
 
-	if( t < t1 )
+	if (t < t1)
 	{
 		ts = t0;
 		dt = t1 - t0;
@@ -999,7 +1003,7 @@ inline float LookupSpline( float t, float t0, float v0, float t1, float v1, floa
 //------------------------------------------------------------------------
 void CVehicleMovementHelicopter::Update(const float deltaTime)
 {
-  FUNCTION_PROFILER( GetISystem(), PROFILE_GAME );
+	FUNCTION_PROFILER(GetISystem(), PROFILE_GAME);
 
 	CVehicleMovementBase::Update(deltaTime);
 
@@ -1017,22 +1021,22 @@ void CVehicleMovementHelicopter::Update(const float deltaTime)
 
 	// ai specific sound matter
 
-	if ( m_soundMasterVolume != m_vehicleVolume )
+	if (m_soundMasterVolume != m_vehicleVolume)
 	{
 		float vol = m_soundMasterVolume;
-		if ( m_vehicleVolume == 0 )
+		if (m_vehicleVolume == 0)
 			CVehicleMovementBase::SetSoundMasterVolume(m_vehicleVolume);
-		else if ( vol < m_vehicleVolume )
+		else if (vol < m_vehicleVolume)
 		{
-			vol +=deltaTime;
-			if ( vol > m_vehicleVolume )
+			vol += deltaTime;
+			if (vol > m_vehicleVolume)
 				vol = m_vehicleVolume;
 			CVehicleMovementBase::SetSoundMasterVolume(vol);
 		}
-		else if ( vol > m_vehicleVolume )
+		else if (vol > m_vehicleVolume)
 		{
-			vol -=deltaTime;
-			if ( vol < m_vehicleVolume )
+			vol -= deltaTime;
+			if (vol < m_vehicleVolume)
 				vol = m_vehicleVolume;
 			CVehicleMovementBase::SetSoundMasterVolume(vol);
 		}
@@ -1056,8 +1060,8 @@ void CVehicleMovementHelicopter::Update(const float deltaTime)
 		Vec3& velocity = m_statusDyn.v;
 		Vec3& angVelocity = m_statusDyn.w;
 
-		pRenderer->Draw2dLabel(5.0f,   0.0f, 2.0f, color, false, "Helicopter movement"); Vec3 i; i = m_control.impulse.GetNormalizedSafe();
-		pRenderer->Draw2dLabel(5.0f,  85.0f, 1.5f, color, false, "impulse: %f, %f, %f (%f, %f, %f)", m_control.impulse.x, m_control.impulse.y, m_control.impulse.z, i.x, i.y, i.z);
+		pRenderer->Draw2dLabel(5.0f, 0.0f, 2.0f, color, false, "Helicopter movement"); Vec3 i; i = m_control.impulse.GetNormalizedSafe();
+		pRenderer->Draw2dLabel(5.0f, 85.0f, 1.5f, color, false, "impulse: %f, %f, %f (%f, %f, %f)", m_control.impulse.x, m_control.impulse.y, m_control.impulse.z, i.x, i.y, i.z);
 		pRenderer->Draw2dLabel(5.0f, 100.0f, 1.5f, color, false, "angImpulse: %f, %f, %f", m_control.angImpulse.x, m_control.angImpulse.y, m_control.angImpulse.z); i = velocity.GetNormalizedSafe();
 		pRenderer->Draw2dLabel(5.0f, 115.0f, 1.5f, color, false, "velocity: %f, %f, %f (%f) (%f, %f, %f)", velocity.x, velocity.y, velocity.z, velocity.GetLength(), i.x, i.y, i.z);
 		pRenderer->Draw2dLabel(5.0f, 130.0f, 1.5f, color, false, "angular velocity: %f, %f, %f", RAD2DEG(angVelocity.x), RAD2DEG(angVelocity.y), RAD2DEG(angVelocity.z));
@@ -1078,7 +1082,7 @@ void CVehicleMovementHelicopter::Update(const float deltaTime)
 //------------------------------------------------------------------------
 void CVehicleMovementHelicopter::OnEngineCompletelyStopped()
 {
-  CVehicleMovementBase::OnEngineCompletelyStopped();
+	CVehicleMovementBase::OnEngineCompletelyStopped();
 
 	RemoveSurfaceEffects();
 
@@ -1106,8 +1110,8 @@ float CVehicleMovementHelicopter::GetEnginePower()
 //------------------------------------------------------------------------
 bool CVehicleMovementHelicopter::RequestMovement(CMovementRequest& movementRequest)
 {
-	FUNCTION_PROFILER( gEnv->pSystem, PROFILE_GAME );
- 
+	FUNCTION_PROFILER(gEnv->pSystem, PROFILE_GAME);
+
 	m_movementAction.isAI = true;
 	if (!m_isEnginePowered)
 		return false;
@@ -1123,10 +1127,10 @@ bool CVehicleMovementHelicopter::RequestMovement(CMovementRequest& movementReque
 	{
 		Vec3 entityPos = m_pEntity->GetWorldPos();
 		Vec3 start(entityPos);
-		Vec3 end( movementRequest.GetMoveTarget() );
-		Vec3 pos = ( end - start ) * 100.0f;
-		pos +=start;
-		m_aiRequest.SetMoveTarget( pos );
+		Vec3 end(movementRequest.GetMoveTarget());
+		Vec3 pos = (end - start) * 100.0f;
+		pos += start;
+		m_aiRequest.SetMoveTarget(pos);
 	}
 	else
 		m_aiRequest.ClearMoveTarget();
@@ -1141,13 +1145,13 @@ bool CVehicleMovementHelicopter::RequestMovement(CMovementRequest& movementReque
 		Vec3 entityPos = m_pEntity->GetWorldPos();
 		m_aiRequest.SetForcedNavigation(movementRequest.GetForcedNavigation());
 		m_aiRequest.SetDesiredSpeed(movementRequest.GetForcedNavigation().GetLength());
-		m_aiRequest.SetMoveTarget(entityPos+movementRequest.GetForcedNavigation().GetNormalizedSafe()*100.0f);
+		m_aiRequest.SetMoveTarget(entityPos + movementRequest.GetForcedNavigation().GetNormalizedSafe() * 100.0f);
 	}
 	else
 		m_aiRequest.ClearForcedNavigation();
 
 	return true;
-		
+
 }
 
 //------------------------------------------------------------------------
@@ -1155,7 +1159,7 @@ void CVehicleMovementHelicopter::Serialize(TSerialize ser, unsigned aspects)
 {
 	CVehicleMovementBase::Serialize(ser, aspects);
 
-	if ((ser.GetSerializationTarget() == eST_Network) &&(aspects & eEA_GameClientDynamic))
+	if ((ser.GetSerializationTarget() == eST_Network) && (aspects & eEA_GameClientDynamic))
 	{
 		m_netActionSync.Serialize(ser, aspects);
 	}
@@ -1165,21 +1169,21 @@ void CVehicleMovementHelicopter::Serialize(TSerialize ser, unsigned aspects)
 		ser.Value("timeOnTheGround", m_timeOnTheGround);
 		ser.Value("lastDir", m_lastDir);
 		ser.Value("desiredHeight", m_desiredHeight);
-		ser.Value("vehicleVolume",m_vehicleVolume);
+		ser.Value("vehicleVolume", m_vehicleVolume);
 		ser.Value("turbulence", m_turbulence);
 
-		ser.Value("steeringDamage",m_steeringDamage);
-		ser.Value("noHoveringTimer",m_noHoveringTimer);
-		ser.Value("relaxTimer",m_relaxTimer);
-		ser.Value("desiredRoll",m_desiredRoll);
-		ser.Value("desiredPitch",m_desiredPitch);
+		ser.Value("steeringDamage", m_steeringDamage);
+		ser.Value("noHoveringTimer", m_noHoveringTimer);
+		ser.Value("relaxTimer", m_relaxTimer);
+		ser.Value("desiredRoll", m_desiredRoll);
+		ser.Value("desiredPitch", m_desiredPitch);
 
 		if (ser.IsReading())
 			m_isTouchingGround = m_timeOnTheGround > 0.0f;
 	}
 };
 
-void CVehicleMovementHelicopter::GetMemoryStatistics(ICrySizer * s)
+void CVehicleMovementHelicopter::GetMemoryStatistics(ICrySizer* s)
 {
 	s->Add(*this);
 	m_playerControls.GetMemoryStatistics(s);
@@ -1188,7 +1192,7 @@ void CVehicleMovementHelicopter::GetMemoryStatistics(ICrySizer * s)
 //------------------------------------------------------------------------
 void CHelicopterPlayerControls::Init(CVehicleMovementHelicopter* pHelicopterMovement)
 {
-	m_pHelicopterMovement = pHelicopterMovement; 
+	m_pHelicopterMovement = pHelicopterMovement;
 	Reset();
 }
 
@@ -1299,7 +1303,7 @@ void CHelicopterPlayerControls::Reset()
 
 //------------------------------------------------------------------------
 void CHelicopterPlayerControls::OnAction(const TVehicleActionId actionId, int activationMode, float value)
-{ 
+{
 	TActionInfoVector::iterator actionIte = m_actions.begin();
 	TActionInfoVector::iterator actionEnd = m_actions.end();
 
@@ -1360,14 +1364,14 @@ void CHelicopterPlayerControls::ProcessActions(const float deltaTime)
 
 		if (actionInfo.activationMode != 0)
 		{
-			if (actionInfo.activationMode == eAAM_OnPress || actionInfo.activationMode == eAAM_OnHold 
+			if (actionInfo.activationMode == eAAM_OnPress || actionInfo.activationMode == eAAM_OnHold
 				|| actionInfo.activationMode == eAAM_OnRelease)
 			{
 				if (actionInfo.valueModif == eVM_Positive)
 					v += actionInfo.value;
 				else if (actionInfo.valueModif == eVM_Negative)
 					v -= actionInfo.value;
-			}	
+			}
 			else if (actionInfo.activationMode == eAAM_Always)
 			{
 				v += actionInfo.value;
@@ -1396,30 +1400,29 @@ void CHelicopterPlayerControls::Serialize(TSerialize ser, unsigned aspects)
 //------------------------------------------------------------------------
 void CHelicopterPlayerControls::ClearAllActions()
 {
-	for (size_t i=0; i<m_actions.size(); ++i)
+	for (size_t i = 0; i < m_actions.size(); ++i)
 		m_actions[i].activationMode = 0;
 }
 
 //------------------------------------------------------------------------
-void CHelicopterPlayerControls::GetMemoryStatistics(ICrySizer * s)
+void CHelicopterPlayerControls::GetMemoryStatistics(ICrySizer* s)
 {
 	s->AddContainer(m_actions);
 	s->AddContainer(m_values);
-	for (size_t i=0; i<m_values.size(); i++)
+	for (size_t i = 0; i < m_values.size(); i++)
 		s->Add(m_values[i].name);
 }
 
 //------------------------------------------------------------------------
 CNetworkMovementHelicopter::CNetworkMovementHelicopter()
-: m_hoveringPower(0.0f),
+	: m_hoveringPower(0.0f),
 	m_forwardAction(0.0f),
 	m_actionPitch(0.0f),
 	m_actionYaw(0.0f),
 	m_actionRoll(0.0f),
 	m_actionStrafe(0.0f),
-  m_boost(false)
-{
-}
+	m_boost(false)
+{}
 
 //------------------------------------------------------------------------
 float CVehicleMovementHelicopter::GetDamageMult()
@@ -1431,7 +1434,7 @@ float CVehicleMovementHelicopter::GetDamageMult()
 }
 
 //------------------------------------------------------------------------
-CNetworkMovementHelicopter::CNetworkMovementHelicopter(CVehicleMovementHelicopter *pMovement)
+CNetworkMovementHelicopter::CNetworkMovementHelicopter(CVehicleMovementHelicopter* pMovement)
 {
 	m_hoveringPower = pMovement->m_hoveringPower;
 	m_forwardAction = pMovement->m_forwardAction;
@@ -1441,11 +1444,11 @@ CNetworkMovementHelicopter::CNetworkMovementHelicopter(CVehicleMovementHelicopte
 	m_actionStrafe = pMovement->m_strafeAction;
 	m_desiredDir = pMovement->m_desiredDir;
 	m_desiredHeight = pMovement->m_desiredHeight;
-  m_boost = pMovement->m_boost;
+	m_boost = pMovement->m_boost;
 }
 
 //------------------------------------------------------------------------
-void CNetworkMovementHelicopter::UpdateObject(CVehicleMovementHelicopter *pMovement)
+void CNetworkMovementHelicopter::UpdateObject(CVehicleMovementHelicopter* pMovement)
 {
 	pMovement->m_playerControls.ClearAllActions();
 	pMovement->m_hoveringPower = m_hoveringPower;
@@ -1456,13 +1459,13 @@ void CNetworkMovementHelicopter::UpdateObject(CVehicleMovementHelicopter *pMovem
 	pMovement->m_strafeAction = m_actionStrafe;
 	pMovement->m_desiredHeight = m_desiredHeight;
 	pMovement->m_desiredDir = m_desiredDir;
-  pMovement->m_boost = m_boost;
+	pMovement->m_boost = m_boost;
 }
 
 //------------------------------------------------------------------------
 void CNetworkMovementHelicopter::Serialize(TSerialize ser, unsigned aspects)
 {
-	if (ser.GetSerializationTarget()==eST_Network && aspects&CONTROLLED_ASPECT)
+	if (ser.GetSerializationTarget() == eST_Network && aspects & CONTROLLED_ASPECT)
 	{
 		ser.Value("power", m_hoveringPower, 'vPow');
 		ser.Value("fws", m_forwardAction, 'vPow');
@@ -1472,6 +1475,6 @@ void CNetworkMovementHelicopter::Serialize(TSerialize ser, unsigned aspects)
 		ser.Value("roll", m_actionRoll, 'vAng');
 		ser.Value("height", m_desiredHeight, 'iii');
 		ser.Value("dir", m_desiredDir, 'iii');
-    ser.Value("boost", m_boost, 'bool');
+		ser.Value("boost", m_boost, 'bool');
 	}
 }

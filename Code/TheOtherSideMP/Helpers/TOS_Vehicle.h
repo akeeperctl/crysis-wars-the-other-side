@@ -6,6 +6,19 @@
 
 namespace TOS_Vehicle
 {
+	inline void BroadcastMovementEvent(IVehicle* pVehicle, IVehicleMovement::EVehicleMovementEvent event, const SVehicleMovementEventParams& params)
+	{
+		if (!pVehicle)
+			return;
+
+		auto pMovement = pVehicle->GetMovement();
+		if (!pMovement)
+			return;
+
+		pMovement->OnEvent(event, params);
+	}
+
+
 	inline void Exit(const IActor* pActor, bool transitionEnabled, bool force, Vec3 exitPos = Vec3(0, 0, 0))
 	{
 		if (!pActor)

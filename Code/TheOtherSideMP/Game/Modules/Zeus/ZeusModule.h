@@ -109,6 +109,7 @@ public:
 	};
 	void        Init();
 	void        Update(float frametime);
+	void UpdateOnScreenIcons(IActor* pClientActor);
 	void        Serialize(TSerialize ser);
 	int GetDebugLog()
 	{
@@ -187,7 +188,7 @@ private:
 	/// @param localOffset - локальное смещение иконки
 	/// @param distance 
 	/// @param size 
-	void HUDUpdateZeusUnitIcon(EntityId objective, int friendly, int iconType, const Vec3 localOffset);
+	void HUDUpdateOnScreenIcon(EntityId objective, int friendly, int iconType, const Vec3 localOffset);
 	void HUDUpdateAllZeusUnitIcons();
 	void HUDInit();
 	void HUDInGamePostUpdate(float frametime);

@@ -128,6 +128,24 @@ bool CTOSZeusModule::OnInputEvent(const SInputEvent& event)
 			}
 			else if (event.state == eIS_Released)
 			{
+				if (m_altModifier)
+				{
+					for (auto it = m_selectedEntities.cbegin(); it != m_selectedEntities.cend(); it++)
+					{
+						const bool movedOnHeight = m_draggingDelta.len() > 1;
+
+						auto pVehicle = TOS_GET_VEHICLE(*it);
+						if (pVehicle && movedOnHeight)
+						{
+							SVehicleMovementEventParams params;
+							params.fValue = pVehicle->GetEntity()->GetWorldPos().z; // желаемая высота
+
+							TOS_Vehicle::BroadcastMovementEvent(pVehicle, IVehicleMovement::eVME_WarmUpEngine, params);
+						}
+					}
+
+				}
+
 				m_altModifier = false;
 			}
 		}
@@ -1083,84 +1101,7 @@ void CTOSZeusModule::Update(float frametime)
 		if (!pClientActor)
 			return;
 
-		IEntityItPtr pIt = gEnv->pEntitySystem->GetEntityIterator();
-		while (!pIt->IsEnd())
-		{
-			int color = eFTI_Grey;
-			int icon = eZSI_Base;
-
-			if (IEntity* pEntity = pIt->Next())
-			{
-				const auto id = pEntity->GetId();
-
-				if (!SelectionFilter(id))
-					continue;
-
-				if (pEntity->IsGarbage())
-					continue;
-
-				if (pEntity->IsHidden())
-				{
-					const auto selectedIter = stl::binary_find(m_selectedEntities.cbegin(), m_selectedEntities.cend(), id);
-					const bool selected = selectedIter != m_selectedEntities.cend();
-					if (!(m_copying && selected))
-					{
-						continue;
-					}
-				}
-
-				if (!IsPhysicsAllowed(pEntity))
-					continue;
-
-				// пропускаем сущность актера клиента
-				if (id == pClientActor->GetEntityId())
-					continue;
-
-				AABB worldBounds;
-				pEntity->GetWorldBounds(worldBounds);
-
-				//skip further calculations if the entity is not visible at all...
-				if (gEnv->pSystem->GetViewCamera().IsAABBVisible_F(worldBounds) == CULL_EXCLUSION)
-					continue;
-
-				IVehicle* pVehicle = g_pGame->GetIGameFramework()->GetIVehicleSystem()->GetVehicle(id);
-				if (pVehicle)
-				{
-					//TODO Танк, VTOL!
-					const auto movType = pVehicle->GetMovement()->GetMovementType();
-					if (movType == IVehicleMovement::eVMT_Land)
-						icon = eZSI_Car;
-					else if (movType == IVehicleMovement::eVMT_Air)
-						icon = eZSI_Helicopter;
-					else if (movType == IVehicleMovement::eVMT_Sea || IVehicleMovement::eVMT_Amphibious)
-						icon = eZSI_Boat;
-
-					// не пустые тс должны быть желтые
-					if (pVehicle->GetStatus().passengerCount > 0)
-						color = eFTI_Yellow;
-
-					if (pVehicle->IsDestroyed())
-						color = eFTI_Grey;
-				}
-
-				const IActor* pActor = g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(id);
-				if (pActor)
-				{
-					icon = eZSI_Unit;
-
-					if (pActor->GetHealth() > 0)
-						color = eFTI_Yellow;
-				}
-
-				const IItem* pItem = g_pGame->GetIGameFramework()->GetIItemSystem()->GetItem(id);
-				if (pItem)
-				{
-					icon = eZSI_Circle;
-				}
-
-				HUDUpdateZeusUnitIcon(id, color, icon, Vec3(0, 0, 0));
-			}
-		}
+		UpdateOnScreenIcons(pClientActor);
 	}
 
 	// Отрисовка квадрата выделенных сущностей
@@ -1177,6 +1118,92 @@ void CTOSZeusModule::Update(float frametime)
 	// Отрисовка отладки
 	///////////////////////////////////////////////////////////////////////
 	UpdateDebug(zeusMoving, zeus_dyn.v);
+}
+
+void CTOSZeusModule::UpdateOnScreenIcons(IActor* pClientActor)
+{
+	IEntityItPtr pIt = gEnv->pEntitySystem->GetEntityIterator();
+	while (!pIt->IsEnd())
+	{
+		int color = eFTI_Grey;
+		int icon = eZSI_Base;
+
+		if (IEntity* pEntity = pIt->Next())
+		{
+			const auto id = pEntity->GetId();
+
+			if (!SelectionFilter(id))
+				continue;
+
+			if (pEntity->IsGarbage())
+				continue;
+
+			if (pEntity->IsHidden())
+			{
+				const auto selectedIter = stl::binary_find(m_selectedEntities.cbegin(), m_selectedEntities.cend(), id);
+				const bool selected = selectedIter != m_selectedEntities.cend();
+				if (!(m_copying && selected))
+				{
+					continue;
+				}
+			}
+
+			if (!IsPhysicsAllowed(pEntity))
+				continue;
+
+			// пропускаем сущность актера клиента
+			if (id == pClientActor->GetEntityId())
+				continue;
+
+			AABB worldBounds;
+			pEntity->GetWorldBounds(worldBounds);
+
+			//skip further calculations if the entity is not visible at all...
+			if (gEnv->pSystem->GetViewCamera().IsAABBVisible_F(worldBounds) == CULL_EXCLUSION)
+				continue;
+
+			IVehicle* pVehicle = TOS_GET_VEHICLE(id);
+			if (pVehicle)
+			{
+				//TODO Танк, VTOL!
+				const auto movType = pVehicle->GetMovement()->GetMovementType();
+				if (movType == IVehicleMovement::eVMT_Land)
+					icon = eZSI_Car;
+				else if (movType == IVehicleMovement::eVMT_Air)
+					icon = eZSI_Helicopter;
+				else if (movType == IVehicleMovement::eVMT_Sea || IVehicleMovement::eVMT_Amphibious)
+					icon = eZSI_Boat;
+
+				// не пустые тс должны быть желтые
+				if (pVehicle->GetStatus().passengerCount > 0)
+					color = eFTI_Yellow;
+
+				if (pVehicle->IsDestroyed())
+					color = eFTI_Grey;
+			}
+
+			const IActor* pActor = TOS_GET_ACTOR(id);
+			if (pActor)
+			{
+				icon = eZSI_Unit;
+
+				if (pActor->GetHealth() > 0)
+					color = eFTI_Yellow;
+
+				auto pLinkedVehicle = TOS_Vehicle::GetVehicle(pActor);
+				if (pLinkedVehicle)
+					continue;
+			}
+
+			const IItem* pItem = g_pGame->GetIGameFramework()->GetIItemSystem()->GetItem(id);
+			if (pItem)
+			{
+				icon = eZSI_Circle;
+			}
+
+			HUDUpdateOnScreenIcon(id, color, icon, Vec3(0, 0, 0));
+		}
+	}
 }
 
 void CTOSZeusModule::UpdateDebug(bool zeusMoving, const Vec3& zeusDynVec)
