@@ -391,6 +391,15 @@ private:
 	int m_mapRadarRadius[NUM_MAP_TEXTURES];
 	//player coords helper for MP
 	string m_lastPlayerCoords;
+
+	//TheOtherSide
+public:
+	// Переводит из 0..1 координат на миникарте в мировые координаты
+	bool TOSGetWorldPosFromMap(float flashX, float flashY, float& worldX, float& worldY, bool flashCoordinates);
+
+	// Переводит flashX и flashY из 0..508 (размер PDA миникарты) в 0..1, которые эквивалентны значениям из GetPosOnMap
+	void TOSNormalizeFlashIconPos(double flashX, double flashY, float& normalizedX, float& normalizedY, const Vec3& offset, float fMapSize) const;
+	//~TheOtherSide
 };
 
 //-----------------------------------------------------------------------------------------------------

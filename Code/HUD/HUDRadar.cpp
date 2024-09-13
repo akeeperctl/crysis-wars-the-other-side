@@ -35,7 +35,43 @@ History:
 #include "NetInputChainDebug.h"
 #include "TheOtherSideMP/Actors/Player/TOSPlayer.h"
 #include "TheOtherSideMP/Helpers/TOS_Console.h"
-//TheOtherSide
+
+void CHUDRadar::TOSNormalizeFlashIconPos(double flashX, double flashY, float& normalizedX, float& normalizedY, const Vec3& offset, float fMapSize) const
+{
+	normalizedX = 0.5f + fMapSize / 2 - fMapSize / 2 - ((flashX - m_vPDAMapTranslation.x - offset.x) / fMapSize);
+	normalizedY = 0.5f + fMapSize / 2 - fMapSize / 2 - ((flashY - m_vPDAMapTranslation.y - offset.y) / fMapSize);
+}
+
+
+bool CHUDRadar::TOSGetWorldPosFromMap(float flashX, float flashY, float& worldX, float& worldY, bool flashCoordinates)
+{
+	// Если входящие координаты были переведены в доли экрана, преобразуем обратно
+	if (flashCoordinates)
+	{
+		flashX = flashX * static_cast<float>(m_mapDimX) + static_cast<float>(m_startOnScreenX);
+		flashY = flashY * static_cast<float>(m_mapDimY) + static_cast<float>(m_startOnScreenY);
+	}
+
+	// Преобразуем экранные координаты обратно в координаты на карте
+	float posX = (flashX - static_cast<float>(m_startOnScreenX)) / (static_cast<float>(m_mapDimX) * m_mapDivX);
+	float posY = (flashY - static_cast<float>(m_startOnScreenY)) / (static_cast<float>(m_mapDimY) * m_mapDivY);
+
+	// Снова поменяем posX и posY местами
+	float temp = posX;
+	posX = posY;
+	posY = temp;
+
+	// Преобразуем координаты posX и posY обратно в оригинальные inX и inY
+	worldX = posX + std::min(static_cast<float>(m_miniMapStartX[m_mapId]), static_cast<float>(m_miniMapEndX[m_mapId]));
+	worldY = posY + std::min(static_cast<float>(m_miniMapStartY[m_mapId]), static_cast<float>(m_miniMapEndY[m_mapId]));
+
+	// Гарантируем, что координаты остаются в пределах миникарты
+	worldX = std::max(0.0f, worldX);
+	worldY = std::max(0.0f, worldY);
+
+	return true;
+}
+//~TheOtherSide
 
 #define RANDOM() ((((float)cry_rand()/(float)RAND_MAX)*2.0f)-1.0f)
 const float COMPASS_EPSILON = (0.01f);
@@ -425,7 +461,7 @@ void CHUDRadar::Update(float fDeltaTime)
 		m_lastScan = now;
 	}
 
-	//*********************************MAIN ENTITY UPDATE*************************
+	//**************MAIN ENTITY UPDATE*************************
 	UpdateRadarEntities(pActor, fRadius, playerViewMtxInverted, numOfValues, &entityValues);
 	//****************************************************************************
 
@@ -767,7 +803,7 @@ float CHUDRadar::GetRadarRotation(CActor* actor)
 
 //-----------------------------------------------------------------------------------------------------
 
-void CHUDRadar::UpdateMinimapEntities(CActor* pActor, float& fRadius, Matrix34& playerViewMtxInverted, int& numOfValues, ArrayFillHelper<double, FVAT_Double, NUM_ARRAY_FILL_HELPER_SIZE>* entityValues)
+void CHUDRadar::UpdateRadarEntities(CActor* pActor, float& fRadius, Matrix34& playerViewMtxInverted, int& numOfValues, ArrayFillHelper<double, FVAT_Double, NUM_ARRAY_FILL_HELPER_SIZE>* entityValues)
 {
 	float fCos = cosf(m_fTime);
 	float lowerBoundX = m_fX - fRadarSizeOverTwo; //used for flash radar position computation
@@ -1071,9 +1107,15 @@ void CHUDRadar::UpdateMinimapEntities(CActor* pActor, float& fRadius, Matrix34& 
 
 			//draw entity
 			float lowerBoundY = m_fY - fRadarSizeOverTwo;
-			float dimX        = (m_fX + fRadarSizeOverTwo) - lowerBoundX;
-			float dimY        = (m_fY + fRadarSizeOverTwo) - lowerBoundY;
-			numOfValues += ::FillUpDoubleArray(entityValues, pEntity->GetId(), ChooseType(pEntity, true), (fX - lowerBoundX) / dimX, (fY - lowerBoundY) / dimY, 180.0f + RAD2DEG(fAngle), friendly, sizeScale * 25.0f, fAlpha * 100.0f);
+			float dimX = (m_fX + fRadarSizeOverTwo) - lowerBoundX;
+			float dimY = (m_fY + fRadarSizeOverTwo) - lowerBoundY;
+
+			//TheOtherSide
+			float x = (fX - lowerBoundX) / dimX;
+			float y = (fY - lowerBoundY) / dimY;
+			//~TheOtherSide
+
+			numOfValues += ::FillUpDoubleArray(entityValues, pEntity->GetId(), ChooseType(pEntity, true), x, y, 180.0f + RAD2DEG(fAngle), friendly, sizeScale * 25.0f, fAlpha * 100.0f);
 		}
 	}
 }
@@ -1623,7 +1665,33 @@ bool CHUDRadar::GetPosOnMap(IEntity* pEntity, float& outX, float& outY, bool fla
 	if (pos.IsZero())
 		pos = pEntity->GetWorldPos();
 
-	return GetPosOnMap(pos.x, pos.y, outX, outY, flashCoordinates);
+	//TheOtherSide
+	//return GetPosOnMap(pos.x, pos.y, outX, outY, flashCoordinates);
+	bool result = GetPosOnMap(pos.x, pos.y, outX, outY, flashCoordinates);
+
+	//float worldX = 0;
+	//float worldY = 0;
+	//GetWorldPosFromMap(outX, outY, worldX, worldY, flashCoordinates);
+	//Vec3 realWorldPos = pEntity->GetWorldPos();
+
+	//int terrainSize = GetISystem()->GetI3DEngine()->GetTerrainSize();
+	//int heightMapUnitSize = GetISystem()->GetI3DEngine()->GetHeightMapUnitSize();
+
+	//IPersistantDebug* pPD = gEnv->pGame->GetIGameFramework()->GetIPersistantDebug();
+	//pPD->Begin("TOSMap", true);
+	//pPD->AddText(400, 400, 1.3f, ColorF(1, 1, 1, 1), 15.0f, "%s flash(%i) on   minimap (%f, %f)", pEntity->GetName(), flashCoordinates, outX, outY);
+	//pPD->AddText(400, 420, 1.3f, ColorF(1, 1, 1, 1), 15.0f, "%s flash(%i) from minimap (%f, %f)", pEntity->GetName(), flashCoordinates, worldX, worldY);
+	//pPD->AddText(400, 440, 1.3f, ColorF(1, 1, 1, 1), 15.0f, "%s coords from real world (%f, %f)", pEntity->GetName(), realWorldPos.x, realWorldPos.y);
+	//pPD->AddText(400, 460, 1.3f, ColorF(1, 1, 1, 1), 15.0f, "m_mapDivX, m_mapDivY      (%f, %f)", m_mapDivX, m_mapDivY);
+	//pPD->AddText(400, 480, 1.3f, ColorF(1, 1, 1, 1), 15.0f, "m_mapDimX, m_mapDimY      (%i, %i)", m_mapDimX, m_mapDimY);
+	//pPD->AddText(400, 500, 1.3f, ColorF(1, 1, 1, 1), 15.0f, "m_miniMapStartX, m_miniMapStartY   (%i, %i)", m_miniMapStartX[m_mapId], m_miniMapStartY[m_mapId]);
+	//pPD->AddText(400, 520, 1.3f, ColorF(1, 1, 1, 1), 15.0f, "m_miniMapEndX, m_miniMapEndY       (%i, %i)", m_miniMapEndX[m_mapId], m_miniMapEndY[m_mapId]);
+	//pPD->AddText(400, 540, 1.3f, ColorF(1, 1, 1, 1), 15.0f, "m_startOnScreenX, m_startOnScreenY (%i, %i)", m_startOnScreenX, m_startOnScreenY);
+	//pPD->AddText(400, 560, 1.3f, ColorF(1, 1, 1, 1), 15.0f, "terrainSize                      (%i)", terrainSize);
+	//pPD->AddText(400, 580, 1.3f, ColorF(1, 1, 1, 1), 15.0f, "heightMapUnitSize                (%i)", heightMapUnitSize);
+
+	return result;
+	//~TheOtherSide
 }
 
 //---------------------------------- -------------------------------------------------------------------
@@ -2375,14 +2443,43 @@ void CHUDRadar::ComputePositioning(Vec2 playerpos, std::vector<double>* doubleAr
 		value = (vMapPos.x + vOffset.x) + fStep * 4.0f - fOffsetX;
 	}
 
+	IPersistantDebug* pPD = gEnv->pGame->GetIGameFramework()->GetIPersistantDebug();
+	pPD->Begin("TOSMinimap", true);
+
 	//calculate icon positions
 	for (int i(0); i < doubleArray->size(); i += 11)
 	{
 		if (doubleArray->size() > i + 6)
 		{
-			(*doubleArray)[i + 2] = 254.0f - ((playerpos.x - (*doubleArray)[i + 2]) * fMapSize) + m_vPDAMapTranslation.x + vOffset.x;
-			(*doubleArray)[i + 3] = 254.0f - ((playerpos.y - (*doubleArray)[i + 3]) * fMapSize) + m_vPDAMapTranslation.y + vOffset.y;
+			auto x = (*doubleArray)[i + 2] = 254.0f - ((playerpos.x - (*doubleArray)[i + 2]) * fMapSize) + m_vPDAMapTranslation.x + vOffset.x;
+			auto y = (*doubleArray)[i + 3] = 254.0f - ((playerpos.y - (*doubleArray)[i + 3]) * fMapSize) + m_vPDAMapTranslation.y + vOffset.y;
 			(*doubleArray)[i + 6] = (*doubleArray)[i + 6] * (m_fPDAZoomFactor + 2.0f) * 0.25f;
+
+			//TheOtherSide
+			//EntityId id = (*doubleArray)[i];
+
+			//float normX = 0.0f;
+			//float normY = 0.0f;
+			//NormalizeFlashIconPos(playerpos.x, playerpos.y, normX, normY, vOffset, fMapSize);
+
+			//auto pEntity = gEnv->pEntitySystem->GetEntity(id);
+			//if (pEntity)
+			//{
+			//	Vec3 realWPos = pEntity->GetWorldPos();
+			//	Vec3 WPosFromMap(ZERO);
+			//	GetWorldPosFromMap(normX, normY, WPosFromMap.x, WPosFromMap.y, true);
+
+			//	pPD->AddText(400, 60, 1.3f, ColorF(1, 1, 1, 1), 15.f, "invertedPlayerPos =(%f,%f)", normX, normY);
+			//	pPD->AddText(400, 80, 1.3f, ColorF(1, 1, 1, 1), 15.f, "playerpos =        (%f,%f)", playerpos.x, playerpos.y);
+			//	pPD->AddText(400, 100, 1.3f, ColorF(1, 1, 1, 1), 15.f, "WPosFromMap =      (%f,%f)", WPosFromMap.x, WPosFromMap.y);
+			//	pPD->AddText(400, 120, 1.3f, ColorF(1, 1, 1, 1), 15.f, "WPosReal =         (%f,%f)", realWPos.x, realWPos.y);
+			//	pPD->AddText(400, 140, 1.3f, ColorF(1, 1, 1, 1), 15.f, "$s icon x,y = (%lf,%lf)", pEntity->GetName(), x, y);
+			//	pPD->AddText(400, 160, 1.3f, ColorF(1, 1, 1, 1), 15.f, "fMapSize = (%f)", fMapSize);
+			//	pPD->AddText(400, 180, 1.3f, ColorF(1, 1, 1, 1), 15.f, "m_vPDAMapTranslation = (%f,%f)", m_vPDAMapTranslation.x, m_vPDAMapTranslation.y);
+			//	pPD->AddText(400, 200, 1.3f, ColorF(1, 1, 1, 1), 15.f, "m_fPDAZoomFactor = (%f)", m_fPDAZoomFactor);
+			//	pPD->AddText(400, 220, 1.3f, ColorF(1, 1, 1, 1), 15.f, "vOffset = (%f, %f)", vOffset.x, vOffset.y);
+			//}
+			//~TheOtherSide
 		}
 	}
 	if (m_bDragMap)
