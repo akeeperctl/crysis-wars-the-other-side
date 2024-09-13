@@ -18,36 +18,30 @@ namespace TOS_Vehicle
 		pMovement->OnEvent(event, params);
 	}
 
-
-	inline void Exit(const IActor* pActor, bool transitionEnabled, bool force, Vec3 exitPos = Vec3(0, 0, 0))
-	{
-		if (!pActor)
-			return;
-
-		const auto pVeh = pActor->GetLinkedVehicle();
-		if (!pVeh)
-			return;
-
-		const auto pSeat = pVeh->GetSeatForPassenger(pActor->GetEntityId());
-		if (!pSeat)
-			return;
-
-		pSeat->Exit(transitionEnabled, force, exitPos);
-	}
-
-	inline int RequestFreeSeatIndex(const IVehicle* pVehicle)
+	inline int RequestFreeSeatIndex(IVehicle* pVehicle)
 	{
 		auto freeSeatIndex = -1;
 
 		if (pVehicle)
 		{
-			HSCRIPTFUNCTION RequestSeatFunc = nullptr;
-			const auto      pTable = pVehicle->GetEntity()->GetScriptTable();
+			//HSCRIPTFUNCTION RequestSeatFunc = nullptr;
+			//const auto      pTable = pVehicle->GetEntity()->GetScriptTable();
 
-			if (pTable && pTable->GetValue("RequestSeat", RequestSeatFunc))
+			//if (pTable && pTable->GetValue("TOSRequestSeat", RequestSeatFunc))
+			//{
+			//	Script::CallReturn(gEnv->pScriptSystem, RequestSeatFunc, pTable, freeSeatIndex);
+			//	gEnv->pScriptSystem->ReleaseFunc(RequestSeatFunc);
+			//}
+
+			const int seatCount = pVehicle->GetSeatCount();
+			for (int i = 0; i <= seatCount; i++)
 			{
-				Script::CallReturn(gEnv->pScriptSystem, RequestSeatFunc, pTable, freeSeatIndex);
-				gEnv->pScriptSystem->ReleaseFunc(RequestSeatFunc);
+				auto pSeat = pVehicle->GetSeatById(i);
+				if (pSeat && pSeat->GetPassenger() == 0)
+				{
+					freeSeatIndex = i;
+					break;
+				}
 			}
 		}
 
@@ -66,7 +60,7 @@ namespace TOS_Vehicle
 			HSCRIPTFUNCTION RequestSeatFunc = nullptr;
 			const auto      pTable = pVehicle->GetEntity()->GetScriptTable();
 
-			if (pTable && pTable->GetValue("RequestGunnerSeat", RequestSeatFunc))
+			if (pTable && pTable->GetValue("TOSRequestGunnerSeat", RequestSeatFunc))
 			{
 				Script::CallReturn(gEnv->pScriptSystem, RequestSeatFunc, pTable, gunnerSeatIndex);
 				gEnv->pScriptSystem->ReleaseFunc(RequestSeatFunc);
@@ -75,10 +69,66 @@ namespace TOS_Vehicle
 			}
 		}
 
-		if (gunnerSeatIndex == -1)
-			CryLogAlways("%s[C++][WARNING][RequestGunnerSeatIndex return -1]", TOS_COLOR_YELLOW);
+		//if (gunnerSeatIndex == -1)
+		//	CryLogAlways("%s[C++][WARNING][RequestGunnerSeatIndex return -1]", TOS_COLOR_YELLOW);
 
 		return gunnerSeatIndex;
+	}
+
+	inline void Exit(const IActor* pActor, bool transitionEnabled, bool force, Vec3 exitPos = Vec3(0, 0, 0))
+	{
+		if (!pActor)
+			return;
+
+		const auto pVeh = pActor->GetLinkedVehicle();
+		if (!pVeh)
+			return;
+
+		const auto pSeat = pVeh->GetSeatForPassenger(pActor->GetEntityId());
+		if (!pSeat)
+			return;
+
+		pSeat->Exit(transitionEnabled, force, exitPos);
+	}
+
+	inline bool Enter(const IActor* pActor, IVehicle* pVehicle, bool fast)
+	{
+		if (!pActor || !pActor->GetEntity() || pActor && pActor->GetHealth() < 0)
+			return false;
+
+		if (!pVehicle || pVehicle && pVehicle->IsDestroyed())
+			return false;
+
+		const int seatIndex = RequestFreeSeatIndex(pVehicle);
+		auto pSeat = pVehicle->GetSeatById(seatIndex);
+		auto pActorAI = pActor->GetEntity()->GetAI();
+
+		if (pActor->IsPlayer() || fast)
+		{
+			HSCRIPTFUNCTION EnterVehicle = nullptr;
+			auto pTable = pVehicle->GetEntity()->GetScriptTable();
+			if (pTable && pTable->GetValue("EnterVehicle", EnterVehicle))
+			{
+				if (pSeat)
+				{
+					pSeat->Enter(pActor->GetEntityId(), false);
+					Script::CallMethod(pTable, EnterVehicle, ScriptHandle(pActor->GetEntityId()), seatIndex, true);
+					gEnv->pScriptSystem->ReleaseFunc(EnterVehicle);
+				}
+			}
+		}
+		else if (gEnv->bServer && gEnv->pAISystem && pActorAI)
+		{
+			IAISignalExtraData* pData = gEnv->pAISystem->CreateSignalExtraData();
+
+			pData->fValue = (float)seatIndex;
+			pData->nID = pVehicle->GetEntityId();
+			pData->iValue2 = false;
+			pActorAI->CastToIAIActor()->SetSignal(10, "ACT_ENTERVEHICLE", pActor->GetEntity(), pData);
+		}
+
+
+		return true;
 	}
 
 	inline bool ActorIsPassenger(const IActor* pActor)

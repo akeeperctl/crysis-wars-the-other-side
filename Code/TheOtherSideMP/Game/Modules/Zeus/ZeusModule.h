@@ -154,6 +154,13 @@ private:
 	/// @return 0 - попаданий не было, > 0 - есть попадания
 	int	MouseProjectToWorld(ray_hit& ray, const Vec3& mouseWorldPos, uint entityFlags);
 
+	/// @brief Обновляет позицию перетаскиваемого объекта.
+	/// @param id Идентификатор перетаскиваемого объекта.
+	/// @param pClickedEntity Указатель на объект, на который щелкнули.
+	/// @param pZeusPhys Указатель на физический объект Зевса.
+	/// @param container Карта, содержащая позиции всех перетаскиваемых объектов.
+	/// @param heightAutoCalc Флаг, указывающий, нужно ли автоматически вычислять высоту перетаскиваемого объекта.
+	/// @return true, если обновление прошло успешно, иначе false.
 	bool UpdateDraggedEntity(EntityId id, const IEntity* pClickedEntity, IPhysicalEntity* pZeusPhys, std::map<EntityId, SOBBWorldPos*>& container, bool heightAutoCalc);
 
 	/// Можно ли выбрать сущности выделением нескольких сразу?
@@ -224,6 +231,7 @@ private:
 	EntityId m_mouseOveredEntityId;
 	EntityId m_curClickedEntityId;
 	EntityId m_lastClickedEntityId;
+	EntityId m_dragTargetId; // Сущность на которую перетаскивают
 
 	float m_updateIconOnScreenTimer;
 	float m_draggingMoveStartTimer; /// Таймер начала перемещения сущностей после включения перетаскивания

@@ -40,6 +40,7 @@ CTOSZeusModule::CTOSZeusModule()
 	m_draggingDelta(ZERO),
 	m_lastClickedEntityId(0),
 	m_curClickedEntityId(0),
+	m_dragTargetId(0),
 	m_mouseOveredEntityId(0),
 	m_mouseDownDurationSec(0),
 	m_draggingMoveStartTimer(0),
@@ -93,6 +94,7 @@ void CTOSZeusModule::Reset()
 	m_storedEntitiesPositions.clear();
 	m_boxes.clear();
 	m_lastClickedEntityId = m_curClickedEntityId = 0;
+	m_dragTargetId = 0;
 	m_mouseOveredEntityId = 0;
 	m_updateIconOnScreenTimer = TOS_Console::GetSafeFloatVar("tos_sv_zeus_on_screen_update_delay", 0);
 }
@@ -623,16 +625,34 @@ void CTOSZeusModule::OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eH
 
 				if (m_dragging)
 				{
+
 					for (auto it = m_selectedEntities.begin(); it != m_selectedEntities.end(); it++)
 					{
 						auto pEntity = TOS_GET_ENTITY(*it);
 						if (!pEntity)
 							continue;
 
-						// Применяем сдвинутые позиции боксов на сущности
-						const auto pBox = m_boxes[pEntity->GetId()];
-						pEntity->SetWorldTM(Matrix34::CreateTranslationMat(pBox->wPos));
-						pEntity->SetRotation(Quat(pBox->obb.m33));
+						bool needMoveBoxes = true;
+
+						const auto pDragTarget = TOS_GET_ENTITY(m_dragTargetId);
+						if (pDragTarget)
+						{
+							IActor* pSelectedActor = TOS_GET_ACTOR(*it);
+							if (pSelectedActor)
+							{
+								IVehicle* pDragVehicleTarget = TOS_GET_VEHICLE(pDragTarget->GetId());
+								if (pDragVehicleTarget && TOS_Vehicle::Enter(pSelectedActor, pDragVehicleTarget, true))
+									needMoveBoxes = false;
+							}
+						}
+
+						if (needMoveBoxes)
+						{
+							// Применяем сдвинутые позиции боксов на сущности
+							const auto pBox = m_boxes[pEntity->GetId()];
+							pEntity->SetWorldTM(Matrix34::CreateTranslationMat(pBox->wPos));
+							pEntity->SetRotation(Quat(pBox->obb.m33));
+						}
 
 						// Пинаем физику выделенных сущностей после того как закончили их перетаскивать
 						auto pPhys = pEntity->GetPhysics();
@@ -646,6 +666,7 @@ void CTOSZeusModule::OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eH
 					}
 				}
 
+				m_dragTargetId = 0;
 				m_dragging = false;
 			}
 			else if (eHardwareMouseEvent == HARDWAREMOUSEEVENT_MOVE)
@@ -1048,9 +1069,14 @@ void CTOSZeusModule::Update(float frametime)
 			if (!UpdateDraggedEntity(id, pClickedEntity, pZeusPhys, m_boxes, autoEntitiesHeight))
 				continue;
 		}
+
+		m_dragTargetId = GetMouseEntityId();
+		if (m_dragTargetId == m_curClickedEntityId)
+			m_dragTargetId = 0;
 	}
 	else if (!m_dragging)
 	{
+
 		for (auto it = m_selectedEntities.cbegin(); it != m_selectedEntities.cend(); it++)
 		{
 			const EntityId id = *it;
@@ -1060,7 +1086,6 @@ void CTOSZeusModule::Update(float frametime)
 				m_boxes[id]->wPos = pEntity->GetWorldPos();
 				m_boxes[id]->obb.m33 = Matrix33(pEntity->GetRotation());
 			}
-
 		}
 	}
 	else
@@ -1257,24 +1282,26 @@ void CTOSZeusModule::UpdateDebug(bool zeusMoving, const Vec3& zeusDynVec)
 
 	const auto pLastClickedEntity = TOS_GET_ENTITY(m_lastClickedEntityId);
 	const auto pCurrClickedEntity = TOS_GET_ENTITY(m_curClickedEntityId);
+	const auto pDragTargetEntity = TOS_GET_ENTITY(m_dragTargetId);
 	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 0, 1.3f, color, false, "lastClickedEntity = %s", pLastClickedEntity ? pLastClickedEntity->GetName() : "");
-	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 1, 1.3f, color, false, "currClickedEntity  = %s", pCurrClickedEntity ? pCurrClickedEntity->GetName() : "");
+	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 1, 1.3f, color, false, "currClickedEntity = %s", pCurrClickedEntity ? pCurrClickedEntity->GetName() : "");
+	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 2, 1.3f, color, false, "dragTargetEntity  = %s", pDragTargetEntity ? pDragTargetEntity->GetName() : "");
 
-	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 2, 1.3f, color, false, "m_draggingMoveStartTimer = %f", m_draggingMoveStartTimer);
+	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 3, 1.3f, color, false, "m_draggingMoveStartTimer = %f", m_draggingMoveStartTimer);
 
-	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 3, 1.3f, color, false, "m_mouseIPos = (%i, %i)", m_mouseIPos.x, m_mouseIPos.y);
-	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 4, 1.3f, color, false, "m_mouseDownDurationSec = %1.f", m_mouseDownDurationSec);
+	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 4, 1.3f, color, false, "m_mouseIPos = (%i, %i)", m_mouseIPos.x, m_mouseIPos.y);
+	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 5, 1.3f, color, false, "m_mouseDownDurationSec = %1.f", m_mouseDownDurationSec);
 
-	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 5, 1.3f, color, false, "m_doubleClick = %i", int(m_doubleClick));
-	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 6, 1.3f, color, false, "m_select = %i", int(m_select));
-	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 7, 1.3f, color, false, "m_dragging = %i", int(m_dragging));
-	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 8, 1.3f, color, false, "m_copying = %i", int(m_copying));
-	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 9, 1.3f, color, false, "m_ctrlModifier = %i", int(m_ctrlModifier));
-	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 10, 1.3f, color, false, "m_altModifier = %i", int(m_altModifier));
-	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 11, 1.3f, color, false, "m_debugZModifier = %i", int(m_debugZModifier));
+	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 6, 1.3f, color, false, "m_doubleClick = %i", int(m_doubleClick));
+	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 7, 1.3f, color, false, "m_select = %i", int(m_select));
+	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 8, 1.3f, color, false, "m_dragging = %i", int(m_dragging));
+	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 9, 1.3f, color, false, "m_copying = %i", int(m_copying));
+	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 10, 1.3f, color, false, "m_ctrlModifier = %i", int(m_ctrlModifier));
+	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 11, 1.3f, color, false, "m_altModifier = %i", int(m_altModifier));
+	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 12, 1.3f, color, false, "m_debugZModifier = %i", int(m_debugZModifier));
 
-	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 12, 1.3f, color, false, "zeusDynVec = (%1.f,%1.f,%1.f)", zeusDynVec.x, zeusDynVec.y, zeusDynVec.z);
-	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 13, 1.3f, color, false, "zeusMoving = %i", zeusMoving);
+	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 13, 1.3f, color, false, "zeusDynVec = (%1.f,%1.f,%1.f)", zeusDynVec.x, zeusDynVec.y, zeusDynVec.z);
+	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 14, 1.3f, color, false, "zeusMoving = %i", zeusMoving);
 
 	if (!m_selectedEntities.empty())
 	{

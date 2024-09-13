@@ -123,7 +123,9 @@ void CTOSZeusModule::HUDUpdateOnScreenIcon(EntityId objective, int friendly, int
 	const int healthValue = 100;
 
 	const auto iter = stl::binary_find(m_selectedEntities.cbegin(), m_selectedEntities.cend(), objective);
-	const bool selected = iter != m_selectedEntities.cend();
+	bool selected = iter != m_selectedEntities.cend();
+	if (!selected && m_dragTargetId > 0)
+		selected = objective == m_dragTargetId;
 
 	SOnScreenIcon icon(objective, transX, transY, (int)iconType, friendly, fDist, fSize * fSize, -rotation, healthValue, (int)selected);
 
