@@ -40,16 +40,16 @@ History:
 #define RANDOM() ((((float)cry_rand()/(float)RAND_MAX)*2.0f)-1.0f)
 const float COMPASS_EPSILON = (0.01f);
 
-const static float fRadarSizeOverTwo   = 47.0f;
-const static float fEntitySize         = 4.0f;
-const static float fEntityMaxDistance  = fRadarSizeOverTwo - fEntitySize;
+const static float fRadarSizeOverTwo = 47.0f;
+const static float fEntitySize = 4.0f;
+const static float fEntityMaxDistance = fRadarSizeOverTwo - fEntitySize;
 const static float fRadarDefaultRadius = 75.0f;
 
 //-----------------------------------------------------------------------------------------------------
 
 CHUDRadar::CHUDRadar()
 {
-	m_pActorSystem   = gEnv->pGame->GetIGameFramework()->GetIActorSystem();
+	m_pActorSystem = gEnv->pGame->GetIGameFramework()->GetIActorSystem();
 	m_pVehicleSystem = gEnv->pGame->GetIGameFramework()->GetIVehicleSystem();
 
 	m_fX = 93.75f; // RadarCenterX in Flash * 800 (CryEngineRefSizeX) / 1024 (FlashRefSizeX)
@@ -67,44 +67,44 @@ CHUDRadar::CHUDRadar()
 
 	m_soundIdCounter = static_cast<unsigned>(1 << 26);
 
-	m_fLastViewRot           = m_fLastCompassRot = m_fLastStealthValue = m_fLastStealthValueStatic = m_fLastFov = -9999.99f;
-	m_lookAtObjectID         = 0;
-	m_lookAtTimer            = 0.0f;
-	m_scannerObjectID        = 0;
-	m_scannerTimer           = 0.0f;
-	m_scannerGatherTimer     = 0.50f;
-	m_startBroadScanTime     = .0f;
-	m_lastScan               = 0.0f;
-	m_jammingValue           = 0.0f;
-	m_jammerID               = 0;
-	m_jammerDisconnectMap    = false;
-	m_mapId                  = 0;
-	m_fPDAZoomFactor         = 1.0;
-	m_fPDATempZoomFactor     = 1.0;
-	m_vPDAMapTranslation     = Vec2(0, 0);
+	m_fLastViewRot = m_fLastCompassRot = m_fLastStealthValue = m_fLastStealthValueStatic = m_fLastFov = -9999.99f;
+	m_lookAtObjectID = 0;
+	m_lookAtTimer = 0.0f;
+	m_scannerObjectID = 0;
+	m_scannerTimer = 0.0f;
+	m_scannerGatherTimer = 0.50f;
+	m_startBroadScanTime = .0f;
+	m_lastScan = 0.0f;
+	m_jammingValue = 0.0f;
+	m_jammerID = 0;
+	m_jammerDisconnectMap = false;
+	m_mapId = 0;
+	m_fPDAZoomFactor = 1.0;
+	m_fPDATempZoomFactor = 1.0;
+	m_vPDAMapTranslation = Vec2(0, 0);
 	m_vPDATempMapTranslation = Vec2(0, 0);
-	m_bDragMap               = false;
-	m_fLastRadarRatio        = -1.0f;
+	m_bDragMap = false;
+	m_fLastRadarRatio = -1.0f;
 
 	for (int i = 0; i < NUM_MAP_TEXTURES; ++i)
 	{
-		m_miniMapStartX[i]  = m_miniMapStartY[i] = 0;
-		m_miniMapEndX[i]    = m_miniMapEndY[i]   = 2048;
+		m_miniMapStartX[i] = m_miniMapStartY[i] = 0;
+		m_miniMapEndX[i] = m_miniMapEndY[i] = 2048;
 		m_mapRadarRadius[i] = -1;
 	}
 
 	m_startOnScreenX = m_startOnScreenY = m_endOnScreenX = m_endOnScreenY = 0;
-	m_mapDivX        = m_mapDivY        = 1.0f;
-	m_mapDimX        = m_mapDimY        = 1;
+	m_mapDivX = m_mapDivY = 1.0f;
+	m_mapDimX = m_mapDimY = 1;
 
 	m_renderMiniMap = false;
 
-	m_bsRadius       = 0.0f;
+	m_bsRadius = 0.0f;
 	m_bsUseParameter = m_bsKeepEntries = false;
-	m_bsPosition     = Vec3(0, 0, 0);
+	m_bsPosition = Vec3(0, 0, 0);
 
-	m_flashPDA              = nullptr;
-	m_flashRadar            = nullptr;
+	m_flashPDA = nullptr;
+	m_flashRadar = nullptr;
 	m_iMultiplayerEnemyNear = 0;
 
 	m_pLevelData = nullptr;
@@ -121,37 +121,38 @@ CHUDRadar::CHUDRadar()
 	IEntityClassRegistry* pEntityClassRegistry = gEnv->pEntitySystem->GetClassRegistry();
 
 	//save some classes for comparison
-	m_pVTOL        = pEntityClassRegistry->FindClass("US_vtol");
-	m_pHeli        = pEntityClassRegistry->FindClass("Asian_helicopter");
-	m_pHunter      = pEntityClassRegistry->FindClass("Hunter");
-	m_pWarrior     = pEntityClassRegistry->FindClass("Alien_warrior");
-	m_pAlien       = pEntityClassRegistry->FindClass("Alien");
-	m_pTrooper     = pEntityClassRegistry->FindClass("Trooper");
+	m_pVTOL = pEntityClassRegistry->FindClass("US_vtol");
+	m_pHeli = pEntityClassRegistry->FindClass("Asian_helicopter");
+	m_pHunter = pEntityClassRegistry->FindClass("Hunter");
+	m_pWarrior = pEntityClassRegistry->FindClass("Alien_warrior");
+	m_pAlien = pEntityClassRegistry->FindClass("Alien");
+	m_pTrooper = pEntityClassRegistry->FindClass("Trooper");
 	m_pPlayerClass = pEntityClassRegistry->FindClass("Player");
-	m_pGrunt       = pEntityClassRegistry->FindClass("Grunt");
-	m_pScout       = pEntityClassRegistry->FindClass("Scout");
-	m_pTankUS      = pEntityClassRegistry->FindClass("US_tank");
-	m_pTankA       = pEntityClassRegistry->FindClass("Asian_tank");
-	m_pLTVUS       = pEntityClassRegistry->FindClass("US_ltv");
-	m_pLTVA        = pEntityClassRegistry->FindClass("Asian_ltv");
-	m_pAAA         = pEntityClassRegistry->FindClass("Asian_aaa");
-	m_pTruck       = pEntityClassRegistry->FindClass("Asian_truck");
-	m_pAPCUS       = pEntityClassRegistry->FindClass("US_apc");
-	m_pAPCA        = pEntityClassRegistry->FindClass("Asian_apc");
-	m_pBoatCiv     = pEntityClassRegistry->FindClass("Civ_speedboat");
-	m_pHover       = pEntityClassRegistry->FindClass("US_hovercraft");
-	m_pBoatUS      = pEntityClassRegistry->FindClass("US_smallboat");
-	m_pBoatA       = pEntityClassRegistry->FindClass("Asian_patrolboat");
-	m_pCarCiv      = pEntityClassRegistry->FindClass("Civ_car1");
-	m_pParachute   = pEntityClassRegistry->FindClass("Parachute");
-	m_pUSASV       = pEntityClassRegistry->FindClass("US_asv");
+	m_pGrunt = pEntityClassRegistry->FindClass("Grunt");
+	m_pScout = pEntityClassRegistry->FindClass("Scout");
+	m_pTankUS = pEntityClassRegistry->FindClass("US_tank");
+	m_pTankA = pEntityClassRegistry->FindClass("Asian_tank");
+	m_pLTVUS = pEntityClassRegistry->FindClass("US_ltv");
+	m_pLTVA = pEntityClassRegistry->FindClass("Asian_ltv");
+	m_pAAA = pEntityClassRegistry->FindClass("Asian_aaa");
+	m_pTruck = pEntityClassRegistry->FindClass("Asian_truck");
+	m_pAPCUS = pEntityClassRegistry->FindClass("US_apc");
+	m_pAPCA = pEntityClassRegistry->FindClass("Asian_apc");
+	m_pBoatCiv = pEntityClassRegistry->FindClass("Civ_speedboat");
+	m_pHover = pEntityClassRegistry->FindClass("US_hovercraft");
+	m_pBoatUS = pEntityClassRegistry->FindClass("US_smallboat");
+	m_pBoatA = pEntityClassRegistry->FindClass("Asian_patrolboat");
+	m_pCarCiv = pEntityClassRegistry->FindClass("Civ_car1");
+	m_pParachute = pEntityClassRegistry->FindClass("Parachute");
+	m_pUSASV = pEntityClassRegistry->FindClass("US_asv");
 
 	assert(m_pLTVA && m_pLTVUS && m_pTankA && m_pTankUS && m_pWarrior && m_pHunter && m_pAlien && m_pScout && m_pGrunt && m_pHeli && m_pVTOL && m_pAAA && m_pTruck && m_pAPCUS && m_pAPCA && m_pBoatCiv && m_pHover && m_pBoatUS && m_pBoatA && m_pCarCiv && m_pParachute && m_pUSASV);
 }
 
 //-----------------------------------------------------------------------------------------------------
 
-CHUDRadar::~CHUDRadar() {}
+CHUDRadar::~CHUDRadar()
+{}
 
 //-----------------------------------------------------------------------------------------------------
 
@@ -197,7 +198,7 @@ void CHUDRadar::AddStoryEntity(EntityId id, FlashRadarType type /* = EWayPoint *
 	IEntity* pEntity = gEnv->pEntitySystem->GetEntity(id);
 	if (pEntity)
 	{
-		std::vector<TempRadarEntity>::iterator it  = m_storyEntitiesOnRadar.begin();
+		std::vector<TempRadarEntity>::iterator it = m_storyEntitiesOnRadar.begin();
 		std::vector<TempRadarEntity>::iterator end = m_storyEntitiesOnRadar.end();
 		for (; it != end; ++it)
 		{
@@ -211,7 +212,7 @@ void CHUDRadar::AddStoryEntity(EntityId id, FlashRadarType type /* = EWayPoint *
 
 void CHUDRadar::RemoveStoryEntity(EntityId id)
 {
-	std::vector<TempRadarEntity>::iterator it  = m_storyEntitiesOnRadar.begin();
+	std::vector<TempRadarEntity>::iterator it = m_storyEntitiesOnRadar.begin();
 	std::vector<TempRadarEntity>::iterator end = m_storyEntitiesOnRadar.end();
 	for (; it != end; ++it)
 	{
@@ -225,7 +226,7 @@ void CHUDRadar::RemoveStoryEntity(EntityId id)
 
 void CHUDRadar::ShowSoundOnRadar(Vec3 pos, float intensity)
 {
-	intensity      = std::min(8.0f, intensity); //limit the size of the sound on radar ...
+	intensity = std::min(8.0f, intensity); //limit the size of the sound on radar ...
 	CActor* pActor = static_cast<CActor*>(gEnv->pGame->GetIGameFramework()->GetClientActor());
 	m_soundsOnRadar.push_back(RadarSound(pos, intensity, m_soundIdCounter++));
 
@@ -238,7 +239,7 @@ void CHUDRadar::ShowSoundOnRadar(Vec3 pos, float intensity)
 void CHUDRadar::RemoveFromRadar(EntityId id)
 {
 	{
-		std::deque<RadarEntity>::iterator it  = m_entitiesOnRadar.begin();
+		std::deque<RadarEntity>::iterator it = m_entitiesOnRadar.begin();
 		std::deque<RadarEntity>::iterator end = m_entitiesOnRadar.end();
 		for (; it != end; ++it)
 		{
@@ -291,7 +292,8 @@ struct ArrayFillHelper
 		: m_pFlashPlayer(pFlashPlayer),
 		m_varName(varName),
 		m_nIndex(0),
-		m_nValues(0) { }
+		m_nValues(0)
+	{}
 
 	~ArrayFillHelper()
 	{
@@ -316,7 +318,7 @@ struct ArrayFillHelper
 	}
 
 	IFlashPlayer* m_pFlashPlayer;
-	const char*   m_varName;
+	const char* m_varName;
 	int           m_nIndex;
 	int           m_nValues;
 	T             m_values[NUM_VALS];
@@ -373,7 +375,7 @@ void CHUDRadar::Update(float fDeltaTime)
 	ArrayFillHelper<double, FVAT_Double, NUM_ARRAY_FILL_HELPER_SIZE> entityValues(m_flashRadar->GetFlashPlayer(), "m_allValues");
 	int                                                              numOfValues = 0;
 
-	float now     = gEnv->pTimer->GetFrameStartTime().GetSeconds();
+	float now = gEnv->pTimer->GetFrameStartTime().GetSeconds();
 	float fRadius = fRadarDefaultRadius;
 	if (m_mapRadarRadius[m_mapId] > 2)
 		fRadius = static_cast<float>(m_mapRadarRadius[m_mapId]);
@@ -429,7 +431,7 @@ void CHUDRadar::Update(float fDeltaTime)
 
 	// Draw MissionObjectives or their target entities
 	// we draw after normal targets, so AI guys which are targets show up as Objective
-	std::map<EntityId, RadarObjective>::const_iterator it  = m_missionObjectives.begin();
+	std::map<EntityId, RadarObjective>::const_iterator it = m_missionObjectives.begin();
 	std::map<EntityId, RadarObjective>::const_iterator end = m_missionObjectives.end();
 	for (; it != end; ++it)
 	{
@@ -437,8 +439,8 @@ void CHUDRadar::Update(float fDeltaTime)
 		if (pEntity && !pEntity->IsHidden())
 		{
 			Vec3 vTransformed = pEntity->GetWorldPos();
-			vTransformed      = playerViewMtxInverted * vTransformed;
-			vTransformed.z    = 0;
+			vTransformed = playerViewMtxInverted * vTransformed;
+			vTransformed.z = 0;
 
 			float scaledX = (vTransformed.x / fRadius) * fEntityMaxDistance;
 			float scaledY = (vTransformed.y / fRadius) * fEntityMaxDistance;
@@ -446,17 +448,17 @@ void CHUDRadar::Update(float fDeltaTime)
 			vTransformed.Set(scaledX, scaledY, 0.0f);
 
 			FlashRadarFaction faction = ENeutral;
-			float             fAngle  = 0.0f;
+			float             fAngle = 0.0f;
 
-			float fX     = m_fX + vTransformed.x;
-			float fY     = m_fY - vTransformed.y;
+			float fX = m_fX + vTransformed.x;
+			float fY = m_fY - vTransformed.y;
 			float fAlpha = 0.75f;
 
 			Vec2 intersection;
 			if (!RadarBounds_Inside(Vec2(fX, fY), intersection))
 			{
-				fX      = intersection.x;
-				fY      = intersection.y;
+				fX = intersection.x;
+				fY = intersection.y;
 				faction = EFriend;
 			}
 
@@ -475,8 +477,8 @@ void CHUDRadar::Update(float fDeltaTime)
 
 			//in flash
 			float lowerBoundY = m_fY - fRadarSizeOverTwo;
-			float dimX        = (m_fX + fRadarSizeOverTwo) - lowerBoundX;
-			float dimY        = (m_fY + fRadarSizeOverTwo) - lowerBoundY;
+			float dimX = (m_fX + fRadarSizeOverTwo) - lowerBoundX;
+			float dimY = (m_fY + fRadarSizeOverTwo) - lowerBoundY;
 
 			numOfValues += ::FillUpDoubleArray(&entityValues, pEntity->GetId(), 5 /* MO */, (fX - lowerBoundX) / dimX, (fY - lowerBoundY) / dimY, 180 + RAD2DEG(fAngle), faction, 75.0f, fAlpha * 100.0f);
 		}
@@ -491,9 +493,9 @@ void CHUDRadar::Update(float fDeltaTime)
 
 		CGameRules* pGameRules = static_cast<CGameRules*>(gEnv->pGame->GetIGameFramework()->GetIGameRulesSystem()->GetCurrentGameRules());
 
-		float fX         = 0.0;
-		float fY         = 0.0;
-		float sizeScale  = 1.0;
+		float fX = 0.0;
+		float fY = 0.0;
+		float sizeScale = 1.0;
 		int   playerTeam = pGameRules->GetTeam(pActor->GetEntityId());
 
 		//now spawn points
@@ -523,8 +525,8 @@ void CHUDRadar::Update(float fDeltaTime)
 				}
 
 				Vec3 vTransformed = pEntity->GetWorldPos();
-				vTransformed      = playerViewMtxInverted * vTransformed;
-				vTransformed.z    = 0;
+				vTransformed = playerViewMtxInverted * vTransformed;
+				vTransformed.z = 0;
 
 				float scaledX = (vTransformed.x / fRadius) * fEntityMaxDistance;
 				float scaledY = (vTransformed.y / fRadius) * fEntityMaxDistance;
@@ -540,8 +542,8 @@ void CHUDRadar::Update(float fDeltaTime)
 
 				//in flash
 				float lowerBoundY = m_fY - fRadarSizeOverTwo;
-				float dimX        = (m_fX + fRadarSizeOverTwo) - lowerBoundX;
-				float dimY        = (m_fY + fRadarSizeOverTwo) - lowerBoundY;
+				float dimX = (m_fX + fRadarSizeOverTwo) - lowerBoundX;
+				float dimY = (m_fY + fRadarSizeOverTwo) - lowerBoundY;
 				numOfValues += ::FillUpDoubleArray(&entityValues, pEntity->GetId(), ESpawnPoint /*building entity*/, (fX - lowerBoundX) / dimX, (fY - lowerBoundY) / dimY, 0.0f, friendly, sizeScale * 100.0f, 100.0f);
 			}
 		}
@@ -556,8 +558,8 @@ void CHUDRadar::Update(float fDeltaTime)
 				if (pEntity)
 				{
 					Vec3 vTransformed = pEntity->GetWorldPos();
-					vTransformed      = playerViewMtxInverted * vTransformed;
-					vTransformed.z    = 0;
+					vTransformed = playerViewMtxInverted * vTransformed;
+					vTransformed.z = 0;
 
 					float scaledX = (vTransformed.x / fRadius) * fEntityMaxDistance;
 					float scaledY = (vTransformed.y / fRadius) * fEntityMaxDistance;
@@ -573,9 +575,9 @@ void CHUDRadar::Update(float fDeltaTime)
 
 					//in flash
 					float          lowerBoundY = m_fY - fRadarSizeOverTwo;
-					float          dimX        = (m_fX + fRadarSizeOverTwo) - lowerBoundX;
-					float          dimY        = (m_fY + fRadarSizeOverTwo) - lowerBoundY;
-					FlashRadarType type        = ChooseType(pEntity);
+					float          dimX = (m_fX + fRadarSizeOverTwo) - lowerBoundX;
+					float          dimY = (m_fY + fRadarSizeOverTwo) - lowerBoundY;
+					FlashRadarType type = ChooseType(pEntity);
 
 					if (type == EHeadquarter || type == EHeadquarter2)
 						continue;
@@ -589,7 +591,7 @@ void CHUDRadar::Update(float fDeltaTime)
 	//temp units on radar
 	for (int t = 0; t < m_tempEntitiesOnRadar.size(); ++t)
 	{
-		TempRadarEntity temp     = m_tempEntitiesOnRadar[t];
+		TempRadarEntity temp = m_tempEntitiesOnRadar[t];
 		float           diffTime = now - temp.m_spawnTime;
 		if (diffTime > temp.m_timeLimit || diffTime < 0.0f)
 		{
@@ -609,16 +611,16 @@ void CHUDRadar::Update(float fDeltaTime)
 			}
 
 			Vec3 vTransformed = pEntity->GetWorldPos();
-			vTransformed      = playerViewMtxInverted * vTransformed;
-			vTransformed.z    = 0;
+			vTransformed = playerViewMtxInverted * vTransformed;
+			vTransformed.z = 0;
 
 			float scaledX = (vTransformed.x / fRadius) * fEntityMaxDistance;
 			float scaledY = (vTransformed.y / fRadius) * fEntityMaxDistance;
 			vTransformed.Set(scaledX, scaledY, 0.0f);
 
 			float distSq = scaledX * scaledX + scaledY * scaledY;
-			float fX     = m_fX + vTransformed.x;
-			float fY     = m_fY - vTransformed.y;
+			float fX = m_fX + vTransformed.x;
+			float fY = m_fY - vTransformed.y;
 
 			Vec2 intersection;
 			if (!RadarBounds_Inside(Vec2(fX, fY), intersection))
@@ -627,14 +629,14 @@ void CHUDRadar::Update(float fDeltaTime)
 				fY = intersection.y;
 			}
 
-			float fAngle    = pActor->GetAngles().z - pEntity->GetWorldAngles().z;
-			float fAlpha    = 0.85f;
+			float fAngle = pActor->GetAngles().z - pEntity->GetWorldAngles().z;
+			float fAlpha = 0.85f;
 			float sizeScale = GetRadarSize(pEntity, pActor);
 
 			//in flash
 			float lowerBoundY = m_fY - fRadarSizeOverTwo;
-			float dimX        = (m_fX + fRadarSizeOverTwo) - lowerBoundX;
-			float dimY        = (m_fY + fRadarSizeOverTwo) - lowerBoundY;
+			float dimX = (m_fX + fRadarSizeOverTwo) - lowerBoundX;
+			float dimY = (m_fY + fRadarSizeOverTwo) - lowerBoundY;
 
 			int playerTeam = g_pGame->GetGameRules()->GetTeam(pActor->GetEntityId());
 
@@ -653,20 +655,20 @@ void CHUDRadar::Update(float fDeltaTime)
 			if (pEntity)
 			{
 				Vec3 vTransformed = pEntity->GetWorldPos();
-				vTransformed      = playerViewMtxInverted * vTransformed;
-				vTransformed.z    = 0;
+				vTransformed = playerViewMtxInverted * vTransformed;
+				vTransformed.z = 0;
 
 				if (vTransformed.len() > fEntityMaxDistance)
 					vTransformed.SetLength(fEntityMaxDistance);
 
-				float fX        = m_fX + vTransformed.x;
-				float fY        = m_fY - vTransformed.y;
+				float fX = m_fX + vTransformed.x;
+				float fY = m_fY - vTransformed.y;
 				float sizeScale = GetRadarSize(pEntity, pActor);
 
 				//in flash
 				float lowerBoundY = m_fY - fRadarSizeOverTwo;
-				float dimX        = (m_fX + fRadarSizeOverTwo) - lowerBoundX;
-				float dimY        = (m_fY + fRadarSizeOverTwo) - lowerBoundY;
+				float dimX = (m_fX + fRadarSizeOverTwo) - lowerBoundX;
+				float dimY = (m_fY + fRadarSizeOverTwo) - lowerBoundY;
 				numOfValues += ::FillUpDoubleArray(&entityValues, pEntity->GetId(), 7 /*tagged entity*/, (fX - lowerBoundX) / dimX, (fY - lowerBoundY) / dimY, 0.0f, 0, sizeScale * 100.0f, 100.0f);
 			}
 		}
@@ -675,7 +677,7 @@ void CHUDRadar::Update(float fDeltaTime)
 	//sounds on radar
 	for (int i = 0; i < m_soundsOnRadar.size(); ++i)
 	{
-		RadarSound temp     = m_soundsOnRadar[i];
+		RadarSound temp = m_soundsOnRadar[i];
 		float      diffTime = now - temp.m_spawnTime;
 		if (diffTime > 2.0f || diffTime < 0.0f) //show only 2 seconds (and catch errors)
 		{
@@ -684,7 +686,7 @@ void CHUDRadar::Update(float fDeltaTime)
 			continue;
 		}
 		Vec3 pos = temp.m_pos;
-		pos      = playerViewMtxInverted * pos;
+		pos = playerViewMtxInverted * pos;
 
 		float intensity = temp.m_intensity;
 		if (intensity > 4.0f)
@@ -700,8 +702,8 @@ void CHUDRadar::Update(float fDeltaTime)
 
 		float scaledX = (pos.x / fRadius) * fEntityMaxDistance;
 		float scaledY = (pos.y / fRadius) * fEntityMaxDistance;
-		float distSq  = (scaledX * scaledX + scaledY * scaledY) * 0.70f;
-		float size    = intensity * (4.0f + diffTime * 4.0f);
+		float distSq = (scaledX * scaledX + scaledY * scaledY) * 0.70f;
+		float size = intensity * (4.0f + diffTime * 4.0f);
 		if (size > fEntityMaxDistance)
 			continue;
 		if (distSq > (fEntityMaxDistance * fEntityMaxDistance * 1.5f))
@@ -710,8 +712,8 @@ void CHUDRadar::Update(float fDeltaTime)
 		float fY = m_fY - scaledY;
 		//in flash
 		float lowerBoundY = m_fY - fRadarSizeOverTwo;
-		float dimX        = (m_fX + fRadarSizeOverTwo) - lowerBoundX;
-		float dimY        = (m_fY + fRadarSizeOverTwo) - lowerBoundY;
+		float dimX = (m_fX + fRadarSizeOverTwo) - lowerBoundX;
+		float dimY = (m_fY + fRadarSizeOverTwo) - lowerBoundY;
 		numOfValues += ::FillUpDoubleArray(&entityValues, temp.m_id, 6 /*sound*/, (fX - lowerBoundX) / dimX, (fY - lowerBoundY) / dimY, 0.0f, 0, size * 10.0f, (1.0f - (0.5f * diffTime)) * 100.0f);
 	}
 	//render the mini map
@@ -765,9 +767,9 @@ float CHUDRadar::GetRadarRotation(CActor* actor)
 
 //-----------------------------------------------------------------------------------------------------
 
-void CHUDRadar::UpdateRadarEntities(CActor* pActor, float& fRadius, Matrix34& playerViewMtxInverted, int& numOfValues, ArrayFillHelper<double, FVAT_Double, NUM_ARRAY_FILL_HELPER_SIZE>* entityValues)
+void CHUDRadar::UpdateMinimapEntities(CActor* pActor, float& fRadius, Matrix34& playerViewMtxInverted, int& numOfValues, ArrayFillHelper<double, FVAT_Double, NUM_ARRAY_FILL_HELPER_SIZE>* entityValues)
 {
-	float fCos        = cosf(m_fTime);
+	float fCos = cosf(m_fTime);
 	float lowerBoundX = m_fX - fRadarSizeOverTwo; //used for flash radar position computation
 
 	//****************************************************************************
@@ -785,7 +787,7 @@ void CHUDRadar::UpdateRadarEntities(CActor* pActor, float& fRadius, Matrix34& pl
 
 	//extra vehicle checks
 	bool  inVehicle = false;
-	bool  inAAA     = false;
+	bool  inAAA = false;
 	float aaaDamage = 0.0f;
 	if (IVehicle* pVehicle = pActor->GetLinkedVehicle())
 	{
@@ -806,7 +808,7 @@ void CHUDRadar::UpdateRadarEntities(CActor* pActor, float& fRadius, Matrix34& pl
 	int amount = m_entitiesInProximity.size();
 	for (int i = 0; i < amount; ++i)
 	{
-		EntityId id      = m_entitiesInProximity[i];
+		EntityId id = m_entitiesInProximity[i];
 		IEntity* pEntity = gEnv->pEntitySystem->GetEntity(id);
 
 		if (pEntity)
@@ -825,11 +827,11 @@ void CHUDRadar::UpdateRadarEntities(CActor* pActor, float& fRadius, Matrix34& pl
 				continue;
 
 			//lets find out whether this entity belongs on the radar
-			bool isOnRadar          = false;
-			bool mate               = false;
+			bool isOnRadar = false;
+			bool mate = false;
 			bool unknownEnemyObject = false;
-			bool unknownEnemyActor  = false;
-			bool airPlaneInAAA      = false;
+			bool unknownEnemyActor = false;
+			bool airPlaneInAAA = false;
 
 			if (inAAA) //check whether it's an unknown, flying airplane when you are in an AAA (show all airplanes > 3m over ground)
 			{
@@ -855,17 +857,17 @@ void CHUDRadar::UpdateRadarEntities(CActor* pActor, float& fRadius, Matrix34& pl
 				isOnRadar = true;
 
 			if (!isOnRadar) //check whether it's an aggressive (non-vehicle) AI (in possible proximity),
-			//which is not yet on the radar
+				//which is not yet on the radar
 			{
 				IAIObject* pTemp = pEntity->GetAI();
 				if (pTemp && AIOBJECT_VEHICLE != pTemp->GetAIType() && pTemp->IsHostile(pActor->GetEntity()->GetAI(), false))
 				{
-					isOnRadar          = true;
+					isOnRadar = true;
 					unknownEnemyObject = true;
 				}
 				else if (tempActor && gEnv->bMultiplayer) //not teammate, not AI -> enemy!?
 				{
-					isOnRadar         = true;
+					isOnRadar = true;
 					unknownEnemyActor = true;
 				}
 			}
@@ -876,7 +878,7 @@ void CHUDRadar::UpdateRadarEntities(CActor* pActor, float& fRadius, Matrix34& pl
 			//**********************************************************************************************
 
 			Vec3 vTransformed = pEntity->GetWorldPos();
-			vTransformed      = playerViewMtxInverted * vTransformed;
+			vTransformed = playerViewMtxInverted * vTransformed;
 
 			//distance check********************************************************************************
 
@@ -885,8 +887,8 @@ void CHUDRadar::UpdateRadarEntities(CActor* pActor, float& fRadius, Matrix34& pl
 			vTransformed.z = 0;
 
 			float sizeScale = GetRadarSize(pEntity, pActor);
-			float scaledX   = (vTransformed.x / fRadius) * fEntityMaxDistance;
-			float scaledY   = (vTransformed.y / fRadius) * fEntityMaxDistance;
+			float scaledX = (vTransformed.x / fRadius) * fEntityMaxDistance;
+			float scaledY = (vTransformed.y / fRadius) * fEntityMaxDistance;
 
 			float fX = m_fX + scaledX;
 			float fY = m_fY - scaledY;
@@ -922,20 +924,20 @@ void CHUDRadar::UpdateRadarEntities(CActor* pActor, float& fRadius, Matrix34& pl
 
 			//AI Object
 			IAIObject* pAIObject = pEntity->GetAI();
-			int        friendly  = mate ? EFriend : ENeutral;
+			int        friendly = mate ? EFriend : ENeutral;
 			if (pAIObject)
 			{
 				bool checkDriver = false;
 				if (AIOBJECT_VEHICLE == pAIObject->GetAIType()) //switch to vehicle texture ?
-					if (IVehicle*         pVehicle = m_pVehicleSystem->GetVehicle(id))
-						if (IVehicleSeat* pSeat    = pVehicle->GetSeatById(1))
+					if (IVehicle* pVehicle = m_pVehicleSystem->GetVehicle(id))
+						if (IVehicleSeat* pSeat = pVehicle->GetSeatById(1))
 							if (pSeat->IsDriver())
 							{
 								EntityId driverId = pSeat->GetPassenger();
-								IEntity* temp     = gEnv->pEntitySystem->GetEntity(driverId);
+								IEntity* temp = gEnv->pEntitySystem->GetEntity(driverId);
 								if (temp && temp->GetAI())
 								{
-									pAIObject   = temp->GetAI(); //check the driver instead of the vehicle
+									pAIObject = temp->GetAI(); //check the driver instead of the vehicle
 									checkDriver = true;
 								}
 							}
@@ -965,12 +967,12 @@ void CHUDRadar::UpdateRadarEntities(CActor* pActor, float& fRadius, Matrix34& pl
 
 						if (1 == iAlertnessState)
 						{
-							fAlpha   = 0.65f + fCos * 0.35f;
+							fAlpha = 0.65f + fCos * 0.35f;
 							friendly = EAggressor;
 						}
 						else if (2 == iAlertnessState)
 						{
-							fAlpha   = 0.65f + fCos * 0.35f;
+							fAlpha = 0.65f + fCos * 0.35f;
 							friendly = ESelf;
 						}
 					}
@@ -1083,7 +1085,7 @@ void CHUDRadar::UpdateCompassStealth(CActor* pActor, float fDeltaTime)
 	IEntity* pPlayerEntity = pActor->GetEntity();
 
 	//**********************update flash radar values
-	float fStealthValue       = 0;
+	float fStealthValue = 0;
 	float fStealthValueStatic = 0;
 
 	//TheOtherSide
@@ -1107,18 +1109,18 @@ void CHUDRadar::UpdateCompassStealth(CActor* pActor, float fDeltaTime)
 		static int test = 0;
 		if (test == 0)
 		{
-			fStealthValue       = max(levels.puppetExposure, levels.puppetThreat) * 100.0f;
+			fStealthValue = max(levels.puppetExposure, levels.puppetThreat) * 100.0f;
 			fStealthValueStatic = max(levels.vehicleExposure, levels.vehicleThreat) * 100.0f;
 		}
 		else if (test == 1)
 		{
-			fStealthValue       = max(levels.vehicleThreat, levels.puppetThreat) * 100.0f;
+			fStealthValue = max(levels.vehicleThreat, levels.puppetThreat) * 100.0f;
 			fStealthValueStatic = levels.puppetExposure * 100.0f;
 		}
 	}
 	else if (g_pGameCVars->g_enableMPStealthOMeter && enableStealthOMeter && m_iMultiplayerEnemyNear)
 	{
-		fStealthValueStatic     = fStealthValue = m_iMultiplayerEnemyNear * 10.0f;
+		fStealthValueStatic = fStealthValue = m_iMultiplayerEnemyNear * 10.0f;
 		m_iMultiplayerEnemyNear = 0;
 	}
 
@@ -1143,7 +1145,7 @@ void CHUDRadar::UpdateCompassStealth(CActor* pActor, float fDeltaTime)
 	float fCompass = GetRadarRotation(pActor);
 	if (m_jammingValue >= g_pGameCVars->hud_radarJammingThreshold) //spin compass
 	{
-		float compassDir        = cosf(gEnv->pTimer->GetAsyncCurTime());
+		float compassDir = cosf(gEnv->pTimer->GetAsyncCurTime());
 		float originalDirection = (fCompass + gf_PI) - (m_fLastCompassRot + gf_PI);
 		if (originalDirection > 0.1f)
 			originalDirection = 2.0f;
@@ -1201,7 +1203,7 @@ void CHUDRadar::UpdateRadarJammer(CActor* pActor)
 		if (pEntity)
 		{
 			Vec3  jamPos = pEntity->GetWorldPos();
-			float dist   = jamPos.GetDistance(pActor->GetEntity()->GetWorldPos());
+			float dist = jamPos.GetDistance(pActor->GetEntity()->GetWorldPos());
 			if (dist < m_jammerRadius)
 			{
 				m_jammingValue = 1.0f - dist / m_jammerRadius;
@@ -1252,8 +1254,8 @@ void CHUDRadar::UpdateRadarJammer(CActor* pActor)
 
 float CHUDRadar::GetRadarSize(IEntity* entity, CActor* actor)
 {
-	float posEnt      = entity->GetWorldPos().z;
-	float posPlayer   = actor->GetEntity()->GetWorldPos().z;
+	float posEnt = entity->GetWorldPos().z;
+	float posPlayer = actor->GetEntity()->GetWorldPos().z;
 	float returnValue = 1.0f;
 
 	if ((posEnt + 15) < posPlayer)
@@ -1274,7 +1276,7 @@ bool CHUDRadar::IsOnRadar(EntityId id, int first, int last)
 	int size = last - first;
 	if (size > 1)
 	{
-		int      mid   = first + (size / 2);
+		int      mid = first + (size / 2);
 		EntityId midId = m_entitiesOnRadar[mid].m_id;
 		if (midId == id)
 			return true;
@@ -1339,7 +1341,7 @@ bool CHUDRadar::ScanObject(EntityId id)
 	if (!pPE)
 		return false;
 
-	if (IActor*     pActor  = m_pActorSystem->GetActor(id))
+	if (IActor* pActor = m_pActorSystem->GetActor(id))
 		if (CActor* pCActor = static_cast<CActor*>(pActor))
 			if (pCActor->GetActorClass() == CPlayer::GetActorClassType())
 			{
@@ -1357,7 +1359,7 @@ bool CHUDRadar::ScanObject(EntityId id)
 		g_pGame->GetHUD()->AutoAimNoText(id);
 
 		m_scannerObjectID = id;
-		m_scannerTimer    = g_pGameCVars->hud_binocsScanningDelay; //0.55f;
+		m_scannerTimer = g_pGameCVars->hud_binocsScanningDelay; //0.55f;
 
 		return true;
 	}
@@ -1462,11 +1464,11 @@ bool CHUDRadar::CheckObject(IEntity* pEntity, bool checkVelocity, bool checkVisi
 	if (pVehicle && pVehicle->IsDestroyed())
 		return false;
 
-	CCamera&         rCamera          = GetISystem()->GetViewCamera();
-	uint32           uiFlags          = pEntity->GetFlags();
-	IPhysicalEntity* pPE              = pEntity->GetPhysics();
+	CCamera& rCamera = GetISystem()->GetViewCamera();
+	uint32           uiFlags = pEntity->GetFlags();
+	IPhysicalEntity* pPE = pEntity->GetPhysics();
 	float            fSquaredDistance = pEntity->GetWorldPos().GetSquaredDistance(rCamera.GetPosition());
-	bool             bPointVisible    = rCamera.IsPointVisible(pEntity->GetWorldPos());
+	bool             bPointVisible = rCamera.IsPointVisible(pEntity->GetWorldPos());
 
 	if ((uiFlags & ENTITY_FLAG_ON_RADAR) && pPE && (!checkVisibility || (checkVisibility && fSquaredDistance < 1000000.0f && bPointVisible)))
 	{
@@ -1479,7 +1481,7 @@ bool CHUDRadar::CheckObject(IEntity* pEntity, bool checkVelocity, bool checkVisi
 
 		if (checkVisibility)
 		{
-			IActor*          pActor   = gEnv->pGame->GetIGameFramework()->GetClientActor();
+			IActor* pActor = gEnv->pGame->GetIGameFramework()->GetClientActor();
 			IPhysicalEntity* pSkipEnt = pActor ? pActor->GetEntity()->GetPhysics() : nullptr;
 
 			ray_hit hit;
@@ -1580,10 +1582,10 @@ bool CHUDRadar::GetPosOnMap(float inX, float inY, float& outX, float& outY, bool
 	float posX = std::max(0.0f, inX - std::min(static_cast<float>(m_miniMapStartX[m_mapId]), static_cast<float>(m_miniMapEndX[m_mapId])));
 	float posY = std::max(0.0f, inY - std::min(static_cast<float>(m_miniMapStartY[m_mapId]), static_cast<float>(m_miniMapEndY[m_mapId])));
 	float temp = posX;
-	posX       = posY;
-	posY       = temp;
-	outX       = std::max(static_cast<float>(m_startOnScreenX), static_cast<float>(m_startOnScreenX) + (std::min(posX * m_mapDivX, 1.0f) * static_cast<float>(m_mapDimX)));
-	outY       = std::max(static_cast<float>(m_startOnScreenY), static_cast<float>(m_startOnScreenY) + (std::min(posY * m_mapDivY, 1.0f) * static_cast<float>(m_mapDimY)));
+	posX = posY;
+	posY = temp;
+	outX = std::max(static_cast<float>(m_startOnScreenX), static_cast<float>(m_startOnScreenX) + (std::min(posX * m_mapDivX, 1.0f) * static_cast<float>(m_mapDimX)));
+	outY = std::max(static_cast<float>(m_startOnScreenY), static_cast<float>(m_startOnScreenY) + (std::min(posY * m_mapDivY, 1.0f) * static_cast<float>(m_mapDimY)));
 	if (flashCoordinates)
 	{
 		outX = (outX - static_cast<float>(m_startOnScreenX)) / static_cast<float>(m_mapDimX);
@@ -1598,7 +1600,7 @@ bool CHUDRadar::GetPosOnMap(IEntity* pEntity, float& outX, float& outY, bool fla
 	if (!pEntity)
 		return false;
 	SEntitySlotInfo info;
-	Vec3            pos       = Vec3(0, 0, 0);
+	Vec3            pos = Vec3(0, 0, 0);
 	int             slotCount = pEntity->GetSlotCount();
 	for (int i = 0; i < slotCount; ++i)
 	{
@@ -1629,19 +1631,19 @@ void CHUDRadar::ComputeMiniMapResolution()
 {
 	//size of the displayed 3d area
 	const float mapSizeX = fabsf(m_miniMapEndX[m_mapId] - m_miniMapStartX[m_mapId]);
-	m_mapDivX            = 1.0f / mapSizeX;
+	m_mapDivX = 1.0f / mapSizeX;
 	const float mapSizeY = fabsf(m_miniMapEndY[m_mapId] - m_miniMapStartY[m_mapId]);
-	m_mapDivY            = 1.0f / mapSizeY;
-	float width          = static_cast<float>(gEnv->pRenderer->GetWidth());
-	float height         = static_cast<float>(gEnv->pRenderer->GetHeight());
+	m_mapDivY = 1.0f / mapSizeY;
+	float width = static_cast<float>(gEnv->pRenderer->GetWidth());
+	float height = static_cast<float>(gEnv->pRenderer->GetHeight());
 	//coordinates of the map in screen pixels in 4:3 at a reference resolution of 800*600
 	m_startOnScreenX = 358;
 	m_startOnScreenY = 50;
-	m_endOnScreenX   = 756;
-	m_endOnScreenY   = 446;
+	m_endOnScreenX = 756;
+	m_endOnScreenY = 446;
 	//adopt x-coordinates to current resolution
 	m_startOnScreenX = static_cast<int>(800 - ((800 - m_startOnScreenX) / 600.0f * 800 / width * height));
-	m_endOnScreenX   = static_cast<int>(800 - ((800 - m_endOnScreenX) / 600.0f * 800 / width * height));
+	m_endOnScreenX = static_cast<int>(800 - ((800 - m_endOnScreenX) / 600.0f * 800 / width * height));
 	//compute screen dimensions
 	m_mapDimX = m_endOnScreenX - m_startOnScreenX;
 	m_mapDimY = m_endOnScreenY - m_startOnScreenY;
@@ -1686,8 +1688,8 @@ void CHUDRadar::LoadMiniMap(const char* mapPath)
 	if (gEnv->bMultiplayer)
 	{
 		IEntityClass* factoryClass = gEnv->pEntitySystem->GetClassRegistry()->FindClass("Factory");
-		IEntityClass* hqClass      = gEnv->pEntitySystem->GetClassRegistry()->FindClass("HQ");
-		IEntityClass* alienClass   = gEnv->pEntitySystem->GetClassRegistry()->FindClass("AlienEnergyPoint");
+		IEntityClass* hqClass = gEnv->pEntitySystem->GetClassRegistry()->FindClass("HQ");
+		IEntityClass* alienClass = gEnv->pEntitySystem->GetClassRegistry()->FindClass("AlienEnergyPoint");
 
 		m_buildingsOnRadar.clear();
 
@@ -1712,11 +1714,11 @@ void CHUDRadar::LoadMiniMap(const char* mapPath)
 					m_buildingsOnRadar.push_back(RadarEntity(pEntity->GetId()));
 				if (cls == factoryClass && pLocalActor && g_pGame->GetHUD()->GetPowerStruggleHUD() && g_pGame->GetHUD()->GetPowerStruggleHUD()->IsFactoryType(pEntity->GetId(), CHUDPowerStruggle::E_PROTOTYPES))
 				{
-					Vec3  dirvec   = (pLocalActor->GetPos() - pEntity->GetPos());
+					Vec3  dirvec = (pLocalActor->GetPos() - pEntity->GetPos());
 					float distance = dirvec.GetLength2D();
 					if (!minDistance || minDistance > distance)
 					{
-						minDistance                 = distance;
+						minDistance = distance;
 						uiOnScreenObjectiveEntityId = pEntity->GetId();
 					}
 				}
@@ -1767,7 +1769,7 @@ void CHUDRadar::LoadMiniMap(const char* mapPath)
 		for (int n = 0; n < mapInfo->getChildCount(); ++n)
 		{
 			XmlNodeRef  mapNode = mapInfo->getChild(n);
-			const char* name    = mapNode->getTag();
+			const char* name = mapNode->getTag();
 			if (!stricmp(name, "MiniMap"))
 			{
 				int         attribs = mapNode->getNumAttributes();
@@ -1789,7 +1791,7 @@ void CHUDRadar::LoadMiniMap(const char* mapPath)
 						else
 						{
 							CryFixedStringT<64> number = keyString.substr(pos, keyString.length() - pos);
-							int                 n      = atoi(number.c_str());
+							int                 n = atoi(number.c_str());
 							if (n >= 0 && n < NUM_MAP_TEXTURES)
 							{
 								mapNr = n;
@@ -1914,7 +1916,7 @@ void CHUDRadar::RenderMapOverlay()
 		IEntity* pEntity = gEnv->pEntitySystem->GetEntity(m_buildingsOnRadar[i].m_id);
 		if (GetPosOnMap(pEntity, fX, fY))
 		{
-			int  friendly    = FriendOrFoe(isMultiplayer, team, pEntity, pGameRules);
+			int  friendly = FriendOrFoe(isMultiplayer, team, pEntity, pGameRules);
 			bool addBuilding = true;
 			if (friendly == 2)
 			{
@@ -1957,8 +1959,8 @@ void CHUDRadar::RenderMapOverlay()
 		for (int m = 0; m < synchEntities.size(); ++m)
 		{
 			CGameRules::SMinimapEntity mEntity = synchEntities[m];
-			FlashRadarType             type    = GetSynchedEntityType(mEntity.type);
-			IEntity*                   pEntity = nullptr;
+			FlashRadarType             type = GetSynchedEntityType(mEntity.type);
+			IEntity* pEntity = nullptr;
 			if (type == ENuclearWeapon || type == ETechCharger) //might be a gun
 			{
 				if (IItem* pWeapon = g_pGame->GetIGameFramework()->GetIItemSystem()->GetItem(mEntity.entityId))
@@ -2076,7 +2078,7 @@ void CHUDRadar::RenderMapOverlay()
 
 	//draw position of teammates ...
 	{
-		std::vector<EntityId>::const_iterator it  = m_teamMates.begin();
+		std::vector<EntityId>::const_iterator it = m_teamMates.begin();
 		std::vector<EntityId>::const_iterator end = m_teamMates.end();
 		for (; it != end; ++it)
 		{
@@ -2125,7 +2127,7 @@ void CHUDRadar::RenderMapOverlay()
 	for (int i = 0; i < m_entitiesOnRadar.size(); ++i)
 	{
 		EntityId uiEntityId = m_entitiesOnRadar[i].m_id;
-		IEntity* pEntity    = gEnv->pEntitySystem->GetEntity(uiEntityId);
+		IEntity* pEntity = gEnv->pEntitySystem->GetEntity(uiEntityId);
 		if (!pEntity || pEntity->IsHidden())
 		{
 			RemoveFromRadar(uiEntityId);
@@ -2197,7 +2199,7 @@ void CHUDRadar::RenderMapOverlay()
 				continue;
 			if (pEntity)
 			{
-				IVehicle* pVehicle  = m_pVehicleSystem->GetVehicle(pEntity->GetId());
+				IVehicle* pVehicle = m_pVehicleSystem->GetVehicle(pEntity->GetId());
 				bool      isVehicle = (pVehicle) ? true : false;
 				if (GetPosOnMap(pEntity, fX, fY))
 				{
@@ -2252,7 +2254,7 @@ void CHUDRadar::RenderMapOverlay()
 	//.. and mission objectives
 	if (!gEnv->bMultiplayer)
 	{
-		std::map<EntityId, RadarObjective>::const_iterator it  = m_missionObjectives.begin();
+		std::map<EntityId, RadarObjective>::const_iterator it = m_missionObjectives.begin();
 		std::map<EntityId, RadarObjective>::const_iterator end = m_missionObjectives.end();
 
 		for (; it != end; ++it)
@@ -2346,7 +2348,7 @@ void CHUDRadar::ComputePositioning(Vec2 playerpos, std::vector<double>* doubleAr
 		m_flashPDA->SetVariable("Root.PDAArea.Map_M.MapArea.Map.Map_G._x", SFlashVarValue(vMapPos.x + vOffset.x));
 		m_flashPDA->SetVariable("Root.PDAArea.Map_M.MapArea.Map.Map_G._y", SFlashVarValue(vMapPos.y + vOffset.y));
 
-		float fStep    = 63.5f * m_fPDAZoomFactor;
+		float fStep = 63.5f * m_fPDAZoomFactor;
 		float fOffsetX = (fStep * 0.5f) - 70.0f;
 		float fOffsetY = (fStep * 0.5f) - 18.0f;
 
@@ -2369,8 +2371,8 @@ void CHUDRadar::ComputePositioning(Vec2 playerpos, std::vector<double>* doubleAr
 		m_flashPDA->SetVariable("Root.PDAArea.Map_M.Sector8._x", SFlashVarValue((vMapPos.x + vOffset.x) + fStep * 8.0f - fOffsetX));
 
 		float value = 0;
-		value       = (vMapPos.x + vOffset.x) + fStep * 4.0f - fOffsetX;
-		value       = (vMapPos.x + vOffset.x) + fStep * 4.0f - fOffsetX;
+		value = (vMapPos.x + vOffset.x) + fStep * 4.0f - fOffsetX;
+		value = (vMapPos.x + vOffset.x) + fStep * 4.0f - fOffsetX;
 	}
 
 	//calculate icon positions
@@ -2391,7 +2393,7 @@ void CHUDRadar::ComputePositioning(Vec2 playerpos, std::vector<double>* doubleAr
 
 void CHUDRadar::InitMap()
 {
-	m_initMap                = true;
+	m_initMap = true;
 	m_vPDATempMapTranslation = Vec2(0, 0);
 }
 
@@ -2434,7 +2436,7 @@ void CHUDRadar::Serialize(TSerialize ser)
 	{
 		ser.BeginGroup("HUDRadar");
 		int amount = 0;
-		amount     = m_entitiesOnRadar.size();
+		amount = m_entitiesOnRadar.size();
 		ser.Value("AmountOfRadarEntities", amount);
 		if (ser.IsReading())
 		{
@@ -2527,16 +2529,16 @@ void CHUDRadar::Serialize(TSerialize ser)
 			}
 
 			//reset update timer
-			m_lastScan           = 0.0f;
+			m_lastScan = 0.0f;
 			m_startBroadScanTime = 0.0f;
-			m_fLastRadarRatio    = -1.0f;
+			m_fLastRadarRatio = -1.0f;
 		}
 		else //writing
 		{
 			std::map<EntityId, RadarObjective>::iterator it = m_missionObjectives.begin();
 			for (int i = 0; i < amount; ++i, ++it)
 			{
-				EntityId id   = it->first;
+				EntityId id = it->first;
 				string   text = it->second.text;
 				ser.BeginGroup("MissionObjective");
 				ser.Value("Active", id);
@@ -2581,8 +2583,8 @@ FlashRadarType CHUDRadar::ChooseType(IEntity* pEntity, bool radarOnly)
 	if (!pEntity)
 		return EFirstType;
 	const IEntityClass* pCls = pEntity->GetClass();
-	const char*         cls  = pCls->GetName();
-	const char*         name = pEntity->GetName();
+	const char* cls = pCls->GetName();
+	const char* name = pEntity->GetName();
 
 	FlashRadarType returnType = ELTV;
 
@@ -2712,12 +2714,12 @@ FlashRadarFaction CHUDRadar::FriendOrFoe(bool multiplayer, int playerTeam, IEnti
 	{
 		IAIObject* pAI = entity->GetAI();
 		if (pAI && pAI->GetAIType() == AIOBJECT_VEHICLE)
-			if (IVehicle*         pVehicle = m_pVehicleSystem->GetVehicle(entity->GetId()))
-				if (IVehicleSeat* pSeat    = pVehicle->GetSeatById(1))
+			if (IVehicle* pVehicle = m_pVehicleSystem->GetVehicle(entity->GetId()))
+				if (IVehicleSeat* pSeat = pVehicle->GetSeatById(1))
 					if (pSeat->IsDriver())
 					{
 						EntityId driverId = pSeat->GetPassenger();
-						IEntity* temp     = gEnv->pEntitySystem->GetEntity(driverId);
+						IEntity* temp = gEnv->pEntitySystem->GetEntity(driverId);
 						if (temp && temp->GetAI())
 							pAI = temp->GetAI();
 					}
@@ -2738,17 +2740,17 @@ FlashRadarType CHUDRadar::GetSynchedEntityType(int type)
 {
 	switch (type)
 	{
-	case 1:
-		return EAmmoTruck;
-		break;
-	case 2:
-		return ENuclearWeapon; //this is a tac entity
-		break;
-	case 3:
-		return ETechCharger;
-		break;
-	default:
-		break;
+		case 1:
+			return EAmmoTruck;
+			break;
+		case 2:
+			return ENuclearWeapon; //this is a tac entity
+			break;
+		case 3:
+			return ETechCharger;
+			break;
+		default:
+			break;
 	}
 	return EFirstType;
 }
@@ -2781,9 +2783,9 @@ void CHUDRadar::StartBroadScan(bool useParameters, bool keepEntities, Vec3 pos, 
 		m_startBroadScanTime = gEnv->pTimer->GetFrameStartTime().GetSeconds();
 		//set scanning parameter
 		m_bsUseParameter = useParameters;
-		m_bsKeepEntries  = keepEntities;
-		m_bsPosition     = pos;
-		m_bsRadius       = radius;
+		m_bsKeepEntries = keepEntities;
+		m_bsPosition = pos;
+		m_bsRadius = radius;
 
 		return;
 	}
@@ -2801,7 +2803,7 @@ void CHUDRadar::StartBroadScan(bool useParameters, bool keepEntities, Vec3 pos, 
 	int playerTeam = g_pGame->GetGameRules()->GetTeam(pClient->GetEntityId());
 	for (int e = 0; e < m_entitiesInProximity.size(); ++e)
 	{
-		EntityId id      = m_entitiesInProximity[e];
+		EntityId id = m_entitiesInProximity[e];
 		IEntity* pEntity = gEnv->pEntitySystem->GetEntity(id);
 		if (IsOnRadar(id, 0, m_entitiesOnRadar.size() - 1) || IsEntityTagged(id))
 			continue;
@@ -2811,7 +2813,7 @@ void CHUDRadar::StartBroadScan(bool useParameters, bool keepEntities, Vec3 pos, 
 		g_pGame->GetGameRules()->AddTaggedEntity(pClient->GetEntityId(), id, m_bsKeepEntries ? false : true);
 	}
 	m_startBroadScanTime = 0.0f;
-	m_bsKeepEntries      = false;
+	m_bsKeepEntries = false;
 }
 
 void CHUDRadar::GetMemoryStatistics(ICrySizer* s)
@@ -2861,7 +2863,7 @@ void CHUDRadar::SetTeamMate(EntityId id, bool active)
 void CHUDRadar::SelectTeamMate(EntityId id, bool active)
 {
 	bool                            found = false;
-	std::vector<EntityId>::iterator it    = m_selectedTeamMates.begin();
+	std::vector<EntityId>::iterator it = m_selectedTeamMates.begin();
 	for (; it != m_selectedTeamMates.end(); ++it)
 	{
 		if (*it == id)
@@ -2887,12 +2889,12 @@ void CHUDRadar::ScanProximity(Vec3& pos, float& radius)
 	m_itemsInProximity.clear();
 
 	SEntityProximityQuery query;
-	query.box          = AABB(Vec3(pos.x - radius, pos.y - (radius * 1.33f), pos.z - radius), Vec3(pos.x + radius, pos.y + (radius * 1.33f), pos.z + radius));
+	query.box = AABB(Vec3(pos.x - radius, pos.y - (radius * 1.33f), pos.z - radius), Vec3(pos.x + radius, pos.y + (radius * 1.33f), pos.z + radius));
 	query.nEntityFlags = ENTITY_FLAG_ON_RADAR; // Filter by entity flag.
 	gEnv->pEntitySystem->QueryProximity(query);
 
 	CPlayer* pClientPlayer = static_cast<CPlayer*>(g_pGame->GetIGameFramework()->GetClientActor());
-	IEntity* pActorEntity  = g_pGame->GetIGameFramework()->GetClientActor()->GetEntity();
+	IEntity* pActorEntity = g_pGame->GetIGameFramework()->GetClientActor()->GetEntity();
 
 	for (int iEntity = 0; iEntity < query.nCount; iEntity++)
 	{
@@ -2922,10 +2924,10 @@ EntityId CHUDRadar::RayCastBinoculars(CPlayer* pPlayer, ray_hit* pRayHit)
 	Vec3 pos, dir, up, right;
 
 	const Matrix34& rmatCamera = gEnv->pSystem->GetViewCamera().GetMatrix();
-	pos                        = rmatCamera.GetTranslation();
-	dir                        = rmatCamera.GetColumn1();
-	up                         = rmatCamera.GetColumn2();
-	right                      = (dir % up).GetNormalizedSafe();
+	pos = rmatCamera.GetTranslation();
+	dir = rmatCamera.GetColumn1();
+	up = rmatCamera.GetColumn2();
+	right = (dir % up).GetNormalizedSafe();
 
 	IPhysicalEntity* pPhysEnt = pPlayer->GetEntity()->GetPhysics();
 
@@ -2933,10 +2935,10 @@ EntityId CHUDRadar::RayCastBinoculars(CPlayer* pPlayer, ray_hit* pRayHit)
 		return 0;
 
 	static const int          obj_types = ent_all; // ent_terrain|ent_static|ent_rigid|ent_sleeping_rigid|ent_living;
-	static const unsigned int flags     = rwi_pierceability(1);
+	static const unsigned int flags = rwi_pierceability(1);
 
 	right = right * g_pGameCVars->hud_binocsScanningWidth;
-	up    = up * g_pGameCVars->hud_binocsScanningWidth;
+	up = up * g_pGameCVars->hud_binocsScanningWidth;
 
 	Vec3 positions[4];
 	positions[0] = pos + right + up;
@@ -2969,7 +2971,7 @@ bool CHUDRadar::IsEntityTagged(const EntityId& id) const
 
 void CHUDRadar::SetJammer(EntityId id, float radius)
 {
-	m_jammerID     = id;
+	m_jammerID = id;
 	m_jammerRadius = radius;
 
 	if (!id && m_jammingValue)
@@ -3026,9 +3028,9 @@ bool CHUDRadar::RadarBounds_Inside(const Vec2& pos, Vec2& intersectionPoint)
 
 bool CHUDRadar::RadarBounds_IntersectsLineFromOutside(const Vec2& A, const Vec2& B, const Vec2& P, const Vec2& M, Vec2& resultingIntersection)
 {
-	Vec2 line       = B - A; //k
+	Vec2 line = B - A; //k
 	Vec2 lineNormal = Vec2(-line.y, line.x);
-	Vec2 faceLine   = A - P;
+	Vec2 faceLine = A - P;
 
 	bool intersects = false;
 
@@ -3039,24 +3041,24 @@ bool CHUDRadar::RadarBounds_IntersectsLineFromOutside(const Vec2& A, const Vec2&
 
 		if (line.x == 0)
 		{
-			float i2                = crossingLine.y / crossingLine.x;
-			float r2                = M.y - ((M.x * crossingLine.y) / crossingLine.x); //p
+			float i2 = crossingLine.y / crossingLine.x;
+			float r2 = M.y - ((M.x * crossingLine.y) / crossingLine.x); //p
 			resultingIntersection.x = A.x;
 			resultingIntersection.y = i2 * resultingIntersection.x + r2;
 		}
 		else if (crossingLine.x == 0)
 		{
-			float i1                = line.y / line.x;
-			float r1                = A.y - ((A.x * line.y) / line.x); //b
+			float i1 = line.y / line.x;
+			float r1 = A.y - ((A.x * line.y) / line.x); //b
 			resultingIntersection.x = M.x;
 			resultingIntersection.y = i1 * resultingIntersection.x + r1;
 		}
 		else
 		{
-			float i1                = line.y / line.x; //gradients m
-			float i2                = crossingLine.y / crossingLine.x; //n
-			float r1                = A.y - ((A.x * line.y) / line.x); //b
-			float r2                = M.y - ((M.x * crossingLine.y) / crossingLine.x); //p
+			float i1 = line.y / line.x; //gradients m
+			float i2 = crossingLine.y / crossingLine.x; //n
+			float r1 = A.y - ((A.x * line.y) / line.x); //b
+			float r2 = M.y - ((M.x * crossingLine.y) / crossingLine.x); //p
 			resultingIntersection.x = (r1 - r2) / (i2 - i1);
 			resultingIntersection.y = i1 * resultingIntersection.x + r1;
 		}
@@ -3082,7 +3084,7 @@ void CHUDRadar::UpdateBinoculars(CActor* pActor, float fDeltaTime)
 		if (!lookAtObjectID)
 		{
 			CPlayer* pPlayer = static_cast<CPlayer*>(pActor);
-			lookAtObjectID   = RayCastBinoculars(pPlayer, &rayHit);
+			lookAtObjectID = RayCastBinoculars(pPlayer, &rayHit);
 		}
 
 		// When in a cinematic, pActor view doesn't move (it's faked), so let's not use the lookAtEntityId
@@ -3107,7 +3109,7 @@ void CHUDRadar::UpdateBinoculars(CActor* pActor, float fDeltaTime)
 		if (lookAtObjectID && lookAtObjectID != m_lookAtObjectID)
 		{
 			// DevTrack 17224: set the delay to a very small value
-			m_lookAtTimer    = 0.05f;
+			m_lookAtTimer = 0.05f;
 			m_lookAtObjectID = lookAtObjectID;
 		}
 		else if (lookAtObjectID)
