@@ -47,7 +47,7 @@ CTOSMasterModule::CTOSMasterModule()
 	m_scheduledTakeControls.clear();
 }
 
-CTOSMasterModule::~CTOSMasterModule() 
+CTOSMasterModule::~CTOSMasterModule()
 {
 	if (g_pGame->GetGameRules())
 	{
@@ -66,7 +66,7 @@ void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEven
 {
 	if (!pEntity)
 	{
-		CryWarning(VALIDATOR_MODULE_GAME, VALIDATOR_WARNING, "OnExtraGameplayEvent Entity is NULL when");
+		//CryWarning(VALIDATOR_MODULE_GAME, VALIDATOR_WARNING, "OnExtraGameplayEvent Entity is NULL when");
 		return;
 	}
 
@@ -82,363 +82,363 @@ void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEven
 
 	switch (event.event)
 	{
-	//case eEGE_GamerulesStartGame: is ok
-	//case eEGE_GamerulesPostInit: not ok
-	//case eEGE_GameModuleInit: not ok
-	//case eEGE_EntitiesPostReset: not ok
-	case eEGE_GamerulesStartGame: //not ok long time still ok
-	{
-		// 10/10/2023, 18:43 Akeeper: Теперь синхронизаторы нужно спавнить через редактор (заебался я с ними возиться)
-		//CreateSynchonizer<CTOSMasterSynchronizer>("MasterSynchronizer", "TOSMasterSynchronizer");
-
-		if (g_pGame->GetGameRules())
+		//case eEGE_GamerulesStartGame: is ok
+		//case eEGE_GamerulesPostInit: not ok
+		//case eEGE_GameModuleInit: not ok
+		//case eEGE_EntitiesPostReset: not ok
+		case eEGE_GamerulesStartGame: //not ok long time still ok
 		{
-			g_pGame->GetGameRules()->AddHitListener(this);
-		}
+			// 10/10/2023, 18:43 Akeeper: Теперь синхронизаторы нужно спавнить через редактор (заебался я с ними возиться)
+			//CreateSynchonizer<CTOSMasterSynchronizer>("MasterSynchronizer", "TOSMasterSynchronizer");
 
-		break;
-	}
-	//case eEGE_ActorPostInit: no ok on client
-	case eEGE_SynchronizerCreated:
-	{
-		if (pGO)
-		{
-			m_pSynchonizer = dynamic_cast<CTOSMasterSynchronizer*>(pGO->AcquireExtension("TOSMasterSynchronizer"));
-			assert(m_pSynchonizer);
-		}
+			if (g_pGame->GetGameRules())
+			{
+				g_pGame->GetGameRules()->AddHitListener(this);
+			}
 
-		TOS_RECORD_EVENT(entId, STOSGameEvent(eEGE_SynchronizerRegistered, "For Master Module", true));
-
-		break;
-	}
-	//case eEGE_SynchronizerRegistered:
-	case eEGE_ClientEnteredGame:
-	{
-		// В одиночной игре мастер будет задаваться по случаю
-		// Т.е в момент когда идёт запрос на взятие раба под контроль 
-		if (!gEnv->bMultiplayer)
 			break;
+		}
+		//case eEGE_ActorPostInit: no ok on client
+		case eEGE_SynchronizerCreated:
+		{
+			if (pGO)
+			{
+				m_pSynchonizer = dynamic_cast<CTOSMasterSynchronizer*>(pGO->AcquireExtension("TOSMasterSynchronizer"));
+				assert(m_pSynchonizer);
+			}
 
-		if (pEntity)
+			TOS_RECORD_EVENT(entId, STOSGameEvent(eEGE_SynchronizerRegistered, "For Master Module", true));
+
+			break;
+		}
+		//case eEGE_SynchronizerRegistered:
+		case eEGE_ClientEnteredGame:
+		{
+			// В одиночной игре мастер будет задаваться по случаю
+			// Т.е в момент когда идёт запрос на взятие раба под контроль 
+			if (!gEnv->bMultiplayer)
+				break;
+
+			if (pEntity)
+			{
+				if (gEnv->bServer)
+				{
+					const auto pPlayer = dynamic_cast<CTOSPlayer*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(entId));
+					assert(pPlayer);
+
+					const auto masterNeedSlave = pPlayer->GetSpectatorMode() == 0 &&
+						IsMaster(pPlayer->GetEntity()) &&
+						!GetCurrentSlave(pPlayer->GetEntity());
+
+					if (masterNeedSlave)
+					{
+						TOS_RECORD_EVENT(entId, STOSGameEvent(eEGE_PlayerJoinedGame, "after sv_restart", true));
+					}
+				}
+
+				//if(gEnv->bClient)
+				//{
+					//const int joinAsAlien = gEnv->pConsole->GetCVar("tos_cl_JoinAsMaster")->GetIVal();
+					//if (joinAsAlien > 0)
+					//{
+						//const auto clientEntityId = g_pGame->GetIGameFramework()->GetClientActorId();
+						//const auto pSlaveEntClsCvar = gEnv->pConsole->GetCVar("tos_cl_SlaveEntityClass");
+						//assert(pSlaveEntClsCvar);
+
+						//const auto params = NetMasterAddingParams(clientEntityId, pSlaveEntClsCvar->GetString());
+
+						//assert(m_pSynchonizer);
+						//m_pSynchonizer->RMISend(CTOSMasterSynchronizer::SvRequestMasterAdd(), params, eRMI_ToServer);
+					//}
+				//}
+			}
+
+			break;
+		}
+		//case eEGE_PlayerJoinedGame:
+		case eEGE_PlayerJoinedGame:
 		{
 			if (gEnv->bServer)
 			{
-				const auto pPlayer = dynamic_cast<CTOSPlayer*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(entId));
-				assert(pPlayer);
+				const int    teamId = g_pGame->GetGameRules()->GetTeam(pEntity->GetId());
+				const string teamName = g_pGame->GetGameRules()->GetTeamName(teamId);
 
-				const auto masterNeedSlave = pPlayer->GetSpectatorMode() == 0 && 
-					IsMaster(pPlayer->GetEntity()) && 
-					!GetCurrentSlave(pPlayer->GetEntity());
-
-				if (masterNeedSlave)
+				if (!IsMaster(pEntity) && teamName == "aliens")
 				{
-					TOS_RECORD_EVENT(entId, STOSGameEvent(eEGE_PlayerJoinedGame, "after sv_restart", true));
+					MasterAdd(pEntity, "Trooper");
+				}
+
+				if (IsMaster(pEntity))
+				{
+					STOSMasterInfo info;
+					GetMasterInfo(pEntity, info);
+
+					const string slaveClsName = info.desiredSlaveClassName;
+					const string slaveName = entName + "(Slave)";
+					const auto pClass = gEnv->pEntitySystem->GetClassRegistry()->FindClass(slaveClsName.c_str());
+
+					assert(pClass);
+					if (!pClass)
+					{
+						CryLogAlways("[C++][%s][%s] Class %s not found",
+									 TOS_Debug::GetEnv(),
+									 TOS_Debug::GetAct(1),
+									 slaveClsName.c_str());
+						break;
+					}
+
+					auto pSavedSlave = g_pTOSGame->GetEntitySpawnModule()->GetSavedSlaveByAuthName(entName);
+					if (!pSavedSlave)
+					{
+						STOSEntityDelaySpawnParams params;
+						params.authorityPlayerName = entName;
+						params.savedName = slaveName;
+						params.scheduledTimeStamp = gEnv->pTimer->GetFrameStartTime().GetSeconds();
+						params.spawnDelay = tos_sv_SlaveSpawnDelay;
+						params.tosFlags |= TOS_ENTITY_FLAG_MUST_RECREATED;
+						params.vanilla.bStaticEntityId = true;
+						params.vanilla.nFlags |= ENTITY_FLAG_NEVER_NETWORK_STATIC | ENTITY_FLAG_TRIGGER_AREAS | ENTITY_FLAG_CASTSHADOW;
+						params.vanilla.pClass = pClass;
+						params.vanilla.qRotation = pEntity->GetWorldRotation();
+						params.vanilla.vPosition = pEntity->GetWorldPos();
+						params.forceStartControl = true;
+
+						TOS_Entity::SpawnDelay(params);
+					}
 				}
 			}
 
-			//if(gEnv->bClient)
-			//{
-				//const int joinAsAlien = gEnv->pConsole->GetCVar("tos_cl_JoinAsMaster")->GetIVal();
-				//if (joinAsAlien > 0)
-				//{
-					//const auto clientEntityId = g_pGame->GetIGameFramework()->GetClientActorId();
-					//const auto pSlaveEntClsCvar = gEnv->pConsole->GetCVar("tos_cl_SlaveEntityClass");
-					//assert(pSlaveEntClsCvar);
-
-					//const auto params = NetMasterAddingParams(clientEntityId, pSlaveEntClsCvar->GetString());
-
-					//assert(m_pSynchonizer);
-					//m_pSynchonizer->RMISend(CTOSMasterSynchronizer::SvRequestMasterAdd(), params, eRMI_ToServer);
-				//}
-			//}
+			break;
 		}
-
-		break;
-	}
-	//case eEGE_PlayerJoinedGame:
-	case eEGE_PlayerJoinedGame:
-	{
-		if (gEnv->bServer)
+		case eEGE_ForceStartControl:
 		{
-			const int    teamId =   g_pGame->GetGameRules()->GetTeam(pEntity->GetId());
-			const string teamName = g_pGame->GetGameRules()->GetTeamName(teamId);
-
-			if (!IsMaster(pEntity) && teamName == "aliens")
+			if (gEnv->bServer && pEntity)
 			{
-				MasterAdd(pEntity, "Trooper");
-			}
+				const auto masterChannelId = event.int_value;
+				auto pPlayer = g_pGame->GetIGameFramework()->GetIActorSystem()->GetActorByChannelId(masterChannelId);
+				assert(pPlayer);
 
-			if (IsMaster(pEntity))
-			{
-				STOSMasterInfo info;
-				GetMasterInfo(pEntity, info);
+				const int    teamId = g_pGame->GetGameRules()->GetTeam(pPlayer->GetEntityId());
+				const string teamName = g_pGame->GetGameRules()->GetTeamName(teamId);
 
-				const string slaveClsName = info.desiredSlaveClassName;
-				const string slaveName = entName + "(Slave)";
-				const auto pClass = gEnv->pEntitySystem->GetClassRegistry()->FindClass(slaveClsName.c_str());
-
-				assert(pClass);
-				if (!pClass)
+				// После sv_restart игрок начинает контролировать раба, но игрок не является мастером
+				// Поэтому нужно игрока добавить в ряды мастеров
+				if (!IsMaster(pPlayer->GetEntity()) && teamName == "aliens")
 				{
-					CryLogAlways("[C++][%s][%s] Class %s not found", 
-						TOS_Debug::GetEnv(), 
-						TOS_Debug::GetAct(1),
-						slaveClsName.c_str());
+					MasterAdd(pPlayer->GetEntity(), "Trooper");
+				}
+
+				//Обнаружен баг
+				//При sv_restart на сервере синхронизатор появляется раньше и раб тоже
+				//а на клиенте много позже, так что при попытке отправить RMI'шку на клиент
+				//во время его загрузки вызывает дисконнект клиента. И пишет что у синхронизатора
+				//не найден GameObjectExtension
+				// Исправление: запланировать передачу контроля после того как сущность готова
+				// подчиняться и когда клиент полностью инициализирован
+
+				const auto inGame = g_pGame->GetGameRules()->IsChannelInGame(masterChannelId);
+				if (!inGame)
+				{
+					auto pCvar = gEnv->pConsole->GetCVar("tos_sv_mc_StartControlDelay");
+
+					//раб, клиент мастера
+					STOSStartControlInfo info;
+					info.masterChannelId = masterChannelId;
+					info.slaveId = entId;
+					info.startDelay = pCvar ? pCvar->GetFVal() : 0.0f;
+
+					ScheduleMasterStartControl(info);
+
 					break;
 				}
 
-				auto pSavedSlave = g_pTOSGame->GetEntitySpawnModule()->GetSavedSlaveByAuthName(entName);
-				if (!pSavedSlave)
-				{
-					STOSEntityDelaySpawnParams params;
-					params.authorityPlayerName = entName;
-					params.savedName = slaveName;
-					params.scheduledTimeStamp = gEnv->pTimer->GetFrameStartTime().GetSeconds();
-					params.spawnDelay = tos_sv_SlaveSpawnDelay;
-					params.tosFlags |= TOS_ENTITY_FLAG_MUST_RECREATED;
-					params.vanilla.bStaticEntityId = true;
-					params.vanilla.nFlags |= ENTITY_FLAG_NEVER_NETWORK_STATIC | ENTITY_FLAG_TRIGGER_AREAS | ENTITY_FLAG_CASTSHADOW;
-					params.vanilla.pClass = pClass;
-					params.vanilla.qRotation = pEntity->GetWorldRotation();
-					params.vanilla.vPosition = pEntity->GetWorldPos();
-					params.forceStartControl = true;
+				NetMasterStartControlParams params;
+				params.slaveId = entId;
+				params.factionPriority = eFP_Master;
 
-					TOS_Entity::SpawnDelay(params);
-				}
+				assert(m_pSynchonizer);
+				m_pSynchonizer->RMISend(
+					CTOSMasterSynchronizer::ClMasterClientStartControl(),
+					params,
+					eRMI_ToClientChannel,
+					masterChannelId
+				);
 			}
-		}
 
-		break;
-	}
-	case eEGE_ForceStartControl:
-	{
-		if (gEnv->bServer && pEntity)
+			break;
+		}
+		case eEGE_MasterClientOnStartControl:
 		{
-			const auto masterChannelId = event.int_value;
-			auto pPlayer = g_pGame->GetIGameFramework()->GetIActorSystem()->GetActorByChannelId(masterChannelId);
+			// Излишняя проверка на клиента
+			if (gEnv->bClient)
+			{
+				NetMasterStartControlParams params;
+				params.slaveId = pEntity->GetId();
+				params.masterId = g_pGame->GetIGameFramework()->GetClientActorId();
+
+				auto pFlags = static_cast<uint*>(event.extra_data);
+				if (pFlags)
+				{
+					params.masterFlags = *pFlags;
+					delete pFlags;
+				}
+
+				assert(m_pSynchonizer);
+				m_pSynchonizer->RMISend(
+					CTOSMasterSynchronizer::SvRequestMasterClientStartControl(),
+					params,
+					eRMI_ToServer
+				);
+			}
+			break;
+		}
+		case eEGE_MasterClientOnStopControl:
+		{
+			// Излишняя проверка на клиента
+			if (gEnv->bClient)
+			{
+				NetMasterStopControlParams params;
+				params.masterId = g_pGame->GetIGameFramework()->GetClientActorId();
+
+				assert(m_pSynchonizer);
+				m_pSynchonizer->RMISend(
+					CTOSMasterSynchronizer::SvRequestMasterClientStopControl(),
+					params,
+					eRMI_ToServer
+				);
+			}
+			break;
+		}
+		case eEGE_PlayerJoinedSpectator:
+		{
+			const auto pPlayer = g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(entId);
 			assert(pPlayer);
 
-			const int    teamId = g_pGame->GetGameRules()->GetTeam(pPlayer->GetEntityId());
-			const string teamName = g_pGame->GetGameRules()->GetTeamName(teamId);
-
-			// После sv_restart игрок начинает контролировать раба, но игрок не является мастером
-			// Поэтому нужно игрока добавить в ряды мастеров
-			if (!IsMaster(pPlayer->GetEntity()) && teamName == "aliens")
+			if (gEnv->bServer)
 			{
-				MasterAdd(pPlayer->GetEntity(), "Trooper");
-			}
+				const int playerChannelId = pPlayer->GetChannelId();
 
-			//Обнаружен баг
-			//При sv_restart на сервере синхронизатор появляется раньше и раб тоже
-			//а на клиенте много позже, так что при попытке отправить RMI'шку на клиент
-			//во время его загрузки вызывает дисконнект клиента. И пишет что у синхронизатора
-			//не найден GameObjectExtension
-			// Исправление: запланировать передачу контроля после того как сущность готова
-			// подчиняться и когда клиент полностью инициализирован
-
-			const auto inGame = g_pGame->GetGameRules()->IsChannelInGame(masterChannelId);
-			if (!inGame)
-			{
-				auto pCvar = gEnv->pConsole->GetCVar("tos_sv_mc_StartControlDelay");
-
-				//раб, клиент мастера
-				STOSStartControlInfo info;
-				info.masterChannelId = masterChannelId;
-				info.slaveId = entId;
-				info.startDelay = pCvar ? pCvar->GetFVal() : 0.0f;
-
-				ScheduleMasterStartControl(info);
-
-				break;
-			}
-
-			NetMasterStartControlParams params;
-			params.slaveId = entId;
-			params.factionPriority = eFP_Master;
-
-			assert(m_pSynchonizer);
-			m_pSynchonizer->RMISend(
-				CTOSMasterSynchronizer::ClMasterClientStartControl(),
-				params,
-				eRMI_ToClientChannel,
-				masterChannelId
-			);
-		}
-
-		break;
-	}
-	case eEGE_MasterClientOnStartControl:
-	{
-		// Излишняя проверка на клиента
-		if (gEnv->bClient)
-		{
-			NetMasterStartControlParams params;
-			params.slaveId = pEntity->GetId();
-			params.masterId = g_pGame->GetIGameFramework()->GetClientActorId();
-
-			auto pFlags = static_cast<uint*>(event.extra_data);
-			if (pFlags)
-			{
-				params.masterFlags = *pFlags;
-				delete pFlags;
-			}
-
-			assert(m_pSynchonizer);
-			m_pSynchonizer->RMISend(
-				CTOSMasterSynchronizer::SvRequestMasterClientStartControl(),
-				params,
-				eRMI_ToServer
-			);
-		}
-		break;
-	}
-	case eEGE_MasterClientOnStopControl:
-	{
-		// Излишняя проверка на клиента
-		if (gEnv->bClient)
-		{
-			NetMasterStopControlParams params;
-			params.masterId = g_pGame->GetIGameFramework()->GetClientActorId();
-
-			assert(m_pSynchonizer);
-			m_pSynchonizer->RMISend(
-				CTOSMasterSynchronizer::SvRequestMasterClientStopControl(),
-				params,
-				eRMI_ToServer
-			);
-		}
-		break;
-	}
-	case eEGE_PlayerJoinedSpectator:
-	{
-		const auto pPlayer = g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(entId);
-		assert(pPlayer);
-
-		if (gEnv->bServer)
-		{
-			const int playerChannelId = pPlayer->GetChannelId();
-
-			if (IsMaster(pEntity))
-			{
-				const auto pSlave = GetCurrentSlave(pEntity);
-				if (pSlave)
+				if (IsMaster(pEntity))
 				{
-					assert(m_pSynchonizer);
-					m_pSynchonizer->RMISend(
-						CTOSMasterSynchronizer::ClMasterClientStopControl(),
-						NetGenericNoParams(),
-						eRMI_ToClientChannel,
-						playerChannelId
-					);
+					const auto pSlave = GetCurrentSlave(pEntity);
+					if (pSlave)
+					{
+						assert(m_pSynchonizer);
+						m_pSynchonizer->RMISend(
+							CTOSMasterSynchronizer::ClMasterClientStopControl(),
+							NetGenericNoParams(),
+							eRMI_ToClientChannel,
+							playerChannelId
+						);
 
-					TOS_Entity::RemoveEntityForced(pSlave->GetId());
+						TOS_Entity::RemoveEntityForced(pSlave->GetId());
+					}
+
+					MasterRemove(pPlayer->GetEntity());
+				}
+			}
+
+			if (gEnv->bClient && pPlayer->IsClient())
+			{
+				const auto pLocalMS = g_pTOSGame->GetMasterModule()->GetMasterClient();
+				assert(pLocalMS);
+
+				if (pLocalMS->GetSlaveEntity())
+				{
+					pLocalMS->StopControl();
+				}
+			}
+
+			break;
+		}
+		case eEGE_ActorDead:
+		{
+			if (gEnv->bServer)
+			{
+				// Раб погиб -> убиваем Мастера
+				IEntity* pSlaveEntity = pEntity;
+				IEntity* pMasterEntity = GetMaster(pSlaveEntity);
+
+				if (pSlaveEntity && pMasterEntity)
+				{
+					//IActor* const pMasterActor = g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pMasterEntity->GetId());
+					//if (pMasterActor)
+					//{
+					//	const EntityId id = pMasterActor->GetEntityId();
+
+					//	HitInfo info;
+					//	info.SetDamage(9999);
+					//	info.shooterId = id;
+					//	info.targetId = id;
+
+					//	//g_pGame->GetGameRules()->ServerHit(info);
+					//}
+				}
+				else
+				{
+					// Мастер погиб -> убиваем Раба
+					pMasterEntity = pEntity;
+					pSlaveEntity = GetCurrentSlave(pMasterEntity);
+
+					if (pMasterEntity && pSlaveEntity)
+					{
+						IActor* const pSlaveActor = g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pSlaveEntity->GetId());
+						if (pSlaveActor)
+						{
+							const EntityId id = pSlaveActor->GetEntityId();
+
+							HitInfo info;
+							info.SetDamage(9999);
+							info.shooterId = id;
+							info.targetId = id;
+
+							g_pGame->GetGameRules()->ServerHit(info);
+						}
+					}
+				}
+			}
+
+			break;
+		}
+		case eEGE_ClientDisconnect:
+		{
+			if (pEntity && gEnv->bServer)
+			{
+				const auto pPlayer = dynamic_cast<CTOSPlayer*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(entId));
+				if (!pPlayer)
+					break;
+
+				if (IsMaster(pPlayer->GetEntity()))
+				{
+					const auto pSlave = GetCurrentSlave(pPlayer->GetEntity());
+					if (pSlave)
+					{
+						//Вызывало баг, когда в какой-то момент раб перестал появляться после sv_restart
+						//Вернул, чтобы сущность удалялась после отключения клиента, а не когда актёр клиента вызвал Release
+						TOS_Entity::RemoveEntityForced(pSlave->GetId());
+					}
+
+					const auto pSavedEnt = g_pTOSGame->GetEntitySpawnModule()->GetSavedSlaveByAuthName(pPlayer->GetEntity()->GetName());
+					if (pSavedEnt)
+					{
+						TOS_Entity::RemoveEntityForced(pSavedEnt->GetId());
+					}
 				}
 
 				MasterRemove(pPlayer->GetEntity());
 			}
+			break;
 		}
-
-		if (gEnv->bClient && pPlayer->IsClient())
+		case eEGE_EntityOnRemove:
 		{
-			const auto pLocalMS = g_pTOSGame->GetMasterModule()->GetMasterClient();
-			assert(pLocalMS);
-
-			if (pLocalMS->GetSlaveEntity())
+			if (gEnv->bServer && IsSlave(pEntity))
 			{
-				pLocalMS->StopControl();
+				TOS_RECORD_EVENT(pEntity->GetId(), STOSGameEvent(eEGE_SlaveEntityOnRemove), "", true);
 			}
+			break;
 		}
-
-		break;
-	}
-	case eEGE_ActorDead:
-	{	
-		if (gEnv->bServer)
-		{
-			// Раб погиб -> убиваем Мастера
-			IEntity* pSlaveEntity = pEntity;
-			IEntity* pMasterEntity = GetMaster(pSlaveEntity);
-
-			if (pSlaveEntity && pMasterEntity)
-			{
-				//IActor* const pMasterActor = g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pMasterEntity->GetId());
-				//if (pMasterActor)
-				//{
-				//	const EntityId id = pMasterActor->GetEntityId();
-
-				//	HitInfo info;
-				//	info.SetDamage(9999);
-				//	info.shooterId = id;
-				//	info.targetId = id;
-
-				//	//g_pGame->GetGameRules()->ServerHit(info);
-				//}
-			}
-			else
-			{
-				// Мастер погиб -> убиваем Раба
-				pMasterEntity = pEntity;
-				pSlaveEntity = GetCurrentSlave(pMasterEntity);
-
-				if (pMasterEntity && pSlaveEntity)
-				{
-					IActor* const pSlaveActor = g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pSlaveEntity->GetId());
-					if (pSlaveActor)
-					{
-						const EntityId id = pSlaveActor->GetEntityId();
-
-						HitInfo info;
-						info.SetDamage(9999);
-						info.shooterId = id;
-						info.targetId = id;
-
-						g_pGame->GetGameRules()->ServerHit(info);
-					}
-				}
-			}	
-		}
-
-		break;
-	}
-	case eEGE_ClientDisconnect:
-	{
-		if (pEntity && gEnv->bServer)
-		{
-			const auto pPlayer = dynamic_cast<CTOSPlayer*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(entId));
-			if (!pPlayer)
-				break;
-
-			if (IsMaster(pPlayer->GetEntity()))
-			{
-				const auto pSlave = GetCurrentSlave(pPlayer->GetEntity());
-				if (pSlave)
-				{
-					//Вызывало баг, когда в какой-то момент раб перестал появляться после sv_restart
-					//Вернул, чтобы сущность удалялась после отключения клиента, а не когда актёр клиента вызвал Release
-					TOS_Entity::RemoveEntityForced(pSlave->GetId());
-				}
-
-				const auto pSavedEnt = g_pTOSGame->GetEntitySpawnModule()->GetSavedSlaveByAuthName(pPlayer->GetEntity()->GetName());
-				if (pSavedEnt)
-				{
-					TOS_Entity::RemoveEntityForced(pSavedEnt->GetId());
-				}
-			}
-
-			MasterRemove(pPlayer->GetEntity());
-		}
-		break;
-	}
-	case eEGE_EntityOnRemove:
-	{
-		if (gEnv->bServer && IsSlave(pEntity))
-		{
-			TOS_RECORD_EVENT(pEntity->GetId(), STOSGameEvent(eEGE_SlaveEntityOnRemove), "", true);
-		}
-		break;
-	}
-	default:
-		break;
+		default:
+			break;
 	}
 }
 
@@ -614,7 +614,7 @@ IEntity* CTOSMasterModule::GetCurrentSlave(const IEntity* pMasterEntity)
 			{
 				if (it->first == pMasterEntity->GetId())
 					return gEnv->pEntitySystem->GetEntity(it->second.slaveId);
-			}				
+			}
 		}
 	}
 
@@ -724,7 +724,7 @@ bool CTOSMasterModule::ReviveSlave(const IEntity* pSlaveEntity, const Vec3& revi
 		//IInventory* pInventory = pActor->GetInventory();
 		//pInventory->Destroy();
 		//pInventory->Clear();
-		
+
 		pSlaveActor->ResetActorWeapons(1000);
 	}
 
@@ -738,7 +738,7 @@ void CTOSMasterModule::DebugDraw(const Vec2& screenPos, float fontSize, float in
 {
 	//Header
 	DRAW_2D_TEXT(
-		screenPos.x, 
+		screenPos.x,
 		screenPos.y - interval * 2,
 		fontSize + 0.2f,
 		"--- TOS Master System (MasterName:SlaveName) ---");
@@ -764,9 +764,9 @@ void CTOSMasterModule::DebugDraw(const Vec2& screenPos, float fontSize, float in
 
 		DRAW_2D_TEXT(
 			screenPos.x,
-			screenPos.y + channelId * interval, 
-			fontSize, 
-			"%i) %s:%s", 
+			screenPos.y + channelId * interval,
+			fontSize,
+			"%i) %s:%s",
 			channelId, masterName, slaveName);
 	}
 }
@@ -789,7 +789,7 @@ void CTOSMasterModule::SaveMasterClientParams(IEntity* pMasterEntity)
 	if (pAI)
 		pAI->Event(AIEVENT_DISABLE, nullptr);
 
-	auto &params = m_masters[pMasterEntity->GetId()].mcSavedParams;
+	auto& params = m_masters[pMasterEntity->GetId()].mcSavedParams;
 	params.dirty = true;
 
 	params.pos = pMasterEntity->GetWorldPos();
@@ -846,10 +846,10 @@ void CTOSMasterModule::SaveMasterClientParams(IEntity* pMasterEntity)
 	//pSuit->SetModeDefect(NANOMODE_SPEED, true);
 	//pSuit->SetModeDefect(NANOMODE_STRENGTH, true);
 	CryLog("<c++> [SaveMasterClientParams] pos(%1.f,%1.f,%1.f), rot(%1.f,%1.f,%1.f), species '%i', energy '%1.f', suitMode '%i'",
-			params.pos.x, params.pos.y, params.pos.z, params.rot.v.x, params.rot.v.y, params.rot.v.z, params.species, params.suitEnergy, params.suitMode);
+		   params.pos.x, params.pos.y, params.pos.z, params.rot.v.x, params.rot.v.y, params.rot.v.z, params.species, params.suitEnergy, params.suitMode);
 }
 
-void CTOSMasterModule::ApplyMasterClientParams(IEntity* pMasterEntity)    
+void CTOSMasterModule::ApplyMasterClientParams(IEntity* pMasterEntity)
 {
 	assert(pMasterEntity);
 
