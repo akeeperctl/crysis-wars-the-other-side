@@ -61,7 +61,7 @@ void CTOSEntitySpawnModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGam
 				//pParams->sName = pEntity->GetName();
 
 				if (gEnv->pSystem->IsDevMode())
-					CryLogAlways("[%s|%s|%id] Create saved params ", pParams->savedName, pEntity->GetName(), entId);
+					CryLog("<c++> [OnExtraGameplayEvent] Save spawn params for spawned entity with saved name '%s', with real name '%s', id '%i'", pParams->savedName, pEntity->GetName(), entId);
 
 				m_savedSpawnParams[entId] = pParams;
 			}
@@ -151,10 +151,10 @@ void CTOSEntitySpawnModule::Update(float frametime)
 		STOSEntitySpawnParams* pScheduledParams = it->second;
 
 		// Проверка на необходимость выполнить пересоздание
-		if (!pScheduledEnt && (pScheduledParams->tosFlags & TOS_ENTITY_FLAG_SCHEDULED_RECREATION))
+		if (!pScheduledEnt && (pScheduledParams->tosFlags & ENTITY_RECREATION_SCHEDULED))
 		{
 			// После рекреации помечаем флагом, чтобы рекреация повторилась
-			pScheduledParams->tosFlags = TOS_ENTITY_FLAG_MUST_RECREATED;
+			pScheduledParams->tosFlags = ENTITY_MUST_RECREATED;
 
 			IEntity* pRecreatedEntity = SpawnEntity(*pScheduledParams);
 			assert(pRecreatedEntity);
@@ -256,12 +256,10 @@ IEntity* CTOSEntitySpawnModule::SpawnEntity(STOSEntitySpawnParams& params, bool 
 		bool alreadyHaveSaved = !params.authorityPlayerName.empty() && iter->second->authorityPlayerName == params.authorityPlayerName;
 		if (alreadyHaveSaved)
 		{
-			CryLog("%s[C++][SpawnEntity] Slave entity spawn interrupted! The system already has a saved slave for player %s", TOS_COLOR_YELLOW, params.authorityPlayerName);
-
+			CryLog("%s<c++> [CTOSEntitySpawnModule] Slave entity spawn interrupted! The system already has a saved slave for player %s", TOS_COLOR_YELLOW, params.authorityPlayerName);
 			return nullptr;
 		}
 	}
-
 
 	const auto pEntity = pEntSys->SpawnEntity(params.vanilla, false);
 	assert(pEntity);
@@ -272,7 +270,7 @@ IEntity* CTOSEntitySpawnModule::SpawnEntity(STOSEntitySpawnParams& params, bool 
 	gEnv->pEntitySystem->InitEntity(pEntity, params.vanilla);
 
 	const EntityId entityId = pEntity->GetId();
-	CActor* pActor = static_cast<CActor*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(entityId));
+	CActor* pActor = static_cast<CActor*>(TOS_GET_ACTOR(entityId));
 
 	IEntity* pAuthorityPlayerEnt = gEnv->pEntitySystem->FindEntityByName(params.authorityPlayerName);
 	if (pAuthorityPlayerEnt)
@@ -280,12 +278,11 @@ IEntity* CTOSEntitySpawnModule::SpawnEntity(STOSEntitySpawnParams& params, bool 
 		g_pGame->GetGameRules()->MovePlayer(pActor, pAuthorityPlayerEnt->GetWorldPos(), Ang3(pAuthorityPlayerEnt->GetWorldRotation()));
 	}
 
-
 	//1
 	if (sendTosEvent)
 		TOS_RECORD_EVENT(entityId, STOSGameEvent(eEGE_TOSEntityOnSpawn, "", true, false, &params));
 
-	if (params.tosFlags & TOS_ENTITY_FLAG_MUST_RECREATED)
+	if (params.tosFlags & ENTITY_MUST_RECREATED)
 	{
 
 		auto alreadyInside = stl::find(s_markedForRecreation, entityId);
@@ -495,7 +492,7 @@ void CTOSEntitySpawnModule::ScheduleRecreation(const IEntity* pEntity)
 	}
 
 	pParams->pSavedScript = pSavedScript;
-	pParams->tosFlags |= TOS_ENTITY_FLAG_SCHEDULED_RECREATION;
+	pParams->tosFlags |= ENTITY_RECREATION_SCHEDULED;
 	pParams->vanilla = m_savedSpawnParams[entId]->vanilla;
 
 	pParams->savedName = entName;

@@ -9,16 +9,16 @@
 
 enum ETOSEntityFlags
 {
-	TOS_ENTITY_FLAG_MUST_RECREATED = (1 << 0),
-	TOS_ENTITY_FLAG_SCHEDULED_RECREATION = (1 << 1),
-	//TOS_ENTITY_FLAG_ALREADY_RECREATED = (1 << 2),
+	ENTITY_MUST_RECREATED = (1 << 0),
+	ENTITY_RECREATION_SCHEDULED = (1 << 1),
 };
 
 struct STOSScheduleDelegateAuthorityParams
 {
 	STOSScheduleDelegateAuthorityParams()
 		: forceStartControl(false),
-		scheduledTimeStamp(0) {}
+		scheduledTimeStamp(0)
+	{}
 
 	bool forceStartControl;
 	string playerName; // имя игрока, который получит власть
@@ -57,10 +57,11 @@ struct STOSEntitySpawnParams : public STOSSmartStruct
 		this->forceStartControl = params.forceStartControl;
 	}
 
-	~STOSEntitySpawnParams()  { }
+	~STOSEntitySpawnParams()
+	{}
 
 	IScriptTable* pSavedScript;
-	SEntitySpawnParams vanilla; 
+	SEntitySpawnParams vanilla;
 
 	bool forceStartControl; ///< Если \a true, то при передаче власти игроку генерирует событие \a eEGE_ForceStartControl \n Используется вместе с \a authorityPlayerName
 	string authorityPlayerName; ///< Имя персонажа игрока, которому будет передана власть над сущностью после её пересоздания 
@@ -74,17 +75,20 @@ struct STOSEntityDelaySpawnParams : public STOSEntitySpawnParams
 {
 	STOSEntityDelaySpawnParams()
 		: scheduledTimeStamp(0),
-		spawnDelay(0) { }
+		spawnDelay(0)
+	{}
 
 	explicit STOSEntityDelaySpawnParams(const SEntitySpawnParams& _vanillaParams)
 		: STOSEntitySpawnParams(_vanillaParams),
 		scheduledTimeStamp(0),
-		spawnDelay(0) { }
+		spawnDelay(0)
+	{}
 
 	explicit STOSEntityDelaySpawnParams(const STOSEntitySpawnParams& params)
 		: STOSEntitySpawnParams(params),
 		scheduledTimeStamp(0),
-		spawnDelay(0) { }
+		spawnDelay(0)
+	{}
 
 	float scheduledTimeStamp; ///< Штамп времени, когда свершилось планирование
 	float spawnDelay; ///< Задержка перед спавном. \n Если значение > 0.0f, то использовать функцию \a SpawnDelay(), иначе задержки не будет */
@@ -101,23 +105,26 @@ typedef std::map<int, _smart_ptr<STOSEntityDelaySpawnParams>>        TMapDelayTO
  * \brief Модуль создания сущностей, используемых в моде The Other Side
  * \note Также модуль предназначен для пересоздания сущностей, удаленных во время работы консольной команды sv_restart.
  */
-class CTOSEntitySpawnModule  :
+class CTOSEntitySpawnModule :
 	public CTOSGenericModule
 {
 public:
 	CTOSEntitySpawnModule();
-	~CTOSEntitySpawnModule() ;
+	~CTOSEntitySpawnModule();
 
 	//ITOSGameModule
-	void OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event) ;
-	const char* GetName()  { return "CTOSEntitySpawnModule"; };
-	void Init() ;
-	void Update(float frametime) ;
-	void Serialize(TSerialize ser) ;
-	void InitCVars(IConsole* pConsole) ;
-	void InitCCommands(IConsole* pConsole) ;
-	void ReleaseCVars() ;
-	void ReleaseCCommands() ;
+	void OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event);
+	const char* GetName()
+	{
+		return "CTOSEntitySpawnModule";
+	};
+	void Init();
+	void Update(float frametime);
+	void Serialize(TSerialize ser);
+	void InitCVars(IConsole* pConsole);
+	void InitCCommands(IConsole* pConsole);
+	void ReleaseCVars();
+	void ReleaseCCommands();
 	//~ITOSGameModule
 
 	void Reset();
@@ -168,7 +175,7 @@ public:
 private:
 
 	/**
-	 * \brief Запланировать пересоздание сущности после sv_restart 
+	 * \brief Запланировать пересоздание сущности после sv_restart
 	 * \param pEntity - указатель на сущность, которую нужно пересоздать
 	 */
 	void ScheduleRecreation(const IEntity* pEntity);
@@ -185,6 +192,6 @@ private:
 	static TVecEntities s_markedForRecreation; ///< \b Что \b хранит: \n сущности которые должны быть пересозданы после sv_restart
 	static TMapDelayTOSParams s_scheduledSpawnsDelay;
 	TMapAuthorityParams m_scheduledAuthorities; ///< \b Что \b хранит: \n ключ - id сущности, \n значение - структура, где есть имя игрока, который получит власть над сущностью и штамп времени, когда случилось планирование
-	TMapTOSParams m_scheduledRecreations; 
+	TMapTOSParams m_scheduledRecreations;
 	TMapTOSParams m_savedSpawnParams; ///< \b Что \b хранит: \n ключ - id сущности, которая была заспавнена в этом модуле, \n значение - её \a STOSEntitySpawnParams, захваченные при спавне в этом модуле
 };
