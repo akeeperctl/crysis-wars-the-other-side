@@ -625,44 +625,79 @@ void CTOSZeusModule::OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eH
 
 				if (m_dragging)
 				{
-
-					for (auto it = m_selectedEntities.begin(); it != m_selectedEntities.end(); it++)
+					for (auto it = m_selectedEntities.begin(); it != m_selectedEntities.end();)
 					{
-						auto pEntity = TOS_GET_ENTITY(*it);
-						if (!pEntity)
+						const EntityId selectedEntId = *it;
+						// Сущность, которую перенаскивают
+						auto pSelectedEntity = TOS_GET_ENTITY(selectedEntId);
+						if (!pSelectedEntity)
+						{
+							it++;
 							continue;
+						}
 
-						bool needMoveBoxes = true;
+						bool moveSelectedEnt = true;
+						bool needDeselect = false;
 
+						// сущность, на которую перетаскивают 
 						const auto pDragTarget = TOS_GET_ENTITY(m_dragTargetId);
 						if (pDragTarget)
 						{
-							IActor* pSelectedActor = TOS_GET_ACTOR(*it);
+							auto pSelectedActor = static_cast<CTOSActor*>(TOS_GET_ACTOR(selectedEntId));
+							auto pSelectedItem = static_cast<CItem*>(TOS_GET_ITEM(selectedEntId));
+
+							const EntityId dragTargetId = pDragTarget->GetId();
+
 							if (pSelectedActor)
 							{
-								IVehicle* pDragVehicleTarget = TOS_GET_VEHICLE(pDragTarget->GetId());
-								if (pDragVehicleTarget && TOS_Vehicle::Enter(pSelectedActor, pDragVehicleTarget, true))
-									needMoveBoxes = false;
+								// Actor перетаскивают на Vehicle
+								IVehicle* pDragVehicle = TOS_GET_VEHICLE(dragTargetId);
+								if (pDragVehicle && TOS_Vehicle::Enter(pSelectedActor, pDragVehicle, true))
+									moveSelectedEnt = false;
+							}
+							else if (pSelectedItem)
+							{
+								// Item перетаскивают на Actor
+								auto pDragActor = static_cast<CTOSActor*>(TOS_GET_ACTOR(dragTargetId));
+								if (pDragActor && pDragActor->GetHealth() > 0)
+								{
+									if (pDragActor->PickUpItem(pSelectedItem->GetEntityId(), true))
+									{
+										TOS_Inventory::SelectItemByClass(pDragActor, pSelectedItem->GetEntity()->GetClass()->GetName());
+										moveSelectedEnt = false;
+										needDeselect = true;
+									}
+								}
+
 							}
 						}
 
-						if (needMoveBoxes)
+						if (moveSelectedEnt)
 						{
 							// Применяем сдвинутые позиции боксов на сущности
-							const auto pBox = m_boxes[pEntity->GetId()];
-							pEntity->SetWorldTM(Matrix34::CreateTranslationMat(pBox->wPos));
-							pEntity->SetRotation(Quat(pBox->obb.m33));
+							const auto pBox = m_boxes[pSelectedEntity->GetId()];
+							pSelectedEntity->SetWorldTM(Matrix34::CreateTranslationMat(pBox->wPos));
+							pSelectedEntity->SetRotation(Quat(pBox->obb.m33));
 						}
 
 						// Пинаем физику выделенных сущностей после того как закончили их перетаскивать
-						auto pPhys = pEntity->GetPhysics();
-						if (!pPhys)
-							continue;
+						auto pPhys = pSelectedEntity->GetPhysics();
+						if (pPhys)
+						{
+							pe_action_awake awake;
+							awake.bAwake = 1;
+							pPhys->Action(&awake);
+						}
 
-						pe_action_awake awake;
-						awake.bAwake = 1;
-
-						pPhys->Action(&awake);
+						if (needDeselect)
+						{
+							it = DeselectEntity(pSelectedEntity->GetId());
+							//deselectionSet.insert(pSelectedEntity->GetId());
+						}
+						else
+						{
+							it++;
+						}
 					}
 				}
 
@@ -1226,7 +1261,7 @@ void CTOSZeusModule::UpdateOnScreenIcons(IActor* pClientActor)
 					continue;
 			}
 
-			const IItem* pItem = g_pGame->GetIGameFramework()->GetIItemSystem()->GetItem(id);
+			const IItem* pItem = TOS_GET_ITEM(id);
 			if (pItem)
 			{
 				icon = eZSI_Circle;
