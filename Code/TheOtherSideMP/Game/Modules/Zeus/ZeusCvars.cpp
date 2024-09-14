@@ -10,6 +10,7 @@ void CTOSZeusModule::InitCVars(IConsole* pConsole)
 	pConsole->Register("tos_sv_zeus_mass_selection_hold_sec", &tos_sv_zeus_mass_selection_hold_sec, 0.2f, VF_CHEAT,
 					   "Delay in sec, how long you need to hold LMB down before the multiple object selection mode is enabled");
 
+	// ZEUS DRAGGING
 	pConsole->Register("tos_sv_zeus_dragging_ignore_dead_bodies", &tos_sv_zeus_dragging_ignore_dead_bodies, 1, VF_CHEAT,
 					   "");
 
@@ -25,6 +26,11 @@ void CTOSZeusModule::InitCVars(IConsole* pConsole)
 	pConsole->Register("tos_sv_zeus_dragging_move_start_delay", &tos_sv_zeus_dragging_move_start_delay, 0.05f, VF_CHEAT,
 					   "Delay in sec in starting to move entities after enabling drag and drop");
 
+	pConsole->Register("tos_sv_zeus_dragging_move_boxes_separately", &tos_sv_zeus_dragging_move_boxes_separately, 1, VF_CHEAT,
+					   "0 - entities and selection boxes move together in realtime. Copying with 0 cause move bug \n1 - selection boxes move separately from entities");
+
+
+	// ZEUS ON SCREEN ICONS
 	pConsole->Register("tos_sv_zeus_on_screen_force_show", &tos_sv_zeus_on_screen_force_show, 1, VF_CHEAT,
 					   "");
 
@@ -49,9 +55,7 @@ void CTOSZeusModule::InitCVars(IConsole* pConsole)
 	pConsole->Register("tos_sv_zeus_on_screen_update_delay", &tos_sv_zeus_on_screen_update_delay, 0.0f, VF_CHEAT,
 					   "");
 
-	pConsole->Register("tos_sv_zeus_dragging_move_boxes_separately", &tos_sv_zeus_dragging_move_boxes_separately, 1, VF_CHEAT,
-					   "0 - entities and selection boxes move together in realtime. Copying with 0 cause move bug \n1 - selection boxes move separately from entities");
-
+	// ZEUS SELECTION
 	pConsole->Register("tos_sv_zeus_selection_ignore_default", &tos_sv_zeus_selection_ignore_default, 1, VF_CHEAT,
 					   "0 - zeus will not ignore entities with class Default when selecting \n1 - zeus will ignore entities with class Default when selecting");
 
