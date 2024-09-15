@@ -1593,7 +1593,19 @@ bool CTOSZeusModule::ExecuteCommand(EZeusCommands command)
 					}
 				}
 
-				gEnv->pEntitySystem->RemoveEntity(id);
+				try
+				{
+					gEnv->pEntitySystem->RemoveEntity(id);
+				}
+				catch (...)
+				{
+					auto pEntity = TOS_GET_ENTITY(id);
+					if (pEntity)
+					{
+						CryLogAlways("[Error] '%s' removing not finished properly, hide them", pEntity->GetName());
+						pEntity->Hide(true);
+					}
+				}
 				it = DeselectEntity(id);
 				m_doubleClickLastSelectedEntities.erase(id);
 
@@ -1610,30 +1622,31 @@ bool CTOSZeusModule::ExecuteCommand(EZeusCommands command)
 					std::map<int, string> savedItems;
 					string currentItemClass;
 
-					IActor* pActor = TOS_GET_ACTOR(id);
-					if (pActor)
-					{
-						const IInventory* pInventory = pActor->GetInventory();
-						if (pInventory)
-						{
-							savedItemCount = pInventory->GetCount();
+					//IActor* pActor = TOS_GET_ACTOR(id);
+					//if (pActor)
+					//{
+					//	const IInventory* pInventory = pActor->GetInventory();
+					//	if (pInventory)
+					//	{
+					//		savedItemCount = pInventory->GetCount();
 
-							for (int slot = 0; slot <= savedItemCount; slot++)
-							{
-								const auto pItem = TOS_GET_ENTITY(pInventory->GetItem(slot));
-								if (pItem)
-									savedItems[slot] = pItem->GetClass()->GetName();
-							}
+					//		for (int slot = 0; slot <= savedItemCount; slot++)
+					//		{
+					//			const auto pItem = TOS_GET_ENTITY(pInventory->GetItem(slot));
+					//			if (pItem)
+					//				savedItems[slot] = pItem->GetClass()->GetName();
+					//		}
 
-							const auto pCurrentItem = TOS_GET_ENTITY(pInventory->GetCurrentItem());
-							if (pCurrentItem)
-								currentItemClass = pCurrentItem->GetClass()->GetName();
-						}
-					}
+					//		const auto pCurrentItem = TOS_GET_ENTITY(pInventory->GetCurrentItem());
+					//		if (pCurrentItem)
+					//			currentItemClass = pCurrentItem->GetClass()->GetName();
+					//	}
+					//}
 
 
 					STOSEntitySpawnParams params;
-					//params.vanilla.bStaticEntityId = true;
+					params.vanilla.bStaticEntityId = false; // true - вылетает в редакторе и медленно работает O(n), false O(1)
+					params.vanilla.bIgnoreLock = false; // spawn lock игнор
 					params.vanilla.nFlags = pEntity->GetFlags();
 					params.vanilla.nFlags &= ~ENTITY_FLAG_UNREMOVABLE;
 
@@ -1655,10 +1668,6 @@ bool CTOSZeusModule::ExecuteCommand(EZeusCommands command)
 					{
 						pSpawned->Hide(true);
 
-						//bool hostile = true;
-						//TOS_Script::GetEntityProperty(pEntity, "bSpeciesHostility", hostile);
-						//TOS_Script::SetEntityProperty(pSpawned, "bSpeciesHostility", hostile);
-
 						it = DeselectEntity(id);
 						needUpdateIter = false;
 
@@ -1666,12 +1675,12 @@ bool CTOSZeusModule::ExecuteCommand(EZeusCommands command)
 						//m_select = true;
 
 						const auto spawnedId = pSpawned->GetId();
-						pActor = TOS_GET_ACTOR(spawnedId);
-						if (pActor)
-						{
-							for (int slot = 0; slot <= savedItemCount; slot++)
-								TOS_Inventory::GiveItem(pActor, savedItems[slot], false, false, false);
-						}
+						//pActor = TOS_GET_ACTOR(spawnedId);
+						//if (pActor)
+						//{
+						//	for (int slot = 0; slot <= savedItemCount; slot++)
+						//		TOS_Inventory::GiveItem(pActor, savedItems[slot], false, false, false);
+						//}
 
 						char buffer[16];
 						sprintf(buffer, "%i", spawnedId);
