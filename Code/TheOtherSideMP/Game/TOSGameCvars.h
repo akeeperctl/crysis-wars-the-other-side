@@ -42,13 +42,13 @@ struct STOSCvars  // NOLINT(cppcoreguidelines-special-member-functions)
 		delete this;
 	}
 
-	void        InitCVars(IConsole * pConsole);
-	static void InitCCommands(IConsole * pConsole);
+	void        InitCVars(IConsole* pConsole);
+	static void InitCCommands(IConsole* pConsole);
 	static void ReleaseCVars();
 	static void ReleaseCCommands();
 
 	// SERVER COMMANDS
-	static void CmdNetChName(IConsoleCmdArgs *pArgs);	
+	static void CmdNetChName(IConsoleCmdArgs* pArgs);
 
 	static void CmdDumpActorInfo(IConsoleCmdArgs* pArgs);
 	static void CmdGetEntityScriptValue(IConsoleCmdArgs* pArgs);
@@ -62,12 +62,15 @@ struct STOSCvars  // NOLINT(cppcoreguidelines-special-member-functions)
 
 
 	// CLIENT COMMANDS
-	static void CmdGetDudeName(IConsoleCmdArgs *pArgs);
+	static void CmdGetDudeName(IConsoleCmdArgs* pArgs);
 
 	// Правило написания консольных значений
 	// мод_среда_ОписаниеДействия
 
 	int tos_temp_var;
+
+	int tos_sv_enable_ghost_item_fix;
+	int tos_sv_enable_ghost_item_fix_log;
 
 	int tos_sv_AIActionTrackerDebugDraw;
 	int tos_sv_AIActionTrackerDebugLog;

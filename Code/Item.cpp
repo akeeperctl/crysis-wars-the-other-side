@@ -35,6 +35,9 @@
 
 //TheOtherSide
 #include "TheOtherSideMP/HUD/TOSCrosshair.h"
+#include "TheOtherSideMP/Helpers/TOS_Screen.h"
+#include <TheOtherSideMP\Helpers\TOS_Entity.h>
+#include <TheOtherSideMP\Helpers\TOS_Console.h>
 //~TheOtherSide
 
 #pragma warning(disable: 4355)	// ґthisґ used in base member initializer list
@@ -371,10 +374,6 @@ void CItem::Update(SEntityUpdateContext& ctx, int slot)
 {
 	FUNCTION_PROFILER(GetISystem(), PROFILE_GAME);
 
-	//TheOtherSide
-
-	//~TheOtherSide
-
 	if (m_bPostPostSerialize)
 	{
 		PostPostSerialize();
@@ -607,6 +606,37 @@ void CItem::ProcessEvent(SEntityEvent& event)
 						RemoveAllAccessories();
 						PatchInitialSetup();
 						InitialSetup();
+
+						//TheOtherSide
+						const int enableFix = TOS_Console::GetSafeIntVar("tos_sv_enable_ghost_item_fix", 1);
+						const int enableFixLog = TOS_Console::GetSafeIntVar("tos_sv_enable_ghost_item_fix_log", 1);
+						auto pEntity = GetEntity();
+						if (enableFix > 0 && pEntity)
+						{
+							auto pOwner = TOS_GET_ENTITY(GetOwnerId());
+							if (pEntity->GetParent() == nullptr && (pOwner == nullptr || m_stats.dropped))
+							{
+								if (enableFixLog)
+									CryLogAlways("[%s] IS POTENTIAL GHOST ITEM", pEntity->GetName());
+
+								// Если сущность удаляема
+								if ((ENTITY_FLAG_UNREMOVABLE & pEntity->GetFlags()) == 0)
+								{
+									//if (!pEntity->IsGarbage())
+									if (!pEntity->IsHidden())
+									{
+										if (enableFixLog)
+											CryLogAlways("[%s] GHOST ITEM HIDDEN", pEntity->GetName());
+
+										pEntity->Hide(true);
+
+										//gEnv->pEntitySystem->RemoveEntity(pEntity->GetId());
+										//g_pGame->GetIGameFramework()->GetIItemSystem()->RemoveItem(pEntity->GetId());
+									}
+								}
+							}
+						}
+						//~TheOtherSide
 					}
 				}
 			}
@@ -1445,6 +1475,7 @@ void CItem::Drop(float impulseScale, bool selectNext, bool byDeath)
 	}
 
 	Pickalize(true, true);
+
 	EnableUpdate(false);
 
 	if (IsServer() && g_pGame->GetGameRules())
@@ -2514,11 +2545,35 @@ void CItem::RequireUpdate(int slot)
 //------------------------------------------------------------------------
 void CItem::EnableUpdate(bool enable, int slot)
 {
+	//TheOtherSide
+	//if (enable)
+	//{
+	//	if (slot == -1)
+	//		for (int i = 0; i < 4; i++)
+	//			GetGameObject()->EnableUpdateSlot(this, i);
+	//	else
+	//		GetGameObject()->EnableUpdateSlot(this, slot);
+
+	//}
+	//else
+	//{
+	//	if (slot == -1)
+	//	{
+	//		for (int i = 0; i < 4; i++)
+	//			GetGameObject()->DisableUpdateSlot(this, i);
+	//	}
+	//	else
+	//		GetGameObject()->DisableUpdateSlot(this, slot);
+	//}
+
 	if (enable)
 	{
 		if (slot == -1)
 			for (int i = 0; i < 4; i++)
+			{
 				GetGameObject()->EnableUpdateSlot(this, i);
+				m_stats.updating = true;
+			}
 		else
 			GetGameObject()->EnableUpdateSlot(this, slot);
 
@@ -2528,11 +2583,15 @@ void CItem::EnableUpdate(bool enable, int slot)
 		if (slot == -1)
 		{
 			for (int i = 0; i < 4; i++)
+			{
 				GetGameObject()->DisableUpdateSlot(this, i);
+				m_stats.updating = false;
+			}
 		}
 		else
 			GetGameObject()->DisableUpdateSlot(this, slot);
 	}
+	//~TheOtherSide
 }
 
 //------------------------------------------------------------------------

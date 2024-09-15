@@ -12,13 +12,13 @@
 
 namespace TOS_Entity
 {
-	inline IEntity* Spawn(STOSEntitySpawnParams& params)
+	inline IEntity* Spawn(STOSEntitySpawnParams& params, bool saveParams)
 	{
-		return CTOSEntitySpawnModule::SpawnEntity(params, true);
+		return CTOSEntitySpawnModule::SpawnEntity(params, saveParams);
 	}
-	inline bool SpawnDelay(STOSEntityDelaySpawnParams& params)
+	inline bool SpawnDelay(STOSEntityDelaySpawnParams& params, bool saveParams)
 	{
-		return CTOSEntitySpawnModule::SpawnEntityDelay(params, true);
+		return CTOSEntitySpawnModule::SpawnEntityDelay(params, saveParams);
 	}
 	inline void RemoveEntityForced(const EntityId id)
 	{

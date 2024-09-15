@@ -28,11 +28,13 @@ void STOSCvars::InitCVars(IConsole* pConsole)
 	pConsole->Register("tos_sv_EnableShotValidator", &tos_sv_EnableShotValidator, 1, 0, "Enable shot validator in multiplayer 1 - yes, 0 - no");
 	pConsole->Register("tos_tr_charging_jump_input_time", &tos_tr_charging_jump_input_time, 0.20f, 0, "Time between press jump and jump action confirm");
 	pConsole->Register("tos_sv_PlayerAlwaysAiming", &tos_sv_PlayerAlwaysAiming, 1, 0, "");
+	pConsole->Register("tos_sv_enable_ghost_item_fix", &tos_sv_enable_ghost_item_fix, 1, VF_CHEAT, "");
+	pConsole->Register("tos_sv_enable_ghost_item_fix_log", &tos_sv_enable_ghost_item_fix_log, 0, VF_CHEAT, "");
 	pConsole->Register("tos_temp_var", &tos_temp_var, 0, 0, "");
 
-	tos_sv_AlienMPEquipPack =  pConsole->RegisterString("tos_sv_AlienMPEquipPack",    "Alien_naked", 0, "");
-	tos_sv_HunterMPEquipPack = pConsole->RegisterString("tos_sv_HunterMPEquipPack",   "Alien_Hunter", 0, "");
-	tos_sv_ScoutMPEquipPack =  pConsole->RegisterString("tos_sv_ScoutMPEquipPack",    "Alien_Scout_Gunner", 0, "");
+	tos_sv_AlienMPEquipPack = pConsole->RegisterString("tos_sv_AlienMPEquipPack", "Alien_naked", 0, "");
+	tos_sv_HunterMPEquipPack = pConsole->RegisterString("tos_sv_HunterMPEquipPack", "Alien_Hunter", 0, "");
+	tos_sv_ScoutMPEquipPack = pConsole->RegisterString("tos_sv_ScoutMPEquipPack", "Alien_Scout_Gunner", 0, "");
 	tos_sv_TrooperMPEquipPack = pConsole->RegisterString("tos_sv_TrooperMPEquipPack", "Alien_Trooper", 0, "");
 	tos_sv_HumanGruntMPEquipPack = pConsole->RegisterString("tos_sv_HumanGruntMPEquipPack", "NK_Pistol", 0, "");
 	tos_sv_EnableMPStealthOMeterForTeam = pConsole->RegisterString("tos_sv_EnableMPStealthOMeterForTeam", "aliens", 0, "Enable for only one Team. Teams: all, black, tan, aliens");
@@ -103,6 +105,9 @@ void STOSCvars::ReleaseCVars()
 	//pConsole->UnregisterVariable("tos_cl_SlaveEntityClass", true);
 
 	//pConsole->UnregisterVariable("tos_cl_JoinAsMaster", true);
+	pConsole->UnregisterVariable("tos_sv_enable_ghost_item_fix", true);
+	pConsole->UnregisterVariable("tos_sv_enable_ghost_item_fix_log", true);
+
 	pConsole->UnregisterVariable("tos_temp_var", true);
 	pConsole->UnregisterVariable("tos_sv_PlayerAlwaysAiming", true);
 	pConsole->UnregisterVariable("tos_cl_DisableSlaveRequestMovement", true);
@@ -211,31 +216,31 @@ void STOSCvars::CmdGetEntityScriptValue(IConsoleCmdArgs* pArgs)
 
 	switch (value.type)
 	{
-	case ANY_TNIL:
-		CryLogAlways("Failed: %s not found in script table", pathToValue);
-		break;
-	case ANY_TBOOLEAN:
-		CryLogAlways("Result: %s = %i", pathToValue, value.b);
-		break;
-	case ANY_TNUMBER:
-		CryLogAlways("Result: %s = %f", pathToValue, value.number);
-		break;
-	case ANY_TSTRING:
-		CryLogAlways("Result: %s = %s", pathToValue, value.str);
-		break;
-	case ANY_TVECTOR:
-		CryLogAlways("Result: %s = (%1.f, %1.f, %1.f)", pathToValue, value.vec3.x, value.vec3.y, value.vec3.z);
-		break;
-	case ANY_TTABLE:
-		CryLogAlways("Result: values of table %s", pathToValue);
-		value.table->Dump(g_pTOSGame);
-		break;
-	case ANY_THANDLE:
-	case ANY_ANY:
-	case ANY_TFUNCTION:
-	case ANY_TUSERDATA:
-	case ANY_COUNT:
-		break;
+		case ANY_TNIL:
+			CryLogAlways("Failed: %s not found in script table", pathToValue);
+			break;
+		case ANY_TBOOLEAN:
+			CryLogAlways("Result: %s = %i", pathToValue, value.b);
+			break;
+		case ANY_TNUMBER:
+			CryLogAlways("Result: %s = %f", pathToValue, value.number);
+			break;
+		case ANY_TSTRING:
+			CryLogAlways("Result: %s = %s", pathToValue, value.str);
+			break;
+		case ANY_TVECTOR:
+			CryLogAlways("Result: %s = (%1.f, %1.f, %1.f)", pathToValue, value.vec3.x, value.vec3.y, value.vec3.z);
+			break;
+		case ANY_TTABLE:
+			CryLogAlways("Result: values of table %s", pathToValue);
+			value.table->Dump(g_pTOSGame);
+			break;
+		case ANY_THANDLE:
+		case ANY_ANY:
+		case ANY_TFUNCTION:
+		case ANY_TUSERDATA:
+		case ANY_COUNT:
+			break;
 	}
 }
 
@@ -270,11 +275,11 @@ void STOSCvars::CmdDumpEntityInfo(IConsoleCmdArgs* pArgs)
 
 	TOS_Debug::DumpEntityFlags(pEntity);
 
-	IEntityRenderProxy *pRenderProxy = static_cast<IEntityRenderProxy *>(pEntity->GetProxy(ENTITY_PROXY_RENDER));
+	IEntityRenderProxy* pRenderProxy = static_cast<IEntityRenderProxy*>(pEntity->GetProxy(ENTITY_PROXY_RENDER));
 
 	if (pRenderProxy)
 	{
-		IRenderNode *pRenderNode = pRenderProxy?pRenderProxy->GetRenderNode():0;
+		IRenderNode* pRenderNode = pRenderProxy ? pRenderProxy->GetRenderNode() : 0;
 
 		if (pRenderNode)
 		{
