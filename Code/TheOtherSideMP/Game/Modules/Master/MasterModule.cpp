@@ -171,7 +171,7 @@ void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEven
 				if (IsMaster(pEntity))
 				{
 					STOSMasterInfo info;
-					GetMasterInfo(pEntity, info);
+					GetMasterInfo(pEntity, &info);
 
 					const string slaveClsName = info.desiredSlaveClassName;
 					const string slaveName = entName + "(Slave)";
@@ -454,10 +454,10 @@ void CTOSMasterModule::Update(float frametime)
 	for (auto it = m_scheduledTakeControls.begin(); it != m_scheduledTakeControls.end();)
 	{
 		const auto slaveId = it->first;
-		const auto masterChannelId = it->second.masterChannelId;
+		const auto masterChannelId = it->second->masterChannelId;
 		const bool inGame = g_pGame->GetGameRules()->IsChannelInGame(masterChannelId);
 
-		float& delay = it->second.inGameDelay;
+		float& delay = it->second->inGameDelay;
 
 		if (inGame && delay < 0.0f)
 		{
@@ -537,8 +537,8 @@ void CTOSMasterModule::MasterAdd(const IEntity* pMasterEntity, const char* slave
 
 		if (!IsMaster(pMasterEntity))
 		{
-			auto info = STOSMasterInfo();
-			info.desiredSlaveClassName = slaveDesiredClass;
+			auto info = new STOSMasterInfo();
+			info->desiredSlaveClassName = slaveDesiredClass;
 
 			m_masters[id] = info;
 
@@ -613,7 +613,7 @@ IEntity* CTOSMasterModule::GetCurrentSlave(const IEntity* pMasterEntity)
 			for (; it != m_masters.end(); it++)
 			{
 				if (it->first == pMasterEntity->GetId())
-					return gEnv->pEntitySystem->GetEntity(it->second.slaveId);
+					return gEnv->pEntitySystem->GetEntity(it->second->slaveId);
 			}
 		}
 	}
@@ -629,8 +629,8 @@ void CTOSMasterModule::SetCurrentSlave(const IEntity* pMasterEntity, const IEnti
 	if (!IsMaster(pMasterEntity))
 		return;
 
-	m_masters[pMasterEntity->GetId()].slaveId = pSlaveEntity->GetId();
-	m_masters[pMasterEntity->GetId()].flags = masterFlags;
+	m_masters[pMasterEntity->GetId()]->slaveId = pSlaveEntity->GetId();
+	m_masters[pMasterEntity->GetId()]->flags = masterFlags;
 
 	auto pActor = static_cast<CTOSActor*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pSlaveEntity->GetId()));
 	if (pActor)
@@ -647,7 +647,7 @@ void CTOSMasterModule::ClearCurrentSlave(const IEntity* pMasterEntity)
 	if (!IsMaster(pMasterEntity))
 		return;
 
-	EntityId slaveId = m_masters[pMasterEntity->GetId()].slaveId;
+	EntityId slaveId = m_masters[pMasterEntity->GetId()]->slaveId;
 
 	auto pActor = static_cast<CTOSActor*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(slaveId));
 	if (pActor)
@@ -656,8 +656,8 @@ void CTOSMasterModule::ClearCurrentSlave(const IEntity* pMasterEntity)
 		pActor->GetGameObject()->ChangedNetworkState(TOS_NET::SERVER_ASPECT_STATIC);
 	}
 
-	m_masters[pMasterEntity->GetId()].slaveId = 0;
-	m_masters[pMasterEntity->GetId()].flags = 0;
+	m_masters[pMasterEntity->GetId()]->slaveId = 0;
+	m_masters[pMasterEntity->GetId()]->flags = 0;
 }
 
 bool CTOSMasterModule::IsSlave(const IEntity* pPotentialSlave) const
@@ -668,7 +668,7 @@ bool CTOSMasterModule::IsSlave(const IEntity* pPotentialSlave) const
 	auto it = m_masters.begin();
 	for (; it != m_masters.end(); it++)
 	{
-		if (it->second.slaveId == pPotentialSlave->GetId())
+		if (it->second->slaveId == pPotentialSlave->GetId())
 			return true;
 	}
 
@@ -771,12 +771,12 @@ void CTOSMasterModule::DebugDraw(const Vec2& screenPos, float fontSize, float in
 	}
 }
 
-bool CTOSMasterModule::GetMasterInfo(const IEntity* pMasterEntity, STOSMasterInfo& info)
+bool CTOSMasterModule::GetMasterInfo(const IEntity* pMasterEntity, STOSMasterInfo* info)
 {
 	if (!IsMaster(pMasterEntity))
 		return false;
 
-	info = m_masters[pMasterEntity->GetId()];
+	info = m_masters[pMasterEntity->GetId()].get();
 
 	return true;
 }
@@ -789,7 +789,7 @@ void CTOSMasterModule::SaveMasterClientParams(IEntity* pMasterEntity)
 	if (pAI)
 		pAI->Event(AIEVENT_DISABLE, nullptr);
 
-	auto& params = m_masters[pMasterEntity->GetId()].mcSavedParams;
+	auto& params = m_masters[pMasterEntity->GetId()]->mcSavedParams;
 	params.dirty = true;
 
 	params.pos = pMasterEntity->GetWorldPos();
@@ -856,7 +856,7 @@ void CTOSMasterModule::ApplyMasterClientParams(IEntity* pMasterEntity)
 	if (IsMaster(pMasterEntity))
 	{
 		STOSMasterInfo info;
-		GetMasterInfo(pMasterEntity, info);
+		GetMasterInfo(pMasterEntity, &info);
 
 		const auto& saved = info.mcSavedParams;
 		if (!saved.dirty)
@@ -926,12 +926,12 @@ void CTOSMasterModule::ScheduleMasterStartControl(const STOSStartControlInfo& in
 	const auto it = m_scheduledTakeControls.find(info.slaveId);
 	if (it == m_scheduledTakeControls.end())
 	{
-		m_scheduledTakeControls[info.slaveId].masterChannelId = info.masterChannelId;
-		m_scheduledTakeControls[info.slaveId].inGameDelay = info.startDelay;
+		m_scheduledTakeControls[info.slaveId]->masterChannelId = info.masterChannelId;
+		m_scheduledTakeControls[info.slaveId]->inGameDelay = info.startDelay;
 	}
 }
 
-void CTOSMasterModule::GetMasters(std::map<EntityId, STOSMasterInfo>& masters) const
+void CTOSMasterModule::GetMasters(std::map<EntityId, _smart_ptr<STOSMasterInfo>>& masters) const
 {
 	masters = m_masters;
 }
@@ -946,7 +946,7 @@ IEntity* CTOSMasterModule::GetMaster(const IEntity* pSlaveEntity) const
 
 	for (; it != end; it++)
 	{
-		if (it->second.slaveId == pSlaveEntity->GetId())
+		if (it->second->slaveId == pSlaveEntity->GetId())
 		{
 			return TOS_GET_ENTITY(it->first);
 		}
@@ -964,7 +964,7 @@ bool CTOSMasterModule::SetMasterDesiredSlaveCls(const IEntity* pEntity, const ch
 	if (!IsMaster(pEntity))
 		return false;
 
-	m_masters[pEntity->GetId()].desiredSlaveClassName = slaveDesiredClass;
+	m_masters[pEntity->GetId()]->desiredSlaveClassName = slaveDesiredClass;
 
 	return true;
 }

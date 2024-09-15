@@ -184,7 +184,7 @@ public:
 	void     MasterAdd(const IEntity* pMasterEntity, const char* slaveDesiredClass);
 	void     MasterRemove(const IEntity* pMasterEntity);
 	bool     IsMaster(const IEntity* pMasterEntity);
-	void     GetMasters(std::map<EntityId, STOSMasterInfo>& masters) const;
+	void	 GetMasters(std::map<EntityId, _smart_ptr<STOSMasterInfo>>& masters) const;
 	IEntity* GetMaster(const IEntity* pSlaveEntity) const;
 	bool     SetMasterDesiredSlaveCls(const IEntity* pEntity, const char* slaveDesiredClass);
 
@@ -212,7 +212,7 @@ public:
 	//Console variable's functions
 	static void CVarSetDesiredSlaveCls(ICVar* pVar);
 
-	bool GetMasterInfo(const IEntity* pMasterEntity, STOSMasterInfo& info);
+	bool GetMasterInfo(const IEntity* pMasterEntity, STOSMasterInfo* info);
 protected:
 	/**
  * \brief Берёт параметры сущности с сервера и сохраняет их там-же на сервере
@@ -266,7 +266,7 @@ public:
 	float tos_tr_regen_energy_recharge_time_mp;
 
 private:
-	std::map<EntityId, STOSMasterInfo> m_masters; //ключ - мастер, значение - структура, хранящая имя класса раба, который должен будет заспавниться
+	std::map<EntityId, _smart_ptr<STOSMasterInfo>> m_masters; //ключ - мастер, значение - структура, хранящая имя класса раба, который должен будет заспавниться
 	CTOSMasterClient* m_pLocalMasterClient;
-	std::map<EntityId, STOSScheduledMasterInfo> m_scheduledTakeControls; ///< \b Что \b хранит: \n ключ - ID сущности раба \n значение - структуру канала клиента через который подключен мастер
+	std::map<EntityId, _smart_ptr<STOSScheduledMasterInfo>> m_scheduledTakeControls; ///< \b Что \b хранит: \n ключ - ID сущности раба \n значение - структуру канала клиента через который подключен мастер
 };
