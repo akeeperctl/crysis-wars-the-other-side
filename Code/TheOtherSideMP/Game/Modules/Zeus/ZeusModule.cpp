@@ -1401,22 +1401,32 @@ void CTOSZeusModule::UpdateDebug(bool zeusMoving, const Vec3& zeusDynVec)
 		pPD->AddText(screenPos.x, screenPos.y + 20 * 4, 1.2f, ColorF(1, 1, 1, 1), 1.0f, "Physics = %i", int(pDebugEntity->GetPhysics() != nullptr));
 		pPD->AddText(screenPos.x, screenPos.y + 20 * 5, 1.2f, ColorF(1, 1, 1, 1), 1.0f, "Parent = %s", pParent ? pParent->GetName() : "NONE");
 
+		int actorDelta = 6;
+		int itemDelta = 6;
+
+		auto pActor = static_cast<CTOSActor*>(TOS_GET_ACTOR(pDebugEntity->GetId()));
 		auto pItem = static_cast<CItem*>(TOS_GET_ITEM(pDebugEntity->GetId()));
-		if (pItem)
+
+		if (pActor)
+		{
+			pPD->AddText(screenPos.x, screenPos.y + 20 * (actorDelta + 0), 1.2f, ColorF(1, 1, 1, 1), 1.0f, "Health = %i", pActor->GetHealth());
+			pPD->AddText(screenPos.x, screenPos.y + 20 * (actorDelta + 1), 1.2f, ColorF(1, 1, 1, 1), 1.0f, "Stance = %i", int(pActor->GetStance()));
+		}
+		else if (pItem)
 		{
 			auto id = pItem->GetOwnerId();
 			auto pOwner = TOS_GET_ENTITY(id);
-			CActor* pActorOwner = static_cast<CActor*>(TOS_GET_ACTOR(id));
-			pPD->AddText(screenPos.x, screenPos.y + 20 * 6, 1.2f, ColorF(1, 1, 1, 1), 1.0f, "Owner = %s(%i)", pOwner ? pOwner->GetName() : "NONE", id);
-			pPD->AddText(screenPos.x, screenPos.y + 20 * 7, 1.2f, ColorF(1, 1, 1, 1), 1.0f, "dropped = %i", int(pItem->GetStats().dropped));
-			pPD->AddText(screenPos.x, screenPos.y + 20 * 8, 1.2f, ColorF(1, 1, 1, 1), 1.0f, "flying = %i", int(pItem->GetStats().flying));
-			pPD->AddText(screenPos.x, screenPos.y + 20 * 9, 1.2f, ColorF(1, 1, 1, 1), 1.0f, "mounted = %i", int(pItem->GetStats().mounted));
-			pPD->AddText(screenPos.x, screenPos.y + 20 * 10, 1.2f, ColorF(1, 1, 1, 1), 1.0f, "pickable = %i", int(pItem->GetStats().pickable));
-			pPD->AddText(screenPos.x, screenPos.y + 20 * 11, 1.2f, ColorF(1, 1, 1, 1), 1.0f, "selectable = %i", int(pItem->GetStats().selectable));
-			pPD->AddText(screenPos.x, screenPos.y + 20 * 12, 1.2f, ColorF(1, 1, 1, 1), 1.0f, "selected = %i", int(pItem->GetStats().selected));
-			pPD->AddText(screenPos.x, screenPos.y + 20 * 13, 1.2f, ColorF(1, 1, 1, 1), 1.0f, "used = %i", int(pItem->GetStats().used));
-			pPD->AddText(screenPos.x, screenPos.y + 20 * 14, 1.2f, ColorF(1, 1, 1, 1), 1.0f, "updating = %i", int(pItem->GetStats().updating));
-			pPD->AddText(screenPos.x, screenPos.y + 20 * 15, 1.2f, ColorF(1, 1, 1, 1), 1.0f, "inOwnerInventory = %i", pActorOwner ? (pActorOwner->GetInventory()->FindItem(pItem->GetEntityId())) : -1);
+			auto pActorOwner = static_cast<CTOSActor*>(TOS_GET_ACTOR(id));
+			pPD->AddText(screenPos.x, screenPos.y + 20 * (itemDelta + 0), 1.2f, ColorF(1, 1, 1, 1), 1.0f, "Owner = %s(%i)", pOwner ? pOwner->GetName() : "NONE", id);
+			pPD->AddText(screenPos.x, screenPos.y + 20 * (itemDelta + 1), 1.2f, ColorF(1, 1, 1, 1), 1.0f, "dropped = %i", int(pItem->GetStats().dropped));
+			pPD->AddText(screenPos.x, screenPos.y + 20 * (itemDelta + 2), 1.2f, ColorF(1, 1, 1, 1), 1.0f, "flying = %i", int(pItem->GetStats().flying));
+			pPD->AddText(screenPos.x, screenPos.y + 20 * (itemDelta + 3), 1.2f, ColorF(1, 1, 1, 1), 1.0f, "mounted = %i", int(pItem->GetStats().mounted));
+			pPD->AddText(screenPos.x, screenPos.y + 20 * (itemDelta + 4), 1.2f, ColorF(1, 1, 1, 1), 1.0f, "pickable = %i", int(pItem->GetStats().pickable));
+			pPD->AddText(screenPos.x, screenPos.y + 20 * (itemDelta + 5), 1.2f, ColorF(1, 1, 1, 1), 1.0f, "selectable = %i", int(pItem->GetStats().selectable));
+			pPD->AddText(screenPos.x, screenPos.y + 20 * (itemDelta + 6), 1.2f, ColorF(1, 1, 1, 1), 1.0f, "selected = %i", int(pItem->GetStats().selected));
+			pPD->AddText(screenPos.x, screenPos.y + 20 * (itemDelta + 7), 1.2f, ColorF(1, 1, 1, 1), 1.0f, "used = %i", int(pItem->GetStats().used));
+			pPD->AddText(screenPos.x, screenPos.y + 20 * (itemDelta + 8), 1.2f, ColorF(1, 1, 1, 1), 1.0f, "updating = %i", int(pItem->GetStats().updating));
+			pPD->AddText(screenPos.x, screenPos.y + 20 * (itemDelta + 9), 1.2f, ColorF(1, 1, 1, 1), 1.0f, "inOwnerInventory = %i", pActorOwner ? (pActorOwner->GetInventory()->FindItem(pItem->GetEntityId())) : -1);
 		}
 	}
 }
