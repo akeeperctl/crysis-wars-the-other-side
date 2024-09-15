@@ -145,7 +145,7 @@ private:
 	/// @param container Карта, содержащая позиции всех перетаскиваемых объектов.
 	/// @param heightAutoCalc Флаг, указывающий, нужно ли автоматически вычислять высоту перетаскиваемого объекта.
 	/// @return true, если обновление прошло успешно, иначе false.
-	bool UpdateDraggedEntity(EntityId id, const IEntity* pClickedEntity, IPhysicalEntity* pZeusPhys, std::map<EntityId, SOBBWorldPos*>& container, bool heightAutoCalc);
+	bool UpdateDraggedEntity(EntityId id, const IEntity* pClickedEntity, IPhysicalEntity* pZeusPhys, std::map<EntityId, _smart_ptr<SOBBWorldPos>>& container, bool heightAutoCalc);
 
 	/// Можно ли выбрать сущности выделением нескольких сразу?
 	bool CanSelectMultiplyWithBox() const;
@@ -207,7 +207,7 @@ private:
 
 	std::set<EntityId> m_doubleClickLastSelectedEntities;
 	std::set<EntityId> m_selectedEntities; /// выделенные сущности
-	std::map<EntityId, SOBBWorldPos*> m_boxes; /// боксы выделенных сущностей
+	std::map<EntityId, _smart_ptr<SOBBWorldPos>> m_boxes; /// боксы выделенных сущностей
 	std::map<EntityId, Vec3> m_selectStartEntitiesPositions;
 	std::map<EntityId, Vec3> m_storedEntitiesPositions;
 

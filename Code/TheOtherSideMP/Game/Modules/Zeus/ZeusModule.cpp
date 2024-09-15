@@ -977,7 +977,7 @@ int CTOSZeusModule::MouseProjectToWorld(ray_hit& ray, const Vec3& mouseWorldPos,
 	return gEnv->pPhysicalWorld->RayWorldIntersection(mouseWorldPos, camToMouseDir, entityFlags, rayFlags, &ray, 1, pSkipEnts, nSkip);
 }
 
-bool CTOSZeusModule::UpdateDraggedEntity(EntityId id, const IEntity* pClickedEntity, IPhysicalEntity* pZeusPhys, std::map<EntityId, SOBBWorldPos*>& container, bool heightAutoCalc)
+bool CTOSZeusModule::UpdateDraggedEntity(EntityId id, const IEntity* pClickedEntity, IPhysicalEntity* pZeusPhys, std::map<EntityId, _smart_ptr<SOBBWorldPos>>& container, bool heightAutoCalc)
 {
 	auto pEntity = TOS_GET_ENTITY(id);
 	if (!pEntity)
