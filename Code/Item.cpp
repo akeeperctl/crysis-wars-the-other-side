@@ -608,8 +608,8 @@ void CItem::ProcessEvent(SEntityEvent& event)
 						InitialSetup();
 
 						//TheOtherSide
-						const int enableFix = TOS_Console::GetSafeIntVar("tos_sv_enable_ghost_item_fix", 1);
-						const int enableFixLog = TOS_Console::GetSafeIntVar("tos_sv_enable_ghost_item_fix_log", 1);
+						const bool enableFix = TOS_Console::GetSafeIntVar("tos_sv_enable_ghost_item_fix", 1) == 1;
+						const bool enableFixLog = TOS_Console::GetSafeIntVar("tos_sv_enable_ghost_item_fix_log", 1) == 1;
 						auto pEntity = GetEntity();
 						if (enableFix > 0 && pEntity)
 						{
@@ -622,19 +622,6 @@ void CItem::ProcessEvent(SEntityEvent& event)
 								// Если сущность удаляема
 								if ((ENTITY_FLAG_UNREMOVABLE & pEntity->GetFlags()) == 0)
 								{
-									//try
-									//{
-									//	if (!pEntity->IsGarbage())
-									//	{
-									//		if (enableFixLog)
-									//			CryLogAlways("[%s] GHOST ITEM REMOVED", pEntity->GetName());
-
-									//		gEnv->pEntitySystem->RemoveEntity(pEntity->GetId());
-									//	}
-
-									//}
-									//catch (...)
-									//{
 									if (!pEntity->IsHidden())
 									{
 										if (enableFixLog)
@@ -642,7 +629,15 @@ void CItem::ProcessEvent(SEntityEvent& event)
 
 										pEntity->Hide(true);
 									}
-									//}
+
+									if (!pEntity->IsGarbage())
+									{
+										if (enableFixLog)
+											CryLogAlways("[%s] GHOST ITEM REMOVED", pEntity->GetName());
+
+										//gEnv->pEntitySystem->RemoveEntity(pEntity->GetId());
+										TOS_Entity::RemoveEntityDelayed(pEntity->GetId(), 1);
+									}
 								}
 							}
 						}
