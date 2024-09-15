@@ -18,22 +18,6 @@ enum EZeusCommands
 	eZC_CopySelected,
 };
 
-enum EZeusOnScreenIcon
-{
-	eZSI_Base = 0,
-	eZSI_Car,
-	eZSI_Helicopter,
-	eZSI_Tank,
-	eZSI_Boat,
-	eZSI_Flag,
-	eZSI_Flash,
-	eZSI_Unit,
-	eZSI_Star,
-	eZSI_Circle,
-	eZSI_AlienTrooper,
-	eZSI_AlienScout,
-};
-
 /**
  * \brief Модуль для обработки ситуаций режима игры Zeus
  */

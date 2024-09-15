@@ -21,10 +21,32 @@ std::map<string, string> CTOSZeusModule::s_classToConsoleVar;
 
 enum eScreenIconType
 {
-	eFTI_Grey = 0,
+	eFTI_Grey = 1,
 	eFTI_Blue,
 	eFTI_Red,
 	eFTI_Yellow,
+};
+
+enum EZeusOnScreenIcon
+{
+	eZSI_Base = 1,
+	eZSI_Car,
+	eZSI_Helicopter,
+	eZSI_Tank,
+	eZSI_Boat,
+	eZSI_Flag,
+	eZSI_Flash,
+	eZSI_Unit,
+	eZSI_Star,
+	eZSI_Circle,
+	eZSI_AlienTrooper,
+	eZSI_AlienScout,
+	eZSI_Ammo,
+	eZSI_Rifle,
+	eZSI_Antenn,
+	eZSI_DOT,
+	eZSI_Turret,
+	eZSI_BrokenWall,
 };
 
 CTOSZeusModule::CTOSZeusModule()
@@ -298,7 +320,7 @@ void CTOSZeusModule::HandleOnceSelection(EntityId id)
 				DeselectEntities();
 
 			// После чистки всех выделенных сущностей, выделяем кликнутую сущность
-			if (m_curClickedEntityId != 0 && SelectionFilter(m_curClickedEntityId))
+			if (SelectionFilter(m_curClickedEntityId) && m_curClickedEntityId != 0)
 				SelectEntity(m_curClickedEntityId);
 		}
 	}
@@ -418,6 +440,18 @@ bool CTOSZeusModule::SelectionFilter(EntityId id)
 
 	if (m_debugZModifier)
 		return true;
+
+	if (pEntity->IsGarbage())
+		return false;
+
+	IItem* pItem = TOS_GET_ITEM(id);
+	if (pItem)
+	{
+		if (pItem->GetEntity()->GetParent())
+			return false;
+		else if (pItem->GetOwnerId())
+			return false;
+	}
 
 	const string className = pEntity->GetClass()->GetName();
 	auto it = s_classToConsoleVar.find(className);
@@ -566,9 +600,6 @@ void CTOSZeusModule::OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eH
 									const auto id = pEntity->GetId();
 
 									if (!SelectionFilter(id))
-										continue;
-
-									if (pEntity->IsGarbage())
 										continue;
 
 									if (pEntity->IsHidden())
@@ -750,9 +781,6 @@ void CTOSZeusModule::GetSelectedEntities()
 			if (m_debugZModifier == false)
 			{
 				// пропускаем мусор (при удалении сущности, в редакторе остается мусор от сущности, который можно выделить повторно)
-				if (pEntity->IsGarbage())
-					continue;
-
 				if (!IsPhysicsAllowed(pEntity))
 					continue;
 			}
@@ -1201,9 +1229,6 @@ void CTOSZeusModule::UpdateOnScreenIcons(IActor* pClientActor)
 			if (!SelectionFilter(id))
 				continue;
 
-			if (pEntity->IsGarbage())
-				continue;
-
 			if (pEntity->IsHidden())
 			{
 				const auto selectedIter = stl::binary_find(m_selectedEntities.cbegin(), m_selectedEntities.cend(), id);
@@ -1261,10 +1286,17 @@ void CTOSZeusModule::UpdateOnScreenIcons(IActor* pClientActor)
 					continue;
 			}
 
-			const IItem* pItem = TOS_GET_ITEM(id);
+			IItem* pItem = TOS_GET_ITEM(id);
 			if (pItem)
 			{
 				icon = eZSI_Circle;
+
+				const auto pPickupClass = TOS_GET_ENTITY_CLASS("CustomAmmoPickup");
+
+				if (pItem->GetEntity()->GetClass() == pPickupClass)
+					icon = eZSI_Ammo;
+				else if (pItem->GetIWeapon())
+					icon = eZSI_Rifle;
 			}
 
 			HUDUpdateOnScreenIcon(id, color, icon, Vec3(0, 0, 0));

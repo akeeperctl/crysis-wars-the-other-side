@@ -76,7 +76,7 @@ void CTOSEntitySpawnModule::CmdSpawnEntity(IConsoleCmdArgs* pArgs)
 	params.savedName = newEntName.c_str();
 	params.vanilla.vPosition = pPlayerEntity->GetWorldPos();
 	params.vanilla.qRotation = pPlayerEntity->GetWorldRotation();
-	params.tosFlags |= TOS_ENTITY_FLAG_MUST_RECREATED;
+	params.tosFlags |= ENTITY_MUST_RECREATED;
 
 	CTOSEntitySpawnModule::SpawnEntity(params);
 }
