@@ -24,5 +24,9 @@ namespace TOS_Entity
 	{
 		CTOSEntitySpawnModule::RemoveEntityForced(id);
 	}
+	inline void RemoveEntityDelayed(const EntityId id, int delayInFrames)
+	{
+		g_pTOSGame->GetEntitySpawnModule()->RemoveEntityDelayed(id, delayInFrames);
+	}
 
 }

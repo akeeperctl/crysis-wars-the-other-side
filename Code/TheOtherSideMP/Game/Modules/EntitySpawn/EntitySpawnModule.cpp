@@ -24,6 +24,17 @@ CTOSEntitySpawnModule::CTOSEntitySpawnModule()
 CTOSEntitySpawnModule::~CTOSEntitySpawnModule()
 {}
 
+void CTOSEntitySpawnModule::GetMemoryStatistics(ICrySizer* s)
+{
+	s->Add(this);
+	s->AddContainer(s_markedForRecreation);
+	s->AddContainer(s_scheduledSpawnsDelay);
+	s->AddContainer(m_scheduledRecreations);
+	s->AddContainer(m_scheduledAuthorities);
+	s->AddContainer(m_savedSpawnParams);
+	s->AddContainer(m_removeDelay);
+}
+
 void CTOSEntitySpawnModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event)
 {
 	TOS_INIT_EVENT_VALUES(pEntity, event);
@@ -108,6 +119,7 @@ void CTOSEntitySpawnModule::Init()
 	s_markedForRecreation.clear();
 	m_scheduledAuthorities.clear();
 	s_scheduledSpawnsDelay.clear();
+	m_removeDelay.clear();
 }
 
 void CTOSEntitySpawnModule::Update(float frametime)
@@ -116,6 +128,27 @@ void CTOSEntitySpawnModule::Update(float frametime)
 
 	if (!gEnv->bServer)
 		return;
+
+	for (auto it = m_removeDelay.begin(); it != m_removeDelay.end();)
+	{
+		const int currentFrameId = gEnv->pRenderer->GetFrameID();
+		if (currentFrameId == it->second->targetFrameId)
+		{
+			auto pEntity = TOS_GET_ENTITY(it->first);
+			//CryLogAlways("[%s] <RemoveEntityDelayed> FRAME: %i Entity removed",
+			//			 pEntity ? pEntity->GetName() : "",
+			//			 gEnv->pRenderer->GetFrameID());
+
+
+			gEnv->pEntitySystem->RemoveEntity(it->first);
+			it = m_removeDelay.erase(it);
+
+		}
+		else
+		{
+			it++;
+		}
+	}
 
 	auto it = s_scheduledSpawnsDelay.begin();
 	while (it != s_scheduledSpawnsDelay.end())
@@ -381,9 +414,30 @@ void CTOSEntitySpawnModule::RemoveEntityForced(EntityId id)
 	if (pSM->m_savedSpawnParams.find(id) != pSM->m_savedSpawnParams.end())
 		pSM->m_savedSpawnParams.erase(id);
 
+	if (pSM->m_removeDelay.find(id) != pSM->m_removeDelay.end())
+		pSM->m_removeDelay.erase(id);
+
 	TOS_RECORD_EVENT(id, STOSGameEvent(eEGE_EntityRemovedForced, "", true));
 
 	gEnv->pEntitySystem->RemoveEntity(id);
+}
+
+void CTOSEntitySpawnModule::RemoveEntityDelayed(EntityId id, int framesCount)
+{
+	auto pEntity = TOS_GET_ENTITY(id);
+	if (!pEntity)
+		return;
+
+	auto iter = m_removeDelay.find(id);
+	if (iter == m_removeDelay.end())
+	{
+		m_removeDelay[id] = new SFrameTimer(framesCount + m_removeDelay.size());
+
+		//CryLogAlways("[%s] <RemoveEntityDelayed> FRAME: %i, TARGET FRAME: %i",
+		//			 pEntity->GetName(),
+		//			 m_removeDelay[id]->creationFrameId,
+		//			 m_removeDelay[id]->targetFrameId);
+	}
 }
 
 bool CTOSEntitySpawnModule::MustBeRecreated(const IEntity* pEntity) const

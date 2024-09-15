@@ -109,6 +109,23 @@ class CTOSEntitySpawnModule :
 	public CTOSGenericModule
 {
 public:
+	struct SFrameTimer : STOSSmartStruct
+	{
+		SFrameTimer() :
+			creationFrameId(0),
+			targetFrameId(0)
+		{};
+
+		SFrameTimer(int framesDelta = 0)
+		{
+			creationFrameId = gEnv->pRenderer->GetFrameID();
+			targetFrameId = creationFrameId + framesDelta;
+		};
+
+		int creationFrameId;
+		int targetFrameId;
+	};
+
 	CTOSEntitySpawnModule();
 	~CTOSEntitySpawnModule();
 
@@ -125,6 +142,7 @@ public:
 	void InitCCommands(IConsole* pConsole);
 	void ReleaseCVars();
 	void ReleaseCCommands();
+	void GetMemoryStatistics(ICrySizer* s);
 	//~ITOSGameModule
 
 	void Reset();
@@ -157,6 +175,11 @@ public:
 	 * \param id - идентификатор сущности, которую нужно удалить
 	 */
 	static void RemoveEntityForced(EntityId id);
+
+	/// @brief Отложенное удаление сущности
+	/// @param id - идентификатор сущности для удаления
+	/// @param framesCount - количество пройденных кадров до удаления
+	void RemoveEntityDelayed(EntityId id, int framesCount);
 
 	/**
 	 * \brief Проверяет, должна ли быть воссоздана сущность после sv_restart
@@ -194,4 +217,5 @@ private:
 	TMapAuthorityParams m_scheduledAuthorities; ///< \b Что \b хранит: \n ключ - id сущности, \n значение - структура, где есть имя игрока, который получит власть над сущностью и штамп времени, когда случилось планирование
 	TMapTOSParams m_scheduledRecreations;
 	TMapTOSParams m_savedSpawnParams; ///< \b Что \b хранит: \n ключ - id сущности, которая была заспавнена в этом модуле, \n значение - её \a STOSEntitySpawnParams, захваченные при спавне в этом модуле
+	std::map<EntityId, _smart_ptr<SFrameTimer>> m_removeDelay;
 };
