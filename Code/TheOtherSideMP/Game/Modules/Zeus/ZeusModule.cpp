@@ -1374,11 +1374,11 @@ void CTOSZeusModule::UpdateDebug(bool zeusMoving, const Vec3& zeusDynVec)
 
 	if (!m_selectedEntities.empty())
 	{
-		TOS_Debug::DrawEntitiesName2DLabel(m_selectedEntities, "Selected Entities: ", 100, startY + deltaY * 14, deltaY);
+		TOS_Debug::DrawEntitiesName2DLabel(m_selectedEntities, "Selected Entities: ", 100, startY + deltaY * 15, deltaY);
 	}
 	if (!m_doubleClickLastSelectedEntities.empty())
 	{
-		TOS_Debug::DrawEntitiesName2DLabel(m_doubleClickLastSelectedEntities, "DC Selected Entities: ", 300, startY + deltaY * 14, deltaY);
+		TOS_Debug::DrawEntitiesName2DLabel(m_doubleClickLastSelectedEntities, "DC Selected Entities: ", 240, startY + deltaY * 15, deltaY);
 	}
 
 	auto pDebugEntity = pCurrClickedEntity;
@@ -1406,6 +1406,7 @@ void CTOSZeusModule::UpdateDebug(bool zeusMoving, const Vec3& zeusDynVec)
 		{
 			auto id = pItem->GetOwnerId();
 			auto pOwner = TOS_GET_ENTITY(id);
+			CActor* pActorOwner = static_cast<CActor*>(TOS_GET_ACTOR(id));
 			pPD->AddText(screenPos.x, screenPos.y + 20 * 6, 1.2f, ColorF(1, 1, 1, 1), 1.0f, "Owner = %s(%i)", pOwner ? pOwner->GetName() : "NONE", id);
 			pPD->AddText(screenPos.x, screenPos.y + 20 * 7, 1.2f, ColorF(1, 1, 1, 1), 1.0f, "dropped = %i", int(pItem->GetStats().dropped));
 			pPD->AddText(screenPos.x, screenPos.y + 20 * 8, 1.2f, ColorF(1, 1, 1, 1), 1.0f, "flying = %i", int(pItem->GetStats().flying));
@@ -1415,6 +1416,7 @@ void CTOSZeusModule::UpdateDebug(bool zeusMoving, const Vec3& zeusDynVec)
 			pPD->AddText(screenPos.x, screenPos.y + 20 * 12, 1.2f, ColorF(1, 1, 1, 1), 1.0f, "selected = %i", int(pItem->GetStats().selected));
 			pPD->AddText(screenPos.x, screenPos.y + 20 * 13, 1.2f, ColorF(1, 1, 1, 1), 1.0f, "used = %i", int(pItem->GetStats().used));
 			pPD->AddText(screenPos.x, screenPos.y + 20 * 14, 1.2f, ColorF(1, 1, 1, 1), 1.0f, "updating = %i", int(pItem->GetStats().updating));
+			pPD->AddText(screenPos.x, screenPos.y + 20 * 15, 1.2f, ColorF(1, 1, 1, 1), 1.0f, "inOwnerInventory = %i", pActorOwner ? (pActorOwner->GetInventory()->FindItem(pItem->GetEntityId())) : -1);
 		}
 	}
 }
