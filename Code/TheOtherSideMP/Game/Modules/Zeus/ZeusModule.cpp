@@ -1605,7 +1605,8 @@ bool CTOSZeusModule::ExecuteCommand(EZeusCommands command)
 
 				try
 				{
-					gEnv->pEntitySystem->RemoveEntity(id);
+					//gEnv->pEntitySystem->RemoveEntity(id);
+					TOS_Entity::RemoveEntityDelayed(id, 2);
 				}
 				catch (...)
 				{
