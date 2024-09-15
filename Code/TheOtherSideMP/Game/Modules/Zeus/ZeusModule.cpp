@@ -1633,26 +1633,29 @@ bool CTOSZeusModule::ExecuteCommand(EZeusCommands command)
 					std::map<int, string> savedItems;
 					string currentItemClass;
 
-					//IActor* pActor = TOS_GET_ACTOR(id);
-					//if (pActor)
-					//{
-					//	const IInventory* pInventory = pActor->GetInventory();
-					//	if (pInventory)
-					//	{
-					//		savedItemCount = pInventory->GetCount();
+					EStance selectedStance = STANCE_STAND;
+					CTOSActor* pActor = static_cast<CTOSActor*>(TOS_GET_ACTOR(id));
+					if (pActor)
+					{
+						//	const IInventory* pInventory = pActor->GetInventory();
+						//	if (pInventory)
+						//	{
+						//		savedItemCount = pInventory->GetCount();
 
-					//		for (int slot = 0; slot <= savedItemCount; slot++)
-					//		{
-					//			const auto pItem = TOS_GET_ENTITY(pInventory->GetItem(slot));
-					//			if (pItem)
-					//				savedItems[slot] = pItem->GetClass()->GetName();
-					//		}
+						//		for (int slot = 0; slot <= savedItemCount; slot++)
+						//		{
+						//			const auto pItem = TOS_GET_ENTITY(pInventory->GetItem(slot));
+						//			if (pItem)
+						//				savedItems[slot] = pItem->GetClass()->GetName();
+						//		}
 
-					//		const auto pCurrentItem = TOS_GET_ENTITY(pInventory->GetCurrentItem());
-					//		if (pCurrentItem)
-					//			currentItemClass = pCurrentItem->GetClass()->GetName();
-					//	}
-					//}
+						//		const auto pCurrentItem = TOS_GET_ENTITY(pInventory->GetCurrentItem());
+						//		if (pCurrentItem)
+						//			currentItemClass = pCurrentItem->GetClass()->GetName();
+						//	}
+
+						selectedStance = pActor->GetStance();
+					}
 
 
 					STOSEntitySpawnParams params;
@@ -1686,12 +1689,15 @@ bool CTOSZeusModule::ExecuteCommand(EZeusCommands command)
 						//m_select = true;
 
 						const auto spawnedId = pSpawned->GetId();
-						//pActor = TOS_GET_ACTOR(spawnedId);
-						//if (pActor)
-						//{
-						//	for (int slot = 0; slot <= savedItemCount; slot++)
-						//		TOS_Inventory::GiveItem(pActor, savedItems[slot], false, false, false);
-						//}
+						auto pSpawnedActor = static_cast<CTOSActor*>(TOS_GET_ACTOR(spawnedId));
+						if (pSpawnedActor)
+						{
+							//	for (int slot = 0; slot <= savedItemCount; slot++)
+							//		TOS_Inventory::GiveItem(pSpawnedActor, savedItems[slot], false, false, false);
+
+							pSpawnedActor->SetStance(selectedStance);
+							TOS_AI::SetStance(pSpawnedActor->GetEntity()->GetAI(), selectedStance);
+						}
 
 						char buffer[16];
 						sprintf(buffer, "%i", spawnedId);
