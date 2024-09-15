@@ -622,17 +622,27 @@ void CItem::ProcessEvent(SEntityEvent& event)
 								// Если сущность удаляема
 								if ((ENTITY_FLAG_UNREMOVABLE & pEntity->GetFlags()) == 0)
 								{
-									//if (!pEntity->IsGarbage())
+									//try
+									//{
+									//	if (!pEntity->IsGarbage())
+									//	{
+									//		if (enableFixLog)
+									//			CryLogAlways("[%s] GHOST ITEM REMOVED", pEntity->GetName());
+
+									//		gEnv->pEntitySystem->RemoveEntity(pEntity->GetId());
+									//	}
+
+									//}
+									//catch (...)
+									//{
 									if (!pEntity->IsHidden())
 									{
 										if (enableFixLog)
 											CryLogAlways("[%s] GHOST ITEM HIDDEN", pEntity->GetName());
 
 										pEntity->Hide(true);
-
-										//gEnv->pEntitySystem->RemoveEntity(pEntity->GetId());
-										//g_pGame->GetIGameFramework()->GetIItemSystem()->RemoveItem(pEntity->GetId());
 									}
+									//}
 								}
 							}
 						}
