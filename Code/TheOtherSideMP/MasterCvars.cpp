@@ -23,61 +23,61 @@ void CTOSMasterModule::InitCVars(IConsole* pConsole)
 		//"he will control a slave.");
 
 	pConsole->Register("tos_cl_playerFeedbackSoundsVersion", &tos_cl_playerFeedbackSoundsVersion, 1, VF_NOT_NET_SYNCED,
-		"Version of player character feedback sounds. \n 1 - from Crysis 1, \n 2 - from Crysis 2");
+					   "Version of player character feedback sounds. \n 1 - from Crysis 1, \n 2 - from Crysis 2");
 
 	pConsole->Register("tos_cl_nanosuitSoundsVersion", &tos_cl_nanosuitSoundsVersion, 1, VF_NOT_NET_SYNCED,
-		"Version of nanosuit sounds. \n 1 - from Crysis 1, \n 2 - from Crysis 2");
+					   "Version of nanosuit sounds. \n 1 - from Crysis 1, \n 2 - from Crysis 2");
 
-	pConsole->Register("tos_sv_SlaveSpawnDelay", &tos_sv_SlaveSpawnDelay, 0.1f, VF_CHEAT, 
-		"Delay in seconds before slave spawns. \n" 
-		"It is necessary so that the slave cannot appear before the master respawns");
+	pConsole->Register("tos_sv_SlaveSpawnDelay", &tos_sv_SlaveSpawnDelay, 0.1f, VF_CHEAT,
+					   "Delay in seconds before slave spawns. \n"
+					   "It is necessary so that the slave cannot appear before the master respawns");
 
 	// Не используется, да и как показала практика, что с 1.0, что с 0.0 отрицательного влияния не наблюдается
 	pConsole->Register("tos_sv_mc_StartControlDelay", &tos_sv_mc_StartControlDelay, 0.0f, VF_CHEAT,
-		"Delay in seconds before master starts control a slave.");
+					   "Delay in seconds before master starts control a slave.");
 
 	pConsole->Register("tos_sv_pl_inputAccel", &tos_sv_pl_inputAccel, 30.0f, VF_CHEAT,
-		"Movement input acceleration");
+					   "Movement input acceleration");
 
 	pConsole->Register("tos_sv_mc_LookDebugDraw", &tos_sv_mc_LookDebugDraw, 1, VF_CHEAT,
-			"Display look debug of the controlled character");
+					   "Display look debug of the controlled character");
 
 	// Trooper консольные значения
 	pConsole->Register("tos_tr_jump_height", &tos_tr_jump_height, 3, VF_CHEAT,
-		"The higher the value, the higher the trooper's jump.");
+					   "The higher the value, the higher the trooper's jump.");
 
 	pConsole->Register("tos_tr_double_jump_force", &tos_tr_double_jump_force, 1000.0f, VF_CHEAT,
-		"The higher the value, the higher the trooper's second jump.");
+					   "The higher the value, the higher the trooper's second jump.");
 
 	pConsole->Register("tos_tr_charged_jump_mul", &tos_tr_charged_jump_mul, 2.0f, VF_CHEAT,
-		"Charged jump multiplier, normal jump comes with 1");
+					   "Charged jump multiplier, normal jump comes with 1");
 
 	pConsole->Register("tos_tr_melee_energy_costs", &tos_tr_melee_energy_costs, 15.0f, VF_CHEAT,
-		"The amount of energy a trooper spends when do melee attack on ground");
+					   "The amount of energy a trooper spends when do melee attack on ground");
 
 	pConsole->Register("tos_tr_double_jump_energy_cost", &tos_tr_double_jump_energy_cost, 50.0f, VF_CHEAT,
-		"The amount of energy a trooper spends when double jumping");
+					   "The amount of energy a trooper spends when double jumping");
 
 	pConsole->Register("tos_tr_double_jump_melee_energy_cost", &tos_tr_double_jump_melee_energy_cost, 65.0f, VF_CHEAT,
-		"The amount of energy a trooper spends when do melee attack in jumping state");
+					   "The amount of energy a trooper spends when do melee attack in jumping state");
 
 	pConsole->Register("tos_tr_double_jump_melee_rest_seconds", &tos_tr_double_jump_melee_rest_seconds, 2.0f, VF_CHEAT,
-		"Time in seconds during which the trooper cannot jump after a jump");
+					   "Time in seconds during which the trooper cannot jump after a jump");
 
 	pConsole->Register("tos_tr_regen_energy_start_delay_sp", &tos_tr_regen_energy_start_delay_sp, 6.0f, VF_CHEAT | VF_REQUIRE_LEVEL_RELOAD,
-			"Delay before starting to restore trooper energy after spend it singleplayer");
+					   "Delay before starting to restore trooper energy after spend it singleplayer");
 
 	pConsole->Register("tos_tr_regen_energy_start_delay_mp", &tos_tr_regen_energy_start_delay_mp, 4.0f, VF_CHEAT | VF_REQUIRE_LEVEL_RELOAD,
-		"Delay before starting to restore trooper energy after spend it in multiplayer");
+					   "Delay before starting to restore trooper energy after spend it in multiplayer");
 
 	pConsole->Register("tos_tr_regen_energy_start_delay_20boundary", &tos_tr_regen_energy_start_delay_20boundary, 2.0f, VF_CHEAT | VF_REQUIRE_LEVEL_RELOAD,
-			"Delay before starting to restore trooper energy after spend");
+					   "Delay before starting to restore trooper energy after spend");
 
 	pConsole->Register("tos_tr_regen_energy_recharge_time_mp", &tos_tr_regen_energy_recharge_time_mp, 1.0f, VF_CHEAT,
-		"Modify energy recharge for Trooper in multiplayer.");
+					   "Modify energy recharge for Trooper in multiplayer.");
 
 	pConsole->Register("tos_tr_regen_energy_recharge_time_sp", &tos_tr_regen_energy_recharge_time_sp, 1.0f, VF_CHEAT,
-		"Modify energy recharge for Trooper in singleplayer.");
+					   "Modify energy recharge for Trooper in singleplayer.");
 }
 
 void CTOSMasterModule::ReleaseCVars()
@@ -168,22 +168,22 @@ void CTOSMasterModule::CmdDumpMastersList(IConsoleCmdArgs* pArgs)
 {
 	ONLY_SERVER_CMD;
 
-	std::map<EntityId, STOSMasterInfo> masters;
+	std::map<EntityId, _smart_ptr<STOSMasterInfo>> masters;
 	g_pTOSGame->GetMasterModule()->GetMasters(masters);
 
 	CryLogAlways("Result: master:id | slave:id");
-	for (std::map<EntityId, STOSMasterInfo>::const_iterator it = masters.begin(); it != masters.end(); ++it)
+	for (std::map<EntityId, _smart_ptr<STOSMasterInfo>>::const_iterator it = masters.begin(); it != masters.end(); ++it)
 	{
 		const EntityId masterId = it->first;
-		const STOSMasterInfo& masterInfo = it->second;
-		const EntityId slaveId = masterInfo.slaveId;
+		const auto masterInfo = it->second.get();
+		const EntityId slaveId = masterInfo->slaveId;
 
 		const IEntity* pMasterEnt = gEnv->pEntitySystem->GetEntity(masterId);
 		const IEntity* pSlaveEnt = gEnv->pEntitySystem->GetEntity(slaveId);
 
 		const char* masterName = pMasterEnt ? pMasterEnt->GetName() : "NULL";
 		const char* slaveName = pSlaveEnt ? pSlaveEnt->GetName() : "NULL";
-		const char* desiredSlaveClass = masterInfo.desiredSlaveClassName;
+		const char* desiredSlaveClass = masterInfo->desiredSlaveClassName;
 
 		CryLogAlways("	%s:%i | %s:%i | desired slave class: %s", masterName, masterId, slaveName, slaveId, desiredSlaveClass);
 	}
@@ -292,17 +292,17 @@ void CTOSMasterModule::CmdSetPhysProfile(IConsoleCmdArgs* pArgs)
 	}
 	else if (profile == "alive2")
 	{
-		pActor->GetAnimatedCharacter()->RequestPhysicalColliderMode( eColliderMode_Undefined, eColliderModeLayer_Game, "Actor::SetAspectProfile");
-		if (IPhysicalEntity *pPhysics=pActor->GetEntity()->GetPhysics())
+		pActor->GetAnimatedCharacter()->RequestPhysicalColliderMode(eColliderMode_Undefined, eColliderModeLayer_Game, "Actor::SetAspectProfile");
+		if (IPhysicalEntity* pPhysics = pActor->GetEntity()->GetPhysics())
 		{
-			if (ICharacterInstance *pCharacter=pActor->GetEntity()->GetCharacter(0))
+			if (ICharacterInstance* pCharacter = pActor->GetEntity()->GetCharacter(0))
 			{
 				pCharacter->GetISkeletonPose()->DestroyCharacterPhysics(2);
 
-				if (IPhysicalEntity *pCharPhysics=pCharacter->GetISkeletonPose()->GetCharacterPhysics())
+				if (IPhysicalEntity* pCharPhysics = pCharacter->GetISkeletonPose()->GetCharacterPhysics())
 				{
 					pe_params_articulated_body body;
-					body.pHost=pPhysics;
+					body.pHost = pPhysics;
 					pCharPhysics->SetParams(&body);
 				}
 			}
@@ -310,12 +310,12 @@ void CTOSMasterModule::CmdSetPhysProfile(IConsoleCmdArgs* pArgs)
 	}
 	else if (profile == "alive3")
 	{
-		if (ICharacterInstance *pCharacter=pActor->GetEntity()->GetCharacter(0))
+		if (ICharacterInstance* pCharacter = pActor->GetEntity()->GetCharacter(0))
 			pCharacter->GetISkeletonPose()->DestroyCharacterPhysics(1);
 
 		pActor->GetAnimatedCharacter()->ForceRefreshPhysicalColliderMode();
-		pActor->GetAnimatedCharacter()->RequestPhysicalColliderMode( eColliderMode_Spectator, eColliderModeLayer_Game, "Actor::SetAspectProfile");		
-	}	
+		pActor->GetAnimatedCharacter()->RequestPhysicalColliderMode(eColliderMode_Spectator, eColliderModeLayer_Game, "Actor::SetAspectProfile");
+	}
 	else if (profile == "alive4")
 	{
 		if (pActor->GetAnimatedCharacter())
