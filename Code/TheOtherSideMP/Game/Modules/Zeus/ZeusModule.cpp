@@ -1603,20 +1603,15 @@ bool CTOSZeusModule::ExecuteCommand(EZeusCommands command)
 					}
 				}
 
-				try
+				auto pEntity = TOS_GET_ENTITY(id);
+				if (pEntity)
 				{
-					//gEnv->pEntitySystem->RemoveEntity(id);
-					TOS_Entity::RemoveEntityDelayed(id, 2);
+					pEntity->Hide(true);
+					pEntity->Activate(false);
 				}
-				catch (...)
-				{
-					auto pEntity = TOS_GET_ENTITY(id);
-					if (pEntity)
-					{
-						CryLogAlways("[Error] '%s' removing not finished properly, hide them", pEntity->GetName());
-						pEntity->Hide(true);
-					}
-				}
+
+				TOS_Entity::RemoveEntityDelayed(id, 2);
+
 				it = DeselectEntity(id);
 				m_doubleClickLastSelectedEntities.erase(id);
 
