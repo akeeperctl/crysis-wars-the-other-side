@@ -31,17 +31,18 @@ struct STOSMasterClientSavedParams
 		suitEnergy(0),
 		suitMode(0),
 		species(-1),
-		dirty(false) {};
+		dirty(false)
+	{};
 
 	STOSMasterClientSavedParams(const STOSMasterClientSavedParams& other)
-	: masterId(other.masterId),
+		: masterId(other.masterId),
 		pos(other.pos),
 		rot(other.rot),
 		suitEnergy(other.suitEnergy),
 		suitMode(other.suitMode),
 		species(other.species),
 		inventoryItems(other.inventoryItems),
-		currentItemClass(other.currentItemClass) 
+		currentItemClass(other.currentItemClass)
 	{}
 };
 
@@ -50,11 +51,12 @@ struct STOSMasterClientSavedParams
  * \brief хранит информацию о канале мастера во время перезапуска игры.
    \n Нужен для фикса бага: https://github.com/akeeperctl/crysis-wars-the-other-side/issues/9
  */
-struct STOSScheduledMasterInfo  : STOSSmartStruct  // NOLINT(cppcoreguidelines-special-member-functions)
+struct STOSScheduledMasterInfo : STOSSmartStruct  // NOLINT(cppcoreguidelines-special-member-functions)
 {
 	STOSScheduledMasterInfo()
 		: masterChannelId(0),
-		inGameDelay(0) {}
+		inGameDelay(0)
+	{}
 
 	explicit STOSScheduledMasterInfo(const uint channelId, const float _delay) :
 		masterChannelId(channelId),
@@ -68,7 +70,7 @@ struct STOSScheduledMasterInfo  : STOSSmartStruct  // NOLINT(cppcoreguidelines-s
 /**
  * \brief хранит информацию о работе одного мастера
  */
-struct STOSMasterInfo  : STOSSmartStruct  // NOLINT(cppcoreguidelines-special-member-functions)
+struct STOSMasterInfo : STOSSmartStruct  // NOLINT(cppcoreguidelines-special-member-functions)
 {
 	STOSMasterInfo() :
 		slaveId(0), flags(0)
@@ -98,12 +100,14 @@ struct STOSStartControlInfo
 	STOSStartControlInfo()
 		: slaveId(0),
 		masterChannelId(0),
-		startDelay(0) {}
+		startDelay(0)
+	{}
 
 	explicit STOSStartControlInfo(const EntityId _slaveId, const uint _masterChannelId, const float _delay)
 		: slaveId(_slaveId),
 		masterChannelId(_masterChannelId),
-		startDelay(_delay) {}
+		startDelay(_delay)
+	{}
 
 	EntityId slaveId;
 	uint masterChannelId;
@@ -118,7 +122,7 @@ struct STOSStartControlInfo
  * \note \a Мастер - это игрок, контролирующий в данный момент \a раба (в частности пришельца). (консольная команда tos_cl_JoinAsAlien)
  * \note \a Раб - это сущность, которую контролирует \a мастер в данный момент.
  */
-class CTOSMasterModule  : 
+class CTOSMasterModule :
 	public CTOSGenericModule,
 	public IHitListener
 {
@@ -127,25 +131,30 @@ class CTOSMasterModule  :
 
 public:
 	CTOSMasterModule();
-	~CTOSMasterModule() ;
+	~CTOSMasterModule();
 
 	//ITOSGameModule
-	void OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event) ;
-	const char* GetName()  {return "CTOSMasterModule";};
-	void Init() ;
-	void Update(float frametime) ;
-	void Serialize(TSerialize ser) ;
+	void OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event);
+	const char* GetName()
+	{
+		return "CTOSMasterModule";
+	};
+	void Init();
+	void Update(float frametime);
+	void Serialize(TSerialize ser);
 	//bool NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int flags) ;
-	void InitCVars(IConsole* pConsole) ;
-	void InitCCommands(IConsole* pConsole) ;
-	void ReleaseCVars() ;
-	void ReleaseCCommands() ;
+	void InitCVars(IConsole* pConsole);
+	void InitCCommands(IConsole* pConsole);
+	void ReleaseCVars();
+	void ReleaseCCommands();
 	//ITOSGameModule
 
 	//IHitListener
 	void OnHit(const HitInfo&);
-	void OnExplosion(const ExplosionInfo&) {};
-	void OnServerExplosion(const ExplosionInfo&) {};
+	void OnExplosion(const ExplosionInfo&)
+	{};
+	void OnServerExplosion(const ExplosionInfo&)
+	{};
 	//~IHitListener
 
 	void Reset();
@@ -185,7 +194,8 @@ public:
 	bool     IsSlave(const IEntity* pPotentialSlave) const;
 	bool	 ReviveSlave(const IEntity* pSlaveEntity, const Vec3& revivePos, const Ang3& angles, const int teamId, const bool resetWeapons) const;
 
-	void     DebugDraw(const Vec2& screenPos = Vec2(20,300), float fontSize = 1.2f, float interval = 20.0f, int maxElemNum = 5);
+	void     DebugDraw(const Vec2& screenPos = Vec2(20, 300), float fontSize = 1.2f, float interval = 20.0f, int maxElemNum = 5);
+
 
 	//Console command's functions
 	static void CmdDumpMastersList(IConsoleCmdArgs* pArgs);
@@ -204,10 +214,10 @@ public:
 
 	bool GetMasterInfo(const IEntity* pMasterEntity, STOSMasterInfo& info);
 protected:
-		/**
-	 * \brief Берёт параметры сущности с сервера и сохраняет их там-же на сервере
-	 * \param pMasterEntity - указатель на сущность мастера
-	 */
+	/**
+ * \brief Берёт параметры сущности с сервера и сохраняет их там-же на сервере
+ * \param pMasterEntity - указатель на сущность мастера
+ */
 	void SaveMasterClientParams(IEntity* pMasterEntity);
 	void ApplyMasterClientParams(IEntity* pMasterEntity);
 
