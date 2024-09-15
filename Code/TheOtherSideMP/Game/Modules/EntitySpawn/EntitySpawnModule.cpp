@@ -267,6 +267,17 @@ IEntity* CTOSEntitySpawnModule::SpawnEntity(STOSEntitySpawnParams& params, bool 
 	if (!params.savedName.empty())
 		pEntity->SetName(params.savedName);
 
+	IPersistantDebug* pPD = gEnv->pGame->GetIGameFramework()->GetIPersistantDebug();
+	pPD->Begin("EntitySpawnModule", true);
+
+	auto& props = params.properties;
+	if (props.GetPtr())
+		pEntity->GetScriptTable()->SetValue("Properties", props);
+
+	auto& propsInstance = params.propertiesInstance;
+	if (propsInstance.GetPtr())
+		pEntity->GetScriptTable()->SetValue("PropertiesInstance", propsInstance);
+
 	gEnv->pEntitySystem->InitEntity(pEntity, params.vanilla);
 
 	const EntityId entityId = pEntity->GetId();
@@ -484,14 +495,9 @@ void CTOSEntitySpawnModule::ScheduleRecreation(const IEntity* pEntity)
 	auto pParams = new STOSEntitySpawnParams();
 	auto pSavedScript = gEnv->pScriptSystem->CreateTable(false);
 
-	if (pSavedScript->Clone(pEntity->GetScriptTable()))
-	{
-		//CryLogAlways("[%s] Script table successfully cloned", entName);
-		//CryLogAlways("[%s] Script dump:", entName);
-		//pSavedScript->Dump(g_pTOSGame);
-	}
+	pEntity->GetScriptTable()->GetValue("Properties", pParams->properties);
+	pEntity->GetScriptTable()->GetValue("PropertiesInstance", pParams->propertiesInstance);
 
-	pParams->pSavedScript = pSavedScript;
 	pParams->tosFlags |= ENTITY_RECREATION_SCHEDULED;
 	pParams->vanilla = m_savedSpawnParams[entId]->vanilla;
 

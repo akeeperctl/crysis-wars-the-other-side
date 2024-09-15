@@ -203,7 +203,7 @@ void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEven
 						params.vanilla.vPosition = pEntity->GetWorldPos();
 						params.forceStartControl = true;
 
-						TOS_Entity::SpawnDelay(params);
+						TOS_Entity::SpawnDelay(params, true);
 					}
 				}
 			}

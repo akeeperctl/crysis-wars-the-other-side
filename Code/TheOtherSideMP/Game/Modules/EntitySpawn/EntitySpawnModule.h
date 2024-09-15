@@ -28,8 +28,7 @@ struct STOSScheduleDelegateAuthorityParams
 struct STOSEntitySpawnParams : public STOSSmartStruct
 {
 	STOSEntitySpawnParams()
-		: pSavedScript(nullptr),
-		forceStartControl(false),
+		: forceStartControl(false),
 		tosFlags(0)
 	{
 		m_refs = 0;
@@ -37,8 +36,7 @@ struct STOSEntitySpawnParams : public STOSSmartStruct
 	}
 
 	explicit STOSEntitySpawnParams(const SEntitySpawnParams& _vanillaParams)
-		: pSavedScript(nullptr),
-		forceStartControl(false),
+		: forceStartControl(false),
 		tosFlags(0)
 	{
 		m_refs = 0;
@@ -51,18 +49,20 @@ struct STOSEntitySpawnParams : public STOSSmartStruct
 		this->m_refs = 0;
 		this->tosFlags = params.tosFlags;
 		this->vanilla = params.vanilla;
-		this->pSavedScript = params.pSavedScript;
 		this->authorityPlayerName = params.authorityPlayerName;
 		this->savedName = params.savedName;
 		this->forceStartControl = params.forceStartControl;
+		this->properties = params.properties;
+		this->propertiesInstance = params.propertiesInstance;
 	}
 
 	~STOSEntitySpawnParams()
 	{}
 
-	IScriptTable* pSavedScript;
 	SEntitySpawnParams vanilla;
 
+	SmartScriptTable properties;
+	SmartScriptTable propertiesInstance;
 	bool forceStartControl; ///< Если \a true, то при передаче власти игроку генерирует событие \a eEGE_ForceStartControl \n Используется вместе с \a authorityPlayerName
 	string authorityPlayerName; ///< Имя персонажа игрока, которому будет передана власть над сущностью после её пересоздания 
 	string savedName; ///< Имя сущности, которая будет спавнится

@@ -11,6 +11,7 @@
 #include <TheOtherSideMP\Helpers\TOS_Entity.h>
 #include <TheOtherSideMP\Helpers\TOS_Vehicle.h>
 #include <TheOtherSideMP\Helpers\TOS_STL.h>
+#include <TheOtherSideMP\Helpers\TOS_Screen.h>
 #include <Cry_Camera.h>
 
 const uint DEFAULT_MOUSE_ENT_FLAGS = ent_terrain; //ent_living | ent_rigid | ent_static | ent_terrain | ent_sleeping_rigid | ent_independent;
@@ -111,6 +112,7 @@ void CTOSZeusModule::Reset()
 	m_debugZModifier = false;
 
 
+	m_doubleClickLastSelectedEntities.clear();
 	m_selectedEntities.clear();
 	m_selectStartEntitiesPositions.clear();
 	m_storedEntitiesPositions.clear();
@@ -1379,6 +1381,42 @@ void CTOSZeusModule::UpdateDebug(bool zeusMoving, const Vec3& zeusDynVec)
 		TOS_Debug::DrawEntitiesName2DLabel(m_doubleClickLastSelectedEntities, "DC Selected Entities: ", 300, startY + deltaY * 14, deltaY);
 	}
 
+	auto pDebugEntity = pCurrClickedEntity;
+	if (!pDebugEntity)
+	{
+		pDebugEntity = TOS_GET_ENTITY(*m_selectedEntities.begin());
+	}
+
+	if (pDebugEntity)
+	{
+		Vec3 screenPos(ZERO);
+		TOS_Screen::ProjectToScreen(pDebugEntity->GetWorldPos(), screenPos);
+
+		auto pParent = pDebugEntity->GetParent();
+
+		pPD->AddText(screenPos.x, screenPos.y + 20 * 0, 1.2f, ColorF(1, 1, 1, 1), 1.0f, "Name = %s", pDebugEntity->GetName());
+		pPD->AddText(screenPos.x, screenPos.y + 20 * 1, 1.2f, ColorF(1, 1, 1, 1), 1.0f, "IsGarbage = %i", int(pDebugEntity->IsGarbage()));
+		pPD->AddText(screenPos.x, screenPos.y + 20 * 2, 1.2f, ColorF(1, 1, 1, 1), 1.0f, "IsRemovable = %i", int((ENTITY_FLAG_UNREMOVABLE & pDebugEntity->GetFlags()) == 0));
+		pPD->AddText(screenPos.x, screenPos.y + 20 * 3, 1.2f, ColorF(1, 1, 1, 1), 1.0f, "IsActive = %i", int(pDebugEntity->IsActive()));
+		pPD->AddText(screenPos.x, screenPos.y + 20 * 4, 1.2f, ColorF(1, 1, 1, 1), 1.0f, "Physics = %i", int(pDebugEntity->GetPhysics() != nullptr));
+		pPD->AddText(screenPos.x, screenPos.y + 20 * 5, 1.2f, ColorF(1, 1, 1, 1), 1.0f, "Parent = %s", pParent ? pParent->GetName() : "NONE");
+
+		auto pItem = static_cast<CItem*>(TOS_GET_ITEM(pDebugEntity->GetId()));
+		if (pItem)
+		{
+			auto id = pItem->GetOwnerId();
+			auto pOwner = TOS_GET_ENTITY(id);
+			pPD->AddText(screenPos.x, screenPos.y + 20 * 6, 1.2f, ColorF(1, 1, 1, 1), 1.0f, "Owner = %s(%i)", pOwner ? pOwner->GetName() : "NONE", id);
+			pPD->AddText(screenPos.x, screenPos.y + 20 * 7, 1.2f, ColorF(1, 1, 1, 1), 1.0f, "dropped = %i", int(pItem->GetStats().dropped));
+			pPD->AddText(screenPos.x, screenPos.y + 20 * 8, 1.2f, ColorF(1, 1, 1, 1), 1.0f, "flying = %i", int(pItem->GetStats().flying));
+			pPD->AddText(screenPos.x, screenPos.y + 20 * 9, 1.2f, ColorF(1, 1, 1, 1), 1.0f, "mounted = %i", int(pItem->GetStats().mounted));
+			pPD->AddText(screenPos.x, screenPos.y + 20 * 10, 1.2f, ColorF(1, 1, 1, 1), 1.0f, "pickable = %i", int(pItem->GetStats().pickable));
+			pPD->AddText(screenPos.x, screenPos.y + 20 * 11, 1.2f, ColorF(1, 1, 1, 1), 1.0f, "selectable = %i", int(pItem->GetStats().selectable));
+			pPD->AddText(screenPos.x, screenPos.y + 20 * 12, 1.2f, ColorF(1, 1, 1, 1), 1.0f, "selected = %i", int(pItem->GetStats().selected));
+			pPD->AddText(screenPos.x, screenPos.y + 20 * 13, 1.2f, ColorF(1, 1, 1, 1), 1.0f, "used = %i", int(pItem->GetStats().used));
+			pPD->AddText(screenPos.x, screenPos.y + 20 * 14, 1.2f, ColorF(1, 1, 1, 1), 1.0f, "updating = %i", int(pItem->GetStats().updating));
+		}
+	}
 }
 
 void CTOSZeusModule::Serialize(TSerialize ser)
@@ -1594,7 +1632,9 @@ bool CTOSZeusModule::ExecuteCommand(EZeusCommands command)
 
 					STOSEntitySpawnParams params;
 					//params.vanilla.bStaticEntityId = true;
-					params.vanilla.nFlags = ENTITY_FLAG_CASTSHADOW | ENTITY_FLAG_ON_RADAR;
+					params.vanilla.nFlags = pEntity->GetFlags();
+					params.vanilla.nFlags &= ~ENTITY_FLAG_UNREMOVABLE;
+
 					params.vanilla.pClass = pEntity->GetClass();
 					params.vanilla.vPosition = pEntity->GetWorldPos();
 					params.vanilla.qRotation = pEntity->GetRotation();
@@ -1605,27 +1645,17 @@ bool CTOSZeusModule::ExecuteCommand(EZeusCommands command)
 					const auto pScriptTable = pEntity->GetScriptTable();
 					if (pScriptTable)
 					{
-						SmartScriptTable props;
-						if (pScriptTable->GetValue("Properties", props))
-						{
-							params.vanilla.pPropertiesTable = props;
-						}
-
-						SmartScriptTable propsInstance;
-						if (pScriptTable->GetValue("PropertiesInstance", propsInstance))
-						{
-							params.vanilla.pPropertiesInstanceTable = propsInstance;
-						}
+						pScriptTable->GetValue("Properties", params.properties);
 					}
 
-					const auto pSpawned = TOS_Entity::Spawn(params);
+					const auto pSpawned = TOS_Entity::Spawn(params, false);
 					if (pSpawned)
 					{
 						pSpawned->Hide(true);
 
-						bool hostile = true;
-						TOS_Script::GetEntityProperty(pEntity, "bSpeciesHostility", hostile);
-						TOS_Script::SetEntityProperty(pSpawned, "bSpeciesHostility", hostile);
+						//bool hostile = true;
+						//TOS_Script::GetEntityProperty(pEntity, "bSpeciesHostility", hostile);
+						//TOS_Script::SetEntityProperty(pSpawned, "bSpeciesHostility", hostile);
 
 						it = DeselectEntity(id);
 						needUpdateIter = false;

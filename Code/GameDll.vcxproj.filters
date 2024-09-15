@@ -1532,6 +1532,9 @@
     <ClInclude Include="TheOtherSideMP\Game\Modules\Zeus\ZeusModule.h">
       <Filter>TheOtherSideMP\Game\Modules\Zeus</Filter>
     </ClInclude>
+    <ClInclude Include="TheOtherSideMP\Helpers\TOS_Screen.h">
+      <Filter>TheOtherSideMP\Helpers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="GameActions.actions">
