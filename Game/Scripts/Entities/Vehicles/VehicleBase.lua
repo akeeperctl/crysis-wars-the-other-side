@@ -15,10 +15,6 @@
 Script.ReloadScript("Scripts/Utils/Math.lua");
 Script.ReloadScript("Scripts/Entities/Vehicles/VehicleSeat.lua");
 
---TheOtherSide
-Script.ReloadScript("Scripts/Entities/Vehicles/TOSVehicleBase.lua");
---~TheOtherSide
-
 VehicleBase =
 {  
 	State =
@@ -628,7 +624,7 @@ end
 
 --------------------------------------------------------------------------
 function VehicleBase:EnterVehicle(passengerId, seatId, isAnimationEnabled)
-	Log("VehicleBase:EnterVehicle() - playerId = %s, seatId = %s", tostring(passengerId), tostring(seatId));
+	-- System.LogAlways("VehicleBase:EnterVehicle() - playerId = %s, seatId = %s", tostring(passengerId), tostring(seatId));
 	return self.vehicle:EnterVehicle(passengerId, seatId, isAnimationEnabled);
 end
 
