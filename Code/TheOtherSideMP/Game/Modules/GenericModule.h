@@ -47,6 +47,8 @@ public:
 		return m_debugLogMode;
 	}
 
+	void InitScriptBinds()
+	{};
 	void InitCVars(IConsole* pConsole)
 	{};
 	void InitCCommands(IConsole* pConsole)
