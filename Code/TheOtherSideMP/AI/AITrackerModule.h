@@ -38,8 +38,14 @@ struct SAIActionInfo
 		maxAlertness = 0;
 	}
 
-	bool operator ==(const SAIActionInfo& info) const { return strcmp(info.name, this->name) == 0; }
-	bool operator ==(const SAIActionInfo* info) const { return strcmp(info->name, this->name) == 0; }
+	bool operator ==(const SAIActionInfo& info) const
+	{
+		return strcmp(info.name, this->name) == 0;
+	}
+	bool operator ==(const SAIActionInfo* info) const
+	{
+		return strcmp(info->name, this->name) == 0;
+	}
 
 	SAIActionInfo& operator =(const SAIActionInfo& info)
 	{
@@ -81,7 +87,10 @@ struct SAIActionInfo
 
 struct SVoidHolder
 {
-	SVoidHolder() { id = 0; }
+	SVoidHolder()
+	{
+		id = 0;
+	}
 
 	SVoidHolder(const EntityId _id, const SAIActionInfo& _actionInfo)
 	{
@@ -103,7 +112,10 @@ struct SVoidHolder
 	//const bool operator >= (EntityId _id) const { return this->id >= _id; }
 
 	//fix C2678 
-	bool operator <(const SVoidHolder& void2) const { return this->id < void2.id; }
+	bool operator <(const SVoidHolder& void2) const
+	{
+		return this->id < void2.id;
+	}
 
 	EntityId      id;
 	SAIActionInfo actionInfo;
@@ -134,11 +146,11 @@ struct SAIActionStats
 	\note Указатель на модуль существует только на сервере.
 	\note Указатель на модуль на клиенте равен nullptr.
  */
-class СTOSAIModule  : public CTOSGenericModule, IGoalPipeListener
+class СTOSAIModule : public CTOSGenericModule, IGoalPipeListener
 {
 public:
 	СTOSAIModule();
-	~СTOSAIModule() ;
+	~СTOSAIModule();
 
 	bool IsExecuting(const IAIObject* pUserAI, int actionGoalPipeId);
 	bool IsExecuting(const IAIObject* pUserAI, const char* actionName);
@@ -148,24 +160,34 @@ public:
 	//void OnVehicleDestroyed(const IVehicle* pVeh);
 
 	//ITOSGameModule
-	bool OnInputEvent(const SInputEvent& event)  { return true; };
-	bool OnInputEventUI(const SInputEvent& event)  { return false; };
+	bool OnInputEvent(const SInputEvent& event)
+	{
+		return true;
+	};
+	bool OnInputEventUI(const SInputEvent& event)
+	{
+		return false;
+	};
 
-	void        OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event) ;
-	void        GetMemoryStatistics(ICrySizer* s) ;
-	const char* GetName()  { return "СTOSAIModule"; }
-	void        Init() ;
-	void        Update(float frametime) ;
-	void        Serialize(TSerialize ser) ;
+	void        OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event);
+	void        GetMemoryStatistics(ICrySizer* s);
+	const char* GetName()
+	{
+		return "СTOSAIModule";
+	}
+	void        Init();
+	void        Update(float frametime);
+	void        Serialize(TSerialize ser);
 
-	void InitCVars(IConsole* pConsole) ;
-	void InitCCommands(IConsole* pConsole) ;
-	void ReleaseCVars() ;
-	void ReleaseCCommands() ;
+	void InitScriptBinds();
+	void InitCVars(IConsole* pConsole);
+	void InitCCommands(IConsole* pConsole);
+	void ReleaseCVars();
+	void ReleaseCCommands();
 	//~ITOSGameModule
 
 	//IGoalPipeListener
-	void OnGoalPipeEvent(IPipeUser* pPipeUser, EGoalPipeEvent event, int goalPipeId) ;
+	void OnGoalPipeEvent(IPipeUser* pPipeUser, EGoalPipeEvent event, int goalPipeId);
 	//~IGoalPipeListener
 
 	bool IsTracking(const IAIObject* pAI) const;
@@ -200,22 +222,22 @@ protected:
 	{
 		switch (event)
 		{
-		case ePN_Removed:
-			return "Removed";
-		case ePN_OwnerRemoved:
-			return "OwnerRemoved";
-		case ePN_Finished:
-			return "Finished";
-		case ePN_Deselected:
-			return "Deselected";
-		case ePN_Suspended:
-			return "Suspended";
-		case ePN_Resumed:
-			return "Resumed";
-		case ePN_AnimStarted:
-			return "AnimStarted";
-		case ePN_RefPointMoved:
-			return "RefPointMoved";
+			case ePN_Removed:
+				return "Removed";
+			case ePN_OwnerRemoved:
+				return "OwnerRemoved";
+			case ePN_Finished:
+				return "Finished";
+			case ePN_Deselected:
+				return "Deselected";
+			case ePN_Suspended:
+				return "Suspended";
+			case ePN_Resumed:
+				return "Resumed";
+			case ePN_AnimStarted:
+				return "AnimStarted";
+			case ePN_RefPointMoved:
+				return "RefPointMoved";
 		}
 
 		return "<undefined>";
@@ -225,12 +247,12 @@ protected:
 	{
 		switch (flag)
 		{
-		case eAAEF_None:
-			return "None";
-		case eAAEF_IgnoreCombatDuringAction:
-			return "IgnoreCombatDuringAction";
-		case eAAEF_JoinCombatPauseAction:
-			return "JoinCombatPauseAction";
+			case eAAEF_None:
+				return "None";
+			case eAAEF_IgnoreCombatDuringAction:
+				return "IgnoreCombatDuringAction";
+			case eAAEF_JoinCombatPauseAction:
+				return "JoinCombatPauseAction";
 		}
 
 		return "<undefined>";

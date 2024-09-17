@@ -20,25 +20,41 @@ public:
 	friend class CTOSMasterModule;
 
 	CTOSGenericModule();
-	~CTOSGenericModule() ;
+	~CTOSGenericModule();
 
 	//ITOSGameModule
-	bool        OnInputEvent(const SInputEvent& event)  { return true; };
-	bool        OnInputEventUI(const SInputEvent& event)  { return false; };
-	void        OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event) ;
-	void        GetMemoryStatistics(ICrySizer* s) ;
-	const char* GetName()  { return "CTOSGenericModule"; };
-	void        Init() ;
-	void        Update(float frametime) ;
-	void        Serialize(TSerialize ser) ;
+	bool        OnInputEvent(const SInputEvent& event)
+	{
+		return true;
+	};
+	bool        OnInputEventUI(const SInputEvent& event)
+	{
+		return false;
+	};
+	void        OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event);
+	void        GetMemoryStatistics(ICrySizer* s);
+	const char* GetName()
+	{
+		return "CTOSGenericModule";
+	};
+	void        Init();
+	void        Update(float frametime);
+	void        Serialize(TSerialize ser);
 	//bool		NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int flags) ;
 
-	int GetDebugLog()  { return m_debugLogMode; }
+	int GetDebugLog()
+	{
+		return m_debugLogMode;
+	}
 
-	void InitCVars(IConsole* pConsole)  {};
-	void InitCCommands(IConsole* pConsole)  {};
-	void ReleaseCVars()  {};
-	void ReleaseCCommands()  {};
+	void InitCVars(IConsole* pConsole)
+	{};
+	void InitCCommands(IConsole* pConsole)
+	{};
+	void ReleaseCVars()
+	{};
+	void ReleaseCCommands()
+	{};
 	//~ITOSGameModule
 
 	virtual CTOSGenericSynchronizer* GetSynchronizer() const;

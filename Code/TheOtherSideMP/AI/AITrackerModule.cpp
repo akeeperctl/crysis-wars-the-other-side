@@ -25,7 +25,10 @@ for (auto it = m_voidHolders.begin(); it != m_voidHolders.end(); it++)\
 	}\
 }
 
-СTOSAIModule::СTOSAIModule() { Reset(); }
+СTOSAIModule::СTOSAIModule()
+{
+	Reset();
+}
 
 СTOSAIModule::~СTOSAIModule()
 {
@@ -583,7 +586,8 @@ void СTOSAIModule::SetActionInfo(const IAIObject* pAI, const SAIActionInfo& act
 	}
 }
 
-void СTOSAIModule::Serialize(TSerialize ser) {}
+void СTOSAIModule::Serialize(TSerialize ser)
+{}
 
 void СTOSAIModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event)
 {
@@ -591,58 +595,61 @@ void СTOSAIModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& 
 
 	switch (event.event)
 	{
-	case eEGE_ActorDead:
-	{
-		if (!pEntity)
+		case eEGE_ActorDead:
+		{
+			if (!pEntity)
+				break;
+
+			const auto pAI = pEntity->GetAI();
+			if (!pAI)
+				break;
+
+			if (!IsTracking(pAI))
+				break;
+
+			const EntityId id = pAI->GetEntity()->GetId();
+
+			SAIActionInfo info;
+			GetActionInfo(pAI, info);
+
+			m_entitiesStats[id].actionName = info.name;
+			m_entitiesStats[id].lastTimeFailed = gEnv->pTimer->GetFrameStartTime().GetSeconds();
+			StopTracking(pAI);
+
+			//for (const auto pListener : m_listeners) { pListener->OnActorDeath(pActor); }
+
 			break;
+		}
+		case eEGE_VehicleDestroyed:
+		{
+			if (!pEntity)
+				break;
 
-		const auto pAI = pEntity->GetAI();
-		if (!pAI)
+			if (!IsTracking(entId))
+				break;
+
+			SAIActionInfo info;
+			GetActionInfo(entId, info);
+
+			m_entitiesStats[entId].actionName = info.name;
+			m_entitiesStats[entId].lastTimeFailed = gEnv->pTimer->GetFrameStartTime().GetSeconds();
+			StopTracking(entId);
+
 			break;
-
-		if (!IsTracking(pAI))
+		}
+		case eEGE_MainMenuOpened:
+		case eEGE_GamerulesReset:
+			Reset();
 			break;
-
-		const EntityId id = pAI->GetEntity()->GetId();
-
-		SAIActionInfo info;
-		GetActionInfo(pAI, info);
-
-		m_entitiesStats[id].actionName = info.name;
-		m_entitiesStats[id].lastTimeFailed = gEnv->pTimer->GetFrameStartTime().GetSeconds();
-		StopTracking(pAI);
-
-		//for (const auto pListener : m_listeners) { pListener->OnActorDeath(pActor); }
-
-		break;
-	}
-	case eEGE_VehicleDestroyed:
-	{
-		if (!pEntity)
+		default:
 			break;
-
-		if (!IsTracking(entId))
-			break;
-
-		SAIActionInfo info;
-		GetActionInfo(entId, info);
-
-		m_entitiesStats[entId].actionName = info.name;
-		m_entitiesStats[entId].lastTimeFailed = gEnv->pTimer->GetFrameStartTime().GetSeconds();
-		StopTracking(entId);
-
-		break;
-	}
-	case eEGE_MainMenuOpened:
-	case eEGE_GamerulesReset:
-		Reset();
-		break;
-	default:
-		break;
 	}
 }
 
-void СTOSAIModule::GetMemoryStatistics(ICrySizer* s) { s->Add(*this); }
+void СTOSAIModule::GetMemoryStatistics(ICrySizer* s)
+{
+	s->Add(*this);
+}
 
 void СTOSAIModule::OnGoalPipeEvent(IPipeUser* pPipeUser, const EGoalPipeEvent event, const int goalPipeId)
 {
@@ -684,31 +691,31 @@ void СTOSAIModule::OnGoalPipeEvent(IPipeUser* pPipeUser, const EGoalPipeEvent e
 
 	switch (event)
 	{
-	case ePN_Removed: //also called when the ai action on pause or also on start action with goalPipeId == 2
-	{
-		if (!info.paused && !isVoidHolder)
+		case ePN_Removed: //also called when the ai action on pause or also on start action with goalPipeId == 2
 		{
-			//CryLogAlways("Finished");
+			if (!info.paused && !isVoidHolder)
+			{
+				//CryLogAlways("Finished");
+				m_entitiesStats[id].actionName = info.name;
+				m_entitiesStats[id].lastTimeFinished = gEnv->pTimer->GetFrameStartTime().GetSeconds();
+				StopTracking(pPipeOwner->GetAI());
+			}
+
+			break;
+		}
+		case ePN_OwnerRemoved:
+		case ePN_Finished:
 			m_entitiesStats[id].actionName = info.name;
 			m_entitiesStats[id].lastTimeFinished = gEnv->pTimer->GetFrameStartTime().GetSeconds();
+		case ePN_Deselected: //also called when the AI dies
+			//CryLogAlways("Deselected");
 			StopTracking(pPipeOwner->GetAI());
-		}
-
-		break;
-	}
-	case ePN_OwnerRemoved:
-	case ePN_Finished:
-		m_entitiesStats[id].actionName = info.name;
-		m_entitiesStats[id].lastTimeFinished = gEnv->pTimer->GetFrameStartTime().GetSeconds();
-	case ePN_Deselected: //also called when the AI dies
-		//CryLogAlways("Deselected");
-		StopTracking(pPipeOwner->GetAI());
-		break;
-	case ePN_Suspended:
-	case ePN_Resumed:
-	case ePN_AnimStarted:
-	case ePN_RefPointMoved:
-		break;
+			break;
+		case ePN_Suspended:
+		case ePN_Resumed:
+		case ePN_AnimStarted:
+		case ePN_RefPointMoved:
+			break;
 	}
 
 	//for (const auto pListener : m_listeners) { pListener->OnGoalPipeEvent(pPipeOwner->GetAI(), event, goalPipeId); }
