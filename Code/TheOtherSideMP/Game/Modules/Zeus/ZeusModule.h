@@ -16,6 +16,7 @@ enum EZeusCommands
 	eZC_KillSelected,
 	eZC_RemoveSelected,
 	eZC_CopySelected,
+	eZC_OrderSelected,
 };
 
 /**
@@ -99,6 +100,7 @@ public:
 	{
 		return m_debugLogMode;
 	}
+
 	void InitCVars(IConsole* pConsole);
 	void InitCCommands(IConsole* pConsole);
 	void ReleaseCVars();
@@ -135,8 +137,9 @@ private:
 	/// @brief Проекция координат мыши в мир от камеры
 	/// @param ray - структура луча
 	/// @param mouseWorldPos - мировые координаты мыши, которые будут спроецированы на некоторое расстояние от камеры
+	/// @param boxDistanceAdjustment true - максимальное расстояние будет равно расстоянию до кликнутой сущности, false - максимально далеко
 	/// @return 0 - попаданий не было, > 0 - есть попадания
-	int	MouseProjectToWorld(ray_hit& ray, const Vec3& mouseWorldPos, uint entityFlags);
+	int	MouseProjectToWorld(ray_hit& ray, const Vec3& mouseWorldPos, uint entityFlags, bool boxDistanceAdjustment);
 
 	/// @brief Обновляет позицию перетаскиваемого объекта.
 	/// @param id Идентификатор перетаскиваемого объекта.
@@ -201,6 +204,9 @@ private:
 	Vec3 m_clickedSelectStartPos; // позиция кликнутой сущности во время её выделения
 	Vec2 m_selectStopPos;
 	Vec3 m_draggingDelta;
+	Vec3 m_orderPos;
+	SmartScriptTable m_orderInfo;
+	SmartScriptTable m_executorInfo;
 
 	// std::set<EntityId> m_copiedEntities; /// скопированные сущности
 	// std::map<EntityId, SOBBWorldPos*> m_copiedBoxes; /// боксы скопированных сущностей
@@ -216,6 +222,7 @@ private:
 	EntityId m_curClickedEntityId;
 	EntityId m_lastClickedEntityId;
 	EntityId m_dragTargetId; // Сущность на которую перетаскивают
+	EntityId m_orderTargetId;
 
 	float m_updateIconOnScreenTimer;
 	float m_draggingMoveStartTimer; /// Таймер начала перемещения сущностей после включения перетаскивания

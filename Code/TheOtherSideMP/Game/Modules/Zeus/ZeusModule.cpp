@@ -61,6 +61,8 @@ CTOSZeusModule::CTOSZeusModule()
 	m_selectStopPos(ZERO),
 	m_mouseIPos(ZERO),
 	m_draggingDelta(ZERO),
+	m_orderPos(ZERO),
+	m_orderTargetId(0),
 	m_lastClickedEntityId(0),
 	m_curClickedEntityId(0),
 	m_dragTargetId(0),
@@ -111,6 +113,8 @@ void CTOSZeusModule::Reset()
 	m_shiftModifier = false;
 	m_debugZModifier = false;
 
+	m_orderInfo.Create(gEnv->pScriptSystem);
+	m_executorInfo.Create(gEnv->pScriptSystem);
 
 	m_doubleClickLastSelectedEntities.clear();
 	m_selectedEntities.clear();
@@ -125,6 +129,9 @@ void CTOSZeusModule::Reset()
 
 bool CTOSZeusModule::OnInputEvent(const SInputEvent& event)
 {
+	if (!m_zeus || !m_zeus->IsClient())
+		return false;
+
 	if (event.deviceId == EDeviceId::eDI_Keyboard)
 	{
 		if (event.keyId == EKeyId::eKI_LCtrl)
@@ -207,6 +214,20 @@ bool CTOSZeusModule::OnInputEvent(const SInputEvent& event)
 		else if (event.keyId == EKeyId::eKI_Delete)
 		{
 			ExecuteCommand(eZC_RemoveSelected);
+		}
+	}
+	else if (event.deviceId == EDeviceId::eDI_Mouse)
+	{
+		if (event.keyId == EKeyId::eKI_Mouse3) // Средняя кнопка мыши
+		{
+			SetZeusFlag(eZF_CanRotateCamera, event.state == eIS_Down);
+		}
+		else if (event.keyId == EKeyId::eKI_Mouse2) // Правая кнопка мыши
+		{
+			if (event.state == EInputState::eIS_Pressed)
+			{
+				ExecuteCommand(eZC_OrderSelected);
+			}
 		}
 	}
 
@@ -412,6 +433,16 @@ static bool EntityIsSimilarToEntity(IEntity* pFirstEntity, IEntity* pSecondEntit
 
 	if (firstSpecies != secondSpecies)
 		return false;
+
+	auto pFirstActor = static_cast<CTOSActor*>(TOS_GET_ACTOR(pFirstEntity->GetId()));
+	auto pSecondActor = static_cast<CTOSActor*>(TOS_GET_ACTOR(pSecondEntity->GetId()));
+	if (pFirstActor && pSecondActor)
+	{
+		auto pFirstVehicle = pFirstActor->GetLinkedVehicle();
+		auto pSecondVehicle = pSecondActor->GetLinkedVehicle();
+		if (pFirstVehicle != pSecondVehicle)
+			return false;
+	}
 
 	return true;
 }
@@ -947,7 +978,7 @@ void CTOSZeusModule::GetMemoryStatistics(ICrySizer* s)
 	s->AddContainer(m_boxes);
 }
 
-int CTOSZeusModule::MouseProjectToWorld(ray_hit& ray, const Vec3& mouseWorldPos, uint entityFlags)
+int CTOSZeusModule::MouseProjectToWorld(ray_hit& ray, const Vec3& mouseWorldPos, uint entityFlags, bool boxDistanceAdjustment)
 {
 	if (!m_zeus || !m_zeus->GetEntity() || !m_zeus->GetEntity()->GetPhysics())
 		return 0;
@@ -962,13 +993,15 @@ int CTOSZeusModule::MouseProjectToWorld(ray_hit& ray, const Vec3& mouseWorldPos,
 	if (pClickedEntity)
 		pSkipEnts[1] = pClickedEntity->GetPhysics();
 
-	//auto obbWP = stl::find_in_map(m_boxes, m_curClickedEntityId, SOBBWorldPos());
-	auto it = m_boxes.find(m_curClickedEntityId);
-	if (it != m_boxes.end())
+	if (boxDistanceAdjustment)
 	{
-		//clickedBoxDistance = pClickedEntity->GetWorldPos().GetDistance(mouseWorldPos);
-		clickedBoxDistance = it->second->wPos.GetDistance(mouseWorldPos);
-		camToMouseDir = camToMouseDir.GetNormalizedSafe() * clickedBoxDistance;
+		auto it = m_boxes.find(m_curClickedEntityId);
+		if (it != m_boxes.end())
+		{
+			//clickedBoxDistance = pClickedEntity->GetWorldPos().GetDistance(mouseWorldPos);
+			clickedBoxDistance = it->second->wPos.GetDistance(mouseWorldPos);
+			camToMouseDir = camToMouseDir.GetNormalizedSafe() * clickedBoxDistance;
+		}
 	}
 
 	const int nSkip = sizeof(pSkipEnts) / sizeof(pSkipEnts[0]);
@@ -1100,7 +1133,7 @@ void CTOSZeusModule::Update(float frametime)
 	else
 		m_mouseDownDurationSec = 0.0f;
 
-	MouseProjectToWorld(m_mouseRay, m_worldMousePos, m_mouseRayEntityFlags);
+	MouseProjectToWorld(m_mouseRay, m_worldMousePos, m_mouseRayEntityFlags, true);
 	m_worldProjectedMousePos = m_mouseRay.pt;
 
 	// Обработка таймера задержки перемещения выделенных сущностей
@@ -1308,126 +1341,144 @@ void CTOSZeusModule::UpdateOnScreenIcons(IActor* pClientActor)
 
 void CTOSZeusModule::UpdateDebug(bool zeusMoving, const Vec3& zeusDynVec)
 {
-	IPersistantDebug* pPD = gEnv->pGame->GetIGameFramework()->GetIPersistantDebug();
-	pPD->Begin("ZeusModule", true);
-	const auto blue = ColorF(0, 0, 1, 1);
-	const auto green = ColorF(0, 1, 0, 1);
-	const auto red = ColorF(1, 0, 0, 1);
-
-	// Отрисовка отладки позиции мыши в реальном мире
-	///////////////////////////////////////////////////////////////////////
-	pPD->AddSphere(m_worldProjectedMousePos, 0.20f, blue, 1.0f);
-
-	if (TOS_Console::GetSafeIntVar("tos_cl_zeus_dragging_draw_debug", 0) > 0 && m_dragging)
+	if (TOS_Console::GetSafeIntVar("tos_cl_zeus_dragging_draw_debug", 0) > 0)
 	{
-		// Отрисовка фактических координат сущности
-		const auto pEntity = TOS_GET_ENTITY(m_curClickedEntityId);
-		if (pEntity)
+		IPersistantDebug* pPD = gEnv->pGame->GetIGameFramework()->GetIPersistantDebug();
+		pPD->Begin("ZeusModule", true);
+		const auto blue = ColorF(0, 0, 1, 1);
+		const auto green = ColorF(0, 1, 0, 1);
+		const auto red = ColorF(1, 0, 0, 1);
+		const auto orderColor = ColorF(0.7, 0.3, 1, 1);
+
+		// Отрисовка позиции мыши в реальном мире
+		///////////////////////////////////////////////////////////////////////
+		pPD->AddSphere(m_worldProjectedMousePos, 0.20f, blue, 1.0f);
+
+		// Отрисовка позиции приказа в реальном мире
+		///////////////////////////////////////////////////////////////////////
+		const auto pOrderTargerEntity = TOS_GET_ENTITY(m_orderTargetId);
+
+		pPD->AddSphere(m_orderPos, 0.40f, orderColor, 1.0f);
+		Vec3 ordScreenPos(ZERO);
+		TOS_Screen::ProjectToScreen(m_orderPos, ordScreenPos);
+		pPD->AddText(ordScreenPos.x, ordScreenPos.y, 1.3f, orderColor, 1.0f, "Order position: (%1.f, %1.f, %1.f)", m_orderPos.x, m_orderPos.y, m_orderPos.z);
+		pPD->AddText(ordScreenPos.x, ordScreenPos.y + 20, 1.3f, orderColor, 1.0f, "Order target: %s", pOrderTargerEntity ? pOrderTargerEntity->GetName() : "NONE");
+
+		if (m_dragging)
 		{
-			const Vec3 startPos = m_selectStartEntitiesPositions[pEntity->GetId()];
-			Vec3 newPos = Vec3(startPos.x + m_draggingDelta.x, startPos.y + m_draggingDelta.y, startPos.z);
-			if (m_altModifier)
+			// Отрисовка фактических координат сущности
+			const auto pEntity = TOS_GET_ENTITY(m_curClickedEntityId);
+			if (pEntity)
 			{
-				newPos.z += m_draggingDelta.z;
+				const Vec3 startPos = m_selectStartEntitiesPositions[pEntity->GetId()];
+				Vec3 newPos = Vec3(startPos.x + m_draggingDelta.x, startPos.y + m_draggingDelta.y, startPos.z);
+				if (m_altModifier)
+				{
+					newPos.z += m_draggingDelta.z;
+				}
+
+				pPD->AddSphere(newPos, 0.20f, red, 1.0f);
+				pPD->AddLine(startPos, newPos, red, 1.0f);
 			}
 
-			pPD->AddSphere(newPos, 0.20f, red, 1.0f);
-			pPD->AddLine(startPos, newPos, red, 1.0f);
+			// Отрисовка точки начала выделения сущностей
+			///////////////////////////////////////////////////////////////////////
+			pPD->AddText(m_mouseIPos.x, m_mouseIPos.y, 1.4f, green, 1.0f, "m_draggingDelta (%1.f, %1.f, %1.f)",
+						 m_draggingDelta.x, m_draggingDelta.y, m_draggingDelta.z);
+			pPD->AddSphere(m_clickedSelectStartPos, 0.20f, green, 1.0f);
+			pPD->AddLine(m_clickedSelectStartPos, m_worldProjectedMousePos, green, 1.0f);
 		}
 
-		// Отрисовка точки начала выделения сущностей
+		// Вывод текстовой отладки
 		///////////////////////////////////////////////////////////////////////
-		pPD->AddText(m_mouseIPos.x, m_mouseIPos.y, 1.4f, green, 1.0f, "m_draggingDelta (%1.f, %1.f, %1.f)",
-					 m_draggingDelta.x, m_draggingDelta.y, m_draggingDelta.z);
-		pPD->AddSphere(m_clickedSelectStartPos, 0.20f, green, 1.0f);
-		pPD->AddLine(m_clickedSelectStartPos, m_worldProjectedMousePos, green, 1.0f);
-	}
+		float color[] = {1,1,1,1};
+		const int startY = 100;
+		const int deltaY = 20;
 
-	// Вывод текстовой отладки
-	///////////////////////////////////////////////////////////////////////
-	float color[] = {1,1,1,1};
-	const int startY = 100;
-	const int deltaY = 20;
+		const auto pLastClickedEntity = TOS_GET_ENTITY(m_lastClickedEntityId);
+		const auto pCurrClickedEntity = TOS_GET_ENTITY(m_curClickedEntityId);
+		const auto pDragTargetEntity = TOS_GET_ENTITY(m_dragTargetId);
+		gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 0, 1.3f, color, false, "lastClickedEntity = %s", pLastClickedEntity ? pLastClickedEntity->GetName() : "");
+		gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 1, 1.3f, color, false, "currClickedEntity = %s", pCurrClickedEntity ? pCurrClickedEntity->GetName() : "");
+		gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 2, 1.3f, color, false, "dragTargetEntity  = %s", pDragTargetEntity ? pDragTargetEntity->GetName() : "");
+		gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 3, 1.3f, color, false, "orderTargerEntity  = %s", pOrderTargerEntity ? pOrderTargerEntity->GetName() : "");
 
-	const auto pLastClickedEntity = TOS_GET_ENTITY(m_lastClickedEntityId);
-	const auto pCurrClickedEntity = TOS_GET_ENTITY(m_curClickedEntityId);
-	const auto pDragTargetEntity = TOS_GET_ENTITY(m_dragTargetId);
-	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 0, 1.3f, color, false, "lastClickedEntity = %s", pLastClickedEntity ? pLastClickedEntity->GetName() : "");
-	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 1, 1.3f, color, false, "currClickedEntity = %s", pCurrClickedEntity ? pCurrClickedEntity->GetName() : "");
-	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 2, 1.3f, color, false, "dragTargetEntity  = %s", pDragTargetEntity ? pDragTargetEntity->GetName() : "");
+		gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 4, 1.3f, color, false, "m_draggingMoveStartTimer = %f", m_draggingMoveStartTimer);
 
-	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 3, 1.3f, color, false, "m_draggingMoveStartTimer = %f", m_draggingMoveStartTimer);
+		gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 5, 1.3f, color, false, "m_mouseIPos = (%i, %i)", m_mouseIPos.x, m_mouseIPos.y);
+		gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 6, 1.3f, color, false, "m_mouseDownDurationSec = %1.f", m_mouseDownDurationSec);
 
-	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 4, 1.3f, color, false, "m_mouseIPos = (%i, %i)", m_mouseIPos.x, m_mouseIPos.y);
-	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 5, 1.3f, color, false, "m_mouseDownDurationSec = %1.f", m_mouseDownDurationSec);
+		gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 7, 1.3f, color, false, "m_doubleClick = %i", int(m_doubleClick));
+		gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 8, 1.3f, color, false, "m_select = %i", int(m_select));
+		gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 9, 1.3f, color, false, "m_dragging = %i", int(m_dragging));
+		gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 10, 1.3f, color, false, "m_copying = %i", int(m_copying));
+		gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 11, 1.3f, color, false, "m_ctrlModifier = %i", int(m_ctrlModifier));
+		gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 12, 1.3f, color, false, "m_altModifier = %i", int(m_altModifier));
+		gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 13, 1.3f, color, false, "m_debugZModifier = %i", int(m_debugZModifier));
 
-	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 6, 1.3f, color, false, "m_doubleClick = %i", int(m_doubleClick));
-	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 7, 1.3f, color, false, "m_select = %i", int(m_select));
-	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 8, 1.3f, color, false, "m_dragging = %i", int(m_dragging));
-	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 9, 1.3f, color, false, "m_copying = %i", int(m_copying));
-	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 10, 1.3f, color, false, "m_ctrlModifier = %i", int(m_ctrlModifier));
-	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 11, 1.3f, color, false, "m_altModifier = %i", int(m_altModifier));
-	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 12, 1.3f, color, false, "m_debugZModifier = %i", int(m_debugZModifier));
+		gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 14, 1.3f, color, false, "zeusDynVec = (%1.f,%1.f,%1.f)", zeusDynVec.x, zeusDynVec.y, zeusDynVec.z);
+		gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 15, 1.3f, color, false, "zeusMoving = %i", zeusMoving);
 
-	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 13, 1.3f, color, false, "zeusDynVec = (%1.f,%1.f,%1.f)", zeusDynVec.x, zeusDynVec.y, zeusDynVec.z);
-	gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 14, 1.3f, color, false, "zeusMoving = %i", zeusMoving);
-
-	if (!m_selectedEntities.empty())
-	{
-		TOS_Debug::DrawEntitiesName2DLabel(m_selectedEntities, "Selected Entities: ", 100, startY + deltaY * 15, deltaY);
-	}
-	if (!m_doubleClickLastSelectedEntities.empty())
-	{
-		TOS_Debug::DrawEntitiesName2DLabel(m_doubleClickLastSelectedEntities, "DC Selected Entities: ", 240, startY + deltaY * 15, deltaY);
-	}
-
-	auto pDebugEntity = pCurrClickedEntity;
-	if (!pDebugEntity)
-	{
-		pDebugEntity = TOS_GET_ENTITY(*m_selectedEntities.begin());
-	}
-
-	if (pDebugEntity)
-	{
-		Vec3 screenPos(ZERO);
-		TOS_Screen::ProjectToScreen(pDebugEntity->GetWorldPos(), screenPos);
-
-		auto pParent = pDebugEntity->GetParent();
-
-		pPD->AddText(screenPos.x, screenPos.y + 20 * 0, 1.2f, ColorF(1, 1, 1, 1), 1.0f, "Name = %s", pDebugEntity->GetName());
-		pPD->AddText(screenPos.x, screenPos.y + 20 * 1, 1.2f, ColorF(1, 1, 1, 1), 1.0f, "IsGarbage = %i", int(pDebugEntity->IsGarbage()));
-		pPD->AddText(screenPos.x, screenPos.y + 20 * 2, 1.2f, ColorF(1, 1, 1, 1), 1.0f, "IsRemovable = %i", int((ENTITY_FLAG_UNREMOVABLE & pDebugEntity->GetFlags()) == 0));
-		pPD->AddText(screenPos.x, screenPos.y + 20 * 3, 1.2f, ColorF(1, 1, 1, 1), 1.0f, "IsActive = %i", int(pDebugEntity->IsActive()));
-		pPD->AddText(screenPos.x, screenPos.y + 20 * 4, 1.2f, ColorF(1, 1, 1, 1), 1.0f, "Physics = %i", int(pDebugEntity->GetPhysics() != nullptr));
-		pPD->AddText(screenPos.x, screenPos.y + 20 * 5, 1.2f, ColorF(1, 1, 1, 1), 1.0f, "Parent = %s", pParent ? pParent->GetName() : "NONE");
-
-		int actorDelta = 6;
-		int itemDelta = 6;
-
-		auto pActor = static_cast<CTOSActor*>(TOS_GET_ACTOR(pDebugEntity->GetId()));
-		auto pItem = static_cast<CItem*>(TOS_GET_ITEM(pDebugEntity->GetId()));
-
-		if (pActor)
+		if (!m_selectedEntities.empty())
 		{
-			pPD->AddText(screenPos.x, screenPos.y + 20 * (actorDelta + 0), 1.2f, ColorF(1, 1, 1, 1), 1.0f, "Health = %i", pActor->GetHealth());
-			pPD->AddText(screenPos.x, screenPos.y + 20 * (actorDelta + 1), 1.2f, ColorF(1, 1, 1, 1), 1.0f, "Stance = %i", int(pActor->GetStance()));
+			TOS_Debug::DrawEntitiesName2DLabel(m_selectedEntities, "Selected Entities: ", 100, startY + deltaY * 16, deltaY);
 		}
-		else if (pItem)
+		if (!m_doubleClickLastSelectedEntities.empty())
 		{
-			auto id = pItem->GetOwnerId();
-			auto pOwner = TOS_GET_ENTITY(id);
-			auto pActorOwner = static_cast<CTOSActor*>(TOS_GET_ACTOR(id));
-			pPD->AddText(screenPos.x, screenPos.y + 20 * (itemDelta + 0), 1.2f, ColorF(1, 1, 1, 1), 1.0f, "Owner = %s(%i)", pOwner ? pOwner->GetName() : "NONE", id);
-			pPD->AddText(screenPos.x, screenPos.y + 20 * (itemDelta + 1), 1.2f, ColorF(1, 1, 1, 1), 1.0f, "dropped = %i", int(pItem->GetStats().dropped));
-			pPD->AddText(screenPos.x, screenPos.y + 20 * (itemDelta + 2), 1.2f, ColorF(1, 1, 1, 1), 1.0f, "flying = %i", int(pItem->GetStats().flying));
-			pPD->AddText(screenPos.x, screenPos.y + 20 * (itemDelta + 3), 1.2f, ColorF(1, 1, 1, 1), 1.0f, "mounted = %i", int(pItem->GetStats().mounted));
-			pPD->AddText(screenPos.x, screenPos.y + 20 * (itemDelta + 4), 1.2f, ColorF(1, 1, 1, 1), 1.0f, "pickable = %i", int(pItem->GetStats().pickable));
-			pPD->AddText(screenPos.x, screenPos.y + 20 * (itemDelta + 5), 1.2f, ColorF(1, 1, 1, 1), 1.0f, "selectable = %i", int(pItem->GetStats().selectable));
-			pPD->AddText(screenPos.x, screenPos.y + 20 * (itemDelta + 6), 1.2f, ColorF(1, 1, 1, 1), 1.0f, "selected = %i", int(pItem->GetStats().selected));
-			pPD->AddText(screenPos.x, screenPos.y + 20 * (itemDelta + 7), 1.2f, ColorF(1, 1, 1, 1), 1.0f, "used = %i", int(pItem->GetStats().used));
-			pPD->AddText(screenPos.x, screenPos.y + 20 * (itemDelta + 8), 1.2f, ColorF(1, 1, 1, 1), 1.0f, "updating = %i", int(pItem->GetStats().updating));
-			pPD->AddText(screenPos.x, screenPos.y + 20 * (itemDelta + 9), 1.2f, ColorF(1, 1, 1, 1), 1.0f, "inOwnerInventory = %i", pActorOwner ? (pActorOwner->GetInventory()->FindItem(pItem->GetEntityId())) : -1);
+			TOS_Debug::DrawEntitiesName2DLabel(m_doubleClickLastSelectedEntities, "DC Selected Entities: ", 300, startY + deltaY * 17, deltaY);
 		}
+
+		// Вывод текстовой отладки кликнутой сущности
+		///////////////////////////////////////////////////////////////////////
+		auto pDebugEntity = pCurrClickedEntity;
+		if (!pDebugEntity)
+		{
+			pDebugEntity = TOS_GET_ENTITY(*m_selectedEntities.begin());
+		}
+
+		if (pDebugEntity)
+		{
+			Vec3 screenPos(ZERO);
+			TOS_Screen::ProjectToScreen(pDebugEntity->GetWorldPos(), screenPos);
+
+			auto pParent = pDebugEntity->GetParent();
+
+			pPD->AddText(screenPos.x, screenPos.y + 20 * 0, 1.2f, ColorF(1, 1, 1, 1), 1.0f, "Name = %s", pDebugEntity->GetName());
+			pPD->AddText(screenPos.x, screenPos.y + 20 * 1, 1.2f, ColorF(1, 1, 1, 1), 1.0f, "IsGarbage = %i", int(pDebugEntity->IsGarbage()));
+			pPD->AddText(screenPos.x, screenPos.y + 20 * 2, 1.2f, ColorF(1, 1, 1, 1), 1.0f, "IsRemovable = %i", int((ENTITY_FLAG_UNREMOVABLE & pDebugEntity->GetFlags()) == 0));
+			pPD->AddText(screenPos.x, screenPos.y + 20 * 3, 1.2f, ColorF(1, 1, 1, 1), 1.0f, "IsActive = %i", int(pDebugEntity->IsActive()));
+			pPD->AddText(screenPos.x, screenPos.y + 20 * 4, 1.2f, ColorF(1, 1, 1, 1), 1.0f, "Physics = %i", int(pDebugEntity->GetPhysics() != nullptr));
+			pPD->AddText(screenPos.x, screenPos.y + 20 * 5, 1.2f, ColorF(1, 1, 1, 1), 1.0f, "Parent = %s", pParent ? pParent->GetName() : "NONE");
+
+			int actorDelta = 6;
+			int itemDelta = 6;
+
+			auto pActor = static_cast<CTOSActor*>(TOS_GET_ACTOR(pDebugEntity->GetId()));
+			auto pItem = static_cast<CItem*>(TOS_GET_ITEM(pDebugEntity->GetId()));
+
+			if (pActor)
+			{
+				pPD->AddText(screenPos.x, screenPos.y + 20 * (actorDelta + 0), 1.2f, ColorF(1, 1, 1, 1), 1.0f, "Health = %i", pActor->GetHealth());
+				pPD->AddText(screenPos.x, screenPos.y + 20 * (actorDelta + 1), 1.2f, ColorF(1, 1, 1, 1), 1.0f, "Stance = %i", int(pActor->GetStance()));
+			}
+			else if (pItem)
+			{
+				auto id = pItem->GetOwnerId();
+				auto pOwner = TOS_GET_ENTITY(id);
+				auto pActorOwner = static_cast<CTOSActor*>(TOS_GET_ACTOR(id));
+				pPD->AddText(screenPos.x, screenPos.y + 20 * (itemDelta + 0), 1.2f, ColorF(1, 1, 1, 1), 1.0f, "Owner = %s(%i)", pOwner ? pOwner->GetName() : "NONE", id);
+				pPD->AddText(screenPos.x, screenPos.y + 20 * (itemDelta + 1), 1.2f, ColorF(1, 1, 1, 1), 1.0f, "dropped = %i", int(pItem->GetStats().dropped));
+				pPD->AddText(screenPos.x, screenPos.y + 20 * (itemDelta + 2), 1.2f, ColorF(1, 1, 1, 1), 1.0f, "flying = %i", int(pItem->GetStats().flying));
+				pPD->AddText(screenPos.x, screenPos.y + 20 * (itemDelta + 3), 1.2f, ColorF(1, 1, 1, 1), 1.0f, "mounted = %i", int(pItem->GetStats().mounted));
+				pPD->AddText(screenPos.x, screenPos.y + 20 * (itemDelta + 4), 1.2f, ColorF(1, 1, 1, 1), 1.0f, "pickable = %i", int(pItem->GetStats().pickable));
+				pPD->AddText(screenPos.x, screenPos.y + 20 * (itemDelta + 5), 1.2f, ColorF(1, 1, 1, 1), 1.0f, "selectable = %i", int(pItem->GetStats().selectable));
+				pPD->AddText(screenPos.x, screenPos.y + 20 * (itemDelta + 6), 1.2f, ColorF(1, 1, 1, 1), 1.0f, "selected = %i", int(pItem->GetStats().selected));
+				pPD->AddText(screenPos.x, screenPos.y + 20 * (itemDelta + 7), 1.2f, ColorF(1, 1, 1, 1), 1.0f, "used = %i", int(pItem->GetStats().used));
+				pPD->AddText(screenPos.x, screenPos.y + 20 * (itemDelta + 8), 1.2f, ColorF(1, 1, 1, 1), 1.0f, "updating = %i", int(pItem->GetStats().updating));
+				pPD->AddText(screenPos.x, screenPos.y + 20 * (itemDelta + 9), 1.2f, ColorF(1, 1, 1, 1), 1.0f, "inOwnerInventory = %i", pActorOwner ? (pActorOwner->GetInventory()->FindItem(pItem->GetEntityId())) : -1);
+			}
+		}
+
 	}
 }
 
@@ -1709,6 +1760,36 @@ bool CTOSZeusModule::ExecuteCommand(EZeusCommands command)
 
 						copiedEntities.insert(spawnedId);
 					}
+				}
+				break;
+			}
+			case eZC_OrderSelected:
+			{
+				MouseProjectToWorld(m_mouseRay, m_worldMousePos, m_mouseRayEntityFlags, false);
+				m_orderPos = m_mouseRay.pt;
+
+				m_orderTargetId = GetMouseEntityId();
+				auto pOrderTargetEnt = TOS_GET_ENTITY(m_orderTargetId);
+				if (pOrderTargetEnt)
+					m_orderPos = pOrderTargetEnt->GetWorldPos();
+
+				IScriptSystem* pSS = gEnv->pScriptSystem;
+				if (pSS->ExecuteFile("Scripts/AI/TOS/TOSHandleOrder.lua", true, true))
+				{
+					CScriptSetGetChain executor(m_executorInfo);
+					executor.SetValue("entityId", id);
+					executor.SetValue("maxCount", int(m_selectedEntities.size())); // макс. кол-во исполнителей
+					executor.SetValue("index", int(index)); // текущий номер исполнителя
+
+					CScriptSetGetChain order(m_orderInfo);
+					order.SetValue("goalPipeId", id); // так надо
+					order.SetValue("pos", m_orderPos);
+					order.SetValue("targetId", m_orderTargetId);
+
+					pSS->BeginCall("HandleOrder");
+					pSS->PushFuncParam(m_executorInfo);
+					pSS->PushFuncParam(m_orderInfo);
+					pSS->EndCall();
 				}
 				break;
 			}
