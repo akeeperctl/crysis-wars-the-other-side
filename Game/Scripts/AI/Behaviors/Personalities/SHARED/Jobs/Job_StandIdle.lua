@@ -37,7 +37,7 @@ AIBehaviour.Job_StandIdle = {
 		
 		-- TheOtherSide add AIGOALPIPE_SAMEPRIORITY and fix relaxed problem with EnableCombat
 		entity:InitAIRelaxed();
-		entity:SelectPipe(0,"stand_only");
+		entity.SelectPipe(0,"stand_only");
 		entity:InsertSubpipe(AIGOALPIPE_SAMEPRIORITY,"setup_idle");
 		entity:InsertSubpipe(AIGOALPIPE_SAMEPRIORITY,"clear_all"); -- to allow receive again onplayerseen 
 
