@@ -1,13 +1,4 @@
 ---@diagnostic disable-next-line: lowercase-global
-g_FuncCallData = {
-    func = nil,
-    param1 = nil,
-    param2 = nil,
-    param3 = nil, 
-    param4 = nil
-}
-
----@diagnostic disable-next-line: lowercase-global
 g_ActionData = {
     actionId = "",
     userId = 0,
@@ -76,16 +67,44 @@ BRANCH = {
     IF_COVER_NOT_COMPROMISED = 36, -- Отрицательная версия IF_COVER_COMPROMISED.
     IF_COVER_SOFT = 37, -- Если текущее укрытие является мягким.
     IF_COVER_NOT_SOFT = 38, -- Если текущее укрытие не является мягким.
-    IF_CAN_SHOOT_TARGET_PRONED = 39, -- Если цель находится в зоне поражения, лежа на животе
-    IF_CAN_SHOOT_TARGET_CROUCHED = 40, -- Если цель находится в зоне поражения, присев
-    IF_CAN_SHOOT_TARGET_STANDING = 41, -- Если цель находится в зоне поражения, стоя
-    IF_COVER_FIRE_ENABLED = 42, -- Если огонь из-за укрытия не доступен
-    IF_RANDOM = 43, -- Случайный переход с шансом (0.0 до 1.0) из 5го аргумента
-    IF_LASTOP_FAILED = 44, -- Если последняя операция завершилась неудачно
-    IF_LASTOP_SUCCEED = 45, -- Если последняя операция завершилась успешно
+    IF_CAN_SHOOT_TARGET_CROUCHED = 39, -- Если цель находится в зоне поражения, присев
+    IF_COVER_FIRE_ENABLED = 40, -- Если огонь из-за укрытия не доступен
+    IF_RANDOM = 41, -- Случайный переход с шансом (0.0 до 1.0) из 5го аргумента
+    IF_LASTOP_FAILED = 42, -- Если последняя операция завершилась неудачно
+    IF_LASTOP_SUCCEED = 43, -- Если последняя операция завершилась успешно
     BRANCH_ALWAYS = 44, -- Безусловный переход.
     NOT = 0x100 -- Отрицательный флаг, применяемый в сочетании с другими значениями
 }
+
+-- ФЛАГИ ВЫПОЛНЕНИЯ AI ACTION ЧЕРЕЗ AITracker
+IGNORE_COMBAT_DURING_ACTION = 1
+JOIN_COMBAT_PAUSE_ACTION = 2
+
+-- Стандартные флаги приоритета для InsertSubpipe
+AIGOALPIPE_LOOP = 0 -- Повторять цикл до завершения.
+AIGOALPIPE_RUN_ONCE = 1 -- Выполнить один раз.
+AIGOALPIPE_NOTDUPLICATE = 2 -- Не запускать, если уже запущен.
+AIGOALPIPE_HIGHPRIORITY = 4 -- Высокий приоритет.
+AIGOALPIPE_SAMEPRIORITY = 8 --  Такой же приоритет, как у предыдущего.
+AIGOALPIPE_DONT_RESET_AG = 16 -- Не сбрасывать AnimGraph? или Агрессию?.
+AIGOALPIPE_KEEP_LAST_SUBPIPE = 32 --  Сохранять последний подканал. 
+
+-- Режимы стрельбы ИИ
+FIREMODE_OFF = 0 -- Не стрелять.
+FIREMODE_BURST = 1 -- Стрелять очередями - только по живым целям.
+FIREMODE_CONTINUOUS = 2 -- Стрелять непрерывно - только по живым целям.
+FIREMODE_FORCED = 3 -- Стрелять непрерывно - допускаются любые цели.
+FIREMODE_AIM = 4 -- Целиться в цель - допускаются любые цели.
+FIREMODE_SECONDARY = 5 -- Стрелять из вторичного оружия (гранаты, ...).
+FIREMODE_SECONDARY_SMOKE = 6 -- Стрелять дымовой гранатой.
+FIREMODE_MELEE = 7 -- Ближний бой.
+FIREMODE_KILL = 8 -- Без промахов, стрелять прямо в цель, независимо от агрессии, дальности атаки, точности.
+FIREMODE_BURST_WHILE_MOVING = 9 -- (Переименовать.
+FIREMODE_PANIC_SPREAD = 10 --  
+FIREMODE_BURST_DRAWFIRE = 11 --  
+FIREMODE_MELEE_FORCED = 12 -- Ближний бой без ограничений по дальности.
+FIREMODE_BURST_SNIPE = 13 --  
+FIREMODE_AIM_SWEEP = 14 --  
 
 GO = {
     --[[
@@ -678,8 +697,16 @@ TOS_AI = {
         end
     end,
 
-    InsertSubpipe = function ( entity, goalPipeId, pipeName, targetId, eventId)
-        return entity:InsertSubpipe(goalPipeId, pipeName, targetId, eventId) == true
+    --[[
+    Аргументы:
+        @param entity (Entity):  Объект, в который добавляется подканал.
+        @pipeName (string):  Имя подканала.
+        @priorityFlag (int):  Приоритет подканала (битовые флаги, используемые в `AIGOALPIPE_...`).
+        @targetId (int):  Идентификатор цели подканала, которая при вызове функции сохраняется в LastOpResult
+        @goalPipeId (int):  Идентификатор `AIGoalPipe`, в который добавляется подканал.
+    ]]
+    InsertSubpipe = function ( entity, pipeName, priorityFlag, targetId, goalPipeId)
+        return entity:InsertSubpipe(priorityFlag, pipeName, targetId, goalPipeId) == true
     end,
 
     SendSignal = function ( filter, id, functionName, senderId, data)
