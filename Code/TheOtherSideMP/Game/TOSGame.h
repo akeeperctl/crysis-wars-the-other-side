@@ -35,7 +35,7 @@ typedef void (*func)();
 //enum EExtraGameplayEvent;
 
 // ReSharper disable once CppPolymorphicClassWithNonVirtualPublicDestructor
-class CTOSGame:  // NOLINT(cppcoreguidelines-special-member-functions)
+class CTOSGame :  // NOLINT(cppcoreguidelines-special-member-functions)
 	public IGameplayListener,
 	public IInputEventListener,
 	public IEntitySystemSink,
@@ -52,6 +52,8 @@ public:
 	void Init();
 	void Shutdown();
 	void Update(float frameTime, int frameId);
+	void InitScriptBinds();
+	void ReleaseScriptBinds();
 
 	//Events
 	// ILevelSystemListener
@@ -61,7 +63,7 @@ public:
 	void OnLoadingComplete(ILevel* pLevel);
 	void OnLoadingError(ILevelInfo* pLevel, const char* error);
 	void OnLoadingProgress(ILevelInfo* pLevel, int progressAmount);
-	
+
 	// ILevelSystemListener
 
 
@@ -70,12 +72,15 @@ public:
 	//~IHardwareMouseEventListener
 
 	//IInputEventListener
-	bool OnInputEvent(const SInputEvent& event) ;
-	bool OnInputEventUI(const SInputEvent& event)  { return false; }
+	bool OnInputEvent(const SInputEvent& event);
+	bool OnInputEventUI(const SInputEvent& event)
+	{
+		return false;
+	}
 	//~IInputEventListener
 
 	//IGameplayListener
-	void OnGameplayEvent(IEntity* pEntity, const GameplayEvent& event) ;
+	void OnGameplayEvent(IEntity* pEntity, const GameplayEvent& event);
 	//~IGameplayListener
 
 	//TOSEventRecorder->RecordEvent->calling this
@@ -83,15 +88,15 @@ public:
 	void OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event) const;
 
 	//IEntitySystemSink
-	bool OnBeforeSpawn( SEntitySpawnParams &params ) ;
-	void OnSpawn(IEntity* pEntity, SEntitySpawnParams& params) ;
-	bool OnRemove(IEntity* pEntity) ;
-	void OnEvent(IEntity* pEntity, SEntityEvent& event) ;
+	bool OnBeforeSpawn(SEntitySpawnParams& params);
+	void OnSpawn(IEntity* pEntity, SEntitySpawnParams& params);
+	bool OnRemove(IEntity* pEntity);
+	void OnEvent(IEntity* pEntity, SEntityEvent& event);
 	//~IEntitySystemSink
 
 	//IScriptTableDumpSink
-	void OnElementFound(const char* sName, ScriptVarType type) ;
-	void OnElementFound(int nIdx, ScriptVarType type) ;
+	void OnElementFound(const char* sName, ScriptVarType type);
+	void OnElementFound(int nIdx, ScriptVarType type);
 	//~IScriptTableDumpSink
 
 	//ILevelSystemListener
@@ -131,10 +136,10 @@ public:
 	IActor* GetActualClientActor() const;
 
 	CTOSGameEventRecorder* GetEventRecorder() const;
-	CTOSMasterModule*      GetMasterModule() const;
-	CTOSZeusModule*       GetZeusModule() const;
+	CTOSMasterModule* GetMasterModule() const;
+	CTOSZeusModule* GetZeusModule() const;
 	CTOSEntitySpawnModule* GetEntitySpawnModule() const;
-	СTOSAIModule*          GetAITrackerModule() const;
+	СTOSAIModule* GetAITrackerModule() const;
 
 
 	bool ModuleAdd(ITOSGameModule* pModule, bool flowGraph);

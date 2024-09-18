@@ -20,7 +20,8 @@ CTOSGame::CTOSGame()
 	m_pMasterModule(nullptr),
 	m_pEntitySpawnModule(nullptr),
 	m_lastChannelConnectionState(0),
-	m_lastContextViewState(0) {}
+	m_lastContextViewState(0)
+{}
 
 CTOSGame::~CTOSGame()
 {
@@ -40,7 +41,7 @@ CTOSGame::~CTOSGame()
 void CTOSGame::Init()
 {
 	g_pGame->GetIGameFramework()->GetIGameplayRecorder()->RegisterListener(this);
-	if (gEnv->pInput) 
+	if (gEnv->pInput)
 		gEnv->pInput->AddEventListener(this);
 	if (gEnv->pEntitySystem)
 		gEnv->pEntitySystem->AddSink(this);
@@ -49,7 +50,7 @@ void CTOSGame::Init()
 
 	m_pEventRecorder = new CTOSGameEventRecorder();
 
-	if (gEnv->bServer && gEnv->pAISystem)
+	//if (gEnv->bServer)
 	{
 		m_pAITrackerModule = new СTOSAIModule();
 	}
@@ -104,6 +105,30 @@ void CTOSGame::Update(const float frameTime, int frameId)
 	}
 }
 
+void CTOSGame::InitScriptBinds()
+{
+	for (std::vector<ITOSGameModule*>::iterator it = m_modules.begin(); it != m_modules.end(); ++it)
+	{
+		ITOSGameModule* pModule = *it;
+		if (pModule)
+		{
+			pModule->InitScriptBinds();
+		}
+	}
+}
+
+void CTOSGame::ReleaseScriptBinds()
+{
+	for (std::vector<ITOSGameModule*>::iterator it = m_modules.begin(); it != m_modules.end(); ++it)
+	{
+		ITOSGameModule* pModule = *it;
+		if (pModule)
+		{
+			pModule->ReleaseScriptBinds();
+		}
+	}
+}
+
 void CTOSGame::OnLevelNotFound(const char* levelName)
 {
 
@@ -154,12 +179,10 @@ void CTOSGame::OnLoadingComplete(ILevel* pLevel)
 }
 
 void CTOSGame::OnLoadingError(ILevelInfo* pLevel, const char* error)
-{
-}
+{}
 
 void CTOSGame::OnLoadingProgress(ILevelInfo* pLevel, int progressAmount)
-{
-}
+{}
 
 CTOSGameEventRecorder* CTOSGame::GetEventRecorder() const
 {
@@ -215,20 +238,20 @@ void CTOSGame::UpdateChannelConnectionState()
 		const char* state = "<unknown state>";
 		switch (currentState)
 		{
-		case eCCS_StartingConnection:
-			state = "eCCS_StartingConnection";
-			break;
-		case eCCS_InContextInitiation:
-			state = "eCCS_InContextInitiation";
-			break;
-		case eCCS_InGame:
-			state = "eCCS_InGame";
-			break;
-		case eCCS_Disconnecting:
-			state = "eCCS_Disconnecting";
-			break;
-		default: 
-			break;
+			case eCCS_StartingConnection:
+				state = "eCCS_StartingConnection";
+				break;
+			case eCCS_InContextInitiation:
+				state = "eCCS_InContextInitiation";
+				break;
+			case eCCS_InGame:
+				state = "eCCS_InGame";
+				break;
+			case eCCS_Disconnecting:
+				state = "eCCS_Disconnecting";
+				break;
+			default:
+				break;
 		}
 
 		TOS_RECORD_EVENT(0, STOSGameEvent(eEGE_UpdateChannelConnectionState, state, true));
@@ -249,30 +272,30 @@ void CTOSGame::UpdateContextViewState()
 		const char* state = "<unknown state>";
 		switch (currentState)
 		{
-		case eCVS_Initial:
-			state = "eCVS_Initial: Requesting Game Environment";
-			break;
-		case eCVS_Begin:
-			state = "eCVS_Begin: Receiving Game Environment";
-			break;
-		case eCVS_EstablishContext:
-			state = "eCVS_EstablishContext: Loading Game Assets";
-			break;
-		case eCVS_ConfigureContext:
-			state = "eCVS_ConfigureContext: Configuring Game Settings";
-			break;
-		case eCVS_SpawnEntities:
-			state = "eCVS_SpawnEntities: Spawning Entities";
-			break;
-		case eCVS_PostSpawnEntities:
-			state = "eCVS_PostSpawnEntities: Initializing Entities";
-			break;
-		case eCVS_InGame:
-			state = "eCVS_InGame: In Game";
-			break;
-		case eCVS_NUM_STATES:
-		default:   // NOLINT(clang-diagnostic-covered-switch-default)
-			break;
+			case eCVS_Initial:
+				state = "eCVS_Initial: Requesting Game Environment";
+				break;
+			case eCVS_Begin:
+				state = "eCVS_Begin: Receiving Game Environment";
+				break;
+			case eCVS_EstablishContext:
+				state = "eCVS_EstablishContext: Loading Game Assets";
+				break;
+			case eCVS_ConfigureContext:
+				state = "eCVS_ConfigureContext: Configuring Game Settings";
+				break;
+			case eCVS_SpawnEntities:
+				state = "eCVS_SpawnEntities: Spawning Entities";
+				break;
+			case eCVS_PostSpawnEntities:
+				state = "eCVS_PostSpawnEntities: Initializing Entities";
+				break;
+			case eCVS_InGame:
+				state = "eCVS_InGame: In Game";
+				break;
+			case eCVS_NUM_STATES:
+			default:   // NOLINT(clang-diagnostic-covered-switch-default)
+				break;
 		}
 
 		TOS_RECORD_EVENT(0, STOSGameEvent(eEGE_UpdateContextViewState, state, true));

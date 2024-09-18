@@ -8,7 +8,8 @@ class CTOSGenericSynchronizer;
 
 struct ITOSGameModule  // NOLINT(cppcoreguidelines-special-member-functions)
 {
-	virtual ~ITOSGameModule() {};
+	virtual ~ITOSGameModule()
+	{};
 	//virtual void OnMainMenuEnter() = 0;
 	//virtual void OnGameRulesReset() = 0;
 	//virtual void OnActorDeath(IActor* pActor) = 0;
@@ -22,8 +23,14 @@ struct ITOSGameModule  // NOLINT(cppcoreguidelines-special-member-functions)
 	//virtual void OnStartControl(const IActor* pActor) { };
 	//virtual void OnStopControl(const IActor* pActor) { };
 
-	virtual bool OnInputEvent(const SInputEvent& event) { return true; };
-	virtual bool OnInputEventUI(const SInputEvent& event) { return false; };
+	virtual bool OnInputEvent(const SInputEvent& event)
+	{
+		return true;
+	};
+	virtual bool OnInputEventUI(const SInputEvent& event)
+	{
+		return false;
+	};
 
 	virtual void OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event) = 0;
 	virtual void GetMemoryStatistics(ICrySizer* s) = 0;
@@ -34,10 +41,13 @@ struct ITOSGameModule  // NOLINT(cppcoreguidelines-special-member-functions)
 	//virtual bool NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int flags) = 0;
 	virtual int GetDebugLog() = 0;
 
+	virtual CScriptableBase* GetScriptBind() = 0;
+	virtual void InitScriptBinds() = 0;
 	virtual void InitCVars(IConsole* pConsole) = 0;
 	virtual void InitCCommands(IConsole* pConsole) = 0;
 	virtual void ReleaseCVars() = 0;
 	virtual void ReleaseCCommands() = 0;
+	virtual void ReleaseScriptBinds() = 0;
 
 	bool operator == (ITOSGameModule* pModule)
 	{

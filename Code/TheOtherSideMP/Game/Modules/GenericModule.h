@@ -47,8 +47,15 @@ public:
 		return m_debugLogMode;
 	}
 
+
+	CScriptableBase* GetScriptBind()
+	{
+		return nullptr;
+	};
+
 	void InitScriptBinds()
 	{};
+
 	void InitCVars(IConsole* pConsole)
 	{};
 	void InitCCommands(IConsole* pConsole)
@@ -56,6 +63,8 @@ public:
 	void ReleaseCVars()
 	{};
 	void ReleaseCCommands()
+	{};
+	void ReleaseScriptBinds()
 	{};
 	//~ITOSGameModule
 
