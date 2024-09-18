@@ -465,6 +465,78 @@ function Trooper_x.Client:ClMeleeHit(entityId, distance, radius)
 	end
 end
 
+function Trooper_x:AICreateShockwave()
+	--System.LogAlways("Trooper_x:AICreateShockwave")
+	--Log("SHOCKWAVE TIME :@");
+
+	local curTime = _time;
+	
+	if(self.AI.lastShockwaveTime==nil) then 
+		self.AI.lastShockwaveTime = 0;
+	end
+	
+	local timePassed = curTime - self.AI.lastShockwaveTime;
+	
+	local reloadTime = 3;
+	-- if (self.actor:IsHaveOwner()) then
+	-- 	reloadTime = 150; -- 150sec = 2.5 min
+	-- end
+
+	if( timePassed > reloadTime ) then
+		local pos = g_Vectors.temp_v1;
+		self:GetWorldPos(pos);
+		pos.z=pos.z+1.5;
+				
+		--Log("Shockwave :E");
+		g_gameRules.game:ServerExplosion(self.id, self.id, 50, pos, g_Vectors.up, 6, 0, 2000, 10, "expansion_fx.weapons.emp_grenade", 0.8, 21);
+		--self.actor:CreateCodeEvent({event="AICreateShockwave"});
+
+		self.AI.lastShockwaveTime = curTime;
+		
+	end
+end
+
+function Trooper_x:EnableLamLights(bEnable)
+	self.actor:CreateCodeEvent({event="lamLights", enable=bEnable});
+	--System.LogAlways("Trooper_x:EnableLamLights");
+end
+
+function Trooper_x:ApplyGuardianStuff()
+	self.actor:CreateCodeEvent({event="applyGuardianStuff"});
+	--System.LogAlways("Trooper_x:EnableLamLights");
+end
+
+function Trooper_x:ApplyLeaderStuff()
+	self.actor:CreateCodeEvent({event="applyLeaderStuff"});
+end
+
+function Trooper_x:ApplyCloakStuff()
+	self.IsHaveCloak = true;
+	self.actor:CreateCodeEvent({event="applyCloakStuff"});
+end
+
+-----------------------------------------------------------------------------------------------------
+function Trooper_x:Event_EnableLamLights(sender)
+	self:EnableLamLights(true);
+	--System.LogAlways("Trooper_x:Event_EnableLamLights");
+end
+
+function Trooper_x:Event_DisableLamLights(sender)
+	self:EnableLamLights(false);
+	--System.LogAlways("Trooper_x:Event_DisableLamLights");
+end
+
+function Trooper_x:RequestCloakTurnOn(sender)
+	if (self.IsHaveCloak == true and self.cloaked == 0) then
+		self:Cloak(1);
+	end	
+end
+
+function Trooper_x:RequestCloakTurnOff(sender)
+	if (self.IsHaveCloak == true and self.cloaked == 1) then
+		self:Cloak(0);
+	end	
+end
 --~TheOtherSide
 
 
