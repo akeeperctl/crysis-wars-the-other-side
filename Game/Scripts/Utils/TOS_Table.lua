@@ -8,7 +8,7 @@ function table.dump(tbl, indent)
       end
       first = false
       if type(v) == "table" then
-        result = result .. "\n" .. indent .. tostring(k) .. ": " .. dump_table(v, indent .. "  ")
+        result = result .. "\n" .. indent .. tostring(k) .. ": " .. table.dump(v, indent .. "  ")
       else
         result = result .. "\n" .. indent .. tostring(k) .. ": " .. tostring(v)
       end
