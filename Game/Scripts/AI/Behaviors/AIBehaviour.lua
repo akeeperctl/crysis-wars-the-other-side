@@ -5,7 +5,7 @@ AIBehaviour = {
 	AVAILABLE = 
 	{
 		--TheOtherSide
-		TOS_SHARED 		= "Scripts/AI/TOS/Behaviors/TOSSHARED.lua",
+		TOSSHARED 		= "Scripts/AI/TOS/Behaviors/TOSSHARED.lua",
 		--~TheOtherSide
 
 	-- hardcoding behavior for video recording
