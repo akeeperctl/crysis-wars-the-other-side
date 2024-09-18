@@ -1,4 +1,4 @@
-function table.dump_table(tbl, indent)
+function table.dump(tbl, indent)
     indent = indent or ""
     local result = "{"
     local first = true
