@@ -206,17 +206,17 @@ namespace TOS_AI
 
 		if (!pObject)
 			if (g_pGameCVars && g_pTOSGame->GetAITrackerModule()->GetDebugLog() > 0)
-				CryLogAlways("%s[C++][Execute AI Action: %s][AI: %s][WARNING][Cause: OBJECT NOT DEFINED][Solution: %s]", TOS_COLOR_YELLOW, actionName, pUser->GetName(), solution);
+				CryLogAlways("%s<c++> WARNING [Execute AI Action: %s] AI: '%s' Cause: OBJECT NOT DEFINED, Solution: %s", TOS_COLOR_YELLOW, actionName, pUser->GetName(), solution);
 
 		if (!gEnv->pAISystem->GetAIAction(actionName))
 		{
-			CryLogAlways("%s[C++][Execute AI Action: %s][AI: %s][FAILED][Cause: ACTION NOT DEFINED][Solution: %s]", TOS_COLOR_RED, actionName, pUser->GetName(), solution);
+			CryLogAlways("%s<c++> FAILED [Execute AI Action: %s] AI: '%s' Cause: ACTION NOT DEFINED, Solution: %s", TOS_COLOR_RED, actionName, pUser->GetName(), solution);
 			return -1;
 		}
 
 		if (!pUser->IsEnabled())
 		{
-			CryLogAlways("%s[C++][Execute AI Action: %s][AI: %s][FAILED][Cause: AI IS DISABLED][Solution: %s]", TOS_COLOR_RED, actionName, pUser->GetName(), solution);
+			CryLogAlways("%s<c++> FAILED [Execute AI Action: %s] AI: '%s' Cause: AI IS DISABLED, Solution: %s", TOS_COLOR_RED, actionName, pUser->GetName(), solution);
 
 			return -1;
 		}
@@ -265,10 +265,93 @@ namespace TOS_AI
 		pTracker->StartTracking(pUser, info);
 
 		if (g_pGameCVars && g_pTOSGame->GetAITrackerModule()->GetDebugLog() > 0)
-			CryLogAlways("%s[C++][Execute AI Action: (%i) %s][AI: %s][SUCCESS][Solution: %s]", TOS_COLOR_GREEN, actionGoalPipeId, actionName, pUser->GetName(), solution);
+		{
+			CryLogAlways("%s<c++> SUCCESS [Execute AI Action: (%i) %s] AI: %s Solution: %s", TOS_COLOR_GREEN, actionGoalPipeId, actionName, pUser->GetName(), solution);
+		}
+
 
 		return actionGoalPipeId;
 	}
+
+	//Return allocated or used goal pipe id
+	inline int ExecuteAIAction(IAIObject* pUser, IEntity* pObject, const char* actionName, const float maxAlertness, int actionGoalPipeId, const EAAEFlag flag, const char* desiredGoalName, const char* solution, const char* luaCallbackFuncName)
+	{
+		const auto pTracker = g_pTOSGame->GetAITrackerModule();
+		if (!pTracker)
+			return -1;
+
+		if (!pUser)
+			return -1;
+
+		if (!pObject)
+			if (g_pGameCVars && g_pTOSGame->GetAITrackerModule()->GetDebugLog() > 0)
+				CryLogAlways("%s<c++> WARNING [Execute AI Action: %s] AI: '%s' Cause: OBJECT NOT DEFINED, Solution: %s", TOS_COLOR_YELLOW, actionName, pUser->GetName(), solution);
+
+		if (!gEnv->pAISystem->GetAIAction(actionName))
+		{
+			CryLogAlways("%s<c++> FAILED [Execute AI Action: %s] AI: '%s' Cause: ACTION NOT DEFINED, Solution: %s", TOS_COLOR_RED, actionName, pUser->GetName(), solution);
+			return -1;
+		}
+
+		if (!pUser->IsEnabled())
+		{
+			CryLogAlways("%s<c++> FAILED [Execute AI Action: %s] AI: '%s' Cause: AI IS DISABLED, Solution: %s", TOS_COLOR_RED, actionName, pUser->GetName(), solution);
+
+			return -1;
+		}
+
+		if (pTracker->IsTracking(pUser))
+		{
+			SAIActionInfo info;
+			pTracker->GetActionInfo(pUser, info);
+
+			AbortAIAction(pUser, info.goalPipeId, "AI currently needs to start executing another action");
+		}
+
+		if (flag == eAAEF_IgnoreCombatDuringAction)
+			EnableCombat(pUser, false, true, "Flag of ignore combat set on true");
+
+		if (actionGoalPipeId == -1)
+			actionGoalPipeId = gEnv->pAISystem->AllocGoalPipeId();
+
+		const auto pData = gEnv->pAISystem->CreateSignalExtraData();
+		pData->SetObjectName(actionName);
+		pData->fValue = maxAlertness;
+		pData->iValue = actionGoalPipeId;
+
+		//method 0 may not trigger an action in the Update function
+		const int method = 1;
+
+		if (method == 0)
+			SendSignal(pUser, SIGNALFILTER_SENDER, "ACT_EXECUTE", pObject, pData);
+		if (method == 1)
+			gEnv->pAISystem->ExecuteAIAction(actionName, pUser->GetEntity(), pObject, maxAlertness, actionGoalPipeId);
+
+		SAIActionInfo info;
+		info.goalPipeId = actionGoalPipeId;
+		info.name = actionName;
+		info.flag = flag;
+		info.objectId = pObject ? pObject->GetId() : -1; //-1 is undefined
+		info.maxAlertness = maxAlertness;
+		info.luaCallbackFuncName = luaCallbackFuncName;
+
+		if (desiredGoalName != nullptr && strcmp(desiredGoalName, "") != 0)
+			info.desiredGoalPipe = desiredGoalName;
+
+		//Akeeper: 
+		//If you change it to true here, then there may be bugs with the pause mode
+		info.paused = false;
+
+		pTracker->StartTracking(pUser, info);
+
+		if (g_pGameCVars && g_pTOSGame->GetAITrackerModule()->GetDebugLog() > 0)
+		{
+			CryLogAlways("%s<c++> SUCCESS [Execute AI Action: (%i) %s] AI: %s Solution: %s", TOS_COLOR_GREEN, actionGoalPipeId, actionName, pUser->GetName(), solution);
+		}
+
+		return actionGoalPipeId;
+	}
+
 
 	inline bool IsExecuting(const IAIObject* pUser, const char* actionName)
 	{
