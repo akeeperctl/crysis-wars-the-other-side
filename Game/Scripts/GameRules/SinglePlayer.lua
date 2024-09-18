@@ -226,6 +226,12 @@ function SinglePlayer:CalcDamage(material_type, damage, tbl, assist)
 	if (damage and damage~=0) then
 		if (material_type and tbl) then
 			local mult = tbl[material_type] or 1;
+
+			--TheOtherSide fix assist is nil
+			if not assist then
+				assist = 0
+			end
+			--~TheOtherSide
 			local asm = assist*tbl["assist_min"];
 			if (mult < asm) then
 				mult=asm;
