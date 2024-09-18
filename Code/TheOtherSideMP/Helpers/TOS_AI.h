@@ -452,6 +452,11 @@ namespace TOS_AI
 		return nullptr;
 	}
 
+	/// @brief Чтобы получить текущее поведение, нужно в констукторе поведения внести строку
+	/// entity.AI.currentBehaviour 
+	/// 
+	/// @param pAI - указатель на ИИ объект
+	/// @return название текущего поведения 
 	inline const char* GetCurrentAIBehaviour(const IAIObject* pAI)
 	{
 		if (gEnv->bServer && gEnv->pAISystem && pAI && pAI->IsEnabled())
