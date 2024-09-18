@@ -125,9 +125,9 @@ public:
 	bool GetZeusFlag(uint flag) const;
 	void Reset();
 
-	void OnAction(const ActionId& action, int activationMode, float value);
+	//void OnAction(const ActionId& action, int activationMode, float value);
 protected:
-	bool OnActionAttack2(const CTOSActor* pActor, const ActionId& actionId, int activationMode, float value, float pressedDur = 0);
+	//bool OnActionAttack2(const CTOSActor* pActor, const ActionId& actionId, int activationMode, float value, float pressedDur = 0);
 
 private:
 	void UpdateDebug(bool zeusMoving, const Vec3& zeusDynVec);

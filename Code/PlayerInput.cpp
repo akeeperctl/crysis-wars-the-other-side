@@ -159,19 +159,19 @@ void CPlayerInput::OnAction( const ActionId& actionId, int activationMode, float
 			pMC->OnAction(actionId, activationMode, value);
 		}
 
-		const auto pZM = g_pTOSGame->GetZeusModule();
-		if (pZM)
-		{
-			pZM->OnAction(actionId, activationMode, value);
-		}
+		//const auto pZM = g_pTOSGame->GetZeusModule();
+		//if (pZM)
+		//{
+		//	pZM->OnAction(actionId, activationMode, value);
+		//}
 	}
 	//~TheOtherSide
 
 	FUNCTION_PROFILER(GetISystem(), PROFILE_GAME);
 
-	m_pPlayer->GetGameObject()->ChangedNetworkState( INPUT_ASPECT );
+	m_pPlayer->GetGameObject()->ChangedNetworkState(INPUT_ASPECT);
 
-	m_lastActions=m_actions;
+	m_lastActions = m_actions;
 
 	//this tell if OnAction have to be forwarded to scripts, now its true by default, only high framerate actions are ignored
 	bool filterOut = true;
