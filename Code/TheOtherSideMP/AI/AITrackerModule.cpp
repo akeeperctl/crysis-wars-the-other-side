@@ -6,6 +6,7 @@
 #include "GameCVars.h"
 #include "IAIAction.h"
 #include "IAITrackerModuleListener.h"
+#include "ScriptBind_AITracker.h"
 
 #include "../Helpers/TOS_AI.h"
 #include "../Helpers/TOS_Debug.h"
@@ -33,6 +34,21 @@ for (auto it = m_voidHolders.begin(); it != m_voidHolders.end(); it++)\
 СTOSAIModule::~СTOSAIModule()
 {
 	//g_pControlSystem->RemoveChild(this, false);
+}
+
+CScriptableBase* СTOSAIModule::GetScriptBind()
+{
+	return m_pAITrackerScriptBind;
+}
+
+void СTOSAIModule::InitScriptBinds()
+{
+	m_pAITrackerScriptBind = new CScriptBind_AITracker(gEnv->pSystem, g_pGame->GetIGameFramework());
+}
+
+void СTOSAIModule::ReleaseScriptBinds()
+{
+	SAFE_DELETE(m_pAITrackerScriptBind);
 }
 
 bool СTOSAIModule::IsExecuting(const IAIObject* pUserAI, const int actionGoalPipeId)
@@ -310,6 +326,26 @@ void СTOSAIModule::StopTracking(IAIObject* pAI)
 				TOS_AI::EnableCombat(pAI, true, false, solution);
 			}
 
+		string lua = actionInfo.luaCallbackFuncName;
+		if (!lua.empty())
+		{
+			if (gEnv->pScriptSystem->BeginCall("AITracker", lua))
+			{
+				SmartScriptTable dataTable = gEnv->pScriptSystem->CreateTable();
+				CScriptSetGetChain chain(dataTable);
+				chain.SetValue("userId", iter->first);
+				chain.SetValue("objectId", actionInfo.objectId);
+				chain.SetValue("actionName", actionInfo.name);
+				chain.SetValue("maxAlertness", actionInfo.maxAlertness);
+				chain.SetValue("usedGoalPipeId", actionInfo.goalPipeId);
+				chain.SetValue("combatFlag", int(actionInfo.flag));
+				chain.SetValue("desiredGoalPipe", actionInfo.desiredGoalPipe);
+
+				gEnv->pScriptSystem->PushFuncParam(dataTable);
+				gEnv->pScriptSystem->EndCall();
+			}
+		}
+
 		pPipeUser->UnRegisterGoalPipeListener(this, actionInfo.goalPipeId);
 		m_entitiesActions.erase(iter);
 	}
@@ -326,29 +362,6 @@ void СTOSAIModule::StopTracking(const EntityId Id)
 		return;
 
 	StopTracking(pAI);
-
-	//auto pPipeUser = pAI->CastToIPipeUser();
-	//if (!pPipeUser)
-	//	return;
-
-	//auto iter = m_entitiesActions.find(pAI->GetEntity()->GetId());
-	//if (iter != m_entitiesActions.end())
-	//{
-	//	const auto actionInfo = iter->second;
-
-	//	if (actionInfo.flag == eAAEF_IgnoreCombatDuringAction)
-	//	{
-	//		if (!TOS_AI::IsCombatEnable(pAI))
-	//		{
-	//			const char* solution = "CAIActionTracker::StopTracking: enable combat because action used DisableCombatDuringAction";
-
-	//			TOS_AI::EnableCombat(pAI, true, false, solution);
-	//		}
-	//	}
-
-	//	pPipeUser->UnRegisterGoalPipeListener(this, actionInfo.goalPipeId);
-	//	m_entitiesActions.erase(iter);
-	//}
 }
 
 bool СTOSAIModule::IsPaused(IAIObject* pAI) const

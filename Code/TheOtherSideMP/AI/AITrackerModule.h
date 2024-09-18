@@ -24,11 +24,13 @@ enum EAIActionExecutingFlag
 };
 
 typedef EAIActionExecutingFlag EAAEFlag;
+class CScriptBind_AITracker;
 
 struct SAIActionInfo
 {
 	SAIActionInfo()
 	{
+		luaCallbackFuncName = nullptr;
 		name = nullptr;
 		desiredGoalPipe = nullptr;
 		goalPipeId = -1;
@@ -59,6 +61,7 @@ struct SAIActionInfo
 		this->name = info.name;
 		this->objectId = info.objectId;
 		this->paused = info.paused;
+		this->luaCallbackFuncName = info.luaCallbackFuncName;
 
 		return *this;
 	}
@@ -72,10 +75,12 @@ struct SAIActionInfo
 		this->name = info->name;
 		this->objectId = info->objectId;
 		this->paused = info->paused;
+		this->luaCallbackFuncName = info->luaCallbackFuncName;
 
 		return *this;
 	}
 
+	const char* luaCallbackFuncName;
 	EntityId    objectId;
 	bool        paused;
 	const char* name;
@@ -179,11 +184,13 @@ public:
 	void        Update(float frametime);
 	void        Serialize(TSerialize ser);
 
+	CScriptableBase* GetScriptBind();
 	void InitScriptBinds();
 	void InitCVars(IConsole* pConsole);
 	void InitCCommands(IConsole* pConsole);
 	void ReleaseCVars();
 	void ReleaseCCommands();
+	void ReleaseScriptBinds();
 	//~ITOSGameModule
 
 	//IGoalPipeListener
@@ -272,4 +279,6 @@ private:
 
 	std::map<SVoidHolder, float>           m_voidHolders;
 	//std::vector<IAIActionTrackerListener*> m_listeners;
+
+	CScriptBind_AITracker* m_pAITrackerScriptBind;
 };

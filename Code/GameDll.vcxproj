@@ -422,6 +422,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="TheOtherSideMP\AI\ScriptBind_AITracker.cpp" />
     <ClCompile Include="TheOtherSideMP\Control\ControlAction.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">true</ExcludedFromBuild>
@@ -478,6 +479,9 @@
     <ClCompile Include="TheOtherSideMP\MasterCvars.cpp" />
     <ClCompile Include="TheOtherSideMP\Nodes\FlowFlashHUD.cpp" />
     <ClCompile Include="TheOtherSideMP\Nodes\FlowMasterClientNodes.cpp" />
+    <ClCompile Include="TheOtherSideMP\Nodes\FlowScriptNodes.cpp" />
+    <ClCompile Include="TheOtherSideMP\Nodes\FlowStringNodes.cpp" />
+    <ClCompile Include="TheOtherSideMP\Nodes\FlowVehicleNodes.cpp" />
     <ClCompile Include="TheOtherSideMP\Utilities\DedicatedServerHackScope.cpp" />
     <ClCompile Include="Throw.cpp" />
     <ClCompile Include="ThrowableWeapon.cpp" />
@@ -677,6 +681,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">true</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="TheOtherSideMP\AI\ScriptBind_AITracker.h" />
     <ClInclude Include="TheOtherSideMP\AI\IAITrackerModuleListener.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">true</ExcludedFromBuild>

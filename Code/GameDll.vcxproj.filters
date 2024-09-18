@@ -869,6 +869,18 @@
     <ClCompile Include="TheOtherSideMP\Game\Modules\Zeus\ZeusHUD.cpp">
       <Filter>TheOtherSideMP\Game\Modules\Zeus</Filter>
     </ClCompile>
+    <ClCompile Include="TheOtherSideMP\Nodes\FlowVehicleNodes.cpp">
+      <Filter>TheOtherSideMP\Nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="TheOtherSideMP\Nodes\FlowScriptNodes.cpp">
+      <Filter>TheOtherSideMP\Nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="TheOtherSideMP\Nodes\FlowStringNodes.cpp">
+      <Filter>TheOtherSideMP\Nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="TheOtherSideMP\AI\ScriptBind_AITracker.cpp">
+      <Filter>TheOtherSideMP\Game\Modules\AI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor.h">
@@ -1534,6 +1546,9 @@
     </ClInclude>
     <ClInclude Include="TheOtherSideMP\Helpers\TOS_Screen.h">
       <Filter>TheOtherSideMP\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="TheOtherSideMP\AI\ScriptBind_AITracker.h">
+      <Filter>TheOtherSideMP\Game\Modules\AI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
