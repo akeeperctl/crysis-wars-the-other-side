@@ -237,7 +237,7 @@ AIBehaviour.VtolFlyTOS = {
 			--entity.AI.bLock = 0;
 			--local vZero = {x=0.0,y=0.0,z=0.0};
 			--AI.SetForcedNavigation( entity.id, vZero );
-			--AI.Signal(SIGNALFILTER_SENDER, 1, "TO_IDLE", entity.id);
+			--AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_IDLE", entity.id);
 			entity.AI.vehicleIgnorantIssued = false;
 			AI.Signal(SIGNALFILTER_SENDER, 1, "VtolFlyTOS_END", entity.id);
 			entity.AI.heliTimer4 = nil;

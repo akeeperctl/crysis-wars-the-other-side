@@ -406,7 +406,7 @@ function PipeManager:OnInit2()
 	AI.PushGoal("civ_hide","signal",0,1,"END_HIDE",SIGNALFILTER_SENDER);
 	AI.PushGoal("civ_hide","branch",1,"END",BRANCH_ALWAYS);
 	AI.PushLabel("civ_hide","NOHIDE");
-	AI.PushGoal("civ_hide","signal",0,1,"GO_TO_COWER",SIGNALFILTER_SENDER);
+	AI.PushGoal("civ_hide","signal",0,1,"GO_TO_COVER",SIGNALFILTER_SENDER);
 	AI.PushLabel("civ_hide","END");
 	
 	AI.CreateGoalPipe("civ_surrender");
@@ -678,7 +678,7 @@ function PipeManager:OnInit2()
 	AI.PushGoal("lean_right_attack","signal",1,1,"LEAN_RIGHT_ANIM",0);
 	AI.PushGoal("lean_right_attack","signal",1,1,"CHECK_SUCCESS_FLAG",0);
 	AI.PushGoal("lean_right_attack","hide",1,10,HM_NEAREST);
-	AI.PushGoal("lean_right_attack","signal",1,1,"TO_PREVIOUS",0);
+	AI.PushGoal("lean_right_attack","signal",1,1,"GO_TO_PREVIOUS",0);
 
 	AI.CreateGoalPipe("lean_left_attack");
 	AI.PushGoal("lean_left_attack","firecmd",0,1);
@@ -686,7 +686,7 @@ function PipeManager:OnInit2()
 	AI.PushGoal("lean_left_attack","signal",1,1,"LEAN_LEFT_ANIM",0);
 	AI.PushGoal("lean_left_attack","signal",1,1,"CHECK_SUCCESS_FLAG",0);
 	AI.PushGoal("lean_left_attack","hide",1,10,HM_NEAREST);
-	AI.PushGoal("lean_left_attack","signal",1,1,"TO_PREVIOUS",0);
+	AI.PushGoal("lean_left_attack","signal",1,1,"GO_TO_PREVIOUS",0);
 
 	AI.CreateGoalPipe("delay_headsup");
 	AI.PushGoal("delay_headsup","DropBeaconAt");

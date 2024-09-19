@@ -126,7 +126,7 @@ AIBehaviour.TankFixedIdle = {
 	end,
 	---------------------------------------------
 	OnEnemyDamage = function ( self, entity, sender,data)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			if ( data and data.id == entity.id ) then
 			else
 				self:OnPlayerSeen( entity, 0.0 );
@@ -135,7 +135,7 @@ AIBehaviour.TankFixedIdle = {
 	end,
 	---------------------------------------------
 	OnBulletRain = function ( self, entity, sender)	
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			if ( data and data.id == entity.id ) then
 			else
 				self:OnPlayerSeen( entity, 0.0 );

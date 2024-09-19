@@ -147,6 +147,31 @@ AIBehaviour.TOSSHARED = {
 		LogAlways("[%s] TOSSHARED.OnBulletRain, sender: %s", EntityName(entity), EntityName(sender))
 
 	end,
+
+	-- ИЗ ДРУГИХ ПОВЕДЕНИЙ
+	---------------------------------------------
+	OnTargetApproaching	= function (self, entity)
+		LogAlways("[%s] TOSSHARED.OnTargetApproaching", EntityName(entity))
+	end,
+	---------------------------------------------
+	OnTargetFleeing	= function (self, entity)
+		LogAlways("[%s] TOSSHARED.OnTargetFleeing", EntityName(entity))
+	end,
+	--------------------------------------------------
+	OnCoverCompromised = function(self, entity, sender, data)
+		LogAlways("[%s] TOSSHARED.OnCoverCompromised", EntityName(entity))
+	end,
+
+	-- ---------------------------------------------
+	-- OnFallAndPlayWakeUp = function( self, entity )
+	-- 	AI_Utils:CommonContinueAfterReaction(entity);
+	-- 	LogAlways("[%s] TOSSHARED.OnFallAndPlayWakeUp", EntityName(entity))
+	-- end,
+
+	-- ---------------------------------------------
+	-- OnPlayerTeamKill = function(self,entity,sender,data)
+	-- 	LogAlways("[%s] TOSSHARED.OnPlayerTeamKill", EntityName(entity))
+	-- end,
 	--------------------------------------------------
 
 	-- GROUP SIGNALS

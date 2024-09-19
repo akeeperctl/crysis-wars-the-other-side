@@ -1053,10 +1053,9 @@ TOS_AI = {
         priorityFlag: Флаг приоритета (например, AIGOALPIPE_RUN_ONCE, AIGOALPIPE_HIGH_PRIORITY).
         entity: Сущность, для которой выбирается труба целей.
         pipeName: Имя трубы целей (например, "Attack", "Move").
-        targetId: Идентификатор цели (необязательно). Сохраняется как LastOpResult
-        pipeId: Идентификатор трубы целей (необязательно).
-        resetCurrentPipe:  true,  чтобы  сбросить  состояние  текущей  трубы  целей (необязательно).
-        dynamicParams: Таблица с динамическими параметрами для трубы целей (необязательно).
+        targetId: (Опционально) Идентификатор цели (она должна быть ИИ). Сохраняется как LastOpResult
+        pipeId: (Опционально) Идентификатор трубы целей.
+        resetCurrentPipe:  (Опционально) true,  чтобы  сбросить  состояние  текущей  трубы  целей.
     
     Возвращает:
         true, если труба целей была успешно выбрана.
@@ -1070,13 +1069,8 @@ TOS_AI = {
     Пример использования:
         SelectPipe(AIGOALPIPE_RUN_ONCE,  entity,  "Attack",  targetId,  0,  true)
     ]]
-    SelectPipe = function (priorityFlag, entity, pipeName, targetId, pipeId, resetCurrentPipe, dynamicParams)
-
-        if (dynamicParams) then
-            return entity:SelectPipe(priorityFlag, pipeName, targetId, pipeId, resetCurrentPipe, dynamicParams) == true
-        else
-            return entity:SelectPipe(priorityFlag, pipeName, targetId, pipeId, resetCurrentPipe) == true
-        end
+    SelectPipe = function (priorityFlag, entity, pipeName, targetId, pipeId, resetCurrentPipe)
+        return entity:SelectPipe(priorityFlag, pipeName, targetId, pipeId, resetCurrentPipe) == true
     end,
 
     --[[
@@ -1084,8 +1078,8 @@ TOS_AI = {
         @priorityFlag (int):  Приоритет подканала (битовые флаги, используемые в `AIGOALPIPE_...`).
         @param entity (Entity):  Объект, в который добавляется подканал.
         @pipeName (string):  Имя подканала.
-        @targetId (int):  Идентификатор цели подканала, которая при вызове функции сохраняется в LastOpResult
-        @goalPipeId (int):  Идентификатор `AIGoalPipe`, в который добавляется подканал.
+        @targetId (int):   Идентификатор цели подканала (она должна быть ИИ), которая при вызове функции сохраняется в LastOpResult.
+        @goalPipeId (int):  (Опционально) Идентификатор `AIGoalPipe`, в который добавляется подканал.
     ]]
     InsertSubpipe = function ( priorityFlag, entity, pipeName, targetId, goalPipeId)
         return entity:InsertSubpipe(priorityFlag, pipeName, targetId, goalPipeId) == true
@@ -1206,7 +1200,11 @@ TOS_AI = {
     Получить кол-во агентов в группе, согласно флагам
     ]]
     GetGroupCount = function (entityId, GROUP_flags)
-        AI.GetGroupCount(entityId, GROUP_flags);
+        return AI.GetGroupCount(entityId, GROUP_flags);
+    end,
+
+    GetAIParameter = function (entity, AIPARAM)
+        return AI.GetAIParameter( entity.id, AIPARAM);
     end,
 
     --[[
@@ -1215,7 +1213,7 @@ TOS_AI = {
     @param param - это параметр AIPARAM..
     @param value - это его значение 
     ]]
-    ChangeParameter = function (entity, param, value)
-        AI.ChangeParameter( entity.id, param, value );
+    ChangeParameter = function (entity, AIPARAM, value)
+        return AI.ChangeParameter( entity.id, AIPARAM, value );
     end
 }

@@ -1260,7 +1260,7 @@ function PipeManager:OnInitCover2()
 		AI.PushGoal("approach",1,0,AILASTOPRES_USE);
 		AI.PushGoal("firecmd",0,FIREMODE_BURST);
 		AI.PushGoal("timeout",1,4.5,6);
-		AI.PushGoal("signal",0,1,"TO_ATTACK",0);		
+		AI.PushGoal("signal",0,1,"GO_TO_ATTACK",0);		
 	AI.EndGoalPipe();	
 
 
@@ -1460,7 +1460,7 @@ function PipeManager:OnInitCover2()
 		AI.PushGoal("signal",1,1,"reportcontact",SIGNALID_READIBILITY,115);
 		--AI.PushGoal("animation",1,AIANIM_SIGNAL,"signalFollow");
 		AI.PushGoal("signal",1,1,"ENEMYSEEN_FIRST_CONTACT",SIGNALFILTER_GROUPONLY_EXCEPT);
-		AI.PushGoal("signal",1,1,"TO_ATTACK",0);
+		AI.PushGoal("signal",1,1,"GO_TO_ATTACK",0);
 	AI.EndGoalPipe();
 
 	---------------------------------------------

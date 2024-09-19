@@ -155,7 +155,7 @@ function PipeManager:OnInitAlien()
 
 		AI.CreateGoalPipe("sc_player_seen_delay_attack");
 		AI.PushGoal("sc_player_seen_delay_attack","timeout",1,2);
-		AI.PushGoal("sc_player_seen_delay_attack","signal",0,1,"GO_ATTACK",SIGNALFILTER_SENDER);	-- get next point in path
+		AI.PushGoal("sc_player_seen_delay_attack","signal",0,1,"GO_TO_ATTACK",SIGNALFILTER_SENDER);	-- get next point in path
 
 		--------------------------------------------------------------------------
 		AI.CreateGoalPipe("sc_exit_delay");
