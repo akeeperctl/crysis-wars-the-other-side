@@ -11,6 +11,7 @@
 
 #include "TheOtherSideMP/Actors/TOSActor.h"
 #include "TheOtherSideMP/AI/AITrackerModule.h"
+#include "TOS_Debug.h"
 
 namespace TOS_AI
 {
@@ -61,7 +62,7 @@ namespace TOS_AI
 
 		if (actionGoalPipeId == -1)
 		{
-			//CryLogAlways("%s[C++][WARNING][%s Abort AI Action: goalPipeid is -1][Solution: %s]",
+			//CryLogAlways("%s[C++][WARNING][%s Abort AI Action: goalPipeid is -1][CASE: %s]",
 			//TOS_COLOR_YELLOW, pUser->GetName(), solution);
 		}
 
@@ -69,7 +70,7 @@ namespace TOS_AI
 		g_pTOSGame->GetAITrackerModule()->OnActionAborted(pUser);
 		g_pTOSGame->GetAITrackerModule()->StopTracking(pUser);
 
-		//CryLogAlways("%s[C++][Abort AI Action: (%i) %s][AI: %s][Solution: %s]",
+		//CryLogAlways("%s[C++][Abort AI Action: (%i) %s][AI: %s][CASE: %s]",
 		//TOS_COLOR_PURPLE, actionGoalPipeId, info.name, pUser->GetName(), solution);
 	}
 
@@ -94,8 +95,7 @@ namespace TOS_AI
 			g_pTOSGame->GetAITrackerModule()->StopTracking(pUser);
 		}
 
-		if (g_pTOSGame->GetAITrackerModule()->GetDebugLog() > 0)
-			CryLogAlways("%s[C++][Abort AI Action: (%i) %s][AI: %s][Solution: %s]", TOS_COLOR_PURPLE, actionGoalPipeId, info.name, pUser->GetName(), solution);
+		CryLog("<TOS_AI> [AbortAIAction] %s USER: %s, CASE: %s",info.name, pUser->GetName(), solution);
 	}
 
 	inline void AbortPausedAIAction(IAIObject* pUser, const int actionGoalPipeId, const char* solution)
@@ -118,7 +118,7 @@ namespace TOS_AI
 		////Because action is only paused, not deleted
 		//gEnv->pAISystem->AbortAIAction(pUser->GetEntity(), actionGoalPipeId);
 
-		//CryLogAlways("%s[C++][%s Abort Paused AI Action: %i][Solution: %s]",
+		//CryLogAlways("%s[C++][%s Abort Paused AI Action: %i][CASE: %s]",
 		//	TOS_COLOR_PURPLE, pUser->GetName(), actionGoalPipeId, solution);
 	}
 
@@ -134,17 +134,14 @@ namespace TOS_AI
 
 		if (!pTracker->IsTracking(pUser))
 		{
-			if (g_pTOSGame->GetAITrackerModule()->GetDebugLog() > 0)
-				CryLogAlways("%s[C++][%s Continue AI Action %s FAILED][Cause: THE USER IS NOT TRACKED!][Solution: %s]", TOS_COLOR_RED, pUser->GetName(), solution);
+			CryLogError("<TOS_AI> [ContinuePausedAIAction] FAILED: USER %s IS NOT TRACKED, CASE: %s", pUser->GetName(), solution);
 
 			return -1;
 		}
 
 		if (!pUser->IsEnabled())
 		{
-			if (g_pTOSGame->GetAITrackerModule()->GetDebugLog() > 0)
-				CryLogAlways("%s[C++][%s Continue AI Action %s FAILED][Cause: AI IS DISABLED][Solution: %s]", TOS_COLOR_RED, pUser->GetName(), solution);
-
+			CryLogError("<TOS_AI> [ContinuePausedAIAction] FAILED: USER %s IS DISABLED, CASE: %s", pUser->GetName(), solution);
 			return -1;
 		}
 
@@ -154,24 +151,20 @@ namespace TOS_AI
 		const auto pObjectEntity = gEnv->pEntitySystem->GetEntity(actionInfo.objectId);
 		if (!pObjectEntity)
 		{
-			if (g_pTOSGame->GetAITrackerModule()->GetDebugLog() > 0)
-				CryLogAlways("%s[C++][%s Continue AI Action %s FAILED][Cause: OBJECT UNDEFINED!][Solution: %s]", TOS_COLOR_RED, pUser->GetName(), solution);
-
+			CryLogError("<TOS_AI> [ContinuePausedAIAction] FAILED: '%s' OBJECT ENTITY UNDEFINED, USER: %s, CASE: %s", actionInfo.name, pUser->GetName(), solution);
 			return -1;
 		}
 
 		if (actionInfo.goalPipeId == -1)
 		{
-			if (g_pTOSGame->GetAITrackerModule()->GetDebugLog() > 0)
-				CryLogAlways("%s[C++][%s Continue AI Action %s FAILED][Cause: GOAL PIPE ID UNDEFINED][Solution: %s]", TOS_COLOR_RED, pUser->GetName(), actionInfo.name, solution);
+			CryLogError("<TOS_AI> [ContinuePausedAIAction] FAILED: '%s' GOAL PIPE ID UNDEFINED, USER: %s, CASE: %s", actionInfo.name, pUser->GetName(), solution);
 			return -1;
 		}
 
 		//Akeeper: I'm not sure what it could be
 		if (!gEnv->pAISystem->GetAIAction(actionInfo.name))
 		{
-			if (g_pTOSGame->GetAITrackerModule()->GetDebugLog() > 0)
-				CryLogAlways("%s[C++][%s Continue AI Action %s FAILED][Cause: ACTION NOT DEFINED][Solution: %s]", TOS_COLOR_RED, pUser->GetName(), actionInfo.name, solution);
+			CryLogError("<TOS_AI> [ContinuePausedAIAction] FAILED: '%s' ACTION NOT DEFINED, USER: %s, CASE: %s", actionInfo.name,pUser->GetName(), solution);
 			return -1;
 		}
 
@@ -187,9 +180,7 @@ namespace TOS_AI
 		if (method == 1)
 			gEnv->pAISystem->ExecuteAIAction(actionInfo.name, pUser->GetEntity(), pObjectEntity, actionInfo.maxAlertness, actionInfo.goalPipeId);
 
-
-		if (g_pTOSGame->GetAITrackerModule()->GetDebugLog() > 0)
-			CryLogAlways("%s[C++][%s Continue AI Action: %s][Solution: %s]", TOS_COLOR_PURPLE, pUser->GetName(), actionInfo.name, solution);
+		CryLog("<TOS_AI> [ContinuePausedAIAction] '%s' '%s' CASE: %s", pUser->GetName(), actionInfo.name, solution);
 
 		return actionInfo.goalPipeId;
 	}
@@ -206,18 +197,19 @@ namespace TOS_AI
 
 		if (!pObject)
 			if (g_pGameCVars && g_pTOSGame->GetAITrackerModule()->GetDebugLog() > 0)
-				CryLogAlways("%s<c++> WARNING [Execute AI Action: %s] AI: '%s' Cause: OBJECT NOT DEFINED, Solution: %s", TOS_COLOR_YELLOW, actionName, pUser->GetName(), solution);
+			{
+				CryLog("<TOS_AI> [ExecuteAIAction] %s OBJECT NOT DEFINED", actionName);
+			}
 
 		if (!gEnv->pAISystem->GetAIAction(actionName))
 		{
-			CryLogAlways("%s<c++> FAILED [Execute AI Action: %s] AI: '%s' Cause: ACTION NOT DEFINED, Solution: %s", TOS_COLOR_RED, actionName, pUser->GetName(), solution);
+			CryLogWarning("<TOS_AI> [ExecuteAIAction] %s FAILED: ACTION NOT DEFINED", actionName);
 			return -1;
 		}
 
 		if (!pUser->IsEnabled())
 		{
-			CryLogAlways("%s<c++> FAILED [Execute AI Action: %s] AI: '%s' Cause: AI IS DISABLED, Solution: %s", TOS_COLOR_RED, actionName, pUser->GetName(), solution);
-
+			CryLogWarning("<TOS_AI> [ExecuteAIAction] %s FAILED: '%s' IS DISABLED, CASE: %s", actionName, pUser->GetName(), solution);
 			return -1;
 		}
 
@@ -266,7 +258,7 @@ namespace TOS_AI
 
 		if (g_pGameCVars && g_pTOSGame->GetAITrackerModule()->GetDebugLog() > 0)
 		{
-			CryLogAlways("%s<c++> SUCCESS [Execute AI Action: (%i) %s] AI: %s Solution: %s", TOS_COLOR_GREEN, actionGoalPipeId, actionName, pUser->GetName(), solution);
+			CryLog("%s<TOS_AI> [ExecuteAIAction] SUCCESS: %s AI: %s CASE: %s", TOS_COLOR_GREEN, actionName, pUser->GetName(), solution);
 		}
 
 
@@ -285,18 +277,19 @@ namespace TOS_AI
 
 		if (!pObject)
 			if (g_pGameCVars && g_pTOSGame->GetAITrackerModule()->GetDebugLog() > 0)
-				CryLogAlways("%s<c++> WARNING [Execute AI Action: %s] AI: '%s' Cause: OBJECT NOT DEFINED, Solution: %s", TOS_COLOR_YELLOW, actionName, pUser->GetName(), solution);
+			{
+				CryLog("<TOS_AI> [ExecuteAIAction] %s OBJECT NOT DEFINED", actionName);
+			}
 
 		if (!gEnv->pAISystem->GetAIAction(actionName))
 		{
-			CryLogAlways("%s<c++> FAILED [Execute AI Action: %s] AI: '%s' Cause: ACTION NOT DEFINED, Solution: %s", TOS_COLOR_RED, actionName, pUser->GetName(), solution);
+			CryLogWarning("<TOS_AI> [ExecuteAIAction] %s FAILED: ACTION NOT DEFINED", actionName);
 			return -1;
 		}
 
 		if (!pUser->IsEnabled())
 		{
-			CryLogAlways("%s<c++> FAILED [Execute AI Action: %s] AI: '%s' Cause: AI IS DISABLED, Solution: %s", TOS_COLOR_RED, actionName, pUser->GetName(), solution);
-
+			CryLogWarning("<TOS_AI> [ExecuteAIAction] %s FAILED: '%s' IS DISABLED, CASE: %s", actionName, pUser->GetName(), solution);
 			return -1;
 		}
 
@@ -346,7 +339,7 @@ namespace TOS_AI
 
 		if (g_pGameCVars && g_pTOSGame->GetAITrackerModule()->GetDebugLog() > 0)
 		{
-			CryLogAlways("%s<c++> SUCCESS [Execute AI Action: (%i) %s] AI: %s Solution: %s", TOS_COLOR_GREEN, actionGoalPipeId, actionName, pUser->GetName(), solution);
+			CryLog("%s<TOS_AI> [ExecuteAIAction] SUCCESS: %s AI: %s CASE: %s", TOS_COLOR_GREEN, actionName, pUser->GetName(), solution);
 		}
 
 		return actionGoalPipeId;
@@ -523,7 +516,7 @@ namespace TOS_AI
 			{
 				pUser->InsertSubPipe(goalFlag, pipeName, nullptr, goalPipeId);
 
-				//CryLogAlways("%s[C++][%s Insert Pipe %s][Solution: %s]",
+				//CryLogAlways("%s[C++][%s Insert Pipe %s][CASE: %s]",
 				//	TOS_COLOR_PURPLE, pAIObject->GetName(), pipeName, solution);
 
 				if (pUser->IsUsingPipe(pipeName))
@@ -543,7 +536,7 @@ namespace TOS_AI
 			{
 				pUser->SelectPipe(0, pipeName, nullptr, goalPipeId);
 
-				//CryLogAlways("%s[C++][%s Select Pipe %s][Solution: %s]",
+				//CryLogAlways("%s[C++][%s Select Pipe %s][CASE: %s]",
 				//	TOS_COLOR_PURPLE, pAIObject->GetName(), pipeName, solution);
 
 				if (pUser->IsUsingPipe(pipeName))
@@ -570,7 +563,7 @@ namespace TOS_AI
 			{
 				pUser->SelectPipe(0, pipeName, nullptr, goalPipeId);
 
-				CryLogAlways("%s[C++][%s Select Pipe %s][Solution: %s]", TOS_COLOR_PURPLE, pAIObject->GetName(), pipeName, solution);
+				CryLog("%s[%s] Select pipe '%s' CASE: %s", TOS_COLOR_PURPLE, pAIObject->GetName(), pipeName, solution);
 
 				if (pUser->IsUsingPipe(pipeName))
 					return true;
@@ -785,7 +778,7 @@ namespace TOS_AI
 		if (!pAI)
 			return;
 
-		//CryLogAlways("%s[C++][Enable Combat: %i][AI: %s][Solution: %s]",
+		//CryLogAlways("%s[C++][Enable Combat: %i][AI: %s][CASE: %s]",
 		//TOS_COLOR_PURPLE, enable, pAI->GetName(), solution);
 
 		const auto pVeh = g_pGame->GetIGameFramework()->GetIVehicleSystem()->GetVehicle(pAI->GetEntityID());

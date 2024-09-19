@@ -412,7 +412,7 @@ void CTOSMasterModule::CVarSetDesiredSlaveCls(ICVar* pVar)
 
 		if (!pClass)
 		{
-			CryLogAlways("Failed: %s class not found", clsName.c_str());
+			CryLogError("<CTOSMasterModule> class not found: '%s'", clsName.c_str());
 			return;
 		}
 
@@ -421,7 +421,7 @@ void CTOSMasterModule::CVarSetDesiredSlaveCls(ICVar* pVar)
 
 		if (!pSynch)
 		{
-			CryLogAlways("Failed: Master Module synchronizer's entity pointer is NULL");
+			CryLogError("<CTOSMasterModule> synchronizer's entity pointer is NULL");
 			return;
 		}
 

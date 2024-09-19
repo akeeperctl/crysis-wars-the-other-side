@@ -243,9 +243,9 @@ void СTOSAIModule::Update(const float frametime)
 				m_voidHolders[SVoidHolder(entityId, info)] = 0.5f;
 
 				if (GetDebugLog() > 0)
-					CryLog("%s[C++][Detect and Fix Void Action][Victim: %s]", TOS_COLOR_RED, pEntity->GetName());
+					CryLog("%s[%s] Void action detected! Fixing void action", TOS_COLOR_RED, pEntity->GetName());
 
-				TOS_AI::AbortAIAction(pAI, info.goalPipeId, false, "Void Action Fix");
+				TOS_AI::AbortAIAction(pAI, info.goalPipeId, false, "Void action fix");
 			}
 	}
 }

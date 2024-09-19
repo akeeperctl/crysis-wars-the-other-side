@@ -1953,9 +1953,9 @@ bool CActor::SetAspectProfile( EEntityAspects aspect, uint8 profile )
 
 	if (aspect == eEA_Physics)
 	{
-		CryLog("%s::SetProfile(%d): %s (was: %d %s)", GetEntity()->GetName(),
-		profile, profile==eAP_Alive?"alive":(profile==eAP_Ragdoll?"ragdoll":(profile==eAP_Spectator?"spectator":(profile==eAP_Frozen?"frozen":"unknown"))),
-			m_currentPhysProfile, m_currentPhysProfile==eAP_Alive?"alive":(m_currentPhysProfile==eAP_Ragdoll?"ragdoll":(m_currentPhysProfile==eAP_Spectator?"spectator":(m_currentPhysProfile==eAP_Frozen?"frozen":"unknown"))));
+		//CryLog("%s::SetProfile(%d): %s (was: %d %s)", GetEntity()->GetName(),
+		//profile, profile==eAP_Alive?"alive":(profile==eAP_Ragdoll?"ragdoll":(profile==eAP_Spectator?"spectator":(profile==eAP_Frozen?"frozen":"unknown"))),
+			//m_currentPhysProfile, m_currentPhysProfile==eAP_Alive?"alive":(m_currentPhysProfile==eAP_Ragdoll?"ragdoll":(m_currentPhysProfile==eAP_Spectator?"spectator":(m_currentPhysProfile==eAP_Frozen?"frozen":"unknown"))));
 
 		if (m_currentPhysProfile==profile && !gEnv->pSystem->IsSerializingFile()) //rephysicalize when loading savegame
 			return true;
@@ -3808,7 +3808,7 @@ IMPLEMENT_RMI(CActor, ClSetSpectatorMode)
 	SetSpectatorMode(params.mode, params.targetId);
 
 	//TheOtherSide
-	CryLog("<c++> [CActor::ClSetSpectatorMode] Mode '%i', TargetId '%i', Actor '%s'",
+	CryLog("[ClSetSpectatorMode] Mode '%i', TargetId '%i', Actor '%s'",
 		TOS_Debug::GetEnv(), TOS_Debug::GetAct(3), params.mode, params.targetId, GetEntity()->GetName());
 	//~TheOtherSide
 

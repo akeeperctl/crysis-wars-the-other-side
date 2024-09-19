@@ -46,7 +46,7 @@ void CTOSEntitySpawnModule::CmdSpawnEntity(IConsoleCmdArgs* pArgs)
 	string arg1 = pArgs->GetArg(1);
 	if (arg1.empty())
 	{
-		CryLogAlways("<c++> Spawn failed: empty class of entity");
+		CryWarning(VALIDATOR_MODULE_ENTITYSYSTEM, VALIDATOR_WARNING, "<CTOSEntitySpawnModule> Spawn failed: empty class of entity");
 		return;
 	}
 

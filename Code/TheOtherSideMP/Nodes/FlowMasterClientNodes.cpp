@@ -154,10 +154,9 @@ public:
 
 			if (pDudePlayer->GetLinkedVehicle())
 			{
-				CryLog("%s[%s][%s] Player %s cannot start control Slave %s while in a vehicle", 
+				CryLog("%s[%s] [%s] cannot start control Slave %s while in a vehicle", 
 					TOS_COLOR_YELLOW, 
 					TOS_Debug::GetEnv(), 
-					TOS_Debug::GetAct(1), 
 					pDudePlayer->GetEntity()->GetName(),
 					pInputEntity->GetName());
 

@@ -22,6 +22,36 @@ enum ELogColor
 	eLC_GREY = 9
 };
 
+//////////////////////////////////////////////////////////////////////////
+// Error log of data with verbosity.
+void CryLogError(const char *, ...) PRINTF_PARAMS(1, 2);
+inline void CryLogError( const char *format,... )
+{
+//	return;
+	if (gEnv && gEnv->pSystem)
+	{
+		va_list args;
+		va_start(args,format);
+		gEnv->pLog->LogV( ILog::eError,format,args );
+		va_end(args);
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Warning log of data with verbosity.
+void CryLogWarning(const char *, ...) PRINTF_PARAMS(1, 2);
+inline void CryLogWarning( const char *format,... )
+{
+//	return;
+	if (gEnv && gEnv->pSystem)
+	{
+		va_list args;
+		va_start(args,format);
+		gEnv->pLog->LogV( ILog::eWarning,format,args );
+		va_end(args);
+	}
+}
+
 namespace TOS_Debug
 {
 	const auto SIZE_HEADER = 1.3f;
@@ -196,22 +226,22 @@ namespace TOS_Debug
 	{
 		if (gEnv->bServer && !gEnv->bClient)
 		{
-			return "ded";
+			return "D SV";
 		}
 		else if (gEnv->bServer && gEnv->bClient)
 		{
-			return "svcl";
+			return "SV+CL";
 		}
 		else if (gEnv->bServer)
 		{
-			return "sv";
+			return "SV";
 		}
 		else if (gEnv->bClient)
 		{
-			return "cl";
+			return "CL";
 		}
 
-		return "env_null";
+		return "NONE";
 	}
 
 	/// @brief Возвращает строковое представление цвета для логирования.

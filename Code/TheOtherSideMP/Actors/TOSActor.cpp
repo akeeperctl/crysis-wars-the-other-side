@@ -957,6 +957,7 @@ IMPLEMENT_RMI(CTOSActor, ClTOSJump)
 	request.SetJump();
 	GetMovementController()->RequestMovement(request);
 
+	CryLog("[%s] Received jump", m_debugName);
 	return true;
 }
 
@@ -972,7 +973,8 @@ IMPLEMENT_RMI(CTOSActor, SvRequestTOSJump)
 		CMovementRequest request;
 		request.SetJump();
 		GetMovementController()->RequestMovement(request);
-		CryLogAlways("<c++> Actor '%s' request jump to channel %i", m_debugName, channelId);
+
+		CryLog("[%s] Requesting jump to channel %i", m_debugName, channelId);
 	}
 
 	return true;
@@ -984,8 +986,8 @@ IMPLEMENT_RMI(CTOSActor, ClAttachChild)
 	IEntity* pChild = TOS_GET_ENTITY(params.id);
 	if(pChild)
 	{
-		CryLogAlways("<c++> Actor '%s' attach child '%s' on client", m_debugName, pChild->GetName());
 		GetEntity()->AttachChild(pChild, params.flags);
+		CryLog("[%s] Received attach child '%s'", m_debugName, pChild->GetName());
 	}
 
 	return true;
@@ -997,7 +999,7 @@ IMPLEMENT_RMI(CTOSActor, SvRequestAttachChild)
 	IEntity* pChild = TOS_GET_ENTITY(params.id);
 	if(pChild)
 	{
-		CryLogAlways("<c++> Actor '%s' attach child '%s' on server", m_debugName, pChild->GetName());
+		CryLog("[%s] Requesting attach child '%s'", m_debugName, pChild->GetName());
 		GetEntity()->AttachChild(pChild, params.flags);
 	}
 
