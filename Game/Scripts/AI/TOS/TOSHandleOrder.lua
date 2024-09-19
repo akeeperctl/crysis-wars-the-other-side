@@ -17,16 +17,20 @@ end
     orderTable          Таблица задания
 ]]
 function HandleOrder(executorTable, orderTable)
+
     local outputOrderType = 0
     local enableLog = false
 
     local executor = System.GetEntity(executorTable.entityId)
-    executor.order = g_OrderData
-    local executorName = executor:GetName()
+    local executorName = EntityName(executor)
     local executorIndex = executorTable.index
-    local maxExecutorsCount = executorTable.maxCount
+    local maxExecutorsCount = executorTable.maxCount  
 
-    local orderPosition = orderTable.pos
+    -- System.LogAlways(string.format("[%s].AI = %s", executorName, table.dump(executor.AI)))
+
+    local orderPosition = g_Vectors.v000
+    CopyVector(orderPosition, orderTable.pos)
+
     local orderGoalPipeId = orderTable.goalPipeId
     local orderTarget = System.GetEntity(orderTable.targetId)
     local orderTargetName = ""
@@ -69,45 +73,13 @@ function HandleOrder(executorTable, orderTable)
 
                 local seatId = orderTarget:RequestSeat(executor.id) + executorIndex
                 local seatPos = orderTarget:GetSeatPos(seatId)
-                local maxAlertness = 3
+                local maxAlertness = 2
                 local seatInstance = orderTarget.Seats[seatId]
 
                 local enterRadius = TOS_Vehicle:GetEnterRadius(orderTarget) / 2
-                local endAccuracy = 0
-                local distanceVariation = 0
 
-                TOS_AI.BeginGoalPipe("goto_enter_vehicle")
-                    TOS_AI.PushGoal(GO.LOCATE, 1, orderTargetName)
-                    TOS_AI.PushGoal(GO.ACQUIRE_TARGET, 1, orderTargetName)
-                    TOS_AI.PushGoal(GO.BRANCH, 1, "MOVING", IF_TARGET_DIST_GREATER, enterRadius)
-
-                    TOS_AI.PushLabel("MOVING")
-                    TOS_AI.PushGoal(GO.BODYPOS, 0, STANCE_STAND)
-                    TOS_AI.PushGoal(GO.RUN, 0, 5)
-                    TOS_AI.PushGoal(GO.STICK, 1, enterRadius, AILASTOPRES_USE + AI_DONT_STEER_AROUND_TARGET + AI_CONSTANT_SPEED, STICK_BREAK, endAccuracy, distanceVariation);
-                    TOS_AI.PushGoal(GO.BRANCH, 1, "STOP", IF_TARGET_DIST_LESS, enterRadius)
-
-                    TOS_AI.PushLabel("STOP")
-                    TOS_AI.PushGoal(GO.SIGNAL, 1, 1, "TOS_CALL_ORDER_FUNC", SIGNALFILTER_SENDER)
-                    --TOS_AI.PushGoal(GO.SIGNAL, 1, 1, "TOS_ORDER_ENTER_VEHICLE", SIGNALFILTER_SENDER)
-                    --TOS_AI.PushGoal(GO.SIGNAL, 1, 1, "TOS_ORDER_END_CURRENT", SIGNALFILTER_SENDER)
-
-                    TOS_AI.PushLabel("NO_TARGET")
-                    TOS_AI.PushGoal("do_nothing", 1)             
-                TOS_AI.EndGoalPipe()
-
-                TOS_AI.BeginGoalPipe("test")
-                    TOS_AI.PushGoal(GO.IGNOREALL, 1, 1)
-                    TOS_AI.PushGoal(GO.SIGNAL, 1, 1, "TestSignal", SIGNALFILTER_SENDER, 5555)
-                TOS_AI.EndGoalPipe()
-
-                local fast = true;
-                executor.order.funcName = "ENTER_VEHICLE"
-                executor.order.funcParams = {orderTarget.id, executor.id, seatId, fast}
-
-                -- AI.SetRefPointPosition(executor.id, seatPos)
-                TOS_AI.InsertSubpipe(executor, orderGoalPipeId, "goto_enter_vehicle", 0, 0)
-                --TOS_AI.InsertSubpipe(executor, orderGoalPipeId, "test", 0, 0)
+                -- ScriptHandle user, ScriptHandle object, const char* actionName, const float maxAlertness, int actionGoalPipeId, const int combatFlag, const char* luaCallback, const char* desiredGoalName
+                --AITracker.ExecuteAIAction(executor.id, orderTarget.id, "conqueror_goto_a0_d0_r3", maxAlertness, orderGoalPipeId, IGNORE_COMBAT_DURING_ACTION, "OnActionEnd", "")
 
                 local output = string.format("[ORDER] executor(%i) %s enter vehicle %s on seat %i(%i)",
                     executorIndex,
@@ -121,64 +93,171 @@ function HandleOrder(executorTable, orderTable)
         end
     else
         -- Если цели нет, то бежим
-        
+        AI_GOTO(executor, orderPosition, 3, false)
 
     end
-
-    -- output = string.format("[ORDER] target is actor = %s", tostring(targetActor ~= nil))
-    -- System.LogAlways(output)
-
-    -- output = string.format("[ORDER] target is item = %s", tostring(targetItem ~= nil))
-    -- System.LogAlways(output)
-
-    --g_SignalData.iValue = orderGoalPipeId
-    --TOS_AI.SendSignal(SIGNALFILTER_SENDER, 100, "TOS_ORDER_END_CURRENT", executor.id, g_SignalData)
-
     return outputOrderType
 end
 
-
-
--- function AIBehaviour.DEFAULT:TOS_CALL_ORDER_FUNC(entity, sender, data)
-
---     local order = sender.order
-
---     g_Functions[order.funcName](unpack(order.funcParams))
---     --System.LogAlways(string.format("[ORDER] frame<%i> EXECUTING '%s'", System.GetFrameID(), order.funcName))
--- end
-
-function AIBehaviour.DEFAULT:TOS_EXECUTE_ACTION(entity, sender, data)
-    local userId = sender.id
-
-    local actionId = g_ActionData.actionId
-    local goalPipeId = g_ActionData.goalPipeId
-    local maxAlertness = g_ActionData.maxAlertness
-    local objectId = g_ActionData.objectId
-    local userId = g_ActionData.userId
-
-    if (not objectId) then
-        objectId = 0
+function AI_GOTO(entity, position, speed, ignoreCombat)
+    if (not entity) then
+        CryLogAlways("<AI_GOTO>: entity not found")
+        return
     end
 
-    System.LogAlways(string.format("[TOS_EXECUTE_ACTION] frame<%i> actionId: %s, objectId: %s", 
-        System.GetFrameID(), 
-        actionId, 
-        tostring(objectId)))
+    local orderRefName = EntityName(entity).."_orderRefPoint"
+    local orderRefEnt = EntityNamed(orderRefName)
 
-    TOS_AI.ExecuteAction(actionId, userId, objectId, maxAlertness, goalPipeId)
+    -- получаем сущность для определения позиции приказа
+    if (not orderRefEnt) then
 
-    g_ActionData = {}
+        local spawnParams  = {}
+        spawnParams.class = "TagPoint"
+        spawnParams.position = position
+        spawnParams.orientation = {x=0,y=-1,z=0};
+        spawnParams.name = orderRefName
+
+        orderRefEnt = System.TOSSpawnEntity(spawnParams)
+
+       --  LogAlways("<AI_GOTO> order tag point spawned: %s, ai: %s", orderRefEnt:GetName(), tostring(AI.HasAI(orderRefEnt.id)))
+        g_SpawnParams:reset()
+    else
+        orderRefEnt:SetWorldPos(position)
+        -- LogAlways("<AI_GOTO> order tag point updated: %s", orderRefName)
+    end
+
+    entity.orderRefEnt = orderRefEnt
+
+    if (ignoreCombat) then
+        DISABLE_COMBAT(entity, true)
+    end
+
+    TOS_AI.BeginGoalPipe("ai_goto")
+        TOS_AI.PushGoal(GO.SIGNAL, 1, AISIGNAL_DEFAULT, "AI_GOTO_STARTED", SIGNALFILTER_SENDER)
+
+        if ignoreCombat then
+            TOS_AI.PushGoal(GO.DEVALUE, 1)
+            TOS_AI.PushGoal(GO.FIRECMD, 1, FIREMODE_OFF)
+        else 
+            if TOS_AI.GetTargetType(entity.id) == AITARGET_ENEMY then
+                TOS_AI.PushGoal(GO.STRAFE, 1, 100, 100)
+                TOS_AI.PushGoal(GO.FIRECMD, 1, FIREMODE_BURST_DRAWFIRE)
+            else
+                TOS_AI.PushGoal(GO.FIRECMD, 1, FIREMODE_OFF)
+            end
+        end
+
+        TOS_AI.PushGoal(GO.BODYPOS, 1, BODYPOS_STAND)
+        TOS_AI.PushGoal(GO.RUN, 1, speed)
+       -- TOS_AI.PushGoal(GO.LOCATE, 1, "Civilian1")
+        TOS_AI.PushGoal(GO.STICK, 1, 1, AILASTOPRES_USE + AI_CONSTANT_SPEED + AI_REQUEST_PARTIAL_PATH, STICK_BREAK, 5)
+        TOS_AI.PushGoal(GO.SIGNAL, 1, AISIGNAL_DEFAULT, "AI_GOTO_ENDED", SIGNALFILTER_SENDER)
+        -- TOS_AI.PushGoal(GO.IGNOREALL, 1, 1) -- не работает
+    TOS_AI.EndGoalPipe()
+
+    TOS_AI.SendSignal(SIGNALFILTER_SENDER, AISIGNAL_PROCESS_NEXT_UPDATE, "START_AI_GOTO", entity.id)
 end
 
-function AIBehaviour.DEFAULT:TOS_ORDER_END_CURRENT(entity, sender, data)
-    System.LogAlways(string.format("[ORDER] frame<%i> %i END", System.GetFrameID(), data.iValue))
+function AITracker:OnActionEnd(data)
+    System.LogAlways(string.format("OnActionEnd data %s", table.dump(data)))
 end
 
+function AIBehaviour.DEFAULT:START_AI_GOTO(entity, sender, data)
+    System.LogAlways(string.format("[ORDER] <START_AI_GOTO> entity: %s, sender: %s, data: %s", 
+        EntityName(entity), 
+        EntityName(sender), 
+        table.safedump(data))
+    )
+
+    TOS_AI.SelectPipe(AIGOALPIPE_LOOP, entity, "ai_goto", entity.orderRefEnt.id)
+end
+
+function AIBehaviour.DEFAULT:AI_GOTO_STARTED(entity, sender, data)
+    System.LogAlways(string.format("[ORDER] <AI_GOTO_START> entity: %s, sender: %s, data: %s", 
+        EntityName(entity), 
+        EntityName(sender), 
+        table.safedump(data))
+    )
+
+    entity.AI.ignoreSignals = true
+end
+
+function AIBehaviour.DEFAULT:AI_GOTO_ENDED(entity, sender, data)
+    System.LogAlways(string.format("[ORDER] <AI_GOTO_END> entity: %s, sender: %s, data: %s", 
+        EntityName(entity), 
+        EntityName(sender), 
+        table.safedump(data))
+    )
+
+    entity.AI.ignoreSignals = false
+
+    if (entity.orderRefEnt) then
+        System.RemoveEntity(entity.orderRefEnt.id)
+    end
+
+    ENABLE_COMBAT(entity)
+    TOS_AI.SelectPipe(AIGOALPIPE_SAMEPRIORITY, entity, "do_it_standing")
+
+    local targetType = TOS_AI.GetTargetType(entity.id)
+    if targetType == AITARGET_ENEMY then
+        TOS_AI.SendSignal(SIGNALFILTER_SENDER, AISIGNAL_DEFAULT, "GO_TO_ATTACK", entity.id)
+    elseif targetType == AITARGET_MEMORY then
+        TOS_AI.SendSignal(SIGNALFILTER_SENDER, AISIGNAL_DEFAULT, "GO_TO_SEARCH", entity.id)
+    else
+        TOS_AI.SendSignal(SIGNALFILTER_SENDER, AISIGNAL_DEFAULT, "GO_TO_IDLE", entity.id)
+    end
+    AI_Utils:CommonContinueAfterReaction(entity);
+end
+
+-- ИИ Перестает реагировать на сигналы, но враги его игнорировать не будут
+function DISABLE_COMBAT(entity, returnToFirst)
+    LogAlways("[ORDER] <DISABLE_COMBAT> entity: %s, returnToFirst: %s", 
+        EntityName(entity), 
+        tostring(returnToFirst)
+    )
+
+    -- return to first?
+    if (returnToFirst and returnToFirst == true) then
+        entity:CancelSubpipe()
+        TOS_AI.InsertSubpipe(AIGOALPIPE_SAMEPRIORITY, entity, "devalue_target");
+        TOS_AI.SendSignal(SIGNALFILTER_SENDER, AISIGNAL_DEFAULT, "RETURN_TO_FIRST", entity.id)
+        TOS_AI.SelectPipe(AIGOALPIPE_LOOP, entity, "do_nothing", 0, 0, true)
+
+        if entity.vehicle then
+            TOS_AI.SendSignal(SIGNALFILTER_SENDER, AISIGNAL_DEFAULT, "TO_IDLE", entity.id)
+        else
+            TOS_AI.SendSignal(SIGNALFILTER_SENDER, AISIGNAL_DEFAULT, "GO_TO_IDLE", entity.id)
+        end
+    end
+
+    entity.AI.lastCombatClass = TOS_AI.GetAIParameter(entity, AIPARAM_COMBATCLASS)
+    -- entity.AI.ignoreSignals = true
+    TOS_AI.ChangeParameter(entity, AIPARAM_COMBATCLASS, AICombatClasses.Ignore)
+    TOS_AI.ChangeParameter(entity, AIPARAM_PERCEPTIONSCALE_AUDIO, 0)
+    TOS_AI.ChangeParameter(entity, AIPARAM_PERCEPTIONSCALE_VISUAL, 0)
+end
+
+function ENABLE_COMBAT(entity)
+    System.LogAlways(string.format("[ORDER] <ENABLE_COMBAT> entity: %s", 
+        EntityName(entity)
+    ))
+
+    --entity.AI.ignoreSignals = false
+    if (entity.AI.lastCombatClass ~= nil) then
+        TOS_AI.ChangeParameter(entity, AIPARAM_COMBATCLASS, entity.AI.lastCombatClass)
+    end
+
+    TOS_AI.ChangeParameter(entity, AIPARAM_PERCEPTIONSCALE_AUDIO, 1)
+    TOS_AI.ChangeParameter(entity, AIPARAM_PERCEPTIONSCALE_VISUAL, 1)
+end
+
+-- Дебаг ниже
+----------------------------------------------------------------
 function AIBehaviour.DEFAULT:TestSignal(entity, sender, data)
     local entName = "NONE"
     if (entity) then
         entName = entity:GetName()
     end
 
-    System.LogAlways(string.format("[TESTSIGNAL] entity: %s, sender: %s, data: %s", entName, sender:GetName(), dump_table(data)))
+    System.LogAlways(string.format("[AI_SIGNAL] <TestSignal> entity: %s, sender: %s, data: %s", entName, sender:GetName(), table.dump(data)))
 end

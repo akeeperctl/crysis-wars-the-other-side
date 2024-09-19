@@ -16,8 +16,11 @@
 AICharacter.Car = {
 
 	AnyBehavior = {
+		--TheOtherSide
+		GO_TO_TOSSHARED = "TOSSHARED",
+		--~TheOtherSide
 		STOP_VEHICLE = "CarIdle",
-		TO_IDLE = "CarIdle"
+		GO_TO_IDLE = "CarIdle"
 	},
 	
 	CarIdle = {

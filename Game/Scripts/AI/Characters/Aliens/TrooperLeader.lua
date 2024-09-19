@@ -20,7 +20,11 @@ AICharacter.TrooperLeader = {
 	end,
 	
 	AnyBehavior = {
-		TO_IDLE					= "TrooperLeaderIdle",
+		--TheOtherSide
+		GO_TO_TOSSHARED = "TOSSHARED",
+		--~TheOtherSide
+		
+		GO_TO_IDLE					= "TrooperLeaderIdle",
 		RETURN_TO_FIRST			= "FIRST",
 		ORDER_FORM				= "TrooperForm",
 		ORDER_MOVE				= "TrooperMove",

@@ -4,6 +4,10 @@ AICharacter.Drone = {
 	{
 		RETURN_TO_FIRST = "FIRST",
 		TO_FIRST		= "FIRST",
+		--TheOtherSide
+		GO_TO_TOSSHARED = "TOSSHARED"
+		--~TheOtherSide
+
 	},
 	DroneIdle = 
 	{

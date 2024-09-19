@@ -9,6 +9,9 @@ AICharacter.Hostage = {
 	end,
 		
 	AnyBehavior = {
+		--TheOtherSide
+		GO_TO_TOSSHARED = "TOSSHARED",
+		--~TheOtherSide
 		RESUME_FOLLOWING	= "HostageFollow",
 		ORDER_HIDE = "HostageHideSquad",
 		ORDER_HIDE_FIRE = "HostageHideSquad",

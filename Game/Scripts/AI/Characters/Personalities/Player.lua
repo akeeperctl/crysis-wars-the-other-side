@@ -20,6 +20,9 @@ AICharacter.Player = {
 	end,
 	
 	AnyBehavior = {
+		--TheOtherSide
+		GO_TO_TOSSHARED = "TOSSHARED",
+		--~TheOtherSide
 	
 		-----------------------------------
 		-- Vehicles related - player should not be AI-enabling vehicle

@@ -15,8 +15,11 @@
 AICharacter.Boat = {
 
 	AnyBehavior = {
+		--TheOtherSide
+		GO_TO_TOSSHARED = "TOSSHARED",
+		--~TheOtherSide
 		STOP_VEHICLE = "BoatIdle",
-		TO_IDLE = "TankIdle"
+		GO_TO_IDLE = "TankIdle"
 	},
 
 	BoatIdle = {

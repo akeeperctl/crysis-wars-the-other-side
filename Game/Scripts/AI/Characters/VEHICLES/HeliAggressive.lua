@@ -15,9 +15,13 @@
 AICharacter.HeliAggressive = {
 	AnyBehavior = 
 	{
+		--TheOtherSide
+		GO_TO_TOSSHARED = "TOSSHARED",		
+		TO_VTOL_FLY_TOS  = "VtolFlyTOS",
+		--~TheOtherSide
+		
 		STOP_VEHICLE = "CarIdle",
-		TO_IDLE = "HeliAggressiveIdle",
-		TO_VTOL_FLY_TOS  = "VtolFlyTOS"
+		GO_TO_IDLE = "HeliAggressiveIdle",
 	},
 
 	HeliAggressiveIdle = {

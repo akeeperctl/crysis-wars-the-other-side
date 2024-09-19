@@ -33,10 +33,15 @@ AICharacter.TrooperMKII_Sneak = {
 --------------------------------------------------------------------------
 	AnyBehavior = 
 	{
+		
+		--TheOtherSide
+		GO_TO_TOSSHARED = "TOSSHARED",
+		--~TheOtherSide
+		
 		-- Defaults
 		RETURN_TO_FIRST			= "FIRST",
-		TO_PREVIOUS				= "PREVIOUS",
-		TO_IDLE					= "TrooperMKII_SneakIdle",
+		GO_TO_PREVIOUS				= "PREVIOUS",
+		GO_TO_IDLE					= "TrooperMKII_SneakIdle",
 		
 		-- COMMON
 		OnFallAndPlay			= "TrooperDown",
@@ -46,27 +51,27 @@ AICharacter.TrooperMKII_Sneak = {
 	
 		-- HUMAN	
 		-- Combat states
-		TO_ATTACK				= "Trooper2Attack",
-		TO_ATTACK_GROUP			= "Trooper2AttackGroup",
-		TO_HIDE					= "Trooper2Hide",
-		TO_THREATENED			= "Trooper2Threatened",
-		TO_THREATENED_STANDBY	= "Trooper2ThreatenedStandby",
-		TO_INTERESTED			= "Trooper2Interested",
-		TO_SEEK					= "Trooper2Seek",
-		TO_SEARCH				= "Trooper2Search",
--- EXTINCT!			TO_RELOAD				= "Trooper2Reload",
+		GO_TO_ATTACK				= "Trooper2Attack",
+		GO_TO_ATTACK_GROUP			= "Trooper2AttackGroup",
+		GO_TO_HIDE					= "Trooper2Hide",
+		GO_TO_THREATENED			= "Trooper2Threatened",
+		GO_TO_THREATENED_STANDBY	= "Trooper2ThreatenedStandby",
+		GO_TO_INTERESTED			= "Trooper2Interested",
+		GO_TO_SEEK					= "Trooper2Seek",
+		GO_TO_SEARCH				= "Trooper2Search",
+-- EXTINCT!			GO_TO_RELOAD				= "Trooper2Reload",
 		
 		-- Miscellaneous
 		GO_TO_AVOIDEXPLOSIVES	= "Trooper2AvoidExplosives",
 		GO_TO_AVOIDVEHICLE		= "Trooper2AvoidVehicle",
 		GO_TO_CHECKDEAD			= "Trooper2CheckDead",
-		TO_CALL_REINFORCEMENTS	= "Trooper2CallReinforcements",
+		GO_TO_CALL_REINFORCEMENTS	= "Trooper2CallReinforcements",
 
 		-- To Remove
--- Don't use		TO_AVOID_TANK			= "Cover2AvoidTank",
--- Don't use		TO_RPG_ATTACK			= "Cover2RPGAttack",
--- EXTINCT!			TO_RUSH_ATTACK			= "Cover2RushAttack",
--- Don't use		TO_PANIC				= "Cover2Panic",
+-- Don't use		GO_TO_AVOID_TANK			= "Cover2AvoidTank",
+-- Don't use		GO_TO_RPG_ATTACK			= "Cover2RPGAttack",
+-- EXTINCT!			GO_TO_RUSH_ATTACK			= "Cover2RushAttack",
+-- Don't use		GO_TO_PANIC				= "Cover2Panic",
 			
 		-- Vehicles & mounts
 -- Don't use		ENTERING_VEHICLE		= "EnteringVehicle",
@@ -74,7 +79,7 @@ AICharacter.TrooperMKII_Sneak = {
 -- Don't use		USE_MOUNTED_WEAPON_INIT = "UseMountedIdle",
 		
 		-- Miscellaneous	
--- EXTINCT!			TO_STATIC 				= "HBaseStaticShooter",
+-- EXTINCT!			GO_TO_STATIC 				= "HBaseStaticShooter",
 		-- /To Remove
 		-- /HUMAN
 		
@@ -205,15 +210,15 @@ AICharacter.TrooperMKII_Sneak = {
 		OnInterestingSoundHeard =		"",
 		OnThreateningSoundHeard =		"",
 		OnSomethingSeen =				"",
-		TO_ATTACK =						"",
-		TO_HIDE =						"",
-		TO_THREATENED =					"",
-		TO_THREATENED_STANDBY =			"",
-		TO_INTERESTED =					"",
-		TO_SEEK =						"",
-		TO_SEARCH =						"",
-		TO_RELOAD =						"",
-		TO_CALL_REINFORCEMENTS =		"",
+		GO_TO_ATTACK =						"",
+		GO_TO_HIDE =						"",
+		GO_TO_THREATENED =					"",
+		GO_TO_THREATENED_STANDBY =			"",
+		GO_TO_INTERESTED =					"",
+		GO_TO_SEEK =						"",
+		GO_TO_SEARCH =						"",
+		GO_TO_RELOAD =						"",
+		GO_TO_CALL_REINFORCEMENTS =		"",
 		ENEMYSEEN_FIRST_CONTACT =		"",
 		ENEMYSEEN_DURING_COMBAT =		"",
 	},

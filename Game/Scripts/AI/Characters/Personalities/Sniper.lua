@@ -19,7 +19,10 @@ AICharacter.Sniper = {
 	Class = UNIT_CLASS_INFANTRY,
 	
 	AnyBehavior = {
-		TO_IDLE = "SniperIdle",
+		--TheOtherSide
+		GO_TO_TOSSHARED = "TOSSHARED",
+		--~TheOtherSide
+		GO_TO_IDLE = "SniperIdle",
 		RETURN_TO_FIRST = "FIRST",
 		USE_MOUNTED_WEAPON = "UseMounted",
 		USE_MOUNTED_WEAPON_INIT = "UseMountedIdle",

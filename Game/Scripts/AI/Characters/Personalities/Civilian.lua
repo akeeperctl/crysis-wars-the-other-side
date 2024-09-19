@@ -10,7 +10,12 @@ AICharacter.Civilian = {
 	Class = UNIT_CLASS_CIVILIAN,
 	
 	AnyBehavior = {
-		TO_IDLE					= "CivilianIdle",
+		
+		--TheOtherSide
+		GO_TO_TOSSHARED = "TOSSHARED",
+		--~TheOtherSide
+		
+		GO_TO_IDLE					= "CivilianIdle",
 		OnPlayerSeen    	= "CivilianAlert",
 		OnInterestingSoundHeard = "",
 		OnSomethingSeen		= "",
@@ -25,7 +30,7 @@ AICharacter.Civilian = {
 		GET_ALERTED = "",
 		SURRENDER = "CivilianSurrender",
 		GO_TO_HIDE = "CivilianHide",
-		GO_TO_COWER= "CivilianCower",
+		GO_TO_COVER= "CivilianCower",
 		ENTERING_VEHICLE = "EnteringVehicle",
 		entered_vehicle = "InVehicle",
 		exited_vehicle 	= "PREVIOUS",
@@ -70,12 +75,12 @@ AICharacter.Civilian = {
 	EnteringVehicle = {
 		exited_vehicle = "FIRST",
 		do_exit_vehicle= "FIRST",
-		TO_ATTACK				= "",
-		TO_HIDE					= "",
-		TO_THREATENED		= "",
-		TO_INTERESTED		= "",
-		TO_SEEK					= "",
-		TO_SEARCH				= "",
+		GO_TO_ATTACK				= "",
+		GO_TO_HIDE					= "",
+		GO_TO_THREATENED		= "",
+		GO_TO_INTERESTED		= "",
+		GO_TO_SEEK					= "",
+		GO_TO_SEARCH				= "",
 		entered_vehicle = "InVehicle",
 		entered_vehicle_gunner = "InVehicle",
 	},
@@ -98,12 +103,12 @@ AICharacter.Civilian = {
 		HEADS_UP_GUYS =						"",
 		GO_TO_HIDE =							"",
 
-		TO_ATTACK				= "",
-		TO_HIDE					= "",
-		TO_THREATENED		= "",
-		TO_INTERESTED		= "",
-		TO_SEEK					= "",
-		TO_SEARCH				= "",
+		GO_TO_ATTACK				= "",
+		GO_TO_HIDE					= "",
+		GO_TO_THREATENED		= "",
+		GO_TO_INTERESTED		= "",
+		GO_TO_SEEK					= "",
+		GO_TO_SEARCH				= "",
 
 	},
 	
@@ -125,12 +130,12 @@ AICharacter.Civilian = {
 		HEADS_UP_GUYS =						"",
 		GO_TO_HIDE =							"",
 
-		TO_ATTACK				= "",
-		TO_HIDE					= "",
-		TO_THREATENED		= "",
-		TO_INTERESTED		= "",
-		TO_SEEK					= "",
-		TO_SEARCH				= "",
+		GO_TO_ATTACK				= "",
+		GO_TO_HIDE					= "",
+		GO_TO_THREATENED		= "",
+		GO_TO_INTERESTED		= "",
+		GO_TO_SEEK					= "",
+		GO_TO_SEARCH				= "",
 
 		controll_vehicleGunner = "",
 

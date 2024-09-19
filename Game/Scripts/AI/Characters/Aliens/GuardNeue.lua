@@ -17,12 +17,16 @@ AICharacter.GuardNeue = {
 	AnyBehavior = {
 		RETURN_TO_FIRST = "FIRST",
 		TO_FIRST					= "FIRST",
+		--TheOtherSide
+		GO_TO_TOSSHARED = "TOSSHARED",
+		--~TheOtherSide
+
 --		TO_RUNTOFRIEND		= "GuardCover",
 --		TO_CALLREINF			=	"GuardCallReinf",
 --		TO_PURSUE					=	"GuardPursue",
 		OnFlowgraphCapture	= "GuardDumb",
-		TO_IDLE						=	"GuardNeueIdle",
-		TO_COMBAT					=	"GuardNeueCombat",
+		GO_TO_IDLE						=	"GuardNeueIdle",
+		GO_TO_COMBAT					=	"GuardNeueCombat",
 		OnFallAndPlay =						"HBaseTranquilized",
 	},
 

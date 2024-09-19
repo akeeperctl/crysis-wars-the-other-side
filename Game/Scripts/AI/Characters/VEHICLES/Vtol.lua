@@ -15,9 +15,13 @@
 AICharacter.Vtol = {
 
 	AnyBehavior = {
+		--TheOtherSide
+		GO_TO_TOSSHARED = "TOSSHARED",	
+		TO_VTOL_FLY_TOS = "VtolFlyTOS",
+		--~TheOtherSide
+		
 		TO_HELI_IDLE = "VtolIdle",
-		TO_IDLE = "VtolIdle",
-		TO_VTOL_FLY_TOS          = "VtolFlyTOS",
+		GO_TO_IDLE = "VtolIdle",
 	},
 
 

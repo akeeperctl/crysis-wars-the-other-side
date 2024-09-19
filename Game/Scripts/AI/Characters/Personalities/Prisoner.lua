@@ -5,6 +5,9 @@ AICharacter.Prisoner = {
 	Class = UNIT_CLASS_CIVILIAN,
 	
 	AnyBehavior = {
+		--TheOtherSide
+		GO_TO_TOSSHARED = "TOSSHARED",
+		--~TheOtherSide
 		RESUME_FOLLOWING	= "",
 		ORDER_HIDE = "",
 		ORDER_FIRE = "",

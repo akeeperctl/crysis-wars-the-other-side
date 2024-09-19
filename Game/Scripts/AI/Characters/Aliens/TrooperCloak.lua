@@ -8,6 +8,9 @@ AICharacter.TrooperCloak = {
 	end,
 	
 	AnyBehavior = {
+		--TheOtherSide
+		GO_TO_TOSSHARED = "TOSSHARED",
+		--~TheOtherSide
 		RETURN_TO_FIRST			= "FIRST",
 		ORDER_FORM				= "TrooperForm",
 		ORDER_MOVE				= "TrooperMove",

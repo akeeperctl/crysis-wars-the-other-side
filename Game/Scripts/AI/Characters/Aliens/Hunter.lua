@@ -17,7 +17,10 @@ AICharacter.Hunter = {
 	AnyBehavior = {
 		RETURN_TO_FIRST = "FIRST",
 		TO_FIRST		= "FIRST",
-		TO_IDLE = 		"HunterIdle",
+		GO_TO_IDLE = 		"HunterIdle",
+		--TheOtherSide
+		GO_TO_TOSSHARED = "TOSSHARED",
+		--~TheOtherSide
 	},
 
 	HunterIdle = {
@@ -25,7 +28,7 @@ AICharacter.Hunter = {
 		OnEnemyDamage						= "HunterAttack",
 	--	OnThreateningSoundHeard = "HunterAttack",
 	--	GO_PATROL								= "HunterPatrol",
-	--	GO_ATTACK								= "HunterAttack",
+	--	GO_TO_ATTACK								= "HunterAttack",
 	},
 
 	HunterAttack = {
@@ -42,7 +45,7 @@ AICharacter.Hunter = {
 		OnEnemyDamage						= "HunterAttack",
 		OnThreateningSoundHeard = "HunterAttack",
 		GO_ENEMY_FOUND					= "HunterAttack",
-		GO_ATTACK								= "HunterAttack",
+		GO_TO_ATTACK								= "HunterAttack",
 --		GO_SEARCH    						= "HunterSearch",
 --		GO_ESCORT								= "HunterEscort",
 	},

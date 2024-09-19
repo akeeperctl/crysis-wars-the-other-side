@@ -22,6 +22,9 @@ AICharacter.Warrior = {
 	end,
 	
 	AnyBehavior = {
+		--TheOtherSide
+		GO_TO_TOSSHARED = "TOSSHARED",
+		--~TheOtherSide
 		STOP_VEHICLE = "WarriorIdle",
 	},
 	

@@ -10,6 +10,10 @@ AICharacter.Demo = {
 	Class = UNIT_CLASS_INFANTRY,
 	
 	AnyBehavior = {
+		--TheOtherSide
+		GO_TO_TOSSHARED = "TOSSHARED",
+		--~TheOtherSide
+
 		ENTERING_VEHICLE = "EnteringVehicle",
 		OnExplosionDanger		= "HBaseGrenadeRun",
 		RETURN_TO_FIRST = "FIRST",
@@ -63,7 +67,7 @@ AICharacter.Demo = {
 
 	CamperNoTarget = {
 		OnPlayerSeen    	= "CamperAttack",
-		GO_ATTACK    	= "CamperAttack",
+		GO_TO_ATTACK    	= "CamperAttack",
 		OnInterstingSoundHeard  = "",
 		OnThreateningSoundHeard  = "",
 
@@ -82,7 +86,7 @@ AICharacter.Demo = {
 
 	CamperAlert = {
 		OnPlayerSeen    	= "CamperAttack",
-		GO_ATTACK    	= "CamperAttack",
+		GO_TO_ATTACK    	= "CamperAttack",
 		OnInterstingSoundHeard  = "",
 		OnThreateningSoundHeard  = "",
 

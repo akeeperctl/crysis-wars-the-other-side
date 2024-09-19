@@ -22,8 +22,11 @@ AICharacter.TankFixed = {
 	end,
 	
 	AnyBehavior = {
+		--TheOtherSide
+		GO_TO_TOSSHARED = "TOSSHARED",
+		--~TheOtherSide
 		STOP_VEHICLE = "TankFixedIdle",
-		TO_IDLE = "TankFixedIdle"
+		GO_TO_IDLE = "TankFixedIdle"
 
 	},
 	

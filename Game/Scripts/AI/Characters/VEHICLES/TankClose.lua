@@ -22,8 +22,11 @@ AICharacter.TankClose = {
 	end,
 	
 	AnyBehavior = {
+		--TheOtherSide
+		GO_TO_TOSSHARED = "TOSSHARED",
+		--~TheOtherSide
 		STOP_VEHICLE = "TankCloseIdle",
-		TO_IDLE = "TankCloseIdle"
+		GO_TO_IDLE = "TankCloseIdle"
 
 	},
 	
