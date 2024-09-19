@@ -11,7 +11,7 @@ AIBehaviour.Trooper2Search = {
 
 	---------------------------------------------
 	Constructor = function(self, entity)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			entity:Readibility("searching_for_enemy",1,1,0.3,1.0);
 
 			AI.NotifyGroupTacticState(entity.id, 0, GN_NOTIFY_SEEKING);
@@ -41,7 +41,7 @@ AIBehaviour.Trooper2Search = {
 
 	---------------------------------------------
 	OnPlayerSeen = function( self, entity, fDistance, data )
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			-- called when the enemy sees a living player
 			entity:MakeAlerted();
 			entity:TriggerEvent(AIEVENT_DROPBEACON);
@@ -100,13 +100,13 @@ AIBehaviour.Trooper2Search = {
 	--------------------------------------------------
 	ENEMYSEEN_FIRST_CONTACT = function (self, entity, sender)
 		-- there is still some room for moving.
-		AI.Signal(SIGNALFILTER_SENDER,1,"TO_SEEK",entity.id);
+		AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_SEEK",entity.id);
 	end,
 
 	--------------------------------------------------
 	ENEMYSEEN_DURING_COMBAT = function (self, entity, sender)
 		-- there is still some room for moving.
-		AI.Signal(SIGNALFILTER_SENDER,1,"TO_SEEK",entity.id);
+		AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_SEEK",entity.id);
 	end,
 
 	---------------------------------------------
@@ -127,7 +127,7 @@ AIBehaviour.Trooper2Search = {
 
 	---------------------------------------------
 	OnSomethingSeen = function( self, entity )
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			entity:TriggerEvent(AIEVENT_DROPBEACON);
 			AI_Utils:CheckThreatened(entity, 15.0);
 		end
@@ -151,7 +151,7 @@ AIBehaviour.Trooper2Search = {
 
 	--------------------------------------------------
 	OnEnemyDamage = function( self, entity, sender,data )
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			Trooper_HitReaction(entity);
 		end
 	end,

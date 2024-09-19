@@ -10,6 +10,11 @@ AIBehaviour.CoverGroupIdle = {
 	OnPlayerSeen = function( self, entity, fDistance )
 		-- called when the enemy sees a living player
 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:RequestVehicle(AIGOALTYPE_ATTACK);
 		entity:MakeAlerted();		
 		
@@ -21,6 +26,11 @@ AIBehaviour.CoverGroupIdle = {
 	end,
 	---------------------------------------------
 	OnSomethingSeen = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- called when the enemy sees a foe which is not a living player
 
 		entity:Readibility("IDLE_TO_INTERESTED");
@@ -46,6 +56,11 @@ AIBehaviour.CoverGroupIdle = {
 
 	---------------------------------------------
 	OnReload = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- called when the enemy goes into automatic reload after its clip is empty
 		entity:SelectPipe(0,"cover_scramble");
 	end,
@@ -53,6 +68,11 @@ AIBehaviour.CoverGroupIdle = {
 	OnBulletRain = function ( self, entity, sender)
 		-- called when detect weapon fire around AI
 	
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		AI.Signal(SIGNALFILTER_GROUPONLY, 1, "INCOMING_FIRE",entity.id);
 		
 	end,
@@ -81,6 +101,11 @@ AIBehaviour.CoverGroupIdle = {
 	--------------------------------------------------
 
 	INVESTIGATE_TARGET = function (self, entity, sender)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:SelectPipe(0,"cover_investigate_threat");		
 	end,
 	---------------------------------------------
@@ -90,6 +115,11 @@ AIBehaviour.CoverGroupIdle = {
 	end,
 	---------------------------------------------
 	INCOMING_FIRE = function (self, entity, sender)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		if (entity ~= sender) then
 			entity:MakeAlerted();
 --			entity:InsertSubpipe(0,"DRAW_GUN");
@@ -98,6 +128,11 @@ AIBehaviour.CoverGroupIdle = {
 
 	---------------------------------------------	
 	THREAT_TOO_CLOSE = function (self, entity, sender)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- the team can split
 		entity:MakeAlerted();
 
@@ -111,6 +146,11 @@ AIBehaviour.CoverGroupIdle = {
 
 	-------------------------------------------------
 	GO_TO_DESTINATION = function(self, entity, sender, data)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- data.id = vehicle id
 		-- data.point = destination
 		if(data==nil) then

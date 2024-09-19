@@ -51,6 +51,11 @@ AIBehaviour.SuitSniperAttack = {
 	---------------------------------------------
 	COVER_NORMALATTACK = function (self, entity, sender)
 		
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity.AI.meleeBlock = 0;
 		entity.AI.reloadBlock = 0;
 		entity.AI.stuntBlock = 0;
@@ -107,11 +112,21 @@ AIBehaviour.SuitSniperAttack = {
 --			end
 --		end
 		
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		AI.Signal(SIGNALFILTER_GROUPONLY_EXCEPT, 1, "ENEMYSEEN_DURING_COMBAT",entity.id);
 	end,
 
 	---------------------------------------------
 	OnEnemyMemory = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:TriggerEvent(AIEVENT_DROPBEACON);
 		entity.AI.lastTargetSeenTime = _time;
 	end,
@@ -125,6 +140,11 @@ AIBehaviour.SuitSniperAttack = {
 			AI.ChangeParameter(entity.id, AIPARAM_FIRE_TURNSPEED, -1);
 --			AI.ChangeParameter(entity.id, AIPARAM_MELEE_DISTANCE, 4.0);
 
+			--TheOtherSide
+			if (entity.AI.ignoreSignals == true) then
+				return;
+			end
+			--~TheOtherSide
 			entity:SelectPipe(0,"su_melee");
 			entity.AI.meleeBlock = 1;
 		end
@@ -138,6 +158,11 @@ AIBehaviour.SuitSniperAttack = {
 --		AI.ChangeParameter(entity.id, AIPARAM_FIRE_TURNSPEED, -1);
 
 		AI.NotifyGroupTacticState(entity.id, 0, GN_NOTIFY_ADVANCING);
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:SelectPipe(0,"su_melee_retreat");
 --		entity:SelectPipe(0,"su_melee_pause");
 
@@ -151,6 +176,11 @@ AIBehaviour.SuitSniperAttack = {
 --		AI.ChangeParameter(entity.id, AIPARAM_FIRE_TURNSPEED, -1);
 
 		AI.NotifyGroupTacticState(entity.id, 0, GN_NOTIFY_ADVANCING);
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:SelectPipe(0,"su_melee_retreat");
 --		entity:SelectPipe(0,"su_melee_pause");
 
@@ -158,16 +188,31 @@ AIBehaviour.SuitSniperAttack = {
 	
 	---------------------------------------------
 	OnNoTargetVisible = function (self, entity)
-		AI.Signal(SIGNALFILTER_SENDER,1,"TO_THREATENED",entity.id);
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
+		AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_THREATENED",entity.id);
 	end,
 	
 	---------------------------------------------
 	OnNoTargetAwareness = function (self, entity)
-		AI.Signal(SIGNALFILTER_SENDER,1,"TO_THREATENED",entity.id);
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
+		AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_THREATENED",entity.id);
 	end,
 
 	---------------------------------------------
 	OnEnemyDamage = function(self, entity, sender)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 	
 		AI.Signal(SIGNALFILTER_GROUPONLY_EXCEPT, 1, "COVER_GRENADE",entity.id);
 	
@@ -188,6 +233,11 @@ AIBehaviour.SuitSniperAttack = {
 	
 	---------------------------------------------
 	OnBulletRain = function(self, entity, sender, data)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 	
 		local dist = 100.0;
 		if (AI.GetTargetType(entity.id) ~= AITARGET_NONE) then
@@ -224,6 +274,11 @@ AIBehaviour.SuitSniperAttack = {
 
 	--------------------------------------------------	
 	OnOutOfAmmo = function (self,entity, sender)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 	
 		AI.Signal(SIGNALFILTER_GROUPONLY_EXCEPT, 1, "COVER_GRENADE",entity.id);
 	

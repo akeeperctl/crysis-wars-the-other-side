@@ -21,6 +21,11 @@ AIBehaviour.CoverThreatened = {
 	OnNoTarget = function( self, entity )
 		-- called when the enemy stops having an attention target
 		entity:Readibility("ENEMY_TARGET_LOST");
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:SelectPipe(0,"search_for_target");
 	end,
 	---------------------------------------------
@@ -29,6 +34,11 @@ AIBehaviour.CoverThreatened = {
 
 		entity:Readibility("FIRST_HOSTILE_CONTACT",1);
 		entity:TriggerEvent(AIEVENT_DROPBEACON);
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		if (AI.GetGroupCount(entity.id) > 1) then
 			-- only send this signal if you are not alone
@@ -70,11 +80,21 @@ AIBehaviour.CoverThreatened = {
 	end,
 	---------------------------------------------
 	OnInterestingSoundHeard = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- called when the enemy hears an interesting sound
 	 	entity:SelectPipe(0,"cover_investigate_threat"); 
 		entity:TriggerEvent(AIEVENT_DROPBEACON);
 	end,
 	OnThreateningSoundHeard = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:InsertSubpipe(0,"take_cover");
 	end,
 	---------------------------------------------
@@ -98,6 +118,11 @@ AIBehaviour.CoverThreatened = {
 	---------------------------------------------
 	OnDamage = function ( self, entity, sender)
 		entity:Readibility("GETTING_SHOT_AT",1);
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:InsertSubpipe(0,"hide_sometime");
 		
 	end,

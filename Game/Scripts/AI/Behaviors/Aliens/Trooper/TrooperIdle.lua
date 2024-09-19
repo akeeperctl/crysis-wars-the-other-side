@@ -27,7 +27,7 @@ AIBehaviour.TrooperIdle = {
 
 		--System.LogAlways(entity:GetName().." TrIdle Constructor")
 		AI.LogEvent(entity:GetName().." TROOPERIDLE constructor");
-			if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+			if (entity.AI.ignoreSignals == false) then
 			local leader = AI.GetLeader(entity.id);
 			if(leader) then 
 				g_SignalData.iValue = UPR_COMBAT_GROUND;
@@ -50,7 +50,12 @@ AIBehaviour.TrooperIdle = {
 	end,
 	
 	OnPlayerSeen = function( self, entity, distance )
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
+		if (entity.AI.ignoreSignals == false) then
 		--		local target = AI.GetAttentionTargetEntity(entity.id);
 		--		if(target and target.id) then 
 		--			AI.Signal(SIGNALFILTER_SUPERGROUP, 1, "OnSeenByEnemy", target.id);
@@ -77,7 +82,12 @@ AIBehaviour.TrooperIdle = {
 	
 	---------------------------------------------
 	OnSomethingSeen = function( self, entity )
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
+		if (entity.AI.ignoreSignals == false) then
 			-- called when the enemy sees a foe which is not a living player
 			
 			local target = AI.GetAttentionTargetEntity(entity.id)
@@ -96,6 +106,11 @@ AIBehaviour.TrooperIdle = {
 	
 	--------------------------------------------------
 	OnNoHidingPlace = function( self, entity, sender )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		
 		-- only non grouped behaviour
 		local targetName = AI.GetAttentionTargetOf(entity.id);
@@ -121,6 +136,11 @@ AIBehaviour.TrooperIdle = {
 	
 	---------------------------------------------
 	GET_ALERTED = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:Readibility("IDLE_TO_THREATENED");
 		entity:SelectPipe(0,"tr_pindown");
 		entity:DrawWeaponDelay(0.6);
@@ -141,6 +161,11 @@ AIBehaviour.TrooperIdle = {
 
 	---------------------------------------------
 	OnInterestingSoundHeard = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 --		local target = AI.GetAttentionTargetEntity(entity.id);
 --		if(target and AI.Hostile(entity.id,target.id)) then 
 --			AI.LogEvent(entity:GetName().." OnInterestingSound heard");
@@ -162,6 +187,11 @@ AIBehaviour.TrooperIdle = {
 	end,
 	---------------------------------------------
 	OnThreateningSoundHeard = function( self, entity, fDistance )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_AUDIO ) > 0.0 ) then
 			--AIPARAM_PERCEPTIONSCALE_AUDIO
 
@@ -195,6 +225,11 @@ AIBehaviour.TrooperIdle = {
 
 	--------------------------------------------------
 	OnCollision = function(self,entity,sender,data)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		if(AI.Hostile(entity.id,data.id) and AI.GetAttentionTargetEntity(entity.id) ~= System.GetEntity(data.id)) then 
 			--entity:ReadibilityContact();
 			entity:InsertSubpipe(AIGOALPIPE_NOTDUPLICATE,"short_look_at_lastop",data.id);
@@ -205,7 +240,7 @@ AIBehaviour.TrooperIdle = {
 	OnEnemyDamage = function ( self, entity, sender,data) --Absolutely not necessary, it works without it
 		-- System.LogAlways("OnEnemyDamage")
 		-- --if (entity.AI.lastEnemyDamageTime==nil or (_time - entity.AI.lastEnemyDamageTime > 1)) then
-		-- if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		-- if (entity.AI.ignoreSignals == false) then
 		-- 	--AI.Signal( SIGNALFILTER_SENDER, 1, "TO_SCOUTMOAC_PATROL", entity.id );
 		-- 	entity.AI.lastEnemyDamageTime = _time;
 		-- 	AIBlackBoard.lastTrooperDamageTime = _time;
@@ -237,7 +272,7 @@ AIBehaviour.TrooperIdle = {
 --			Trooper_GoToThreatened(entity,data.point);
 --		end
 		--TheOtherSide	
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then				
+		if (entity.AI.ignoreSignals == false) then
 			Trooper_GoToThreatened(entity,data.point,data.id);
 		end
 		--TheOtherSide
@@ -247,7 +282,7 @@ AIBehaviour.TrooperIdle = {
 	OnBulletHit = function ( self, entity, sender,data)
 		--System.LogAlways("OnBulletHit")
 --		if(AI.Hostile(entity.id,data.id) and (entity.AI.lastEnemyDamageTime==nil or (_time - entity.AI.lastEnemyDamageTime > 1))) then 
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			Trooper_GoToThreatened(entity,data.point);
 			entity.AI.lastBulletHitTime = _time;
 		end
@@ -262,7 +297,7 @@ AIBehaviour.TrooperIdle = {
 	
 	---------------------------------------------
 	SEARCH_IF_NO_TARGET = function ( self, entity, sender)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			local targetType= AI.GetTargetType(entity.id);
 			if(targetType==AITARGET_NONE or targetType==AITARGET_FRIENDLY) then 
 				entity:SelectPipe(0,"tr_approach_beacon_15m");	
@@ -274,7 +309,7 @@ AIBehaviour.TrooperIdle = {
 	
 	---------------------------------------------
 	BEACON_APPROACHED = function ( self, entity, sender)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_SEARCH",entity.id);
 		end
 	end,
@@ -316,7 +351,7 @@ AIBehaviour.TrooperIdle = {
 
 	--------------------------------------------------
 	INVESTIGATE_TARGET = function (self, entity, sender)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			entity:SelectPipe(0,"tr_investigate_threat");
 		end	
 	end,
@@ -324,7 +359,7 @@ AIBehaviour.TrooperIdle = {
 	-- GROUP SIGNALS
 	--------------------------------------------------
 	HEADS_UP_GUYS = function (self, entity, sender)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			local targetType = AI.GetTargetType(entity.id);
 			if(targetType==AITARGET_ENEMY) then 
 				Trooper_StickPlayerAndShoot(entity);
@@ -352,7 +387,7 @@ AIBehaviour.TrooperIdle = {
 
 	---------------------------------------------	
 	THREAT_TOO_CLOSE = function (self, entity, sender)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			entity:SelectPipe(0,"tr_investigate_threat"); 
 			entity:InsertSubpipe(AIGOALPIPE_NOTDUPLICATE,"do_it_running");
 			entity:InsertSubpipe(AIGOALPIPE_NOTDUPLICATE,"tr_threatened"); 
@@ -368,7 +403,7 @@ AIBehaviour.TrooperIdle = {
 	
 	---------------------------------------------
 	LOOK_CLOSER = function( self, entity,sender,data )
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			local targetType = AI.GetTargetType(entity.id);
 			if(targetType ~= AITARGET_SOUND) then 
 				entity:SelectPipe(0,"tr_look_closer");
@@ -399,7 +434,7 @@ AIBehaviour.TrooperIdle = {
 	
 	---------------------------------------------
 	PLAYER_NOT_ENGAGED = function(self , entity, sender)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			local targetType = AI.GetTargetType(entity.id);
 			local distance = AI.GetAttentionTargetDistance(entity.id);
 			if(targetType == AITARGET_ENEMY and distance<30) then

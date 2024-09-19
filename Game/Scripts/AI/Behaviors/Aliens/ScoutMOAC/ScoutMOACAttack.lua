@@ -13,7 +13,7 @@
 --	- 29/11/2005   : Revised for new attack patterns by Tetsuji Iwasaki
 --	- 15/01/2007   : Separated as the MOAC Scout by Tetsuji Iwasaki
 --------------------------------------------------------------------------
-testflg = 0;
+local testflg = 0;
 local minUpdateTime = 0.23;
 
 local	fSCOUTMOACATTACK_DONOTHING			= 0;
@@ -68,14 +68,12 @@ AIBehaviour.ScoutMOACAttack = {
 		entity.AI.previousBehaviour = entity.AI.currentBehaviour
 		entity.AI.currentBehaviour = self.Name
 		--~TheOtherSide	
-
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			AI.Signal(SIGNALFILTER_SENDER, 1, "TO_SCOUTMOAC_IDLE",entity.id);
-		end		
-		--entity:DropObject( true, nil, 0 );
+		end
 		--~TheOtherSide
-
+		
 		entity:EnableSearchBeam(false);
 
 		AIBehaviour.ScoutMOACIdle:Constructor( entity );
@@ -344,6 +342,10 @@ AIBehaviour.ScoutMOACAttack = {
 
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_DODGE_START = function( self, entity, targetEntity, bHeavyDamage )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
 
 		if ( System.GetCurrTime() - entity.AI.lastDodgeTime < 2.0 ) then
 			return;
@@ -453,6 +455,10 @@ AIBehaviour.ScoutMOACAttack = {
 	end,
 
 	SCOUTMOACATTACK_DODGE = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
 			
 		local vTmp = {};
 		CopyVector( vTmp, entity.AI.vDirectionRsvInterrupt );
@@ -486,7 +492,11 @@ AIBehaviour.ScoutMOACAttack = {
 
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_UPDATE = function( entity )
-
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		
 		----------------------------------------------------------------
 		-- set timers
 				
@@ -764,6 +774,10 @@ AIBehaviour.ScoutMOACAttack = {
 
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_FOUNDPLAYER_START = function ( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
 
 		local target = AI.GetAttentionTargetEntity( entity.id );
 		if ( target and AIBehaviour.ScoutMOACDefault:scoutCheckHostile( entity, target )==true ) then
@@ -814,6 +828,10 @@ AIBehaviour.ScoutMOACAttack = {
 
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_FOUNDPLAYER = function ( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
 
 		local target = AI.GetAttentionTargetEntity( entity.id );
 		if ( target and AIBehaviour.ScoutMOACDefault:scoutCheckHostile( entity, target )==true ) then
@@ -874,6 +892,10 @@ AIBehaviour.ScoutMOACAttack = {
 
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_HOVERINGUP_START = function ( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
 
 		local target = AI.GetAttentionTargetEntity( entity.id );
 		if ( target and AIBehaviour.ScoutMOACDefault:scoutCheckHostile( entity, target )==true ) then
@@ -902,6 +924,10 @@ AIBehaviour.ScoutMOACAttack = {
 	end,
 	
 	SCOUTMOACATTACK_HOVERINGUP = function ( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
 
 		local vTmp = {};
 		local vTmp2 = {};
@@ -928,6 +954,10 @@ AIBehaviour.ScoutMOACAttack = {
 
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_BASICAPPROACH_START = function ( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
 
 		local target = AI.GetAttentionTargetEntity( entity.id );
 		if ( target and AIBehaviour.ScoutMOACDefault:scoutCheckHostile( entity, target )==true ) then
@@ -946,6 +976,10 @@ AIBehaviour.ScoutMOACAttack = {
 	end,
 
 	SCOUTMOACATTACK_BASICAPPROACH = function ( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
 
 		local target = AI.GetAttentionTargetEntity( entity.id );
 		if ( target and AIBehaviour.ScoutMOACDefault:scoutCheckHostile( entity, target )==true ) then
@@ -1019,6 +1053,10 @@ AIBehaviour.ScoutMOACAttack = {
 
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_CIRCLESTRAFE_START = function( self, entity, sec )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
 
 		local target = AI.GetAttentionTargetEntity( entity.id );
 		if ( target and AIBehaviour.ScoutMOACDefault:scoutCheckHostile( entity, target )==true ) then
@@ -1063,6 +1101,10 @@ AIBehaviour.ScoutMOACAttack = {
 
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_CIRCLESTRAFE = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
 
 		local vWng = {};
 		local vWngR = {};
@@ -1137,6 +1179,10 @@ AIBehaviour.ScoutMOACAttack = {
 	
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_GOAWAY_START = function ( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
 
 		local target = AI.GetAttentionTargetEntity( entity.id );
 		if ( target and AIBehaviour.ScoutMOACDefault:scoutCheckHostile( entity, target )==true ) then
@@ -1163,6 +1209,10 @@ AIBehaviour.ScoutMOACAttack = {
 	end,
 
 	SCOUTMOACATTACK_GOAWAY = function ( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
 
 		local vDist = {};
 		local vVel = {};
@@ -1219,6 +1269,10 @@ AIBehaviour.ScoutMOACAttack = {
 
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_JUSTSTAY_START = function ( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
 
 		entity.gameParams.forceView = 0.0;
 		entity.actor:SetParams(entity.gameParams);
@@ -1235,6 +1289,10 @@ AIBehaviour.ScoutMOACAttack = {
 
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_JUSTSTAY = function ( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
 
 		local vDist = {};
 		local vVel = {};
@@ -1264,6 +1322,10 @@ AIBehaviour.ScoutMOACAttack = {
 
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_SHOOTSINGULARITY_START = function ( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
 
 		entity.gameParams.forceView = 0.0;
 		entity.actor:SetParams(entity.gameParams);
@@ -1312,6 +1374,10 @@ AIBehaviour.ScoutMOACAttack = {
 
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_POPUP_START = function ( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
 
 		entity.gameParams.forceView = 100.0;
 		entity.actor:SetParams(entity.gameParams);
@@ -1336,6 +1402,10 @@ AIBehaviour.ScoutMOACAttack = {
 	end,
 
 	SCOUTMOACATTACK_POPUP = function ( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
 
 		local vTmp ={};
 
@@ -1347,6 +1417,10 @@ AIBehaviour.ScoutMOACAttack = {
 
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_SEEKHIDEPOSITION_START = function ( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
 
 		local target = AI.GetAttentionTargetEntity( entity.id );
 		if ( target and AIBehaviour.ScoutMOACDefault:scoutCheckHostile( entity, target )==true ) then
@@ -1366,7 +1440,7 @@ AIBehaviour.ScoutMOACAttack = {
 			local vTmp = {};
 			CopyVector( vTmp, entity.AI.vTargetRsv, entity.AI.vMyPosRsv );
 			vTmp.z = 0.0;
-			length = LengthVector( vTmp );
+			local length = LengthVector( vTmp );
 			if ( length > 60.0 ) then
 				self:SCOUTMOACATTACK_UNHIDE_START( entity );
 				return;
@@ -1380,6 +1454,10 @@ AIBehaviour.ScoutMOACAttack = {
 	end,
 
 	SCOUTMOACATTACK_SEEKHIDEPOSITION = function ( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
 
 		local target = AI.GetAttentionTargetEntity( entity.id );
 		if ( target and AIBehaviour.ScoutMOACDefault:scoutCheckHostile( entity, target )==true ) then
@@ -1467,6 +1545,10 @@ AIBehaviour.ScoutMOACAttack = {
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_HIDE_START = function ( self, entity, vSpotPos )
 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
 		--entity:Event_UnCloak();
 
 		entity.gameParams.forceView = 100.0;
@@ -1485,6 +1567,10 @@ AIBehaviour.ScoutMOACAttack = {
 
 	SCOUTMOACATTACK_HIDE = function ( self, entity )
 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
 		if ( entity.AI.bLock == true ) then
 			AI.SetForcedNavigation( entity.id, entity.AI.vZero );
 			if ( System.GetCurrTime() - entity.AI.circleSec > 3.0 ) then
@@ -1550,6 +1636,10 @@ AIBehaviour.ScoutMOACAttack = {
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_UNHIDE_START = function ( self, entity )
 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
 		local target = AI.GetAttentionTargetEntity( entity.id );
 		if ( target and AIBehaviour.ScoutMOACDefault:scoutCheckHostile( entity, target )==true ) then
 
@@ -1572,6 +1662,10 @@ AIBehaviour.ScoutMOACAttack = {
 
 	SCOUTMOACATTACK_UNHIDE = function ( self, entity )
 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
 		local vTmp = {};
 		local vTmp2 = {};
 		
@@ -1637,6 +1731,10 @@ AIBehaviour.ScoutMOACAttack = {
 
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_DIRECTSTRAFE_START = function ( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
 
 		local target = AI.GetAttentionTargetEntity( entity.id );
 		if ( target and AIBehaviour.ScoutMOACDefault:scoutCheckHostile( entity, target )==true ) then
@@ -1662,6 +1760,10 @@ AIBehaviour.ScoutMOACAttack = {
 	end,
 
 	SCOUTMOACATTACK_DIRECTSTRAFE = function ( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
 
 		local vTmp ={};
 		local vTmp2 ={};
@@ -1768,6 +1870,10 @@ AIBehaviour.ScoutMOACAttack = {
 
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_DIRECTSTRAFE2_START = function ( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
 
 		local target = AI.GetAttentionTargetEntity( entity.id );
 		if ( target and AIBehaviour.ScoutMOACDefault:scoutCheckHostile( entity, target )==true ) then
@@ -1831,6 +1937,10 @@ AIBehaviour.ScoutMOACAttack = {
 	end,
 
 	SCOUTMOACATTACK_DIRECTSTRAFE2 = function ( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
 
 		local target = AI.GetAttentionTargetEntity( entity.id );
 		if ( target and AIBehaviour.ScoutMOACDefault:scoutCheckHostile( entity, target )==true ) then
@@ -1959,6 +2069,10 @@ AIBehaviour.ScoutMOACAttack = {
 
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_LOOPINLOOP_START = function ( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
 
 		local target = AI.GetAttentionTargetEntity( entity.id );
 		if ( target and AIBehaviour.ScoutMOACDefault:scoutCheckHostile( entity, target )==true ) then
@@ -2004,6 +2118,10 @@ AIBehaviour.ScoutMOACAttack = {
 	end,
 	
 	SCOUTMOACATTACK_LOOPINLOOP = function ( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
 
 			local vVec = {};
 			local vFwdN = {};
@@ -2095,6 +2213,10 @@ AIBehaviour.ScoutMOACAttack = {
 
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_LINEATTACK_START = function ( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
 
 		local target = AI.GetAttentionTargetEntity( entity.id );
 		if ( target and AIBehaviour.ScoutMOACDefault:scoutCheckHostile( entity, target )==true ) then
@@ -2120,6 +2242,10 @@ AIBehaviour.ScoutMOACAttack = {
 	end,
 
 	SCOUTMOACATTACK_LINEATTACK = function ( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
 
 		local vTmp = {};
 		local vMyPos = {};
@@ -2166,6 +2292,10 @@ AIBehaviour.ScoutMOACAttack = {
 
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_LINEATTACK2_START = function ( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
 
 		local target = AI.GetAttentionTargetEntity( entity.id );
 		if ( target and AIBehaviour.ScoutMOACDefault:scoutCheckHostile( entity, target )==true ) then
@@ -2187,6 +2317,10 @@ AIBehaviour.ScoutMOACAttack = {
 	end,
 
 	SCOUTMOACATTACK_LINEATTACK2 = function ( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
 		
 		if ( entity.AI.bLock == false ) then
 			local vTmp = {};
@@ -2240,6 +2374,10 @@ AIBehaviour.ScoutMOACAttack = {
 
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_LINEATTACK3_START = function ( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
 
 		local target = AI.GetAttentionTargetEntity( entity.id );
 		if ( target and AIBehaviour.ScoutMOACDefault:scoutCheckHostile( entity, target )==true ) then
@@ -2261,6 +2399,10 @@ AIBehaviour.ScoutMOACAttack = {
 	end,
 
 	SCOUTMOACATTACK_LINEATTACK3 = function ( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
 		
 		if ( entity.AI.bLock == false ) then
 			local vTmp = {};
@@ -2297,6 +2439,10 @@ AIBehaviour.ScoutMOACAttack = {
 
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_BACKATTACK_START = function ( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
 
 		local target = AI.GetAttentionTargetEntity( entity.id );
 		if ( target and AIBehaviour.ScoutMOACDefault:scoutCheckHostile( entity, target )==true ) then
@@ -2319,6 +2465,10 @@ AIBehaviour.ScoutMOACAttack = {
 	end,
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_BACKATTACK = function ( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
 	
 		if ( self:SCOUTMOACATTACK_ISTRACEPOSSIBLE( entity ) == true ) then
 				self:SCOUTMOACATTACK_TRACEPATHPRE_START( entity );
@@ -2374,6 +2524,10 @@ AIBehaviour.ScoutMOACAttack = {
 
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_ISTRACEPOSSIBLE = function ( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
 
 		-- check the target
 
@@ -2456,6 +2610,10 @@ AIBehaviour.ScoutMOACAttack = {
 
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_TRACEPATHPRE_START = function ( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
 
 		local target = AI.GetAttentionTargetEntity( entity.id );
 		if ( target and AIBehaviour.ScoutMOACDefault:scoutCheckHostile( entity, target )==true ) then
@@ -2480,6 +2638,10 @@ AIBehaviour.ScoutMOACAttack = {
 	end,
 
 	SCOUTMOACATTACK_TRACEPATHPRE = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
 
 		local vVel = {};
 
@@ -2508,6 +2670,10 @@ AIBehaviour.ScoutMOACAttack = {
 	end,
 
 	SCOUTMOACATTACK_TRACEPATH_START = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
 
 		AI.SetForcedNavigation( entity.id, entity.AI.vZero  );
 
@@ -2532,6 +2698,10 @@ AIBehaviour.ScoutMOACAttack = {
 	end,
 
 	SCOUTMOACATTACK_TRACEPATH_END = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
 		entity:SelectPipe(0,"do_nothing");
 		entity:SelectPipe(0,"ScoutMOAC" );
 		if ( entity.AI.bCloseScout == true ) then
@@ -2543,6 +2713,10 @@ AIBehaviour.ScoutMOACAttack = {
 
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_CIRCLING_START = function ( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
 
 		local target = AI.GetAttentionTargetEntity( entity.id );
 		if ( target and AIBehaviour.ScoutMOACDefault:scoutCheckHostile( entity, target )==true ) then
@@ -2621,6 +2795,10 @@ AIBehaviour.ScoutMOACAttack = {
 	end,
 
 	SCOUTMOACATTACK_CIRCLING = function ( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
 
 		local vWng = {};
 		local vWngR = {};
@@ -2694,6 +2872,10 @@ AIBehaviour.ScoutMOACAttack = {
 
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_SHORTDUSH_START = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
 	
 		local target = AI.GetAttentionTargetEntity( entity.id );
 		if ( target and AIBehaviour.ScoutMOACDefault:scoutCheckHostile( entity, target )==true ) then
@@ -2734,6 +2916,10 @@ AIBehaviour.ScoutMOACAttack = {
 	end,
 
 	SCOUTMOACATTACK_SHORTDUSH = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
 
 		local target = AI.GetAttentionTargetEntity( entity.id );
 		if ( target and AIBehaviour.ScoutMOACDefault:scoutCheckHostile( entity, target )==true ) then
@@ -2754,6 +2940,10 @@ AIBehaviour.ScoutMOACAttack = {
 
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_JAMMER_START = function ( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
 
 		local target = AI.GetAttentionTargetEntity( entity.id );
 		if ( target and AIBehaviour.ScoutMOACDefault:scoutCheckHostile( entity, target )==true ) then
@@ -2791,6 +2981,10 @@ AIBehaviour.ScoutMOACAttack = {
 	end,
 
 	SCOUTMOACATTACK_JAMMER = function ( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
 
 		local vWng = {};
 		local vWngR = {};
@@ -2901,6 +3095,10 @@ AIBehaviour.ScoutMOACAttack = {
 
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_JAMMERDUSH_START = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
 	
 		local target = AI.GetAttentionTargetEntity( entity.id );
 		if ( target and AIBehaviour.ScoutMOACDefault:scoutCheckHostile( entity, target )==true ) then
@@ -2934,6 +3132,10 @@ AIBehaviour.ScoutMOACAttack = {
 	end,
 
 	SCOUTMOACATTACK_JAMMERDUSH = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
 
 		local target = AI.GetAttentionTargetEntity( entity.id );
 		if ( target and AIBehaviour.ScoutMOACDefault:scoutCheckHostile( entity, target )==true ) then
@@ -2971,6 +3173,10 @@ AIBehaviour.ScoutMOACAttack = {
 
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_VSAIR_START = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
 
 		local target = AI.GetAttentionTargetEntity( entity.id );
 		if ( target and AIBehaviour.ScoutMOACDefault:scoutCheckHostile( entity, target ) == true ) then
@@ -3040,6 +3246,10 @@ AIBehaviour.ScoutMOACAttack = {
 	end,
 
 	SCOUTMOACATTACK_VSAIR = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
 
 		local target = AI.GetAttentionTargetEntity( entity.id );
 		if ( target and AIBehaviour.ScoutMOACDefault:scoutCheckHostile( entity, target )==true ) then
@@ -3166,6 +3376,10 @@ AIBehaviour.ScoutMOACAttack = {
 
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_VSAIR2_START = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
 
 		local target = AI.GetAttentionTargetEntity( entity.id );
 		if ( target and AIBehaviour.ScoutMOACDefault:scoutCheckHostile( entity, target )==true ) then
@@ -3232,6 +3446,10 @@ AIBehaviour.ScoutMOACAttack = {
 
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_VSAIR2 = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
 
 		local target = AI.GetAttentionTargetEntity( entity.id );
 		if ( target and AIBehaviour.ScoutMOACDefault:scoutCheckHostile( entity, target )==true ) then
@@ -3402,6 +3620,10 @@ AIBehaviour.ScoutMOACAttack = {
 
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_VSAIRPAUSE_START = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
 
 		local target = AI.GetAttentionTargetEntity( entity.id );
 		if ( target and AIBehaviour.ScoutMOACDefault:scoutCheckHostile( entity, target )==true ) then
@@ -3462,6 +3684,10 @@ AIBehaviour.ScoutMOACAttack = {
 
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_VSAIRPAUSE = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
 
 		local target = AI.GetAttentionTargetEntity( entity.id );
 		if ( target and AIBehaviour.ScoutMOACDefault:scoutCheckHostile( entity, target )==true ) then
@@ -3499,6 +3725,10 @@ AIBehaviour.ScoutMOACAttack = {
 
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_VSAIR3_START = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
 
 		local target = AI.GetAttentionTargetEntity( entity.id );
 		if ( target and AIBehaviour.ScoutMOACDefault:scoutCheckHostile( entity, target )==true ) then
@@ -3546,6 +3776,10 @@ AIBehaviour.ScoutMOACAttack = {
 
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_VSAIR3 = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
 
 		local target = AI.GetAttentionTargetEntity( entity.id );
 		if ( target and AIBehaviour.ScoutMOACDefault:scoutCheckHostile( entity, target )==true ) then
@@ -3678,6 +3912,10 @@ AIBehaviour.ScoutMOACAttack = {
 
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_VSAIRCIRCLE_START = function ( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
 
 		local target = AI.GetAttentionTargetEntity( entity.id );
 		if ( target and AIBehaviour.ScoutMOACDefault:scoutCheckHostile( entity, target )==true ) then
@@ -3712,6 +3950,10 @@ AIBehaviour.ScoutMOACAttack = {
 	end,
 
 	SCOUTMOACATTACK_VSAIRCIRCLE = function ( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
 
 		local vWng = {};
 		local vWngR = {};
@@ -3785,6 +4027,10 @@ AIBehaviour.ScoutMOACAttack = {
 
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_VSAIRUP_START = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
 
 		local target = AI.GetAttentionTargetEntity( entity.id );
 		if ( target and AIBehaviour.ScoutMOACDefault:scoutCheckHostile( entity, target )==true ) then
@@ -3818,6 +4064,10 @@ AIBehaviour.ScoutMOACAttack = {
 
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_VSAIRUP = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
 
 		local target = AI.GetAttentionTargetEntity( entity.id );
 		if ( target and AIBehaviour.ScoutMOACDefault:scoutCheckHostile( entity, target )==true ) then
@@ -3838,6 +4088,10 @@ AIBehaviour.ScoutMOACAttack = {
 
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_VSCLOAK_START = function ( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
 
 		local target = AI.GetAttentionTargetEntity( entity.id );
 		if ( target and AIBehaviour.ScoutMOACDefault:scoutCheckHostile( entity, target )==true ) then
@@ -3864,6 +4118,10 @@ AIBehaviour.ScoutMOACAttack = {
 	end,
 
 	SCOUTMOACATTACK_VSCLOAK = function ( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
 
 		local bClockedTarget = false;
 

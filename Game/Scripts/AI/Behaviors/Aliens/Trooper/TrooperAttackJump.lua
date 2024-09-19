@@ -24,9 +24,12 @@ AIBehaviour.TrooperAttackJump = {
 		entity.AI.currentBehaviour = self.Name
 		--~TheOtherSide	
 
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
 
 		local entityAI = entity.AI;
 		entityAI.bShootingOnSpot = false;
@@ -62,9 +65,12 @@ AIBehaviour.TrooperAttackJump = {
 	
 	--------------------------------------------------
 	JUMP_FIRE_NO_PATH= function(self,entity,sender)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
 
 		AI.Signal(SIGNALFILTER_LEADER,10,"OnRequestUpdate",entity.id);
 	
@@ -72,9 +78,12 @@ AIBehaviour.TrooperAttackJump = {
 	
 	--------------------------------------------------
 	OnAttackSwitchPosition = function(self,entity,sender)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
 
 		local entityAI = entity.AI;
 		entityAI.bShootingOnSpot = false;
@@ -85,9 +94,12 @@ AIBehaviour.TrooperAttackJump = {
 	--------------------------------------------------
 	OnSpecialAction = function(self,entity,sender)
 
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
 
 		local entityAI = entity.AI;
 		entityAI.bShootingOnSpot = false;
@@ -99,9 +111,12 @@ AIBehaviour.TrooperAttackJump = {
 	--------------------------------------------------
 	OnAttackShootSpot = function(self,entity,sender)
 
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
 		local entityAI = entity.AI;
 		entityAI.bShootingOnSpot = true;
 		entityAI.bSwitchingPosition = false;
@@ -115,9 +130,12 @@ AIBehaviour.TrooperAttackJump = {
 			entity:Cloak(0);
 		end
 
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
 
 		local entityAI = entity.AI;
 		if(AI.GetGroupCount( entity.id, GROUP_ENABLED, AIOBJECT_PUPPET )<2 or entityAI.bSpecialAction) then
@@ -136,9 +154,12 @@ AIBehaviour.TrooperAttackJump = {
 	
 	--------------------------------------------------
 	END_MELEE = function(self,entity,sender)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
 
 		AIBehaviour.TROOPERDEFAULT:END_MELEE(entity,sender);
 	end,

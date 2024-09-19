@@ -40,6 +40,11 @@ AIBehaviour.ScoutAlert = {
 	
 	---------------------------------------------		
 	OnPlayerSeen = function( self, entity, fDistance )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:DoPlayerSeen();
 		entity:SelectPipe(0,"sc_player_seen_delay_attack");
 
@@ -56,6 +61,11 @@ AIBehaviour.ScoutAlert = {
 
 	---------------------------------------------
 	OnThreateningSoundHeard = function( self, entity, fDistance )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		self:OnPlayerSeen(entity, fDistance);
 	end,
 }

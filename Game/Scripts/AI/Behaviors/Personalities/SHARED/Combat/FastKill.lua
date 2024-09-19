@@ -92,7 +92,7 @@ AIBehaviour.FastKill = {
 	---------------------------------------------
 	OnThreateningSoundHeard = function( self, entity )
 		-- called when the enemy hears a scary sound
---		AI.Signal(SIGNALFILTER_SENDER,1,"TO_SEEK",entity.id);
+--		AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_SEEK",entity.id);
 	end,
 	---------------------------------------------
 	OnSomethingSeen = function( self, entity )

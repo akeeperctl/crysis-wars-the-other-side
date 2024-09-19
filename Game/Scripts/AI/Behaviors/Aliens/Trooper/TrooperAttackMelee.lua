@@ -24,18 +24,24 @@ AIBehaviour.TrooperAttackMelee = {
 		entity.AI.currentBehaviour = self.Name
 		--~TheOtherSide	
 
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
 
 		entity:SelectPipe(0,"tr_prepare_melee");
 	end,
 	
 	END_MELEE = function(self,entity,sender)
 
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
 
 		if(random(1,100) <50) then 
 			entity:SelectPipe(0,"tr_melee_backoff");
@@ -47,7 +53,7 @@ AIBehaviour.TrooperAttackMelee = {
 	end,
 		
 	OnCloseContact = function(self,entity,sender)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			local target = AI.GetAttentionTargetEntity(entity.id);
 			if(target) then
 
@@ -85,23 +91,29 @@ AIBehaviour.TrooperAttackMelee = {
 	end,
 	
 	OnPlayerSeen = function(self,entity,sender)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			entity:SelectPipe(0,"tr_prepare_melee");
 		end
 	end,
 	
 	END_MELEE_BACKOFF = function(self,entity,sender)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
 
 		entity:SelectPipe(0,"tr_prepare_melee");
 	end,
 	
 	TR_NORMALATTACK = function(self,entity,sender)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
 
 		if(AI.GetTargetType(entity.id)==AITARGET_ENEMY) then
 			entity:SelectPipe(0,"tr_prepare_melee");

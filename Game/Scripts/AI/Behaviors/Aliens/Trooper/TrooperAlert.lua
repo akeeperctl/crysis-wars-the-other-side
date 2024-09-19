@@ -24,9 +24,12 @@ AIBehaviour.TrooperAlert = {
 		entity.AI.currentBehaviour = self.Name
 		--~TheOtherSide	
 
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
 
 		entity:MakeAlerted();
 		entity:SelectPipe(0,"tr_choose_manner");
@@ -51,7 +54,7 @@ AIBehaviour.TrooperAlert = {
 
 	---------------------------------------------
 	OnPlayerSeen = function( self, entity, fDistance )
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then --Р”РѕРґРµР»Р°С‚СЊ СЌС‚Рѕ Рє Attack
+		if (entity.AI.ignoreSignals == false) then --Р”РѕРґРµР»Р°С‚СЊ СЌС‚Рѕ Рє Attack
 		-- called when the enemy sees a living player
 
 			AIBehaviour.TrooperIdle:OnPlayerSeen(entity,fDistance);
@@ -60,7 +63,7 @@ AIBehaviour.TrooperAlert = {
 
 	---------------------------------------------
 	OnEnemyMemory = function( self, entity )
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			if(entity:SetRefPointAtDistanceFromTarget(8)) then 
 				entity:SelectPipe(0,"tr_approach_target_at_distance");
 			end
@@ -104,7 +107,7 @@ AIBehaviour.TrooperAlert = {
 
 	---------------------------------------------
 	OnDamage = function ( self, entity, sender,data)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			-- called when the enemy is damaged
 			entity:Readibility("GETTING_SHOT_AT",1);
 			entity:SelectPipe(0,"tr_getting_shot_at");
@@ -113,14 +116,17 @@ AIBehaviour.TrooperAlert = {
 
 	---------------------------------------------
 	OnHideSpotReached = function( self, entity, sender)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
 
 		local targetName = AI.GetAttentionTargetOf(entity.id);
 		if(AI.Hostile(entity.id,targetName) and System.GetEntityByName(targetName)) then
 			entity:SelectPipe(0,"tr_pindown");
-			AI.Signal(SIGNALFILTER_SENDER,0,"TO_ATTACK",entity.id);
+			AI.Signal(SIGNALFILTER_SENDER,0,"GO_TO_ATTACK",entity.id);
 		elseif(targetName) then
 			entity:SelectPipe(0,"tr_seek_target");
 --			entity:InsertSubpipe(0,"do_it_prone");
@@ -129,9 +135,12 @@ AIBehaviour.TrooperAlert = {
 	end,
 	--------------------------------------------------
 	OnNoPathFound = function ( self, entity, sender)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
 
 		if(AI.GetTargetType(entity.id)==AITARGET_ENEMY) then 
 			entity:SelectPipe(0,"tr_just_shoot");
@@ -142,9 +151,12 @@ AIBehaviour.TrooperAlert = {
 	end,
 	--------------------------------------------------
 	OnEndPathOffset = function ( self, entity, sender)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
 
 		if(AI.GetTargetType(entity.id)==AITARGET_ENEMY) then 
 			entity:SelectPipe(0,"tr_just_shoot");
@@ -160,9 +172,12 @@ AIBehaviour.TrooperAlert = {
 
 	---------------------------------------------	
 	INVESTIGATE_TARGET = function (self, entity, sender)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
 
 		entity:SelectPipe(0,"tr_investigate_threat");		
 	end,
@@ -175,36 +190,48 @@ AIBehaviour.TrooperAlert = {
 
 	---------------------------------------------
 	CEASE = function( self, entity, fDistance )
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
 
 		entity:SelectPipe(0,"tr_cease_approach"); -- in PipeManagerShared.lua			 
 	end,
 
 	---------------------------------------------
 	TRY_TO_LOCATE_SOURCE = function (self, entity, sender)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
 
 		entity:SelectPipe(0,"tr_lookaround_30seconds");
 	end,
 	
 	---------------------------------------------
 	DEATH_CONFIRMED = function (self, entity, sender)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
 
 		entity:SelectPipe(0,"tr_choose_manner");
 	end,
 	
 	---------------------------------------------
 	CHOOSE_MANNER = function (self, entity, sender)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
 
 		local XRandom = random(1,3);
 		if (XRandom == 1) then
@@ -218,18 +245,24 @@ AIBehaviour.TrooperAlert = {
 
 	------------------------------------------------------------------------
 	TARGET_LOST_ANIMATION = function (self, entity, sender)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
 
 		entity:StartAnimation(0,"enemy_target_lost",0);
 	end,
 
 	------------------------------------------------------------------------
 	CONFUSED_ANIMATION = function (self, entity, sender)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
 
 		entity:StartAnimation(0,"_headscratch1",0);
 	end,

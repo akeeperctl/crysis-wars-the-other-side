@@ -13,6 +13,12 @@ AIBehaviour.Cover2AvoidTank = {
 		entity.AI.currentBehaviour = self.Name
 		--~TheOtherSide	
 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
+
 		entity:GettingAlerted();
 
 		entity.AI.coverCompromized = false;	
@@ -42,20 +48,25 @@ AIBehaviour.Cover2AvoidTank = {
 
 	-----------------------------------------------------
 	HandleThreat = function(self, entity, resetTimer)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		local target = AI.GetTargetType(entity.id);
 		if(entity.AI.hideCounter > 2) then
 			if(target==AITARGET_ENEMY or target==AITARGET_MEMORY) then
 				if( AI_Utils:HasRPGAttackSlot(entity) and entity.inventory:GetItemByClass("LAW") 
 						and AIBehaviour.Cover2RPGAttack.FindRPGSpot(self, entity) ~= nil) then
-					AI.Signal(SIGNALFILTER_SENDER, 1, "TO_RPG_ATTACK", entity.id);
+					AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_RPG_ATTACK", entity.id);
 				else
 					-- normally this is done in constructor of Cover2Hide 
 					entity.AI.lastBulletReactionTime = _time - 10;
 					AIBehaviour.Cover2Hide.HandleThreat(self, entity);
 				end	
 			else
-				AI.Signal(SIGNALFILTER_SENDER, 1, "TO_SEEK", entity.id);
+				AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_SEEK", entity.id);
 			end		
 		end
 		entity.AI.hideCounter = entity.AI.hideCounter+1;
@@ -79,46 +90,76 @@ AIBehaviour.Cover2AvoidTank = {
 
 	-----------------------------------------------------
 	HandleBackoff = function(self, entity, resetTimer)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:Readibility("explosion_imminent",1,1,0.1,0.4);
 		entity:SelectPipe(0,"cv_backoff_from_tank");
 	end,
 
 	--------------------------------------------------
 	HIDE_DONE = function(self, entity)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		self:HandleThreat(entity, false);
 	end,
 
 	--------------------------------------------------
 	OnCoverCompromised = function(self, entity, sender, data)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		self:HandleThreat(entity, false);
 	end,
 
 	-----------------------------------------------------
 	OnUnhideTimer = function(entity,timerid)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		--AI.LogEvent(entity:GetName().." OnUnhideTimer");
 		entity.AI.hideTimer = nil;
 		local target = AI.GetTargetType(entity.id);
 		if(target==AITARGET_ENEMY or target==AITARGET_MEMORY) then
 			AIBehaviour.Cover2AvoidTank:HandleThreat(entity, false);
 		else
-			AI.Signal(SIGNALFILTER_SENDER,1,"TO_SEEK",entity.id);
+			AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_SEEK",entity.id);
 		end
 	end,
 
 	-----------------------------------------------------
 	OnAttackTimer = function(entity,timerid)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		--AI.LogEvent(entity:GetName().." OnUnhideTimer");
 		entity.AI.attackTimer = nil;
 		local target = AI.GetTargetType(entity.id);
 		if(target==AITARGET_ENEMY or target==AITARGET_MEMORY) then
-			AI.Signal(SIGNALFILTER_SENDER,1,"TO_ATTACK",entity.id);
+			AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_ATTACK",entity.id);
 		else
-			AI.Signal(SIGNALFILTER_SENDER,1,"TO_SEEK",entity.id);
+			AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_SEEK",entity.id);
 		end
 	end,
 
 	--------------------------------------------------
 	ResetAttackDelay = function(self, entity, sender,data)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		if (entity.AI.attackTimer) then
 			Script.KillTimer(entity.AI.attackTimer);
 			entity.AI.attackTimer = nil;
@@ -127,6 +168,11 @@ AIBehaviour.Cover2AvoidTank = {
 
 	--------------------------------------------------
 	OnNoHidingPlace = function(self, entity, sender,data)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		self:HandleBackoff(entity);
 	end,
 
@@ -147,11 +193,21 @@ AIBehaviour.Cover2AvoidTank = {
 
 	---------------------------------------------
 	OnGroupMemberDiedNearest = function ( self, entity, sender, data )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		AI.Signal(SIGNALFILTER_GROUPONLY, 1, "OnGroupMemberDied",entity.id, data );
 	end,
 
 	---------------------------------------------		
 	OnPlayerSeen = function( self, entity, fDistance )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:MakeAlerted();
 		entity:TriggerEvent(AIEVENT_DROPBEACON);
 		-- switch to combat only after some delay
@@ -160,11 +216,16 @@ AIBehaviour.Cover2AvoidTank = {
 
 	---------------------------------------------
 	OnTankSeen = function( self, entity, fDistance )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		self:ResetAttackDelay(entity);
 		if( AI_Utils:HasRPGAttackSlot(entity) and entity.inventory:GetItemByClass("LAW") 
 				and AIBehaviour.Cover2RPGAttack.FindRPGSpot(self, entity) ~= nil) then
 			entity:Readibility("suppressing_fire",1,1,0.1,0.4);
-			AI.Signal(SIGNALFILTER_SENDER, 1, "TO_RPG_ATTACK",entity.id);
+			AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_RPG_ATTACK",entity.id);
 		else
 			self:HandleThreat(entity, true);
 		end
@@ -172,26 +233,51 @@ AIBehaviour.Cover2AvoidTank = {
 	
 	---------------------------------------------
 	OnHeliSeen = function( self, entity, fDistance )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		self:HandleThreat(entity, true);
 	end,
 
 	---------------------------------------------		
 	OnInterestingSoundHeard = function( self, entity, fDistance )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		self:HandleThreat(entity, false);
 	end,
 
 	---------------------------------------------		
 	OnThreateningSoundHeard = function( self, entity, fDistance )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		self:HandleThreat(entity, false);
 	end,
 
 	---------------------------------------------
 	OnThreateningSeen = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		self:HandleThreat(entity, false);
 	end,
 
 	---------------------------------------------
 	OnEnemyDamage = function ( self, entity, sender,data)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		-- called when the enemy is damaged
 		self:HandleThreat(entity);
@@ -214,16 +300,27 @@ AIBehaviour.Cover2AvoidTank = {
 	--------------------------------------------------
 	OnBulletRain = function(self, entity, sender, data)
 		if(AI.Hostile(entity.id, data.id)) then
-			self:HandleThreat(entity, false);
 			entity:Readibility("bulletrain",1,1,0.1,0.4);
+			--TheOtherSide
+			if (entity.AI.ignoreSignals == true) then
+				return;
+			end
+			--~TheOtherSide
+
+			self:HandleThreat(entity, false);
 		end
 	end,
 
 	---------------------------------------------
 	OnNearMiss = function(self, entity, sender)
 		if(AI.Hostile(entity.id, sender.id)) then
-			self:HandleThreat(entity, false);
 			entity:Readibility("bulletrain",1,1,0.1,0.4);
+			--TheOtherSide
+			if (entity.AI.ignoreSignals == true) then
+				return;
+			end
+			--~TheOtherSide
+			self:HandleThreat(entity, false);
 		end
 	end,
 

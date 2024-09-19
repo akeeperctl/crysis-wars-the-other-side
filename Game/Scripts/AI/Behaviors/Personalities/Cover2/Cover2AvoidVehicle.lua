@@ -42,11 +42,21 @@ AIBehaviour.Cover2AvoidVehicle = {
 	---------------------------------------------
 	OnGroupMemberDiedNearest = function ( self, entity, sender, data )
 		entity:Readibility("ai_down",1,1,0.1,0.4);
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		AI.Signal(SIGNALFILTER_GROUPONLY, 1, "OnGroupMemberDied",entity.id, data );
 	end,
 
 	---------------------------------------------		
 	OnPlayerSeen = function( self, entity, fDistance, data )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		if (data.iValue == AITSR_SEE_STUNT_ACTION) then
 			AI.NotifyGroupTacticState(entity.id, 0, GN_NOTIFY_UNAVAIL);
 			AI_Utils:ChooseStuntReaction(entity);
@@ -100,6 +110,11 @@ AIBehaviour.Cover2AvoidVehicle = {
 
 	--------------------------------------------------
 	END_VEHICLE_DANGER = function(self, entity, sender)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		AI.SetRefPointPosition(entity.id,entity.AI.refPointMemory);
 		AI_Utils:CommonContinueAfterReaction(entity);
 	end,
@@ -128,6 +143,11 @@ AIBehaviour.Cover2AvoidVehicle = {
 	
 	-------------------------------------------------
 	OnBackOffFailed = function(self,entity)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:SelectPipe(0,"sn_flinch_front");
 	end,
 
@@ -139,6 +159,11 @@ AIBehaviour.Cover2AvoidVehicle = {
 
 	--------------------------------------------------
 	OnVehicleDanger = function(self, entity, sender, data)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		if(sender and sender~=entity and entity.Properties.bVehicleIsDangerous == 1) then
 			if (data.iValue == 1) then
 				-- update ref point

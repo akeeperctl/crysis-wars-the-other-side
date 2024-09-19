@@ -25,6 +25,11 @@ AIBehaviour.CoverWait = {
 	end,
 	---------------------------------------------
 	OnPlayerSeen = function( self, entity, fDistance )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- called when the enemy sees a living player
 		--entity:SelectPipe(0,"cover_scramble");
 		entity:SelectPipe(0,"random_reacting_timeout");
@@ -64,11 +69,21 @@ AIBehaviour.CoverWait = {
 	end,
 	---------------------------------------------
 	OnGroupMemberDied = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- called when a member of the group dies
 		entity:SelectPipe(0,"cover_hideform");
 	end,
 
 	OnGroupMemberDiedNearest = function ( self, entity, sender)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- call the default to do stuff that everyone should do
 		AIBehaviour.DEFAULT:OnGroupMemberDiedNearest(entity,sender);
 	end,

@@ -64,7 +64,7 @@ AIBehaviour.SuitHurricaneThreatened = {
 	OnPlayerSeen = function( self, entity, fDistance, data )
 		-- called when the enemy sees a living player
 		entity:TriggerEvent(AIEVENT_DROPBEACON);
-		AI.Signal(SIGNALFILTER_SENDER,1,"TO_ATTACK",entity.id);
+		AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_ATTACK",entity.id);
 	end,
 
 	---------------------------------------------
@@ -93,9 +93,11 @@ AIBehaviour.SuitHurricaneThreatened = {
 
 	---------------------------------------------
 	OnInterestingSoundHeard = function( self, entity )
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_AUDIO) == 0.0 ) then
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
 		entity:TriggerEvent(AIEVENT_DROPBEACON);
 		entity:Readibility("alert_interest_hear",1,1,0.3,0.6);
 		self:CheckToChangeTarget(entity);
@@ -103,9 +105,11 @@ AIBehaviour.SuitHurricaneThreatened = {
 	
 	---------------------------------------------
 	OnThreateningSoundHeard = function( self, entity )
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_AUDIO) == 0.0 ) then
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
 		entity:TriggerEvent(AIEVENT_DROPBEACON);
 		entity:Readibility("alert_interest_hear",1,1,0.3,0.6);
 		self:CheckToChangeTarget(entity);
@@ -128,7 +132,7 @@ AIBehaviour.SuitHurricaneThreatened = {
 	---------------------------------------------
 	ENEMYSEEN_DURING_COMBAT = function (self, entity, sender)
 		if(AI.GetTargetType(entity.id) ~= AITARGET_ENEMY) then
-			AI.Signal(SIGNALFILTER_SENDER,1,"TO_ATTACK",entity.id);
+			AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_ATTACK",entity.id);
 		end
 	end,
 	

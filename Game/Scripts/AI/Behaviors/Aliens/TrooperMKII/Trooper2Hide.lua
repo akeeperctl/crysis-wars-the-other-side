@@ -14,7 +14,7 @@ AIBehaviour.Trooper2Hide = {
 	-----------------------------------------------------
 	Constructor = function(self,entity)
 
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			entity:GettingAlerted();
 
 	--		entity.AI.changeCoverLastTime = _time;
@@ -37,7 +37,7 @@ AIBehaviour.Trooper2Hide = {
 
 	-----------------------------------------------------
 	HandleThreat = function(self, entity, sender)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 
 			local	dt = _time - entity.AI.lastBulletReactionTime;
 
@@ -128,7 +128,7 @@ AIBehaviour.Trooper2Hide = {
 	---------------------------------------------
 	OnEnemyDamage = function ( self, entity, sender,data)
 	
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 
 			Trooper_HitReaction(entity);
 		
@@ -150,7 +150,7 @@ AIBehaviour.Trooper2Hide = {
 
 	---------------------------------------------
 	OnBulletRain = function(self, entity, sender, data)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			entity:Readibility("bulletrain",1,1, 0.1,0.4);
 			--self:HandleThreat(entity, sender);
 

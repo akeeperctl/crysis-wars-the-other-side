@@ -23,6 +23,11 @@ AIBehaviour.SniperSnipe = {
 		entity.AI.currentBehaviour = self.Name
 		--~TheOtherSide	
 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:MakeAlerted();
 		entity:SelectPipe(0,"sniper_snipe");
 --		self:FindSnipeSpot(entity);
@@ -40,7 +45,12 @@ AIBehaviour.SniperSnipe = {
 
 	---------------------------------------------
 	OnPlayerSeen = function( self, entity, fDistance )
-	
+		
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		--local targetDist = AI.GetAttentionTargetDistance(entity.id)	
 		--local target = AI.GetAttentionTargetEntity( entity.id );
 		--if ( target  ) then

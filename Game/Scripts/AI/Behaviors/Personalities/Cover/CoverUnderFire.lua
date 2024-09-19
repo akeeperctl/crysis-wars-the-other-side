@@ -17,6 +17,11 @@ AIBehaviour.CoverUnderFire = {
 
 	---------------------------------------------		
 	OnPlayerSeen = function( self, entity, fDistance )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:SelectPipe(0,"cover_pindown");
 		
 	end,
@@ -37,6 +42,11 @@ AIBehaviour.CoverUnderFire = {
 	end,
 	---------------------------------------------
 	OnDamage = function ( self, entity, sender, data)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- called when the enemy is damaged
 		AI.LogEvent("ON DAMAGE UNDER FIRE");
 
@@ -57,6 +67,11 @@ AIBehaviour.CoverUnderFire = {
 	end,
 
 	OnNoHidingPlace = function( self, entity, sender,data )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- data.fValue = distance at which the hidespot has been searched
 		if(entity.IN_SQUAD~=1) then
 			if(data.fValue<20) then 

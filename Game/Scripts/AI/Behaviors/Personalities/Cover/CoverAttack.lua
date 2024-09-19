@@ -13,6 +13,11 @@ AIBehaviour.CoverAttack = {
 		entity.AI.currentBehaviour = self.Name
 		--~TheOtherSide	
 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:CheckReinforcements();
 		entity:MakeAlerted();
 
@@ -27,6 +32,11 @@ AI.Signal(SIGNALFILTER_GROUPONLY_EXCEPT, 1, "HEADS_UP_GUYS",entity.id);
 
 	---------------------------------------------
 	OnEnemyDamage = function ( self, entity, sender,data)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- data.id: the shooter
 		AI.LogEvent(entity:GetName().." ONENEMY DAMAGE CoverAttack");
 		entity:Readibility("GETTING_SHOT_AT",1);
@@ -91,6 +101,11 @@ AI.Signal(SIGNALFILTER_GROUPONLY_EXCEPT, 1, "HEADS_UP_GUYS",entity.id);
 	end,
 	--------------------------------------------------
 	STRAFE_POINT_REACHED = function(self,entity,sender)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- this happens after strafing the obstacle
 
 		entity:SelectPipe(0,"cover_pindown");
@@ -106,6 +121,11 @@ AI.Signal(SIGNALFILTER_GROUPONLY_EXCEPT, 1, "HEADS_UP_GUYS",entity.id);
 	end,
 	--------------------------------------------------
 	STRAFE_POINT_NOT_REACHED = function(self,entity,sender)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- this happens after strafing the obstacle
 		entity:SelectPipe(0,"cover_pindown");
 		
@@ -113,6 +133,11 @@ AI.Signal(SIGNALFILTER_GROUPONLY_EXCEPT, 1, "HEADS_UP_GUYS",entity.id);
 
 	---------------------------------------------
 	OnLowHideSpot = function( self, entity, sender)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		--entity:SelectPipe(0,"do_nothing");--in case it was already in dig_in_attack
 		entity:SelectPipe(0,"low_hide_shoot");
@@ -122,6 +147,11 @@ AI.Signal(SIGNALFILTER_GROUPONLY_EXCEPT, 1, "HEADS_UP_GUYS",entity.id);
 	
 	---------------------------------------------
 	OnHideSpotReached = function( self, entity, sender)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 	
 			entity:SelectPipe(0,"cover_pindown");
 			entity:InsertSubpipe(0,"random_short_timeout");
@@ -139,6 +169,11 @@ AI.Signal(SIGNALFILTER_GROUPONLY_EXCEPT, 1, "HEADS_UP_GUYS",entity.id);
 	end,
 	---------------------------------------------
 	OnNoTarget = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:Readibility("ENEMY_TARGET_LOST"); -- you will go to alert from here
 		
 --		if(entity:SetRefPointAroundBeaconRandom(8)) then
@@ -154,6 +189,11 @@ AI.Signal(SIGNALFILTER_GROUPONLY_EXCEPT, 1, "HEADS_UP_GUYS",entity.id);
 	end,
 	---------------------------------------------
 	OnPlayerSeen = function( self, entity, fDistance )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		if(entity:IsEnemyClose( fDistance )) then
 			do return end
@@ -176,6 +216,11 @@ AI.Signal(SIGNALFILTER_GROUPONLY_EXCEPT, 1, "HEADS_UP_GUYS",entity.id);
 	end,
 	---------------------------------------------
 	OnEnemyMemory = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 	
 		entity:SelectPipe(0,"dumb_shoot_timout");	
 --		do return end
@@ -209,6 +254,11 @@ AI.Signal(SIGNALFILTER_GROUPONLY_EXCEPT, 1, "HEADS_UP_GUYS",entity.id);
 	end,
 	---------------------------------------------
 	OnInterestingSoundHeard = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- called when the enemy hears an interesting sound
 		entity:Readibility("RELOADING",1);
 		entity:SelectPipe(0,"dumb_shoot_timout");
@@ -218,6 +268,11 @@ AI.Signal(SIGNALFILTER_GROUPONLY_EXCEPT, 1, "HEADS_UP_GUYS",entity.id);
 	end,
 	---------------------------------------------
 	OnThreateningSoundHeard = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- called when the enemy hears a scary sound
 --		entity:InsertSubpipe(0,"get_out_of_cover");
 		entity:InsertSubpipe(0,"devalue_target");
@@ -225,12 +280,22 @@ AI.Signal(SIGNALFILTER_GROUPONLY_EXCEPT, 1, "HEADS_UP_GUYS",entity.id);
 	end,
 	---------------------------------------------
 	OnTargetDead	 = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:SelectPipe(0,"do_nothing");
 		entity:InsertSubpipe(0,"stop_fire");
 				
 	end,
 	---------------------------------------------
 	OnReload = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- called when the enemy goes into automatic reload after its clip is empty
 --		System.Log("--------OnReload");
 		entity:SelectPipe(0,"cover_scramble");
@@ -238,6 +303,11 @@ AI.Signal(SIGNALFILTER_GROUPONLY_EXCEPT, 1, "HEADS_UP_GUYS",entity.id);
 	end,
 	---------------------------------------------
 	OnGroupMemberDied = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- called when a member of the group dies
 		AI.LogEvent(entity:GetName().." OnPlayerdied in CoverAttack");
 		entity:CheckReinforcements();
@@ -248,6 +318,11 @@ AI.Signal(SIGNALFILTER_GROUPONLY_EXCEPT, 1, "HEADS_UP_GUYS",entity.id);
 	end,
 	---------------------------------------------
 	OnNoHidingPlace = function( self, entity, sender )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- select random attack pipe		
 		if(not NOCOVER:SelectAttack(entity)) then
 			local targetName = AI.GetAttentionTargetOf(entity.id);
@@ -287,6 +362,11 @@ AI.Signal(SIGNALFILTER_GROUPONLY_EXCEPT, 1, "HEADS_UP_GUYS",entity.id);
 	end,	
 	---------------------------------------------
 	OnDamage = function ( self, entity, sender,data)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- called when the enemy is damaged
 
 		entity:SelectPipe(0,"cover_scramble");
@@ -310,6 +390,11 @@ AI.Signal(SIGNALFILTER_GROUPONLY_EXCEPT, 1, "HEADS_UP_GUYS",entity.id);
 	-- CUSTOM SIGNALS
 	--------------------------------------------------
 	COVER_NORMALATTACK = function (self, entity, sender)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:SelectPipe(0,"cover_pindown");
 		entity:InsertSubpipe(0,"reload");
 	end,
@@ -377,6 +462,11 @@ AI.Signal(SIGNALFILTER_GROUPONLY_EXCEPT, 1, "HEADS_UP_GUYS",entity.id);
 	end,
 	------------------------------------------------------------------------
 	END_HIDE = function(self,entity,sender)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 	
 			entity:SelectPipe(0,"cover_pindown");
 			entity:InsertSubpipe(0,"random_short_timeout");
@@ -394,6 +484,11 @@ do return end
 	end,
 	------------------------------------------------------------------------
 	END_PINDOWN = function(self,entity,sender)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 	
 		local targetName = AI.GetAttentionTargetOf(entity.id);
 		if(AI.Hostile(entity.id,targetName) and System.GetEntityByName(targetName)) then
@@ -422,6 +517,11 @@ do return end
 	
 	------------------------------------------------------------------------
 	HEADS_UP_GUYS = function(self,entity,sender)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 	
 		if(AI.GetTargetType(entity.id)~=AITARGET_ENEMY) then
 			entity:SelectPipe(0,"cover_pindown");
@@ -432,12 +532,22 @@ do return end
 	
 	------------------------------------------------------------------------
 	CHECK_FOR_TARGET = function (self, entity, sender)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 			entity:SelectPipe(0,"seek_target");
 			entity:InsertSubpipe(0,"do_it_standing");
 	end,	
 	
 	---------------------------------------------
 	SUPRESSED = function ( self, entity, sender,data)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		AI.LogEvent(entity:GetName().." I'm supressed CoverAttack");
 --		entity:Readibility("GETTING_SHOT_AT",1);
 		if(entity.badHide) then
@@ -451,6 +561,11 @@ do return end
 	---------------------------------------------
 	-- nowhere to hide - get down and shoot
 	OnBadHideSpot = function ( self, entity, sender,data)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 	
 			entity.badHide = 1;	
 	

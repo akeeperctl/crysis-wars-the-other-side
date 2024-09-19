@@ -49,7 +49,7 @@ AIBehaviour.TrainSoldierIdle = {
 	---------------------------------------------
 	OnPlayerSeen = function( self, entity, fDistance, data )
 		entity:Readibility("first_contact",1,2, 0.3,0.5);
-		AI.Signal(SIGNALFILTER_SENDER, 1, "TO_ATTACK",entity.id);
+		AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_ATTACK",entity.id);
 	end,
 
 	---------------------------------------------
@@ -212,7 +212,7 @@ AIBehaviour.TrainSoldierIdle = {
 
 	---------------------------------------------
 	OnFallAndPlayWakeUp = function( self, entity )
-		AI.Signal(SIGNALFILTER_SENDER, 1, "TO_ATTACK",entity.id);
+		AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_ATTACK",entity.id);
 	end,
 
 	---------------------------------------------

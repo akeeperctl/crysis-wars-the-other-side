@@ -26,6 +26,11 @@ AIBehaviour.Squad2Cover = {
 			entity.AI.target = {x=0, y=0, z=0};
 		end
 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity.AI.fleeLastTime = _time;
 		entity.AI.peekCount = 0;
 

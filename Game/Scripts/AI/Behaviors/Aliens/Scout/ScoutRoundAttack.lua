@@ -25,6 +25,11 @@ AIBehaviour.ScoutRoundAttack = {
 		entity.AI.currentBehaviour = self.Name
 		--~TheOtherSide	
 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		-- called when the behaviour is selected
 
@@ -88,6 +93,11 @@ AIBehaviour.ScoutRoundAttack = {
 	--------------------------------------------------------------------------
 	SC_SCOUT_ROUNDATTACK2_START = function( self, entity )
 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		local target = AI.GetAttentionTargetEntity( entity.id );
 		if ( target and AI.Hostile( entity.id, target.id ) ) then
 
@@ -119,6 +129,11 @@ AIBehaviour.ScoutRoundAttack = {
 
 	SC_SCOUT_ROUNDATTACK2_1 = function( self, entity )
 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		local target = AI.GetAttentionTargetEntity( entity.id );
 		if ( target and AI.Hostile( entity.id, target.id ) ) then
 
@@ -150,6 +165,11 @@ AIBehaviour.ScoutRoundAttack = {
 
 	SC_SCOUT_ROUNDATTACK2_2 = function( self, entity )
 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		local target = AI.GetAttentionTargetEntity( entity.id );
 		if ( target and AI.Hostile( entity.id, target.id ) ) then
 
@@ -181,6 +201,11 @@ AIBehaviour.ScoutRoundAttack = {
 
 	SC_SCOUT_ROUNDATTACK2_3 = function( self, entity )
 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 			AI.CreateGoalPipe("scoutRoundAttack4");
 			AI.PushGoal("scoutRoundAttack4","timeout",0,200.0);
 			entity:SelectPipe(0,"scoutRoundAttack4");
@@ -190,6 +215,11 @@ AIBehaviour.ScoutRoundAttack = {
 	--------------------------------------------------------------------------
 	SC_SCOUT_ROUNDATTACK_START = function( self, entity )
 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		local target = AI.GetAttentionTargetEntity( entity.id );
 		if ( target and AI.Hostile( entity.id, target.id ) ) then
 
@@ -288,9 +318,19 @@ AIBehaviour.ScoutRoundAttack = {
 	end,
 
 	SC_SCOUT_GETLOOKAT = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		AI.SetRefPointPosition( entity.id, entity.AI.vLookAt );
 	end,
 	SC_SCOUT_GETREF = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		AI.SetRefPointPosition( entity.id, entity.AI.vRoundAttackRef );
 	end,
 

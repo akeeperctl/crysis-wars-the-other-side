@@ -20,6 +20,11 @@ AIBehaviour.CoverInterested = {
 	
 	---------------------------------------------
 	OnNoTarget = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:SelectPipe(0,"disturbance_let_it_go");
 		entity:InsertSubpipe(0,"HOLSTER_GUN");
 	end,
@@ -27,6 +32,11 @@ AIBehaviour.CoverInterested = {
 
 	---------------------------------------------
 	OnPlayerSeen = function( self, entity, fDistance )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		entity:MakeAlerted();
 
@@ -92,23 +102,38 @@ AIBehaviour.CoverInterested = {
 	end,
 	---------------------------------------------
 	OnEnemyDamage = function ( self, entity, sender)
-
 		AI.LogEvent(entity:GetName().." ONENEMY DAMAGE CoverInterested");
-		AI.Signal(SIGNALFILTER_GROUPONLY, 1, "INCOMING_FIRE",entity.id);
 		entity:Readibility("GETTING_SHOT_AT",1);
+		
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
+		AI.Signal(SIGNALFILTER_GROUPONLY, 1, "INCOMING_FIRE",entity.id);
 		entity:SelectPipe(0,"cover_goforcover");
 		
 	end,
 	---------------------------------------------
 	OnDamage = function ( self, entity, sender)
-		AI.Signal(SIGNALFILTER_GROUPONLY, 1, "INCOMING_FIRE",entity.id);
 		entity:Readibility("GETTING_SHOT_AT",1);
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:SelectPipe(0,"cover_goforcover");
-		
+		AI.Signal(SIGNALFILTER_GROUPONLY, 1, "INCOMING_FIRE",entity.id);
+
 	end,
 	---------------------------------------------
 	OnBulletRain = function ( self, entity, sender)	
 		entity:Readibility("BULLETRAIN_IDLE");	
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		AI.Signal(SIGNALFILTER_GROUPONLY, 1, "INCOMING_FIRE",entity.id);
 		entity:Readibility("GETTING_SHOT_AT",1);
 		entity:SelectPipe(0,"cover_goforcover");
@@ -137,20 +162,40 @@ AIBehaviour.CoverInterested = {
 
 	---------------------------------------------
 	Cease = function( self, entity, fDistance )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:SelectPipe(0,"cover_cease_investigation"); -- in PipeManagerShared.lua			 
 	end,
 	---------------------------------------------
 	AISF_GoOn = function (self, entity, sender)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:SelectPipe(0,"InvestigateSound");
 	end,
 	---------------------------------------------
 	TRY_TO_LOCATE_SOURCE = function (self, entity, sender)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:SelectPipe(0,"lookaround_30seconds");
 	end,
 	--------------------------------------------------
 	-- GROUP SIGNALS
 	--------------------------------------------------
 	INCOMING_FIRE = function (self, entity, sender)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		if (entity ~= sender) then
 			AI.SetRefPointPosition(entity.id,sender:GetWorldPos());
 			entity:SelectPipe(0,"randomhide","refpoint");

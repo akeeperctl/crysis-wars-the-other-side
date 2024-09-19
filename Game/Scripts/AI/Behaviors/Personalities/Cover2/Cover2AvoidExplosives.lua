@@ -16,6 +16,12 @@ AIBehaviour.Cover2AvoidExplosives = {
 		entity.AI.currentBehaviour = self.Name
 		--~TheOtherSide	
 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
+
 --		entity:Readibility("explosion_imminent",1,1,0.1,0.4);
 
 		if (entity.AI.grenadeDist) then
@@ -59,6 +65,12 @@ AIBehaviour.Cover2AvoidExplosives = {
 
 	---------------------------------------------		
 	OnPlayerSeen = function( self, entity, fDistance, data )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
+
 		if (data.iValue == AITSR_SEE_STUNT_ACTION) then
 			AI.NotifyGroupTacticState(entity.id, 0, GN_NOTIFY_UNAVAIL);
 			AI_Utils:ChooseStuntReaction(entity);
@@ -79,6 +91,12 @@ AIBehaviour.Cover2AvoidExplosives = {
 
 	---------------------------------------------
 	OnThreateningSeen = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
+
 		entity:TriggerEvent(AIEVENT_DROPBEACON);
 	end,
 

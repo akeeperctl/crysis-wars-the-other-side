@@ -1386,12 +1386,12 @@ AIBehaviour.TROOPERDEFAULT = {
 			end
 				
 			if (state == GS_SEEK) then
-				AI.Signal(SIGNALFILTER_SENDER,1,"TO_SEEK",entity.id);
+				AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_SEEK",entity.id);
 			elseif (state == GS_SEARCH or state == GS_ALERTED or state == GS_IDLE) then
-				AI.Signal(SIGNALFILTER_SENDER,1,"TO_SEARCH",entity.id);
+				AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_SEARCH",entity.id);
 			else
 				AI.NotifyGroupTacticState(entity.id, 0, GN_NOTIFY_ADVANCING);
-				AI.Signal(SIGNALFILTER_SENDER,0,"TO_ATTACK",entity.id);
+				AI.Signal(SIGNALFILTER_SENDER,0,"GO_TO_ATTACK",entity.id);
 			end
 		end
 	end,

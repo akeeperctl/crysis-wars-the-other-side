@@ -31,6 +31,11 @@ AIBehaviour.ScoutPatrol = {
 	
 	---------------------------------------------		
 	OnPlayerSeen = function( self, entity, fDistance )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- first send him OnSeenByEnemy signal
 --		local target = AI.GetAttentionTargetEntity(entity.id);
 --		if(target) then 
@@ -46,11 +51,21 @@ AIBehaviour.ScoutPatrol = {
 
 	---------------------------------------------
 	OnThreateningSoundHeard = function( self, entity, fDistance )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		self:OnPlayerSeen(entity, fDistance);
 	end,
 	
 	--------------------------------------------
 	SC_NEXT_POINT = function( self,entity, sender )	
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 	
 		local name = entity:GetName();
 		local tpname = name.."_P0";	

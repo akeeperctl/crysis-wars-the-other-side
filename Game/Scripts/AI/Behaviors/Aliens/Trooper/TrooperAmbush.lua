@@ -23,9 +23,12 @@ AIBehaviour.TrooperAmbush = {
 		entity.AI.currentBehaviour = self.Name
 		--~TheOtherSide	
 
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
 
 		entity.AI.InSquad = 1;
 		entity:Cloak(1);
@@ -105,7 +108,7 @@ AIBehaviour.TrooperAmbush = {
 
 	--------------------------------------------------
 	OnObjectSeen = function( self, entity, fDistance, signalData )
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			-- called when the enemy sees an object
 			if ( signalData.iValue == AIOBJECT_RPG) then
 				entity:InsertSubpipe(0,"devalue_target");
@@ -125,7 +128,7 @@ AIBehaviour.TrooperAmbush = {
 	
 	---------------------------------------------
 	OnCloseContact = function(self,entity,sender)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			entity:SelectPipe(0,"tr_just_shoot");
 		end
 --		entity:InsertSubpipe(0,"tr_backoff_fire");
@@ -137,9 +140,12 @@ AIBehaviour.TrooperAmbush = {
 
 	------------------------------------------------------------------------
 	START_AMBUSH = function(self,entity,sender,data)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
 
 		local targetType = AI.GetTargetType(entity.id);
 		if(data.id ~= NULL_ENTITY and AI.Hostile(entity.id,data.id)) then

@@ -18,6 +18,11 @@ AIBehaviour.Cover2Search = {
 
 		AI.NotifyGroupTacticState(entity.id, 0, GN_NOTIFY_SEEKING);
 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- check if the AI is at the edge of the territory and cannot move.
 		if(AI_Utils:IsTargetOutsideTerritory(entity) == 1) then
 			-- at the edge, wait, aim and shoot.
@@ -39,6 +44,11 @@ AIBehaviour.Cover2Search = {
 
 	---------------------------------------------
 	OnPlayerSeen = function( self, entity, fDistance, data )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- called when the enemy sees a living player
 		entity:MakeAlerted();
 		entity:TriggerEvent(AIEVENT_DROPBEACON);
@@ -57,6 +67,11 @@ AIBehaviour.Cover2Search = {
 
 	---------------------------------------------
 	COVER_NORMALATTACK = function (self, entity)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- check if the AI is at the edge of the territory and cannot move.
 		if(AI_Utils:IsTargetOutsideTerritory(entity) == 1) then
 			-- at the edge, wait, aim and shoot.
@@ -77,11 +92,21 @@ AIBehaviour.Cover2Search = {
 	HIDE_FAILED = function (self, entity, sender)
 		-- no hide points, goto group combat location to avoid clustering
 		AI.NotifyGroupTacticState(entity.id, 0, GN_NOTIFY_SEEKING);
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:SelectPipe(0,"cv_seek_target_nocover");
 	end,
 
 	--------------------------------------------------
 	LOOK_FOR_TARGET = function (self, entity, sender)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- check if the AI is at the edge of the territory and cannot move.
 		if(AI_Utils:IsTargetOutsideTerritory(entity) == 1) then
 			-- at the edge, wait, aim and shoot.
@@ -95,53 +120,97 @@ AIBehaviour.Cover2Search = {
 
 	--------------------------------------------------
 	ENEMYSEEN_FIRST_CONTACT = function (self, entity, sender)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- there is still some room for moving.
-		AI.Signal(SIGNALFILTER_SENDER,1,"TO_SEEK",entity.id);
+		AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_SEEK",entity.id);
 	end,
 
 	--------------------------------------------------
 	ENEMYSEEN_DURING_COMBAT = function (self, entity, sender)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- there is still some room for moving.
-		AI.Signal(SIGNALFILTER_SENDER,1,"TO_SEEK",entity.id);
+		AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_SEEK",entity.id);
 	end,
 
 	---------------------------------------------
 	OnInterestingSoundHeard = function( self, entity )
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_AUDIO) == 0.0 ) then
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:TriggerEvent(AIEVENT_DROPBEACON);
 		AI_Utils:CheckThreatened(entity, 15.0);
 	end,
 	
 	---------------------------------------------
 	OnThreateningSoundHeard = function( self, entity, fDistance )
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_AUDIO) == 0.0 ) then
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:TriggerEvent(AIEVENT_DROPBEACON);
 		AI_Utils:CheckThreatened(entity, 15.0);
 	end,
 
 	---------------------------------------------
 	OnSomethingSeen = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:TriggerEvent(AIEVENT_DROPBEACON);
 		AI_Utils:CheckThreatened(entity, 15.0);
 	end,
 
 	---------------------------------------------
 	OnThreateningSeen = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:TriggerEvent(AIEVENT_DROPBEACON);
 		AI_Utils:CheckThreatened(entity, 15.0);
 	end,
 
 	---------------------------------------------
 	INVESTIGATE_CONTINUE = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:SelectPipe(0,"cv_investigate_threat_closer");
 	end,
 	
 	---------------------------------------------
 	INVESTIGATE_DONE = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		self:COVER_NORMALATTACK(entity);
 	end,
 

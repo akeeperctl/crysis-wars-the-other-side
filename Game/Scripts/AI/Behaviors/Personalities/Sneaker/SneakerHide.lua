@@ -114,9 +114,9 @@ AIBehaviour.SneakerHide = {
 		self:HandleThreat(entity,false);
 
 		if(AI.GetGroupTacticState(entity.id, 0, GE_LEADER_COUNT) > 0) then
-			AI.Signal(SIGNALFILTER_SENDER, 1, "TO_ATTACK_GROUP",entity.id);
+			AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_ATTACK_GROUP",entity.id);
 		else
-			AI.Signal(SIGNALFILTER_SENDER, 1, "TO_ATTACK",entity.id);
+			AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_ATTACK",entity.id);
 		end
 	end,
 

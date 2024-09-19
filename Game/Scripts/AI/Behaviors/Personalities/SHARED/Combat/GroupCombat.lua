@@ -15,6 +15,11 @@ AIBehaviour.GroupCombat = {
 		entity.AI.previousBehaviour = entity.AI.currentBehaviour
 		entity.AI.currentBehaviour = self.Name
 		--~TheOtherSide	
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 	  AI.LogEvent("Constructor of GroupCombat "..entity:GetName());
 
@@ -47,6 +52,11 @@ AIBehaviour.GroupCombat = {
 	OnEnemyDamage = function ( self, entity, sender, data)
 		-- data.id: the shooter
 		entity:Readibility("GETTING_SHOT_AT",1);
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:InsertSubpipe(0, "bodypos_crouch_or_prone");
 		do return end;
 
@@ -86,6 +96,11 @@ AIBehaviour.GroupCombat = {
 
 
 	ORDER_FIRE = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- this checks for mounted weapons around and uses them
 --		AIBehaviour.DEFAULT:SHARED_FIND_USE_MOUNTED_WEAPON( entity );
 		
@@ -96,6 +111,11 @@ AIBehaviour.GroupCombat = {
   end,
 
 	ORDER_HIDE = function( self, entity, sender, data )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 --		System.Log(entity:GetName().." HIDING AT "..Vec2Str(data.point));
 		AI.SetRefPointPosition(entity.id, data.point);
  	  entity:SelectPipe(0, "do_nothing");--clear all current goals
@@ -141,6 +161,11 @@ AIBehaviour.GroupCombat = {
 	end,
 	---------------------------------------------
 	OnPlayerSeen = function( self, entity, fDistance )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- first send him OnSeenByEnemy signal
 --		AI.Signal(SIGNALFILTER_SUPERGROUP, 1, "OnSeenByEnemy", g_localActor.id);
 
@@ -176,11 +201,21 @@ AIBehaviour.GroupCombat = {
 	end,
 	---------------------------------------------
 	OnReload = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- called when the enemy goes into automatic reload after its clip is empty
 		entity:InsertSubpipe(0, "reload_combat");
 	end,
 	---------------------------------------------
 	OnGroupMemberDied = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- called when a member of the group dies
 		AI.LogEvent(entity:GetName().." received OnGroupMemberDied");
 		entity:CheckReinforcements();

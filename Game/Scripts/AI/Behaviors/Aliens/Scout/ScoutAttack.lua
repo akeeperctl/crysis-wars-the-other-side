@@ -22,6 +22,11 @@ AIBehaviour.ScoutAttack = {
 		entity.AI.previousBehaviour = entity.AI.currentBehaviour
 		entity.AI.currentBehaviour = self.Name
 		--~TheOtherSide	
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 
 		-- Create attack reference counters.	
@@ -67,6 +72,11 @@ AIBehaviour.ScoutAttack = {
 
 	---------------------------------------------
 	Relocate = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		entity.actor:SetMovementTarget({x=0,y=0,z=0},{x=0,y=0,z=0},{x=0,y=0,z=0},1);
 
@@ -111,6 +121,11 @@ AIBehaviour.ScoutAttack = {
 	
 	---------------------------------------------
 	SC_CHOOSE_ATTACK_ACTION = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		-- first send him OnSeenByEnemy signal
 		local target = AI.GetAttentionTargetEntity(entity.id);
@@ -250,6 +265,11 @@ AIBehaviour.ScoutAttack = {
 
 	---------------------------------------------
 	SC_MELEE = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		local attackPos = g_Vectors.temp_v2;
 		local diff = g_Vectors.temp_v3;
 		local entPos = entity:GetPos();
@@ -288,6 +308,11 @@ AIBehaviour.ScoutAttack = {
 
 	---------------------------------------------
 	SC_MELEE_DONE = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity.actor:SetMovementTarget({x=0,y=0,z=0},{x=0,y=0,z=0},{x=0,y=0,z=0},1);
 		self:Relocate( entity );
 
@@ -302,12 +327,22 @@ AIBehaviour.ScoutAttack = {
 
 	---------------------------------------------
 	SC_FIRE = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:BlendAnimation(50);
 		entity:DoShootWeapon();
 	end,
 	
 	---------------------------------------------
 	SC_FIRE_DONE = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		self:Relocate( entity );
 
 		entity:BlendAnimation(BasicAlien.BLENDING_RATIO);
@@ -322,11 +357,21 @@ AIBehaviour.ScoutAttack = {
 
 	---------------------------------------------
 	SC_CHASE = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:DoShootWeaponLong();
 	end,
 	
 	---------------------------------------------
 	SC_CHASE_DONE = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		self:Relocate( entity );
 		-- Remove references.
 		self.AI_aggressorCount = self.AI_aggressorCount - 1;
@@ -337,6 +382,11 @@ AIBehaviour.ScoutAttack = {
 
 	---------------------------------------------		
 	OnPlayerSeen = function( self, entity, fDistance )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- first send him OnSeenByEnemy signal
 --		local target = AI.GetAttentionTargetEntity(entity.id);
 --		if(target) then 
@@ -359,6 +409,11 @@ AIBehaviour.ScoutAttack = {
 
 	---------------------------------------------
 	OnEnemyDamage = function ( self, entity, sender, data)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- called when the enemy is damaged
 		entity.AI.attackDamageAcc = entity.AI.attackDamageAcc + data.fValue;
 		

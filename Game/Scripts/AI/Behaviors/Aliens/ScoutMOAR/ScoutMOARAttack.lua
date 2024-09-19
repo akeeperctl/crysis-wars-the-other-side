@@ -27,6 +27,11 @@ AIBehaviour.ScoutMOARAttack = {
 		entity.AI.previousBehaviour = entity.AI.currentBehaviour
 		entity.AI.currentBehaviour = self.Name
 		--~TheOtherSide	
+		
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
 
 		AI.CreateGoalPipe("scoutMOARAttackDefault");
 		AI.PushGoal("scoutMOARAttackDefault","timeout",1,1.0);

@@ -24,6 +24,11 @@ AIBehaviour.ScoutEscort = {
 		entity.AI.previousBehaviour = entity.AI.currentBehaviour
 		entity.AI.currentBehaviour = self.Name
 		--~TheOtherSide	
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		entity.AI.PathStep = 0;
 		entity.AI.PickedUp = false;
@@ -41,6 +46,11 @@ AIBehaviour.ScoutEscort = {
 	
 	--------------------------------------------
 	SC_NEXT_POINT = function( self,entity, sender )	
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		entity.actor:SetMovementTarget({x=0,y=0,z=0},{x=0,y=0,z=0},{x=0,y=0,z=0},1);
 
@@ -109,6 +119,11 @@ AIBehaviour.ScoutEscort = {
 
 	--------------------------------------------
 	SC_PICKUP = function( self,entity, sender )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- Grap the vehicle.
 		local vehicleName = entity:GetName().."_VEHICLE";
 		entity:GrabEntity(vehicleName)
@@ -139,6 +154,11 @@ AIBehaviour.ScoutEscort = {
 
 	--------------------------------------------
 	SC_ESCORT_DONE = function( self,entity, sender )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:BlendAnimation(BasicAlien.BLENDING_RATIO);
 		entity:DropGrab();
 		entity:DoDropTruck();
@@ -147,6 +167,11 @@ AIBehaviour.ScoutEscort = {
 
 	------------------------------------------------------------------------	
 	OnEnemyDamage = function ( self, entity, data)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:BlendAnimation(BasicAlien.BLENDING_RATIO);
 		entity:DropGrab();
 		entity:DoDropTruck();
@@ -155,6 +180,11 @@ AIBehaviour.ScoutEscort = {
 
 	---------------------------------------------		
 	OnPlayerSeen = function( self, entity, fDistance )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:BlendAnimation(BasicAlien.BLENDING_RATIO);
 		entity:DropGrab();
 		entity:DoPlayerSeen();
@@ -168,6 +198,11 @@ AIBehaviour.ScoutEscort = {
 
 	---------------------------------------------
 	OnThreateningSoundHeard = function( self, entity, fDistance )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		self:OnPlayerSeen(entity, fDistance);
 	end,
 }

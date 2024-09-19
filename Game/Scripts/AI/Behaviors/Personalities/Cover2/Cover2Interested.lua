@@ -43,6 +43,11 @@ AIBehaviour.Cover2Interested = {
 
 	---------------------------------------------
 	SEARCH_TIMER = function(entity,timerid)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity.AI.searchTimer = nil;
 		entity.AI.allowLeave = true;
 		if (AI.GetTargetType(entity.id) == AITARGET_NONE) then
@@ -53,9 +58,14 @@ AIBehaviour.Cover2Interested = {
 	
 	---------------------------------------------
 	INVESTIGATE_DONE = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		local target = AI.GetTargetType(entity.id);
 		if(target == AITARGET_ENEMY) then
-			AI.Signal(SIGNALFILTER_SENDER, 1, "TO_ATTACK",entity.id);
+			AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_ATTACK",entity.id);
 		else
 			AI.SetRefPointPosition(entity.id,entity.AI.idlePos);
 			entity:SelectPipe(0,"cv_get_back_to_idlepos");
@@ -82,6 +92,11 @@ AIBehaviour.Cover2Interested = {
 
 	---------------------------------------------
 	OnPlayerSeen = function( self, entity, fDistance, data )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:MakeAlerted();
 		entity:TriggerEvent(AIEVENT_DROPBEACON);
 
@@ -94,9 +109,11 @@ AIBehaviour.Cover2Interested = {
 
 	---------------------------------------------
 	OnInterestingSoundHeard = function( self, entity )
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_AUDIO) == 0.0 ) then
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
 
 		entity:Readibility("idle_interest_hear",1,1,0.6,1);
 		AI_Utils:CheckInterested(entity);
@@ -131,8 +148,13 @@ AIBehaviour.Cover2Interested = {
 	
 	--------------------------------------------------
 	ENEMYSEEN_FIRST_CONTACT = function (self, entity, sender)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		if(AI.GetTargetType(entity.id) ~= AITARGET_ENEMY) then
-			AI.Signal(SIGNALFILTER_SENDER,1,"TO_SEEK",entity.id);
+			AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_SEEK",entity.id);
 		end
 	end,
 	

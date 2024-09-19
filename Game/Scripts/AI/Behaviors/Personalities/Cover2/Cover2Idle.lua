@@ -29,6 +29,11 @@ AIBehaviour.Cover2Idle = {
 			AI.ChangeParameter( entity.id, AIPARAM_COMBATCLASS, AICombatClasses.Infantry );
 		end
 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		if ( entity.AI and entity.AI.needsAlerted ) then
 			AI.Signal(SIGNALFILTER_SENDER, 1, "INCOMING_FIRE",entity.id);
 			entity.AI.needsAlerted = nil;
@@ -45,9 +50,11 @@ AIBehaviour.Cover2Idle = {
 
 	---------------------------------------------
 	OnPlayerSeen = function( self, entity, fDistance, data )
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL) == 0.0 ) then
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
 
 		entity:MakeAlerted();
 		entity:TriggerEvent(AIEVENT_DROPBEACON);
@@ -63,33 +70,37 @@ AIBehaviour.Cover2Idle = {
 
 	---------------------------------------------
 	OnTankSeen = function( self, entity, fDistance )
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL) == 0.0 ) then
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
 
 		if(	AI_Utils:HasRPGAttackSlot(entity) and entity.inventory:GetItemByClass("LAW") 
 				and AIBehaviour.Cover2RPGAttack.FindRPGSpot(self, entity) ~= nil) then
 			entity:Readibility("suppressing_fire",1,1,0.1,0.4);
-			AI.Signal(SIGNALFILTER_SENDER, 1, "TO_RPG_ATTACK",entity.id);
+			AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_RPG_ATTACK",entity.id);
 		else
 			entity:Readibility("explosion_imminent",1,1,0.1,0.4);
-			AI.Signal(SIGNALFILTER_SENDER, 1, "TO_AVOID_TANK",entity.id);
+			AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_AVOID_TANK",entity.id);
 		end
 	end,
 	
 	---------------------------------------------
 	OnHeliSeen = function( self, entity, fDistance )
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL) == 0.0 ) then
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
 
 		entity:Readibility("explosion_imminent",1,1,0.1,0.4);
-		AI.Signal(SIGNALFILTER_SENDER, 1, "TO_AVOID_TANK",entity.id);
+		AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_AVOID_TANK",entity.id);
 	end,
 
 	---------------------------------------------
 	OnTargetDead = function( self, entity )
-		System.LogAlways("OnTargetDead"..System:GetEntity(entity.id):GetName())
+		-- System.LogAlways("OnTargetDead"..System:GetEntity(entity.id):GetName())
 		-- called when the attention target died
 		entity:Readibility("target_down",1,1,0.3,0.5);
 	end,
@@ -104,11 +115,13 @@ AIBehaviour.Cover2Idle = {
 
 	---------------------------------------------
 	SEEK_KILLER = function(self, entity)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL) == 0.0 ) then
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
 
-		AI.Signal(SIGNALFILTER_SENDER,1,"TO_THREATENED",entity.id);
+		AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_THREATENED",entity.id);
 	end,
 
 
@@ -127,31 +140,35 @@ AIBehaviour.Cover2Idle = {
 	
 	---------------------------------------------
 	OnSomethingSeen = function( self, entity )
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL) == 0.0 ) then
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
 
 		-- called when the enemy sees a foe which is not a living player
 		entity:Readibility("idle_interest_see",1,1,0.6,1);
 		if(AI_Utils:CheckInterested(entity) == true) then
-			AI.Signal(SIGNALFILTER_SENDER, 1, "TO_INTERESTED",entity.id);
+			AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_INTERESTED",entity.id);
 		end
 		AI.ModifySmartObjectStates(entity.id,"UseMountedWeaponInterested");
 	end,
 	
 	---------------------------------------------
 	OnThreateningSeen = function( self, entity )
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL) == 0.0 ) then
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
 		-- called when the enemy hears a scary sound
 		entity:Readibility("idle_interest_see",1,1,0.6,1);
 		entity:TriggerEvent(AIEVENT_DROPBEACON);
 		if(AI_Utils:IsTargetOutsideStandbyRange(entity) == 1) then
 			entity.AI.hurryInStandby = 0;
-			AI.Signal(SIGNALFILTER_SENDER, 1, "TO_THREATENED_STANDBY",entity.id);
+			AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_THREATENED_STANDBY",entity.id);
 		else
-			AI.Signal(SIGNALFILTER_SENDER, 1, "TO_THREATENED",entity.id);
+			AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_THREATENED",entity.id);
 		end
 
 		AI.ModifySmartObjectStates(entity.id,"UseMountedWeaponInterested");
@@ -159,13 +176,15 @@ AIBehaviour.Cover2Idle = {
 	
 	---------------------------------------------
 	OnInterestingSoundHeard = function( self, entity )
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_AUDIO) == 0.0 ) then
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
 		-- check if we should check the sound or not.
 		entity:Readibility("idle_interest_hear",1,1,0.6,1);
 		if(AI_Utils:CheckInterested(entity) == true) then
-			AI.Signal(SIGNALFILTER_SENDER, 1, "TO_INTERESTED",entity.id);
+			AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_INTERESTED",entity.id);
 		end
 
 		AI.ModifySmartObjectStates(entity.id,"UseMountedWeaponInterested");
@@ -173,17 +192,19 @@ AIBehaviour.Cover2Idle = {
 
 	---------------------------------------------
 	OnThreateningSoundHeard = function( self, entity, fDistance )
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_AUDIO) == 0.0 ) then
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
 		-- called when the enemy hears a scary sound
 		entity:Readibility("idle_alert_threat_hear",1,1,0.6,1);
 		entity:TriggerEvent(AIEVENT_DROPBEACON);
 		if(AI_Utils:IsTargetOutsideStandbyRange(entity) == 1) then
 			entity.AI.hurryInStandby = 0;
-			AI.Signal(SIGNALFILTER_SENDER, 1, "TO_THREATENED_STANDBY",entity.id);
+			AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_THREATENED_STANDBY",entity.id);
 		else
-			AI.Signal(SIGNALFILTER_SENDER, 1, "TO_THREATENED",entity.id);
+			AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_THREATENED",entity.id);
 		end
 
 		AI.ModifySmartObjectStates(entity.id,"UseMountedWeaponInterested");
@@ -192,7 +213,7 @@ AIBehaviour.Cover2Idle = {
 	--------------------------------------------------
 	INVESTIGATE_BEACON = function (self, entity, sender)
 		entity:Readibility("ok_battle_state",1,1,0.6,1);
-		AI.Signal(SIGNALFILTER_SENDER, 1, "TO_THREATENED",entity.id);
+		AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_THREATENED",entity.id);
 	end,
 		
 	--------------------------------------------------
@@ -202,9 +223,11 @@ AIBehaviour.Cover2Idle = {
 
 	---------------------------------------------
 	OnDamage = function ( self, entity, sender)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL) == 0.0 ) then
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
 		-- called when the enemy is damaged
 		entity:Readibility("taking_fire",1,1,0.3,0.5);
 		entity:GettingAlerted();
@@ -212,9 +235,11 @@ AIBehaviour.Cover2Idle = {
 
 	---------------------------------------------
 	OnEnemyDamage = function (self, entity, sender, data)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL) == 0.0 ) then
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
 
 		-- called when the enemy is damaged
 		entity:GettingAlerted();
@@ -236,7 +261,7 @@ AIBehaviour.Cover2Idle = {
 		-- avoid this point for some time.
 		AI.NotifyGroupTacticState(entity.id, 0, GN_AVOID_CURRENT_POS, 4);
 
-		AI.Signal(SIGNALFILTER_SENDER, 1, "TO_HIDE",entity.id);
+		AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_HIDE",entity.id);
 	end,
 
 	---------------------------------------------
@@ -250,9 +275,11 @@ AIBehaviour.Cover2Idle = {
 
 	---------------------------------------------
 	OnBulletRain = function(self, entity, sender, data)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL) == 0.0 ) then
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
 		-- only react to hostile bullets.
 
 --		AI.RecComment(entity.id, "hostile="..tostring(AI.Hostile(entity.id, sender.id)));
@@ -275,7 +302,7 @@ AIBehaviour.Cover2Idle = {
 			AI_Utils:IsTargetOutsideStandbyRange(entity);
 
 			AI.Signal(SIGNALFILTER_GROUPONLY_EXCEPT,1,"INCOMING_FIRE",entity.id);
-			AI.Signal(SIGNALFILTER_SENDER, 1, "TO_HIDE",entity.id);
+			AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_HIDE",entity.id);
 		else
 			if(sender==g_localActor) then 
 				entity:Readibility("friendly_fire",1,0.6,1);
@@ -287,9 +314,11 @@ AIBehaviour.Cover2Idle = {
 
 	--------------------------------------------------
 	OnCollision = function(self,entity,sender,data)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL) == 0.0 ) then
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
 
 		if(AI.GetTargetType(entity.id) ~= AITARGET_ENEMY) then 
 			if(AI.Hostile(entity.id,data.id)) then 
@@ -307,18 +336,20 @@ AIBehaviour.Cover2Idle = {
 	---------------------------------------------
 --	OnGroupMemberDied = function( self, entity, sender)
 --		entity:GettingAlerted();
---		AI.Signal(SIGNALFILTER_SENDER,1,"TO_HIDE",entity.id);
+--		AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_HIDE",entity.id);
 --	end,
 	
 	--------------------------------------------------
 	OnGroupMemberDied = function(self, entity, sender, data)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL) == 0.0 ) then
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
 
 		--AI.LogEvent(entity:GetName().." OnGroupMemberDied!");
 		entity:GettingAlerted();
-		AI.Signal(SIGNALFILTER_SENDER,1,"TO_HIDE",entity.id);
+		AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_HIDE",entity.id);
 	end,
 
 	--------------------------------------------------
@@ -337,9 +368,9 @@ AIBehaviour.Cover2Idle = {
 			entity:Readibility("idle_interest_see",1,1,0.6,1);
 			if(AI_Utils:IsTargetOutsideStandbyRange(entity) == 1) then
 				entity.AI.hurryInStandby = 1;
-				AI.Signal(SIGNALFILTER_SENDER, 1, "TO_THREATENED_STANDBY",entity.id);
+				AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_THREATENED_STANDBY",entity.id);
 			else
-				AI.Signal(SIGNALFILTER_SENDER, 1, "TO_THREATENED",entity.id);
+				AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_THREATENED",entity.id);
 			end
 		end
 	end,
@@ -348,7 +379,7 @@ AIBehaviour.Cover2Idle = {
 	ENEMYSEEN_DURING_COMBAT = function (self, entity, sender)
 		entity:GettingAlerted();
 		if(AI.GetTargetType(entity.id) ~= AITARGET_ENEMY) then
-			AI.Signal(SIGNALFILTER_SENDER,1,"TO_SEEK",entity.id);
+			AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_SEEK",entity.id);
 		end
 	end,
 
@@ -358,14 +389,14 @@ AIBehaviour.Cover2Idle = {
 
 		if(DistanceVectors(sender:GetPos(), entity:GetPos()) < 15.0) then
 			-- near to the guy who is being shot, hide!
-			AI.Signal(SIGNALFILTER_SENDER, 1, "TO_HIDE",entity.id);
+			AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_HIDE",entity.id);
 		else
 			-- further away, threatened!
 			if(AI_Utils:IsTargetOutsideStandbyRange(entity) == 1) then
 				entity.AI.hurryInStandby = 1;
-				AI.Signal(SIGNALFILTER_SENDER, 1, "TO_THREATENED_STANDBY",entity.id);
+				AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_THREATENED_STANDBY",entity.id);
 			else
-				AI.Signal(SIGNALFILTER_SENDER, 1, "TO_THREATENED",entity.id);
+				AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_THREATENED",entity.id);
 			end
 		end
 	end,
@@ -393,7 +424,7 @@ AIBehaviour.Cover2Idle = {
 	--------------------------------------------------
 	CHECK_CIVILIAN_THREATEN = function(self, entity, sender)
 		if(AI_Utils:CheckInterested(entity) == true) then
-			AI.Signal(SIGNALFILTER_SENDER, 1, "TO_INTERESTED",entity.id);
+			AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_INTERESTED",entity.id);
 		end
 	end,
 
@@ -597,7 +628,7 @@ AIBehaviour.Cover2Idle = {
 --		AI.EndGoalPipe();
 --		entity:SelectPipe(0,"sn_reinforce_group_wait_PROTO");
 --		AI.NotifyGroupTacticState(entity.id, 0, GN_NOTIFY_SEARCHING);
---		AI.Signal(SIGNALFILTER_SENDER,1,"TO_SEARCH",entity.id);
+--		AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_SEARCH",entity.id);
 		AI_Utils:CommonContinueAfterReaction(entity);
 	end,
 

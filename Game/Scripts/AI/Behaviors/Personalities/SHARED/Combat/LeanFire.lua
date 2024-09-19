@@ -18,7 +18,7 @@ AIBehaviour.LeanFire = {
 	---------------------------------------------
 	OnPlayerSeen = function( self, entity, fDistance )
 		if (fDistance<5) then 
-			AI.Signal(0,1,"TO_PREVIOUS",0);
+			AI.Signal(0,1,"GO_TO_PREVIOUS",0);
 			entity:TriggerEvent(AIEVENT_CLEAR);
 		end
 		entity.LeanSuccessfull = 1;
@@ -76,7 +76,7 @@ AIBehaviour.LeanFire = {
 	end,
 
 	---------------------------------------------
-	TO_PREVIOUS = function (self, entity, sender)
+	GO_TO_PREVIOUS = function (self, entity, sender)
 		entity:TriggerEvent(AIEVENT_CLEAR);
 	end,
 

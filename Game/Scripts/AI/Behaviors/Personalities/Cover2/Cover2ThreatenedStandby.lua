@@ -18,6 +18,11 @@ AIBehaviour.Cover2ThreatenedStandby = {
 
 		AI.NotifyGroupTacticState(entity.id, 0, GN_NOTIFY_UNAVAIL);
 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- store original position.
 		if(not entity.AI.idlePos) then
 			entity.AI.idlePos = {x=0, y=0, z=0};
@@ -50,6 +55,11 @@ AIBehaviour.Cover2ThreatenedStandby = {
 	---------------------------------------------
 	ChooseStandbyPos = function(self, entity)
 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		local target = AI.GetTargetType(entity.id);
 
 --		if(not entity.AI.StandbyValid) then
@@ -142,6 +152,11 @@ AIBehaviour.Cover2ThreatenedStandby = {
 
 	---------------------------------------------
 	INVESTIGATE_CONTINUE = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:SelectPipe(0,"cv_investigate_threat_closer");
 	end,
 
@@ -149,26 +164,46 @@ AIBehaviour.Cover2ThreatenedStandby = {
 	OnNoTarget = function (self, entity)
 --		AI.SetRefPointPosition(entity.id,entity.AI.idlePos);
 --		entity:SelectPipe(0,"cv_get_back_to_idlepos");
---		AI.Signal(SIGNALFILTER_SENDER, 1, "TO_IDLE",entity.id);
+--		AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_IDLE",entity.id);
 	end,
 
 	---------------------------------------------
 	INVESTIGATE_DONE = function (self, entity)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		self:ChooseStandbyPos(entity);
 	end,
 
 	---------------------------------------------
 	APPROACH_DONE = function (self, entity)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		self:ChooseStandbyPos(entity);
 	end,
 
 	---------------------------------------------
 	SEEK_KILLER = function (self, entity)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		AI_Utils:CheckThreatened(entity, 15.0);
 	end,
 
 	---------------------------------------------
 	OnPlayerSeen = function( self, entity, fDistance, data )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- called when the enemy sees a living player
 		entity:TriggerEvent(AIEVENT_DROPBEACON);
 
@@ -204,20 +239,27 @@ AIBehaviour.Cover2ThreatenedStandby = {
 	
 	---------------------------------------------
 	OnThreateningSoundHeard = function( self, entity )
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_AUDIO) == 0.0 ) then
-			return;
-		end
 
 --		entity:TriggerEvent(AIEVENT_CLEAR);
 		-- called when the enemy hears a scary sound
 		entity:Readibility("alert_interest_hear",1,1,0.3,0.6);
 		entity:TriggerEvent(AIEVENT_DROPBEACON);
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		self:ChooseStandbyPos(entity);
 	end,
 
 	---------------------------------------------
 	OnThreateningSeen = function( self, entity )
 		entity:Readibility("alert_interest_see",1,1,0.3,0.6);
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:TriggerEvent(AIEVENT_DROPBEACON);
 		self:ChooseStandbyPos(entity);
 	end,
@@ -225,6 +267,11 @@ AIBehaviour.Cover2ThreatenedStandby = {
 	---------------------------------------------
 	OnSomethingSeen = function( self, entity )
 		entity:Readibility("alert_interest_see",1,1,0.3,0.6);
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		self:ChooseStandbyPos(entity);
 	end,
 
@@ -238,15 +285,30 @@ AIBehaviour.Cover2ThreatenedStandby = {
 
 	---------------------------------------------
 	ENEMYSEEN_FIRST_CONTACT = function (self, entity, sender)
-		AI.Signal(SIGNALFILTER_SENDER,1,"TO_SEEK",entity.id);
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
+		AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_SEEK",entity.id);
 	end,
 	---------------------------------------------
 	ENEMYSEEN_DURING_COMBAT = function (self, entity, sender)
-		AI.Signal(SIGNALFILTER_SENDER,1,"TO_SEEK",entity.id);
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
+		AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_SEEK",entity.id);
 	end,
 
 	--------------------------------------------------
 	INCOMING_FIRE = function (self, entity, sender)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- do nothing on this signal
 		self:ChooseStandbyPos(entity);
 	end,

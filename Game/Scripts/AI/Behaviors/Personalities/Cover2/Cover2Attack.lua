@@ -15,6 +15,11 @@ AIBehaviour.Cover2Attack = {
 		entity.AI.currentBehaviour = self.Name
 		--~TheOtherSide	
 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:MakeAlerted();
 		entity:TriggerEvent(AIEVENT_DROPBEACON);
 --		AI.Signal(SIGNALFILTER_GROUPONLY_EXCEPT, 1, "HEADS_UP_GUYS",entity.id);
@@ -55,6 +60,11 @@ AIBehaviour.Cover2Attack = {
 	end,
 	---------------------------------------------
 	COVER_NORMALATTACK = function (self, entity, sender)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		local target = AI.GetTargetType(entity.id);
 		local state = GS_ADVANCE;
 
@@ -65,9 +75,9 @@ AIBehaviour.Cover2Attack = {
 		local throwingGrenade = 0;
 		
 		if (state == GS_SEEK) then
-			AI.Signal(SIGNALFILTER_SENDER,1,"TO_SEEK",entity.id);
+			AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_SEEK",entity.id);
 		elseif (state == GS_SEARCH or state == GS_ALERTED or state == GS_IDLE) then
-			AI.Signal(SIGNALFILTER_SENDER,1,"TO_SEARCH",entity.id);
+			AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_SEARCH",entity.id);
 		else
 		
 			AI.NotifyGroupTacticState(entity.id, 0, GN_NOTIFY_ADVANCING);
@@ -110,7 +120,7 @@ AIBehaviour.Cover2Attack = {
 	end,
 	---------------------------------------------
 	OnNoTargetVisible = function (self, entity)
---		AI.Signal(SIGNALFILTER_SENDER,1,"TO_SEEK",entity.id);
+--		AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_SEEK",entity.id);
 	end,
 	---------------------------------------------
 	COMBAT_READABILITY = function (self, entity, sender)
@@ -129,13 +139,18 @@ AIBehaviour.Cover2Attack = {
 	end,
 	---------------------------------------------
 	OnNoTarget = function( self, entity )
---		AI.Signal(SIGNALFILTER_SENDER,1,"TO_SEARCH",entity.id);
+--		AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_SEARCH",entity.id);
 	end,
 	---------------------------------------------
 	OnPlayerSeen = function( self, entity, fDistance, data )
 		entity:Readibility("during_combat",1,1,0.3,6);
 		entity:TriggerEvent(AIEVENT_DROPBEACON);
 		
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		AI.Signal(SIGNALFILTER_GROUPONLY_EXCEPT, 1, "ENEMYSEEN_DURING_COMBAT",entity.id);
 		
 		if (data.iValue == AITSR_SEE_STUNT_ACTION) then
@@ -149,6 +164,11 @@ AIBehaviour.Cover2Attack = {
 	---------------------------------------------
 	OnEnemyMemory = function( self, entity )
 		entity:TriggerEvent(AIEVENT_DROPBEACON);
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 	end,
 	---------------------------------------------
 	OnInterestingSoundHeard = function( self, entity )
@@ -173,12 +193,22 @@ AIBehaviour.Cover2Attack = {
 	OnGroupMemberDied = function(self, entity)
 		entity.AI.lastBulletReactionTime = _time;
 		AI.NotifyGroupTacticState(entity.id, 0, GN_NOTIFY_HIDING);
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:SelectPipe(0,"do_nothing");
 		entity:SelectPipe(0,"cv_bullet_reaction");
 	end,
 	--------------------------------------------------
 	OnGroupMemberDiedNearest = function (self, entity, sender, data)
 		entity:Readibility("ai_down",1,1,0.3,0.6);
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		AI.Signal(SIGNALFILTER_GROUPONLY_EXCEPT, 1, "OnGroupMemberDied",entity.id, data);
 
 		entity.AI.lastBulletReactionTime = _time;
@@ -201,6 +231,11 @@ AIBehaviour.Cover2Attack = {
 				entity.AI.lastBulletReactionTime = _time;
 				entity:Readibility("bulletrain",1,2, 0,0.2);
 				AI.NotifyGroupTacticState(entity.id, 0, GN_NOTIFY_HIDING);
+				--TheOtherSide
+				if (entity.AI.ignoreSignals == true) then
+					return;
+				end
+				--~TheOtherSide
 				entity:SelectPipe(0,"do_nothing");
 				entity:SelectPipe(0,"cv_bullet_reaction_fast");
 			end
@@ -222,6 +257,11 @@ AIBehaviour.Cover2Attack = {
 				entity:Readibility("taking_fire",1,2);
 				entity.AI.lastBulletReactionTime = _time;
 				AI.NotifyGroupTacticState(entity.id, 0, GN_NOTIFY_HIDING);
+				--TheOtherSide
+				if (entity.AI.ignoreSignals == true) then
+					return;
+				end
+				--~TheOtherSide
 				entity:SelectPipe(0,"do_nothing");
 				entity:SelectPipe(0,"cv_bullet_reaction_fast");
 			end
@@ -267,7 +307,13 @@ AIBehaviour.Cover2Attack = {
 	OnOutOfAmmo = function (self,entity, sender)
 		entity:Readibility("reload",1,4,0.1,0.4);
 		local targetDist = AI.GetAttentionTargetDistance(entity.id);
-		if (targetDist) then
+		if (targetDist) then	
+			--TheOtherSide
+			if (entity.AI.ignoreSignals == true) then
+				return;
+			end
+			--~TheOtherSide
+			
 			if(targetDist < 20 and entity:CheckCurWeapon(1) == 0 and entity:HasSecondaryWeapon() == 1) then
 				entity:SelectSecondaryWeapon();
 				return;

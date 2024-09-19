@@ -46,6 +46,11 @@ AIBehaviour.SuitHurricaneAttack = {
 		AI.ChangeParameter(entity.id, AIPARAM_LOOKCOMBAT_TURNSPEED, 30);
 		AI.ChangeParameter(entity.id, AIPARAM_MELEE_DISTANCE, 4.0);
 		
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		if (dt > 6.0 and AI.GetTargetType(entity.id) ~= AITARGET_ENEMY) then
 			entity:SelectPipe(0,"su_attack_move");
 			entity.AI.standing = false;
@@ -63,6 +68,11 @@ AIBehaviour.SuitHurricaneAttack = {
 		entity:Readibility("during_combat",1,1,0.3,6);
 		entity:TriggerEvent(AIEVENT_DROPBEACON);
 		
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		if (entity.AI.standing == false) then
 			entity:SelectPipe(0,"su_attack_stop_and_shoot");
 			entity.AI.standing = true;
@@ -74,11 +84,21 @@ AIBehaviour.SuitHurricaneAttack = {
 	---------------------------------------------
 	OnEnemyMemory = function( self, entity )
 		entity:TriggerEvent(AIEVENT_DROPBEACON);
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity.AI.lastTargetSeenTime = _time;
 	end,
 
 	--------------------------------------------------
 	OnCloseContact = function ( self, entity, sender,data)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- Do melee at close range.
 		if(AI.CanMelee(entity.id)) then
 			entity:NanoSuitMode( BasicAI.SuitMode.SUIT_POWER );
@@ -93,11 +113,21 @@ AIBehaviour.SuitHurricaneAttack = {
 	
 	---------------------------------------------
 	OnNoTargetAwareness = function (self, entity)
-		AI.Signal(SIGNALFILTER_SENDER,1,"TO_THREATENED",entity.id);
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
+		AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_THREATENED",entity.id);
 	end,
 
 	---------------------------------------------
 	OnEnemyDamage = function(self, entity, sender)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		local	dt = _time - entity.AI.lastBulletReactionTime;
 		if(dt > 4.0) then
 --			entity:Readibility("taking_fire",1);

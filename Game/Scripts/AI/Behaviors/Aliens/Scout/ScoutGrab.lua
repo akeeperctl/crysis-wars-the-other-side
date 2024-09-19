@@ -26,6 +26,11 @@ AIBehaviour.ScoutGrab = {
 		entity.AI.currentBehaviour = self.Name
 		--~TheOtherSide	
 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- called when the behaviour is selected
 
 		-- for grab attack
@@ -88,6 +93,11 @@ AIBehaviour.ScoutGrab = {
 	
 	--------------------------------------------------------------------------
 	OnSoreDamage = function ( self, entity, sender, data )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		self:OnEnemyDamage(entity);
 	end,
 	---------------------------------------------
@@ -104,6 +114,11 @@ AIBehaviour.ScoutGrab = {
 
 	--------------------------------------------------------------------------
 	SC_SCOUT_START_CAPTURE = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		local grabPattern = AIBehaviour.SCOUTDEFAULT:scoutGetGrabTarget( entity );
 
@@ -205,6 +220,11 @@ AIBehaviour.ScoutGrab = {
 	--------------------------------------------------------------------------
 	--------------------------------------------------------------------------
 	SC_SCOUT_CAPTURE = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		local attackPos = {};
 		local diff = {};
@@ -261,6 +281,11 @@ AIBehaviour.ScoutGrab = {
 
 	--------------------------------------------------------------------------
 	SC_SCOUT_DROP = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 	
 		AI.SetRefPointPosition( entity.id , entity.AI.vGrabPos  );
 		AIBehaviour.SCOUTDEFAULT:scoutAdjustRefPoint( entity, 10.0 );
@@ -281,6 +306,11 @@ AIBehaviour.ScoutGrab = {
 
 	--------------------------------------------------------------------------
 	SC_SCOUT_DROP_END = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 	
 		--entity:DropGrab();
 		local throwVec ={};
@@ -300,6 +330,11 @@ AIBehaviour.ScoutGrab = {
 	--------------------------------------------------------------------------
 	--------------------------------------------------------------------------
 	SC_SCOUT_CAPTURE_PHYSICS = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		local attackPos = {};
 		local diff = {};
@@ -363,6 +398,11 @@ AIBehaviour.ScoutGrab = {
 
 	--------------------------------------------------------------------------
 	SC_SCOUT_DROP_PHYSICS_END = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		
 		local target = AI.GetAttentionTargetEntity( entity.id );
 

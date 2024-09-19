@@ -15,6 +15,11 @@ AIBehaviour.Cover2RushAttack = {
 		entity.AI.currentBehaviour = self.Name
 		--~TheOtherSide	
 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		entity:MakeAlerted();
 		
@@ -41,7 +46,12 @@ AIBehaviour.Cover2RushAttack = {
 	end,
 	---------------------------------------------
 	COVER_NORMALATTACK = function (self, entity, sender)
-		AI.Signal(SIGNALFILTER_SENDER,1,"TO_ATTACK",entity.id);
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
+		AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_ATTACK",entity.id);
 	end,
 	---------------------------------------------
 	OnTargetApproaching	= function (self, entity)
@@ -89,6 +99,11 @@ AIBehaviour.Cover2RushAttack = {
 	---------------------------------------------
 	OnEnemyDamage = function (self, entity, sender, data)
 		entity:Readibility("taking_fire",1);
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:SelectPipe(0,"do_nothing");
 		entity:SelectPipe(0,"sn_bullet_reaction");
 		-- avoid this poit for some time.
@@ -111,17 +126,22 @@ AIBehaviour.Cover2RushAttack = {
 	--------------------------------------------------
 	OnNoPathFound = function( self, entity, sender,data )
 		-- failed the rush, back to normal attack.
-		AI.Signal(SIGNALFILTER_SENDER,1,"TO_ATTACK",entity.id);
+		AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_ATTACK",entity.id);
 	end,	
 	--------------------------------------------------
 	OnOutOfAmmo = function (self,entity, sender)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 			-- Try to choose secondary weapon first.
 		if(entity:CheckCurWeapon(1) == 0) then
 			if(entity:SelectSecondaryWeapon()) then
 				return;
 			end
 		end
-		AI.Signal(SIGNALFILTER_SENDER,1,"TO_RELOAD",entity.id);
+		AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_RELOAD",entity.id);
 	end,
 
 	--------------------------------------------------

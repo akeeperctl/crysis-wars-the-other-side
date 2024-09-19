@@ -83,6 +83,11 @@ AIBehaviour.SniperIdle = {
 
 --		entity:Readibility("IDLE_TO_THREATENED");
 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:SelectPipe(0,"look_around_quick");
 --		entity:SelectPipe(0,"cover_pindown");
 --		entity:SelectPipe(0,"cover_look_closer");
@@ -100,6 +105,11 @@ AIBehaviour.SniperIdle = {
 
 		-- tell everybody else
 		entity:TriggerEvent(AIEVENT_DROPBEACON);
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		if (AI.GetGroupCount(entity.id) > 1) then
 			-- only send this signal if you are not alone
 --			if (entity:NotifyGroup()==nil) then
@@ -120,11 +130,21 @@ AIBehaviour.SniperIdle = {
 	---------------------------------------------
 	-- sniper gets pistol and switches to camper character
 	SniperCloseContact = function( self, entity)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		AI.Signal(SIGNALFILTER_SENDER,0,"Switch2Camper",entity.id);	
 	end,
 	---------------------------------------------
 	-- snaper gets pistol and switches to camper character
 	Switch2Camper = function( self, entity, fDistance )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		AI.SetCharacter( entity.id, "Camper" );	
 --		AI.Signal(SIGNALFILTER_SENDER,0,"OnPlayerSeen",entity.id);		
 	end,	
@@ -149,12 +169,21 @@ AI.LogEvent("sniper:ChecktargetProximity >>>>> "..fDistance);
 
 	---------------------------------------------
 	OnTargetApproaching = function( self, entity, fDistance )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		AIBehaviour.SniperIdle:ChecktargetProximity(entity, AI.GetAttentionTargetDistance(entity.id));
 	end,
 	
 	---------------------------------------------
 	on_spot = function( self, entity, fDistance )
-	
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		local refPos = g_Vectors.temp;
 		-- if there is snipeSpot around
 		if(entity.AI.snipe_spot_dir) then
@@ -169,6 +198,12 @@ AI.LogEvent("sniper:ChecktargetProximity >>>>> "..fDistance);
 	
 	--------------------------------------------------
 	OnCollision = function(self,entity,sender,data)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
+		
 		if(AI.GetTargetType(entity.id) ~= AITARGET_ENEMY) then 
 			if(AI.Hostile(entity.id,data.id)) then 
 			--entity:ReadibilityContact();

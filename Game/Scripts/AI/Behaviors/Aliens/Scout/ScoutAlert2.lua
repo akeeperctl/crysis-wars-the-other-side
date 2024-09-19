@@ -25,6 +25,11 @@ AIBehaviour.ScoutAlert = {
 		entity.AI.currentBehaviour = self.Name
 		--~TheOtherSide	
 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		-- called when the behaviour is selected
 		-- the extra data is from the signal that caused the behavior transition
@@ -34,6 +39,11 @@ AIBehaviour.ScoutAlert = {
 
 	---------------------------------------------
 	Destructor = function ( self, entity, data )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		-- called when the behaviour is de-selected
 		-- the extra data is from the signal that is causing the behavior transition
@@ -58,6 +68,12 @@ AIBehaviour.ScoutAlert = {
 
 	---------------------------------------------
 	OnPlayerSeen = function( self, entity, fDistance )
+
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		-- called when the AI sees a living enemy
 
@@ -105,6 +121,12 @@ AIBehaviour.ScoutAlert = {
 	---------------------------------------------
 	OnEnemyDamage = function ( self, entity, sender, data )
 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
+
 		-- called when AI is damaged by an enemy AI
 		-- data.id = damaging enemy's entity id
 
@@ -142,6 +164,11 @@ AIBehaviour.ScoutAlert = {
 
 	--------------------------------------------------------------------------
 	SC_SCOUT_ALERT_START = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		if( AI.GetBeaconPosition( entity.id,g_Vectors.temp ) ) then
 

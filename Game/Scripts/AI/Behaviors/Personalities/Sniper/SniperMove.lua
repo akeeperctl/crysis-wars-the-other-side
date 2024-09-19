@@ -20,7 +20,13 @@ AIBehaviour.SniperMove = {
 
 	-- firstTime flag is on when doing geting first point from idle
 	FindSnipeSpot  = function (self, entity, firstTime)
-	
+			
+			--TheOtherSide
+			if (entity.AI.ignoreSignals == true) then
+				return;
+			end
+			--~TheOtherSide
+			
 			-- use prev point position, selected in idle
 --			if(entity.AI.snipe_spot_pos~=nil) then return 1 end
 	local anchorName = nil;
@@ -63,6 +69,11 @@ AIBehaviour.SniperMove = {
 		entity.AI.currentBehaviour = self.Name
 		--~TheOtherSide	
 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		if(self:FindSnipeSpot(entity) ~= nil) then
 --			entity:SelectPipe(0,"sniper_singlespot");
 ----			AI.Signal(SIGNALFILTER_SENDER,0,"on_spot",entity.id);	
@@ -128,6 +139,12 @@ AIBehaviour.SniperMove = {
 	sniper_move_start = function( self, entity )
 --		AI.SetRefPointPosition( entity.id, entity.AI.snipe_spot_pos );
 		
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
+
 		local refPos = g_Vectors.temp;
 		FastScaleVector(refPos, entity.AI.snipe_spot_dir, -6);
 		FastSumVectors(refPos, entity.AI.snipe_spot_pos, refPos);
@@ -139,12 +156,23 @@ AIBehaviour.SniperMove = {
 	
 	---------------------------------------------
 	on_spot_back = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		AI.SetRefPointPosition( entity.id, entity.AI.snipe_spot_pos );
 		entity:SelectPipe(0,"sniper_move");
 	end,
 	
 	---------------------------------------------
 	move_done = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
+		
 		local refPos = g_Vectors.temp;
 		FastScaleVector(refPos, entity.AI.snipe_spot_dir, 10);
 		FastSumVectors(refPos, entity.AI.snipe_spot_pos, refPos);

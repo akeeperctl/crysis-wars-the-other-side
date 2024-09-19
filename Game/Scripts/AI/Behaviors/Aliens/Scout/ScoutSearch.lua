@@ -25,6 +25,11 @@ AIBehaviour.ScoutSearch = {
 		--~TheOtherSide	
 
 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity.AI.sniffCounter = 0;
 		entity.AI.searchHoverCount = 0;
 		entity.AI.searchLocation = { x=0, y=0, z=0 };
@@ -45,6 +50,11 @@ AIBehaviour.ScoutSearch = {
 
 	---------------------------------------------
 	SC_FIND_INTERESTING_SPOT = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		entity.actor:SetMovementTarget( {x=0,y=0,z=0}, {x=0,y=0,z=0},{x=0,y=0,z=0},1 );
 
@@ -74,7 +84,7 @@ AIBehaviour.ScoutSearch = {
 					entity.AI.AnchorName = nil;
 					entity.AI.searchHoverCount = 0;
 					if( AI.GetTargetType(entity.id) == AITARGET_ENEMY ) then
-						AI.Signal(SIGNALFILTER_SENDER,0,"GO_ATTACK",entity.id);
+						AI.Signal(SIGNALFILTER_SENDER,0,"GO_TO_ATTACK",entity.id);
 					else
 						entity:DoInvestigate();
 						entity:SelectPipe(0,"sc_search_delay");
@@ -86,7 +96,7 @@ AIBehaviour.ScoutSearch = {
 				entity.AI.AnchorName = nil;
 				entity.AI.searchHoverCount = 0;
 				if( AI.GetAttentionTargetOf(entity.id) ) then
-					AI.Signal(SIGNALFILTER_SENDER,0,"GO_ATTACK",entity.id);
+					AI.Signal(SIGNALFILTER_SENDER,0,"GO_TO_ATTACK",entity.id);
 				else
 					entity:DoInvestigate();
 					entity:SelectPipe(0,"sc_search_delay");
@@ -145,6 +155,11 @@ AIBehaviour.ScoutSearch = {
 
 	---------------------------------------------
 	SC_LAND_ADJUST = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- Align for landing.
 		local tagPoint = System.GetEntityByName(entity.AI.AnchorName);
 		if( tagPoint ) then
@@ -170,6 +185,11 @@ AIBehaviour.ScoutSearch = {
 
 	---------------------------------------------
 	SC_LAND_LANDING = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- Align for landing.
 		local tagPoint = System.GetEntityByName(entity.AI.AnchorName);
 		if( tagPoint ) then
@@ -197,6 +217,11 @@ AIBehaviour.ScoutSearch = {
 
 	---------------------------------------------
 	SC_LAND_INSPECT = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- Trigger inspect animation.
 		entity:StartAnimation(0, "looking_tank", 3, 0.3, 1.0, true,true);
 		entity:BlendAnimation(50);
@@ -204,6 +229,11 @@ AIBehaviour.ScoutSearch = {
 
 	---------------------------------------------
 	SC_LAND_TAKE_OFF = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- Trigger takeoff animation.
 		entity:StartAnimation(0, "taking_off_01", 3, 0.3, 1.0, false,true);
 		entity:BlendAnimation(BasicAlien.BLENDING_RATIO);
@@ -212,6 +242,11 @@ AIBehaviour.ScoutSearch = {
 	
 	---------------------------------------------
 	SC_LAND_TAKE_OFF_FINAL = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- Take off the ground
 		local tagPoint = System.GetEntityByName(entity.AI.AnchorName);
 		if( tagPoint ) then
@@ -237,6 +272,11 @@ AIBehaviour.ScoutSearch = {
 	
 	---------------------------------------------
 	SC_SNIFF_PLAYER = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		entity.actor:SetMovementTarget({x=0,y=0,z=0},{x=0,y=0,z=0},{x=0,y=0,z=0},1);
 		entity:BlendAnimation(BasicAlien.BLENDING_RATIO);
@@ -280,6 +320,11 @@ AIBehaviour.ScoutSearch = {
 	
 	---------------------------------------------
 	SC_AT_SNIFF_POINT = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity.AI.sniffCounter = entity.AI.sniffCounter + 1;
 		if(entity.AI.sniffCounter>1) then
 			-- let's switch to attack after few sniffs
@@ -292,6 +337,11 @@ AIBehaviour.ScoutSearch = {
 
 	---------------------------------------------
 	OnPlayerSeen = function( self, entity, fDistance )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		-- first send him OnSeenByEnemy signal
 --		local target = AI.GetAttentionTargetEntity(entity.id);
@@ -322,11 +372,21 @@ AIBehaviour.ScoutSearch = {
 	end,
 	---------------------------------------------
 	OnThreateningSoundHeard = function( self, entity, fDistance )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		self:OnPlayerSeen(entity, fDistance);
 	end,
 
 	---------------------------------------------
 	OnEnemyDamage = function ( self, entity, data)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		if( entity.AI.searchHoverCount >= 2 ) then
 			-- Damage while landing, take of now!!
 			AI.Signal(SIGNALFILTER_SENDER,0,"SC_SNIFF_PLAYER",entity.id);

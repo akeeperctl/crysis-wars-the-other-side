@@ -17,6 +17,11 @@ AIBehaviour.Cover2Seek = {
 		--~TheOtherSide	
 
 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:GettingAlerted();
 
 		if(not entity.AI.target) then
@@ -47,7 +52,7 @@ AIBehaviour.Cover2Seek = {
 		-- to the primary weapon an reload it.
 --		if(entity:CheckCurWeapon() == 1 or entity:GetAmmoLeftPercent() < 0.25) then
 --			entity.AI.reloadReturnToSeek = true;
---			AI.Signal(SIGNALFILTER_SENDER,1,"TO_RELOAD",entity.id);
+--			AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_RELOAD",entity.id);
 --		end
 
 		if(entity:CheckCurWeapon() == 1) then
@@ -72,6 +77,12 @@ AIBehaviour.Cover2Seek = {
 	---------------------------------------------
 	COVER_NORMALATTACK = function (self, entity)
 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
+
 		local state = GS_SEEK; 
 		if (entity.AI.seekCount ~= 0) then
 			state = AI.GetGroupTacticState(entity.id, 0, GE_GROUP_STATE);
@@ -80,10 +91,10 @@ AIBehaviour.Cover2Seek = {
 		if (entity.AI.seekCount > 1) then
 			local target = AI.GetTargetType(entity.id);
 			if (target == AITARGET_NONE) then
-				AI.Signal(SIGNALFILTER_SENDER,1,"TO_SEARCH",entity.id);
+				AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_SEARCH",entity.id);
 				return;
 			elseif (AI.GetAttentionTargetDistance(entity.id) < 4.0) then
-				AI.Signal(SIGNALFILTER_SENDER,1,"TO_SEARCH",entity.id);
+				AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_SEARCH",entity.id);
 				return;
 			end
 		end
@@ -91,9 +102,9 @@ AIBehaviour.Cover2Seek = {
 		entity.AI.seekCount = entity.AI.seekCount + 1;
 
 		if (state == GS_ADVANCE) then
-			AI.Signal(SIGNALFILTER_SENDER,1,"TO_ATTACK",entity.id);
+			AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_ATTACK",entity.id);
 		elseif (state == GS_SEARCH or state == GS_ALERTED or state == GS_IDLE) then
-			AI.Signal(SIGNALFILTER_SENDER,1,"TO_SEARCH",entity.id);
+			AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_SEARCH",entity.id);
 		else
 		
 			AI.NotifyGroupTacticState(entity.id, 0, GN_NOTIFY_SEEKING);
@@ -138,22 +149,32 @@ AIBehaviour.Cover2Seek = {
 
 	---------------------------------------------
 	SEEK_DIRECT_DONE = function (self, entity)
-		AI.Signal(SIGNALFILTER_SENDER,1,"TO_SEARCH",entity.id);
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
+		AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_SEARCH",entity.id);
 	end,
 
 	---------------------------------------------
 	OnNoTargetAwareness = function (self, entity)
---		AI.Signal(SIGNALFILTER_SENDER,1,"TO_SEARCH",entity.id);
+--		AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_SEARCH",entity.id);
 	end,
 
 	---------------------------------------------
 	OnNoTargetVisible = function (self, entity)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- empty
 		if(AI_Utils:IsTargetOutsideStandbyRange(entity) == 1) then
 			entity.AI.hurryInStandby = 0;
-			AI.Signal(SIGNALFILTER_SENDER, 1, "TO_THREATENED_STANDBY",entity.id);
+			AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_THREATENED_STANDBY",entity.id);
 		else
-			AI.Signal(SIGNALFILTER_SENDER, 1, "TO_THREATENED",entity.id);
+			AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_THREATENED",entity.id);
 		end
 	end,
 
@@ -187,9 +208,9 @@ AIBehaviour.Cover2Seek = {
 --		elseif(target == AITARGET_ENEMY or target == AITARGET_MEMORY) then
 --			entity:Readibility("taunt",1,3,0.1,0.4);
 --			if(AI.GetGroupTacticState(entity.id, 0, GE_LEADER_COUNT) > 0) then
---				AI.Signal(SIGNALFILTER_SENDER, 1, "TO_ATTACK_GROUP",entity.id);
+--				AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_ATTACK_GROUP",entity.id);
 --			else
---				AI.Signal(SIGNALFILTER_SENDER, 1, "TO_ATTACK",entity.id);
+--				AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_ATTACK",entity.id);
 --			end
 --		else
 --			entity.AI.seekCount = 0;
@@ -210,17 +231,22 @@ AIBehaviour.Cover2Seek = {
 --			AI.Signal(SIGNALFILTER_GROUPONLY_EXCEPT,1,"INCOMING_FIRE",entity.id);
 --		end
 --
---		AI.Signal(SIGNALFILTER_SENDER, 1, "TO_HIDE",entity.id);
+--		AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_HIDE",entity.id);
 --	
 --	end,
 
 	---------------------------------------------
 	OnNoTarget = function( self, entity )
---		AI.Signal(SIGNALFILTER_SENDER,1,"TO_SEARCH",entity.id);
+--		AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_SEARCH",entity.id);
 	end,
 
 	---------------------------------------------
 	OnPlayerSeen = function( self, entity, fDistance, data )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:MakeAlerted();
 		entity:TriggerEvent(AIEVENT_DROPBEACON);
 
@@ -243,9 +269,11 @@ AIBehaviour.Cover2Seek = {
 	OnThreateningSoundHeard = function( self, entity )
 		--AI.LogEvent(">>SEEK "..entity:GetName().." OnThreateningSoundHeard");
 
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_AUDIO) == 0.0 ) then
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
 
 		local dt = entity.AI.lastLookatTime - _time;
 		if(dt > 6.0) then
@@ -259,6 +287,11 @@ AIBehaviour.Cover2Seek = {
 
 	---------------------------------------------
 	OnThreateningSeen = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		local dt = entity.AI.lastLookatTime - _time;
 		if(dt > 6.0) then
 			entity:InsertSubpipe(AIGOALPIPE_NOTDUPLICATE,"cv_look_at_lastop", "probabletarget");
@@ -289,6 +322,11 @@ AIBehaviour.Cover2Seek = {
 
 	--------------------------------------------------
 	TARGET_DISTANCE_REACHED = function ( self, entity, sender,data)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		self:LOOK_FOR_TARGET(entity, sender,data);
 	end,
 
@@ -303,7 +341,7 @@ AIBehaviour.Cover2Seek = {
 --			-- Check if someone is already close to beacon.
 --			local state = AI.GetGroupTacticState(entity.id, 0, GE_GROUP_STATE);
 --			if(state == GS_SEARCH or state == GS_IDLE) then
---				AI.Signal(SIGNALFILTER_SENDER,1,"TO_SEARCH",entity.id);
+--				AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_SEARCH",entity.id);
 --			else
 --	--			local	beaconPos = g_Vectors.temp_v1;
 --	--			AI.GetBeaconPosition(entity.id, beaconPos);
@@ -330,16 +368,21 @@ AIBehaviour.Cover2Seek = {
 --				end
 --			end
 --		else
---			AI.Signal(SIGNALFILTER_SENDER,1,"TO_SEARCH",entity.id);
+--			AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_SEARCH",entity.id);
 --		end
 	end,
 
 	--------------------------------------------------
 	ENEMYSEEN_FIRST_CONTACT = function (self, entity, sender)
-		AI.Signal(SIGNALFILTER_SENDER, 1, "TO_ATTACK",entity.id);
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
+		AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_ATTACK",entity.id);
 --		local target = AI.GetTargetType(entity.id);
 --		if (target == AITARGET_ENEMY) then
---			AI.Signal(SIGNALFILTER_SENDER, 1, "TO_ATTACK",entity.id);
+--			AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_ATTACK",entity.id);
 --		else
 --			local unitState = AI.GetGroupTacticState(entity.id, 0, GE_UNIT_STATE);
 --			if (unitState == GN_NOTIFY_SEEKING) then
@@ -352,11 +395,16 @@ AIBehaviour.Cover2Seek = {
 
 	--------------------------------------------------
 	ENEMYSEEN_DURING_COMBAT = function (self, entity, sender)
-		AI.Signal(SIGNALFILTER_SENDER, 1, "TO_ATTACK",entity.id);
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
+		AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_ATTACK",entity.id);
 		entity:Readibility("taunt",1,2, 0.1,0.4);
 --		local target = AI.GetTargetType(entity.id);
 --		if (target == AITARGET_ENEMY) then
---			AI.Signal(SIGNALFILTER_SENDER, 1, "TO_ATTACK",entity.id);
+--			AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_ATTACK",entity.id);
 --		else
 --			local unitState = AI.GetGroupTacticState(entity.id, 0, GE_UNIT_STATE);
 --			if (unitState == GN_NOTIFY_SEEKING) then

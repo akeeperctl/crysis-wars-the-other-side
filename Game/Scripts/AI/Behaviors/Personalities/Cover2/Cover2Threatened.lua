@@ -22,6 +22,11 @@ AIBehaviour.Cover2Threatened = {
 		--~TheOtherSide	
 
 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide 
 		AI.NotifyGroupTacticState(entity.id, 0, GN_NOTIFY_UNAVAIL);
 		-- store original position.
 		if(not entity.AI.idlePos) then
@@ -72,6 +77,11 @@ AIBehaviour.Cover2Threatened = {
 
 	---------------------------------------------
 	SEEK_KILLER = function (self, entity)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		AI_Utils:CheckThreatened(entity, 15.0);
 	end,
 
@@ -94,7 +104,7 @@ AIBehaviour.Cover2Threatened = {
 --			entity.AI.threatTimer = nil;
 --		end
 --
---		AI.Signal(SIGNALFILTER_SENDER,1,"TO_SEARCH",entity.id);
+--		AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_SEARCH",entity.id);
 --	end,
 
 	---------------------------------------------
@@ -105,16 +115,21 @@ AIBehaviour.Cover2Threatened = {
 
 	---------------------------------------------
 	INVESTIGATE_DONE = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		local target = AI.GetTargetType(entity.id);
 		if(target == AITARGET_ENEMY) then
 			entity:Readibility("taunt",1,3,0.3,0.6);
-			AI.Signal(SIGNALFILTER_SENDER,1,"TO_ATTACK",entity.id);
+			AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_ATTACK",entity.id);
 		elseif(target == AITARGET_NONE) then
 			entity:Readibility("alert_idle_relax",1,1, 0.3,0.6);
 			AI.SetRefPointPosition(entity.id,entity.AI.idlePos);
 			entity:SelectPipe(0,"cv_get_back_to_idlepos");
 		else
-			AI.Signal(SIGNALFILTER_SENDER,1,"TO_SEARCH",entity.id);
+			AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_SEARCH",entity.id);
 		end
 	end,
 
@@ -125,6 +140,11 @@ AIBehaviour.Cover2Threatened = {
 
 	---------------------------------------------
 	OnPlayerSeen = function( self, entity, fDistance, data )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- called when the enemy sees a living player
 		entity:TriggerEvent(AIEVENT_DROPBEACON);
 
@@ -153,6 +173,11 @@ AIBehaviour.Cover2Threatened = {
 
 	---------------------------------------------
 	CheckToChangeTarget = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- If the attention target has changed a lot, choose new approach.
 --		local	attPos = g_Vectors.temp_v1;
 --		AI.GetAttentionTargetPosition(entity.id, attPos);
@@ -166,20 +191,29 @@ AIBehaviour.Cover2Threatened = {
 
 	---------------------------------------------
 	OnInterestingSoundHeard = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 --		entity:TriggerEvent(AIEVENT_CLEAR);
 --		entity:Readibility("alert_interest_hear",1,1,0.3,0.6);
 
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_AUDIO) == 0.0 ) then
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
 		self:CheckToChangeTarget(entity);
 	end,
 	
 	---------------------------------------------
 	OnThreateningSoundHeard = function( self, entity )
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_AUDIO) == 0.0 ) then
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
 
 --		entity:TriggerEvent(AIEVENT_CLEAR);
 		entity:TriggerEvent(AIEVENT_DROPBEACON);
@@ -191,12 +225,22 @@ AIBehaviour.Cover2Threatened = {
 	OnThreateningSeen = function( self, entity )
 		entity:TriggerEvent(AIEVENT_DROPBEACON);
 		entity:Readibility("alert_interest_see",1,1,0.3,0.6);
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		self:CheckToChangeTarget(entity);
 	end,
 
 	---------------------------------------------
 	OnSomethingSeen = function( self, entity )
 		entity:Readibility("alert_interest_see",1,1,0.3,0.6);
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		self:CheckToChangeTarget(entity);
 	end,
 
@@ -210,15 +254,25 @@ AIBehaviour.Cover2Threatened = {
 
 	---------------------------------------------
 	ENEMYSEEN_DURING_COMBAT = function (self, entity, sender)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		if(AI.GetTargetType(entity.id) ~= AITARGET_ENEMY) then
-			AI.Signal(SIGNALFILTER_SENDER,1,"TO_SEEK",entity.id);
+			AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_SEEK",entity.id);
 		end
 	end,
 	
 	---------------------------------------------
 	ENEMYSEEN_FIRST_CONTACT = function (self, entity, sender)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		if(AI.GetTargetType(entity.id) ~= AITARGET_ENEMY) then
-			AI.Signal(SIGNALFILTER_SENDER,1,"TO_SEEK",entity.id);
+			AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_SEEK",entity.id);
 		end
 	end,
 

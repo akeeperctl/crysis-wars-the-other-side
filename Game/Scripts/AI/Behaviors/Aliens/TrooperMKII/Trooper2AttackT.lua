@@ -18,7 +18,7 @@ AIBehaviour.Trooper2AttackT = {
 
 	---------------------------------------------
 	Constructor = function (self, entity)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			entity:MakeAlerted();
 			entity.AI.bStrafe = false;
 	--		entity:SelectPipe(0,"tr_just_shoot");
@@ -70,7 +70,7 @@ AIBehaviour.Trooper2AttackT = {
 
 	---------------------------------------------
 	OnEnemyDamage = function ( self, entity, sender,data)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 
 			-- data.id: the shooter
 			--entity:Readibility("GETTING_SHOT_AT",1);
@@ -119,7 +119,7 @@ AIBehaviour.Trooper2AttackT = {
 
 	---------------------------------------------
 	OnPlayerSeen = function( self, entity, fDistance )
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 	--		local rnd=random(1,10);
 	--		if (rnd < 5) then 
 	--			entity:Readibility("THREATEN",1);			
@@ -147,7 +147,7 @@ AIBehaviour.Trooper2AttackT = {
 	end,
 	---------------------------------------------
 	OnEnemyMemory = function( self, entity )
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 	--		if(entity:SetRefPointAtDistanceFromTarget(2)) then 
 	--			entity:SelectPipe(0,"tr_approach_target_at_distance");
 	--		else
@@ -163,7 +163,7 @@ AIBehaviour.Trooper2AttackT = {
 	---------------------------------------------
 	
 	OnNoTargetAwareness= function( self, entity )
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			entity:SelectPipe(0,"do_nothing");
 			entity:SelectPipe(0,"tr_seek_target");
 			entity:InsertSubpipe(0,"tr_random_short_timeout");
@@ -172,7 +172,7 @@ AIBehaviour.Trooper2AttackT = {
 	---------------------------------------------
 	
 	OnNoTargetVisible= function( self, entity )
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			entity:Readibility("target_lost",1,0);
 			entity:SelectPipe(0,"do_nothing");
 			entity:SelectPipe(0,"tr_seek_target");
@@ -183,7 +183,7 @@ AIBehaviour.Trooper2AttackT = {
 	
 	---------------------------------------------
 	OnInterestingSoundHeard = function( self, entity )
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			-- called when the enemy hears an interesting sound
 	--		entity:Readibility("RELOADING",1);
 			entity:SelectPipe(0,"do_nothing");--to reset the tr_seek_target goalpipe if it was already in there
@@ -194,7 +194,7 @@ AIBehaviour.Trooper2AttackT = {
 
 	---------------------------------------------
 	OnThreateningSoundHeard = function( self, entity )
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			-- called when the enemy hears a scary sound
 			entity:SelectPipe(0,"do_nothing");
 			entity:SelectPipe(0,"tr_seek_target");--to reset the tr_seek_target goalpipe if it was already in there
@@ -221,7 +221,7 @@ AIBehaviour.Trooper2AttackT = {
 
 	---------------------------------------------
 	OnDamage = function ( self, entity, sender,data)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			-- called when the enemy is damaged
 			-- call default handling
 			AIBehaviour.TROOPERDEFAULT:OnDamage(entity,sender,data);
@@ -245,7 +245,7 @@ AIBehaviour.Trooper2AttackT = {
 	
 	--------------------------------------------------
 	OnCloseContact = function ( self, entity, target)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			if(not Trooper_CheckMelee(entity,target,2)) then
 			entity:InsertSubpipe(AIGOALPIPE_NOTDUPLICATE,"tr_backoff_fire");
 			end

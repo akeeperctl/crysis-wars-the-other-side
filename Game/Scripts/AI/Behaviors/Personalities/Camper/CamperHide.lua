@@ -16,6 +16,11 @@ AIBehaviour.CamperHide = {
 		entity.AI.currentBehaviour = self.Name
 		--~TheOtherSide	
 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:GettingAlerted();
 		
 --		entity.AI.changeCoverLastTime = _time;
@@ -38,6 +43,11 @@ AIBehaviour.CamperHide = {
 	-----------------------------------------------------
 	HandleThreat = function(self, entity, resetTimer)
 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		local target = AI.GetTargetType(entity.id);
 
 		local dt = _time - entity.AI.lastHideTime;
@@ -72,22 +82,27 @@ AIBehaviour.CamperHide = {
 		local target = AI.GetTargetType(entity.id);
 		if(target==AITARGET_ENEMY or target==AITARGET_MEMORY) then
 			if(AI.GetGroupTacticState(entity.id, 0, GE_LEADER_COUNT) > 0) then
-				AI.Signal(SIGNALFILTER_SENDER, 1, "TO_ATTACK_GROUP",entity.id);
+				AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_ATTACK_GROUP",entity.id);
 			else
-				AI.Signal(SIGNALFILTER_SENDER, 1, "TO_ATTACK",entity.id);
+				AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_ATTACK",entity.id);
 			end
 		else
 			if(AI_Utils:IsTargetOutsideStandbyRange(entity) == 1) then
 				entity.AI.hurryInStandby = 1;
-				AI.Signal(SIGNALFILTER_SENDER, 1, "TO_THREATENED_STANDBY",entity.id);
+				AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_THREATENED_STANDBY",entity.id);
 			else
-				AI.Signal(SIGNALFILTER_SENDER,1,"TO_SEEK",entity.id);
+				AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_SEEK",entity.id);
 			end
 		end
 	end,
 
 	--------------------------------------------------
 	OnNoHidingPlace = function(self, entity, sender,data)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		local target = AI.GetTargetType(entity.id);
 
 		if(target~=AITARGET_NONE) then 
@@ -123,14 +138,19 @@ AIBehaviour.CamperHide = {
 
 	---------------------------------------------		
 	OnPlayerSeen = function( self, entity, fDistance )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:MakeAlerted();
 		entity:TriggerEvent(AIEVENT_DROPBEACON);
 		self:HandleThreat(entity,false);
 
 		if(AI.GetGroupTacticState(entity.id, 0, GE_LEADER_COUNT) > 0) then
-			AI.Signal(SIGNALFILTER_SENDER, 1, "TO_ATTACK_GROUP",entity.id);
+			AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_ATTACK_GROUP",entity.id);
 		else
-			AI.Signal(SIGNALFILTER_SENDER, 1, "TO_ATTACK",entity.id);
+			AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_ATTACK",entity.id);
 		end
 	end,
 
@@ -145,6 +165,11 @@ AIBehaviour.CamperHide = {
 
 	---------------------------------------------
 	OnEnemyDamage = function ( self, entity, sender,data)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		entity.AI.coverCompromized = true;
 

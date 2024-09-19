@@ -32,6 +32,11 @@ AIBehaviour.GuardDumb = {
 	end,
 
 	OnTimer = function(entity,timerid)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		if (entity.iCaptureTimer) then
 			Log(">>"..entity:GetName().." OnTimer");
 --			Script.KillTimer(entity.iCaptureTimer);
@@ -42,6 +47,11 @@ AIBehaviour.GuardDumb = {
 
  	---------------------------------------------
 	OnDeath = function( self, entity )	
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		if (entity.iCaptureTimer) then
 			Log(">>"..entity:GetName().." OnDeath, kill timer");
 			Script.KillTimer(entity.iCaptureTimer);

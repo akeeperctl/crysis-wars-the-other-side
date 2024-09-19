@@ -74,7 +74,7 @@ AIBehaviour.SuitReload = {
 		entity:NanoSuitMode( BasicAI.SuitMode.SUIT_ARMOR );
 		-- suit guy hides only if health is low
 		if(entity:GetHealthPercentage()<50) then
-			AI.Signal(SIGNALFILTER_SENDER, 1, "TO_HIDE",entity.id);
+			AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_HIDE",entity.id);
 		end
 	end,
 	

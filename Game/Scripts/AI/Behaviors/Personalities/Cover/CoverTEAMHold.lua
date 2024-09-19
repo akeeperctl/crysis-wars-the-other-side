@@ -10,12 +10,22 @@ AIBehaviour.CoverTEAMHold = {
 
 	---------------------------------------------
 	OnKnownDamage = function ( self, entity, sender)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- called when the enemy is damaged
 		entity:InsertSubpipe(0,"not_so_random_hide_from",sender.id);
 	end,
 
 	---------------------------------------------
 	OnPlayerSeen = function( self, entity, fDistance )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- drop beacon and shoot like crazy
 --		local rnd = random(1,10);
 --		if (rnd < 2) then 
@@ -27,6 +37,11 @@ AIBehaviour.CoverTEAMHold = {
 	end,
 	---------------------------------------------
 	OnEnemyMemory = function( self, entity, fDistance )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		entity:SelectPipe(0,"dumb_shoot");
 

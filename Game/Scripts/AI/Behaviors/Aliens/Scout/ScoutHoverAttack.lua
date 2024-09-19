@@ -24,6 +24,11 @@ AIBehaviour.ScoutHoverAttack = {
 		entity.AI.currentBehaviour = self.Name
 		--~TheOtherSide	
 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		entity.AI.hoverCount = 0.0;
 		entity.AI.hoverAngle = 0.0;
@@ -83,6 +88,11 @@ AIBehaviour.ScoutHoverAttack = {
 	end,
 	---------------------------------------------
 	OnObjectSeen = function( self, entity, fDistance, data )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		if ( data.iValue == AIOBJECT_RPG and entity.AI.bBlockEscape == false ) then
 
@@ -215,6 +225,11 @@ AIBehaviour.ScoutHoverAttack = {
 	---------------------------------------------
 	OnEnemyMemory = function( self, entity )
 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- called when the AI can no longer see its enemy, but remembers where it saw it last
 --		if ( entity.AI.bBlockSignal ==true ) then
 
@@ -253,11 +268,21 @@ AIBehaviour.ScoutHoverAttack = {
 	
 	--------------------------------------------------------------------------
 	OnSoreDamage = function ( self, entity, sender, data )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		self:OnEnemyDamage( entity );
 	end,
 	---------------------------------------------
 	OnEnemyDamage = function ( self, entity, sender, data )
 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		if ( entity.AI.bBlockSignal ==true ) then
 		
 		else
@@ -301,12 +326,22 @@ AIBehaviour.ScoutHoverAttack = {
 	end,
 	---------------------------------------------
 	OnGroupMemberDied = function( self, entity, sender )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- called when a member of same species dies nearby
 		AI.Signal(SIGNALFILTER_GROUPONLY, 1, "TO_SCOUT_ATTACK", entity.id);
 	end,
 
 	--------------------------------------------------------------------------
 	SC_SCOUT_STAY_ATTACK = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		
 		AIBehaviour.SCOUTDEFAULT:scoutGetID( entity );
 		AIBehaviour.SCOUTDEFAULT:scoutDoStayAttack( entity );
@@ -315,6 +350,11 @@ AIBehaviour.ScoutHoverAttack = {
 	--------------------------------------------------------------------------
 	--------------------------------------------------------------------------
 	SC_SCOUT_HOVERATTACK_START = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		entity.AI.bBlockEscape = false;
 
@@ -464,6 +504,11 @@ AIBehaviour.ScoutHoverAttack = {
 	end,
 
 	SC_SCOUT_HOVERATTACK = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		-- specific. if the target is on the boat.
 		if ( scoutSelected == nil ) then
@@ -577,6 +622,11 @@ AIBehaviour.ScoutHoverAttack = {
 	end,
 
 	SC_SCOUT_HOVERATTACK_WAIT = function( self, entity ) 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		local target = AI.GetAttentionTargetEntity( entity.id );
 		if ( target and AI.Hostile( entity.id, target.id ) ) then
@@ -614,6 +664,11 @@ AIBehaviour.ScoutHoverAttack = {
 	
 	--------------------------------------------------------------------------
 	SC_SCOUT_ROUND_SHOOT_START = function( self, entity ) 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		entity.AI.bBlockEscape = false;
 
@@ -647,6 +702,11 @@ AIBehaviour.ScoutHoverAttack = {
 	end,
 
 	SC_SCOUT_ROUND_SHOOT = function( self, entity ) 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 	
 		local target = AI.GetAttentionTargetEntity( entity.id );
 		if ( target and AI.Hostile( entity.id, target.id ) ) then
@@ -706,6 +766,11 @@ AIBehaviour.ScoutHoverAttack = {
 	end,
 	
 	SC_SCOUT_ROUND_SHOOT_END = function( self, entity ) 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		entity.AI.bBlockSignal = false;
 		
@@ -723,6 +788,11 @@ AIBehaviour.ScoutHoverAttack = {
 	end,
 	
 	SC_SCOUT_ROUND_SHOOT_REFLESH = function( self, entity ) 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 			entity.AI.roundShootAngle = entity.AI.roundShootAngle + entity.AI.roundShootAngleAdd;
 
@@ -743,6 +813,11 @@ AIBehaviour.ScoutHoverAttack = {
 
 	--------------------------------------------------------------------------
 	SC_SCOUT_LINE_SHOOT_START = function( self, entity ) 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		entity.AI.bBlockEscape = false;
 		self:SC_SCOUT_LINE_SHOOT( entity );
@@ -750,6 +825,11 @@ AIBehaviour.ScoutHoverAttack = {
 	end,
 	
 	SC_SCOUT_LINE_SHOOT = function( self, entity ) 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		local target = AI.GetAttentionTargetEntity( entity.id );
 		if ( target and AI.Hostile( entity.id, target.id ) ) then
@@ -786,6 +866,11 @@ AIBehaviour.ScoutHoverAttack = {
 
 	--------------------------------------------------------------------------
 	SC_SCOUT_HOVER_CLOSER = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		entity.AI.bBlockEscape = true;
 
@@ -857,6 +942,11 @@ AIBehaviour.ScoutHoverAttack = {
 	end,
 
 	SC_SCOUT_HOVER_CLOSER_B = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 			AI.CreateGoalPipe("scoutHoverCloseV1_b");
 			AI.PushGoal("scoutHoverCloseV1_b","run",0,1);
@@ -880,6 +970,11 @@ AIBehaviour.ScoutHoverAttack = {
 	end,
 
 	SC_SCOUT_HOVER_CLOSER2 = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 			entity.gameParams.forceView = entity.AI.rsvForceView;
 			entity.actor:SetParams(entity.gameParams);

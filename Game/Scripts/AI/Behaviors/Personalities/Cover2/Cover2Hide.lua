@@ -28,6 +28,11 @@ AIBehaviour.Cover2Hide = {
 		entity.AI.lastBulletReactionTime = _time - 10;
 		
 		entity:Readibility("taking_fire",1,1, 0.1,0.4);
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		self:HandleThreat(entity);
 	end,
 	
@@ -37,6 +42,11 @@ AIBehaviour.Cover2Hide = {
 
 	-----------------------------------------------------
 	HandleThreat = function(self, entity, sender)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		local	dt = _time - entity.AI.lastBulletReactionTime;
 		if(dt > 0.5) then
 			if(not sender or AI.Hostile(entity.id, sender.id)) then
@@ -51,6 +61,11 @@ AIBehaviour.Cover2Hide = {
 
 	-----------------------------------------------------
 	COVER_NORMALATTACK = function(self, entity)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- Choose proper action after being interrupted.
 		AI_Utils:CommonContinueAfterReaction(entity);
 	end,
@@ -97,6 +112,12 @@ AIBehaviour.Cover2Hide = {
 	---------------------------------------------
 	OnEnemyDamage = function ( self, entity, sender,data)
 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
+
 		entity.AI.coverCompromized = true;
 
 		-- set the beacon to the enemy pos
@@ -115,6 +136,11 @@ AIBehaviour.Cover2Hide = {
 	---------------------------------------------
 	OnBulletRain = function(self, entity, sender, data)
 		entity:Readibility("bulletrain",1,1, 0.1,0.4);
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		self:HandleThreat(entity, sender);
 
 		local shooter = System.GetEntity(sender.id);

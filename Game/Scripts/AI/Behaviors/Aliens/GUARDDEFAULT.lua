@@ -138,12 +138,12 @@ AIBehaviour.GUARDDEFAULT = {
 	--------------------------------------------------
 	GotoIdle = function (self, entity, num)
 		g_SignalData.iValue = num;
-		AI.Signal(SIGNALFILTER_SENDER, 1, "TO_IDLE", entity.id,g_SignalData);
+		AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_IDLE", entity.id,g_SignalData);
 	end,
 	--------------------------------------------------
 	GotoInterested = function (self, entity, num)
 		g_SignalData.iValue = num;
-		AI.Signal(SIGNALFILTER_SENDER, 1, "TO_INTERESTED",entity.id,g_SignalData);
+		AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_INTERESTED",entity.id,g_SignalData);
 	end,
 	--------------------------------------------------
 	GotoPursue = function (self, entity, num)
@@ -153,7 +153,7 @@ AIBehaviour.GUARDDEFAULT = {
 	--------------------------------------------------
 	GotoSearch = function (self, entity, num)
 		g_SignalData.iValue = num;
-		AI.Signal(SIGNALFILTER_SENDER, 1, "TO_SEARCH",entity.id,g_SignalData);
+		AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_SEARCH",entity.id,g_SignalData);
 	end,
 	--------------------------------------------------
 	GotoCallReinf = function(self, entity, num, target)
@@ -185,7 +185,7 @@ AIBehaviour.GUARDDEFAULT = {
 	--------------------------------------------------
 	GotoAttack = function (self, entity, num)
 		g_SignalData.iValue = num;
-		AI.Signal(SIGNALFILTER_SENDER, 1, "TO_ATTACK",entity.id,g_SignalData);
+		AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_ATTACK",entity.id,g_SignalData);
 	end,
 	--------------------------------------------------
 	GotoAmbient = function (self, entity, num)
@@ -761,7 +761,7 @@ AIBehaviour.GUARDDEFAULT = {
 		-- run to friends if they are not yet alerted.
 		AI.ModifySmartObjectStates(entity.id, "-Fleeing,-Busy");
 		if(entity.Behaviour.alertness == 0) then
-			AI.Signal(SIGNALFILTER_SENDER, 1, "TO_IDLE",entity.id);
+			AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_IDLE",entity.id);
 		else
 			AI.Signal(SIGNALFILTER_SENDER, 1, "TO_AMBIENT",entity.id);
 		end
@@ -773,7 +773,7 @@ AIBehaviour.GUARDDEFAULT = {
 		-- run to friends if they are not yet alerted.
 		AI.ModifySmartObjectStates(entity.id, "-Fleeing,-Busy");
 		if(entity.Behaviour.alertness == 0) then
-			AI.Signal(SIGNALFILTER_SENDER, 1, "TO_IDLE",entity.id);
+			AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_IDLE",entity.id);
 		else
 			AI.Signal(SIGNALFILTER_SENDER, 1, "TO_AMBIENT",entity.id);
 		end

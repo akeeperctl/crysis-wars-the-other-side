@@ -62,7 +62,7 @@ AIBehaviour.TrooperShootOnRock = {
 	end,
 	
 	OnPlayerSeen = function(self,entity,distance)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			if(entity.AI.landed and not entity.AI.endBehavior) then 
 				if(entity.AI.usingMoar) then 
 					entity.AI.firingMoar = true;
@@ -87,7 +87,7 @@ AIBehaviour.TrooperShootOnRock = {
 	end,
 
 	OnNoTargetVisible = function(self,entity,sender)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			entity:Readibility("target_lost",1,0);
 			if(entity.AI.landed) then 
 				AI.Signal(SIGNALFILTER_SENDER,0,"GO_TO_SWITCH_POSITION",entity.id);
@@ -176,7 +176,7 @@ AIBehaviour.TrooperShootOnRock = {
 
 	
 	OnCloseContact= function(self,entity,target)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			if(entity.AI.landed) then 
 				self:EndBehaviour(entity);
 				Trooper_UpdateMoarStats(entity);

@@ -27,6 +27,11 @@ AIBehaviour.ScoutCircling = {
 		entity.AI.currentBehaviour = self.Name
 		--~TheOtherSide	
 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- called when the behaviour is selected
 		-- the extra data is from the signal that caused the behavior transition
 		
@@ -300,6 +305,11 @@ AIBehaviour.ScoutCircling = {
 
 	---------------------------------------------
 	Destructor = function ( self, entity, data )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		-- called when the behaviour is de-selected
 		-- the extra data is from the signal that is causing the behavior transition
@@ -352,6 +362,11 @@ AIBehaviour.ScoutCircling = {
 	
 	--------------------------------------------------------------------------
 	OnSoreDamage = function ( self, entity, sender, data )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		self:OnEnemyDamage(entity);
 	end,
 	---------------------------------------------
@@ -361,6 +376,11 @@ AIBehaviour.ScoutCircling = {
 
 	---------------------------------------------
 	OnEnemyDamage = function ( self, entity, sender, data )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		-- called when AI is damaged by an enemy AI
 		-- data.id = damaging enemy's entity id
@@ -377,6 +397,11 @@ AIBehaviour.ScoutCircling = {
 
 	--------------------------------------------------------------------------
 	SC_SCOUT_STRAFING_MOVE = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		-- Make a pattern movement of the circle and strafing.
 		-- When we increase index one by one , we can get a circle movement.
@@ -450,6 +475,11 @@ AIBehaviour.ScoutCircling = {
 
 	---------------------------------------------
 	SC_SCOUT_STRAFING_ATTACK = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		-- During a pattern movement of the circle, If the scout shoot at the player.
 		-- 29/11/05 Tetsuji

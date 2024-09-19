@@ -56,6 +56,11 @@ AIBehaviour.CoverProtectArea = {
 	end,
 	---------------------------------------------
 	OnPlayerSeen = function( self, entity, fDistance )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		
 
 		if(not NOCOVER:SelectAttack(entity)) then
@@ -102,6 +107,11 @@ AIBehaviour.CoverProtectArea = {
 	end,
 	---------------------------------------------
 	OnEnemyMemory = function( self, entity, fDistance )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- set a timeout before switching to alert
 		if( entity.bHidden) then 
 			entity:SelectPipe(0,"long_timeout");
@@ -115,6 +125,11 @@ AIBehaviour.CoverProtectArea = {
 
 	---------------------------------------------
 	OnInterestingSoundHeard = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- forget about the timeout, something is still around and don't switch off this behaviour
 		entity.bHidden = false;
 		entity:SelectPipe(0,"seek_target");		
@@ -122,6 +137,11 @@ AIBehaviour.CoverProtectArea = {
 	end,
 	---------------------------------------------
 	OnThreateningSoundHeard = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- forget about the timeout, something is still around and don't switch off this behaviour
 		entity.bHidden = false;
 		entity:SelectPipe(0,"hide_around_from_target",entity.protectSpot);	
@@ -181,18 +201,33 @@ AIBehaviour.CoverProtectArea = {
 	end,
 	------------------------------------------------------------------------
 	TARGET_REACHED = function(self,entity,sender)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity.bHidden = false;
 		entity:SelectPipe(0,"hide_around_from_target",entity.protectSpot);
 	end,
 	
 	------------------------------------------------------------------------
 	END_TIMEOUT = function(self,entity,sender)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:SelectPipe(0,"lookaround_protect",entity.protectSpot);
 		--AI.Signal(SIGNALFILTER_SENDER,1,"BACK_TO_ALERT",entity.id);
 	end,
 
 	------------------------------------------------------------------------
 	END_HIDE = function(self,entity,sender)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		local targetName = AI.GetAttentionTargetOf(entity.id);
 		if(targetName) then 
 			local target = System.GetEntityByName(targetName);

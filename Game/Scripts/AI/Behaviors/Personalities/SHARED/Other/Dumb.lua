@@ -327,7 +327,7 @@ AIBehaviour.Dumb = {
 	end,
 	
 	---------------------------------------------	
-	TO_INTERESTED= function(self,entity,sender)
+	GO_TO_INTERESTED= function(self,entity,sender)
 	end,
 
 	---------------------------------------------	

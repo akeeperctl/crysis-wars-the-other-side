@@ -97,7 +97,7 @@ AIBehaviour.ScoutMOACIdle = {
 	end,
 	--------------------------------------------------------------------------
 	OnEnemyDamage = function ( self, entity, sender, data )
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			if ( data and data.id == entity.id ) then
 			else
 			entity:SelectPrimaryWeapon();

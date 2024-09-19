@@ -11,7 +11,7 @@ AIBehaviour.Trooper2Interested = {
 	alertness = 0,
 	
 	Constructor = function (self, entity)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			AI.NotifyGroupTacticState(entity.id, 0, GN_NOTIFY_UNAVAIL);
 
 			-- store original position.
@@ -56,7 +56,7 @@ AIBehaviour.Trooper2Interested = {
 	INVESTIGATE_DONE = function( self, entity )
 		local target = AI.GetTargetType(entity.id);
 		if(target == AITARGET_ENEMY) then
-			AI.Signal(SIGNALFILTER_SENDER, 1, "TO_ATTACK",entity.id);
+			AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_ATTACK",entity.id);
 		else
 			AI.SetRefPointPosition(entity.id,entity.AI.idlePos);
 			entity:SelectPipe(0,"cv_get_back_to_idlepos");
@@ -83,7 +83,7 @@ AIBehaviour.Trooper2Interested = {
 
 	---------------------------------------------
 	OnPlayerSeen = function( self, entity, fDistance, data )
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			entity:MakeAlerted();
 			entity:TriggerEvent(AIEVENT_DROPBEACON);
 
@@ -133,7 +133,7 @@ AIBehaviour.Trooper2Interested = {
 	--------------------------------------------------
 	ENEMYSEEN_FIRST_CONTACT = function (self, entity, sender)
 		if(AI.GetTargetType(entity.id) ~= AITARGET_ENEMY) then
-			AI.Signal(SIGNALFILTER_SENDER,1,"TO_SEEK",entity.id);
+			AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_SEEK",entity.id);
 		end
 	end,
 	
@@ -144,7 +144,7 @@ AIBehaviour.Trooper2Interested = {
 
 	--------------------------------------------------
 	OnEnemyDamage = function( self, entity, sender,data )
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			Trooper_HitReaction(entity);
 		end
 	end,

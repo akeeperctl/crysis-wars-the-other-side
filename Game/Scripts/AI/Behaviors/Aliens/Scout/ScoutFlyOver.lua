@@ -28,6 +28,11 @@ AIBehaviour.ScoutFlyOver = {
 		--~TheOtherSide	
 
 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- called when the behaviour is selected
 
 		-- for flyover
@@ -80,6 +85,11 @@ AIBehaviour.ScoutFlyOver = {
 	
 	--------------------------------------------------------------------------
 	OnSoreDamage = function ( self, entity, sender, data )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		self:OnEnemyDamage(entity);
 	end,
 	---------------------------------------------
@@ -102,6 +112,11 @@ AIBehaviour.ScoutFlyOver = {
 	--------------------------------------------------------------------------
 	SC_SCOUT_FLYOVER_START = function( self, entity )
 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		AIBehaviour.SCOUTDEFAULT:scoutGetID( entity );
 		AIBehaviour.SCOUTDEFAULT:scoutRefreshStayAttackPosition( entity );
 
@@ -141,6 +156,11 @@ AIBehaviour.ScoutFlyOver = {
 
 	SC_SCOUT_FLYOVER_START_B = function( self, entity )
 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 			AI.CreateGoalPipe("scoutFlyOverStart_b");
 			AI.PushGoal("scoutFlyOverStart_b","continuous",0,1);
 			AI.PushGoal("scoutFlyOverStart_b","run",0,1);	
@@ -156,6 +176,11 @@ AIBehaviour.ScoutFlyOver = {
 	--------------------------------------------------------------------------
 	SC_SCOUT_FLYOVER = function( self, entity )
 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		local target = AI.GetAttentionTargetEntity( entity.id );
 		if ( target and AI.Hostile( entity.id, target.id ) ) then
 
@@ -228,6 +253,11 @@ AIBehaviour.ScoutFlyOver = {
 
 	SC_SCOUT_FLYOVER_B = function( self, entity )
 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		AI.CreateGoalPipe("scoutFlyOver_b");
 		AI.PushGoal("scoutFlyOver_b","continuous",0,1);
 		AI.PushGoal("scoutFlyOver_b","firecmd",0,FIREMODE_FORCED);
@@ -245,6 +275,11 @@ AIBehaviour.ScoutFlyOver = {
 
 	SC_SCOUT_FLYOVER_CHECK = function( self, entity )
 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		if ( entity.AI.flyoverCounter == 0 ) then
 			local height = AIBehaviour.SCOUTDEFAULT:scoutGetDistanceFromTheGround( entity );
 			if ( height < 0.5 ) then
@@ -263,6 +298,11 @@ AIBehaviour.ScoutFlyOver = {
 	--------------------------------------------------------------------------
 	SC_SCOUT_FLYOVER2 = function( self, entity )
 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 			local height = AIBehaviour.SCOUTDEFAULT:scoutGetDistanceFromTheGround( entity );
 
 			self:SC_SCOUT_FLYOVER3( entity );
@@ -302,6 +342,11 @@ AIBehaviour.ScoutFlyOver = {
 	--------------------------------------------------------------------------
 	SC_SCOUT_FLYOVER3 = function( self, entity )
 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		AI.SetRefPointPosition( entity.id , entity.AI.vFlyOver  );
 		if (AIBehaviour.SCOUTDEFAULT:scoutCheckNavOfRef( entity ) == false ) then
 			AI.Signal(SIGNALFILTER_SENDER,1,"TO_SCOUT_ATTACK", entity.id);
@@ -327,6 +372,11 @@ AIBehaviour.ScoutFlyOver = {
 	SC_SCOUT_FLYOVER4 = function( self, entity )
 
 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		local newRefPoint = {};
 
 		AIBehaviour.SCOUTDEFAULT:scoutRefreshStayAttackPosition( entity );
@@ -356,6 +406,11 @@ AIBehaviour.ScoutFlyOver = {
 	--------------------------------------------------------------------------
 	SC_SCOUT_FLYOVER4_B = function( self, entity )
 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		AI.CreateGoalPipe("scoutFlyOver4_b");
 		AI.PushGoal("scoutFlyOver4_b","continuous",0,1);	
 		AI.PushGoal("scoutFlyOver4_b","run",0,1);	

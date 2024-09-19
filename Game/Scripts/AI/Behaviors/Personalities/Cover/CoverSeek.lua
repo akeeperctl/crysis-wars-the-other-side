@@ -15,6 +15,11 @@ AIBehaviour.CoverSeek = {
 		entity.AI.currentBehaviour = self.Name
 		--~TheOtherSide	
 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 --			entity:SelectPipe(0,"approach_target_at_distance");		
 --			entity:SelectPipe(0,"cover_beacon_investigate");		
 
@@ -50,6 +55,11 @@ AIBehaviour.CoverSeek = {
 		-- data.id: the shooter
 		AI.LogEvent(entity:GetName().." ONENEMY DAMAGE CoverAttack");
 		entity:Readibility("GETTING_SHOT_AT",1);
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:InsertSubpipe(AIGOALPIPE_NOTDUPLICATE,"check_hide");
 --		entity:SelectPipe(0,"not_so_random_hide_from",data.id);
 		return;
@@ -115,6 +125,11 @@ AIBehaviour.CoverSeek = {
 --		entity:TriggerEvent(AIEVENT_DROPBEACON);
 --		AI.Signal(SIGNALFILTER_GROUPONLY_EXCEPT, 1, "HEADS_UP_GUYS",entity.id);
 		
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		if (fDistance>20) then
 			entity:SelectPipe(0,"cover_pindown");
 --			entity:InsertSubpipe(0, "short_crouch_cover_fire");
@@ -133,34 +148,64 @@ AIBehaviour.CoverSeek = {
 	OnInterestingSoundHeard = function( self, entity )
 		-- called when the enemy hears an interesting sound
 		entity:Readibility("RELOADING",1);
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:SelectPipe(0,"seek_target");
 --		entity:InsertSubpipe(0,"do_it_standing");
 		entity:InsertSubpipe(0,"do_it_crouched");		
 	end,
 	---------------------------------------------
 	OnThreateningSoundHeard = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- called when the enemy hears a scary sound
 		entity:SelectPipe(0,"seek_target");
 		entity:InsertSubpipe(0,"do_it_crouched");
 	end,
 	---------------------------------------------	
 	OnSomethingSeen	= function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- called when the enemy hears a scary sound
 		entity:SelectPipe(0,"seek_target");
 		entity:InsertSubpipe(0,"do_it_crouched");		
 	end,
 	---------------------------------------------
 	OnGroupMemberDied = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- called when a member of the group dies
 		AI.LogEvent(entity:GetName().." OnPlayerdied in CoverAttack");
 		entity:CheckReinforcements();
 	end,
 	--------------------------------------------------
 	OnGroupMemberDiedNearest = function ( self, entity, sender)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		AIBehaviour.DEFAULT:OnGroupMemberDiedNearest(entity,sender);	
 	end,
 	---------------------------------------------
 	OnDamage = function ( self, entity, sender,data)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- called when the enemy is damaged
 
 		entity:SelectPipe(0,"cover_scramble");
@@ -175,6 +220,11 @@ AIBehaviour.CoverSeek = {
 	end,
 
 	OnNoHidingPlace = function ( self, entity, sender)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:InsertSubpipe(0,"look_around");
 	end,
 
@@ -191,6 +241,11 @@ AIBehaviour.CoverSeek = {
 	end,
 	
 	LOOK_FOR_TARGET	= function ( self, entity, sender,data)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:SelectPipe(0,"seek_target_random");
 --		entity:InsertSubpipe(0,"look_around_quick");
 		entity:InsertSubpipe(0,"look_around_quick");		
@@ -198,6 +253,11 @@ AIBehaviour.CoverSeek = {
 	end,
 
 	HEADS_UP_GUYS = function (self, entity, sender)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 			entity:SelectPipe(0,"cover_pindown");
 			entity:InsertSubpipe(0,"look_at_beacon");
 	end,

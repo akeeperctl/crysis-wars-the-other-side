@@ -27,6 +27,11 @@ AIBehaviour.ScoutIdle = {
 		--~TheOtherSide	
 
 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- called when the behaviour is selected
 		-- the extra data is from the signal that caused the behavior transition
 
@@ -134,6 +139,11 @@ AIBehaviour.ScoutIdle = {
 
 	---------------------------------------------
 	Destructor = function ( self, entity, data )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		-- called when the behaviour is de-selected
 		-- the extra data is from the signal that is causing the behavior transition
@@ -156,6 +166,11 @@ AIBehaviour.ScoutIdle = {
 	end,
 	---------------------------------------------
 	OnPlayerSeen = function( self, entity, fDistance )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		-- called when the AI sees a living enemy
 --		AI.Signal(SIGNALFILTER_SENDER, 1, "TO_SCOUT_PATROL", entity.id);
@@ -191,10 +206,20 @@ AIBehaviour.ScoutIdle = {
 	
 	--------------------------------------------------------------------------
 	OnSoreDamage = function ( self, entity, sender, data )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		self:OnEnemyDamage(entity);
 	end,
 	---------------------------------------------
 	OnEnemyDamage = function ( self, entity, sender, data )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		-- called when AI is damaged by an enemy AI
 		-- data.id = damaging enemy's entity id
@@ -226,6 +251,11 @@ AIBehaviour.ScoutIdle = {
 
 	--------------------------------------------------------------------------
 	SC_SCOUT_IDLE = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:TriggerEvent(AIEVENT_CLEAR);
 		AI.SetRefPointPosition( entity.id , entity.AI.movevec[entity.AI.hoveringCounter] );
 		if ( entity.AI.hoveringCounter < 4 ) then

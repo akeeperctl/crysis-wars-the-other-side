@@ -45,6 +45,11 @@ AIBehaviour.GuardNeueCombat = {
 
 	---------------------------------------------
 	OnPlayerSeen = function( self, entity, fDistance )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 	
 		entity:TriggerEvent(AIEVENT_DROPBEACON);
 	
@@ -112,6 +117,11 @@ AIBehaviour.GuardNeueCombat = {
 
 	---------------------------------------------
 	TARGET_CLOSE = function(self, entity)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		self:OnPlayerSeen(entity);
 	end,
 
@@ -128,6 +138,11 @@ AIBehaviour.GuardNeueCombat = {
 
 	---------------------------------------------
 	UNBLOCK = function(self, entity)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity.AI.blocking = 0;
 		entity.AI.allowMelee = 1;
 		local target = AI.GetTargetType(entity.id);
@@ -159,6 +174,11 @@ AIBehaviour.GuardNeueCombat = {
 	
 	---------------------------------------------
 	END_ATTACK = function (self, entity)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		entity.AI.allowDodge = 1;
 		
@@ -174,6 +194,11 @@ AIBehaviour.GuardNeueCombat = {
 
 	---------------------------------------------
 	SEEK_TARGET = function (self, entity)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:Readibility("anticipation",1, 3);
 		if (AI.SetRefpointToAlienHidespot(entity.id, 10.0, 150.0)) then
 			entity:SelectPipe(0,"grn_SeekHide");		
@@ -182,6 +207,11 @@ AIBehaviour.GuardNeueCombat = {
 	
 	---------------------------------------------
 	TRACK_TARGET = function (self, entity)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:Readibility("anticipation",1, 6);
 
 --		System.Log("TRACK_TARGET "..entity:GetName());
@@ -193,6 +223,11 @@ AIBehaviour.GuardNeueCombat = {
 	
 	---------------------------------------------
 	OnNoTargetVisible = function (self, entity)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 --		System.Log("OnNoTargetVisible "..entity:GetName());
 		entity:SelectPipe(0,"grn_MoveToAttTarget");
@@ -207,6 +242,11 @@ AIBehaviour.GuardNeueCombat = {
 	
 	---------------------------------------------
 	OnEnemyMemory = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:TriggerEvent(AIEVENT_DROPBEACON);
 	end,
 
@@ -216,6 +256,11 @@ AIBehaviour.GuardNeueCombat = {
 
 	---------------------------------------------
 	OnThreateningSoundHeard = function( self, entity, fDistance )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:TriggerEvent(AIEVENT_DROPBEACON);
 		if (entity.AI.blocking == 0) then
 --			System.Log("OnThreateningSoundHeard "..entity:GetName());

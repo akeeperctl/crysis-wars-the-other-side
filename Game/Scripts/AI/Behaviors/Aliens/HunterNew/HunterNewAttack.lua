@@ -22,6 +22,11 @@ AIBehaviour.HunterNewAttack = {
 		entity.AI.previousBehaviour = entity.AI.currentBehaviour
 		entity.AI.currentBehaviour = self.Name
 		--~TheOtherSide	
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		if ( entity.AI.PathStep == nil ) then 
 			entity.AI.PathStep = 0;
@@ -33,6 +38,11 @@ AIBehaviour.HunterNewAttack = {
 	end,
 	---------------------------------------------
 	Destructor = function( self , entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:InsertSubpipe( 0, "stop_fire" );
 	end,
 
@@ -152,6 +162,11 @@ AIBehaviour.HunterNewAttack = {
 	end,
 --	---------------------------------------------
 	OnEnemyDamage = function ( self, entity, sender, data)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		System.LogAlways("HunterAttack: OnEnemyDamage")
 
 		-- first send him OnSeenByEnemy signal

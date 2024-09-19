@@ -12,7 +12,7 @@
 --  - 05/04/2005   : CXP Rush Clean up by Mikko Mononen
 --	- 29/11/2005   : Revised for new attack patterns by Tetsuji Iwasaki
 --------------------------------------------------------------------------
-reqpat = 0;
+local reqpat = 0;
 
 --------------------------------------------------------------------------
 AIBehaviour.ScoutAttack = {
@@ -30,6 +30,11 @@ AIBehaviour.ScoutAttack = {
 		entity.AI.currentBehaviour = self.Name
 		--~TheOtherSide	
 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		-- called when the behaviour is selected
 		-- the extra data is from the signal that caused the behavior transition
@@ -74,6 +79,11 @@ AIBehaviour.ScoutAttack = {
 	---------------------------------------------
 	Destructor = function ( self, entity, data )
 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- called when the behaviour is de-selected
 		-- the extra data is from the signal that is causing the behavior transition
 
@@ -133,6 +143,11 @@ AIBehaviour.ScoutAttack = {
 
 	---------------------------------------------
 	OnEnemyDamage = function ( self, entity, sender, data )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		if ( entity.AI.bBlockSignal == true ) then
 			return;
@@ -184,6 +199,11 @@ AIBehaviour.ScoutAttack = {
 
 	--------------------------------------------------------------------------
 	SC_SCOUT_STAY_ATTACK_START = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		AIBehaviour.SCOUTDEFAULT:scoutGetID(entity);
 		AIBehaviour.SCOUTDEFAULT:scoutDoStayAttack( entity );
 		self:SC_SCOUT_STAY_ATTACK(entity);
@@ -191,6 +211,11 @@ AIBehaviour.ScoutAttack = {
 
 	--------------------------------------------------------------------------
 	SC_SCOUT_STAY_ATTACK = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		-- formation control
 

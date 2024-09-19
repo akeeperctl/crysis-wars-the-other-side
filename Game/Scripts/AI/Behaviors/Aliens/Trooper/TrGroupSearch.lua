@@ -18,8 +18,12 @@ AIBehaviour.TrGroupSearch = {
 		entity.AI.previousBehaviour = entity.AI.currentBehaviour
 		entity.AI.currentBehaviour = self.Name
 		--~TheOtherSide	
-
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
+		if (entity.AI.ignoreSignals == false) then
 				-- data.point = search spot pos
 				-- data.point2 = search spot dir
 				if(AI.GetTargetType(entity.id)==AITARGET_ENEMY) then 
@@ -64,7 +68,12 @@ AIBehaviour.TrGroupSearch = {
 
 	---------------------------------------------
 	OnEnemyDamage = function ( self, entity, sender,data)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
+		if (entity.AI.ignoreSignals == false) then
 			-- called when the enemy is damaged
 			-- data.id = shooter id
 			-- data.point = shooter position
@@ -114,9 +123,11 @@ AIBehaviour.TrGroupSearch = {
 	---------------------------------------------
 
 	ORDER_SEARCH = function ( self, entity, sender, data )
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
 	  AI.LogEvent("ORDER_SEARCH received in TrGroupSearch of "..entity:GetName());
 		AI.SetRefPointPosition(entity.id, data.point);
  	  entity:SelectPipe(0, "do_nothing");--clear all current goals
@@ -127,9 +138,12 @@ AIBehaviour.TrGroupSearch = {
 
 	---------------------------------------------
 	HIDESPOT_REACHED = function ( self, entity, sender)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
 		local pos = g_Vectors.temp;
 		CopyVector(pos,AI.GetRefPointPosition(entity.id));
 		local dir  = entity.AI.lookDir;
@@ -150,14 +164,24 @@ AIBehaviour.TrGroupSearch = {
 
 	---------------------------------------------
 	OnCloseContact = function( self, entity, target )
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
+		if (entity.AI.ignoreSignals == false) then
 			-- should not happen before OnPlayerSeen
 			AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_ATTACK",entity.id);
 		end
 	end,
 	---------------------------------------------
 	OnPlayerSeen = function( self, entity, fDistance )
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
+		if (entity.AI.ignoreSignals == false) then
 			-- called when the enemy sees a living player
 			-- first send him OnSeenByEnemy signal
 	--		if(entity.AI.InSquad==1) then 
@@ -180,7 +204,12 @@ AIBehaviour.TrGroupSearch = {
 	end,
 	---------------------------------------------
 	OnEnemyMemory = function( self, entity )
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
+		if (entity.AI.ignoreSignals == false) then
 			-- called when the enemy can no longer see its foe, but remembers where it saw it last
 			entity:SelectPipe(0, "do_nothing");--clear all current goals
 			entity:SelectPipe(0, "tr_order_search");
@@ -188,6 +217,11 @@ AIBehaviour.TrGroupSearch = {
 	end,
 	---------------------------------------------
 	OnInterestingSoundHeard = function( self, entity,sender )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_AUDIO ) > 0.0 ) then
 			local pos = g_Vectors.temp;
 			if(AI.GetAttentionTargetPosition(entity.id,pos)) then 
@@ -202,7 +236,12 @@ AIBehaviour.TrGroupSearch = {
 	
 	---------------------------------------------
 	OnSomethingSeen = function( self, entity, sender )
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
+		if (entity.AI.ignoreSignals == false) then
 			local target = AI.GetAttentionTargetEntity(entity.id);
 			if(target and target.id) then 
 				g_SignalData.id = target.id;
@@ -217,6 +256,11 @@ AIBehaviour.TrGroupSearch = {
 
 	---------------------------------------------
 	OnThreateningSoundHeard = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_AUDIO ) > 0.0 ) then
 			-- called when the enemy hears a scary sound
 			entity:SelectPipe(0,"tr_look_closer");
@@ -239,9 +283,12 @@ AIBehaviour.TrGroupSearch = {
 	end,
 	---------------------------------------------
 	OnBulletRain = function ( self, entity, sender,data)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
 
 		-- called when the enemy detects bullet trails around him
 --		local shooter = System.GetEntity(data.id);
@@ -258,9 +305,12 @@ AIBehaviour.TrGroupSearch = {
 	
 	--------------------------------------------------
 	OnBulletHit = function( self, entity, sender,data )
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
 
 		if(AI.Hostile(entity.id,data.id) and (entity.AI.lastEnemyDamageTime==nil or (_time - entity.AI.lastEnemyDamageTime > 0.3))) then 
 			self:OnEnemyDamage(entity,sender,data);
@@ -281,7 +331,12 @@ AIBehaviour.TrGroupSearch = {
 --	end,
 	---------------------------------------------
 	END_LOOK_CLOSER = function ( self, entity, sender)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
+		if (entity.AI.ignoreSignals == false) then
 			entity:SelectPipe(0, "do_nothing");--clear all current goals
 			--entity:SelectPipe(0, "tr_look_around");
 			entity:SelectPipe(0, "tr_order_search");

@@ -24,6 +24,11 @@ AIBehaviour.ScoutAttackVehicle = {
 		entity.AI.previousBehaviour = entity.AI.currentBehaviour
 		entity.AI.currentBehaviour = self.Name
 		--~TheOtherSide	
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 
 		entity.AI.normalSpeedRsv = entity.gameParams.stance[1].normalSpeed;
@@ -44,6 +49,11 @@ AIBehaviour.ScoutAttackVehicle = {
 
 	---------------------------------------------
 	Destructor = function ( self, entity, data )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		-- called when the behaviour is de-selected
 		-- the extra data is from the signal that is causing the behavior transition
@@ -65,6 +75,11 @@ AIBehaviour.ScoutAttackVehicle = {
 	end,	
 	--------------------------------------------------------------------------
 	OnNoTarget = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- called when the AI stops having an attention target
 		AI.Signal(SIGNALFILTER_SENDER, 1, "SC_SCOUT_ATTACKVEHICLE_WAIT", entity.id);
 	end,
@@ -113,6 +128,11 @@ AIBehaviour.ScoutAttackVehicle = {
 
 	--------------------------------------------------------------------------
 	SC_SCOUT_ATTACKVEHICLE = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		local target = AI.GetAttentionTargetEntity( entity.id );
 		if ( target and AI.Hostile( entity.id, target.id ) ) then
@@ -206,6 +226,11 @@ AIBehaviour.ScoutAttackVehicle = {
 
 	--------------------------------------------------------------------------
 	SC_SCOUT_ATTACKVEHICLE_WAIT = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		AI.CreateGoalPipe("scoutAttackVehicleWait");
 		AI.PushGoal("scoutAttackVehicleWait","timeout",1,3.0);	
@@ -216,6 +241,11 @@ AIBehaviour.ScoutAttackVehicle = {
 
 	--------------------------------------------------------------------------
 	SC_SCOUT_ATTACKVEHICLE_WAIT_END = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 	
 		local target = AI.GetAttentionTargetEntity( entity.id );
 		if ( target and AI.Hostile( entity.id, target.id ) ) then

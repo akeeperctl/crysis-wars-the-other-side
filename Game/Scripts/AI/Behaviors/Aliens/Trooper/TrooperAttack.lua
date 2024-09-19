@@ -65,7 +65,7 @@ AIBehaviour.TrooperAttack = {
 
 	---------------------------------------------
 	OnEnemyDamage = function ( self, entity, sender,data)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			-- data.id: the shooter
 			--entity:Readibility("GETTING_SHOT_AT",1);
 
@@ -111,7 +111,7 @@ AIBehaviour.TrooperAttack = {
 
 	---------------------------------------------
 	OnPlayerSeen = function( self, entity, fDistance )
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 	--		local rnd=random(1,10);
 	--		if (rnd < 5) then 
 	--			entity:Readibility("THREATEN",1);			
@@ -139,7 +139,7 @@ AIBehaviour.TrooperAttack = {
 	end,
 	---------------------------------------------
 	OnEnemyMemory = function( self, entity )
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 	--		if(entity:SetRefPointAtDistanceFromTarget(2)) then 
 	--			entity:SelectPipe(0,"tr_approach_target_at_distance");
 	--		else
@@ -155,7 +155,7 @@ AIBehaviour.TrooperAttack = {
 	---------------------------------------------
 	
 	OnNoTargetAwareness= function( self, entity )
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			entity:SelectPipe(0,"do_nothing");
 			entity:SelectPipe(0,"tr_seek_target");
 			entity:InsertSubpipe(0,"tr_random_short_timeout");
@@ -164,7 +164,7 @@ AIBehaviour.TrooperAttack = {
 	---------------------------------------------
 	
 	OnNoTargetVisible= function( self, entity )
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			entity:Readibility("target_lost",1,0);
 			entity:SelectPipe(0,"do_nothing");
 			entity:SelectPipe(0,"tr_seek_target");
@@ -213,7 +213,7 @@ AIBehaviour.TrooperAttack = {
 
 	---------------------------------------------
 	OnDamage = function ( self, entity, sender,data)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			-- called when the enemy is damaged
 			-- call default handling
 			AIBehaviour.TROOPERDEFAULT:OnDamage(entity,sender,data);
@@ -237,7 +237,7 @@ AIBehaviour.TrooperAttack = {
 	
 	--------------------------------------------------
 	OnCloseContact = function ( self, entity, target)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			if(not Trooper_CheckMelee(entity,target,2)) then
 			entity:InsertSubpipe(AIGOALPIPE_NOTDUPLICATE,"tr_backoff_fire");
 			end
@@ -279,9 +279,12 @@ AIBehaviour.TrooperAttack = {
 	end,
 	
 	TRY_MELEE_JUMP	= function(self,entity,sender)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
 
 		if(random(1,100)<50) then 
 			local targetPos = g_Vectors.temp_v1;
@@ -308,9 +311,12 @@ AIBehaviour.TrooperAttack = {
 	end,
 	
 	END_MELEE_JUMP	= function(self,entity,sender)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
 
 		entity:SelectPipe(0,"tr_stick_shooting0");
 --		entity:InsertSubpipe(0,"tr_random_short_timeout");
@@ -322,9 +328,12 @@ AIBehaviour.TrooperAttack = {
 
 	--------------------------------------------------
 	OnTargetNavTypeChanged= function(self,entity,sender,data)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
 
 		local targetNavType = data.iValue2;
 		if(targetNavType ==	NAV_WAYPOINT_HUMAN or targetNavType== NAW_WAYPOINT_TRIANGULAR) then 
@@ -340,9 +349,12 @@ AIBehaviour.TrooperAttack = {
 
 	--------------------------------------------------
 	OnLand = function(self,entity,sender)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
 
 		entity:InsertSubpipe(AIGOALPIPE_NOTDUPLICATE,"tr_check_lower_target");
 		entity.AI.JumpType = nil;
@@ -352,9 +364,12 @@ AIBehaviour.TrooperAttack = {
 	END_JUMP_ON_SPOT = function(self,entity,sender)
 		AI.ModifySmartObjectStates(entity.id,"-ShootSpotFound");
 
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
 
 		Trooper_ChooseAttack(entity);
 	end,
@@ -362,9 +377,12 @@ AIBehaviour.TrooperAttack = {
 	--------------------------------------------------
 	END_MELEE = function( self, entity, sender)
 
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
 
 		entity:SelectPipe(AIGOALPIPE_NOTDUPLICATE,"tr_backoff_fire");
 		--Trooper_ChooseAttack(entity);
@@ -373,9 +391,12 @@ AIBehaviour.TrooperAttack = {
 	--------------------------------------------------
 	MELEE_FAILED = function( self, entity, sender)
 
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
 
 		entity:SelectPipe(AIGOALPIPE_NOTDUPLICATE,"tr_backoff_fire");
 --		Trooper_ChooseAttack(entity);
@@ -384,9 +405,12 @@ AIBehaviour.TrooperAttack = {
 	--------------------------------------------------
 	END_BACKOFF = function(self,entity,sender)
 
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
 
 		Trooper_ChooseAttack(entity);
 	end,
@@ -394,9 +418,12 @@ AIBehaviour.TrooperAttack = {
 	--------------------------------------------------
 	GO_TO_SEARCH = function(self,entity,sender)
 
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
 
 		g_SignalData.point.x = 0;
 		g_SignalData.point.y = 0;
@@ -410,18 +437,24 @@ AIBehaviour.TrooperAttack = {
 	--------------------------------------------------
 	END_LOOK_CLOSER = function(self,entity,sender)
 
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
 
 		AIBehaviour.TrooperAttack:GO_TO_SEARCH(entity,sender);
 	end,
 
 	--------------------------------------------------
 	MELEE_OK = function( self, entity, sender)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
 
 		if(Trooper_CheckMeleeFinal(entity)) then 
 			return;
@@ -433,9 +466,12 @@ AIBehaviour.TrooperAttack = {
 	--------------------------------------------------
 	END_SHOOT_ON_ROCK = function( self, entity, sender)
 
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
 
 		Trooper_ChooseAttack(entity);
 	end,
@@ -443,9 +479,12 @@ AIBehaviour.TrooperAttack = {
 	--------------------------------------------------
 	IS_PLAYER_ENGAGED = function(self,entity,sender)
 
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
 
 		if(AI.GetGroupOf(entity.id) ~= AI.GetGroupOf(sender.id)) then 
 			AI.Signal(SIGNALFILTER_GROUPONLY, 0,"PLAYER_ENGAGED",sender.id);

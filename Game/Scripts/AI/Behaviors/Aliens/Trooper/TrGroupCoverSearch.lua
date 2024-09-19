@@ -15,9 +15,13 @@ AIBehaviour.TrGroupCoverSearch = {
 		--TheOtherSide
 		entity.AI.previousBehaviour = entity.AI.currentBehaviour
 		entity.AI.currentBehaviour = self.Name
-		--~TheOtherSide	
-
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		--~TheOtherSide
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
+		if (entity.AI.ignoreSignals == false) then
 
 			-- data.point = enemy position
 			-- data.point2 = average group position
@@ -34,9 +38,16 @@ AIBehaviour.TrGroupCoverSearch = {
 	end,
 	
 	REFPOINT_REACHED = function(self,entity,sender)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		
 		entity:SelectPipe(0,"do_nothing");
 		local firepos = entity.AI.RefPointMemory;

@@ -136,9 +136,9 @@ AIBehaviour.HBaseIdle = {
 	--------------------------------------------------
 	LeaveMG = function(self,entity)
 		if(AI.GetAttentionTargetOf(entity.id)) then 
-			AI.Signal(SIGNALFILTER_SENDER,1,"TO_ATTACK",entity.id);
+			AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_ATTACK",entity.id);
 		else
-			AI.Signal(SIGNALFILTER_SENDER,1,"TO_SEEK",entity.id);
+			AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_SEEK",entity.id);
 		end
 	end,
 
@@ -193,7 +193,7 @@ AIBehaviour.HBaseIdle = {
 		local deadPos = sender:GetWorldPos();
 		AI.SetRefPointPosition(entity.id, deadPos);
 		entity:SelectPipe(0,"approach_dead");
-		AI.Signal(SIGNALFILTER_SENDER, 1, "TO_INTERESTED",entity.id);
+		AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_INTERESTED",entity.id);
 
 	end,
 

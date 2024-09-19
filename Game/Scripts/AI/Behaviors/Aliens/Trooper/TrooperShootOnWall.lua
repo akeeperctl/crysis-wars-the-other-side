@@ -135,7 +135,7 @@ AIBehaviour.TrooperShootOnWall = {
 
 	--------------------------------------------------
 	OnEnemyDamage = function( self, entity, sender,data )
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			if( Trooper_LowHealth(entity)) then 
 				local dist = AI.GetAttentionTargetDistance(entity.id) or 0;
 				if( dist<16) then
@@ -175,7 +175,7 @@ AIBehaviour.TrooperShootOnWall = {
 	
 	--------------------------------------------------
 	OnCloseContact= function(self,entity,target)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			if(entity.AI.landed) then 
 				self:EndBehaviour(entity);
 				Trooper_UpdateMoarStats(entity);

@@ -24,6 +24,11 @@ AIBehaviour.ScoutPickAttack = {
 		entity.AI.currentBehaviour = self.Name
 		--~TheOtherSide	
 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		-- called when the behaviour is selected
 
@@ -88,6 +93,11 @@ AIBehaviour.ScoutPickAttack = {
 	--------------------------------------------------------------------------
 	SC_SCOUT_PICKATTACK_START = function( self, entity )
 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		if ( AIBehaviour.SCOUTDEFAULT:scoutGetPickPosition( entity ) == true ) then
 
 			AI.ChangeParameter( entity.id, AIPARAM_STRAFINGPITCH , 20.0 );
@@ -117,6 +127,11 @@ AIBehaviour.ScoutPickAttack = {
 	--------------------------------------------------------------------------
 	SC_SCOUT_PICKATTACK_START_B = function( self, entity )
 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		AI.CreateGoalPipe("scoutPickAttack_b");
 		AI.PushGoal("scoutPickAttack_b","run",0,1);	
 		AI.PushGoal("scoutPickAttack_b","locate",0,"refpoint");		

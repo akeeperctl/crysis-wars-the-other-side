@@ -27,6 +27,11 @@ AIBehaviour.ScoutMelee = {
 		entity.AI.currentBehaviour = self.Name
 		--~TheOtherSide	
 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		-- called when the behaviour is selected
 
@@ -91,6 +96,11 @@ AIBehaviour.ScoutMelee = {
 	
 	--------------------------------------------------------------------------
 	OnSoreDamage = function ( self, entity, sender, data )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		self:OnEnemyDamage(entity);
 	end,
 	---------------------------------------------
@@ -107,6 +117,11 @@ AIBehaviour.ScoutMelee = {
 
 	--------------------------------------------------------------------------
 	SC_SCOUT_START_MELEE = function ( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		local target = AI.GetAttentionTargetEntity( entity.id );
 		if ( target and AI.Hostile( entity.id, target.id ) ) then
@@ -123,6 +138,11 @@ AIBehaviour.ScoutMelee = {
 
 	--------------------------------------------------------------------------
 	SC_SCOUT_MELEE = function ( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		local targetPos = {};
 		local targetDir = {};
@@ -165,6 +185,11 @@ AIBehaviour.ScoutMelee = {
 
 	--------------------------------------------------------------------------
 	SC_SCOUT_MELEE2 = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		local attackPos = {};
 		local diff = {};

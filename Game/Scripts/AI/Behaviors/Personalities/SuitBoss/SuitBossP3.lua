@@ -107,7 +107,7 @@ AIBehaviour.SuitBossP3 = {
 			elseif(state == GS_SEEK) then
 				-- Goto seek
 				AI.RecComment(entity.id, "COVER_NORMALATTACK/GS_SEEK");
-				AI.Signal(SIGNALFILTER_SENDER,1,"TO_SEEK",entity.id);
+				AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_SEEK",entity.id);
 			else
 				-- take cover
 				entity:Readibility("taunt",1,3,0.1,0.4);

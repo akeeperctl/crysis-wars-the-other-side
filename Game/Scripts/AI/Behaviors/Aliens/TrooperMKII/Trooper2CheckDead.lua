@@ -22,7 +22,7 @@ AIBehaviour.Trooper2CheckDead = {
 	
 	--------------------------------------------------
 	OnEnemyDamage = function( self, entity, sender,data )
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			Trooper_HitReaction(entity);
 		end
 	end,
@@ -98,7 +98,7 @@ AIBehaviour.Trooper2CheckDead = {
 	BE_ALERTED = function ( self, entity, sender)
 		entity:Readibility("confirm_dead",1,1,0.1,0.4);
 		
-		AI.Signal(SIGNALFILTER_SENDER, 1, "TO_SEEK",entity.id);		
+		AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_SEEK",entity.id);		
 --		AI.Signal(SIGNALFILTER_GROUPONLY, 1, "SEEK_KILLER",entity.id);
 		entity:MakeAlerted();
 		

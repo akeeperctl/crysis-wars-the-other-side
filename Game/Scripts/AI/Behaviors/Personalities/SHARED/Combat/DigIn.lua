@@ -27,7 +27,7 @@ AIBehaviour.DigIn = {
 	OnPlayerSeen = function( self, entity, fDistance )
 		self.LOS = 1;
 		if (fDistance<5) then 
-			AI.Signal(0,1,"TO_PREVIOUS",entity.id);
+			AI.Signal(0,1,"GO_TO_PREVIOUS",entity.id);
 			entity:TriggerEvent(AIEVENT_CLEAR);
 		end
 	end,
@@ -85,7 +85,7 @@ AIBehaviour.DigIn = {
 	
 		entity:SelectPipe(0,"cover_fire");
 		entity:InsertSubpipe(0,"do_it_standing");
-		AI.Signal(0,1,"TO_ATTACK",entity.id);		
+		AI.Signal(0,1,"GO_TO_ATTACK",entity.id);		
 		do return end
 		
 	
@@ -99,12 +99,12 @@ AIBehaviour.DigIn = {
 	---------------------------------------------
 	CHECK_FOR_SAFETY = function (self, entity, sender)
 		if (self.LOS) then
-			AI.Signal(0,1,"TO_ATTACK",entity.id);
+			AI.Signal(0,1,"GO_TO_ATTACK",entity.id);
 		--	entity:TriggerEvent(AIEVENT_CLEAR);
 		end
 	end,
 
-	TO_PREVIOUS = function(self,entity,sender)
+	GO_TO_PREVIOUS = function(self,entity,sender)
 --		AI.Signal(0,1,"OnReload",entity.id);
 	end
 

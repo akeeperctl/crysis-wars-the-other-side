@@ -154,9 +154,9 @@ AIBehaviour.Trooper2Reload = {
 --		entity:Readibility("reloading",1);
 --		AI_Utils:SafeReload(entity);
 --		if(target == AITARGET_ENEMY or target == AITARGET_MEMORY) then
---			AI.Signal(SIGNALFILTER_SENDER,1,"TO_ATTACK",entity.id);
+--			AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_ATTACK",entity.id);
 --		else
---			AI.Signal(SIGNALFILTER_SENDER,1,"TO_SEEK",entity.id);
+--			AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_SEEK",entity.id);
 --		end
 	end,
 
@@ -206,19 +206,19 @@ AIBehaviour.Trooper2Reload = {
 		
 			if (entity.AI.reloadReturnToSeek and entity.AI.reloadReturnToSeek == true) then
 				entity.AI.reloadReturnToSeek = nil;
-				AI.Signal(SIGNALFILTER_SENDER,1,"TO_SEEK",entity.id);
+				AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_SEEK",entity.id);
 			else
 				local target = AI.GetTargetType(entity.id);
 				if (target == AITARGET_ENEMY) then
-					AI.Signal(SIGNALFILTER_SENDER, 1, "TO_ATTACK",entity.id);
+					AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_ATTACK",entity.id);
 				elseif (target == AITARGET_MEMORY) then
-					AI.Signal(SIGNALFILTER_SENDER, 1, "TO_SEEK",entity.id);
+					AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_SEEK",entity.id);
 				else
 					if(AI_Utils:IsTargetOutsideStandbyRange(entity) == 1) then
 						entity.AI.hurryInStandby = 0;
-						AI.Signal(SIGNALFILTER_SENDER, 1, "TO_THREATENED_STANDBY",entity.id);
+						AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_THREATENED_STANDBY",entity.id);
 					else
-						AI.Signal(SIGNALFILTER_SENDER, 1, "TO_THREATENED",entity.id);
+						AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_THREATENED",entity.id);
 					end
 				end
 			end

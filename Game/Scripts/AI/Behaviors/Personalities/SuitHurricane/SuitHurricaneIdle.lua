@@ -46,17 +46,27 @@ AIBehaviour.SuitHurricaneIdle = {
 
 	---------------------------------------------
 	OnPlayerSeen = function( self, entity, fDistance, data )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:MakeAlerted();
 		entity:TriggerEvent(AIEVENT_DROPBEACON);
 		entity.AI.firstContact = true;
 
-		AI.Signal(SIGNALFILTER_SENDER,1,"TO_ATTACK",entity.id);
+		AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_ATTACK",entity.id);
 
 	end,
 
 	---------------------------------------------
 	COVER_NORMALATTACK = function (self, entity, sender)
-		AI.Signal(SIGNALFILTER_SENDER, 1, "TO_THREATENED",entity.id);
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
+		AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_THREATENED",entity.id);
 	end,
 
 	---------------------------------------------
@@ -79,7 +89,12 @@ AIBehaviour.SuitHurricaneIdle = {
 
 	---------------------------------------------
 	SEEK_KILLER = function(self, entity)
-		AI.Signal(SIGNALFILTER_SENDER,1,"TO_THREATENED",entity.id);
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
+		AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_THREATENED",entity.id);
 	end,
 	
 	---------------------------------------------
@@ -91,34 +106,58 @@ AIBehaviour.SuitHurricaneIdle = {
 	OnSomethingSeen = function( self, entity )
 		-- called when the enemy sees a foe which is not a living player
 		entity:Readibility("idle_interest_see",1,1,0.6,1);
-		AI.Signal(SIGNALFILTER_SENDER, 1, "TO_THREATENED",entity.id);
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
+		AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_THREATENED",entity.id);
 	end,
 	
 	---------------------------------------------
 	OnInterestingSoundHeard = function( self, entity )
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_AUDIO) == 0.0 ) then
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
 		-- check if we should check the sound or not.
 		entity:Readibility("idle_interest_hear",1,1,0.6,1);
-		AI.Signal(SIGNALFILTER_SENDER, 1, "TO_THREATENED",entity.id);
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
+		AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_THREATENED",entity.id);
 	end,
 
 	---------------------------------------------
 	OnThreateningSoundHeard = function( self, entity, fDistance )
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_AUDIO) == 0.0 ) then
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
 		-- called when the enemy hears a scary sound
 		entity:Readibility("idle_alert_threat_hear",1,1,0.6,1);
 		entity:TriggerEvent(AIEVENT_DROPBEACON);
-		AI.Signal(SIGNALFILTER_SENDER, 1, "TO_THREATENED",entity.id);
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
+		AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_THREATENED",entity.id);
 	end,
 
 	--------------------------------------------------
 	INVESTIGATE_BEACON = function (self, entity, sender)
 		entity:Readibility("ok_battle_state",1,1,0.6,1);
-		AI.Signal(SIGNALFILTER_SENDER, 1, "TO_THREATENED",entity.id);
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
+		AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_THREATENED",entity.id);
 	end,
 		
 	--------------------------------------------------
@@ -135,6 +174,11 @@ AIBehaviour.SuitHurricaneIdle = {
 
 	---------------------------------------------
 	OnEnemyDamage = function (self, entity, sender, data)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- called when the enemy is damaged
 		entity:GettingAlerted();
 --		entity:Readibility("taking_fire",1,1,0.3,0.5);
@@ -156,11 +200,16 @@ AIBehaviour.SuitHurricaneIdle = {
 --		entity:Readibility("bulletrain",1,0.1,0.4);
 		entity:SelectPipe(0,"su_bullet_reaction");
 
---		AI.Signal(SIGNALFILTER_SENDER, 1, "TO_THREATENED",entity.id);
+--		AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_THREATENED",entity.id);
 	end,
 
 	--------------------------------------------------
 	OnNearMiss = function(self, entity, sender)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- only react to hostile bullets.
 		if(AI.Hostile(entity.id, sender.id)) then
 			entity:GettingAlerted();
@@ -180,7 +229,7 @@ AIBehaviour.SuitHurricaneIdle = {
 			AI_Utils:IsTargetOutsideStandbyRange(entity);
 
 			AI.Signal(SIGNALFILTER_GROUPONLY_EXCEPT,1,"INCOMING_FIRE",entity.id);
---			AI.Signal(SIGNALFILTER_SENDER,1,"TO_THREATENED",entity.id);
+--			AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_THREATENED",entity.id);
 
 			entity.AI.lastBulletReactionTime = _time;
 --			entity:Readibility("bulletrain",1,0.1,0.4);
@@ -192,6 +241,11 @@ AIBehaviour.SuitHurricaneIdle = {
 
 	---------------------------------------------
 	OnBulletRain = function(self, entity, sender, data)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		AIBehaviour.SuitHurricaneIdle:OnNearMiss(entity,sender);
 	end,
 
@@ -206,24 +260,39 @@ AIBehaviour.SuitHurricaneIdle = {
 
 	--------------------------------------------------
 	OnGroupMemberDied = function(self, entity, sender, data)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		--AI.LogEvent(entity:GetName().." OnGroupMemberDied!");
 		entity:GettingAlerted();
-		AI.Signal(SIGNALFILTER_SENDER,1,"TO_THREATENED",entity.id);
+		AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_THREATENED",entity.id);
 	end,
 
 	---------------------------------------------
 	ENEMYSEEN_FIRST_CONTACT = function( self, entity )
 		if(AI.GetTargetType(entity.id) ~= AITARGET_ENEMY) then
 			entity:Readibility("idle_interest_see",1,1,0.6,1);
-			AI.Signal(SIGNALFILTER_SENDER, 1, "TO_THREATENED",entity.id);
+			--TheOtherSide
+			if (entity.AI.ignoreSignals == true) then
+				return;
+			end
+			--~TheOtherSide
+			AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_THREATENED",entity.id);
 		end
 	end,
 
 	--------------------------------------------------
 	ENEMYSEEN_DURING_COMBAT = function (self, entity, sender)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:GettingAlerted();
 		if(AI.GetTargetType(entity.id) ~= AITARGET_ENEMY) then
-			AI.Signal(SIGNALFILTER_SENDER,1,"TO_ATTACK",entity.id);
+			AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_ATTACK",entity.id);
 		end
 	end,
 
@@ -312,6 +381,11 @@ AIBehaviour.SuitHurricaneIdle = {
 
 	--------------------------------------------------
 	OnGroupChanged = function (self, entity)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		AI.BeginGoalPipe("temp_goto_beacon");
 			AI.PushGoal("locate",0,"beacon");
 			AI.PushGoal("approach",1,4,AILASTOPRES_USE);
@@ -321,6 +395,11 @@ AIBehaviour.SuitHurricaneIdle = {
 
 	--------------------------------------------------
 	OnExposedToFlashBang = function (self, entity, sender, data)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:SelectPipe(0,"su_threat_reaction");
 --
 --		AI.NotifyGroupTacticState(entity.id, 0, GN_NOTIFY_UNAVAIL);
@@ -347,13 +426,18 @@ AIBehaviour.SuitHurricaneIdle = {
 
 	---------------------------------------------
 	OnExposedToExplosion = function(self, entity, data)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:SelectPipe(0,"su_threat_reaction");
 	end,
 
 	---------------------------------------------
 	OnGroupMemberMutilated = function(self, entity)
 --		System.Log(">>"..entity:GetName().." OnGroupMemberMutilated");
---		AI.Signal(SIGNALFILTER_SENDER,1,"TO_PANIC",entity.id);
+--		AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_PANIC",entity.id);
 	end,
 
 	---------------------------------------------
@@ -374,11 +458,21 @@ AIBehaviour.SuitHurricaneIdle = {
 
 	---------------------------------------------
 	OnGrenadeDanger = function( self, entity, sender, signalData )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 			entity:SelectPipe(0,"su_threat_reaction");
 	end,
 
 	---------------------------------------------
 	OnCloseCollision = function(self, entity, data)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:SelectPipe(0,"su_threat_reaction");
 	end,
 
@@ -395,7 +489,7 @@ AIBehaviour.SuitHurricaneIdle = {
 	---------------------------------------------
 	OnFallAndPlayWakeUp = function( self, entity )
 		-- check if we should check the sound or not.
-		AI.Signal(SIGNALFILTER_SENDER, 1, "TO_THREATENED",entity.id);
+		AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_THREATENED",entity.id);
 	end,
 
 }

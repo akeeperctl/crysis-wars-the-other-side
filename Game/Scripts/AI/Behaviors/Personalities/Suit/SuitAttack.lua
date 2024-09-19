@@ -297,7 +297,7 @@ AIBehaviour.SuitAttack = {
 			entity.AI.seek = true;
 		end
 	
---		AI.Signal(SIGNALFILTER_SENDER,1,"TO_THREATENED",entity.id);
+--		AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_THREATENED",entity.id);
 	end,
 
 	---------------------------------------------

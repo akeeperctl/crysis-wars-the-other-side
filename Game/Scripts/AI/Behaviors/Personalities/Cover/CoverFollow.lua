@@ -26,6 +26,11 @@ AIBehaviour.CoverFollow = {
 	---------------------------------------------
 	OnEnemyDamage = function ( self, entity, sender)
 		entity:Readibility("GETTING_SHOT_AT",1);
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:SelectPipe(0, "random_look_around");
 		entity:InsertSubpipe(0, "notify_threatened");
 	end,
@@ -46,6 +51,11 @@ AIBehaviour.CoverFollow = {
 	
 	---------------------------------------------
 	OnLeaderDied = function ( self, entity, sender)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 --		local target = AI.GetAttentionTargetOf(entity.id);
 --		if(target and target.id and AI.GetSpeciesOf(target.id)) then
 --			-- enemy target
@@ -61,6 +71,11 @@ AIBehaviour.CoverFollow = {
 	end,
 	---------------------------------------------
 	OnPlayerSeen = function( self, entity, fDistance )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- first send him OnSeenByEnemy signal
 --		local target = AI.GetAttentionTargetEntity(entity.id);
 --		if(target) then 
@@ -100,6 +115,11 @@ AIBehaviour.CoverFollow = {
 --		end
 
 		entity:Readibility("IDLE_TO_THREATENED",1);
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:SelectPipe(0, "random_look_around");
 		entity:InsertSubpipe(0, "notify_threatened");
 	end,
@@ -113,20 +133,37 @@ AIBehaviour.CoverFollow = {
 		-- called when a member of the group dies
 
 		entity:Readibility("IDLE_TO_THREATENED",1);
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:SelectPipe(0, "random_look_around");
 		entity:InsertSubpipe(0, "notify_threatened");
 	end,
 	--------------------------------------------------
 	OnGroupMemberDiedNearest = function ( self, entity, sender)
 		entity:Readibility("IDLE_TO_THREATENED",1);
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:SelectPipe(0, "random_look_around");
 		entity:InsertSubpipe(0, "notify_threatened");
 	end,
 	---------------------------------------------
 	OnNoHidingPlace = function( self, entity, sender )
 		-- select random attack pipe		
-		NOCOVER:SelectAttack(entity);
 		entity:Readibility("THREATEN",1);
+		
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
+		NOCOVER:SelectAttack(entity);
+
 	end,	
 	OnHideSpotReached = function( self, entity, sender )
 	end,
@@ -135,6 +172,11 @@ AIBehaviour.CoverFollow = {
 	OnBulletRain = function ( self, entity, sender)
 		entity:Readibility("BULLETRAIN_IDLE");	
 		entity:Readibility("IDLE_TO_THREATENED",1);
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:SelectPipe(0, "random_look_around");
 		entity:InsertSubpipe(0, "notify_threatened");
 	end,
@@ -150,17 +192,32 @@ AIBehaviour.CoverFollow = {
 	--------------------------------------------------
 	
 	LEADER_CROUCH = function(self,entity,sender)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:InsertSubpipe(0,"random_very_short_timeout");
 		entity:InsertSubpipe(0,"do_it_crouched");
 		
 	end,
 	
 	LEADER_STAND = function(self,entity,sender)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:InsertSubpipe(0,"random_very_short_timeout");
 		entity:InsertSubpipe(0,"do_it_standing");
 	end,
 	
 	LEADER_PRONE = function(self,entity,sender)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:InsertSubpipe(0,"random_very_short_timeout");
 		entity:InsertSubpipe(0,"do_it_prone");
 	end,

@@ -50,6 +50,12 @@ AIBehaviour.WatchTowerGuardAlerted = {
 	--------------------------------------------------
 	CHOOSE_WATCH_SPOT_INTERESTED = function (self, entity)
 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
+
 		local	objectPos = g_Vectors.temp_v1;
 		local	objectDir = g_Vectors.temp_v2;
 
@@ -72,6 +78,11 @@ AIBehaviour.WatchTowerGuardAlerted = {
 	OnPlayerSeen = function( self, entity, fDistance )
 		entity:Readibility("first_contact",1,3,0.1,0.4);
 		entity:TriggerEvent(AIEVENT_DROPBEACON);
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		entity.AI.firstContact = true;
 
@@ -91,6 +102,11 @@ AIBehaviour.WatchTowerGuardAlerted = {
 
 	---------------------------------------------
 	OnNoTarget = function (self, entity)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		AI.Signal(SIGNALFILTER_SENDER, 1, "TO_WATCH_TOWER_IDLE",entity.id);
 	end,
 
@@ -113,6 +129,11 @@ AIBehaviour.WatchTowerGuardAlerted = {
 		-- called when the enemy hears a scary sound
 		entity:Readibility("idle_alert_threat_hear",1,1,0.6,1);
 		entity:TriggerEvent(AIEVENT_DROPBEACON);
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		self:CHOOSE_WATCH_SPOT_INTERESTED(entity, true);
 	end,
 
@@ -120,16 +141,31 @@ AIBehaviour.WatchTowerGuardAlerted = {
 	OnDamage = function ( self, entity, sender)
 		-- called when the enemy is damaged
 		entity:Readibility("taking_fire",1,1,0.3,0.5);
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:GettingAlerted();
 	end,
 
 	--------------------------------------------------
 	DUCK_AND_HIDE_DONE = function (self, entity, sender)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		self:CHOOSE_WATCH_SPOT_INTERESTED(entity, true);
 	end,
 
 	---------------------------------------------
 	OnEnemyDamage = function (self, entity, sender, data)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		AI.Signal(SIGNALFILTER_GROUPONLY_EXCEPT,1,"INCOMING_FIRE",entity.id);
 		entity:GettingAlerted();
 		
@@ -147,6 +183,11 @@ AIBehaviour.WatchTowerGuardAlerted = {
 
 	--------------------------------------------------
 	OnNearMiss = function(self, entity, sender)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		if(AI.Hostile(entity.id, sender.id)) then
 			AI.Signal(SIGNALFILTER_GROUPONLY_EXCEPT,1,"INCOMING_FIRE",entity.id);
 			entity:GettingAlerted();
@@ -175,6 +216,11 @@ AIBehaviour.WatchTowerGuardAlerted = {
 
 	---------------------------------------------
 	OnBulletRain = function(self, entity, sender, data)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		if(AI.Hostile(entity.id, sender.id)) then
 			AI.Signal(SIGNALFILTER_GROUPONLY_EXCEPT,1,"INCOMING_FIRE",entity.id);
 			entity:GettingAlerted();
@@ -223,6 +269,11 @@ AIBehaviour.WatchTowerGuardAlerted = {
 
 	--------------------------------------------------
 	OnGroupMemberDied = function(self, entity, sender, data)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:GettingAlerted();
 		if(not entity.AI.lastDuckTime) then
 			entity.AI.lastDuckTime = _time - 10;
@@ -236,6 +287,11 @@ AIBehaviour.WatchTowerGuardAlerted = {
 
 	--------------------------------------------------
 	OnGroupMemberDiedNearest = function (self, entity, sender, data)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:GettingAlerted();
 		if(not entity.AI.lastDuckTime) then
 			entity.AI.lastDuckTime = _time - 10;

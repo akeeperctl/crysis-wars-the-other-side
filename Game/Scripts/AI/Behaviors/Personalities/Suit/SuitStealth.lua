@@ -114,7 +114,7 @@ AIBehaviour.SuitStealth = {
 			elseif(state == GS_SEEK) then
 				-- Goto seek
 				AI.RecComment(entity.id, "COVER_NORMALATTACK/GS_SEEK");
-				AI.Signal(SIGNALFILTER_SENDER,1,"TO_SEEK",entity.id);
+				AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_SEEK",entity.id);
 			else
 				-- take cover
 				entity:Readibility("taunt",1,3,0.1,0.4);
@@ -141,7 +141,7 @@ AIBehaviour.SuitStealth = {
 --		AI.Signal(SIGNALFILTER_SENDER,1,"NANOSUIT_ARMOR",entity.id);
 --		-- suit guy hides only if health is low
 --		if(entity:GetHealthPercentage()<50) then
---			AI.Signal(SIGNALFILTER_SENDER, 1, "TO_HIDE",entity.id);
+--			AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_HIDE",entity.id);
 --		end
 	end,
 
@@ -150,7 +150,7 @@ AIBehaviour.SuitStealth = {
 	
 		-- when player aimes at me - go to normal attack mode
 --		entity:NanoSuitMode( BasicAI.SuitMode.SUIT_ARMOR );				
-		AI.Signal(SIGNALFILTER_SENDER,1,"TO_ATTACK",entity.id);
+		AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_ATTACK",entity.id);
 	
 ----		if(AI.GetNavigationType(entity.id) ~= NAV_WAYPOINT_HUMAN) then
 --		if(entity.AI.lastPlayerLookingTime and (_time - entity.AI.lastPlayerLookingTime) > 6.0) then

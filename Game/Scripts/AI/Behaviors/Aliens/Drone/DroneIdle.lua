@@ -85,7 +85,7 @@ AIBehaviour.DroneIdle = {
 	end,
 	--------------------------------------------------------------------------
 	OnEnemyDamage = function ( self, entity, sender, data )
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			if ( data and data.id == entity.id ) then
 			else
 			AI.Signal( SIGNALFILTER_SENDER, 1, "TO_SCOUTMOAC_PATROL", entity.id );

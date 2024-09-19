@@ -68,7 +68,7 @@ AIBehaviour.TrooperInterested = {
 
 	---------------------------------------------
 	OnSomethingSeen= function( self, entity,sender )
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			-- redirect to new target
 			entity:SelectPipe(0,"do_nothing");
 			entity:SelectPipe(0,"tr_look_closer");

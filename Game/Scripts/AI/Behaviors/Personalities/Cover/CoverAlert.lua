@@ -21,6 +21,11 @@ AIBehaviour.CoverAlert = {
 
 	---------------------------------------------
 	OnEnemyDamage = function ( self, entity, sender,data)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		AI.LogEvent(entity:GetName().." ONENEMY DAMAGE CoverAlert");
 		AI.Signal(SIGNALFILTER_GROUPONLY, 1, "INCOMING_FIRE",entity.id);
 		entity:Readibility("GETTING_SHOT_AT",1);
@@ -42,6 +47,11 @@ AIBehaviour.CoverAlert = {
 	end,
 	---------------------------------------------
 	OnPlayerSeen = function( self, entity, fDistance )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- called when the enemy sees a living player
 		-- REVIEWED
 
@@ -86,6 +96,11 @@ AIBehaviour.CoverAlert = {
 	end,
 	---------------------------------------------
 	OnEnemyMemory = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		local spot = entity:ProtectSpot();
 		if(spot) then
 			AI.Signal(SIGNALFILTER_SENDER,0,"PROTECT_THIS_POINT",entity.id,spot);
@@ -97,12 +112,22 @@ AIBehaviour.CoverAlert = {
 	end,
 	---------------------------------------------
 	OnInterestingSoundHeard = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- called when the enemy hears an interesting sound
 		entity:SelectPipe(0,"cover_look_closer");
 		entity:TriggerEvent(AIEVENT_DROPBEACON); 
 	end,
 	---------------------------------------------
 	OnThreateningSoundHeard = function( self, entity, fDistance )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 --		entity:MakeAlerted();
 
 		local spot = entity:ProtectSpot();
@@ -124,6 +149,11 @@ AIBehaviour.CoverAlert = {
 	end,
 	---------------------------------------------
 	OnReload = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- called when the enemy goes into automatic reload after its clip is empty
 		entity:SelectPipe(0,"cover_scramble");
 	end,
@@ -133,6 +163,11 @@ AIBehaviour.CoverAlert = {
 	end,
 	---------------------------------------------
 	OnDamage = function ( self, entity, sender,data)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- called when the enemy is damaged
 		entity:Readibility("GETTING_SHOT_AT",1);
 		entity:SelectPipe(0,"getting_shot_at");
@@ -140,11 +175,16 @@ AIBehaviour.CoverAlert = {
 	
 	---------------------------------------------
 	OnHideSpotReached = function( self, entity, sender)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		local targetName = AI.GetAttentionTargetOf(entity.id);
 		
 		if(AI.Hostile(entity.id,targetName) and System.GetEntityByName(targetName)) then
 			entity:SelectPipe(0,"cover_pindown");
-			AI.Signal(SIGNALFILTER_SENDER,0,"GO_ATTACK",entity.id);
+			AI.Signal(SIGNALFILTER_SENDER,0,"GO_TO_ATTACK",entity.id);
 		elseif(targetName) then
 		
 			-- start looking for target after some delay
@@ -159,6 +199,11 @@ AIBehaviour.CoverAlert = {
 
 	--------------------------------------------------
 	OnBulletRain = function ( self, entity, sender)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- called when the enemy detects bullet trails around him
 		entity:Readibility("BULLETRAIN_IDLE");		
 		local spot = entity:ProtectSpot();
@@ -190,6 +235,11 @@ AIBehaviour.CoverAlert = {
 --	end,
 	--------------------------------------------------
 	OnGroupMemberDiedNearest = function ( self, entity, sender)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		AIBehaviour.DEFAULT:OnGroupMemberDiedNearest(entity,sender);
 
@@ -197,6 +247,11 @@ AIBehaviour.CoverAlert = {
 	end,
 	---------------------------------------------
 	Cease = function( self, entity, fDistance )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:SelectPipe(0,"cover_cease_approach"); -- in PipeManagerShared.lua			 
 	end,
 	---------------------------------------------

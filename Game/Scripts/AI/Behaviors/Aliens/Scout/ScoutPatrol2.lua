@@ -27,6 +27,11 @@ AIBehaviour.ScoutPatrol = {
 		entity.AI.currentBehaviour = self.Name
 		--~TheOtherSide	
 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		-- called when the behaviour is selected
 		-- the extra data is from the signal that caused the behavior transition
@@ -75,6 +80,11 @@ AIBehaviour.ScoutPatrol = {
 	end,
 	---------------------------------------------
 	OnPlayerSeen = function( self, entity, fDistance )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- called when the AI sees a living enemy
 		-- Drop beacon and let the other know here's something to fight for.
 
@@ -109,6 +119,11 @@ AIBehaviour.ScoutPatrol = {
 	
 	--------------------------------------------------------------------------
 	OnSoreDamage = function ( self, entity, sender, data )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		self:OnEnemyDamage(entity);
 	end,
 	---------------------------------------------

@@ -35,6 +35,10 @@ AIBehaviour.ScoutMOARIdle = {
 	end,
 	--------------------------------------------------------------------------
 	OnPlayerSeen = function( self, entity, fDistance )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
 		AI.Signal(SIGNALFILTER_SENDER, 1, "TO_SCOUTMOAR_ATTACK", entity.id);
 	end,
 	--------------------------------------------------------------------------
@@ -47,6 +51,10 @@ AIBehaviour.ScoutMOARIdle = {
 	end,
 	--------------------------------------------------------------------------
 	OnEnemyDamage = function ( self, entity, sender, data )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
 		AI.Signal(SIGNALFILTER_SENDER, 1, "TO_SCOUTMOAR_PATROL", entity.id);
 	end,
 

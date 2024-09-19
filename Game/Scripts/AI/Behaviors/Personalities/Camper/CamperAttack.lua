@@ -24,6 +24,11 @@ AIBehaviour.CamperAttack = {
 
 	---------------------------------------------
 	COVER_NORMALATTACK = function (self, entity, sender)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		local target = AI.GetTargetType(entity.id);
 		local state = GS_ADVANCE;
 		
@@ -34,9 +39,9 @@ AIBehaviour.CamperAttack = {
 		local throwingGrenade = 0;
 
 		if (state == GS_SEEK) then
-			AI.Signal(SIGNALFILTER_SENDER,1,"TO_SEEK",entity.id);
+			AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_SEEK",entity.id);
 		elseif (state == GS_SEARCH or state == GS_ALERTED or state == GS_IDLE) then
-			AI.Signal(SIGNALFILTER_SENDER,1,"TO_SEARCH",entity.id);
+			AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_SEARCH",entity.id);
 		else
 			
 			AI.NotifyGroupTacticState(entity.id, 0, GN_NOTIFY_ADVANCING);
@@ -90,6 +95,11 @@ AIBehaviour.CamperAttack = {
 
 	---------------------------------------------
 	OnBulletRain = function(self, entity, sender)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 --		local dta = _time - entity.AI.lastAdvanceTime;
 --		if (dta > 3.0) then
 --		if (AI.IsMoving(entity.id,2) == 0) then
@@ -112,6 +122,11 @@ AIBehaviour.CamperAttack = {
 
 	---------------------------------------------
 	OnEnemyDamage = function(self, entity, sender)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 --		local dta = _time - entity.AI.lastAdvanceTime;
 --		if (dta > 3.0) then
 --		if (AI.IsMoving(entity.id,2) == 0) then

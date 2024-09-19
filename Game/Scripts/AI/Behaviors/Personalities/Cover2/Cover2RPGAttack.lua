@@ -42,6 +42,11 @@ AIBehaviour.Cover2RPGAttack = {
 	-- 
 	--------------------------------------------------	
 	FindRPGSpot  = function (self, entity, needToMove)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- Try to find good shot spot.
 		local	attackPos = nil;
 		if(needToMove) then
@@ -76,6 +81,11 @@ AIBehaviour.Cover2RPGAttack = {
 
 	--------------------------------------------------
 	ApproachRPGSpot  = function (self, entity, firstTime)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		
 		local dist1 = DistanceVectors(entity.AI.RPG_spot, entity:GetWorldPos());
 		if(dist1 < 1.5) then
@@ -96,18 +106,23 @@ AIBehaviour.Cover2RPGAttack = {
 		
 --		-- out of ammo, run!
 --		entity:Readibility("explosion_imminent",1,1,0.1,0.4);
---		AI.Signal(SIGNALFILTER_SENDER, 1, "TO_AVOID_TANK",entity.id);
+--		AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_AVOID_TANK",entity.id);
 	end,
 
 
 	--------------------------------------------------
 	RPG_ATTACK = function(self, entity, sender, data)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		local	distToTarget = AI.GetAttentionTargetDistance(entity.id);
 		if((targetType == AITARGET_ENEMY or targetType == AITARGET_MEMORY) and distToTarget < AIBehaviour.Cover2RPGAttack.fleeDistance) then
 		
 
-			AI.Signal(SIGNALFILTER_SENDER, 1, "TO_AVOID_TANK",entity.id);
+			AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_AVOID_TANK",entity.id);
 			do return end
 		end
 	
@@ -115,7 +130,7 @@ AIBehaviour.Cover2RPGAttack = {
 			self:ApproachRPGSpot(entity)
 		else
 
-			AI.Signal(SIGNALFILTER_SENDER, 1, "TO_AVOID_TANK",entity.id);		
+			AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_AVOID_TANK",entity.id);		
 		end
 	
 	
@@ -140,6 +155,11 @@ AIBehaviour.Cover2RPGAttack = {
 
 	--------------------------------------------------
 	RPG_ONSPOT = function(self, entity, sender, data)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		local targetType = AI.GetTargetType(entity.id);
 		local	distToTarget = AI.GetAttentionTargetDistance(entity.id);
 		if((targetType == AITARGET_ENEMY or targetType == AITARGET_MEMORY) and distToTarget > AIBehaviour.Cover2RPGAttack.fleeDistance-3) then
@@ -163,6 +183,11 @@ AIBehaviour.Cover2RPGAttack = {
 	---------------------------------------------
 	---------------------------------------------		
 	OnPlayerSeen = function( self, entity, fDistance )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:MakeAlerted();
 		entity:TriggerEvent(AIEVENT_DROPBEACON);
 		-- switch to combat only after some delay
@@ -172,6 +197,11 @@ AIBehaviour.Cover2RPGAttack = {
 
 	---------------------------------------------
 	OnTankSeen = function( self, entity, fDistance )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		AIBehaviour.Cover2AvoidTank.ResetAttackDelay(self,entity);
 		local	distToTarget = AI.GetAttentionTargetDistance(entity.id);
 		if(distToTarget < AIBehaviour.Cover2RPGAttack.fleeDistance-3) then
@@ -181,6 +211,11 @@ AIBehaviour.Cover2RPGAttack = {
 	
 	---------------------------------------------
 	OnTargetApproaching	= function (self, entity)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:SelectPipe(0,"fleeRPG");
 	end,
 	
@@ -198,6 +233,11 @@ AIBehaviour.Cover2RPGAttack = {
 
 	---------------------------------------------
 	OnEnemyMemory = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		if (entity.AI.hideTimer) then
 			Script.KillTimer(entity.AI.hideTimer);
 			entity.AI.hideTimer = nil;
@@ -207,12 +247,17 @@ AIBehaviour.Cover2RPGAttack = {
 
 	-----------------------------------------------------
 	OnUnhideTimer = function(entity,timerid)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity.AI.hideTimer = nil;
 		local target = AI.GetTargetType(entity.id);
 		if(target==AITARGET_ENEMY) then
 			AI.Signal(SIGNALFILTER_SENDER,1,"RPG_ATTACK",entity.id);
 		else
-			AI.Signal(SIGNALFILTER_SENDER,1,"TO_SEEK",entity.id);
+			AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_SEEK",entity.id);
 		end
 	end,
 	
@@ -249,19 +294,25 @@ AIBehaviour.Cover2RPGAttack = {
 	
 	---------------------------------------------
 	OnEnemyDamage = function ( self, entity, sender,data)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 --		AI.Signal(SIGNALFILTER_SENDER,1,"RPG_ATTACK",entity.id);
 
 		local	distToTarget = AI.GetAttentionTargetDistance(entity.id);
+		local targetType = AI.GetTargetType(entity.id)
 		if((targetType == AITARGET_ENEMY or targetType == AITARGET_MEMORY) 
 				and distToTarget < AIBehaviour.Cover2RPGAttack.fleeDistance-3) then
-			AI.Signal(SIGNALFILTER_SENDER, 1, "TO_AVOID_TANK",entity.id);		
+			AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_AVOID_TANK",entity.id);		
 			do return end
 		end
 	
 		if(self:FindRPGSpot(entity, 1) ~= nil) then
 			self:ApproachRPGSpot(entity)
 		else
-			AI.Signal(SIGNALFILTER_SENDER, 1, "TO_AVOID_TANK",entity.id);		
+			AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_AVOID_TANK",entity.id);		
 		end
 
 	end,

@@ -27,6 +27,11 @@ AIBehaviour.ScoutMOARAttack = {
 		entity.AI.currentBehaviour = self.Name
 		--~TheOtherSide	
 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		AIBehaviour.SCOUTDEFAULT:scoutCloseConnection( entity );	
 
 		if ( entity.AI.bUseFreezeGun == true ) then
@@ -95,6 +100,11 @@ AIBehaviour.ScoutMOARAttack = {
 	
 	--------------------------------------------------------------------------
 	OnSoreDamage = function ( self, entity, sender, data )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		self:OnEnemyDamage(entity);
 	end,
 	---------------------------------------------
@@ -107,6 +117,11 @@ AIBehaviour.ScoutMOARAttack = {
 	---------------------------------------------
 	OnGroupMemberDied = function( self, entity, sender )
 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- called when a member of same species dies nearby
 
 		local senderEntity =System.GetEntity( sender.id );
@@ -270,6 +285,11 @@ AIBehaviour.ScoutMOARAttack = {
 
 	--------------------------------------------------------------------------
 	SC_SCOUT_STAY_ATTACK = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		
 		AIBehaviour.SCOUTDEFAULT:scoutGetID( entity );
 		AIBehaviour.SCOUTDEFAULT:scoutDoStayAttack( entity );
@@ -410,6 +430,11 @@ AIBehaviour.ScoutMOARAttack = {
 	--------------------------------------------------------------------------
 	SC_SCOUT_CLOSE = function( self, entity, sender )
 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- a team member knows, now he can quit gaurding.
 
 		local senderEntity =System.GetEntity( sender.id );
@@ -506,6 +531,11 @@ AIBehaviour.ScoutMOARAttack = {
 
 	SC_SCOUT_START_MOAR_ATTACK = function( self, entity )
 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		AIBehaviour.SCOUTDEFAULT:scoutGetID( entity );
 
 		local scoutAttackCenterPos = {};
@@ -526,6 +556,11 @@ AIBehaviour.ScoutMOARAttack = {
 
 	SC_SCOUT_GET_GUARD_1 = function( self, entity )
 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		AI.LogComment(entity:GetName().." SC_SCOUT_GET_GUARD_1:");
 
 		entity.AI.bIsReplayForConnect = false;
@@ -545,6 +580,11 @@ AIBehaviour.ScoutMOARAttack = {
 
 	SC_SCOUT_GET_GUARD_2 = function( self, entity )
 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		AI.LogComment(entity:GetName().." SC_SCOUT_GET_GUARD_2:");
 
 		-- if there is someone to protect me.
@@ -575,6 +615,11 @@ AIBehaviour.ScoutMOARAttack = {
 
 	SC_SCOUT_GET_GUARD_3 = function( self, entity )
 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		AI.LogComment(entity:GetName().." SC_SCOUT_GET_GUARD_3:");
 
 		--command of senddata to make teammembers start guarding.
@@ -592,6 +637,11 @@ AIBehaviour.ScoutMOARAttack = {
 	
 	SC_SCOUT_GET_GUARD_4 = function( self, entity )
 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		AI.LogComment(entity:GetName().." SC_SCOUT_GET_GUARD_4:");
 
 		--check if the guard finishes going to the guard point.
@@ -669,6 +719,11 @@ AIBehaviour.ScoutMOARAttack = {
 
 	SC_SCOUT_GET_GUARD_5 = function( self, entity )
 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		AI.LogComment(entity:GetName().." SC_SCOUT_GET_GUARD_5:");
 
 		--send close to make gurads escape and start fire.
@@ -701,6 +756,11 @@ AIBehaviour.ScoutMOARAttack = {
 
 	SC_SCOUT_GET_GUARD_6 = function( self, entity )
 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		AI.LogComment(entity:GetName().." SC_SCOUT_GET_GUARD_6:");
 
 		--end of the freezing gun attack.

@@ -23,7 +23,7 @@ AIBehaviour.Trooper2AttackSwitchPosition = {
 	---------------------------------------------
 	Constructor = function (self, entity)
 
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 	--		AI.Signal(SIGNALFILTER_SUPERSPECIES, 0,"IS_PLAYER_ENGAGED",entity.id);
 	--		Log(">>> Trooper MKII Attack switching");
 
@@ -65,7 +65,7 @@ AIBehaviour.Trooper2AttackSwitchPosition = {
 	
 	
 	OnPlayerSeen = function(self,entity,sender)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			if(Trooper_CheckJumpToFormationPoint(entity)) then 
 				AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_ATTACK_JUMP",entity.id);
 			else
@@ -78,7 +78,7 @@ AIBehaviour.Trooper2AttackSwitchPosition = {
 	end,
 	
 	OnPlayerLooking = function(self,entity,sender)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			if(entity:GetDistance(g_localActor.id) > entity.melee.damageRadius+1) then 
 				if( Trooper_Dodge(entity)) then 
 					AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_DODGE",entity.id);
@@ -96,7 +96,7 @@ AIBehaviour.Trooper2AttackSwitchPosition = {
 	end,
 
 	OnNoTargetVisible = function(self,entity,sender)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			entity:Readibility("target_lost",1,0);
 			AI.ModifySmartObjectStates(entity.id,"-StayOnGround");
 			entity:SelectPipe(0,"tr_check_other_shoot_spots");
@@ -105,7 +105,7 @@ AIBehaviour.Trooper2AttackSwitchPosition = {
 
 			
 	OnLeaderActionFailed = function(self,entity,sender,data)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 	--		AIBehaviour.Trooper2AttackSwitchPosition.OnLeaderActionCompleted(entity,sender);
 			Trooper_ChooseNextTactic(entity,data,true);
 		end
@@ -119,7 +119,7 @@ AIBehaviour.Trooper2AttackSwitchPosition = {
 --			AI.Signal(SIGNALFILTER_SENDER,0,"GO_TO_SEARCH",entity.id);
 --		end
 
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			Trooper_ChooseNextTactic(entity,data,false);
 		end
 		
@@ -142,7 +142,7 @@ AIBehaviour.Trooper2AttackSwitchPosition = {
 	end,
 
 	OnBulletRain = function( self, entity, sender,data )
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			if(AI.Hostile(entity.id,data.id)) then 
 				AIBehaviour.Trooper2AttackSwitchPosition:OnEnemyDamage( entity, sender,data );
 			end
@@ -172,7 +172,7 @@ AIBehaviour.Trooper2AttackSwitchPosition = {
 --				entity:SelectPipe(AIGOALPIPE_NOTDUPLICATE,"tr_short_jump_timeout");
 --			end
 --		end
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			local shooter = System.GetEntity(data.id);
 			if(Trooper_ReevaluateShooterTarget(entity,shooter)) then 
 				entity:InsertSubpipe(AIGOALPIPE_NOTDUPLICATE,"acquire_target",shooter.id);
@@ -183,7 +183,7 @@ AIBehaviour.Trooper2AttackSwitchPosition = {
 	end,
 
 	END_HIT_BACK = function( self, entity, sender,data )
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			AI.ModifySmartObjectStates(entity.id,"-StayOnGround");
 			local target = AI.GetAttentionTargetEntity(entity.id,true);
 			local dist = AI.GetAttentionTargetDistance(entity.id);
@@ -212,7 +212,7 @@ AIBehaviour.Trooper2AttackSwitchPosition = {
 
 	--------------------------------------------------
 	CHECK_DOUBLE_JUMP_MELEE = function(self,entity,sender)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			if(not Trooper_DoubleJumpMelee(entity)) then
 				g_SignalData.iValue = 0;
 				g_SignalData.iValue2 = 14;
@@ -223,7 +223,7 @@ AIBehaviour.Trooper2AttackSwitchPosition = {
 
 	--------------------------------------------------
 	CHECK_DODGE = function(self,entity,sender,data)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			if(not Trooper_Dodge(entity,nil,data.iValue)) then 
 				AI.Signal(SIGNALFILTER_SENDER,AISIGNAL_PROCESS_NEXT_UPDATE,"CHECK_DOUBLE_JUMP_MELEE",entity.id);
 			end	
@@ -235,7 +235,7 @@ AIBehaviour.Trooper2AttackSwitchPosition = {
 
 	--------------------------------------------------
 	OnAttackSwitchPosition = function( self, entity, sender )
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			if(not Trooper_CheckJumpToFormationPoint(entity)) then 
 				entity:SelectPipe(0,"do_nothing");
 				entity:SelectPipe(0,"tr_attack_switch_position");
@@ -244,7 +244,7 @@ AIBehaviour.Trooper2AttackSwitchPosition = {
 	end,
 	
 	CHECK_REPOSITION = function( self, entity, sender )
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			if(entity.AI.bReposition) then 
 				if(not Trooper_CheckJumpToFormationPoint(entity)) then 
 					entity:SelectPipe(0,"do_nothing");
@@ -272,7 +272,7 @@ AIBehaviour.Trooper2AttackSwitchPosition = {
 
 
 	OnCloseContact= function(self,entity,target)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			-- check target moving direction
 			if(Trooper_CloseContactChoice(entity,target,4)) then 
 				return;
@@ -300,7 +300,7 @@ AIBehaviour.Trooper2AttackSwitchPosition = {
 	
 	--------------------------------------------------
 	OnPathFound = function(self,entity,sender)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			if(entity:IsUsingPipe("tr_attack_switch_position")) then 
 				entity:PlayAccelerationSound();
 			end
@@ -309,7 +309,7 @@ AIBehaviour.Trooper2AttackSwitchPosition = {
 
 	--------------------------------------------------
 	OnNoPathFound = function(self,entity,sender)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			g_SignalData.iValue = AI_BACKOFF_FROM_TARGET;
 			g_SignalData.fValue = 8;
 			AI.Signal(SIGNALFILTER_LEADER,10,"OnRequestUpdateAlternative",entity.id,g_SignalData);
@@ -328,7 +328,7 @@ AIBehaviour.Trooper2AttackSwitchPosition = {
 	
 	--------------------------------------------------
 	OnAvoidDanger = function(self,entity,sender,data)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			if(AI.GetNavigationType(entity.id) == NAV_TRIANGULAR) then 
 				entity:SelectPipe(0,"do_nothing");
 				entity:SelectPipe(0,"tr_avoid_danger");
@@ -345,7 +345,7 @@ AIBehaviour.Trooper2AttackSwitchPosition = {
 
 	--------------------------------------------------
 	OnTargetNavTypeChanged= function(self,entity,sender,data)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			local targetNavType = data.iValue2;
 			if(targetNavType ==	NAV_WAYPOINT_HUMAN or targetNavType== NAW_WAYPOINT_TRIANGULAR) then 
 				entity.AI.navType = data.iValue;
@@ -359,7 +359,7 @@ AIBehaviour.Trooper2AttackSwitchPosition = {
 	
 	--------------------------------------------------
 	OnLand = function(self,entity,sender)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			if(entity.AI.JumpType == TROOPER_JUMP_SWITCH_POSITION) then 
 				AI.ModifySmartObjectStates(entity.id,"StayOnGround");
 
@@ -415,7 +415,7 @@ AIBehaviour.Trooper2AttackSwitchPosition = {
 	--------------------------------------------------
 	END_SWITCH_POSITION = function(self,entity,sender)
 
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 
 			local dist = AI.GetAttentionTargetDistance(entity.id);
 			
@@ -459,7 +459,7 @@ AIBehaviour.Trooper2AttackSwitchPosition = {
 
 	--------------------------------------------------
 	JUMP_FIRE = function(self,entity,sender)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			if(Trooper_Jump(entity,entity.AI.targetPos,true,true,20)) then 
 				entity.AI.JumpType = TROOPER_JUMP_FIRE;
 				entity:SelectPipe(0,entity.AI.jumpPipe);
@@ -495,7 +495,7 @@ AIBehaviour.Trooper2AttackSwitchPosition = {
 
 	--------------------------------------------------
 	STAY_AWAY_FROM= function(self,entity,sender,data)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			Trooper_MoveAway(entity,data);	
 		end	
 	end,

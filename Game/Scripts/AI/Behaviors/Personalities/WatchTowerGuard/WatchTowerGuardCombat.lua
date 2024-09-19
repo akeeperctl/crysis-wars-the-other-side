@@ -44,6 +44,11 @@ AIBehaviour.WatchTowerGuardCombat = {
 	--------------------------------------------------
 	CHOOSE_WATCH_SPOT_COMBAT = function (self, entity, notAlerted)
 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		local	objectPos = g_Vectors.temp_v1;
 		local	objectDir = g_Vectors.temp_v2;
 
@@ -79,18 +84,33 @@ AIBehaviour.WatchTowerGuardCombat = {
 
 	--------------------------------------------------
 	COVER_NORMALATTACK = function (self, entity, sender)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 --		entity:SelectPipe(0,"sn_close_combat");
 		self:CHOOSE_WATCH_SPOT_COMBAT(entity);
 	end,
 	
 	---------------------------------------------
 	OnPlayerSeen = function( self, entity, fDistance )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:MakeAlerted();
 		AI.Signal(SIGNALFILTER_GROUPONLY_EXCEPT,1,"HEADS_UP_GUYS",entity.id);
 	end,
 
 	---------------------------------------------
 	CheckCloseRange	= function (entity)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 	
 		entity.AI.attackTimer = Script.SetTimerForFunction(500,"AIBehaviour.WatchTowerGuardCombat.CheckCloseRange",entity);
 		local targetDist = AI.GetAttentionTargetDistance(entity.id)
@@ -114,6 +134,11 @@ AIBehaviour.WatchTowerGuardCombat = {
 
 	--------------------------------------------------
 	CHOOSE_WATCH_SPOT_STRAFE = function (self, entity, notAlerted)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		local	objectPos = g_Vectors.temp_v1;
 		local	objectDir = g_Vectors.temp_v2;
@@ -135,6 +160,11 @@ AIBehaviour.WatchTowerGuardCombat = {
 
 	---------------------------------------------
 	OnNoTargetAwareness = function (self, entity)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		AI.Signal(SIGNALFILTER_SENDER,1,"TO_WATCH_TOWER_ALERT",entity.id);
 	end,
 
@@ -161,11 +191,21 @@ AIBehaviour.WatchTowerGuardCombat = {
 
 	--------------------------------------------------
 	DUCK_AND_HIDE_DONE = function (self, entity, sender)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		self:CHOOSE_WATCH_SPOT_COMBAT(entity, true);
 	end,
 
 	---------------------------------------------
 	OnEnemyDamage = function (self, entity, sender, data)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		AI.Signal(SIGNALFILTER_GROUPONLY_EXCEPT,1,"INCOMING_FIRE",entity.id);
 		entity:GettingAlerted();
 		
@@ -183,6 +223,11 @@ AIBehaviour.WatchTowerGuardCombat = {
 
 	--------------------------------------------------
 	OnNearMiss = function(self, entity, sender)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		if(AI.Hostile(entity.id, sender.id)) then
 			AI.Signal(SIGNALFILTER_GROUPONLY_EXCEPT,1,"INCOMING_FIRE",entity.id);
 			entity:GettingAlerted();
@@ -211,6 +256,11 @@ AIBehaviour.WatchTowerGuardCombat = {
 
 	---------------------------------------------
 	OnBulletRain = function(self, entity, sender, data)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		if(AI.Hostile(entity.id, sender.id)) then
 			AI.Signal(SIGNALFILTER_GROUPONLY_EXCEPT,1,"INCOMING_FIRE",entity.id);
 			entity:GettingAlerted();
@@ -259,6 +309,11 @@ AIBehaviour.WatchTowerGuardCombat = {
 
 	--------------------------------------------------
 	OnGroupMemberDied = function(self, entity, sender, data)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:GettingAlerted();
 		if(not entity.AI.lastDuckTime) then
 			entity.AI.lastDuckTime = _time - 10;
@@ -272,6 +327,11 @@ AIBehaviour.WatchTowerGuardCombat = {
 
 	--------------------------------------------------
 	OnGroupMemberDiedNearest = function (self, entity, sender, data)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:GettingAlerted();
 		if(not entity.AI.lastDuckTime) then
 			entity.AI.lastDuckTime = _time - 10;

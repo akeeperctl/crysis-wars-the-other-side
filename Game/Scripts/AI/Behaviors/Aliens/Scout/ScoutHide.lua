@@ -26,6 +26,11 @@ AIBehaviour.ScoutHide = {
 		entity.AI.currentBehaviour = self.Name
 		--~TheOtherSide	
 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		-- called when the behaviour is selected
 		-- the extra data is from the signal that caused the behavior transition
@@ -66,6 +71,11 @@ AIBehaviour.ScoutHide = {
 	end,	
 	--------------------------------------------------------------------------
 	OnNoTarget = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- called when the AI stops having an attention target
 		if ( entity.AI.bBlockSignal == false ) then 
 			AI.Signal(SIGNALFILTER_SENDER, 1, "TO_SCOUT_PATROLL", entity.id);
@@ -77,6 +87,11 @@ AIBehaviour.ScoutHide = {
 	end,
 	---------------------------------------------
 	OnPlayerSeen = function( self, entity, fDistance )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		if ( entity.AI.bBlockSignal==true) then
 			return;
@@ -98,6 +113,11 @@ AIBehaviour.ScoutHide = {
 	end,
 	---------------------------------------------
 	OnObjectSeen = function( self, entity, fDistance, data )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		if ( data.iValue == AIOBJECT_RPG) then
 
@@ -204,6 +224,11 @@ AIBehaviour.ScoutHide = {
 	end,
 	---------------------------------------------
 	OnEnemyMemory = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		if ( entity.AI.bBlockSignal==true) then
 			return;
@@ -229,10 +254,20 @@ AIBehaviour.ScoutHide = {
 	
 	--------------------------------------------------------------------------
 	OnSoreDamage = function ( self, entity, sender, data )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		AI.Signal(SIGNALFILTER_GROUPONLY, 1, "TO_SCOUT_ATTACK", entity.id);
 	end,
 	---------------------------------------------
 	OnEnemyDamage = function ( self, entity, sender, data )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		-- called when AI is damaged by an enemy AI
 		-- data.id = damaging enemy's entity id
@@ -265,6 +300,11 @@ AIBehaviour.ScoutHide = {
 
 	--------------------------------------------------------------------------
 	SC_SCOUT_START_HIDE = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		if ( AIBehaviour.SCOUTDEFAULT:scoutSearchHideSpot( entity, entity.AI.hidePos, entity.AI.peepPos ) == true ) then
 			entity.AI.bFoundAnchor = true;
@@ -283,6 +323,11 @@ AIBehaviour.ScoutHide = {
 	--------------------------------------------------------------------------
 
 	SC_SCOUT_GOTO_HIDE = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		entity:SelectPipe(0,"do_nothing");
 		if ( AIBehaviour.SCOUTDEFAULT:scoutSearchHideSpotCheck( entity, entity.AI.hidePos ) == true ) then
@@ -341,6 +386,11 @@ AIBehaviour.ScoutHide = {
 	end,
 
 	SC_SCOUT_HIDE = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		entity.AI.hidingState = 2;
 
@@ -353,6 +403,11 @@ AIBehaviour.ScoutHide = {
 	end,
 
 	SC_SCOUT_HIDE_FAILED = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		local targetName = AI.GetAttentionTargetOf( entity.id );
 
@@ -378,6 +433,11 @@ AIBehaviour.ScoutHide = {
 	end,
 
 	SC_SCOUT_PEEP = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		entity.AI.hidingState = 3;
 		
@@ -399,6 +459,11 @@ AIBehaviour.ScoutHide = {
 	end,
 
 	SC_SCOUT_PEEPCHECK = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		local targetType = AI.GetTargetType( entity.id );
 		if( targetType == AITARGET_MEMORY ) then
@@ -411,6 +476,11 @@ AIBehaviour.ScoutHide = {
 	end,
 
 	SC_SCOUT_HIDEATTACK = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		self:SC_SCOUT_ROUND_SHOOT_START( entity );
 
@@ -434,6 +504,11 @@ AIBehaviour.ScoutHide = {
 	end,
 
 	SC_SCOUT_CHANGE_HIDE = function( self, entity ) 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		entity.AI.hidingState = 4;
 
@@ -482,6 +557,11 @@ AIBehaviour.ScoutHide = {
 	end,
 
 	SC_SCOUT_ROUND_SHOOT_START = function( self, entity ) 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 	
 		entity.AI.hidingState = 5;
 
@@ -555,6 +635,11 @@ AIBehaviour.ScoutHide = {
 	end,
 	
 	SC_SCOUT_ROUND_SHOOT_END = function( self, entity ) 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		entity.AI.bBlockSignal = false;
 		AI.Signal(SIGNALFILTER_SENDER, 1, "SC_SCOUT_CHANGE_HIDE", entity.id);
@@ -562,6 +647,11 @@ AIBehaviour.ScoutHide = {
 	end,
 	
 	SC_SCOUT_ROUND_SHOOT_REFLESH = function( self, entity ) 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 			entity.AI.roundShootAngle = entity.AI.roundShootAngle + 3.1416 * 5.0 / 180.0;
 
@@ -582,6 +672,11 @@ AIBehaviour.ScoutHide = {
 	end,
 
 	SC_SCOUT_LISTUP_ENTITIES = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 	
 		AIBehaviour.SCOUTDEFAULT:scoutListUpObjects( entity );
 	

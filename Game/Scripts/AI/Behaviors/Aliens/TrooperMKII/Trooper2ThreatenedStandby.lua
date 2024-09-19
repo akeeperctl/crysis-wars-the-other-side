@@ -146,7 +146,7 @@ AIBehaviour.Trooper2ThreatenedStandby = {
 	OnNoTarget = function (self, entity)
 --		AI.SetRefPointPosition(entity.id,entity.AI.idlePos);
 --		entity:SelectPipe(0,"cv_get_back_to_idlepos");
---		AI.Signal(SIGNALFILTER_SENDER, 1, "TO_IDLE",entity.id);
+--		AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_IDLE",entity.id);
 	end,
 
 	---------------------------------------------
@@ -231,11 +231,11 @@ AIBehaviour.Trooper2ThreatenedStandby = {
 
 	---------------------------------------------
 	ENEMYSEEN_FIRST_CONTACT = function (self, entity, sender)
-		AI.Signal(SIGNALFILTER_SENDER,1,"TO_SEEK",entity.id);
+		AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_SEEK",entity.id);
 	end,
 	---------------------------------------------
 	ENEMYSEEN_DURING_COMBAT = function (self, entity, sender)
-		AI.Signal(SIGNALFILTER_SENDER,1,"TO_SEEK",entity.id);
+		AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_SEEK",entity.id);
 	end,
 
 	--------------------------------------------------

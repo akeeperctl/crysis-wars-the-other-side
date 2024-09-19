@@ -62,7 +62,7 @@ AIBehaviour.FriendlyNPCIdle = {
 	---------------------------------------------
 	OnPlayerSeen = function( self, entity, fDistance, data )
 		entity:Readibility("first_contact",1,2, 0.3,0.5);
-		AI.Signal(SIGNALFILTER_SENDER, 1, "TO_ATTACK",entity.id);
+		AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_ATTACK",entity.id);
 	end,
 
 	---------------------------------------------
@@ -340,7 +340,7 @@ AIBehaviour.FriendlyNPCIdle = {
 	---------------------------------------------
 	OnFallAndPlayWakeUp = function( self, entity )
 		-- check if we should check the sound or not.
-		AI.Signal(SIGNALFILTER_SENDER, 1, "TO_ATTACK",entity.id);
+		AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_ATTACK",entity.id);
 	end,
 
 	---------------------------------------------

@@ -34,6 +34,11 @@ AIBehaviour.ScoutMeleePatrol = {
 	end,
 	--------------------------------------------------------------------------
 	OnPlayerSeen = function( self, entity, fDistance )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		AI.Signal(SIGNALFILTER_SENDER, 1, "TO_SCOUTMELEE_ATTACK", entity.id);
 	end,
 

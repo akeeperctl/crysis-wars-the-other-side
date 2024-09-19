@@ -17,6 +17,11 @@ AIBehaviour.Cover2CallReinforcements = {
 		--~TheOtherSide	
 
 
+		--TheOtherSide
+			if (entity.AI.ignoreSignals == true) then
+				return;
+			end
+			--~TheOtherSide
 		AI.NotifyGroupTacticState(entity.id, 0, GN_NOTIFY_UNAVAIL);
 
 		entity:GettingAlerted();
@@ -45,7 +50,11 @@ AIBehaviour.Cover2CallReinforcements = {
 
 	-----------------------------------------------------
 	SETUP_REINF = function(self, entity)
-		
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		if (entity.AI.reinfType == nil) then
 			self:ContinueAfterReinf(entity);
 			return;
@@ -90,6 +99,11 @@ AIBehaviour.Cover2CallReinforcements = {
 	
 	---------------------------------------------
 	CHOOSE_PISTOL = function (self, entity)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		local pistolId = entity.inventory:GetItemByClass("SOCOM");
 		-- see if pistol weapon is awailable
 		if (pistolId) then
@@ -125,6 +139,11 @@ AIBehaviour.Cover2CallReinforcements = {
 	end,
 	---------------------------------------------
 	OnPlayerSeen = function( self, entity, fDistance, data )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		if (data.iValue == AITSR_SEE_STUNT_ACTION) then
 			AI.NotifyGroupTacticState(entity.id, 0, GN_NOTIFY_UNAVAIL);
 			AI_Utils:ChooseStuntReaction(entity);
@@ -160,6 +179,11 @@ AIBehaviour.Cover2CallReinforcements = {
 	--------------------------------------------------
 	OnGroupMemberDiedNearest = function ( self, entity, sender, data )
 		entity:Readibility("ai_down",1,1,0.3,0.6);
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		AI.Signal(SIGNALFILTER_GROUPONLY, 1, "OnGroupMemberDied",entity.id, data );
 	end,
 	--------------------------------------------------
@@ -170,6 +194,11 @@ AIBehaviour.Cover2CallReinforcements = {
 	end,
 	---------------------------------------------
 	OnEnemyDamage = function (self, entity, sender, data)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		local dt = _time - entity.AI.reinfLastHide;
 		if (dt > 5.0) then
 			entity:SelectPipe(0,"sn_callreinf_short_hide");
@@ -211,6 +240,11 @@ AIBehaviour.Cover2CallReinforcements = {
 	end,
 	--------------------------------------------------
 	OnSmokeGrenadeThrown = function (self,entity, sender)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- if throwing smoke grenade
 		if (entity.AI.reinfType == 3) then
 			entity:SelectPipe(0,"sn_throw_grenade_done");	
@@ -219,6 +253,11 @@ AIBehaviour.Cover2CallReinforcements = {
 	end,
 	--------------------------------------------------
 	GRENADE_FAIL = function (self,entity, sender)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity.AI.reinfSpotId = nil;
 		AI.NotifyReinfDone(entity.id, 0);
 		self:ContinueAfterReinf(entity);		
@@ -226,6 +265,11 @@ AIBehaviour.Cover2CallReinforcements = {
 	
 	--------------------------------------------------
 	REINF_DONE = function (self,entity, sender)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		if (entity.AI.reinfSpotId) then
 			local spot = System.GetEntity(entity.AI.reinfSpotId);
 			entity.AI.reinfSpotId = nil;
@@ -243,12 +287,22 @@ AIBehaviour.Cover2CallReinforcements = {
 
 	--------------------------------------------------
 	TARGET_TOO_CLOSE = function (self, entity)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		AI.LogEvent(">>> "..entity:GetName().." TARGET_TOO_CLOSE");
 		self:ContinueAfterReinf(entity);
 	end,
 
 	--------------------------------------------------
 	ContinueAfterReinf = function (self, entity)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- Choose proper action after being interrupted.
 		AI_Utils:CommonContinueAfterReaction(entity);
 	end,

@@ -55,6 +55,11 @@ AIBehaviour.GuardNeueIdle = {
 
 	---------------------------------------------
 	OnPlayerSeen = function( self, entity, fDistance )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:TriggerEvent(AIEVENT_DROPBEACON);
 
 		AI.SetPFBlockerRadius(entity.id, PFB_BETWEEN_NAV_TARGET, 10);
@@ -131,7 +136,7 @@ AIBehaviour.GuardNeueIdle = {
 			end
 		end
 		
-		AI.Signal(SIGNALFILTER_SENDER, 1, "TO_COMBAT",entity.id);
+		AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_COMBAT",entity.id);
 	end,
 
 	---------------------------------------------
@@ -144,6 +149,11 @@ AIBehaviour.GuardNeueIdle = {
 	
 	---------------------------------------------
 	OnEnemyMemory = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:TriggerEvent(AIEVENT_DROPBEACON);
 	end,
 
@@ -153,6 +163,11 @@ AIBehaviour.GuardNeueIdle = {
 
 	---------------------------------------------
 	OnThreateningSoundHeard = function( self, entity, fDistance )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:TriggerEvent(AIEVENT_DROPBEACON);
 		if (entity.AI.blocking == 0) then
 --			System.Log("OnThreateningSoundHeard "..entity:GetName());
@@ -168,6 +183,11 @@ AIBehaviour.GuardNeueIdle = {
 
 	---------------------------------------------
 	OnEnemyDamage = function (self,entity,sender,data)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		local targetDist = 100000;
 		if (AI.GetTargetType(entity.id) ~= AITARGET_NONE) then
@@ -230,6 +250,11 @@ AIBehaviour.GuardNeueIdle = {
 
 	--------------------------------------------------
 	OnBulletRain = function ( self, entity, sender)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		if (entity.AI.allowMelee == 0) then
 			local dt = _time - entity.AI.lastHideTime;
 --			System.Log(">>>OnBulletRain "..entity:GetName()..": melee=0 dt="..dt);
@@ -245,6 +270,11 @@ AIBehaviour.GuardNeueIdle = {
 
 	--------------------------------------------------
 	Hide = function(self, entity)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 --		System.Log(">>>Dodge "..entity:GetName());
 		if (AI.SetRefpointToAlienHidespot(entity.id, 10.0, 150.0)) then
 			entity:SelectPipe(0,"grn_AlienHide");		
@@ -256,6 +286,11 @@ AIBehaviour.GuardNeueIdle = {
 
 	---------------------------------------------
 	CONTINUE_MELEE = function (self, entity)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 --		entity:Readibility("anticipation",1, 6);
 		if (entity.AI.hasWeapon == 1) then
 			entity:SelectPipe(0,"grn_RangeAttack");
@@ -266,18 +301,29 @@ AIBehaviour.GuardNeueIdle = {
 
 	---------------------------------------------
 	CONTINUE_HIDE = function (self, entity)
+		
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		self:Hide(entity);
 	end,
 
 	---------------------------------------------
 	TRACK_TARGET = function (self, entity)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:Readibility("anticipation",1, 6);
 
 --		System.Log("TRACK_TARGET (idle) "..entity:GetName());
 		entity:SelectPipe(0,"grn_MoveToAttTarget");		
 		entity.AI.allowMelee = 1;
 
-		AI.Signal(SIGNALFILTER_SENDER, 1, "TO_COMBAT",entity.id);
+		AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_COMBAT",entity.id);
 	end,
 
 	---------------------------------------------
@@ -287,6 +333,11 @@ AIBehaviour.GuardNeueIdle = {
 
 	---------------------------------------------
 	CHECK_MELEE = function (self, entity)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		
 		if (AI.IsAgentInTargetFOV(entity.id, 50.0) == 0) then
 --			System.Log("*************************** CHECK_MELEE "..entity:GetName());

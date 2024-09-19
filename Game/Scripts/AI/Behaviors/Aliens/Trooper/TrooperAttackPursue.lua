@@ -26,9 +26,12 @@ AIBehaviour.TrooperAttackPursue = {
 		--~TheOtherSide	
 
 
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
 
 		entity.AI.bStrafe = false;
 		entity:SelectPipe(0,"tr_acquire_target_and_pursue",data.id);

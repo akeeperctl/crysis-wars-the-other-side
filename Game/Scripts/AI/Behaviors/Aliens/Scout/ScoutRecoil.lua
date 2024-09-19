@@ -23,11 +23,21 @@ AIBehaviour.ScoutRecoil = {
 		entity.AI.currentBehaviour = self.Name
 		--~TheOtherSide	
 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		self:Relocate( entity );
 	end,
 
 	---------------------------------------------
 	Relocate = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- Approach the target.
 		local targetName = AI.GetAttentionTargetOf(entity.id);
 		if( targetName ) then
@@ -53,6 +63,11 @@ AIBehaviour.ScoutRecoil = {
 
 	---------------------------------------------
 	OnPlayerSeen = function( self, entity, fDistance )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- Drop beacon and let the other know here's something to fight for.
 		entity:TriggerEvent(AIEVENT_DROPBEACON);
 		AI.Signal(SIGNALFILTER_GROUPONLY, 1, "GO_ENEMY_FOUND",entity.id);

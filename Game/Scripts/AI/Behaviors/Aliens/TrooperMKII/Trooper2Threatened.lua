@@ -18,7 +18,7 @@ AIBehaviour.Trooper2Threatened = {
 
 	---------------------------------------------
 	Constructor = function (self, entity)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			AI.NotifyGroupTacticState(entity.id, 0, GN_NOTIFY_UNAVAIL);
 			-- store original position.
 			if(not entity.AI.idlePos) then
@@ -70,7 +70,7 @@ AIBehaviour.Trooper2Threatened = {
 
 	---------------------------------------------
 	SEEK_KILLER = function (self, entity)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			AI_Utils:CheckThreatened(entity, 15.0);
 		end
 	end,
@@ -94,7 +94,7 @@ AIBehaviour.Trooper2Threatened = {
 --			entity.AI.threatTimer = nil;
 --		end
 --
---		AI.Signal(SIGNALFILTER_SENDER,1,"TO_SEARCH",entity.id);
+--		AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_SEARCH",entity.id);
 --	end,
 
 	---------------------------------------------
@@ -105,17 +105,17 @@ AIBehaviour.Trooper2Threatened = {
 
 	---------------------------------------------
 	INVESTIGATE_DONE = function( self, entity )
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			local target = AI.GetTargetType(entity.id);
 			if(target == AITARGET_ENEMY) then
 				entity:Readibility("taunt",1,3,0.3,0.6);
-				AI.Signal(SIGNALFILTER_SENDER,1,"TO_ATTACK",entity.id);
+				AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_ATTACK",entity.id);
 			elseif(target == AITARGET_NONE) then
 				entity:Readibility("alert_idle_relax",1,1, 0.3,0.6);
 				AI.SetRefPointPosition(entity.id,entity.AI.idlePos);
 				entity:SelectPipe(0,"cv_get_back_to_idlepos");
 			else
-				AI.Signal(SIGNALFILTER_SENDER,1,"TO_SEARCH",entity.id);
+				AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_SEARCH",entity.id);
 			end
 		end
 	end,
@@ -127,7 +127,7 @@ AIBehaviour.Trooper2Threatened = {
 
 	---------------------------------------------
 	OnPlayerSeen = function( self, entity, fDistance, data )
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			-- called when the enemy sees a living player
 			entity:TriggerEvent(AIEVENT_DROPBEACON);
 
@@ -215,14 +215,14 @@ AIBehaviour.Trooper2Threatened = {
 	---------------------------------------------
 	ENEMYSEEN_DURING_COMBAT = function (self, entity, sender)
 		if(AI.GetTargetType(entity.id) ~= AITARGET_ENEMY) then
-			AI.Signal(SIGNALFILTER_SENDER,1,"TO_SEEK",entity.id);
+			AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_SEEK",entity.id);
 		end
 	end,
 	
 	---------------------------------------------
 	ENEMYSEEN_FIRST_CONTACT = function (self, entity, sender)
 		if(AI.GetTargetType(entity.id) ~= AITARGET_ENEMY) then
-			AI.Signal(SIGNALFILTER_SENDER,1,"TO_SEEK",entity.id);
+			AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_SEEK",entity.id);
 		end
 	end,
 

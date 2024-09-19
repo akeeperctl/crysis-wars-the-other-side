@@ -33,12 +33,22 @@ AIBehaviour.HunterAttack = {
 	end,
 	---------------------------------------------
 	Destructor = function( self , entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:InsertSubpipe( 0, "stop_fire" );
 	end,
 
 	---------------------------------------------
 
 	OnPlayerSeen = function(self,entity,distance)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		
 		if(entity.grabParams.entityId and entity.grabParams.entityId~= NULL_ENTITY) then 
 			System.Log("HUNTER THROWING OBJECT!");
@@ -59,6 +69,11 @@ AIBehaviour.HunterAttack = {
 	end,
 	---------------------------------------------
 	HT_SHOOT = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 
 		AI.LogEvent( "Hunter shoot" );
 
@@ -74,10 +89,20 @@ AIBehaviour.HunterAttack = {
 
 	---------------------------------------------
 	HT_END_LOOKAROUND = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:SelectPipe(0,"do_nothing");
 	end,	
 	---------------------------------------------
 	DROP_OBJECT = function(self,entity,sender)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		local targetType = AI.GetTargetType(entity.id);
 		local targetPos = g_Vectors.temp;
 		AI.GetAttentionTargetPosition(entity.id,targetPos);
@@ -116,6 +141,11 @@ AIBehaviour.HunterAttack = {
 	--------------------------------------------
 	
 	MoveOld = function( self,entity)	
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- TO DO: hunter is not supposed to fly
 
 	--	local targettype = AI.GetTargetType(entity.id);

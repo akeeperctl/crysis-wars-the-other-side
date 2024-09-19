@@ -40,7 +40,7 @@ AIBehaviour.TrooperChase = {
 	
 	
 	OnPlayerSeen = function(self,entity,sender)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			if(not entity.AI.liveTarget) then 
 				entity:SelectPipe(0,"do_nothing");
 				entity:SelectPipe(0,"tr_chase_fire");
@@ -54,7 +54,7 @@ AIBehaviour.TrooperChase = {
 	end,
 	
 	OnEnemyMemory = function(self,entity,sender)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			entity.AI.liveTarget = false;
 		end
 	end,
@@ -93,7 +93,7 @@ AIBehaviour.TrooperChase = {
 	end,
 
 	OnSomethingSeen = function( self, entity, distance )
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			if(not entity.AI.liveTarget) then 
 				entity:SelectPipe(0,"do_nothing");
 				entity:SelectPipe(0,"tr_chase_fire");

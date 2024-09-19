@@ -45,6 +45,11 @@ AIBehaviour.SuitSniperThreatened = {
 
 	---------------------------------------------
 	SEEK_KILLER = function (self, entity)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		AI_Utils:CheckThreatened(entity, 15.0);
 	end,
 
@@ -56,9 +61,14 @@ AIBehaviour.SuitSniperThreatened = {
 
 	---------------------------------------------
 	INVESTIGATE_DONE = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		local target = AI.GetTargetType(entity.id);
 		if(target == AITARGET_ENEMY) then
-			AI.Signal(SIGNALFILTER_SENDER,1,"TO_ATTACK",entity.id);
+			AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_ATTACK",entity.id);
 		else
 			entity:NanoSuitMode(BasicAI.SuitMode.SUIT_ARMOR);
 			entity:SelectPipe(0,"cv_seek_target_random");
@@ -75,7 +85,12 @@ AIBehaviour.SuitSniperThreatened = {
 		-- called when the enemy sees a living player
 		entity:TriggerEvent(AIEVENT_DROPBEACON);
 
-		AI.Signal(SIGNALFILTER_SENDER,1,"TO_ATTACK",entity.id);
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
+		AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_ATTACK",entity.id);
 	end,
 
 	---------------------------------------------
@@ -100,6 +115,11 @@ AIBehaviour.SuitSniperThreatened = {
 
 	---------------------------------------------
 	CheckToChangeTarget = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- If the attention target has changed a lot, choose new approach.
 --		local	attPos = g_Vectors.temp_v1;
 --		AI.GetAttentionTargetPosition(entity.id, attPos);
@@ -113,9 +133,11 @@ AIBehaviour.SuitSniperThreatened = {
 
 	---------------------------------------------
 	OnInterestingSoundHeard = function( self, entity )
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_AUDIO) == 0.0 ) then
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
 
 --		entity:TriggerEvent(AIEVENT_CLEAR);
 --		entity:Readibility("alert_interest_hear",1,1,0.3,0.6);
@@ -124,9 +146,11 @@ AIBehaviour.SuitSniperThreatened = {
 	
 	---------------------------------------------
 	OnThreateningSoundHeard = function( self, entity )
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_AUDIO) == 0.0 ) then
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
 --		entity:TriggerEvent(AIEVENT_CLEAR);
 		entity:TriggerEvent(AIEVENT_DROPBEACON);
 		entity:Readibility("alert_interest_hear",1,1,0.3,0.6);
@@ -137,12 +161,22 @@ AIBehaviour.SuitSniperThreatened = {
 	OnThreateningSeen = function( self, entity )
 		entity:TriggerEvent(AIEVENT_DROPBEACON);
 		entity:Readibility("alert_interest_see",1,1,0.3,0.6);
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		self:CheckToChangeTarget(entity);
 	end,
 
 	---------------------------------------------
 	OnSomethingSeen = function( self, entity )
 		entity:Readibility("alert_interest_see",1,1,0.3,0.6);
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		self:CheckToChangeTarget(entity);
 	end,
 
@@ -156,15 +190,25 @@ AIBehaviour.SuitSniperThreatened = {
 
 	---------------------------------------------
 	ENEMYSEEN_DURING_COMBAT = function (self, entity, sender)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		if(AI.GetTargetType(entity.id) ~= AITARGET_ENEMY) then
-			AI.Signal(SIGNALFILTER_SENDER,1,"TO_ATTACK",entity.id);
+			AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_ATTACK",entity.id);
 		end
 	end,
 	
 	---------------------------------------------
 	ENEMYSEEN_FIRST_CONTACT = function (self, entity, sender)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		if(AI.GetTargetType(entity.id) ~= AITARGET_ENEMY) then
-			AI.Signal(SIGNALFILTER_SENDER,1,"TO_ATTACK",entity.id);
+			AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_ATTACK",entity.id);
 		end
 	end,
 

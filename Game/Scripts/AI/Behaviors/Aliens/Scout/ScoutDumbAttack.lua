@@ -45,6 +45,11 @@ AIBehaviour.ScoutDumbAttack = {
 
 	---------------------------------------------
 	SC_MELEE = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 --		local attackPos = g_Vectors.temp_v2;
 --		local diff = g_Vectors.temp_v3;
 --		local entPos = entity:GetPos();
@@ -89,12 +94,22 @@ AIBehaviour.ScoutDumbAttack = {
 
 	---------------------------------------------
 	SC_FIRE = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:BlendAnimation(50);
 		entity:DoShootWeapon();
 	end,
 	
 	---------------------------------------------
 	SC_FIRE_DONE = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 --		self:Relocate( entity );
 
 		entity:BlendAnimation(BasicAlien.BLENDING_RATIO);
@@ -110,6 +125,11 @@ AIBehaviour.ScoutDumbAttack = {
 
 	---------------------------------------------		
 	OnPlayerSeen = function( self, entity, fDistance )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- first send him OnSeenByEnemy signal
 --		local target = AI.GetAttentionTargetEntity(entity.id);
 --		if(target) then 
@@ -128,6 +148,11 @@ AIBehaviour.ScoutDumbAttack = {
 
 	---------------------------------------------
 	OnCloseContact = function( self, entity, fDistance )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		AI.SetRefPointPosition( entity.id, entity:GetPos() );
 		AI.SetRefPointDirection( entity.id, {x=0,y=0,z=0} );
 	

@@ -180,7 +180,7 @@ AIBehaviour.TrooperMKIIIdle = {
 			local deadPos = sender:GetWorldPos();
 			AI.SetRefPointPosition(entity.id, deadPos);
 			entity:SelectPipe(0,"approach_dead");
-			AI.Signal(SIGNALFILTER_SENDER, 1, "TO_INTERESTED",entity.id);
+			AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_INTERESTED",entity.id);
 		end
 	end,
 
@@ -341,10 +341,10 @@ AIBehaviour.TrooperMKIIIdle = {
 			if(	AI_Utils:HasRPGAttackSlot(entity) and entity.inventory:GetItemByClass("LAW") 
 					and AIBehaviour.Trooper2RPGAttack.FindRPGSpot(self, entity) ~= nil) then
 				entity:Readibility("suppressing_fire",1,1,0.1,0.4);
-				AI.Signal(SIGNALFILTER_SENDER, 1, "TO_RPG_ATTACK",entity.id);
+				AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_RPG_ATTACK",entity.id);
 			else
 				entity:Readibility("explosion_imminent",1,1,0.1,0.4);
-				AI.Signal(SIGNALFILTER_SENDER, 1, "TO_AVOID_TANK",entity.id);
+				AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_AVOID_TANK",entity.id);
 			end
 		end
 	end,
@@ -353,7 +353,7 @@ AIBehaviour.TrooperMKIIIdle = {
 	OnHeliSeen = function( self, entity, fDistance )
 		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL) > 0.0 ) then
 			entity:Readibility("explosion_imminent",1,1,0.1,0.4);
-			AI.Signal(SIGNALFILTER_SENDER, 1, "TO_AVOID_TANK",entity.id);
+			AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_AVOID_TANK",entity.id);
 		end
 	end,
 
@@ -374,7 +374,7 @@ AIBehaviour.TrooperMKIIIdle = {
 	---------------------------------------------
 	SEEK_KILLER = function(self, entity)
 		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL) > 0.0 ) then
-			AI.Signal(SIGNALFILTER_SENDER,1,"TO_THREATENED",entity.id);
+			AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_THREATENED",entity.id);
 		end
 	end,
 
@@ -398,7 +398,7 @@ AIBehaviour.TrooperMKIIIdle = {
 			-- called when the enemy sees a foe which is not a living player
 			entity:Readibility("idle_interest_see",1,1,0.6,1);
 			if(AI_Utils:CheckInterested(entity) == true) then
-				AI.Signal(SIGNALFILTER_SENDER, 1, "TO_INTERESTED",entity.id);
+				AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_INTERESTED",entity.id);
 			end
 			AI.ModifySmartObjectStates(entity.id,"UseMountedWeaponInterested");
 		end
@@ -412,9 +412,9 @@ AIBehaviour.TrooperMKIIIdle = {
 			entity:TriggerEvent(AIEVENT_DROPBEACON);
 			if(AI_Utils:IsTargetOutsideStandbyRange(entity) == 1) then
 				entity.AI.hurryInStandby = 0;
-				AI.Signal(SIGNALFILTER_SENDER, 1, "TO_THREATENED_STANDBY",entity.id);
+				AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_THREATENED_STANDBY",entity.id);
 			else
-				AI.Signal(SIGNALFILTER_SENDER, 1, "TO_THREATENED",entity.id);
+				AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_THREATENED",entity.id);
 			end
 
 			AI.ModifySmartObjectStates(entity.id,"UseMountedWeaponInterested");
@@ -427,7 +427,7 @@ AIBehaviour.TrooperMKIIIdle = {
 			-- check if we should check the sound or not.
 			entity:Readibility("idle_interest_hear",1,1,0.6,1);
 			if(AI_Utils:CheckInterested(entity) == true) then
-				AI.Signal(SIGNALFILTER_SENDER, 1, "TO_INTERESTED",entity.id);
+				AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_INTERESTED",entity.id);
 			end
 
 			AI.ModifySmartObjectStates(entity.id,"UseMountedWeaponInterested");
@@ -442,9 +442,9 @@ AIBehaviour.TrooperMKIIIdle = {
 			entity:TriggerEvent(AIEVENT_DROPBEACON);
 			if(AI_Utils:IsTargetOutsideStandbyRange(entity) == 1) then
 				entity.AI.hurryInStandby = 0;
-				AI.Signal(SIGNALFILTER_SENDER, 1, "TO_THREATENED_STANDBY",entity.id);
+				AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_THREATENED_STANDBY",entity.id);
 			else
-				AI.Signal(SIGNALFILTER_SENDER, 1, "TO_THREATENED",entity.id);
+				AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_THREATENED",entity.id);
 			end
 
 			AI.ModifySmartObjectStates(entity.id,"UseMountedWeaponInterested");
@@ -454,7 +454,7 @@ AIBehaviour.TrooperMKIIIdle = {
 	--------------------------------------------------
 	INVESTIGATE_BEACON = function (self, entity, sender)
 		entity:Readibility("ok_battle_state",1,1,0.6,1);
-		AI.Signal(SIGNALFILTER_SENDER, 1, "TO_THREATENED",entity.id);
+		AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_THREATENED",entity.id);
 	end,
 		
 	--------------------------------------------------
@@ -495,7 +495,7 @@ AIBehaviour.TrooperMKIIIdle = {
 			-- avoid this point for some time.
 			AI.NotifyGroupTacticState(entity.id, 0, GN_AVOID_CURRENT_POS, 4);
 
-	--		AI.Signal(SIGNALFILTER_SENDER, 1, "TO_HIDE",entity.id);
+	--		AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_HIDE",entity.id);
 	--		self:HandleHit(entity, shooter);
 
 			Trooper_HitReaction(entity);
@@ -536,7 +536,7 @@ AIBehaviour.TrooperMKIIIdle = {
 				AI_Utils:IsTargetOutsideStandbyRange(entity);
 
 				AI.Signal(SIGNALFILTER_GROUPONLY_EXCEPT,1,"INCOMING_FIRE",entity.id);
-				AI.Signal(SIGNALFILTER_SENDER, 1, "TO_HIDE",entity.id);
+				AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_HIDE",entity.id);
 			else
 				if(sender==g_localActor) then 
 					entity:Readibility("friendly_fire",1,0.6,1);
@@ -567,7 +567,7 @@ AIBehaviour.TrooperMKIIIdle = {
 	---------------------------------------------
 --	OnGroupMemberDied = function( self, entity, sender)
 --		entity:GettingAlerted();
---		AI.Signal(SIGNALFILTER_SENDER,1,"TO_HIDE",entity.id);
+--		AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_HIDE",entity.id);
 --	end,
 	
 	--------------------------------------------------
@@ -575,7 +575,7 @@ AIBehaviour.TrooperMKIIIdle = {
 		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL) > 0.0 ) then
 			--AI.LogEvent(entity:GetName().." OnGroupMemberDied!");
 			entity:GettingAlerted();
-			AI.Signal(SIGNALFILTER_SENDER,1,"TO_HIDE",entity.id);
+			AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_HIDE",entity.id);
 		end
 	end,
 
@@ -596,9 +596,9 @@ AIBehaviour.TrooperMKIIIdle = {
 				entity:Readibility("idle_interest_see",1,1,0.6,1);
 				if(AI_Utils:IsTargetOutsideStandbyRange(entity) == 1) then
 					entity.AI.hurryInStandby = 1;
-					AI.Signal(SIGNALFILTER_SENDER, 1, "TO_THREATENED_STANDBY",entity.id);
+					AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_THREATENED_STANDBY",entity.id);
 				else
-					AI.Signal(SIGNALFILTER_SENDER, 1, "TO_THREATENED",entity.id);
+					AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_THREATENED",entity.id);
 				end
 			end
 		end
@@ -609,7 +609,7 @@ AIBehaviour.TrooperMKIIIdle = {
 		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL) > 0.0 ) then
 			entity:GettingAlerted();
 			if(AI.GetTargetType(entity.id) ~= AITARGET_ENEMY) then
-				AI.Signal(SIGNALFILTER_SENDER,1,"TO_SEEK",entity.id);
+				AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_SEEK",entity.id);
 			end
 		end
 	end,
@@ -621,14 +621,14 @@ AIBehaviour.TrooperMKIIIdle = {
 
 			if(DistanceVectors(sender:GetPos(), entity:GetPos()) < 15.0) then
 				-- near to the guy who is being shot, hide!
-				AI.Signal(SIGNALFILTER_SENDER, 1, "TO_HIDE",entity.id);
+				AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_HIDE",entity.id);
 			else
 				-- further away, threatened!
 				if(AI_Utils:IsTargetOutsideStandbyRange(entity) == 1) then
 					entity.AI.hurryInStandby = 1;
-					AI.Signal(SIGNALFILTER_SENDER, 1, "TO_THREATENED_STANDBY",entity.id);
+					AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_THREATENED_STANDBY",entity.id);
 				else
-					AI.Signal(SIGNALFILTER_SENDER, 1, "TO_THREATENED",entity.id);
+					AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_THREATENED",entity.id);
 				end
 			end
 		end
@@ -657,7 +657,7 @@ AIBehaviour.TrooperMKIIIdle = {
 	--------------------------------------------------
 	CHECK_CIVILIAN_THREATEN = function(self, entity, sender)
 		if(AI_Utils:CheckInterested(entity) == true) then
-			AI.Signal(SIGNALFILTER_SENDER, 1, "TO_INTERESTED",entity.id);
+			AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_INTERESTED",entity.id);
 		end
 	end,
 
@@ -837,7 +837,7 @@ AIBehaviour.TrooperMKIIIdle = {
 
 --		AI.LogEvent(">>> "..entity:GetName().." OnCallReinforcements");
 
-		AI.Signal(SIGNALFILTER_SENDER,1,"TO_CALL_REINFORCEMENTS",entity.id);
+		AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_CALL_REINFORCEMENTS",entity.id);
 	end,
 
 	--------------------------------------------------
@@ -861,7 +861,7 @@ AIBehaviour.TrooperMKIIIdle = {
 --		AI.EndGoalPipe();
 --		entity:SelectPipe(0,"sn_reinforce_group_wait_PROTO");
 --		AI.NotifyGroupTacticState(entity.id, 0, GN_NOTIFY_SEARCHING);
---		AI.Signal(SIGNALFILTER_SENDER,1,"TO_SEARCH",entity.id);
+--		AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_SEARCH",entity.id);
 		AI_Utils:CommonContinueAfterReaction(entity);
 	end,
 
@@ -912,7 +912,7 @@ AIBehaviour.TrooperMKIIIdle = {
 	---------------------------------------------
 	OnGroupMemberMutilated = function(self, entity)
 --		System.Log(">>"..entity:GetName().." OnGroupMemberMutilated");
-		AI.Signal(SIGNALFILTER_SENDER,1,"TO_PANIC",entity.id);
+		AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_PANIC",entity.id);
 	end,
 
 	---------------------------------------------

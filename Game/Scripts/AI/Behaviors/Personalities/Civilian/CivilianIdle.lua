@@ -110,7 +110,7 @@ AIBehaviour.CivilianIdle = {
 --		entity:Readibility("GETTING_SHOT_AT",1);
 		
 		entity:Readibility("cower");
-		AI.Signal(SIGNALFILTER_SENDER,0,"GO_TO_COWER",entity.id);
+		AI.Signal(SIGNALFILTER_SENDER,0,"GO_TO_COVER",entity.id);
 		AI.Signal(SIGNALFILTER_NEARESTINCOMM_SPECIES,0,"CIVILIAN_COWERING",entity.id,data);
 	end,
 
@@ -119,7 +119,7 @@ AIBehaviour.CivilianIdle = {
 --		entity:Readibility("GETTING_SHOT_AT",1);
 		-- TO DO
 		entity:Readibility("cower");
-		AI.Signal(SIGNALFILTER_SENDER,0,"GO_TO_COWER",entity.id);
+		AI.Signal(SIGNALFILTER_SENDER,0,"GO_TO_COVER",entity.id);
 	end,
 
 	--------------------------------------------------
@@ -127,7 +127,7 @@ AIBehaviour.CivilianIdle = {
 		-- called when detect weapon fire around AI
 		--entity:MakeAlerted();
 		entity:Readibility("cower");
-		AI.Signal(SIGNALFILTER_SENDER,0,"GO_TO_COWER",entity.id);
+		AI.Signal(SIGNALFILTER_SENDER,0,"GO_TO_COVER",entity.id);
 		AI.Signal(SIGNALFILTER_NEARESTINCOMM_SPECIES,0,"CIVILIAN_COWERING",entity.id,data);
 	end,
 
@@ -136,7 +136,7 @@ AIBehaviour.CivilianIdle = {
 		-- called when detect weapon fire around AI
 		--entity:MakeAlerted();
 --		entity:Readibility("cower");
---		AI.Signal(SIGNALFILTER_SENDER,0,"GO_TO_COWER",entity.id);
+--		AI.Signal(SIGNALFILTER_SENDER,0,"GO_TO_COVER",entity.id);
 --		AI.Signal(SIGNALFILTER_NEARESTINCOMM_SPECIES,0,"CIVILIAN_COWERING",entity.id,data);
 	end,
 	--------------------------------------------------
@@ -217,7 +217,7 @@ AIBehaviour.CivilianIdle = {
 			if(anchor) then
 				CopyVector(g_SignalData.point,pos);
 				CopyVector(g_SignalData.point2,dir);
-				AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_COWER",entity.id,g_SignalData);
+				AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_COVER",entity.id,g_SignalData);
 				return true;
 			end
 		end
@@ -227,7 +227,7 @@ AIBehaviour.CivilianIdle = {
 	---------------------------------------------
 	OnPlayerLooking = function(self,entity,sender,data)
 		if(not AIBehaviour.CivilianIdle:SearchCower(entity)) then 
-			AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_COWER",entity.id);
+			AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_COVER",entity.id);
 		end
 	end,
 	

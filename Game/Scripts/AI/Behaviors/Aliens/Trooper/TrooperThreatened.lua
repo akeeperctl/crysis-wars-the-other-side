@@ -141,7 +141,7 @@ AIBehaviour.TrooperThreatened = {
 
 	---------------------------------------------
 	OnBulletRain = function ( self, entity, sender,data)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 	
 --		if(AI.Hostile(entity.id,data.id) and not Trooper_IsThreateningBullet(entity,data.point)) then 
 --			entity.AI.lastEnemyDamageTime	 = _time;
@@ -153,7 +153,7 @@ AIBehaviour.TrooperThreatened = {
 
 	---------------------------------------------
 	OnBulletHit = function ( self, entity, sender,data)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 
 			local curtime = _time;
 			-- don't make the trooper lured by every single hit
@@ -166,7 +166,7 @@ AIBehaviour.TrooperThreatened = {
 	
 	---------------------------------------------
 	OnEnemyDamage = function ( self, entity, sender,data)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 
 		-- called when the enemy is damaged
 --		local curtime = _time;

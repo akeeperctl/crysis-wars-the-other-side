@@ -25,6 +25,11 @@ AIBehaviour.ScoutExit = {
 		entity.AI.currentBehaviour = self.Name
 		--~TheOtherSide	
 
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		-- Drag the scout to enetity named entityname_EXIT
 
 		local tagPoint;
@@ -84,6 +89,11 @@ AIBehaviour.ScoutExit = {
 	
 	---------------------------------------------
 	SC_EXIT_CHECK = function( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		if( entity.AI.targetPos ~= nil and entity.AI.targetType ~= nil ) then
 			local diff = g_Vectors.temp_v1;
 			SubVectors( diff, entity.AI.targetPos, entity:GetPos() );

@@ -61,6 +61,11 @@ AIBehaviour.CoverSearch = {
 
 	TARGET_REACHED = function (self, entity, sender)
 	
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		if(entity.anchor) then
 			if(entity.anchorType == AIAnchorTable.ACTION_LOOK_AROUND) then
 				CopyVector(g_Vectors.temp, entity:GetDirectionVector());
@@ -96,6 +101,11 @@ AIBehaviour.CoverSearch = {
 	end, 
 	
 	LOOKING_DONE = function (self, entity, sender)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		g_StringTemp1 = AI.GetAnchor(entity.id,AIAnchorTable.ACTION_RECOG_CORPSE,15);
 		if(g_StringTemp1 ==nil or g_StringTemp1=="") then
 			g_StringTemp1 = AI.GetAnchor(entity.id,AIAnchorTable.ACTION_LOOK_AROUND,30);
@@ -129,6 +139,11 @@ AIBehaviour.CoverSearch = {
 	
 
 	OnEndAnimation = function(entity,timerId)
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		AI.Signal(SIGNALFILTER_SENDER,0,"LOOKING_DONE",entity.id);
 	end
 	

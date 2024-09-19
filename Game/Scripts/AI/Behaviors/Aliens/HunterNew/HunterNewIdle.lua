@@ -69,6 +69,11 @@ AIBehaviour.HunterNewIdle = {
 
 	---------------------------------------------
 	DoScream = function( self, entity, sender, data )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		if (entity:DoScream() ~= 1) then
 			entity:InsertSubpipe( AIGOALPIPE_SAMEPRIORITY, "action_dummy", nil, data.iValue );
 			entity:CancelSubpipe( data.iValue );
@@ -98,7 +103,12 @@ AIBehaviour.HunterNewIdle = {
 	end,
 	
 	---------------------------------------------
-	CheckSingularityCannonUsage = function( self, entity, sender, data )	
+	CheckSingularityCannonUsage = function( self, entity, sender, data )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide	
 		local target = AI.GetAttentionTargetEntity(entity.id);
 		if( target) then
 			local SCUsage = entity.AI.SCUsage or 0;
@@ -125,6 +135,11 @@ AIBehaviour.HunterNewIdle = {
 	end,
 	---------------------------------------------
 	SelectPrimaryWeapon = function( self, entity, sender, data )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:SelectPrimaryWeapon();
 	end,
 

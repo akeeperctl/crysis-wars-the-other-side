@@ -26,9 +26,12 @@ AIBehaviour.TrooperAttackFlank = {
 		--~TheOtherSide	
 
 
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
 
 		AI.SetRefPointPosition(entity.id,data.point);
 		local distTarget = AI.GetAttentionTargetDistance(entity.id);
@@ -65,18 +68,24 @@ AIBehaviour.TrooperAttackFlank = {
 
 	---------------------------------------------
 	OnNoHidingPlace = function( self, entity, sender )
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
 
 		entity:SelectPipe(0,"tr_shoot_timeout");
 	end,	
 
 	---------------------------------------------
 	OnLowHideSpot = function( self, entity, sender)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
 		entity:SelectPipe(0,"tr_dig_in_shoot_on_spot_timeout");
 	end,
 
@@ -86,9 +95,12 @@ AIBehaviour.TrooperAttackFlank = {
 
 	---------------------------------------------
 	REFPOINT_REACHED = function(self,entity,sender)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
-		end		
+		end
+		--~TheOtherSide		
 		
 		if(entity.iTimer) then 
 			Script.KillTimer(entity.iTimer);
@@ -147,7 +159,7 @@ AIBehaviour.TrooperAttackFlank = {
 
 	---------------------------------------------
 	OnDamage = function ( self, entity, sender,data)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			-- called when the enemy is damaged
 	--		entity:SelectPipe(0,"tr_scramble");
 			-- call default handling
@@ -157,7 +169,7 @@ AIBehaviour.TrooperAttackFlank = {
 
 	---------------------------------------------
 	OnEnemyDamage = function ( self, entity, sender,data)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			-- called when the enemy is damaged
 	--		entity:SelectPipe(0,"tr_scramble");
 			-- call default handling
@@ -198,9 +210,12 @@ AIBehaviour.TrooperAttackFlank = {
 
 	------------------------------------------------------------------------
 	CHECK_FOR_TARGET = function (self, entity, sender)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
 
 		entity:SelectPipe(0,"tr_seek_target");
 	end,	
@@ -208,9 +223,12 @@ AIBehaviour.TrooperAttackFlank = {
 	------------------------------------------------------------------------
 	OnBehaviourTimeout = function(entity,timerid)
 
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
 
 		entity.iTimer = nil;
 		AI.Signal(SIGNALFILTER_LEADER,10,"ORD_DONE",entity.id);

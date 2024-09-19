@@ -69,6 +69,11 @@ AIBehaviour.HunterIdle = {
 
 	---------------------------------------------
 	DoScream = function( self, entity, sender, data )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		if (entity:DoScream() ~= 1) then
 			entity:InsertSubpipe( AIGOALPIPE_SAMEPRIORITY, "action_dummy", nil, data.iValue );
 			entity:CancelSubpipe( data.iValue );
@@ -99,6 +104,11 @@ AIBehaviour.HunterIdle = {
 	
 	---------------------------------------------
 	CheckSingularityCannonUsage = function( self, entity, sender, data )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		
 		local target = AI.GetAttentionTargetEntity(entity.id);
 		if( target) then

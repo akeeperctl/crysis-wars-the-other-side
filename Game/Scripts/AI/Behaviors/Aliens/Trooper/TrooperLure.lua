@@ -33,7 +33,7 @@ AIBehaviour.TrooperLure = {
 	
 	---------------------------------------------
 	OnPlayerSeen = function( self, entity, fDistance )
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			entity:MakeAlerted();
 			if(entity.AI.bInvestigating) then 
 				self:GoToAmbushPoint(entity);
@@ -53,7 +53,7 @@ AIBehaviour.TrooperLure = {
 	
 	---------------------------------------------
 	OnSomethingSeen = function( self, entity )
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			-- called when the enemy sees a foe which is not a living player
 			entity:Readibility("IDLE_TO_INTERESTED");
 			entity:SelectPipe(0,"tr_look_closer");
@@ -126,7 +126,7 @@ AIBehaviour.TrooperLure = {
 
 	---------------------------------------------
 	OnEnemyDamage = function ( self, entity, sender,data)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			-- called when the enemy is damaged
 
 			entity:MakeAlerted();
@@ -145,7 +145,7 @@ AIBehaviour.TrooperLure = {
 
 	--------------------------------------------------
 	OnBulletRain = function ( self, entity, sender,data)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			-- called when detect weapon fire around AI
 
 			entity:MakeAlerted();
@@ -159,7 +159,7 @@ AIBehaviour.TrooperLure = {
 
 	--------------------------------------------------
 	OnObjectSeen = function( self, entity, fDistance, signalData )
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			-- called when the enemy sees an object
 			if ( signalData.iValue == AIOBJECT_RPG) then
 				entity:InsertSubpipe(0,"devalue_target");
@@ -198,7 +198,7 @@ AIBehaviour.TrooperLure = {
 
 	--------------------------------------------------
 	OnLeaderDied = function(self,entity,sender)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			if(AI.GetGroupTarget(entity.id,true,true)) then
 				entity:SelectPipe(0,"tr_confused");
 			else

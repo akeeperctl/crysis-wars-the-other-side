@@ -47,7 +47,7 @@ AIBehaviour.FollowerNPCIdle = {
 	OnPlayerSeen = function( self, entity, fDistance, data )
 		if (fDistance < 6.0) then
 			entity.AI.allowedToFire = true;
-			AI.Signal(SIGNALFILTER_SENDER, 1, "TO_ATTACK",entity.id);
+			AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_ATTACK",entity.id);
 		end
 	end,
 
@@ -340,7 +340,7 @@ AIBehaviour.FollowerNPCIdle = {
 --		AI.NotifyGroupTacticState(entity.id, 1, GN_NOTIFY_ADVANCING, data.fValue);
 --		self:CheckWeapon(entity);
 
-		AI.Signal(SIGNALFILTER_SENDER, 1, "TO_ATTACK",entity.id);
+		AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_ATTACK",entity.id);
 	end,
 		
 	---------------------------------------------
@@ -388,7 +388,7 @@ AIBehaviour.FollowerNPCIdle = {
 		AI.ChangeParameter(entity.id, AIPARAM_MELEE_DISTANCE, 4.0);
 
 		entity.AI.noRelax = 1; -- do not change to relaxed in constructor
-		AI.Signal(SIGNALFILTER_SENDER, 1, "TO_IDLE",entity.id);
+		AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_IDLE",entity.id);
 
 	end,
 
@@ -407,20 +407,20 @@ AIBehaviour.FollowerNPCIdle = {
 		AI.ChangeParameter(entity.id, AIPARAM_MELEE_DISTANCE, 4.0);
 
 		entity.AI.noRelax = 1; -- do not change to relaxed in constructor
-		AI.Signal(SIGNALFILTER_SENDER, 1, "TO_IDLE",entity.id);
+		AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_IDLE",entity.id);
 
 	end,
 
 	---------------------------------------------
 	OnFallAndPlayWakeUp = function( self, entity )
-		AI.Signal(SIGNALFILTER_SENDER, 1, "TO_ATTACK",entity.id);
+		AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_ATTACK",entity.id);
 
 --		local following = entity.AI.following;
 --		local allowedToFire = entity.AI.allowedToFire;
 --		local heavyWeapon = entity.AI.heavyWeapon;
 --		local followDistance = entity.AI.followDistance;
 
---		AI.Signal(SIGNALFILTER_SENDER, 1, "TO_IDLE",entity.id);	-- switch behavior
+--		AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_IDLE",entity.id);	-- switch behavior
 
 --		AI.NotifyGroupTacticState(entity.id, 1, GN_NOTIFY_ADVANCING, followDistance);
 

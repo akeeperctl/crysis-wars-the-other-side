@@ -43,7 +43,7 @@ AIBehaviour.TrooperAttackSwitchPositionMelee = {
 	
 	--------------------------------------------------
 	OnEnemyDamage = function(self,entity,sender,data)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			if(not entity.AI.canDodge) then 
 				return;
 			end
@@ -110,7 +110,7 @@ AIBehaviour.TrooperAttackSwitchPositionMelee = {
 	
 	--------------------------------------------------
 	OnEnemyMemory = function(self,entity,target)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) > 0.0 ) then
+		if (entity.AI.ignoreSignals == false) then
 			AI.Signal(SIGNALFILTER_SENDER,1,"MELEE_FAILED",entity.id);
 		end
 	end,

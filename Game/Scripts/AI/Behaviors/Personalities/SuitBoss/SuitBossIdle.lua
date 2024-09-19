@@ -29,9 +29,9 @@ AIBehaviour.SuitBossIdle = {
 		entity.AI.firstContact = true;
 
 		if(AI.GetGroupTacticState(entity.id, 0, GE_LEADER_COUNT) > 0) then
-			AI.Signal(SIGNALFILTER_SENDER, 1, "TO_ATTACK_GROUP",entity.id);
+			AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_ATTACK_GROUP",entity.id);
 		else
-			AI.Signal(SIGNALFILTER_SENDER, 1, "TO_ATTACK",entity.id);
+			AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_ATTACK",entity.id);
 		end
 	end,
 
@@ -55,9 +55,11 @@ AIBehaviour.SuitBossIdle = {
 	
 	---------------------------------------------
 	OnInterestingSoundHeard = function( self, entity )
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_AUDIO) == 0.0 ) then
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
 		-- check if we should check the sound or not.
 		entity:Readibility("idle_interest_hear",1,1,0.6,1);
 		entity:MakeAlerted();		
@@ -65,9 +67,11 @@ AIBehaviour.SuitBossIdle = {
 
 	---------------------------------------------
 	OnThreateningSoundHeard = function( self, entity, fDistance )
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_AUDIO) == 0.0 ) then
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
+		--~TheOtherSide
 		-- called when the enemy hears a scary sound
 		entity:Readibility("idle_alert_threat_hear",1,1,0.6,1);
 		entity:TriggerEvent(AIEVENT_DROPBEACON);
