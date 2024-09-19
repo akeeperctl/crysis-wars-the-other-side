@@ -40,6 +40,7 @@ public:
 	//TheOtherSide
 	int ReviveSlaveOfPlayer(IFunctionHandler* pH, int playerChannelId, Vec3 pos, Vec3 angles);
 	int SpawnAndAssignSlaveToPlayer(IFunctionHandler* pH, int playerChannelId, const char* slaveClassName, float spawnDelaySec, Vec3 pos, Vec3 angles);
+	int IsConquestGamemode(IFunctionHandler* pH);
 	//TheOtherSide
 
 	CScriptBind_GameRules(ISystem *pSystem, IGameFramework *pGameFramework);

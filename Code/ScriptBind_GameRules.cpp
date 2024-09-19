@@ -91,6 +91,21 @@ int CScriptBind_GameRules::SpawnAndAssignSlaveToPlayer(IFunctionHandler* pH, int
 
 	return pH->EndFunction();
 }
+
+int CScriptBind_GameRules::IsConquestGamemode(IFunctionHandler* pH)
+{
+	CGameRules* pGameRules = GetGameRules(pH);
+	if (!pGameRules)
+		return pH->EndFunction();
+
+	//if (!g_pControlSystem->GetConquerorSystem())
+	//	return pH->EndFunction();
+
+	//if (g_pControlSystem->GetConquerorSystem()->IsGamemode())
+	//	return pH->EndFunction(1);
+
+	return pH->EndFunction();
+}
 //~TheOtherSide
 
 //------------------------------------------------------------------------
@@ -161,6 +176,7 @@ void CScriptBind_GameRules::RegisterMethods()
 	//TheOtherSide
 	SCRIPT_REG_TEMPLFUNC(ReviveSlaveOfPlayer, "playerChannelId, pos, angles");
 	SCRIPT_REG_TEMPLFUNC(SpawnAndAssignSlaveToPlayer, "playerChannelId, slaveClassName, spawnDelaySec, pos, angles");
+	SCRIPT_REG_TEMPLFUNC(IsConquestGamemode, "");
 	//TheOtherSide
 
 	SCRIPT_REG_TEMPLFUNC(IsServer, "");
