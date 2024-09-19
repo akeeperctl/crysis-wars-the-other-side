@@ -7,6 +7,7 @@
 #include <ILevelSystem.h>
 #include <IInput.h>
 #include "Modules\Zeus\ZeusModule.h"
+#include "ScriptBinds\ScriptBind_Custom.h"
 
 class СTOSAIModule;
 class CControlClient;
@@ -150,6 +151,7 @@ private:
 	void UpdateChannelConnectionState();
 	void UpdateContextViewState();
 
+
 	СTOSAIModule* m_pAITrackerModule;
 	CControlClient* m_pLocalControlClient;
 
@@ -157,6 +159,8 @@ private:
 	CTOSMasterModule* m_pMasterModule;
 	CTOSZeusModule* m_pZeusModule;
 	CTOSEntitySpawnModule* m_pEntitySpawnModule;
+
+	CScriptBind_Custom* m_pCustomScriptBind;
 
 	std::vector<ITOSGameModule*> m_modules;
 	std::vector<ITOSGameModule*> m_flowgraphModules;

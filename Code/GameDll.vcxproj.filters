@@ -163,6 +163,9 @@
     <Filter Include="TheOtherSideMP\Game\Modules\Zeus">
       <UniqueIdentifier>{186141cc-3590-466d-9314-5b53dabd664a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="TheOtherSideMP\Game\ScriptBinds">
+      <UniqueIdentifier>{d483f571-7c28-4a1a-987e-8b4204f1cba4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Actor.cpp">
@@ -881,6 +884,9 @@
     <ClCompile Include="TheOtherSideMP\AI\ScriptBind_AITracker.cpp">
       <Filter>TheOtherSideMP\Game\Modules\AI</Filter>
     </ClCompile>
+    <ClCompile Include="TheOtherSideMP\Game\ScriptBinds\ScriptBind_Custom.cpp">
+      <Filter>TheOtherSideMP\Game\ScriptBinds</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor.h">
@@ -1550,6 +1556,9 @@
     <ClInclude Include="TheOtherSideMP\AI\ScriptBind_AITracker.h">
       <Filter>TheOtherSideMP\Game\Modules\AI</Filter>
     </ClInclude>
+    <ClInclude Include="TheOtherSideMP\Game\ScriptBinds\ScriptBind_Custom.h">
+      <Filter>TheOtherSideMP\Game\ScriptBinds</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="GameActions.actions">
@@ -1558,6 +1567,7 @@
     <None Include="..\Launcher\Cursor_White.cur">
       <Filter>Resources</Filter>
     </None>
+    <None Include=".editorconfig" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Crysis.ico">

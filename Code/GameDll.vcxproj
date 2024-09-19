@@ -472,6 +472,7 @@
     <ClCompile Include="TheOtherSideMP\Game\Modules\Zeus\ZeusHUD.cpp" />
     <ClCompile Include="TheOtherSideMP\Game\Modules\Zeus\ZeusModule.cpp" />
     <ClCompile Include="TheOtherSideMP\Game\Modules\Zeus\ZeusNodes.cpp" />
+    <ClCompile Include="TheOtherSideMP\Game\ScriptBinds\ScriptBind_Custom.cpp" />
     <ClCompile Include="TheOtherSideMP\Game\TOSGame.cpp" />
     <ClCompile Include="TheOtherSideMP\Game\TOSGameCvars.cpp" />
     <ClCompile Include="TheOtherSideMP\Game\TOSGameEventRecorder.cpp" />
@@ -727,6 +728,7 @@
     <ClInclude Include="TheOtherSideMP\Game\Modules\Master\MasterModule.h" />
     <ClInclude Include="TheOtherSideMP\Game\Modules\Master\MasterSynchronizer.h" />
     <ClInclude Include="TheOtherSideMP\Game\Modules\Zeus\ZeusModule.h" />
+    <ClInclude Include="TheOtherSideMP\Game\ScriptBinds\ScriptBind_Custom.h" />
     <ClInclude Include="TheOtherSideMP\Game\TOSGame.h" />
     <ClInclude Include="TheOtherSideMP\Game\TOSGameCvars.h" />
     <ClInclude Include="TheOtherSideMP\Game\TOSGameEventRecorder.h" />
@@ -780,6 +782,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Launcher\Cursor_White.cur" />
+    <None Include=".editorconfig" />
     <None Include="GameActions.actions" />
   </ItemGroup>
   <ItemGroup>

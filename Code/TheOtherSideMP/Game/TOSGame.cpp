@@ -12,6 +12,7 @@
 
 #include "TheOtherSideMP/AI/AITrackerModule.h"
 #include "TheOtherSideMP/Helpers/TOS_Cache.h"
+#include "TheOtherSideMP/Helpers/TOS_Script.h"
 
 CTOSGame::CTOSGame()
 	: m_pAITrackerModule(nullptr),
@@ -115,6 +116,8 @@ void CTOSGame::InitScriptBinds()
 			pModule->InitScriptBinds();
 		}
 	}
+
+	m_pCustomScriptBind = new CScriptBind_Custom(gEnv->pSystem, g_pGame->GetIGameFramework());
 }
 
 void CTOSGame::ReleaseScriptBinds()
@@ -127,6 +130,8 @@ void CTOSGame::ReleaseScriptBinds()
 			pModule->ReleaseScriptBinds();
 		}
 	}
+
+	SAFE_DELETE(m_pCustomScriptBind);
 }
 
 void CTOSGame::OnLevelNotFound(const char* levelName)

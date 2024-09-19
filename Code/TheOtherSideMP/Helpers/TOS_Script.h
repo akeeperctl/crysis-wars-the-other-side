@@ -111,7 +111,7 @@ namespace TOS_Script
 				subprop->SetValue(name, value);
 				return true;
 			}
-				
+
 		}
 
 		return false;
@@ -142,5 +142,79 @@ namespace TOS_Script
 		IScriptTable* pScriptTable = pEntity->GetScriptTable();
 		if (pScriptTable && pScriptTable->GetValue("Properties", props))
 			props->SetValue(name, value);
+	}
+
+	inline void RegisterFunction(const char* sTableName, const char* sFuncName, IScriptTable::FunctionFunctor function)
+	{
+		auto pSS = gEnv->pScriptSystem;
+		if (!pSS)
+			return;
+
+		bool tableNameNotFound = false;
+
+		SmartScriptTable table;
+		if (!pSS->GetGlobalValue(sTableName, table))
+		{
+			tableNameNotFound = true;
+			table = pSS->CreateTable();
+			table->AddRef();
+		}
+
+		if (!table.GetPtr())
+			return;
+
+		if (tableNameNotFound)
+		{
+			pSS->SetGlobalValue(sTableName, table);
+		}
+
+		IScriptTable::SUserFunctionDesc fd;
+		fd.sGlobalName = sTableName;
+		fd.sFunctionName = sFuncName;
+		fd.pFunctor = function;
+		fd.nParamIdOffset = 0;
+		table->AddFunction(fd);
+	}
+
+	template <typename Callee, typename Func>
+	void RegisterTemplateFunction(const char* sTableName, const char* sFuncName, const char* sFuncParams, Callee& callee, const Func& func)
+	{
+		auto pSS = gEnv->pScriptSystem;
+		if (!pSS)
+			return;
+
+		bool tableNameNotFound = false;
+
+		SmartScriptTable table;
+		if (!pSS->GetGlobalValue(sTableName, table))
+		{
+			tableNameNotFound = true;
+			table = pSS->CreateTable();
+			table->AddRef();
+		}
+
+		if (!table.GetPtr())
+			return;
+
+		if (tableNameNotFound)
+			pSS->SetGlobalValue(sTableName, table);
+
+
+		typedef Callee* Callee_pointer;
+		Callee_pointer pCalleePtr = &callee;
+		unsigned char pBuffer[sizeof(Callee_pointer) + sizeof(func)];
+		memcpy(pBuffer, &pCalleePtr, sizeof(Callee_pointer));
+		memcpy(pBuffer + sizeof(Callee_pointer), &func, sizeof(func));
+
+		IScriptTable::SUserFunctionDesc fd;
+		fd.sGlobalName = sTableName;
+		fd.sFunctionName = sFuncName;
+		fd.sFunctionParams = sFuncParams;
+		fd.pUserDataFunc = ScriptTemplateCallHelper::CallDispatcher<Callee, Func>::Dispatch;
+		fd.nDataSize = sizeof(Callee_pointer) + sizeof(func);
+		fd.pDataBuffer = pBuffer;
+		fd.nParamIdOffset = 0;
+
+		table->AddFunction(fd);
 	}
 }
