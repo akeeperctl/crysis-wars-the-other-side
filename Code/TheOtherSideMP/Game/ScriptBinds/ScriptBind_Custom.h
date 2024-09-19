@@ -14,7 +14,9 @@ public:
 	void RegisterMethods();
 	void MergeTable(IScriptTable* pDest, IScriptTable* pSrc);
 
+
 	// Methods
+	int HasAI(IFunctionHandler* pH, ScriptHandle entityId);
 	int TOSSpawnEntity(IFunctionHandler* pH, SmartScriptTable params);
 
 private:

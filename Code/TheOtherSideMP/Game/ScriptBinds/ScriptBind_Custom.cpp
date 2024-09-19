@@ -22,9 +22,10 @@ CScriptBind_Custom::~CScriptBind_Custom()
 void CScriptBind_Custom::RegisterMethods()
 {
 # define REGISTER_TEMPLATE(sGlobalName, sFuncName, sFuncParams)\
-	TOS_Script::RegisterTemplateFunction(sGlobalName, #sFuncName, sFuncParams, *this, CScriptBind_Custom::sFuncName)
+	TOS_Script::RegisterTemplateFunction(sGlobalName, #sFuncName, sFuncParams, *this, &CScriptBind_Custom::sFuncName)
 
 	REGISTER_TEMPLATE("System", TOSSpawnEntity, "params");
+	REGISTER_TEMPLATE("AI", HasAI, "entityId");
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -91,6 +92,16 @@ void CScriptBind_Custom::MergeTable(IScriptTable* pDest, IScriptTable* pSrc)
 	pSrc->EndIteration(it);
 }
 
+//------------------------------------------------------------------------
+int CScriptBind_Custom::HasAI(IFunctionHandler* pH, ScriptHandle entityId)
+{
+	const EntityId id = (EntityId)entityId.n;
+	IEntity* pEntity = gEnv->pEntitySystem->GetEntity(id);
+	
+	const bool hasAI = pEntity ? pEntity->GetAI() : false;
+	return pH->EndFunction(hasAI);
+}
+
 int CScriptBind_Custom::TOSSpawnEntity(IFunctionHandler* pH, SmartScriptTable params)
 {
 	const char* entityClass = 0;
@@ -142,7 +153,7 @@ int CScriptBind_Custom::TOSSpawnEntity(IFunctionHandler* pH, SmartScriptTable pa
 	if (dir.IsZero(.1f))
 	{
 		dir = Vec3(1.0f, 0.0f, 0.0f);
-		CryLogWarning("Zero orientation CScriptBind_Custom::SpawnEntity. Entity name %s", entityName);
+		CryLogWarning("<CScriptBind_Custom> [TOSSpawnEntity] Zero orientation. Entity name %s", entityName);
 	}
 	else dir.NormalizeSafe();
 
@@ -161,7 +172,7 @@ int CScriptBind_Custom::TOSSpawnEntity(IFunctionHandler* pH, SmartScriptTable pa
 
 	if (!spawnParams.pClass)
 	{
-		CryLogError("No such entity class %s (entity name: %s)", entityClass, entityName);
+		CryLogError("<CScriptBind_Custom> [TOSSpawnEntity] No such entity class %s (entity name: %s)", entityClass, entityName);
 		return pH->EndFunction();
 	}
 	// if there is a prototype - use some flags of prototype entity
@@ -193,6 +204,12 @@ int CScriptBind_Custom::TOSSpawnEntity(IFunctionHandler* pH, SmartScriptTable pa
 		}
 
 		gEnv->pEntitySystem->InitEntity(pEntity, spawnParams);
+	}
+
+	if (!pEntityTable)
+	{
+		CryLogError("<CScriptBind_Custom> [TOSSpawnEntity] Script table of spawned entity not created");
+		return pH->EndFunction();
 	}
 
 	if (pEntity && pEntityTable)
