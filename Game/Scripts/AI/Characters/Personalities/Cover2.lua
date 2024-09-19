@@ -16,8 +16,8 @@ AICharacter.Cover2 = {
 	
 	AnyBehavior = {	
 		--TheOtherSide
+		-- _ANY_ = "",
 		GO_TO_TOSSHARED = 			"TOSSHARED",		
-		OnFallAndPlayWakeUp = 		"Cover2Attack",
 		--~TheOtherSide
 
 		ENTERING_VEHICLE =				"EnteringVehicle",
@@ -50,12 +50,51 @@ AICharacter.Cover2 = {
 		GO_TO_STATIC 			= "HBaseStaticShooter",
 		
 	},
+
+	TOSSHARED = {
+		RESUME_FOLLOWING =				"",
+		ENTERING_VEHICLE =				"",
+		USE_MOUNTED_WEAPON =			"",
+		OnPlayerSeen =						"",
+		OnTankSeen =							"",
+		OnHeliSeen =							"",
+		OnBulletRain =						"",
+		OnGrenadeSeen =						"",
+		OnInterestingSoundHeard =	"",
+		OnThreateningSoundHeard =	"",
+		entered_vehicle	=					"",
+		exited_vehicle =					"",
+		exited_vehicle_investigate = "",
+		OnSomethingSeen =					"",
+		GO_TO_IDLE = 						"Cover2Idle",
+		GO_TO_ATTACK				= "",
+		GO_TO_ATTACK_GROUP	= "",
+		GO_TO_RUSH_ATTACK	= "",
+		GO_TO_HIDE					= "",
+		GO_TO_AVOID_TANK		= "",
+		GO_TO_RPG_ATTACK		= "",
+		GO_TO_THREATENED		= "",
+		GO_TO_THREATENED_STANDBY = "",
+		GO_TO_INTERESTED		= "",
+		GO_TO_SEEK					= "",
+		GO_TO_SEARCH				= "",
+		GO_TO_RELOAD				= "",
+		GO_TO_CALL_REINFORCEMENTS	= "",
+		ENEMYSEEN_FIRST_CONTACT	 		= "",
+		ENEMYSEEN_DURING_COMBAT		= "",
+		GO_TO_PANIC				= "",
+		OnFallAndPlayWakeUp =	  "Cover2Idle",
+	},
 	
 	HBaseAlerted = {
 			
 	},
 	
 	HBaseTranquilized = {
+		--TheOtherSide
+		OnFallAndPlayWakeUp = 				"PREVIOUS",
+		--~TheOtherSide
+		
 		GO_TO_IDLE =							"Cover2Idle",
 		RESUME_FOLLOWING =				"",
 		ENTERING_VEHICLE =				"",
@@ -72,10 +111,8 @@ AICharacter.Cover2 = {
 		exited_vehicle_investigate = "",
 		OnSomethingSeen =					"",
 		GO_TO_SEEK =							"",
-		--TheOtherSide
-		GO_TO_SEARCH =						"Cover2Search",
-		GO_TO_ATTACK =						"Cover2Attack",
-		--~TheOtherSide
+		GO_TO_SEARCH =						"",
+		GO_TO_ATTACK =						"",
 		GO_TO_AVOIDEXPLOSIVES =   "",
 		GO_TO_AVOIDVEHICLE =   		"",
 		GO_TO_ALERT =							"",
