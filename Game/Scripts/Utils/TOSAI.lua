@@ -98,6 +98,11 @@ AIOBJECT_PLAYER = 100
 AIOBJECT_GRENADE = 150
 AIOBJECT_RPG = 151
 
+
+AITSR_NONE = 0
+AITSR_SEE_STUNT_ACTION = 1
+AITSR_SEE_CLOAKED = 2
+
 -- Флаги получения количества единиц ИИ в группе
 
 GROUP_ALL = 1 -- Всех объектов в группе
@@ -1111,7 +1116,7 @@ TOS_AI = {
     ]]
     SetAdjustPath = function (entity, bAdjust)
         AI.SetAdjustPath(entity, bAdjust)
-    end
+    end,
 
     --[[
         Возвращает таблицу ближайших сущностей определенного типа.
@@ -1141,5 +1146,15 @@ TOS_AI = {
     ]]
     GetRefPointPosition = function (entityId)
         return AI.GetRefPointPosition(entityId)
+    end,
+
+    --[[
+    Изменяет параметр ИИ объекта
+
+    @param param - это параметр AIPARAM..
+    @param value - это его значение 
+    ]]
+    ChangeParameter = function (entity, param, value)
+        AI.ChangeParameter( entity.id, param, value );
     end
 }

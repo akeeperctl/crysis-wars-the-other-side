@@ -1,27 +1,9 @@
-Script.ReloadScript("Scripts/Utils/TOS_AI.lua")
-Script.ReloadScript("Scripts/Utils/TOS_Table.lua")
-Script.ReloadScript("Scripts/Utils/TOS_Vehicle.lua")
+Script.ReloadScript("Scripts/TOSLoader.lua")
+Script.ReloadScript("Scripts/TOSDebug.lua")
 
--- g_OrderData = {
---     funcName = "",
---     funcParams = {},
---     iValue1 = 0,
---     iValue2 = 0,
---     fValue1 = 0,
---     fValue2 = 0,
---     strValue1 = "",
---     strValue2 = "",
---     pos1 = g_Vectors.v000,
---     pos2 = g_Vectors.v000
--- }
-
--- g_Functions = {
-
---     ENTER_VEHICLE = function(vehicleId, passengerId, seatId, transition)
---         local vehicle = System.GetEntity(vehicleId)
---         vehicle:EnterVehicle(passengerId, seatId, transition)
---     end
--- }
+local function CryLogAlways(str, ...)
+    System.LogAlways(string.format(str, ...))
+end
 
 --[[
     Обрабатывает задачу для сущности.

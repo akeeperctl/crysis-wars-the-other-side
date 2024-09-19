@@ -16,3 +16,11 @@ function table.dump(tbl, indent)
     result = result .. "\n" .. indent .. "}"
     return result
 end
+
+function table.safedump(data)
+	if (data and type(data) == "table") then
+		return table.dump(data)
+	else
+		return "{}"
+	end
+end
