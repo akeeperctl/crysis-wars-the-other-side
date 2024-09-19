@@ -1,3 +1,8 @@
+--************************************************************************* 
+ --AlienKeeper Source File.
+ --Copyright (C), AlienKeeper, 2024.
+--*************************************************************************
+
 -- File loads all TheOtherSide lua files
 
 Script.ReloadScript("Scripts/Utils/TOSCommon.lua")

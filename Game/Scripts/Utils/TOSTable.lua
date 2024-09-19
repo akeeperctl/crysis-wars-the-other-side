@@ -1,3 +1,8 @@
+--************************************************************************* 
+ --AlienKeeper Source File.
+ --Copyright (C), AlienKeeper, 2024.
+--*************************************************************************
+
 function table.dump(tbl, indent)
     indent = indent or ""
     local result = "{"

@@ -1,3 +1,8 @@
+--************************************************************************* 
+ --AlienKeeper Source File.
+ --Copyright (C), AlienKeeper, 2024.
+--*************************************************************************
+
 function PipeManager:OnInitTOS()
 
     AI.BeginGoalPipe("tos_setup_combat_idle");	

@@ -1,3 +1,8 @@
+--************************************************************************* 
+ --AlienKeeper Source File.
+ --Copyright (C), AlienKeeper, 2024.
+--*************************************************************************
+
 local g_SpawnParams_point = {x=0,y=0,z=0}
 local g_SpawnParams_scale = {x=1,y=1,z=1}
 

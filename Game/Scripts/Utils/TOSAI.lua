@@ -1,3 +1,8 @@
+--************************************************************************* 
+ --AlienKeeper Source File.
+ --Copyright (C), AlienKeeper, 2024.
+--*************************************************************************
+
 -- Файл представляет собой определитель синтаксиса для различных функций
 -- или значений переменных, которые зареганы в Движке, но подсказки по ним нет.
 
@@ -1146,6 +1151,62 @@ TOS_AI = {
     ]]
     GetRefPointPosition = function (entityId)
         return AI.GetRefPointPosition(entityId)
+    end,
+
+    GetTargetType = function (entityId)
+        return AI.GetTargetType(entityId)
+    end,
+
+    GetAttentionTargetDistance = function (entityId)
+        return AI.GetAttentionTargetDistance(entityId)
+    end,
+
+    SetPFBlockerRadius = function (entityId, PFB_type, radius)
+        return AI.SetPFBlockerRadius(entityId, PFB_type, radius)
+    end,
+
+    NotifyGroupTacticState = function (entityId, HZ_INT, GN_type)
+        return AI.NotifyGroupTacticState(entityId, HZ_INT, GN_type)
+    end,
+
+    GetGroupTacticState = function (entityId, HZ_INT, GE_type)
+        return AI.GetGroupTacticState(entityId, HZ_INT, GE_type)
+    end,
+
+    GetGroupTacticPoint = function (entityId, HZ_INT, GE_type_POS)
+        return AI.GetGroupTacticPoint(entityId, HZ_INT, GE_type_POS)
+    end,
+
+    GetGroupMember = function (entityId, index, GROUP_flag)
+        return AI.GetGroupMember(entityId, index, GROUP_flag)
+    end,
+
+    GetGroupTarget = function (entityId, HZ_BOOL)
+        return AI.GetGroupTarget(entityId, HZ_BOOL)
+    end,
+
+    -- AI.ScaleFormation(entity.id,1);
+    ScaleFormation = function (entityId, scale)
+        return AI.ScaleFormation(entityId, scale)
+    end,
+
+    -- AI.GetGroupAveragePosition(entity.id,UPR_COMBAT_GROUND,avgPos);
+    GetGroupAveragePosition = function (entityId, UPR_type, avgPos)
+        return AI.GetGroupAveragePosition(entityId, UPR_type, avgPos)
+    end,
+
+    --[[
+    Получить номер группы ИИ объекта
+    ]]
+    GetGroupOf = function (entityId)
+        return AI.GetGroupOf(entityId)
+    end,
+
+    --[[
+    Получить кол-во агентов в группе, согласно флагам
+    ]]
+    GetGroupCount = function (entityId, GROUP_flags)
+        AI.GetGroupCount(entityId, GROUP_flags);
     end,
 
     --[[
