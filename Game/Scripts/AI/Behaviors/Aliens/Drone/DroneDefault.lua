@@ -73,6 +73,11 @@ AIBehaviour.DroneDefault = {
 	end,
 	--------------------------------------------------------------------------
 	OnObjectSeen = function( self, entity, fDistance, data )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity:InsertSubpipe(0,"devalue_target");
 	end,
 	--------------------------------------------------------------------------

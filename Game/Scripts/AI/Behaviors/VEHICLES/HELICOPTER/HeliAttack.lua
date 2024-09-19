@@ -22,6 +22,7 @@ AIBehaviour.HeliAttack = {
 
 
 		--TheOtherSide
+		entity.AI.previousBehaviour = entity.AI.currentBehaviour
 		entity.AI.currentBehaviour = self.Name
 		--~TheOtherSide	
 
@@ -125,7 +126,7 @@ AIBehaviour.HeliAttack = {
 	HELI_REFLESH_POSITION = function( self, entity, sender, data )
 
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -141,7 +142,7 @@ AIBehaviour.HeliAttack = {
 	HELI_STAY_ATTACK_START = function( self, entity )
 
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -155,7 +156,7 @@ AIBehaviour.HeliAttack = {
 	HELI_EXPAND_FORMATION = function( self, entity )
 
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -249,7 +250,7 @@ AIBehaviour.HeliAttack = {
 	--------------------------------------------------------------------------
 	HELI_STAY_ATTACK = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -405,7 +406,7 @@ AIBehaviour.HeliAttack = {
 	---------------------------------------------
 	OnEnemyDamage = function ( self, entity, sender, data )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -443,7 +444,7 @@ AIBehaviour.HeliAttack = {
 	---------------------------------------------
 	HELI_TAKE_EVADEACTION = function ( self, entity, sender, data )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -468,7 +469,7 @@ AIBehaviour.HeliAttack = {
 	---------------------------------------------
 	OnObjectSeen = function( self, entity, fDistance, data )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -506,7 +507,7 @@ AI.LogEvent(">>>>helipath selecting "..tpname);
 	---------------------------------------------
 	Relocate = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -559,7 +560,7 @@ AI.LogEvent(">>>>heliattack NO TARGET ");
 	---------------------------------------------
 	H_CHOOSE_ATTACK_ACTION  = function (self, entity, sender)
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -571,7 +572,7 @@ AI.LogEvent(">>>>heliattack NO TARGET ");
 	--------------------------------------------------------------------------
 	heliDoStayAttack = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide

@@ -50,6 +50,7 @@ AIBehaviour.HeliHoverAttack2 = {
 	Constructor = function ( self, entity, data )
 
 		--TheOtherSide
+		entity.AI.previousBehaviour = entity.AI.currentBehaviour
 		entity.AI.currentBehaviour = self.Name
 		--~TheOtherSide	
 
@@ -188,7 +189,7 @@ AIBehaviour.HeliHoverAttack2 = {
 
 	HELI_HOVERATTACK2_RECOVERLOOKAT_MAIN = function ( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -214,7 +215,7 @@ AIBehaviour.HeliHoverAttack2 = {
 
 	HELI_HOVERATTACK2_CHECKTARGET = function ( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -241,7 +242,7 @@ AIBehaviour.HeliHoverAttack2 = {
 	--------------------------------------------------------------------------
 	OnNoTarget = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -293,7 +294,7 @@ AIBehaviour.HeliHoverAttack2 = {
 	---------------------------------------------
 	OnEnemyDamage = function ( self, entity, sender, data )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -363,7 +364,7 @@ AIBehaviour.HeliHoverAttack2 = {
 	--------------------------------------------------------------------------
 	HELI_HOVERATTACK2_CHECKGOAWAY = function( self, entity, distance )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -391,7 +392,7 @@ AIBehaviour.HeliHoverAttack2 = {
 	---------------------------------------------
 	HELI_HOVERATTACK2_GETPARTSDAMAGE = function ( self, entity, sender, data )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -453,7 +454,7 @@ AIBehaviour.HeliHoverAttack2 = {
 	------------------------------------------------------------------------------------------
 	HELI_TAKE_EVADEACTION = function ( self, entity, sender, data )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -489,7 +490,7 @@ AIBehaviour.HeliHoverAttack2 = {
 	---------------------------------------------
 	OnObjectSeen = function( self, entity, fDistance, data )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -572,7 +573,7 @@ AIBehaviour.HeliHoverAttack2 = {
 	--------------------------------------------------------------------------
 	HELI_REFLESH_POSITION = function( self, entity, sender, data )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -594,7 +595,7 @@ AIBehaviour.HeliHoverAttack2 = {
 	--------------------------------------------------------------------------
 	HELI_HOVERATTACK2_UPDATE = function( entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -834,7 +835,7 @@ AIBehaviour.HeliHoverAttack2 = {
 	--------------------------------------------------------------------------
 	HELI_HOVERATTACK2_GETDAMAGESMALL_START = function ( self, entity, targetEntity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -894,7 +895,7 @@ AIBehaviour.HeliHoverAttack2 = {
 	
 	HELI_HOVERATTACK2_GETDAMAGESMALL = function ( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -936,7 +937,7 @@ AIBehaviour.HeliHoverAttack2 = {
 	--------------------------------------------------------------------------
 	HELI_HOVERATTACK2_START = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -972,7 +973,7 @@ AIBehaviour.HeliHoverAttack2 = {
 	--------------------------------------------------------------------------
 	HELI_HOVERATTACK2 = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -1064,7 +1065,7 @@ AIBehaviour.HeliHoverAttack2 = {
 
 	HELI_HOVERATTACK2_ADVANCE_START  = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -1095,7 +1096,7 @@ AIBehaviour.HeliHoverAttack2 = {
 
 	HELI_HOVERATTACK2_ADVANCE  = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -1198,7 +1199,7 @@ AIBehaviour.HeliHoverAttack2 = {
 	--------------------------------------------------------------------------
 	HELI_HOVERATTACK2_QUICKRETREAT_START  = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -1234,7 +1235,7 @@ AIBehaviour.HeliHoverAttack2 = {
 
 	HELI_HOVERATTACK2_QUICKRETREAT = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -1323,7 +1324,7 @@ AIBehaviour.HeliHoverAttack2 = {
 	--------------------------------------------------------------------------
 	HELI_HOVERATTACK2_STRAFERETREAT_START  = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -1355,7 +1356,7 @@ AIBehaviour.HeliHoverAttack2 = {
 
 	HELI_HOVERATTACK2_STRAFERETREAT  = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -1419,7 +1420,7 @@ AIBehaviour.HeliHoverAttack2 = {
 	--------------------------------------------------------------------------
 	HELI_HOVERATTACK2_STRAFING_START = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -1454,7 +1455,7 @@ AIBehaviour.HeliHoverAttack2 = {
 	--------------------------------------------------------------------------
 	HELI_HOVERATTACK2_STRAFING = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -1503,7 +1504,7 @@ AIBehaviour.HeliHoverAttack2 = {
 	--------------------------------------------------------------------------
 	HELI_HOVERATTACK2_STRAFING2_START = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -1531,7 +1532,7 @@ AIBehaviour.HeliHoverAttack2 = {
 	--------------------------------------------------------------------------
 	HELI_HOVERATTACK2_STRAFING2 = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -1637,7 +1638,7 @@ AIBehaviour.HeliHoverAttack2 = {
 	--------------------------------------------------------------------------
 	HELI_HOVERATTACK2_STRAFING3_START = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -1665,7 +1666,7 @@ AIBehaviour.HeliHoverAttack2 = {
 	--------------------------------------------------------------------------
 	HELI_HOVERATTACK2_STRAFING3 = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -1719,7 +1720,7 @@ AIBehaviour.HeliHoverAttack2 = {
 	--------------------------------------------------------------------------
 	HELI_HOVERATTACK2_STRAFING4_START = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -1750,7 +1751,7 @@ AIBehaviour.HeliHoverAttack2 = {
 	--------------------------------------------------------------------------
 	HELI_HOVERATTACK2_STRAFING4 = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -1858,7 +1859,7 @@ AIBehaviour.HeliHoverAttack2 = {
 	--------------------------------------------------------------------------
 	HELI_HOVERATTACK2_STRAFING5_START = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -1892,7 +1893,7 @@ AIBehaviour.HeliHoverAttack2 = {
 	--------------------------------------------------------------------------
 	HELI_HOVERATTACK2_STRAFING5 = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -1932,7 +1933,7 @@ AIBehaviour.HeliHoverAttack2 = {
 	--------------------------------------------------------------------------
 	HELI_HOVERATTACK2_DASH_START = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -1983,7 +1984,7 @@ AIBehaviour.HeliHoverAttack2 = {
 	--------------------------------------------------------------------------
 	HELI_HOVERATTACK2_DASH = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -2009,7 +2010,7 @@ AIBehaviour.HeliHoverAttack2 = {
 	--------------------------------------------------------------------------
 	HELI_HOVERATTACK2_MAKECURVE_START = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -2054,7 +2055,7 @@ AIBehaviour.HeliHoverAttack2 = {
 	--------------------------------------------------------------------------
 	HELI_HOVERATTACK2_MAKECURVE = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -2150,7 +2151,7 @@ AIBehaviour.HeliHoverAttack2 = {
 	--------------------------------------------------------------------------
 	HELI_HOVERATTACK2_WAITLOOK_START = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -2188,7 +2189,7 @@ AIBehaviour.HeliHoverAttack2 = {
 	--------------------------------------------------------------------------
 	HELI_HOVERATTACK2_WAITLOOK = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -2229,7 +2230,7 @@ AIBehaviour.HeliHoverAttack2 = {
 	--------------------------------------------------------------------------
 	HELI_HOVERATTACK2_NORMALDAMAGE_START = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -2262,7 +2263,7 @@ AIBehaviour.HeliHoverAttack2 = {
 	--------------------------------------------------------------------------
 	HELI_HOVERATTACK2_NORMALDAMAGE = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -2326,7 +2327,7 @@ AIBehaviour.HeliHoverAttack2 = {
 	--------------------------------------------------------------------------
 	HELI_HOVERATTACK2_NORMALDAMAGE2_START = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -2369,7 +2370,7 @@ AIBehaviour.HeliHoverAttack2 = {
 	--------------------------------------------------------------------------
 	HELI_HOVERATTACK2_NORMALDAMAGE2 = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -2396,7 +2397,7 @@ AIBehaviour.HeliHoverAttack2 = {
 	--------------------------------------------------------------------------
 	HELI_HOVERATTACK2_EVADELAW_START = function( self, entity, vec, vec2 )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -2469,7 +2470,7 @@ AIBehaviour.HeliHoverAttack2 = {
 	--------------------------------------------------------------------------
 	HELI_HOVERATTACK2_EVADELAW = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -2499,7 +2500,7 @@ AIBehaviour.HeliHoverAttack2 = {
 	--------------------------------------------------------------------------
 	HELI_HOVERATTACK2_PATHATTACK_START = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -2542,7 +2543,7 @@ AIBehaviour.HeliHoverAttack2 = {
 	--------------------------------------------------------------------------
 	HELI_HOVERATTACK2_PATHATTACK = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -2654,7 +2655,7 @@ AIBehaviour.HeliHoverAttack2 = {
 	--------------------------------------------------------------------------
 	HELI_HOVERATTACK2_GOAWAY_START = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -2686,7 +2687,7 @@ AIBehaviour.HeliHoverAttack2 = {
 	
 	HELI_HOVERATTACK2_GOAWAY = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -2759,7 +2760,7 @@ AIBehaviour.HeliHoverAttack2 = {
 	--------------------------------------------------------------------------
 	HELI_HOVERATTACK2_SHOOTMISSILE_START = function( self, entity, myPos, enemyPos )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -2787,7 +2788,7 @@ AIBehaviour.HeliHoverAttack2 = {
 	--------------------------------------------------------------------------
 	HELI_HOVERATTACK2_SHOOTMISSILE = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -2845,7 +2846,7 @@ AIBehaviour.HeliHoverAttack2 = {
 	--------------------------------------------------------------------------
 	HELI_HOVERATTACK2_SHOOTMISSILE2_START = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -2879,7 +2880,7 @@ AIBehaviour.HeliHoverAttack2 = {
 
 	HELI_HOVERATTACK2_SHOOTMISSILE2 = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -2907,7 +2908,7 @@ AIBehaviour.HeliHoverAttack2 = {
 	--------------------------------------------------------------------------
 	HELI_HOVERATTACK2_EMERGENCYSTOP_START = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -2956,7 +2957,7 @@ AIBehaviour.HeliHoverAttack2 = {
 
 	HELI_HOVERATTACK2_EMERGENCYSTOP = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -3064,7 +3065,7 @@ AIBehaviour.HeliHoverAttack2 = {
 	--------------------------------------------------------------------------
 	HELI_HOVERATTACK2_VSCLOAK_START = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -3100,7 +3101,7 @@ AIBehaviour.HeliHoverAttack2 = {
 	--------------------------------------------------------------------------
 	HELI_HOVERATTACK2_VSCLOAK = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide

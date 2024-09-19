@@ -24,6 +24,7 @@ AIBehaviour.ScoutMOACIdle = {
 	Constructor = function ( self, entity, data )
 
 		--TheOtherSide
+		entity.AI.previousBehaviour = entity.AI.currentBehaviour
 		entity.AI.currentBehaviour = self.Name
 		--~TheOtherSide	
 
@@ -78,7 +79,7 @@ AIBehaviour.ScoutMOACIdle = {
 	--------------------------------------------------------------------------
 	OnPlayerSeen = function( self, entity, fDistance )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide

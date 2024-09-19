@@ -21,6 +21,7 @@ AIBehaviour.TrooperAttackFlank = {
 	Constructor = function (self, entity,data)
 		
 		--TheOtherSide
+		entity.AI.previousBehaviour = entity.AI.currentBehaviour
 		entity.AI.currentBehaviour = self.Name
 		--~TheOtherSide	
 

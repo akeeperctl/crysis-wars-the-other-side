@@ -1276,19 +1276,33 @@ AIBehaviour.DEFAULT = {
 		if ( data and data.point ) then
 			AI.SetRefPointPosition( entity.id, data.point );
 
+			--TheOtherSide
 			-- use dynamically created goal pipe to set approach distance
+			-- g_StringTemp1 = "action_goto"..data.fValue;
+			-- AI.CreateGoalPipe(g_StringTemp1);
+			-- AI.PushGoal(g_StringTemp1, "locate", 0, "refpoint");
+			-- AI.PushGoal(g_StringTemp1, "pathfind", 1, "refpoint");
+			-- AI.PushGoal(g_StringTemp1, "branch", 0, "NO_PATH", IF_LASTOP_FAILED );
+			-- AI.PushGoal(g_StringTemp1, "+stick", 1, data.point2.x, AILASTOPRES_USE + AI_REQUEST_PARTIAL_PATH, STICK_BREAK, data.fValue);	-- noncontinuous stick
+			-- AI.PushGoal(g_StringTemp1, "branch", 0, "END", BRANCH_ALWAYS );
+			-- AI.PushLabel(g_StringTemp1, "NO_PATH" );
+			-- AI.PushGoal(g_StringTemp1, "signal", 1, 1, "CANCEL_CURRENT",0);
+			-- AI.PushLabel(g_StringTemp1, "END" );
+			-- AI.PushGoal(g_StringTemp1, "signal", 1, 1, "END_ACT_GOTO",0);
+			
 			g_StringTemp1 = "action_goto"..data.fValue;
 			AI.CreateGoalPipe(g_StringTemp1);
 			AI.PushGoal(g_StringTemp1, "locate", 0, "refpoint");
-			AI.PushGoal(g_StringTemp1, "pathfind", 1, "refpoint");
-			AI.PushGoal(g_StringTemp1, "branch", 0, "NO_PATH", IF_LASTOP_FAILED );
+			--AI.PushGoal(g_StringTemp1, "pathfind", 1, "refpoint");
+			--AI.PushGoal(g_StringTemp1, "branch", 0, "NO_PATH", IF_LASTOP_FAILED );
 			AI.PushGoal(g_StringTemp1, "+stick", 1, data.point2.x, AILASTOPRES_USE + AI_REQUEST_PARTIAL_PATH, STICK_BREAK, data.fValue);	-- noncontinuous stick
 			AI.PushGoal(g_StringTemp1, "branch", 0, "END", BRANCH_ALWAYS );
-			AI.PushLabel(g_StringTemp1, "NO_PATH" );
-			AI.PushGoal(g_StringTemp1, "signal", 1, 1, "CANCEL_CURRENT",0);
+			--AI.PushLabel(g_StringTemp1, "NO_PATH" );
+			--AI.PushGoal(g_StringTemp1, "signal", 1, 1, "CANCEL_CURRENT",0);
 			AI.PushLabel(g_StringTemp1, "END" );
 			AI.PushGoal(g_StringTemp1, "signal", 1, 1, "END_ACT_GOTO",0);
-			
+			--~TheOtherSide
+
 			entity:InsertSubpipe( AIGOALPIPE_SAMEPRIORITY, g_StringTemp1, nil, data.iValue );
 		end
 	end,

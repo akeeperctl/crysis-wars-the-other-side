@@ -24,6 +24,7 @@ AIBehaviour.TrooperAttackSpecialAction = {
 	Constructor = function (self, entity)
 		
 		--TheOtherSide
+		entity.AI.previousBehaviour = entity.AI.currentBehaviour
 		entity.AI.currentBehaviour = self.Name
 		--~TheOtherSide	
 
@@ -307,7 +308,7 @@ AIBehaviour.TrooperAttackSpecialAction = {
 	OnLand = function(self,entity,sender)
 
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -363,7 +364,7 @@ AIBehaviour.TrooperAttackSpecialAction = {
 	MELEE_SPECIAL_START_TIMEOUT = function (self,entity,sender)
 
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -376,7 +377,7 @@ AIBehaviour.TrooperAttackSpecialAction = {
 	MELEE_SPECIAL_TIMEOUT = function (self,entity,sender)
 
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -391,7 +392,7 @@ AIBehaviour.TrooperAttackSpecialAction = {
 	MELEE_SPECIAL_TIMEOUT2 = function (self,entity,sender)
 
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -407,7 +408,7 @@ AIBehaviour.TrooperAttackSpecialAction = {
 	OnAttackSwitchPosition = function (self,entity,sender)
 
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -447,7 +448,7 @@ AIBehaviour.TrooperAttackSpecialAction = {
 	EndBehaviour = function (self,entity)
 
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -465,7 +466,7 @@ AIBehaviour.TrooperAttackSpecialAction = {
 	entity:RequestCloakTurnOff();
 	--~TheOtherSide
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -480,7 +481,7 @@ AIBehaviour.TrooperAttackSpecialAction = {
 	TryMelee = function(self,entity,target)
 
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide

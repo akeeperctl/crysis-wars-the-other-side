@@ -36,6 +36,7 @@ AIBehaviour.HeliHoverAttack = {
 	Constructor = function ( self, entity, data )
 
 		--TheOtherSide
+		entity.AI.previousBehaviour = entity.AI.currentBehaviour
 		entity.AI.currentBehaviour = self.Name
 		--~TheOtherSide	
 
@@ -93,7 +94,7 @@ AIBehaviour.HeliHoverAttack = {
 	--------------------------------------------------------------------------
 	OnNoTarget = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -142,7 +143,7 @@ AIBehaviour.HeliHoverAttack = {
 	---------------------------------------------
 	OnEnemyDamage = function ( self, entity, sender, data )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -216,7 +217,7 @@ AIBehaviour.HeliHoverAttack = {
 	---------------------------------------------
 	HELI_TAKE_EVADEACTION = function ( self, entity, sender, data )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -245,7 +246,7 @@ AIBehaviour.HeliHoverAttack = {
 	---------------------------------------------
 	HELI_RETREAT = function ( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -319,7 +320,7 @@ AIBehaviour.HeliHoverAttack = {
 	OnObjectSeen = function( self, entity, fDistance, data )
 
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -422,7 +423,7 @@ AIBehaviour.HeliHoverAttack = {
 	--------------------------------------------------------------------------
 	HELI_REFLESH_POSITION = function( self, entity, sender, data )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -443,7 +444,7 @@ AIBehaviour.HeliHoverAttack = {
 	--------------------------------------------------------------------------
 	HELI_HOVERATTACK_START = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -459,7 +460,7 @@ AIBehaviour.HeliHoverAttack = {
 	--------------------------------------------------------------------------
 	HELI_HOVERATTACK = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -712,7 +713,7 @@ AIBehaviour.HeliHoverAttack = {
 	--------------------------------------------------------------------------
 	HELI_HOVERATTACK_AGGRASSIVE = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -999,7 +1000,7 @@ AIBehaviour.HeliHoverAttack = {
 	--------------------------------------------------------------------------
 	HELI_LINE_SHOOT = function( self, entity ) 
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -1063,7 +1064,7 @@ AIBehaviour.HeliHoverAttack = {
 	--------------------------------------------------------------------------
 	HELI_STICK_TO_THE_GROUND = function( self, entity ) 
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide

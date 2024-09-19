@@ -14,6 +14,7 @@ AIBehaviour.Cover2Idle = {
 		--AI.Signal(SIGNALFILTER_SENDER, 1, "TOS_CHECK_BODY",entity.id);
 
 		--TheOtherSide
+		entity.AI.previousBehaviour = entity.AI.currentBehaviour
 		entity.AI.currentBehaviour = self.Name
 		--~TheOtherSide	
 

@@ -25,7 +25,7 @@ AIBehaviour.HeliBase = {
 
 	HELI_AUTOFIRE_CHECK_NOTARGET = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -58,7 +58,7 @@ AIBehaviour.HeliBase = {
 
 	HELI_AUTOFIRE_CHECK = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -96,7 +96,7 @@ AIBehaviour.HeliBase = {
 
 	HELI_AUTOFIRE_CHECK_AGGRASSIVE = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -137,7 +137,7 @@ AIBehaviour.HeliBase = {
 
 	HELI_HOVER_CHECK = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -158,7 +158,7 @@ AIBehaviour.HeliBase = {
 
 	HELI_HOVER_CHECK2 = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -224,7 +224,7 @@ AIBehaviour.HeliBase = {
 
 	HELI_HOVER_DISABLE_REACTION = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -235,7 +235,7 @@ AIBehaviour.HeliBase = {
 	
 	HELI_HOVER_ENABLE_REACTION = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -247,7 +247,7 @@ AIBehaviour.HeliBase = {
 	--------------------------------------------------------------------------
 	HELI_HOVER_START_AIMING = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -305,7 +305,7 @@ AIBehaviour.HeliBase = {
 
 	HELI_HOVER_START_AIMING_NEXT = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -327,7 +327,7 @@ AIBehaviour.HeliBase = {
 
 	HELI_HOVER_START_AIMING_NEXT2 = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -424,7 +424,7 @@ AIBehaviour.HeliBase = {
 
 	HELI_HOVER_AIMING_END = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -488,7 +488,7 @@ AIBehaviour.HeliBase = {
 
 	HELI_GOT_BIGDAMAGE_SUB = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide

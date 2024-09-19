@@ -21,11 +21,12 @@ AIBehaviour.HeliEmergencyLanding = {
 	Constructor = function( self, entity, sender, data )
 		
 		--TheOtherSide
+		entity.AI.previousBehaviour = entity.AI.currentBehaviour
 		entity.AI.currentBehaviour = self.Name
 		--~TheOtherSide	
 
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -41,7 +42,7 @@ AIBehaviour.HeliEmergencyLanding = {
 	--------------------------------------------------------------------------
 	HELI_EMERGENCY_LANDING_START = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -116,7 +117,7 @@ AIBehaviour.HeliEmergencyLanding = {
 	--------------------------------------------------------------------------
 	HELI_EMERGENCY_LANDING_END = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide

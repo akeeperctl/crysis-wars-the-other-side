@@ -15,6 +15,7 @@ AIBehaviour.SuitHurricaneAttack = {
 --		entity:SelectPipe(0,"do_nothing");
 
 		--TheOtherSide
+		entity.AI.previousBehaviour = entity.AI.currentBehaviour
 		entity.AI.currentBehaviour = self.Name
 		--~TheOtherSide	
 

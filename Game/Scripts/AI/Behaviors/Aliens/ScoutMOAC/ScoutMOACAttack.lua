@@ -65,6 +65,7 @@ AIBehaviour.ScoutMOACAttack = {
 		
 		
 		--TheOtherSide
+		entity.AI.previousBehaviour = entity.AI.currentBehaviour
 		entity.AI.currentBehaviour = self.Name
 		--~TheOtherSide	
 
@@ -221,7 +222,7 @@ AIBehaviour.ScoutMOACAttack = {
 	--------------------------------------------------------------------------
 	OnNoTarget = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -233,7 +234,7 @@ AIBehaviour.ScoutMOACAttack = {
 	OnBulletRain = function ( self, entity, sender, data )
 
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -266,7 +267,7 @@ AIBehaviour.ScoutMOACAttack = {
 	OnSoreDamage = function ( self, entity, sender, data )
 		--TheOtherSide
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -279,7 +280,7 @@ AIBehaviour.ScoutMOACAttack = {
 
 		--TheOtherSide
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide

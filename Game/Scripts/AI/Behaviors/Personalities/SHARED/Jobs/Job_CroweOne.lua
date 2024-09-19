@@ -10,6 +10,7 @@ AIBehaviour.Job_CroweOne = {
 		entity:InitAIRelaxed();
 
 		--TheOtherSide
+		entity.AI.previousBehaviour = entity.AI.currentBehaviour
 		entity.AI.currentBehaviour = self.Name
 		--~TheOtherSide	
 

@@ -49,11 +49,12 @@ AIBehaviour.DroneAttack = {
 	Constructor = function ( self, entity, data )
 
 		--TheOtherSide
+		entity.AI.previousBehaviour = entity.AI.currentBehaviour
 		entity.AI.currentBehaviour = self.Name
 		--~TheOtherSide	
 
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -200,7 +201,7 @@ AIBehaviour.DroneAttack = {
 	SCOUTMOACATTACK_RANDOM = function ( self, entity, low, high )
 
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -213,7 +214,7 @@ AIBehaviour.DroneAttack = {
 	OnNoTarget = function( self, entity )
 
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -225,7 +226,7 @@ AIBehaviour.DroneAttack = {
 	OnBulletRain = function ( self, entity, sender, data )
 
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -258,7 +259,7 @@ AIBehaviour.DroneAttack = {
 	OnSoreDamage = function ( self, entity, sender, data )
 
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -270,7 +271,7 @@ AIBehaviour.DroneAttack = {
 	OnEnemyDamage = function ( self, entity, sender, data )
 
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -335,7 +336,7 @@ AIBehaviour.DroneAttack = {
 	SCOUTMOACATTACK_DODGE_START = function( self, entity, targetEntity, bHeavyDamage )
 
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -450,7 +451,7 @@ AIBehaviour.DroneAttack = {
 
 	SCOUTMOACATTACK_DODGE = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -489,7 +490,7 @@ AIBehaviour.DroneAttack = {
 	SCOUTMOACATTACK_UPDATE = function( entity )
 
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -763,7 +764,7 @@ AIBehaviour.DroneAttack = {
 	SCOUTMOACATTACK_DONOTHING_START = function ( self, entity )
 
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -780,7 +781,7 @@ AIBehaviour.DroneAttack = {
 	SCOUTMOACATTACK_FOUNDPLAYER_START = function ( self, entity )
 
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -836,7 +837,7 @@ AIBehaviour.DroneAttack = {
 	SCOUTMOACATTACK_FOUNDPLAYER = function ( self, entity )
 
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -902,7 +903,7 @@ AIBehaviour.DroneAttack = {
 	SCOUTMOACATTACK_HOVERINGUP_START = function ( self, entity )
 		System.LogAlways("Drone:SCOUTMOACATTACK_HOVERINGUP_START")
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -936,7 +937,7 @@ AIBehaviour.DroneAttack = {
 	SCOUTMOACATTACK_HOVERINGUP = function ( self, entity )
 
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -967,7 +968,7 @@ AIBehaviour.DroneAttack = {
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_BASICAPPROACH_START = function ( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -990,7 +991,7 @@ AIBehaviour.DroneAttack = {
 
 	SCOUTMOACATTACK_BASICAPPROACH = function ( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -1068,7 +1069,7 @@ AIBehaviour.DroneAttack = {
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_CIRCLESTRAFE_START = function( self, entity, sec )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -1117,7 +1118,7 @@ AIBehaviour.DroneAttack = {
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_CIRCLESTRAFE = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -1196,7 +1197,7 @@ AIBehaviour.DroneAttack = {
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_GOAWAY_START = function ( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -1227,7 +1228,7 @@ AIBehaviour.DroneAttack = {
 
 	SCOUTMOACATTACK_GOAWAY = function ( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -1288,7 +1289,7 @@ AIBehaviour.DroneAttack = {
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_JUSTSTAY_START = function ( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -1309,7 +1310,7 @@ AIBehaviour.DroneAttack = {
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_JUSTSTAY = function ( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -1343,7 +1344,7 @@ AIBehaviour.DroneAttack = {
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_SHOOTSINGULARITY_START = function ( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -1388,6 +1389,13 @@ AIBehaviour.DroneAttack = {
 	end,
 
 	SCOUTMOACATTACK_SHOOTSINGULARITY_END  = function ( self, entity )
+		
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
+
 		entity:SelectPrimaryWeapon();
 		entity.AI.memorySec = System.GetCurrTime();
 			--entity:Event_Cloak();
@@ -1396,7 +1404,7 @@ AIBehaviour.DroneAttack = {
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_POPUP_START = function ( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -1425,7 +1433,7 @@ AIBehaviour.DroneAttack = {
 
 	SCOUTMOACATTACK_POPUP = function ( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -1441,7 +1449,7 @@ AIBehaviour.DroneAttack = {
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_SEEKHIDEPOSITION_START = function ( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -1479,7 +1487,7 @@ AIBehaviour.DroneAttack = {
 
 	SCOUTMOACATTACK_SEEKHIDEPOSITION = function ( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -1570,7 +1578,7 @@ AIBehaviour.DroneAttack = {
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_HIDE_START = function ( self, entity, vSpotPos )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -1593,7 +1601,7 @@ AIBehaviour.DroneAttack = {
 
 	SCOUTMOACATTACK_HIDE = function ( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -1651,19 +1659,29 @@ AIBehaviour.DroneAttack = {
 
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_STOP_START = function ( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		entity.gameParams.forceView = 0.0;
 		entity.actor:SetParams(entity.gameParams);
 		entity.AI.CurrentHook = fSCOUTMOACATTACK_STOP;
 	end,
 
 	SCOUTMOACATTACK_STOP = function ( self, entity )
+		--TheOtherSide
+		if (entity.AI.ignoreSignals == true) then
+			return;
+		end
+		--~TheOtherSide
 		AI.SetForcedNavigation( entity.id, entity.AI.vZero );
 	end,
 
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_UNHIDE_START = function ( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -1690,7 +1708,7 @@ AIBehaviour.DroneAttack = {
 
 	SCOUTMOACATTACK_UNHIDE = function ( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -1761,7 +1779,7 @@ AIBehaviour.DroneAttack = {
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_DIRECTSTRAFE_START = function ( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -1791,7 +1809,7 @@ AIBehaviour.DroneAttack = {
 
 	SCOUTMOACATTACK_DIRECTSTRAFE = function ( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -1902,7 +1920,7 @@ AIBehaviour.DroneAttack = {
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_DIRECTSTRAFE2_START = function ( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -1970,7 +1988,7 @@ AIBehaviour.DroneAttack = {
 
 	SCOUTMOACATTACK_DIRECTSTRAFE2 = function ( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -2103,7 +2121,7 @@ AIBehaviour.DroneAttack = {
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_LOOPINLOOP_START = function ( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -2153,7 +2171,7 @@ AIBehaviour.DroneAttack = {
 	
 	SCOUTMOACATTACK_LOOPINLOOP = function ( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -2249,7 +2267,7 @@ AIBehaviour.DroneAttack = {
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_LINEATTACK_START = function ( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -2279,7 +2297,7 @@ AIBehaviour.DroneAttack = {
 
 	SCOUTMOACATTACK_LINEATTACK = function ( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -2330,7 +2348,7 @@ AIBehaviour.DroneAttack = {
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_LINEATTACK2_START = function ( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -2356,7 +2374,7 @@ AIBehaviour.DroneAttack = {
 
 	SCOUTMOACATTACK_LINEATTACK2 = function ( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -2414,7 +2432,7 @@ AIBehaviour.DroneAttack = {
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_LINEATTACK3_START = function ( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -2440,7 +2458,7 @@ AIBehaviour.DroneAttack = {
 
 	SCOUTMOACATTACK_LINEATTACK3 = function ( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -2481,7 +2499,7 @@ AIBehaviour.DroneAttack = {
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_BACKATTACK_START = function ( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -2508,7 +2526,7 @@ AIBehaviour.DroneAttack = {
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_BACKATTACK = function ( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -2568,7 +2586,7 @@ AIBehaviour.DroneAttack = {
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_ISTRACEPOSSIBLE = function ( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -2655,7 +2673,7 @@ AIBehaviour.DroneAttack = {
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_TRACEPATHPRE_START = function ( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -2684,7 +2702,7 @@ AIBehaviour.DroneAttack = {
 
 	SCOUTMOACATTACK_TRACEPATHPRE = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -2717,7 +2735,7 @@ AIBehaviour.DroneAttack = {
 
 	SCOUTMOACATTACK_TRACEPATH_START = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -2746,7 +2764,7 @@ AIBehaviour.DroneAttack = {
 
 	SCOUTMOACATTACK_TRACEPATH_END = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -2764,7 +2782,7 @@ AIBehaviour.DroneAttack = {
 	SCOUTMOACATTACK_CIRCLING_START = function ( self, entity )
 		System.LogAlways("Drone:SCOUTMOACATTACK_CIRCLING_START");
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -2847,7 +2865,7 @@ AIBehaviour.DroneAttack = {
 
 	SCOUTMOACATTACK_CIRCLING = function ( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -2925,7 +2943,7 @@ AIBehaviour.DroneAttack = {
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_SHORTDUSH_START = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -2971,7 +2989,7 @@ AIBehaviour.DroneAttack = {
 	SCOUTMOACATTACK_SHORTDUSH = function( self, entity )
 		System.LogAlways("Drone:SCOUTMOACATTACK_SHORTDUSH");
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -2996,7 +3014,7 @@ AIBehaviour.DroneAttack = {
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_JAMMER_START = function ( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -3038,7 +3056,7 @@ AIBehaviour.DroneAttack = {
 
 	SCOUTMOACATTACK_JAMMER = function ( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -3153,7 +3171,7 @@ AIBehaviour.DroneAttack = {
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_JAMMERDUSH_START = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -3191,7 +3209,7 @@ AIBehaviour.DroneAttack = {
 
 	SCOUTMOACATTACK_JAMMERDUSH = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -3236,7 +3254,7 @@ AIBehaviour.DroneAttack = {
 
 
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -3310,7 +3328,7 @@ AIBehaviour.DroneAttack = {
 
 	SCOUTMOACATTACK_VSAIR = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -3441,7 +3459,7 @@ AIBehaviour.DroneAttack = {
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_VSAIR2_START = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -3512,7 +3530,7 @@ AIBehaviour.DroneAttack = {
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_VSAIR2 = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -3687,7 +3705,7 @@ AIBehaviour.DroneAttack = {
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_VSAIRPAUSE_START = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -3752,7 +3770,7 @@ AIBehaviour.DroneAttack = {
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_VSAIRPAUSE = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -3794,7 +3812,7 @@ AIBehaviour.DroneAttack = {
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_VSAIR3_START = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -3846,7 +3864,7 @@ AIBehaviour.DroneAttack = {
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_VSAIR3 = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -3983,7 +4001,7 @@ AIBehaviour.DroneAttack = {
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_VSAIRCIRCLE_START = function ( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -4022,7 +4040,7 @@ AIBehaviour.DroneAttack = {
 
 	SCOUTMOACATTACK_VSAIRCIRCLE = function ( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -4100,7 +4118,7 @@ AIBehaviour.DroneAttack = {
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_VSAIRUP_START = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -4138,7 +4156,7 @@ AIBehaviour.DroneAttack = {
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_VSAIRUP = function( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -4163,7 +4181,7 @@ AIBehaviour.DroneAttack = {
 	--------------------------------------------------------------------------
 	SCOUTMOACATTACK_VSCLOAK_START = function ( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -4194,7 +4212,7 @@ AIBehaviour.DroneAttack = {
 
 	SCOUTMOACATTACK_VSCLOAK = function ( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide

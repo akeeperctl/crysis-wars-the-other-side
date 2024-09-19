@@ -15,6 +15,7 @@ AIBehaviour.SuitBossIdle = {
 	OnPlayerSeen = function( self, entity, fDistance )
 	
 		--TheOtherSide
+		entity.AI.previousBehaviour = entity.AI.currentBehaviour
 		entity.AI.currentBehaviour = self.Name
 		--~TheOtherSide	
 

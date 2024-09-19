@@ -18,6 +18,7 @@ AIBehaviour.InVehicleChangeSeat = {
 		entity.AI.changeSeatTimer= nil;
 		
 		--TheOtherSide
+		entity.AI.previousBehaviour = entity.AI.currentBehaviour
 		entity.AI.currentBehaviour = self.Name
 		--~TheOtherSide	
 

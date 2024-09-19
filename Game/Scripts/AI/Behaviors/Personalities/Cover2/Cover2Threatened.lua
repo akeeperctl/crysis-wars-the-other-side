@@ -17,6 +17,7 @@ AIBehaviour.Cover2Threatened = {
 	---------------------------------------------
 	Constructor = function (self, entity)
 		--TheOtherSide
+		entity.AI.previousBehaviour = entity.AI.currentBehaviour
 		entity.AI.currentBehaviour = self.Name
 		--~TheOtherSide	
 

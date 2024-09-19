@@ -26,6 +26,7 @@ AIBehaviour.HeliFly = {
 	Constructor = function( self, entity, sender, data )
 		
 		--TheOtherSide
+		entity.AI.previousBehaviour = entity.AI.currentBehaviour
 		entity.AI.currentBehaviour = self.Name
 		--~TheOtherSide	
 
@@ -95,7 +96,7 @@ AIBehaviour.HeliFly = {
 	--------------------------------------------------------------------------
 	VTOLFLY_MAIN = function( self, entity, data )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -128,7 +129,7 @@ AIBehaviour.HeliFly = {
 	----------------------------------------------------------------------------------------------------------------------------------------------------
 	VTOLFLY_SUB = function( entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -249,7 +250,7 @@ AIBehaviour.HeliFly = {
 	----------------------------------------------------------------------------------------------------------------------------------------------------
 	VTOLFLY_SUB2 = function( entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide

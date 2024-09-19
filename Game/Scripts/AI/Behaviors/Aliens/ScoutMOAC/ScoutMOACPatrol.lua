@@ -29,6 +29,7 @@ AIBehaviour.ScoutMOACPatrol = {
 	Constructor = function ( self, entity, data )
 
 		--TheOtherSide
+		entity.AI.previousBehaviour = entity.AI.currentBehaviour
 		entity.AI.currentBehaviour = self.Name
 		--~TheOtherSide	
 
@@ -121,7 +122,7 @@ AIBehaviour.ScoutMOACPatrol = {
 	--------------------------------------------------------------------------
 	OnPlayerSeen = function( self, entity, fDistance )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -143,7 +144,7 @@ AIBehaviour.ScoutMOACPatrol = {
 	--------------------------------------------------------------------------
 	OnEnemyDamage = function ( self, entity, sender, data )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -169,7 +170,7 @@ AIBehaviour.ScoutMOACPatrol = {
 	--------------------------------------------------------------------------
 	SCOUTMOACPATROL_UPDATE = function( entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -236,7 +237,7 @@ AIBehaviour.ScoutMOACPatrol = {
 	--------------------------------------------------------------------------
 	SCOUTMOACPATROL_PATROL1_START  = function ( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -275,7 +276,7 @@ AIBehaviour.ScoutMOACPatrol = {
 	--------------------------------------------------------------------------
 	SCOUTMOACPATROL_PATROL1  = function ( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -331,7 +332,7 @@ AIBehaviour.ScoutMOACPatrol = {
 	--------------------------------------------------------------------------
 	SCOUTMOACPATROL_PATROL2_START  = function ( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -370,7 +371,7 @@ AIBehaviour.ScoutMOACPatrol = {
 	--------------------------------------------------------------------------
 	SCOUTMOACPATROL_PATROL2  = function ( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -426,7 +427,7 @@ AIBehaviour.ScoutMOACPatrol = {
 	--------------------------------------------------------------------------
 	SCOUTMOACPATROL_PATROL3_START  = function ( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide
@@ -452,7 +453,7 @@ AIBehaviour.ScoutMOACPatrol = {
 	--------------------------------------------------------------------------
 	SCOUTMOACPATROL_PATROL3  = function ( self, entity )
 		--TheOtherSide
-		if (AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL ) == 0.0 ) then
+		if (entity.AI.ignoreSignals == true) then
 			return;
 		end
 		--~TheOtherSide

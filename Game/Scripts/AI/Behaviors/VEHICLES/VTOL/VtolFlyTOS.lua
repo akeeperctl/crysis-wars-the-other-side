@@ -26,6 +26,7 @@ AIBehaviour.VtolFlyTOS = {
 	Constructor = function( self, entity, sender, data )
 		
 		--TheOtherSide
+		entity.AI.previousBehaviour = entity.AI.currentBehaviour
 		entity.AI.currentBehaviour = self.Name
 		--~TheOtherSide	
 
