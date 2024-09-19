@@ -845,6 +845,10 @@ function Trooper_x.Client:OnHit(hit, remote)
 
 	local damage = hit.damage;
 
+	--TheOtherSide fix
+	g_SignalData.point = g_SignalData_point
+	g_SignalData.point2 = g_SignalData_point
+	--TheOtherSide
 
 	if (hit.shooter ~= nil) then
 		g_SignalData.id = hit.shooter.id;

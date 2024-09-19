@@ -154,10 +154,11 @@ AIBehaviour.SCOUTDEFAULT = {
 		if ( groupCount > 1 ) then
 			for i= 1,groupCount do
 				local member = AI.GetGroupMember( entity.id, i, GROUP_ENABLED );
-				if( member ~= nul and member.id ~= entity.id ) then
+				--TheOtherSide fix nul to nil
+				if( member ~= nil and member.id ~= entity.id ) then
 					local distance = DistanceVectors( vOrgRefPoint, member:GetPos() );
 					distance = distance * distance;
-					length = 50.0 / distance;
+					local length = 50.0 / distance;
 					if ( length > 30.0 ) then
 						length =30.0;
 					end
@@ -169,10 +170,16 @@ AIBehaviour.SCOUTDEFAULT = {
 			end
 			for i= 1,groupCount do
 				local member = AI.GetGroupMember( entity.id, i, GROUP_ENABLED );
-				if( member ~= nul and member.id ~= entity.id ) then
+
+				--TheOtherSide fix nul to nil
+				if( member ~= nil and member.id ~= entity.id ) then
 					local distance = DistanceVectors( vOrgRefPoint, member:GetPos() );
 					distance = distance * distance;
-					length = 50.0 / distance;
+
+					--TheOtherSide global var fix
+					local length = 50.0 / distance;
+					--~TheOtherSide
+					
 					if ( length > 30.0 ) then
 						length =30.0;
 					end
