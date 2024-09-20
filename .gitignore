@@ -360,7 +360,7 @@ healthchecksdb
 #Game/Libs
 /Game/*
 /Code/TheOtherSideMP/Control/*
-/SPCode
+/Code_SP
 /Examples
 /Log Screenshots
 /Gif
