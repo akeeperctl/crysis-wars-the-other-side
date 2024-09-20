@@ -6,6 +6,11 @@
 -- Файл представляет собой определитель синтаксиса для различных функций
 -- или значений переменных, которые зареганы в Движке, но подсказки по ним нет.
 
+---@class Vec3
+---@field x number
+---@field y number
+---@field z number
+
 ---@diagnostic disable-next-line: lowercase-global
 g_ActionData = {
     actionId = "",
@@ -1032,6 +1037,13 @@ GO = {
 
 TOS_AI = {
 
+    ---ИИ-пользователь запускает FG действие
+    ---@param actionId string название действия
+    ---@param userId userdata entity.id пользователя
+    ---@param objectId userdata entity.id объекта над которым будет совершено действие
+    ---@param maxAlertness integer (0,1,2) максимальная беспокоенность 
+    ---@param goalPipeId integer идентификатор выполняемого действия
+    ---@usage ExecuteAction(1,2,3,4,5)
     ExecuteAction = function ( actionId, userId, objectId, maxAlertness, goalPipeId)
 
         if not goalPipeId then
@@ -1042,57 +1054,47 @@ TOS_AI = {
 
     end,
 
+
     AbortAction = function ( userId, goalPipeId)
         AI.AbortAction(userId, goalPipeId)
     end,
-
-    --[[
-    Функция SelectPipe: выбирает трубу целей для сущности.
-
-    Аргументы:
-        priorityFlag: Флаг приоритета (например, AIGOALPIPE_RUN_ONCE, AIGOALPIPE_HIGH_PRIORITY).
-        entity: Сущность, для которой выбирается труба целей.
-        pipeName: Имя трубы целей (например, "Attack", "Move").
-        targetId: (Опционально) Идентификатор цели (она должна быть ИИ). Сохраняется как LastOpResult
-        pipeId: (Опционально) Идентификатор трубы целей.
-        resetCurrentPipe:  (Опционально) true,  чтобы  сбросить  состояние  текущей  трубы  целей.
     
-    Возвращает:
-        true, если труба целей была успешно выбрана.
-    
-    Описание:
-        Эта  функция  вызывает  метод  SelectPipe  объекта  entity  для  выбора  трубы  целей.
-        Если  dynamicParams  указан,  он  передается  как  дополнительный  параметр  в  метод  SelectPipe.
-        
-        SelectPipe  используется  для  управления  поведением  AI,  позволяя  переключаться  между  разными  трубами  целей  в  зависимости  от  условий  игры.
-
-    Пример использования:
-        SelectPipe(AIGOALPIPE_RUN_ONCE,  entity,  "Attack",  targetId,  0,  true)
-    ]]
+    ---Выбирает трубу целей для сущности.
+    ---Используется  для  управления  поведением  AI,  позволяя  переключаться  между  разными  трубами  целей  в  зависимости  от  условий  игры.
+    ---@param priorityFlag any Флаг приоритета (например, `AIGOALPIPE_RUN_ONCE`, `AIGOALPIPE_HIGH_PRIORITY`).
+    ---@param entity any Сущность, для которой выбирается труба целей.
+    ---@param pipeName any Имя трубы целей (например, "Attack", "Move").
+    ---@param targetId any (Опционально) Идентификатор цели (она должна быть ИИ). Сохраняется как `LastOpResult`
+    ---@param pipeId any (Опционально) Идентификатор трубы целей.
+    ---@param resetCurrentPipe any (Опционально) `true`,  чтобы  сбросить  состояние  текущей  трубы  целей.
+    ---@return boolean true если труба целей была успешно выбрана.
     SelectPipe = function (priorityFlag, entity, pipeName, targetId, pipeId, resetCurrentPipe)
         return entity:SelectPipe(priorityFlag, pipeName, targetId, pipeId, resetCurrentPipe) == true
     end,
 
-    --[[
-    Параметры:
-        @priorityFlag (int):  Приоритет подканала (битовые флаги, используемые в `AIGOALPIPE_...`).
-        @param entity (Entity):  Объект, в который добавляется подканал.
-        @pipeName (string):  Имя подканала.
-        @targetId (int):   Идентификатор цели подканала (она должна быть ИИ), которая при вызове функции сохраняется в LastOpResult.
-        @goalPipeId (int):  (Опционально) Идентификатор `AIGoalPipe`, в который добавляется подканал.
-    ]]
+    ---@param priorityFlag integer  Приоритет подканала (битовые флаги, используемые в `AIGOALPIPE_...`).
+    ---@param entity table  Сущность, в которую добавляется подканал.
+    ---@param pipeName string  Имя подканала.
+    ---@param targetId userdata Идентификатор цели подканала (она должна быть ИИ), которая при вызове функции сохраняется в `LastOpResult`
+    ---@param goalPipeId integer  (Опционально) Идентификатор `AIGoalPipe`, в который добавляется подканал.
     InsertSubpipe = function ( priorityFlag, entity, pipeName, targetId, goalPipeId)
         return entity:InsertSubpipe(priorityFlag, pipeName, targetId, goalPipeId) == true
     end,
 
+    --- Отправка сигнала в систему ИИ
+    ---@param filter integer SIGNALFILTER_...
+    ---@param signalId integer AISIGNAL_...
+    ---@param functionName string имя функции, которая будет вызвана. Смотреть в Behaviour файле и Character файле ИИ объекта
+    ---@param senderId userdata идентификатор сущности отправителя
+    ---@param data? table
+    ---@usage TOS_AI.SendSignal(SIGNALFILTER_SENDER, AISIGNAL_DEFAULT, "GO_TO_TOSSHARED", entity.id)
     SendSignal = function ( filter, signalId, functionName, senderId, data)
         AI.Signal(filter, signalId, functionName, senderId, data)
     end,
 
-    --[[
-    Инициирует создание GoalPipe.
-    Инициация должна быть завершена через EndGoalPipe
-    ]]
+    --- Инициирует создание GoalPipe.
+    --- Инициация должна быть завершена через EndGoalPipe
+    --- @param goalPipeName string
     BeginGoalPipe = function ( goalPipeName)
         AI.BeginGoalPipe(goalPipeName)
     end,
@@ -1105,52 +1107,55 @@ TOS_AI = {
         AI.PushLabel(labelName)
     end,
 
+    ---@param goalOp string Любой другой `GoalPipe` или GO.
+    ---@param blocking integer Если `true` - блокирует дальнейшее выполнение текущего GoalPipe пока не будет выполнена `goalOp`
+    ---@param ... unknown параметры, зависящие от `goalOp`
     PushGoal = function (goalOp, blocking, ...)
         AI.PushGoal(goalOp, blocking, ...)
     end,
 
-    --[[
-    Функция конвертирует путь в сплайн, а также использует флаг avoidObstacles из ***m_movementAbility.pathfindingProperties***
-    для определения избегать ли препятствия на пути при корректировке
-    ]]
+    --- Функция конвертирует путь в сплайн, а также использует флаг `avoidObstacles` из `m_movementAbility.pathfindingProperties`
+    ---для понимания, избегать ли препятствия на пути при корректировке или нет.
+    ---@param entity table
+    ---@param bAdjust boolean
     SetAdjustPath = function (entity, bAdjust)
         AI.SetAdjustPath(entity, bAdjust)
     end,
 
-    --[[
-        Возвращает таблицу ближайших сущностей определенного типа.
-
-        @param position          Позиция, относительно которой ищется ближайшая сущность. Может быть точкой (Vec3), сущностью (IEntity) или именем сущности (string).
-        @param aiObjectType      Тип сущности, которую нужно найти (константа, например, AI_HUMAN).
-        @param numObjects        Максимальное количество сущностей, которые нужно найти.
-        @param outputContainer   Таблица, в которую будут добавлены найденные сущности.
-        @param filter            Фильтр для поиска. Возможные значения:
-                                * 0: без фильтра.
-                                * AIOBJECTFILTER_INCLUDEINACTIVE: включает неактивные сущности.
-                                * AIOBJECTFILTER_SAMESPECIES: включает только сущности той же фракции, что и исходная.
-                                * AIOBJECTFILTER_SAMEGROUP: включает только сущности той же группы, что и исходная.
-                                * AIOBJECTFILTER_NOGROUP: включает только сущности, не принадлежащие никакой группе.
-        @param radius            Радиус поиска (в метрах). По умолчанию 30.
-        @return                  Количество найденных сущностей.
-    ]]
+    ---Возвращает таблицу ближайших сущностей определенного типа.
+    ---@param position table Позиция, относительно которой ищется ближайшая сущность. Может быть точкой (Vec3), сущностью (IEntity) или именем сущности (string).
+    ---@param aiObjectType integer Тип сущности, которую нужно найти (константа, например, AI_HUMAN).
+    ---@param numObjects integer Максимальное количество сущностей, которые нужно найти.
+    ---@param outputContainer table Таблица, в которую будут добавлены найденные сущности.
+    ---@param filter integer  Фильтр для поиска:                            
+        ---| '0' # без фильтра.
+        ---| 'AIOBJECTFILTER_INCLUDEINACTIVE' # включает неактивные сущности.
+        ---| 'AIOBJECTFILTER_SAMESPECIES' # включает только сущности той же фракции, что и исходная.
+        ---| 'AIOBJECTFILTER_SAMEGROUP' # включает только сущности той же группы, что и исходная.
+        ---| 'AIOBJECTFILTER_NOGROUP' # включает только сущности, не принадлежащие никакой группе.`
+    ---@param radius integer Радиус поиска (в метрах). По умолчанию 30.
+    ---@return integer integer Количество найденных сущностей.
     GetNearestEntitiesOfType = function (position, aiObjectType, numObjects, outputContainer, filter, radius)
         return AI.GetNearestEntitiesOfType(position, aiObjectType, numObjects, outputContainer, filter, radius)    
     end,
 
-    --[[
-        Возвращает позицию опорной точки сущности.
-
-        @param entityId    Id сущности, для которой нужно получить позицию опорной точки
-        @return            Вектор с координатами опорной точки
-    ]]
+    ---Возвращает позицию опорной точки сущности.
+    ---@param entityId    userdata идентификатор сущности, для которой нужно получить позицию опорной точки
+    ---@return            Vec3 Vec3 координаты опорной точки
     GetRefPointPosition = function (entityId)
         return AI.GetRefPointPosition(entityId)
     end,
 
+    ---Возвращает тип цели внимания для entityId
+    ---@param entityId userdata
+    ---@return integer integer тип цели, т.е. AITARGET_...
     GetTargetType = function (entityId)
         return AI.GetTargetType(entityId)
     end,
 
+    ---Возвращает дистанцию до цели внимания
+    ---@param entityId userdata
+    ---@return number number дистанция
     GetAttentionTargetDistance = function (entityId)
         return AI.GetAttentionTargetDistance(entityId)
     end,
@@ -1179,7 +1184,10 @@ TOS_AI = {
         return AI.GetGroupTarget(entityId, HZ_BOOL)
     end,
 
-    -- AI.ScaleFormation(entity.id,1);
+    -- Умножает размер формации от центра
+    ---@param entityId userdata идентификатор сущности лидера
+    ---@param scale number размер формации (любое число)
+    ---@return unknown
     ScaleFormation = function (entityId, scale)
         return AI.ScaleFormation(entityId, scale)
     end,
@@ -1189,30 +1197,32 @@ TOS_AI = {
         return AI.GetGroupAveragePosition(entityId, UPR_type, avgPos)
     end,
 
-    --[[
-    Получить номер группы ИИ объекта
-    ]]
+    --- Получить номер группы ИИ объекта
+    ---@param entityId userdata
+    ---@return integer
     GetGroupOf = function (entityId)
         return AI.GetGroupOf(entityId)
     end,
 
-    --[[
-    Получить кол-во агентов в группе, согласно флагам
-    ]]
+    ---Получить кол-во агентов в группе, согласно флагам
+    ---@param entityId userdata
+    ---@param GROUP_flags integer
+    ---@return integer
     GetGroupCount = function (entityId, GROUP_flags)
         return AI.GetGroupCount(entityId, GROUP_flags);
     end,
 
+    ---Получить значение параметра ИИ сущности
+    ---@param entity table
+    ---@param AIPARAM integer
+    ---@return unknown
     GetAIParameter = function (entity, AIPARAM)
         return AI.GetAIParameter( entity.id, AIPARAM);
     end,
 
-    --[[
-    Изменяет параметр ИИ объекта
-
-    @param param - это параметр AIPARAM..
-    @param value - это его значение 
-    ]]
+    ---Изменяет параметр ИИ объекта
+    ---@param AIPARAM number параметр AIPARAM...
+    ---@param value any его значение 
     ChangeParameter = function (entity, AIPARAM, value)
         return AI.ChangeParameter( entity.id, AIPARAM, value );
     end
