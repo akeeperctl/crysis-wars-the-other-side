@@ -13,9 +13,11 @@ AICharacter.Cover2 = {
 		AI_Utils:SetupStandby(entity);
 		AI.NotifyGroupTacticState(entity.id, 0, GN_INIT, 0);
 	end,
+
+	AnyBehavior = {
 		--TheOtherSide
 		-- _ANY_ = "",
-		GO_TO_TOSSHARED = 			"TOSSHARED",		
+		GO_TO_TOSSHARED = "TOSSHARED",
 		--~TheOtherSide
 
 		ENTERING_VEHICLE = "EnteringVehicle",
@@ -49,41 +51,68 @@ AICharacter.Cover2 = {
 
 	},
 
+	--TheOtherSide
 	TOSSHARED = {
-		RESUME_FOLLOWING =				"",
-		ENTERING_VEHICLE =				"",
-		USE_MOUNTED_WEAPON =			"",
-		OnPlayerSeen =						"",
-		OnTankSeen =							"",
-		OnHeliSeen =							"",
-		OnBulletRain =						"",
-		OnGrenadeSeen =						"",
-		OnInterestingSoundHeard =	"",
-		OnThreateningSoundHeard =	"",
-		entered_vehicle	=					"",
-		exited_vehicle =					"",
+
+		-- Стандартные сигналы
+		RESUME_FOLLOWING           = "",
+		ENTERING_VEHICLE           = "",
+		USE_MOUNTED_WEAPON         = "",
+		OnPlayerSeen               = "",
+		OnTankSeen                 = "",
+		OnHeliSeen                 = "",
+		OnBulletRain               = "",
+		OnGrenadeSeen              = "",
+		OnInterestingSoundHeard    = "",
+		OnThreateningSoundHeard    = "",
+		entered_vehicle            = "",
+		exited_vehicle             = "",
 		exited_vehicle_investigate = "",
-		OnSomethingSeen =					"",
-		GO_TO_IDLE = 						"Cover2Idle",
-		GO_TO_ATTACK				= "",
-		GO_TO_ATTACK_GROUP	= "",
-		GO_TO_RUSH_ATTACK	= "",
-		GO_TO_HIDE					= "",
-		GO_TO_AVOID_TANK		= "",
-		GO_TO_RPG_ATTACK		= "",
-		GO_TO_THREATENED		= "",
-		GO_TO_THREATENED_STANDBY = "",
-		GO_TO_INTERESTED		= "",
-		GO_TO_SEEK					= "",
-		GO_TO_SEARCH				= "",
-		GO_TO_RELOAD				= "",
-		GO_TO_CALL_REINFORCEMENTS	= "",
-		ENEMYSEEN_FIRST_CONTACT	 		= "",
-		ENEMYSEEN_DURING_COMBAT		= "",
-		GO_TO_PANIC				= "",
-		OnFallAndPlayWakeUp =	  "Cover2Idle",
+		OnSomethingSeen            = "",
+		GO_TO_IDLE                 = "",
+		GO_TO_ATTACK               = "",
+		GO_TO_ATTACK_GROUP         = "",
+		GO_TO_RUSH_ATTACK          = "",
+		GO_TO_HIDE                 = "",
+		GO_TO_AVOID_TANK           = "",
+		GO_TO_RPG_ATTACK           = "",
+		GO_TO_THREATENED           = "",
+		GO_TO_THREATENED_STANDBY   = "",
+		GO_TO_INTERESTED           = "",
+		GO_TO_SEEK                 = "",
+		GO_TO_SEARCH               = "",
+		GO_TO_RELOAD               = "",
+		GO_TO_CALL_REINFORCEMENTS  = "",
+		GO_TO_PANIC                = "",
+		ENEMYSEEN_FIRST_CONTACT    = "",
+		ENEMYSEEN_DURING_COMBAT    = "",
+		OnFallAndPlayWakeUp        = "Cover2Idle",
+
+		-- Форсированные стандартные сигналы
+		-- ИИ поведения, созданные крайтеками используют
+		-- стандартные сигналы, а эти нужны для
+		-- вызовов при завершении приказа или в аналогичных ситуациях,
+		-- где нужен 100% переход в нужное поведение.
+		GO_TO_ATTACK_FORCED              = "Cover2Attack",
+		GO_TO_ATTACK_GROUP_FORCED        = "Cover2AttackGroup",
+		GO_TO_RUSH_ATTACK_FORCED         = "Cover2RushAttack",
+		GO_TO_HIDE_FORCED                = "Cover2Hide",
+		GO_TO_AVOID_TANK_FORCED          = "Cover2AvoidTank",
+		GO_TO_RPG_ATTACK_FORCED          = "Cover2RPGAttack",
+		GO_TO_THREATENED_FORCED          = "Cover2Threatened",
+		GO_TO_THREATENED_STANDBY_FORCED  = "Cover2ThreatenedStandby",
+		GO_TO_INTERESTED_FORCED          = "Cover2Interested",
+		GO_TO_SEEK_FORCED                = "Cover2Seek",
+		GO_TO_SEARCH_FORCED              = "Cover2Search",
+		GO_TO_RELOAD_FORCED              = "Cover2Reload",
+		GO_TO_CALL_REINFORCEMENTS_FORCED = "Cover2CallReinforcements",
+		GO_TO_IDLE_FORCED                = "Cover2Idle",
+		GO_TO_PANIC_FORCED               = "Cover2Panic",
+		GO_TO_PREVIOUS_FORCED            = "PREVIOUS",
+		GO_TO_STATIC_FORCED              = "HBaseStaticShooter",
 	},
-	
+	--~TheOtherSide
+
 	HBaseAlerted = {
 
 	},
