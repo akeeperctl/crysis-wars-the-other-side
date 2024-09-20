@@ -93,13 +93,13 @@ function HandleOrder(executorTable, orderTable)
         end
     else
         -- Если цели нет, то бежим
-        AI_GOTO(executor, orderPosition, 3, false)
+        AI_GOTO(executor, orderPosition, 3)
 
     end
     return outputOrderType
 end
 
-function AI_GOTO(entity, position, speed, ignoreCombat)
+function AI_GOTO(entity, position, speed)
     if (not entity) then
         CryLogAlways("<AI_GOTO>: entity not found")
         return
@@ -117,7 +117,7 @@ function AI_GOTO(entity, position, speed, ignoreCombat)
         spawnParams.orientation = {x=0,y=-1,z=0};
         spawnParams.name = orderRefName
 
-        orderRefEnt = System.TOSSpawnEntity(spawnParams)
+        orderRefEnt = System.SpawnEntity(spawnParams)
 
        --  LogAlways("<AI_GOTO> order tag point spawned: %s, ai: %s", orderRefEnt:GetName(), tostring(AI.HasAI(orderRefEnt.id)))
         g_SpawnParams:reset()
@@ -128,33 +128,23 @@ function AI_GOTO(entity, position, speed, ignoreCombat)
 
     entity.orderRefEnt = orderRefEnt
 
-    if (ignoreCombat) then
-        DISABLE_COMBAT(entity, true)
-    end
-
     TOS_AI.BeginGoalPipe("ai_goto")
         TOS_AI.PushGoal(GO.SIGNAL, 1, AISIGNAL_DEFAULT, "AI_GOTO_STARTED", SIGNALFILTER_SENDER)
 
-        if ignoreCombat then
-            TOS_AI.PushGoal(GO.DEVALUE, 1)
+        if TOS_AI.GetTargetType(entity.id) == AITARGET_ENEMY then
+            TOS_AI.PushGoal(GO.STRAFE, 1, 5, 5)
+            TOS_AI.PushGoal(GO.FIRECMD, 1, FIREMODE_BURST_DRAWFIRE)
+        else
             TOS_AI.PushGoal(GO.FIRECMD, 1, FIREMODE_OFF)
-        else 
-            if TOS_AI.GetTargetType(entity.id) == AITARGET_ENEMY then
-                TOS_AI.PushGoal(GO.STRAFE, 1, 100, 100)
-                TOS_AI.PushGoal(GO.FIRECMD, 1, FIREMODE_BURST_DRAWFIRE)
-            else
-                TOS_AI.PushGoal(GO.FIRECMD, 1, FIREMODE_OFF)
-            end
         end
 
         TOS_AI.PushGoal(GO.BODYPOS, 1, BODYPOS_STAND)
         TOS_AI.PushGoal(GO.RUN, 1, speed)
-       -- TOS_AI.PushGoal(GO.LOCATE, 1, "Civilian1")
         TOS_AI.PushGoal(GO.STICK, 1, 1, AILASTOPRES_USE + AI_CONSTANT_SPEED + AI_REQUEST_PARTIAL_PATH, STICK_BREAK, 5)
         TOS_AI.PushGoal(GO.SIGNAL, 1, AISIGNAL_DEFAULT, "AI_GOTO_ENDED", SIGNALFILTER_SENDER)
-        -- TOS_AI.PushGoal(GO.IGNOREALL, 1, 1) -- не работает
     TOS_AI.EndGoalPipe()
 
+    TOS_AI.SendSignal(SIGNALFILTER_SENDER, AISIGNAL_DEFAULT, "GO_TO_TOSSHARED", entity.id)
     TOS_AI.SendSignal(SIGNALFILTER_SENDER, AISIGNAL_PROCESS_NEXT_UPDATE, "START_AI_GOTO", entity.id)
 end
 
@@ -179,7 +169,7 @@ function AIBehaviour.DEFAULT:AI_GOTO_STARTED(entity, sender, data)
         table.safedump(data))
     )
 
-    entity.AI.ignoreSignals = true
+    -- entity.AI.ignoreSignals = true
 end
 
 function AIBehaviour.DEFAULT:AI_GOTO_ENDED(entity, sender, data)
@@ -189,67 +179,66 @@ function AIBehaviour.DEFAULT:AI_GOTO_ENDED(entity, sender, data)
         table.safedump(data))
     )
 
-    entity.AI.ignoreSignals = false
+    -- entity.AI.ignoreSignals = false
 
     if (entity.orderRefEnt) then
         System.RemoveEntity(entity.orderRefEnt.id)
     end
 
-    ENABLE_COMBAT(entity)
-    TOS_AI.SelectPipe(AIGOALPIPE_SAMEPRIORITY, entity, "do_it_standing")
-
     local targetType = TOS_AI.GetTargetType(entity.id)
     if targetType == AITARGET_ENEMY then
-        TOS_AI.SendSignal(SIGNALFILTER_SENDER, AISIGNAL_DEFAULT, "GO_TO_ATTACK", entity.id)
+        TOS_AI.SendSignal(SIGNALFILTER_SENDER, AISIGNAL_DEFAULT, "GO_TO_ATTACK_FORCED", entity.id)
     elseif targetType == AITARGET_MEMORY then
-        TOS_AI.SendSignal(SIGNALFILTER_SENDER, AISIGNAL_DEFAULT, "GO_TO_SEARCH", entity.id)
+        TOS_AI.SendSignal(SIGNALFILTER_SENDER, AISIGNAL_DEFAULT, "GO_TO_SEARCH_FORCED", entity.id)
     else
-        TOS_AI.SendSignal(SIGNALFILTER_SENDER, AISIGNAL_DEFAULT, "GO_TO_IDLE", entity.id)
+        TOS_AI.SendSignal(SIGNALFILTER_SENDER, AISIGNAL_DEFAULT, "GO_TO_IDLE_FORCED", entity.id)
     end
+    
+    TOS_AI.SelectPipe(AIGOALPIPE_SAMEPRIORITY, entity, "do_it_standing")
     AI_Utils:CommonContinueAfterReaction(entity);
 end
 
 -- ИИ Перестает реагировать на сигналы, но враги его игнорировать не будут
-function DISABLE_COMBAT(entity, returnToFirst)
-    LogAlways("[ORDER] <DISABLE_COMBAT> entity: %s, returnToFirst: %s", 
-        EntityName(entity), 
-        tostring(returnToFirst)
-    )
+-- function DISABLE_COMBAT(entity, returnToFirst)
+--     LogAlways("[ORDER] <DISABLE_COMBAT> entity: %s, returnToFirst: %s", 
+--         EntityName(entity), 
+--         tostring(returnToFirst)
+--     )
 
-    -- return to first?
-    if (returnToFirst and returnToFirst == true) then
-        entity:CancelSubpipe()
-        TOS_AI.InsertSubpipe(AIGOALPIPE_SAMEPRIORITY, entity, "devalue_target");
-        TOS_AI.SendSignal(SIGNALFILTER_SENDER, AISIGNAL_DEFAULT, "RETURN_TO_FIRST", entity.id)
-        TOS_AI.SelectPipe(AIGOALPIPE_LOOP, entity, "do_nothing", 0, 0, true)
+--     -- return to first?
+--     if (returnToFirst and returnToFirst == true) then
+--         entity:CancelSubpipe()
+--         TOS_AI.InsertSubpipe(AIGOALPIPE_SAMEPRIORITY, entity, "devalue_target");
+--         TOS_AI.SendSignal(SIGNALFILTER_SENDER, AISIGNAL_DEFAULT, "RETURN_TO_FIRST", entity.id)
+--         TOS_AI.SelectPipe(AIGOALPIPE_LOOP, entity, "do_nothing", 0, 0, true)
 
-        if entity.vehicle then
-            TOS_AI.SendSignal(SIGNALFILTER_SENDER, AISIGNAL_DEFAULT, "TO_IDLE", entity.id)
-        else
-            TOS_AI.SendSignal(SIGNALFILTER_SENDER, AISIGNAL_DEFAULT, "GO_TO_IDLE", entity.id)
-        end
-    end
+--         if entity.vehicle then
+--             TOS_AI.SendSignal(SIGNALFILTER_SENDER, AISIGNAL_DEFAULT, "GO_TO_IDLE", entity.id)
+--         else
+--             TOS_AI.SendSignal(SIGNALFILTER_SENDER, AISIGNAL_DEFAULT, "GO_TO_IDLE", entity.id)
+--         end
+--     end
 
-    entity.AI.lastCombatClass = TOS_AI.GetAIParameter(entity, AIPARAM_COMBATCLASS)
-    -- entity.AI.ignoreSignals = true
-    TOS_AI.ChangeParameter(entity, AIPARAM_COMBATCLASS, AICombatClasses.Ignore)
-    TOS_AI.ChangeParameter(entity, AIPARAM_PERCEPTIONSCALE_AUDIO, 0)
-    TOS_AI.ChangeParameter(entity, AIPARAM_PERCEPTIONSCALE_VISUAL, 0)
-end
+--     entity.AI.lastCombatClass = TOS_AI.GetAIParameter(entity, AIPARAM_COMBATCLASS)
+--     -- entity.AI.ignoreSignals = true
+--     TOS_AI.ChangeParameter(entity, AIPARAM_COMBATCLASS, AICombatClasses.Ignore)
+--     TOS_AI.ChangeParameter(entity, AIPARAM_PERCEPTIONSCALE_AUDIO, 0)
+--     TOS_AI.ChangeParameter(entity, AIPARAM_PERCEPTIONSCALE_VISUAL, 0)
+-- end
 
-function ENABLE_COMBAT(entity)
-    System.LogAlways(string.format("[ORDER] <ENABLE_COMBAT> entity: %s", 
-        EntityName(entity)
-    ))
+-- function ENABLE_COMBAT(entity)
+--     System.LogAlways(string.format("[ORDER] <ENABLE_COMBAT> entity: %s", 
+--         EntityName(entity)
+--     ))
 
-    --entity.AI.ignoreSignals = false
-    if (entity.AI.lastCombatClass ~= nil) then
-        TOS_AI.ChangeParameter(entity, AIPARAM_COMBATCLASS, entity.AI.lastCombatClass)
-    end
+--     --entity.AI.ignoreSignals = false
+--     if (entity.AI.lastCombatClass ~= nil) then
+--         TOS_AI.ChangeParameter(entity, AIPARAM_COMBATCLASS, entity.AI.lastCombatClass)
+--     end
 
-    TOS_AI.ChangeParameter(entity, AIPARAM_PERCEPTIONSCALE_AUDIO, 1)
-    TOS_AI.ChangeParameter(entity, AIPARAM_PERCEPTIONSCALE_VISUAL, 1)
-end
+--     TOS_AI.ChangeParameter(entity, AIPARAM_PERCEPTIONSCALE_AUDIO, 1)
+--     TOS_AI.ChangeParameter(entity, AIPARAM_PERCEPTIONSCALE_VISUAL, 1)
+-- end
 
 -- Дебаг ниже
 ----------------------------------------------------------------
