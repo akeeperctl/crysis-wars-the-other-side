@@ -11,7 +11,7 @@ AIBehaviour.Trooper2Interested = {
 	alertness = 0,
 	
 	Constructor = function (self, entity)
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			AI.NotifyGroupTacticState(entity.id, 0, GN_NOTIFY_UNAVAIL);
 
 			-- store original position.
@@ -83,7 +83,7 @@ AIBehaviour.Trooper2Interested = {
 
 	---------------------------------------------
 	OnPlayerSeen = function( self, entity, fDistance, data )
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			entity:MakeAlerted();
 			entity:TriggerEvent(AIEVENT_DROPBEACON);
 
@@ -144,7 +144,7 @@ AIBehaviour.Trooper2Interested = {
 
 	--------------------------------------------------
 	OnEnemyDamage = function( self, entity, sender,data )
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			Trooper_HitReaction(entity);
 		end
 	end,

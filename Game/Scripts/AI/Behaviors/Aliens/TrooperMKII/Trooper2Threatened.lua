@@ -18,7 +18,7 @@ AIBehaviour.Trooper2Threatened = {
 
 	---------------------------------------------
 	Constructor = function (self, entity)
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			AI.NotifyGroupTacticState(entity.id, 0, GN_NOTIFY_UNAVAIL);
 			-- store original position.
 			if(not entity.AI.idlePos) then
@@ -70,7 +70,7 @@ AIBehaviour.Trooper2Threatened = {
 
 	---------------------------------------------
 	SEEK_KILLER = function (self, entity)
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			AI_Utils:CheckThreatened(entity, 15.0);
 		end
 	end,
@@ -105,7 +105,7 @@ AIBehaviour.Trooper2Threatened = {
 
 	---------------------------------------------
 	INVESTIGATE_DONE = function( self, entity )
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			local target = AI.GetTargetType(entity.id);
 			if(target == AITARGET_ENEMY) then
 				entity:Readibility("taunt",1,3,0.3,0.6);
@@ -127,7 +127,7 @@ AIBehaviour.Trooper2Threatened = {
 
 	---------------------------------------------
 	OnPlayerSeen = function( self, entity, fDistance, data )
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			-- called when the enemy sees a living player
 			entity:TriggerEvent(AIEVENT_DROPBEACON);
 

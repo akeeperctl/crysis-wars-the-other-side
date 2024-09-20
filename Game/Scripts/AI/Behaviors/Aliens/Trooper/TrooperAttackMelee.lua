@@ -53,7 +53,7 @@ AIBehaviour.TrooperAttackMelee = {
 	end,
 		
 	OnCloseContact = function(self,entity,sender)
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			local target = AI.GetAttentionTargetEntity(entity.id);
 			if(target) then
 
@@ -91,7 +91,7 @@ AIBehaviour.TrooperAttackMelee = {
 	end,
 	
 	OnPlayerSeen = function(self,entity,sender)
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			entity:SelectPipe(0,"tr_prepare_melee");
 		end
 	end,

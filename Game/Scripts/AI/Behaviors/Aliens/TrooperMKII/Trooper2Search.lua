@@ -11,7 +11,7 @@ AIBehaviour.Trooper2Search = {
 
 	---------------------------------------------
 	Constructor = function(self, entity)
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			entity:Readibility("searching_for_enemy",1,1,0.3,1.0);
 
 			AI.NotifyGroupTacticState(entity.id, 0, GN_NOTIFY_SEEKING);
@@ -41,7 +41,7 @@ AIBehaviour.Trooper2Search = {
 
 	---------------------------------------------
 	OnPlayerSeen = function( self, entity, fDistance, data )
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			-- called when the enemy sees a living player
 			entity:MakeAlerted();
 			entity:TriggerEvent(AIEVENT_DROPBEACON);
@@ -127,7 +127,7 @@ AIBehaviour.Trooper2Search = {
 
 	---------------------------------------------
 	OnSomethingSeen = function( self, entity )
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			entity:TriggerEvent(AIEVENT_DROPBEACON);
 			AI_Utils:CheckThreatened(entity, 15.0);
 		end
@@ -151,7 +151,7 @@ AIBehaviour.Trooper2Search = {
 
 	--------------------------------------------------
 	OnEnemyDamage = function( self, entity, sender,data )
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			Trooper_HitReaction(entity);
 		end
 	end,

@@ -65,7 +65,7 @@ AIBehaviour.TrooperAttack = {
 
 	---------------------------------------------
 	OnEnemyDamage = function ( self, entity, sender,data)
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			-- data.id: the shooter
 			--entity:Readibility("GETTING_SHOT_AT",1);
 
@@ -111,7 +111,7 @@ AIBehaviour.TrooperAttack = {
 
 	---------------------------------------------
 	OnPlayerSeen = function( self, entity, fDistance )
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 	--		local rnd=random(1,10);
 	--		if (rnd < 5) then 
 	--			entity:Readibility("THREATEN",1);			
@@ -139,7 +139,7 @@ AIBehaviour.TrooperAttack = {
 	end,
 	---------------------------------------------
 	OnEnemyMemory = function( self, entity )
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 	--		if(entity:SetRefPointAtDistanceFromTarget(2)) then 
 	--			entity:SelectPipe(0,"tr_approach_target_at_distance");
 	--		else
@@ -155,7 +155,7 @@ AIBehaviour.TrooperAttack = {
 	---------------------------------------------
 	
 	OnNoTargetAwareness= function( self, entity )
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			entity:SelectPipe(0,"do_nothing");
 			entity:SelectPipe(0,"tr_seek_target");
 			entity:InsertSubpipe(0,"tr_random_short_timeout");
@@ -164,7 +164,7 @@ AIBehaviour.TrooperAttack = {
 	---------------------------------------------
 	
 	OnNoTargetVisible= function( self, entity )
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			entity:Readibility("target_lost",1,0);
 			entity:SelectPipe(0,"do_nothing");
 			entity:SelectPipe(0,"tr_seek_target");
@@ -213,7 +213,7 @@ AIBehaviour.TrooperAttack = {
 
 	---------------------------------------------
 	OnDamage = function ( self, entity, sender,data)
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			-- called when the enemy is damaged
 			-- call default handling
 			AIBehaviour.TROOPERDEFAULT:OnDamage(entity,sender,data);
@@ -237,7 +237,7 @@ AIBehaviour.TrooperAttack = {
 	
 	--------------------------------------------------
 	OnCloseContact = function ( self, entity, target)
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			if(not Trooper_CheckMelee(entity,target,2)) then
 			entity:InsertSubpipe(AIGOALPIPE_NOTDUPLICATE,"tr_backoff_fire");
 			end

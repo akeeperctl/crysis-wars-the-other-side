@@ -54,7 +54,7 @@ AIBehaviour.TrooperAlert = {
 
 	---------------------------------------------
 	OnPlayerSeen = function( self, entity, fDistance )
-		if (entity.AI.ignoreSignals == false) then --Р”РѕРґРµР»Р°С‚СЊ СЌС‚Рѕ Рє Attack
+		if (entity.AI.ignoreSignals ~= true) then --Р”РѕРґРµР»Р°С‚СЊ СЌС‚Рѕ Рє Attack
 		-- called when the enemy sees a living player
 
 			AIBehaviour.TrooperIdle:OnPlayerSeen(entity,fDistance);
@@ -63,7 +63,7 @@ AIBehaviour.TrooperAlert = {
 
 	---------------------------------------------
 	OnEnemyMemory = function( self, entity )
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			if(entity:SetRefPointAtDistanceFromTarget(8)) then 
 				entity:SelectPipe(0,"tr_approach_target_at_distance");
 			end
@@ -107,7 +107,7 @@ AIBehaviour.TrooperAlert = {
 
 	---------------------------------------------
 	OnDamage = function ( self, entity, sender,data)
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			-- called when the enemy is damaged
 			entity:Readibility("GETTING_SHOT_AT",1);
 			entity:SelectPipe(0,"tr_getting_shot_at");

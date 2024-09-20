@@ -10,7 +10,7 @@ AIBehaviour.Trooper2Attack = {
 	alertness = 2,
 
 	Constructor = function (self, entity)
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 
 			entity:MakeAlerted();
 			entity:TriggerEvent(AIEVENT_DROPBEACON);
@@ -55,7 +55,7 @@ AIBehaviour.Trooper2Attack = {
 	end,
 	---------------------------------------------
 	COVER_NORMALATTACK = function (self, entity, sender)
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 
 			local target = AI.GetTargetType(entity.id);
 			local state = GS_ADVANCE;
@@ -136,7 +136,7 @@ AIBehaviour.Trooper2Attack = {
 	end,
 	---------------------------------------------
 	OnPlayerSeen = function( self, entity, fDistance, data )
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 
 			entity:Readibility("during_combat",1,1,0.3,6);
 			entity:TriggerEvent(AIEVENT_DROPBEACON);
@@ -180,7 +180,7 @@ AIBehaviour.Trooper2Attack = {
 	end,
 	---------------------------------------------
 	OnGroupMemberDied = function(self, entity)
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 
 			entity.AI.lastBulletReactionTime = _time;
 			AI.NotifyGroupTacticState(entity.id, 0, GN_NOTIFY_HIDING);
@@ -190,7 +190,7 @@ AIBehaviour.Trooper2Attack = {
 	end,
 	--------------------------------------------------
 	OnGroupMemberDiedNearest = function (self, entity, sender, data)
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 
 			entity:Readibility("ai_down",1,1,0.3,0.6);
 			AI.Signal(SIGNALFILTER_GROUPONLY_EXCEPT, 1, "OnGroupMemberDied",entity.id, data);
@@ -204,7 +204,7 @@ AIBehaviour.Trooper2Attack = {
 
 	---------------------------------------------
 	OnBulletRain = function(self, entity, sender, data)
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 
 			local	dt = _time - entity.AI.lastBulletReactionTime;
 			local reactionTime = 3.0;
@@ -242,7 +242,7 @@ AIBehaviour.Trooper2Attack = {
 --			end
 -- --		end
 
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 
 			Trooper_HitReaction(entity);
 
@@ -279,7 +279,7 @@ AIBehaviour.Trooper2Attack = {
 
 	--------------------------------------------------
 	OnCloseContact = function ( self, entity, sender,data)
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 
 			-- Do melee at close range.
 			if(AI.CanMelee(entity.id)) then
@@ -348,7 +348,7 @@ AIBehaviour.Trooper2Attack = {
 
 	---------------------------------------------
 	PANIC_DONE = function(self, entity)
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 
 			AI.Signal(SIGNALFILTER_GROUPONLY_EXCEPT, 1, "ENEMYSEEN_FIRST_CONTACT",entity.id);
 			-- Choose proper action after being interrupted.

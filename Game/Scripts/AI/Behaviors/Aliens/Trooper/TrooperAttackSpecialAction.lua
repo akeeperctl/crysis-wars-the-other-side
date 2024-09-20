@@ -156,7 +156,7 @@ AIBehaviour.TrooperAttackSpecialAction = {
 	
 	--------------------------------------------------
 	OnEnemyDamage = function(self,entity,sender,data)
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			if(entity:IsUsingPipe("tr_try_melee_special") or entity:IsUsingPipe("tr_try_melee_vehicle")) then -- :(
 				if (data.ObjectName ~= "melee") then 
 					if(Trooper_Dodge(entity,2,nil,TROOPER_DODGE_FORWARD,true)) then
@@ -186,7 +186,7 @@ AIBehaviour.TrooperAttackSpecialAction = {
 
 	--------------------------------------------------
 	OnPlayerLooking = function(self,entity,sender,data)
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			-- data.fValue = player's distance
 			if(data.fValue>4 and data.fValue<6) then 
 				if(not entity:IsUsingPipe("tr_melee_special_timeout")) then -- :(
@@ -200,7 +200,7 @@ AIBehaviour.TrooperAttackSpecialAction = {
 	
 	--------------------------------------------------
 	OnPlayerSeen = function(self,entity,distance)
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			entity.AI.meleeTarget = AI.GetAttentionTargetEntity(entity.id);
 			entity:SelectPipe(0,"do_nothing");
 			self:TryMelee(entity);
@@ -229,7 +229,7 @@ AIBehaviour.TrooperAttackSpecialAction = {
 	
 	--------------------------------------------------
 	OnNoTarget = function(self,entity,target)
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			if(AI.GetGroupTarget(entity.id)) then 
 				self:EndBehaviour(entity);
 			else
@@ -291,7 +291,7 @@ AIBehaviour.TrooperAttackSpecialAction = {
 		
 	--------------------------------------------------
 	END_MELEE = function( self, entity, sender)
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 		AIBlackBoard.lastTrooperMeleeTime = _time;
 
 			if(AI.GetTargetType(entity.id)==AITARGET_ENEMY) then 

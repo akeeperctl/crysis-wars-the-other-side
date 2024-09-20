@@ -21,7 +21,7 @@ AIBehaviour.TrGroupCoverSearch = {
 			return;
 		end
 		--~TheOtherSide
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 
 			-- data.point = enemy position
 			-- data.point2 = average group position

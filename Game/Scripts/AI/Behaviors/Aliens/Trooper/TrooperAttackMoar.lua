@@ -116,7 +116,7 @@ AIBehaviour.TrooperAttackMoar = {
 	end,
 
 	OnBulletRain = function( self, entity, sender,data )
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 	--		g_SignalData.iValue = AI_BACKOFF_FROM_TARGET;
 	--		g_SignalData.fValue = 10;
 	--		AI.Signal(SIGNALFILTER_LEADER,10,"OnRequestUpdate",entity.id);
@@ -140,7 +140,7 @@ AIBehaviour.TrooperAttackMoar = {
 	end,
 
 	OnEnemyDamage = function( self, entity, sender,data )
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			AI.ModifySmartObjectStates(entity.id,"-StayOnGround");
 			if( Trooper_LowHealth(entity)) then 
 				if(Trooper_CanRetreat(entity)) then 
@@ -247,7 +247,7 @@ AIBehaviour.TrooperAttackMoar = {
 	end,
 
 	OnCloseContact= function(self,entity,target)
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			if(Trooper_CloseContactChoice(entity,target,1)) then
 				-- trooper is either doing melee or jumping away
 				Trooper_UpdateMoarStats(entity);

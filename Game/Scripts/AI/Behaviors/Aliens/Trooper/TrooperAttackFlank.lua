@@ -159,7 +159,7 @@ AIBehaviour.TrooperAttackFlank = {
 
 	---------------------------------------------
 	OnDamage = function ( self, entity, sender,data)
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			-- called when the enemy is damaged
 	--		entity:SelectPipe(0,"tr_scramble");
 			-- call default handling
@@ -169,7 +169,7 @@ AIBehaviour.TrooperAttackFlank = {
 
 	---------------------------------------------
 	OnEnemyDamage = function ( self, entity, sender,data)
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			-- called when the enemy is damaged
 	--		entity:SelectPipe(0,"tr_scramble");
 			-- call default handling

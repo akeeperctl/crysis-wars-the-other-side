@@ -37,7 +37,7 @@ AIBehaviour.Trooper2AttackSwitchPositionMelee = {
 	
 	--------------------------------------------------
 	OnEnemyDamage = function(self,entity,sender,data)
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			if(not entity.AI.canDodge) then 
 				return;
 			end

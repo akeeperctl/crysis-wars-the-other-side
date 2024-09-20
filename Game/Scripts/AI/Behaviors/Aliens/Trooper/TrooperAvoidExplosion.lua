@@ -113,7 +113,7 @@ AIBehaviour.TrooperAvoidExplosion = {
 	
 	------------------------------------------------------------------------
 	OnExplosion = function(self,entity,sender)
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			self:SelectNext(entity);
 		end
 	end,
@@ -156,7 +156,7 @@ AIBehaviour.TrooperAvoidExplosion = {
 	
 	---------------------------------------------
 	OnObjectSeen = function(self,entity,sender,data)
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			if ( data.iValue == AIOBJECT_RPG) then
 				entity:InsertSubpipe(0,"devalue_target");
 			end

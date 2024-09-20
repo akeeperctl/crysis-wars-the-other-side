@@ -12,7 +12,7 @@ AIBehaviour.Trooper2Seek = {
 
 	---------------------------------------------
 	Constructor = function (self, entity)
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			entity:GettingAlerted();
 
 			if(not entity.AI.target) then
@@ -72,7 +72,7 @@ AIBehaviour.Trooper2Seek = {
 
 	---------------------------------------------
 	COVER_NORMALATTACK = function (self, entity)
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			local state = GS_SEEK; 
 			if (entity.AI.seekCount ~= 0) then
 				state = AI.GetGroupTacticState(entity.id, 0, GE_GROUP_STATE);
@@ -223,7 +223,7 @@ AIBehaviour.Trooper2Seek = {
 
 	---------------------------------------------
 	OnPlayerSeen = function( self, entity, fDistance, data )
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			entity:MakeAlerted();
 			entity:TriggerEvent(AIEVENT_DROPBEACON);
 
@@ -376,7 +376,7 @@ AIBehaviour.Trooper2Seek = {
 	end,
 	--------------------------------------------------
 	OnEnemyDamage = function( self, entity, sender,data )
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			Trooper_HitReaction(entity);
 		end
 	end,

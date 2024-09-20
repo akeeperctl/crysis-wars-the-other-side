@@ -43,7 +43,7 @@ AIBehaviour.Trooper2AvoidVehicle = {
 
 	---------------------------------------------		
 	OnPlayerSeen = function( self, entity, fDistance, data )
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			if (data.iValue == AITSR_SEE_STUNT_ACTION) then
 				AI.NotifyGroupTacticState(entity.id, 0, GN_NOTIFY_UNAVAIL);
 				Trooper_ChooseStuntReaction(entity);

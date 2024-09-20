@@ -28,7 +28,7 @@ AIBehaviour.TrooperAttackSwitchPosition = {
 		entity.AI.currentBehaviour = self.Name
 		--~TheOtherSide	
 
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 	--		AI.Signal(SIGNALFILTER_SUPERSPECIES, 0,"IS_PLAYER_ENGAGED",entity.id);
 			entity:SelectPipe(0,"do_nothing");
 			if(entity.AI.usingMoar == nil) then 
@@ -72,7 +72,7 @@ AIBehaviour.TrooperAttackSwitchPosition = {
 	
 	
 	OnPlayerSeen = function(self,entity,sender)
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			if(Trooper_CheckJumpToFormationPoint(entity)) then 
 				AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_ATTACK_JUMP",entity.id);
 			else
@@ -89,7 +89,7 @@ AIBehaviour.TrooperAttackSwitchPosition = {
 	end,
 	
 	OnPlayerLooking = function(self,entity,sender)
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			if(entity:GetDistance(g_localActor.id) > entity.melee.damageRadius+1) then 
 				if(Trooper_Dodge(entity)) then 
 					AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_DODGE",entity.id);
@@ -107,7 +107,7 @@ AIBehaviour.TrooperAttackSwitchPosition = {
 	end,
 
 	OnNoTargetVisible = function(self,entity,sender)
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			entity:Readibility("target_lost",1,0);
 			AI.ModifySmartObjectStates(entity.id,"-StayOnGround");
 			entity:SelectPipe(0,"tr_check_other_shoot_spots");
@@ -148,7 +148,7 @@ AIBehaviour.TrooperAttackSwitchPosition = {
 	end,
 
 	OnBulletRain = function( self, entity, sender,data )
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			if(AI.Hostile(entity.id,data.id)) then 
 				AIBehaviour.TrooperAttackSwitchPosition:OnEnemyDamage( entity, sender,data );
 			end
@@ -162,7 +162,7 @@ AIBehaviour.TrooperAttackSwitchPosition = {
 	end,
 	
 	OnEnemyDamage = function( self, entity, sender,data )
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 	--		local dir = g_Vectors.temp;
 	--		CopyVector(dir,data.point2);
 	--		local dist = data.fValue/100;
@@ -235,7 +235,7 @@ AIBehaviour.TrooperAttackSwitchPosition = {
 
 	--------------------------------------------------
 	OnAttackSwitchPosition = function( self, entity, sender )
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			if(not Trooper_CheckJumpToFormationPoint(entity)) then 
 				entity:SelectPipe(0,"do_nothing");
 				entity:SelectPipe(0,"tr_attack_switch_position");
@@ -245,7 +245,7 @@ AIBehaviour.TrooperAttackSwitchPosition = {
 	end,
 	
 	CHECK_REPOSITION = function( self, entity, sender )
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			if(entity.AI.bReposition) then 
 				if(not Trooper_CheckJumpToFormationPoint(entity)) then 
 					entity:SelectPipe(0,"do_nothing");
@@ -273,7 +273,7 @@ AIBehaviour.TrooperAttackSwitchPosition = {
 
 
 	OnCloseContact= function(self,entity,target)
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			-- check target moving direction
 			if(Trooper_CloseContactChoice(entity,target,4)) then 
 				return;
@@ -358,7 +358,7 @@ AIBehaviour.TrooperAttackSwitchPosition = {
 	
 	--------------------------------------------------
 	OnLand = function(self,entity,sender)
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			if(entity.AI.JumpType == TROOPER_JUMP_SWITCH_POSITION) then 
 				AI.ModifySmartObjectStates(entity.id,"StayOnGround");
 
@@ -399,7 +399,7 @@ AIBehaviour.TrooperAttackSwitchPosition = {
 	
 	--------------------------------------------------
 	END_JUMP_ON_SPOT = function(self,entity,sender)
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			AI.ModifySmartObjectStates(entity.id,"-ShootSpotFound");
 			AI.ModifySmartObjectStates(entity.id,"StayOnGround");
 			if(not Trooper_CheckJumpToFormationPoint(entity)) then 
@@ -460,7 +460,7 @@ AIBehaviour.TrooperAttackSwitchPosition = {
 
 	--------------------------------------------------
 	JUMP_FIRE = function(self,entity,sender)
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			--TheOtherSide
 	entity:RequestCloakTurnOff();
 	--~TheOtherSide
@@ -512,7 +512,7 @@ AIBehaviour.TrooperAttackSwitchPosition = {
 	
 	--------------------------------------------------
 	END_MELEE = function(self,entity,sender)
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			if(Trooper_CheckJumpToFormationPoint(entity)) then 
 				AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_ATTACK_JUMP",entity.id);
 			else
@@ -527,7 +527,7 @@ AIBehaviour.TrooperAttackSwitchPosition = {
 	
 	--------------------------------------------------
 	JUMP_ON_WALL_FAILED = function(self,entity,sender)
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			if(Trooper_CheckJumpToFormationPoint(entity)) then 
 				AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_ATTACK_JUMP",entity.id);
 			else

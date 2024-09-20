@@ -23,7 +23,7 @@ AIBehaviour.TrGroupSearch = {
 			return;
 		end
 		--~TheOtherSide
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 				-- data.point = search spot pos
 				-- data.point2 = search spot dir
 				if(AI.GetTargetType(entity.id)==AITARGET_ENEMY) then 
@@ -73,7 +73,7 @@ AIBehaviour.TrGroupSearch = {
 			return;
 		end
 		--~TheOtherSide
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			-- called when the enemy is damaged
 			-- data.id = shooter id
 			-- data.point = shooter position
@@ -169,7 +169,7 @@ AIBehaviour.TrGroupSearch = {
 			return;
 		end
 		--~TheOtherSide
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			-- should not happen before OnPlayerSeen
 			AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_ATTACK",entity.id);
 		end
@@ -181,7 +181,7 @@ AIBehaviour.TrGroupSearch = {
 			return;
 		end
 		--~TheOtherSide
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			-- called when the enemy sees a living player
 			-- first send him OnSeenByEnemy signal
 	--		if(entity.AI.InSquad==1) then 
@@ -209,7 +209,7 @@ AIBehaviour.TrGroupSearch = {
 			return;
 		end
 		--~TheOtherSide
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			-- called when the enemy can no longer see its foe, but remembers where it saw it last
 			entity:SelectPipe(0, "do_nothing");--clear all current goals
 			entity:SelectPipe(0, "tr_order_search");
@@ -241,7 +241,7 @@ AIBehaviour.TrGroupSearch = {
 			return;
 		end
 		--~TheOtherSide
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			local target = AI.GetAttentionTargetEntity(entity.id);
 			if(target and target.id) then 
 				g_SignalData.id = target.id;
@@ -336,7 +336,7 @@ AIBehaviour.TrGroupSearch = {
 			return;
 		end
 		--~TheOtherSide
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			entity:SelectPipe(0, "do_nothing");--clear all current goals
 			--entity:SelectPipe(0, "tr_look_around");
 			entity:SelectPipe(0, "tr_order_search");

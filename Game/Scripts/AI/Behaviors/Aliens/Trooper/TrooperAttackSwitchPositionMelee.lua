@@ -43,7 +43,7 @@ AIBehaviour.TrooperAttackSwitchPositionMelee = {
 	
 	--------------------------------------------------
 	OnEnemyDamage = function(self,entity,sender,data)
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			if(not entity.AI.canDodge) then 
 				return;
 			end
@@ -110,7 +110,7 @@ AIBehaviour.TrooperAttackSwitchPositionMelee = {
 	
 	--------------------------------------------------
 	OnEnemyMemory = function(self,entity,target)
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			AI.Signal(SIGNALFILTER_SENDER,1,"MELEE_FAILED",entity.id);
 		end
 	end,

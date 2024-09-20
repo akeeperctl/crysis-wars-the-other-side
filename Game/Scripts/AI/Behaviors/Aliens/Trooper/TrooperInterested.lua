@@ -68,7 +68,7 @@ AIBehaviour.TrooperInterested = {
 
 	---------------------------------------------
 	OnSomethingSeen= function( self, entity,sender )
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			-- redirect to new target
 			entity:SelectPipe(0,"do_nothing");
 			entity:SelectPipe(0,"tr_look_closer");

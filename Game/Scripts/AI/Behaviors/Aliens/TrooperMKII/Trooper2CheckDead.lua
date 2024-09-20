@@ -22,7 +22,7 @@ AIBehaviour.Trooper2CheckDead = {
 	
 	--------------------------------------------------
 	OnEnemyDamage = function( self, entity, sender,data )
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			Trooper_HitReaction(entity);
 		end
 	end,

@@ -74,7 +74,7 @@ AIBehaviour.TrooperMKIIIdle = {
 	
 		--------------------------------------------------
 	OnObjectSeen = function( self, entity, fDistance, signalData )
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL) > 0.0 ) then
+		if (entity.AI.ignoreSignals ~= true) then
 			-- called when the enemy sees an object
 			-- data.iValue = target AIObject type
 			-- data.id = target.id
@@ -97,7 +97,7 @@ AIBehaviour.TrooperMKIIIdle = {
 
 	--------------------------------------------------
 	OnGrenadeDanger = function( self, entity, sender, signalData )
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL) > 0.0 ) then
+		if (entity.AI.ignoreSignals ~= true) then
 			-- called when grenade collides within 20m
 			-- data.point = (predicted, or actual) grenade position
 			-- data.point2 = grenade velocity (zero if position is predicted)
@@ -134,7 +134,7 @@ AIBehaviour.TrooperMKIIIdle = {
 	end,
 	---------------------------------------------
 	OnExplosionDanger = function(self,entity,sender,data)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL) > 0.0 ) then
+		if (entity.AI.ignoreSignals ~= true) then
 			--data.id = exploding entity
 	--		Log(entity:GetName().." OnExplosionDanger");
 			local	ent = System.GetEntity(data.id);
@@ -167,7 +167,7 @@ AIBehaviour.TrooperMKIIIdle = {
 	
 	--------------------------------------------------
 	OnBodyFallSound = function(self, entity, sender, data)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL) > 0.0 ) then
+		if (entity.AI.ignoreSignals ~= true) then
 			-- ignore this if current behavior is alerted
 			if(entity.Behaviour.alertness and entity.Behaviour.alertness>0) then return end
 
@@ -186,7 +186,7 @@ AIBehaviour.TrooperMKIIIdle = {
 
 	--------------------------------------------------
 	OnGroupMemberDiedNearest = function(self, entity, sender, data)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL) > 0.0 ) then
+		if (entity.AI.ignoreSignals ~= true) then
 			local targetIsSleeping=0;
 			
 			if (sender.actor:GetHealth() > 0) then
@@ -321,7 +321,7 @@ AIBehaviour.TrooperMKIIIdle = {
 
 	---------------------------------------------
 	OnPlayerSeen = function( self, entity, fDistance, data )
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL) > 0.0 ) then
+		if (entity.AI.ignoreSignals ~= true) then
 			entity:MakeAlerted();
 			entity:TriggerEvent(AIEVENT_DROPBEACON);
 			entity.AI.firstContact = true;
@@ -337,7 +337,7 @@ AIBehaviour.TrooperMKIIIdle = {
 
 	---------------------------------------------
 	OnTankSeen = function( self, entity, fDistance )
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL) > 0.0 ) then
+		if (entity.AI.ignoreSignals ~= true) then
 			if(	AI_Utils:HasRPGAttackSlot(entity) and entity.inventory:GetItemByClass("LAW") 
 					and AIBehaviour.Trooper2RPGAttack.FindRPGSpot(self, entity) ~= nil) then
 				entity:Readibility("suppressing_fire",1,1,0.1,0.4);
@@ -351,7 +351,7 @@ AIBehaviour.TrooperMKIIIdle = {
 	
 	---------------------------------------------
 	OnHeliSeen = function( self, entity, fDistance )
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL) > 0.0 ) then
+		if (entity.AI.ignoreSignals ~= true) then
 			entity:Readibility("explosion_imminent",1,1,0.1,0.4);
 			AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_AVOID_TANK",entity.id);
 		end
@@ -373,7 +373,7 @@ AIBehaviour.TrooperMKIIIdle = {
 
 	---------------------------------------------
 	SEEK_KILLER = function(self, entity)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL) > 0.0 ) then
+		if (entity.AI.ignoreSignals ~= true) then
 			AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_THREATENED",entity.id);
 		end
 	end,
@@ -394,7 +394,7 @@ AIBehaviour.TrooperMKIIIdle = {
 	
 	---------------------------------------------
 	OnSomethingSeen = function( self, entity )
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL) > 0.0 ) then
+		if (entity.AI.ignoreSignals ~= true) then
 			-- called when the enemy sees a foe which is not a living player
 			entity:Readibility("idle_interest_see",1,1,0.6,1);
 			if(AI_Utils:CheckInterested(entity) == true) then
@@ -406,7 +406,7 @@ AIBehaviour.TrooperMKIIIdle = {
 	
 	---------------------------------------------
 	OnThreateningSeen = function( self, entity )
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL) > 0.0 ) then
+		if (entity.AI.ignoreSignals ~= true) then
 			-- called when the enemy hears a scary sound
 			entity:Readibility("idle_interest_see",1,1,0.6,1);
 			entity:TriggerEvent(AIEVENT_DROPBEACON);
@@ -464,7 +464,7 @@ AIBehaviour.TrooperMKIIIdle = {
 
 	---------------------------------------------
 	OnDamage = function ( self, entity, sender)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL) > 0.0 ) then
+		if (entity.AI.ignoreSignals ~= true) then
 			-- called when the enemy is damaged
 			entity:Readibility("taking_fire",1,1,0.3,0.5);
 			entity:GettingAlerted();
@@ -474,7 +474,7 @@ AIBehaviour.TrooperMKIIIdle = {
 
 	---------------------------------------------
 	OnEnemyDamage = function (self, entity, sender, data)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL) > 0.0 ) then
+		if (entity.AI.ignoreSignals ~= true) then
 			-- called when the enemy is damaged
 			entity:GettingAlerted();
 	--		entity:Readibility("taking_fire",1,1,0.3,0.5);
@@ -513,7 +513,7 @@ AIBehaviour.TrooperMKIIIdle = {
 
 	---------------------------------------------
 	OnBulletRain = function(self, entity, sender, data)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL) > 0.0 ) then
+		if (entity.AI.ignoreSignals ~= true) then
 			-- only react to hostile bullets.
 
 	--		AI.RecComment(entity.id, "hostile="..tostring(AI.Hostile(entity.id, sender.id)));
@@ -549,7 +549,7 @@ AIBehaviour.TrooperMKIIIdle = {
 
 	--------------------------------------------------
 	OnCollision = function(self,entity,sender,data)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL) > 0.0 ) then
+		if (entity.AI.ignoreSignals ~= true) then
 			if(AI.GetTargetType(entity.id) ~= AITARGET_ENEMY) then 
 				if(AI.Hostile(entity.id,data.id)) then 
 				--entity:ReadibilityContact();
@@ -572,7 +572,7 @@ AIBehaviour.TrooperMKIIIdle = {
 	
 	--------------------------------------------------
 	OnGroupMemberDied = function(self, entity, sender, data)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL) > 0.0 ) then
+		if (entity.AI.ignoreSignals ~= true) then
 			--AI.LogEvent(entity:GetName().." OnGroupMemberDied!");
 			entity:GettingAlerted();
 			AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_HIDE",entity.id);
@@ -591,7 +591,7 @@ AIBehaviour.TrooperMKIIIdle = {
 
 	---------------------------------------------
 	ENEMYSEEN_FIRST_CONTACT = function( self, entity )
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL) > 0.0 ) then
+		if (entity.AI.ignoreSignals ~= true) then
 			if(AI.GetTargetType(entity.id) ~= AITARGET_ENEMY) then
 				entity:Readibility("idle_interest_see",1,1,0.6,1);
 				if(AI_Utils:IsTargetOutsideStandbyRange(entity) == 1) then
@@ -606,7 +606,7 @@ AIBehaviour.TrooperMKIIIdle = {
 
 	--------------------------------------------------
 	ENEMYSEEN_DURING_COMBAT = function (self, entity, sender)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL) > 0.0 ) then
+		if (entity.AI.ignoreSignals ~= true) then
 			entity:GettingAlerted();
 			if(AI.GetTargetType(entity.id) ~= AITARGET_ENEMY) then
 				AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_SEEK",entity.id);
@@ -616,7 +616,7 @@ AIBehaviour.TrooperMKIIIdle = {
 
 	---------------------------------------------
 	INCOMING_FIRE = function (self, entity, sender)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL) > 0.0 ) then
+		if (entity.AI.ignoreSignals ~= true) then
 			entity:GettingAlerted();
 
 			if(DistanceVectors(sender:GetPos(), entity:GetPos()) < 15.0) then
@@ -896,14 +896,14 @@ AIBehaviour.TrooperMKIIIdle = {
 
 	---------------------------------------------
 	OnExposedToExplosion = function(self, entity, data)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL) > 0.0 ) then
+		if (entity.AI.ignoreSignals ~= true) then
 			self:OnCloseCollision(entity, data);
 		end
 	end,
 
 	---------------------------------------------
 	OnCloseCollision = function(self, entity, data)
-		if ( AI.GetAIParameter( entity.id, AIPARAM_PERCEPTIONSCALE_VISUAL) > 0.0 ) then
+		if (entity.AI.ignoreSignals ~= true) then
 			AI.NotifyGroupTacticState(entity.id, 0, GN_NOTIFY_UNAVAIL);
 			Trooper_ChooseFlinchReaction(entity, data.point);
 		end

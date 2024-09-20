@@ -49,7 +49,7 @@ AIBehaviour.TrooperHide = {
 
 	---------------------------------------------		
 	OnPlayerSeen = function( self, entity, distance )
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			entity:InsertSubpipe(0,"start_fire");
 			if(distance < 15) then 
 				if(Trooper_DoubleJumpMelee(entity)) then 
@@ -78,7 +78,7 @@ AIBehaviour.TrooperHide = {
 
 	---------------------------------------------
 	OnEnemyDamage = function ( self, entity, sender,data)
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			-- called when the enemy is damaged
 			if(AI.GetTargetType(entity.id)==AITARGET_ENEMY) then 
 			-- try melee
@@ -196,7 +196,7 @@ AIBehaviour.TrooperHide = {
 
 	--------------------------------------------------
 	OnCloseContact = function(self,entity,target)
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			if(Trooper_CheckMelee(entity,target,4)) then 
 				return;
 			end

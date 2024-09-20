@@ -45,7 +45,7 @@ AIBehaviour.TrooperShootOnSpot = {
 	end,
 	
 	OnPlayerSeen = function(self,entity,distance)
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			if(Trooper_CheckJumpMeleeFromHighSpot(entity,distance)) then 
 				return;
 			end
@@ -84,7 +84,7 @@ AIBehaviour.TrooperShootOnSpot = {
 	end,
 	
 	OnNoTargetVisible = function(self,entity,sender)
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			entity:Readibility("target_lost",1,0);
 			entity:SelectPipe(0,"tr_check_other_shoot_spots");
 		end
@@ -134,7 +134,7 @@ AIBehaviour.TrooperShootOnSpot = {
 	end,
 
 	OnEnemyDamage = function( self, entity, sender,data )
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			if( Trooper_LowHealth(entity)) then 
 				if(Trooper_CanRetreat(entity)) then 
 					return;
@@ -167,7 +167,7 @@ AIBehaviour.TrooperShootOnSpot = {
 	end,
 
 	OnCloseContact= function(self,entity,target)
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			local diff = entity:GetPos().z - target:GetPos().z;
 			if(diff>-1 and diff<-1) then 
 				if(entity.AI.spotReached) then 

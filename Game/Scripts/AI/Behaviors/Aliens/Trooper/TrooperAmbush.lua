@@ -108,7 +108,7 @@ AIBehaviour.TrooperAmbush = {
 
 	--------------------------------------------------
 	OnObjectSeen = function( self, entity, fDistance, signalData )
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			-- called when the enemy sees an object
 			if ( signalData.iValue == AIOBJECT_RPG) then
 				entity:InsertSubpipe(0,"devalue_target");
@@ -128,7 +128,7 @@ AIBehaviour.TrooperAmbush = {
 	
 	---------------------------------------------
 	OnCloseContact = function(self,entity,sender)
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			entity:SelectPipe(0,"tr_just_shoot");
 		end
 --		entity:InsertSubpipe(0,"tr_backoff_fire");

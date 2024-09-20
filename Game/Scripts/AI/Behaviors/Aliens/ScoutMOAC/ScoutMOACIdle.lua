@@ -97,7 +97,7 @@ AIBehaviour.ScoutMOACIdle = {
 	end,
 	--------------------------------------------------------------------------
 	OnEnemyDamage = function ( self, entity, sender, data )
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			if ( data and data.id == entity.id ) then
 			else
 			entity:SelectPrimaryWeapon();

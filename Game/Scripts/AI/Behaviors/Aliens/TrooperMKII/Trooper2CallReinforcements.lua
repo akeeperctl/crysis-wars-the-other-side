@@ -13,7 +13,7 @@ AIBehaviour.Trooper2CallReinforcements = {
 	-----------------------------------------------------
 	Constructor = function(self,entity)
 
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 
 				AI.NotifyGroupTacticState(entity.id, 0, GN_NOTIFY_UNAVAIL);
 
@@ -46,7 +46,7 @@ AIBehaviour.Trooper2CallReinforcements = {
 	-----------------------------------------------------
 	SETUP_REINF = function(self, entity)
 		
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 
 			if (entity.AI.reinfType == nil) then
 				self:ContinueAfterReinf(entity);
@@ -128,7 +128,7 @@ AIBehaviour.Trooper2CallReinforcements = {
 	end,
 	---------------------------------------------
 	OnPlayerSeen = function( self, entity, fDistance, data )
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 
 			if (data.iValue == AITSR_SEE_STUNT_ACTION) then
 				AI.NotifyGroupTacticState(entity.id, 0, GN_NOTIFY_UNAVAIL);
@@ -176,7 +176,7 @@ AIBehaviour.Trooper2CallReinforcements = {
 	end,
 	---------------------------------------------
 	OnEnemyDamage = function (self, entity, sender, data)
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 
 			local dt = _time - entity.AI.reinfLastHide;
 			if (dt > 5.0) then
@@ -237,7 +237,7 @@ AIBehaviour.Trooper2CallReinforcements = {
 	
 	--------------------------------------------------
 	REINF_DONE = function (self,entity, sender)
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			if (entity.AI.reinfSpotId) then
 				local spot = System.GetEntity(entity.AI.reinfSpotId);
 				entity.AI.reinfSpotId = nil;

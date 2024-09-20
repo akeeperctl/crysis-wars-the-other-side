@@ -10,7 +10,7 @@ AIBehaviour.Trooper2AttackGroup = {
 	alertness = 2,
 
 	Constructor = function (self, entity)
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 
 			entity:MakeAlerted();
 			entity:TriggerEvent(AIEVENT_DROPBEACON);
@@ -79,7 +79,7 @@ AIBehaviour.Trooper2AttackGroup = {
 	---------------------------------------------
 	COVER_NORMALATTACK = function (self, entity, sender)
 		
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 
 			if (entity.AI.pendingAdvance and entity.AI.pendingAdvance == true) then
 				entity.AI.pendingAdvance = nil;
@@ -145,7 +145,7 @@ AIBehaviour.Trooper2AttackGroup = {
 
 	---------------------------------------------
 	OnNoTargetVisible = function (self, entity)
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 
 	--		AI.RecComment(entity.id, "OnNoTargetVisible");
 			if (AI.GetGroupTacticState(entity.id, 0, GE_LEADER_COUNT) < 2) then
@@ -156,7 +156,7 @@ AIBehaviour.Trooper2AttackGroup = {
 
 	---------------------------------------------
 	OnNoTargetAwareness = function (self, entity)
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 
 			if (AI.GetGroupTacticState(entity.id, 0, GE_LEADER_COUNT) < 2) then
 				AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_SEEK",entity.id);
@@ -166,13 +166,13 @@ AIBehaviour.Trooper2AttackGroup = {
 
 	---------------------------------------------
 	NOTIFY_ADVANCING = function (self, entity, sender)
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			AI.NotifyGroupTacticState(entity.id, 0, GN_NOTIFY_ADVANCING);
 		end
 	end,
 	---------------------------------------------
 	NOTIFY_COVERING = function (self, entity, sender)
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			AI.NotifyGroupTacticState(entity.id, 0, GN_NOTIFY_COVERING);
 		end
 	end,
@@ -187,7 +187,7 @@ AIBehaviour.Trooper2AttackGroup = {
 	end,
 	---------------------------------------------
 	SELECT_ADVANCE_POINT = function (self, entity, sender)
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			local advancePoint = AI.GetGroupTacticPoint(entity.id, 0, GE_ADVANCE_POS);
 			if(advancePoint) then
 				AI.SetRefPointPosition(entity.id,advancePoint);
@@ -219,7 +219,7 @@ AIBehaviour.Trooper2AttackGroup = {
 --		entity:SelectPipe(0,"cv_short_cover_fire_signal");
 --		AI.NotifyGroupTacticState(entity.id, 0, GN_NOTIFY_WEAK_COVERING);
 
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 
 			if(not entity.AI.lastCompromisedCover) then
 				entity.AI.lastCompromisedCover = _time - 10;
@@ -240,7 +240,7 @@ AIBehaviour.Trooper2AttackGroup = {
 	end,
 	---------------------------------------------
 	OnPlayerSeen = function( self, entity, fDistance, data )
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			entity:TriggerEvent(AIEVENT_DROPBEACON);
 			if (data.iValue == AITSR_SEE_STUNT_ACTION) then
 				AI.NotifyGroupTacticState(entity.id, 0, GN_NOTIFY_UNAVAIL);
@@ -255,7 +255,7 @@ AIBehaviour.Trooper2AttackGroup = {
 	end,
 	---------------------------------------------
 	OnEnemyMemory = function( self, entity )
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			entity:TriggerEvent(AIEVENT_DROPBEACON);
 			entity.AI.lastLiveEnemyTime = _time;
 		end
@@ -282,7 +282,7 @@ AIBehaviour.Trooper2AttackGroup = {
 	end,
 	---------------------------------------------
 	OnGroupMemberDied = function(self, entity)
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			-- called when a member of the group dies
 	--		entity:SelectPipe(0,"sn_use_cover_safe");
 	--		AI.NotifyGroupTacticState(entity.id, 0, GN_NOTIFY_HIDING);
@@ -293,7 +293,7 @@ AIBehaviour.Trooper2AttackGroup = {
 	end,
 	--------------------------------------------------
 	OnGroupMemberDiedNearest = function (self, entity, sender, data)
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			entity:Readibility("ai_down",1,1,0.3,0.6);
 	--		entity:SelectPipe(0,"sn_use_cover_safe");
 
@@ -305,7 +305,7 @@ AIBehaviour.Trooper2AttackGroup = {
 	end,
 	--------------------------------------------------
 	OnBulletRain = function(self, entity, sender, data)
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			-- only react to hostile bullets.
 			local	dt = _time - entity.AI.lastBulletReactionTime;
 			if(dt > 1.5) then
@@ -320,7 +320,7 @@ AIBehaviour.Trooper2AttackGroup = {
 	end,
 	--------------------------------------------------
 	OnNearMiss = function(self, entity, sender)
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 	--		-- only react to hostile bullets.
 			local	dt = _time - entity.AI.lastBulletReactionTime;
 			if(dt > 1.5) then
@@ -337,7 +337,7 @@ AIBehaviour.Trooper2AttackGroup = {
 	end,
 	---------------------------------------------
 	OnEnemyDamage = function (self, entity, sender, data)
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			Trooper_HitReaction(entity);
 		
 	--		entity:Readibility("taking_fire",1);
@@ -386,7 +386,7 @@ AIBehaviour.Trooper2AttackGroup = {
 	end,	
 	--------------------------------------------------
 	OnNoPathFound = function( self, entity, sender,data )
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 	--		Log(entity:GetName().." OnNoPathFound");
 			entity:SelectPipe(0,"sn_close_combat_group");
 			AI.NotifyGroupTacticState(entity.id, 0, GN_NOTIFY_WEAK_COVERING);
@@ -453,7 +453,7 @@ AIBehaviour.Trooper2AttackGroup = {
 
 	---------------------------------------------
 	PANIC_DONE = function(self, entity)
-		if (entity.AI.ignoreSignals == false) then
+		if (entity.AI.ignoreSignals ~= true) then
 			AI.Signal(SIGNALFILTER_GROUPONLY_EXCEPT, 1, "ENEMYSEEN_FIRST_CONTACT",entity.id);
 			-- Choose proper action after being interrupted.
 			AI_Utils:CommonContinueAfterReaction(entity);
