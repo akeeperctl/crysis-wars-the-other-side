@@ -15,7 +15,6 @@ Copyright (C), AlienKeeper, 2024.
 #include "Modules/Master/MasterClient.h"
 #include "Modules/Master/MasterModule.h"
 
-#include "TheOtherSideMP/AI/AITrackerModule.h"
 #include "TheOtherSideMP/Helpers/TOS_Cache.h"
 #include "TheOtherSideMP/Helpers/TOS_Script.h"
 
@@ -56,10 +55,6 @@ void CTOSGame::Init()
 
 	m_pEventRecorder = new CTOSGameEventRecorder();
 
-	//if (gEnv->bServer)
-	{
-		m_pAITrackerModule = new СTOSAIModule();
-	}
 
 	//Modules
 
