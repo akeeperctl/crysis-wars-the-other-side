@@ -145,9 +145,6 @@
     <Filter Include="TheOtherSideMP\HUD">
       <UniqueIdentifier>{8796b1bf-5bdf-49c1-91bc-f0959f038ad0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="TheOtherSideMP\Game\Modules\AI">
-      <UniqueIdentifier>{9819ac0e-82ff-477d-acc4-c0c0e819d9fc}</UniqueIdentifier>
-    </Filter>
     <Filter Include="TheOtherSideMP\Actors\animation">
       <UniqueIdentifier>{8839ffbb-fce8-4f95-9efa-942480b24ae1}</UniqueIdentifier>
     </Filter>
@@ -806,9 +803,6 @@
     <ClCompile Include="TheOtherSideMP\Control\ControlSystem.cpp">
       <Filter>TheOtherSideMP\Control_Old</Filter>
     </ClCompile>
-    <ClCompile Include="TheOtherSideMP\AI\AITrackerModule.cpp">
-      <Filter>TheOtherSideMP\Game\Modules\AI</Filter>
-    </ClCompile>
     <ClCompile Include="TheOtherSideMP\Game\Modules\Abilities\AbilitiesSystem.cpp">
       <Filter>TheOtherSideMP\Game\Modules\Abilities</Filter>
     </ClCompile>
@@ -829,9 +823,6 @@
     </ClCompile>
     <ClCompile Include="TheOtherSideMP\HUD\TOSCrosshair.cpp">
       <Filter>TheOtherSideMP\HUD</Filter>
-    </ClCompile>
-    <ClCompile Include="TheOtherSideMP\AI\AITrackerCvars.cpp">
-      <Filter>TheOtherSideMP\Game\Modules\AI</Filter>
     </ClCompile>
     <ClCompile Include="TheOtherSideMP\Actors\Animation\AnimationGraphState.cpp">
       <Filter>TheOtherSideMP\Actors\animation</Filter>
@@ -880,9 +871,6 @@
     </ClCompile>
     <ClCompile Include="TheOtherSideMP\Nodes\FlowStringNodes.cpp">
       <Filter>TheOtherSideMP\Nodes</Filter>
-    </ClCompile>
-    <ClCompile Include="TheOtherSideMP\AI\ScriptBind_AITracker.cpp">
-      <Filter>TheOtherSideMP\Game\Modules\AI</Filter>
     </ClCompile>
     <ClCompile Include="TheOtherSideMP\Game\ScriptBinds\ScriptBind_Custom.cpp">
       <Filter>TheOtherSideMP\Game\ScriptBinds</Filter>
@@ -1484,12 +1472,6 @@
     <ClInclude Include="TheOtherSideMP\Control\IControlSystemChild.h">
       <Filter>TheOtherSideMP\Control_Old</Filter>
     </ClInclude>
-    <ClInclude Include="TheOtherSideMP\AI\AITrackerModule.h">
-      <Filter>TheOtherSideMP\Game\Modules\AI</Filter>
-    </ClInclude>
-    <ClInclude Include="TheOtherSideMP\AI\IAITrackerModuleListener.h">
-      <Filter>TheOtherSideMP\Game\Modules\AI</Filter>
-    </ClInclude>
     <ClInclude Include="TheOtherSideMP\Game\Modules\Abilities\AbilitiesSystem.h">
       <Filter>TheOtherSideMP\Game\Modules\Abilities</Filter>
     </ClInclude>
@@ -1552,9 +1534,6 @@
     </ClInclude>
     <ClInclude Include="TheOtherSideMP\Helpers\TOS_Screen.h">
       <Filter>TheOtherSideMP\Helpers</Filter>
-    </ClInclude>
-    <ClInclude Include="TheOtherSideMP\AI\ScriptBind_AITracker.h">
-      <Filter>TheOtherSideMP\Game\Modules\AI</Filter>
     </ClInclude>
     <ClInclude Include="TheOtherSideMP\Game\ScriptBinds\ScriptBind_Custom.h">
       <Filter>TheOtherSideMP\Game\ScriptBinds</Filter>
