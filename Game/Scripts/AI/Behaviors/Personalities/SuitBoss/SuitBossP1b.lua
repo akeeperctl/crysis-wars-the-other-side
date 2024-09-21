@@ -86,7 +86,7 @@ AIBehaviour.SuitBossP1b = {
 	
 		local healthPrc=entity:GetHealthPercentage();
 		if(healthPrc < AIBehaviour.SuitBossAttack.ToPhase2) then
-			AI.Signal(SIGNALFILTER_SENDER, 1, "TO_PHASE_2",entity.id);		
+			AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_PHASE_2",entity.id);		
 		end
 	end,
 

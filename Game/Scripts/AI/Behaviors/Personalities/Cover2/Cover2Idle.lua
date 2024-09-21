@@ -304,11 +304,7 @@ AIBehaviour.Cover2Idle = {
 			AI.Signal(SIGNALFILTER_GROUPONLY_EXCEPT,1,"INCOMING_FIRE",entity.id);
 			AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_HIDE",entity.id);
 		else
-			if(sender==g_localActor) then 
-				entity:Readibility("friendly_fire",1,0.6,1);
-				entity:InsertSubpipe(AIGOALPIPE_NOTDUPLICATE,"look_at_player_5sec");			
-				entity:InsertSubpipe(AIGOALPIPE_NOTDUPLICATE,"do_nothing");		-- make the timeout goal in previous subpipe restart if it was there already
-			end
+			entity:Readibility("friendly_fire",1,1, 0.6,1);
 		end
 	end,
 
@@ -451,13 +447,7 @@ AIBehaviour.Cover2Idle = {
 	
 	---------------------------------------------
 	OnFriendlyDamage = function ( self, entity, sender,data)
-		if(data.id==g_localActor.id) then 
-			entity:Readibility("friendly_fire",1,1, 0.6,1);
-			if(entity:IsUsingPipe("stand_only")) then 
-				entity:InsertSubpipe(AIGOALPIPE_NOTDUPLICATE,"look_at_player_5sec");			
-				entity:InsertSubpipe(AIGOALPIPE_NOTDUPLICATE,"do_nothing");		-- make the timeout goal in previous subpipe restart if it was there already
-			end
-		end
+		entity:Readibility("friendly_fire",1,1, 0.6,1);
 	end,
 
 	---------------------------------------------

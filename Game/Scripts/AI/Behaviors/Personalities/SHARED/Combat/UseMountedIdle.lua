@@ -281,11 +281,7 @@ AIBehaviour.UseMountedIdle = {
 --				entity:SelectPipe(0,"mg_short_reaction_leave");
 			end
 		else
-			if(sender==g_localActor) then 
-				entity:Readibility("friendly_fire",1,0.6,1);
-				entity:InsertSubpipe(AIGOALPIPE_NOTDUPLICATE,"look_at_player_5sec");			
-				entity:InsertSubpipe(AIGOALPIPE_NOTDUPLICATE,"do_nothing");		-- make the timeout goal in previous subpipe restart if it was there already
-			end
+			entity:Readibility("friendly_fire",1,1, 0.6,1);
 		end
 	end,
 

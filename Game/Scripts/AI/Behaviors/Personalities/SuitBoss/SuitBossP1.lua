@@ -38,7 +38,7 @@ AIBehaviour.SuitBossP1 = {
 		entity.AI.lastFriendInWayTime = _time - 10;
 
 		if(entity.AI.suitPhase and entity.AI.suitPhase==2) then
-			AI.Signal(SIGNALFILTER_SENDER, 1, "TO_PHASE_2",entity.id);
+			AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_PHASE_2",entity.id);
 			do return end
 		end
 		
@@ -87,7 +87,7 @@ AIBehaviour.SuitBossP1 = {
 	
 		local healthPrc=entity:GetHealthPercentage();
 		if(healthPrc < AIBehaviour.SuitBossAttack.ToPhase1b) then
-			AI.Signal(SIGNALFILTER_SENDER, 1, "TO_PHASE_1B",entity.id);		
+			AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_PHASE_1B",entity.id);		
 		end
 	end,
 

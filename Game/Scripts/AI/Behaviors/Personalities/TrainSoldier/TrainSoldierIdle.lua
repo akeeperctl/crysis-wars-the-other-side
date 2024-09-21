@@ -118,11 +118,7 @@ AIBehaviour.TrainSoldierIdle = {
 	OnBulletRain = function(self, entity, sender, data)
 		-- only react to hostile bullets.
 		if(not AI.Hostile(entity.id, sender.id)) then
-			if(sender==g_localActor) then 
-				entity:Readibility("friendly_fire",1,1, 0.6,1);
-				entity:InsertSubpipe(AIGOALPIPE_NOTDUPLICATE,"look_at_player_5sec");			
-				entity:InsertSubpipe(AIGOALPIPE_NOTDUPLICATE,"do_nothing");		-- make the timeout goal in previous subpipe restart if it was there already
-			end
+			entity:Readibility("friendly_fire",1,1, 0.6,1);
 		end
 	end,
 
@@ -224,7 +220,7 @@ AIBehaviour.TrainSoldierIdle = {
 		if(data.fValue<6) then 
 			-- react, readability
 			entity:Readibility("staring",1,0,1,2);
-			entity:SelectPipe(0,"look_at_player");			
+			-- entity:SelectPipe(0,"look_at_player");			
 		end
 	end,
 
@@ -243,7 +239,7 @@ AIBehaviour.TrainSoldierIdle = {
 	OnPlayerSticking = function(self,entity,sender,data)
 		if(DialogSystem.IsEntityInDialog(entity.id)) then return end
 		entity:Readibility("staring",1,0,1,2);
-		entity:SelectPipe(0,"look_at_player");			
+		-- entity:SelectPipe(0,"look_at_player");			
 	end,
 
 	----------------------------------

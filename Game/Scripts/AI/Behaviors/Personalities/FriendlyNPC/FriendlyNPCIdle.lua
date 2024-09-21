@@ -155,11 +155,7 @@ AIBehaviour.FriendlyNPCIdle = {
 		if (entity.AI.defending == true) then
 			-- only react to hostile bullets.
 			if(not AI.Hostile(entity.id, sender.id)) then
-				if(sender==g_localActor) then 
-					entity:Readibility("friendly_fire",1,1, 0.6,1);
-					entity:InsertSubpipe(AIGOALPIPE_NOTDUPLICATE,"look_at_player_5sec");			
-					entity:InsertSubpipe(AIGOALPIPE_NOTDUPLICATE,"do_nothing");		-- make the timeout goal in previous subpipe restart if it was there already
-				end
+				entity:Readibility("friendly_fire",1,1, 0.6,1);
 			end
 		end
 	end,
@@ -351,7 +347,6 @@ AIBehaviour.FriendlyNPCIdle = {
 		if(data.fValue<6) then 
 			-- react, readability
 			entity:Readibility("staring",1,0,1,2);
-			--entity:InsertSubpipe(AIGOALPIPE_NOTDUPLICATE,"look_at_player_5sec");			
 		end
 	end,
 
@@ -375,7 +370,6 @@ AIBehaviour.FriendlyNPCIdle = {
 --		AI.LogEvent("Player sticking to "..entity:GetName());
 			-- react, readabIlity
 		entity:Readibility("staring",1,0,1,2);
---		entity:SelectPipe(0,"look_at_player");			
 	end,
 
 	----------------------------------

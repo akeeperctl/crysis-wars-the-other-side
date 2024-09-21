@@ -1339,7 +1339,6 @@ AIBehaviour.DEFAULT = {
 		-- use dynamically created goal pipe to set shooting time
 		AI.CreateGoalPipe("action_shoot_at");
 		AI.PushGoal("action_shoot_at", "locate", 0, "refpoint");
---		AI.PushGoal("action_shoot_at", "+lookat",1,0,0,true);		
 		AI.PushGoal("action_shoot_at", "+firecmd",0,FIREMODE_FORCED,AILASTOPRES_USE);
 		AI.PushGoal("action_shoot_at", "+timeout",1,data.fValue);
 		AI.PushGoal("action_shoot_at", "firecmd",0,0);

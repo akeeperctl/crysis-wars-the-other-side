@@ -1538,7 +1538,7 @@ function PipeManager:OnInitCover2()
 		AI.PushGoal("animation",1,AIANIM_SIGNAL,"signalFollow");
 --		AI.PushGoal("ignoreall",0,0);
 		AI.PushGoal("signal",1,1,"ENEMYSEEN_FIRST_CONTACT",SIGNALFILTER_GROUPONLY_EXCEPT);
-		AI.PushGoal("signal",1,1,"TO_WATCH_TOWER_ALERTED",0);
+		AI.PushGoal("signal",1,1,"GO_TO_WATCH_TOWER_ALERTED",0);
 	AI.EndGoalPipe();
 
 	---------------------------------------------
@@ -1549,7 +1549,7 @@ function PipeManager:OnInitCover2()
 		AI.PushGoal("animation",1,AIANIM_SIGNAL,"signalFollow");
 --		AI.PushGoal("ignoreall",0,0);
 		AI.PushGoal("signal",1,1,"ENEMYSEEN_DURING_COMBAT",SIGNALFILTER_GROUPONLY_EXCEPT);
-		AI.PushGoal("signal",1,1,"TO_WATCH_TOWER_COMBAT",0);
+		AI.PushGoal("signal",1,1,"GO_TO_WATCH_TOWER_COMBAT",0);
 	AI.EndGoalPipe();
 
 	---------------------------------------------

@@ -91,7 +91,7 @@ AIBehaviour.WatchTowerGuardAlerted = {
 			entity:SelectPipe(0,"wtg_signal_target_found_combat");
 		else
 			AI.Signal(SIGNALFILTER_GROUPONLY_EXCEPT,1,"ENEMYSEEN_DURING_COMBAT",entity.id);
-			AI.Signal(SIGNALFILTER_SENDER, 1, "TO_WATCH_TOWER_COMBAT",entity.id);
+			AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_WATCH_TOWER_COMBAT",entity.id);
 		end
 	end,
 
@@ -107,7 +107,7 @@ AIBehaviour.WatchTowerGuardAlerted = {
 			return;
 		end
 		--~TheOtherSide
-		AI.Signal(SIGNALFILTER_SENDER, 1, "TO_WATCH_TOWER_IDLE",entity.id);
+		AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_WATCH_TOWER_IDLE",entity.id);
 	end,
 
 	---------------------------------------------

@@ -60,11 +60,7 @@ AIBehaviour.TrainSoldierAttack = {
 	OnBulletRain = function(self, entity, sender, data)
 		-- only react to hostile bullets.
 		if(not AI.Hostile(entity.id, sender.id)) then
-			if(sender==g_localActor) then 
-				entity:Readibility("friendly_fire",1,1, 0.6,1);
-				entity:InsertSubpipe(AIGOALPIPE_NOTDUPLICATE,"look_at_player_5sec");			
-				entity:InsertSubpipe(AIGOALPIPE_NOTDUPLICATE,"do_nothing");		-- make the timeout goal in previous subpipe restart if it was there already
-			end
+			entity:Readibility("friendly_fire",1,1, 0.6,1);
 		else
 			entity:Readibility("taking_fire",1,2, 0.3,0.5);
 			local dt = _time - entity.AI.bulletReactionTime;

@@ -100,7 +100,7 @@ AIBehaviour.WatchTowerGuardIdle = {
 			return;
 		end
 		--~TheOtherSide
-		AI.Signal(SIGNALFILTER_SENDER, 1, "TO_WATCH_TOWER_ALERTED",entity.id);
+		AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_WATCH_TOWER_ALERTED",entity.id);
 	end,
 
 	--------------------------------------------------
@@ -127,7 +127,7 @@ AIBehaviour.WatchTowerGuardIdle = {
 			entity:SelectPipe(0,"wtg_signal_target_found");
 		else
 			AI.Signal(SIGNALFILTER_GROUPONLY_EXCEPT,1,"ENEMYSEEN_FIRST_CONTACT",entity.id);
-			AI.Signal(SIGNALFILTER_SENDER, 1, "TO_WATCH_TOWER_ALERTED",entity.id);
+			AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_WATCH_TOWER_ALERTED",entity.id);
 		end
 		
 	end,
@@ -141,7 +141,7 @@ AIBehaviour.WatchTowerGuardIdle = {
 			return;
 		end
 		--~TheOtherSide
-		AI.Signal(SIGNALFILTER_SENDER, 1, "TO_WATCH_TOWER_ALERTED",entity.id);
+		AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_WATCH_TOWER_ALERTED",entity.id);
 	end,
 	
 	---------------------------------------------
@@ -153,7 +153,7 @@ AIBehaviour.WatchTowerGuardIdle = {
 			return;
 		end
 		--~TheOtherSide
-		AI.Signal(SIGNALFILTER_SENDER, 1, "TO_WATCH_TOWER_ALERTED",entity.id);
+		AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_WATCH_TOWER_ALERTED",entity.id);
 	end,
 
 	---------------------------------------------
@@ -166,7 +166,7 @@ AIBehaviour.WatchTowerGuardIdle = {
 			return;
 		end
 		--~TheOtherSide
-		AI.Signal(SIGNALFILTER_SENDER, 1, "TO_WATCH_TOWER_ALERTED",entity.id);
+		AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_WATCH_TOWER_ALERTED",entity.id);
 	end,
 
 	---------------------------------------------
@@ -285,7 +285,7 @@ AIBehaviour.WatchTowerGuardIdle = {
 			return;
 		end
 		--~TheOtherSide
-		AI.Signal(SIGNALFILTER_SENDER, 1, "TO_WATCH_TOWER_ALERTED",entity.id);
+		AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_WATCH_TOWER_ALERTED",entity.id);
 
 --		if(AI_Utils:IsTargetOutsideStandbyRange(entity) == 1) then
 --			entity.AI.hurryInStandby = 1;
@@ -303,7 +303,7 @@ AIBehaviour.WatchTowerGuardIdle = {
 		end
 		--~TheOtherSide
 		entity.AI.targetFound = 1;
-		AI.Signal(SIGNALFILTER_SENDER, 1, "TO_WATCH_TOWER_ALERTED",entity.id);
+		AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_WATCH_TOWER_ALERTED",entity.id);
 
 --		AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_SEEK",entity.id);
 	end,
@@ -370,7 +370,7 @@ AIBehaviour.WatchTowerGuardIdle = {
 		end
 		--~TheOtherSide
 		-- Wake up from fall & play
-		AI.Signal(SIGNALFILTER_SENDER, 1, "TO_WATCH_TOWER_ALERTED",entity.id);
+		AI.Signal(SIGNALFILTER_SENDER, 1, "GO_TO_WATCH_TOWER_ALERTED",entity.id);
 	end,
 
 }

@@ -59,7 +59,7 @@ AIBehaviour.WatchTowerGuardCombat = {
 		if(not anchorName) then
 			AI.LogComment("no anchorName");
 			if(notAlerted) then
-				AI.Signal(SIGNALFILTER_SENDER,1,"TO_WATCH_TOWER_ALERT",entity.id);
+				AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_WATCH_TOWER_ALERT",entity.id);
 			else
 				entity:SelectPipe(0,"sn_close_combat");
 			end
@@ -165,7 +165,7 @@ AIBehaviour.WatchTowerGuardCombat = {
 			return;
 		end
 		--~TheOtherSide
-		AI.Signal(SIGNALFILTER_SENDER,1,"TO_WATCH_TOWER_ALERT",entity.id);
+		AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_WATCH_TOWER_ALERT",entity.id);
 	end,
 
 	---------------------------------------------

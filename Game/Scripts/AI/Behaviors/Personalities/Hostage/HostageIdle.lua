@@ -261,7 +261,7 @@ AIBehaviour.HostageIdle = {
 		if(data.fValue<6) then 
 			-- react, readability
 			entity:Readibility("staring",1,0,1,2);
-			entity:SelectPipe(0,"look_at_player");			
+			-- entity:SelectPipe(0,"look_at_player");			
 		end
 	end,
 
@@ -283,7 +283,7 @@ AIBehaviour.HostageIdle = {
 		if(DialogSystem.IsEntityInDialog(entity.id)) then return end
 			-- react, readability
 		entity:Readibility("staring",1,0,1,2);
-		entity:SelectPipe(0,"look_at_player");			
+		-- entity:SelectPipe(0,"look_at_player");			
 	end,
 
 	----------------------------------

@@ -75,7 +75,7 @@ AIBehaviour.SuitSniperIdle = {
 --		end
 	
 --		if (entity.AI.protect == 1) then
---			AI.Signal(SIGNALFILTER_SENDER,1,"TO_PROTECT",entity.id);
+--			AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_PROTECT",entity.id);
 --		else
 --			AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_ATTACK",entity.id);
 --		end
@@ -280,7 +280,7 @@ AIBehaviour.SuitSniperIdle = {
 --		entity:GettingAlerted();
 --		if(AI.GetTargetType(entity.id) ~= AITARGET_ENEMY) then
 --			if (entity.AI.protect == 1) then
---				AI.Signal(SIGNALFILTER_SENDER,1,"TO_PROTECT",entity.id);
+--				AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_PROTECT",entity.id);
 --			else
 --				AI.Signal(SIGNALFILTER_SENDER,1,"GO_TO_ATTACK",entity.id);
 --			end
