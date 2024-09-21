@@ -1037,6 +1037,13 @@ GO = {
 
 TOS_AI = {
 
+    ---Возвращает название текущего поведения сущности
+    ---@param entity table
+    ---@return string
+    GetCurrentBehaviourName = function (entity)
+        return entity.Behaviour.name
+    end,
+
     ---ИИ-пользователь запускает FG действие
     ---@param actionId string название действия
     ---@param userId userdata entity.id пользователя
