@@ -37,7 +37,6 @@ AICharacter.Demo1 = {
 		OnGrenadeSeen                    = "",
 		OnInterestingSoundHeard          = "",
 		OnThreateningSoundHeard          = "",
-		entered_vehicle                  = "",
 		exited_vehicle                   = "",
 		exited_vehicle_investigate       = "",
 		OnSomethingSeen                  = "",
