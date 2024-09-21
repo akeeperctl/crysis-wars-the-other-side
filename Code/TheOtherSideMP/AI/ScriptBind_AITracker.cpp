@@ -45,7 +45,7 @@ int CScriptBind_AITracker::ExecuteAIAction(IFunctionHandler* pH, ScriptHandle us
 	auto pUser = TOS_GET_ENTITY(userId);
 	auto pUserAI = pUser ? pUser->GetAI() : nullptr;
 
-	int usedGoalPipeId = TOS_AI::ExecuteAIAction(pUserAI, pObject, actionName, maxAlertness, actionGoalPipeId, EAAEFlag(combatFlag), desiredGoalName, "", luaCallback);
+	int usedGoalPipeId = TOS_AI::deprecated::ExecuteAIAction_deprecated(pUserAI, pObject, actionName, maxAlertness, actionGoalPipeId, EAAEFlag(combatFlag), desiredGoalName, "", luaCallback);
 
 	return pH->EndFunction(usedGoalPipeId);
 }

@@ -129,7 +129,7 @@ void СTOSAIModule::Update(const float frametime)
 				const auto actionInfo = it->first.actionInfo;
 				const auto pObject = TOS_GET_ENTITY(actionInfo.objectId);
 
-				TOS_AI::ExecuteAIAction(pEntity->GetAI(), pObject, actionInfo.name, actionInfo.maxAlertness, -1, actionInfo.flag, actionInfo.desiredGoalPipe, "Implement void fix");
+				TOS_AI::deprecated::ExecuteAIAction_deprecated(pEntity->GetAI(), pObject, actionInfo.name, actionInfo.maxAlertness, -1, actionInfo.flag, actionInfo.desiredGoalPipe, "Implement void fix");
 
 				m_voidHolders.erase(it->first);
 			}
@@ -183,7 +183,7 @@ void СTOSAIModule::Update(const float frametime)
 		const auto pVehicle = TOS_Vehicle::GetVehicle(pEntity);
 		if (pVehicle)
 			if (!pVehicle->GetDriver())
-				TOS_AI::AbortAIAction(pAI, -1, "driver out from vehicle");
+				TOS_AI::deprecated::AbortAIAction_deprecated(pAI, -1, "driver out from vehicle");
 
 		//pVehicle->GetStatus().vel
 
@@ -250,7 +250,7 @@ void СTOSAIModule::Update(const float frametime)
 				if (GetDebugLog() > 0)
 					CryLog("%s[%s] Void action detected! Fixing void action", TOS_COLOR_RED, pEntity->GetName());
 
-				TOS_AI::AbortAIAction(pAI, info.goalPipeId, false, "Void action fix");
+				TOS_AI::deprecated::AbortAIAction_deprecated(pAI, info.goalPipeId, false, "Void action fix");
 			}
 	}
 }
@@ -324,11 +324,11 @@ void СTOSAIModule::StopTracking(IAIObject* pAI)
 		const auto actionInfo = iter->second;
 
 		if (actionInfo.flag == eAAEF_IgnoreCombatDuringAction)
-			if (!TOS_AI::IsCombatEnable(pAI))
+			if (!TOS_AI::deprecated::IsCombatEnable_deprecated(pAI))
 			{
 				const char* solution = "CAIActionTracker::StopTracking: enable combat because action used DisableCombatDuringAction";
 
-				TOS_AI::EnableCombat(pAI, true, false, solution);
+				TOS_AI::deprecated::EnableCombat_deprecated(pAI, true, false, solution);
 			}
 
 		string lua = actionInfo.luaCallbackFuncName;
@@ -530,14 +530,14 @@ void СTOSAIModule::OnActionPaused(IAIObject* pAIObject) const
 		return;
 
 	//When the action is paused we must cancel current AIAction on entity's AI
-	TOS_AI::AbortPausedAIAction(pAIObject, -1, "CAIActionTracker:: OnActionPaused event has been called");
+	TOS_AI::deprecated::AbortPausedAIAction_deprecated(pAIObject, -1, "CAIActionTracker:: OnActionPaused event has been called");
 
 	//for (const auto pListener : m_listeners) { pListener->OnActionPaused(pAIObject); }
 }
 
 void СTOSAIModule::OnActionUnpaused(IAIObject* pAIObject) const
 {
-	TOS_AI::ContinuePausedAIAction(pAIObject, "CAIActionTracker:: OnActionUnpaused event has been called");
+	TOS_AI::deprecated::ContinuePausedAIAction_deprecated(pAIObject, "CAIActionTracker:: OnActionUnpaused event has been called");
 
 	//for (const auto pListener : m_listeners) { pListener->OnActionUnpaused(pAIObject); }
 }
