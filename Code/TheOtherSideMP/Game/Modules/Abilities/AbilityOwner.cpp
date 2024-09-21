@@ -1,3 +1,8 @@
+/*************************************************************************
+AlienKeeper Source File.
+Copyright (C), AlienKeeper, 2024.
+**************************************************************************/
+
 #include "StdAfx.h"
 
 #include "IEntityProxy.h"
@@ -761,8 +766,8 @@ void CAbilityOwner::ToggleAbility(int index, EntityId targetId)
 
                             if (isActor)
                             {
-                                if (TOS_AI::IsCombatEnable(pCrossActor))
-                                    TOS_AI::EnableCombat(pCrossActor, false, false, "Grabbed by ability");
+                                if (TOS_AI::IsCombatEnable_deprecated(pCrossActor))
+                                    TOS_AI::EnableCombat_deprecated(pCrossActor, false, false, "Grabbed by ability");
 
 
                                 auto pActor = dynamic_cast<CActor*>(pCrossActor);
@@ -796,8 +801,8 @@ void CAbilityOwner::ToggleAbility(int index, EntityId targetId)
                         {
                             auto pActor = g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(id);
 
-                            if (!TOS_AI::IsCombatEnable(pActor))
-                                TOS_AI::EnableCombat(pActor, true, false, "UnGrabbed by ability");
+                            if (!TOS_AI::IsCombatEnable_deprecated(pActor))
+                                TOS_AI::EnableCombat_deprecated(pActor, true, false, "UnGrabbed by ability");
                         }
                     }
                 }

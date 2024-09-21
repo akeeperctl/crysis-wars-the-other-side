@@ -1,3 +1,8 @@
+/*************************************************************************
+AlienKeeper Source File.
+Copyright (C), AlienKeeper, 2024.
+**************************************************************************/
+
 #pragma once
 
 #define CHECK_CONSOLE_VAR_POINTER(varName, returnStatement)\

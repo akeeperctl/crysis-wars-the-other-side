@@ -1,3 +1,8 @@
+/*************************************************************************
+Crysis Co-op Source File.
+Copyright (C), Crysis Co-op
+**************************************************************************/
+
 #include <StdAfx.h>
 #include "AnimationGraphState.h"
 #include "../TOSActor.h"

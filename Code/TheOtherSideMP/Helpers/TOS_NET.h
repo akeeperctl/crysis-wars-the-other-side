@@ -1,3 +1,8 @@
+/*************************************************************************
+AlienKeeper Source File.
+Copyright (C), AlienKeeper, 2024.
+**************************************************************************/
+
 // ReSharper disable CppInconsistentNaming
 #pragma once
 

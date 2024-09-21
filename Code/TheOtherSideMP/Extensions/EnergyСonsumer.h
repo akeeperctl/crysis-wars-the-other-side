@@ -1,3 +1,8 @@
+/*************************************************************************
+AlienKeeper Source File.
+Copyright (C), AlienKeeper, 2024.
+**************************************************************************/
+
 #pragma once
 
 #define TOS_CHECK_CONSUMER_EXISTING(pActor)\

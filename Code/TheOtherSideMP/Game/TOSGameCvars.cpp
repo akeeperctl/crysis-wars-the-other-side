@@ -1,3 +1,8 @@
+/*************************************************************************
+AlienKeeper Source File.
+Copyright (C), AlienKeeper, 2024.
+**************************************************************************/
+
 // ReSharper disable CppParameterMayBeConstPtrOrRef
 // ReSharper disable CppClangTidyClangDiagnosticExtraSemiStmt
 #include "StdAfx.h"

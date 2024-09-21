@@ -1,3 +1,11 @@
+/*************************************************************************
+Crysis Co-op Source File.
+Copyright (C), Crysis Co-op
+**************************************************************************/
+
+// Created by Crysis Co-op Developers
+// Adapted for TOS by Akeeper
+
 #include "StdAfx.h"
 #include "PlayerMovementController.h"
 #include "IVehicleSystem.h"
@@ -6,9 +14,6 @@
 #include <TheOtherSideMP\Utilities\DedicatedServerHackScope.h>
 #include <Item.h>
 #include "TOSGrunt.h"
-
-// Created by Crysis Co-op Developers
-// Adapted for TOS by Akeeper
 
 CTOSGrunt::CTOSGrunt() :
 	m_nStance(STANCE_RELAXED),

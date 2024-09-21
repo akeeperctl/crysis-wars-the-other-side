@@ -1,3 +1,8 @@
+/*************************************************************************
+AlienKeeper Source File.
+Copyright (C), AlienKeeper, 2024.
+**************************************************************************/
+
 #include "StdAfx.h"
 #include "IEntity.h"
 #include "IEntitySystem.h"

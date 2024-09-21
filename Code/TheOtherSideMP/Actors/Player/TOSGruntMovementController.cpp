@@ -1,3 +1,11 @@
+/*************************************************************************
+Crysis Co-op Source File.
+Copyright (C), Crysis Co-op
+**************************************************************************/
+
+// Created by Crysis Co-op Developers
+// Adapted for TOS by Akeeper
+
 #include <StdAfx.h>
 #include "TOSGruntMovementController.h"
 #include "TOSGrunt.h"

@@ -1,3 +1,8 @@
+/*************************************************************************
+AlienKeeper Source File.
+Copyright (C), AlienKeeper, 2024.
+**************************************************************************/
+
 #include "StdAfx.h"
 #include "../Control/ControlSystem.h"
 #include "AbilitiesSystem.h"
