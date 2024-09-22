@@ -314,7 +314,7 @@ void CAbilityOwner::GetMemoryStatistics(ICrySizer* s)
 
 void CAbilityOwner::ToggleAbility(int index, EntityId targetId)
 {
-    auto pOwnerActor = dynamic_cast<CActor*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(m_ownerId));
+    auto pOwnerActor = static_cast<CActor*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(m_ownerId));
     if (!pOwnerActor)
         return;
 
@@ -349,7 +349,7 @@ void CAbilityOwner::ToggleAbility(int index, EntityId targetId)
 
     if (className == "Trooper")
     {
-        auto* pTrooper = dynamic_cast<CTrooper*>(pOwnerActor);
+        auto* pTrooper = static_cast<CTrooper*>(pOwnerActor);
 
         if (abilityName == ABILITY_TROOPER_SHIELD)
         {
@@ -509,7 +509,7 @@ void CAbilityOwner::ToggleAbility(int index, EntityId targetId)
     }
     else if (className == "Hunter")
     {
-        auto pHunter = dynamic_cast<CHunter*>(pOwnerActor);
+        auto pHunter = static_cast<CHunter*>(pOwnerActor);
         if (abilityName == ABILITY_HUNTER_GRAB)
         {
             auto pCrossEntity = pTargetEntity ? pTargetEntity : g_pControlSystem->GetLocalControlClient()->GetLastCrosshairEntity();
@@ -624,7 +624,7 @@ void CAbilityOwner::ToggleAbility(int index, EntityId targetId)
                         pHeadShield->HideAttachment(1);
                 }
 
-                auto pSoundProxy = dynamic_cast<IEntitySoundProxy*>(pClientActor->GetEntity()->GetProxy(
+                auto pSoundProxy = static_cast<IEntitySoundProxy*>(pClientActor->GetEntity()->GetProxy(
                     ENTITY_PROXY_SOUND));
                 if (pSoundProxy)
                 {
@@ -647,7 +647,7 @@ void CAbilityOwner::ToggleAbility(int index, EntityId targetId)
     }
     else if (className == "Scout")
     {
-        auto pScout = dynamic_cast<CScout*>(pOwnerActor);
+        auto pScout = static_cast<CScout*>(pOwnerActor);
         if (abilityName == ABILITY_SCOUT_SPOTLIGHT)
         {
             auto pSearchBeam = gEnv->pEntitySystem->GetEntity(pScout->m_searchbeam.itemId);
@@ -770,7 +770,7 @@ void CAbilityOwner::ToggleAbility(int index, EntityId targetId)
                                     TOS_AI::EnableCombat_deprecated(pCrossActor, false, false, "Grabbed by ability");
 
 
-                                auto pActor = dynamic_cast<CActor*>(pCrossActor);
+                                auto pActor = static_cast<CActor*>(pCrossActor);
                                 const char* grabbedClsName = pActor->GetEntity()->GetClass()->GetName();
 
                                 if (pActor->IsAlien())

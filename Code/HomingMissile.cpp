@@ -106,7 +106,7 @@ void CHomingMissile::UpdateControlledMissile(float frameTime)
 
 	CActor* pClientActor = nullptr;
 	if (gEnv->bClient)
-		pClientActor = dynamic_cast<CActor*>(g_pGame->GetIGameFramework()->GetClientActor());
+		pClientActor = static_cast<CActor*>(g_pGame->GetIGameFramework()->GetClientActor());
 
 	bool isOwner = ((!m_ownerId && isServer) || (isClient && pClientActor && (pClientActor->GetEntityId() == m_ownerId) && pClientActor->IsPlayer()));
 

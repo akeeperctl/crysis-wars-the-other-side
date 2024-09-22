@@ -164,7 +164,7 @@ public:
 		if (!m_pSlaveEntity)
 			return nullptr;
 
-		const auto pActor = dynamic_cast<CTOSActor*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(m_pSlaveEntity->GetId()));
+		const auto pActor = static_cast<CTOSActor*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(m_pSlaveEntity->GetId()));
 		assert(pActor);
 
 		return pActor;

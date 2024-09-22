@@ -387,8 +387,8 @@ void CHUDRadar::Update(float fDeltaTime)
 		return; //we require the flash radar now
 
 	//TheOtherSide
-	auto pActor = dynamic_cast<CActor*>(gEnv->pGame->GetIGameFramework()->GetClientActor());
-	//auto pActor = dynamic_cast<CTOSActor*>(g_pTOSGame->GetActualClientActor());
+	auto pActor = static_cast<CActor*>(gEnv->pGame->GetIGameFramework()->GetClientActor());
+	//auto pActor = static_cast<CTOSActor*>(g_pTOSGame->GetActualClientActor());
 	if (!pActor)
 		return;
 
@@ -424,9 +424,9 @@ void CHUDRadar::Update(float fDeltaTime)
 	float lowerBoundX = m_fX - fRadarSizeOverTwo; //used for flash radar position computation
 
 	//TheOtherSide
-	//auto pPlayer = dynamic_cast<CTOSPlayer*>(pActor);
-	//auto pPlayer = dynamic_cast<CTOSPlayer*>(g_pGame->GetIGameFramework()->GetClientActor());
-	//auto pPlayer = dynamic_cast<CTOSActor*>(g_pGame->GetIGameFramework()->GetClientActor());
+	//auto pPlayer = static_cast<CTOSPlayer*>(pActor);
+	//auto pPlayer = static_cast<CTOSPlayer*>(g_pGame->GetIGameFramework()->GetClientActor());
+	//auto pPlayer = static_cast<CTOSActor*>(g_pGame->GetIGameFramework()->GetClientActor());
 	//Matrix34 playerViewMtxInverted = pPlayer->GetViewMatrix().GetInverted();
 
 	// Главное изменение здесь
@@ -1049,7 +1049,7 @@ void CHUDRadar::UpdateRadarEntities(CActor* pActor, float& fRadius, Matrix34& pl
 						// if cloak enabled then disable mp threat
 
 						bool enableMPThreat = true;
-						auto pOtherPlayer = dynamic_cast<CTOSPlayer*>(tempActor);
+						auto pOtherPlayer = static_cast<CTOSPlayer*>(tempActor);
 
 						if (pOtherPlayer)
 						{

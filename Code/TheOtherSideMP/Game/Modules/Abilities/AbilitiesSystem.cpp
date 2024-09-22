@@ -45,7 +45,7 @@ void CAbilitiesSystem::Update(const float frameTime)
     
     for (auto& abilityOwner : m_abilityOwners)
     {
-        if (auto* pActor = dynamic_cast<CActor*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(
+        if (auto* pActor = static_cast<CActor*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(
             abilityOwner.m_ownerId)))
         {
             const string actorClass = pActor->GetEntity()->GetClass()->GetName();
@@ -69,7 +69,7 @@ void CAbilitiesSystem::Update(const float frameTime)
 
                 if (actorClass == "Trooper")
                 {
-                    const auto pTrooper = dynamic_cast<CTrooper*>(pActor);
+                    const auto pTrooper = static_cast<CTrooper*>(pActor);
 
                     if (ability.name == ABILITY_TROOPER_RAGE)
                     {
@@ -270,7 +270,7 @@ void CAbilitiesSystem::Update(const float frameTime)
                 }
                 else if (actorClass == "Scout")
                 {
-                    const auto pScout = dynamic_cast<CScout*>(pActor);
+                    const auto pScout = static_cast<CScout*>(pActor);
 
                     if (ability.name == ABILITY_SCOUT_SPOTLIGHT)
                     {
@@ -397,7 +397,7 @@ void CAbilitiesSystem::Update(const float frameTime)
                 }
                 else if (actorClass == "Hunter")
                 {
-                    const auto pHunter = dynamic_cast<CHunter*>(pActor);
+                    const auto pHunter = static_cast<CHunter*>(pActor);
 
                     if (ability.name == ABILITY_HUNTER_GRAB)
                     {
@@ -494,7 +494,7 @@ void CAbilitiesSystem::Update(const float frameTime)
                 }
                 else if (actorClass == "Grunt" || actorClass == "Player")
                 {
-                    const auto pPlayer = dynamic_cast<CPlayer*>(pActor);
+                    const auto pPlayer = static_cast<CPlayer*>(pActor);
 
                     if (ability.name == ABILITY_HUMAN_VEHICLE_HEALING)
                     {
@@ -598,7 +598,7 @@ void CAbilitiesSystem::UpdateEffectsHUD()
     {
         auto pPlayer = pCC->GetControlledActor();
         if (!pPlayer)
-            pPlayer = dynamic_cast<CActor*>(g_pGame->GetIGameFramework()->GetClientActor());
+            pPlayer = static_cast<CActor*>(g_pGame->GetIGameFramework()->GetClientActor());
 
         if (pPlayer)
         {
@@ -978,7 +978,7 @@ void CAbilitiesSystem::OnExitVehicle(IActor* pActor)
 
 bool CAbilitiesSystem::OnInputEvent(const SInputEvent& event)
 {
-    auto* pDude = dynamic_cast<CPlayer*>(g_pGame->GetIGameFramework()->GetClientActor());
+    auto* pDude = static_cast<CPlayer*>(g_pGame->GetIGameFramework()->GetClientActor());
     if (!pDude)
         return false;
 
@@ -1044,7 +1044,7 @@ void CAbilitiesSystem::OnAddingAbility(const char* abilityName, const EntityId o
 
             if (ability == ABILITY_SCOUT_SPOTLIGHT)
             {
-                const auto pScout = dynamic_cast<CScout*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(ownerId));
+                const auto pScout = static_cast<CScout*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(ownerId));
                 if (!pScout->InitSearchBeam())
                     CryLogAlways("%s[C++][Error][Scout %s][Can't init search beam]", STR_RED,
                                  pScout->GetEntity()->GetName());

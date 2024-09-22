@@ -30,7 +30,7 @@ namespace
 		const CActor* pOwnerActor = pThis->GetOwnerActor();
 		if (pOwnerActor)
 		{
-			(*pOffHand) = dynamic_cast<COffHand*>(pOwnerActor->GetWeaponByClass(CItem::sOffHandClass));
+			(*pOffHand) = static_cast<COffHand*>(pOwnerActor->GetWeaponByClass(CItem::sOffHandClass));
 			if ((*pOffHand) && (*pOffHand)->IsSelected())
 				offHandSelected = true;
 		}
@@ -43,7 +43,7 @@ namespace
 			IItem* slave = pThis->GetDualWieldSlave();
 			if (slave && slave->GetIWeapon())
 			{
-				(*pSlave)   = dynamic_cast<CWeapon*>(slave);
+				(*pSlave)   = static_cast<CWeapon*>(slave);
 				isDualWield = true;
 			}
 		}
@@ -141,7 +141,7 @@ void CWeapon::ForcePendingActions()
 bool CWeapon::PreActionAttack(const bool startFire) const
 {
 	// Melee while pressing SHIFT for SP
-	auto* pPlayer = dynamic_cast<CPlayer*>(GetOwnerActor());
+	auto* pPlayer = static_cast<CPlayer*>(GetOwnerActor());
 	if (!pPlayer)
 		return false;
 
@@ -268,7 +268,7 @@ bool CWeapon::OnActionAttack(EntityId actorId, const ActionId& actionId, const i
 				IItem*   slave     = GetDualWieldSlave();
 
 				if (slave && slave->GetIWeapon())
-					dualWield = dynamic_cast<CWeapon*>(slave);
+					dualWield = static_cast<CWeapon*>(slave);
 
 				if (dualWield)
 				{
@@ -415,7 +415,7 @@ bool CWeapon::OnActionSpecial(EntityId actorId, const ActionId& actionId, const 
 		CActor* pOwnerActor = GetOwnerActor();
 		if (pOwnerActor && g_pGameCVars->dt_enable)
 		{
-			const auto* pPlayer = dynamic_cast<CPlayer*>(pOwnerActor);
+			const auto* pPlayer = static_cast<CPlayer*>(pOwnerActor);
 			pPlayer->GetNanoSuit()->Tap(eNA_Melee);
 		}
 

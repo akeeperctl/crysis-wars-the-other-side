@@ -108,7 +108,7 @@ void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEven
 		{
 			if (pGO)
 			{
-				m_pSynchonizer = dynamic_cast<CTOSMasterSynchronizer*>(pGO->AcquireExtension("TOSMasterSynchronizer"));
+				m_pSynchonizer = static_cast<CTOSMasterSynchronizer*>(pGO->AcquireExtension("TOSMasterSynchronizer"));
 				assert(m_pSynchonizer);
 			}
 
@@ -128,7 +128,7 @@ void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEven
 			{
 				if (gEnv->bServer)
 				{
-					const auto pPlayer = dynamic_cast<CTOSPlayer*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(entId));
+					const auto pPlayer = static_cast<CTOSPlayer*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(entId));
 					assert(pPlayer);
 
 					const auto masterNeedSlave = pPlayer->GetSpectatorMode() == 0 &&
@@ -409,7 +409,7 @@ void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEven
 		{
 			if (pEntity && gEnv->bServer)
 			{
-				const auto pPlayer = dynamic_cast<CTOSPlayer*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(entId));
+				const auto pPlayer = static_cast<CTOSPlayer*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(entId));
 				if (!pPlayer)
 					break;
 
@@ -689,7 +689,7 @@ bool CTOSMasterModule::ReviveSlave(const IEntity* pSlaveEntity, const Vec3& revi
 	if (!pMasterActor)
 		return false;
 
-	auto pSlaveActor = dynamic_cast<CTOSActor*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pSlaveEntity->GetId()));
+	auto pSlaveActor = static_cast<CTOSActor*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pSlaveEntity->GetId()));
 	if (!pSlaveActor)
 		return false;
 
@@ -701,7 +701,7 @@ bool CTOSMasterModule::ReviveSlave(const IEntity* pSlaveEntity, const Vec3& revi
 			pSeat->Exit(false);
 
 	// stop using any mounted weapons before reviving
-	if (auto pItem = dynamic_cast<CItem*>(pSlaveActor->GetCurrentItem()))
+	if (auto pItem = static_cast<CItem*>(pSlaveActor->GetCurrentItem()))
 		if (pItem->IsMounted())
 			pItem->StopUse(pSlaveActor->GetEntityId());
 
@@ -752,7 +752,7 @@ void CTOSMasterModule::DebugDraw(const Vec2& screenPos, float fontSize, float in
 	auto it = m_masters.begin();
 	for (; it != m_masters.end(); it++)
 	{
-		const auto pMasterActor = dynamic_cast<CTOSPlayer*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(it->first));
+		const auto pMasterActor = static_cast<CTOSPlayer*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(it->first));
 		if (!pMasterActor)
 			continue;
 
@@ -803,7 +803,7 @@ void CTOSMasterModule::SaveMasterClientParams(IEntity* pMasterEntity)
 	if (pAI)
 		params.species = TOS_AI::GetSpecies(pAI, false);
 
-	const auto pPlayer = dynamic_cast<CTOSPlayer*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pMasterEntity->GetId()));
+	const auto pPlayer = static_cast<CTOSPlayer*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pMasterEntity->GetId()));
 	assert(pPlayer);
 
 	const auto pSuit = pPlayer->GetNanoSuit();
@@ -867,7 +867,7 @@ void CTOSMasterModule::ApplyMasterClientParams(IEntity* pMasterEntity)
 		if (!saved.dirty)
 			return;
 
-		const auto pPlayer = dynamic_cast<CTOSPlayer*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pMasterEntity->GetId()));
+		const auto pPlayer = static_cast<CTOSPlayer*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pMasterEntity->GetId()));
 		assert(pPlayer);
 
 		const auto pSuit = pPlayer->GetNanoSuit();

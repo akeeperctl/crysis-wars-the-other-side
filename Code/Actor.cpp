@@ -3846,7 +3846,7 @@ IMPLEMENT_RMI(CActor, ClKill)
 	//TheOtherSide
 	//Problem: Вылетает, когда умер ИИ актёр
 	//Fix: Динамический каст на принадлежность к классу
-	const auto pPlayer = dynamic_cast<CTOSPlayer*>(this);
+	const auto pPlayer = static_cast<CTOSPlayer*>(this);
 	if (pPlayer)
 	{
 		CNanoSuit* pSuit = pPlayer->GetNanoSuit();

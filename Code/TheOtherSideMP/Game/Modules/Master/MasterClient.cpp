@@ -569,7 +569,7 @@ CWeapon* CTOSMasterClient::GetCurrentWeapon(const IActor* pActor) const
 	if (!pItem)
 		return nullptr;
 
-	auto* pWeapon = dynamic_cast<CWeapon*>(pItem->GetIWeapon());
+	auto* pWeapon = static_cast<CWeapon*>(pItem->GetIWeapon());
 	if (!pWeapon)
 		return nullptr;
 
@@ -811,7 +811,7 @@ void CTOSMasterClient::UpdateView(SViewParams& viewParams) const
     }
 
     const EntityId controlledId = m_pSlaveEntity->GetId();
-	const auto pControlledActor = dynamic_cast<CTOSActor*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(controlledId));
+	const auto pControlledActor = static_cast<CTOSActor*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(controlledId));
 
     if (pControlledActor)
     {
@@ -824,7 +824,7 @@ void CTOSMasterClient::UpdateView(SViewParams& viewParams) const
 		IItem* pItem = pControlledActor->GetCurrentItem();
 		if (pItem)
 		{
-			const auto pWeapon = dynamic_cast<CWeapon*>(pItem->GetIWeapon());
+			const auto pWeapon = static_cast<CWeapon*>(pItem->GetIWeapon());
 			if (pWeapon)
 			{
 				// Получение сущностей для пропуска от оружия

@@ -199,7 +199,7 @@ void CMelee::StartFire()
 	if ((m_pWeapon->GetEntity()->GetClass() == CItem::sFistsClass) && m_pWeapon->IsBusy())
 		return;
 
-	CTOSActor* pOwner = dynamic_cast<CTOSActor*>(m_pWeapon->GetOwnerActor());
+	CTOSActor* pOwner = static_cast<CTOSActor*>(m_pWeapon->GetOwnerActor());
 
 	if(pOwner)
 	{
@@ -241,7 +241,7 @@ void CMelee::StartFire()
 
 	//TheOtherSide
 	//Проблема: вылет при ударе в рукопашкую
-	const auto pPlayer = dynamic_cast<CPlayer*>(pOwner);
+	const auto pPlayer = static_cast<CPlayer*>(pOwner);
 	if(pPlayer)
 	{
 		if(CNanoSuit *pSuit = pPlayer->GetNanoSuit())
@@ -300,7 +300,7 @@ void CMelee::NetStartFire()
 
 	//TheOtherSide
 
-	const auto pPlayer = dynamic_cast<CPlayer*>(m_pWeapon->GetOwnerActor());
+	const auto pPlayer = static_cast<CPlayer*>(m_pWeapon->GetOwnerActor());
 	if(pPlayer)
 	{
 		if(const CNanoSuit *pSuit = pPlayer->GetNanoSuit())
@@ -504,7 +504,7 @@ void CMelee::Hit(const Vec3 &pt, const Vec3 &dir, const Vec3 &normal, IPhysicalE
 	CActor *pActor = m_pWeapon->GetOwnerActor();
 	if (pActor && pActor->GetActorClass() == CPlayer::GetActorClassType())
 	{
-		auto pPlayer = dynamic_cast<CPlayer*>(pActor);
+		auto pPlayer = static_cast<CPlayer*>(pActor);
 		if (pPlayer && pPlayer->GetNanoSuit())
 		{
 			if (pPlayer->GetEntity() && pPlayer->GetEntity()->GetAI())
@@ -604,7 +604,7 @@ void CMelee::Impulse(const Vec3& pt, const Vec3& dir, const Vec3& normal, IPhysi
 		bool strengthMode = false; // Режим силы для нанокостюма
 
 		// Получаем актера, владеющего оружием, и проверяем, включен ли режим силы
-		auto pPlayer = dynamic_cast<CTOSPlayer*>(m_pWeapon->GetOwnerActor());
+		auto pPlayer = static_cast<CTOSPlayer*>(m_pWeapon->GetOwnerActor());
 		if (pPlayer)
 		{
 			if (CNanoSuit* pSuit = pPlayer->GetNanoSuit())
@@ -801,7 +801,7 @@ void CMelee::ApplyCameraShake(bool hit)
 {
 	// Add some camera shake for client even if not hitting
 	//TheOtherSide
-	const auto pOwner = dynamic_cast<CTOSActor*>(m_pWeapon->GetOwnerActor());
+	const auto pOwner = static_cast<CTOSActor*>(m_pWeapon->GetOwnerActor());
 	const auto cond = pOwner && 
 		(pOwner->IsClient() || pOwner->IsLocalSlave()) ;
 	//~TheOtherSide
@@ -838,7 +838,7 @@ float CMelee::GetOwnerStrength() const
 		return strength;
 
 	//TheOtherSide
-	const auto pPlayer = dynamic_cast<CTOSPlayer*>(pActor);
+	const auto pPlayer = static_cast<CTOSPlayer*>(pActor);
 	//~TheOtherSide
 
 	if (pPlayer)

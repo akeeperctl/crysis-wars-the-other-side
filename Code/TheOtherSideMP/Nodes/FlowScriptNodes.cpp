@@ -62,7 +62,7 @@ public:
 			{
 				//Get entity's scripttable
 
-				IEntityScriptProxy* pScriptProxy = dynamic_cast<IEntityScriptProxy*>(pActInfo->pEntity->GetProxy(ENTITY_PROXY_SCRIPT));
+				IEntityScriptProxy* pScriptProxy = static_cast<IEntityScriptProxy*>(pActInfo->pEntity->GetProxy(ENTITY_PROXY_SCRIPT));
 				IScriptTable* pTable = pScriptProxy->GetScriptTable();
 
 				if (pTable)

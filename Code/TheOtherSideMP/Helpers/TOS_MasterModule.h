@@ -15,7 +15,7 @@ namespace TOS_MasterModule
 	{
 		bool haveSlave = false;
 
-		const auto pTOSPlayer = dynamic_cast<CTOSPlayer*>(pPlayer);
+		const auto pTOSPlayer = static_cast<CTOSPlayer*>(pPlayer);
 		assert(pTOSPlayer);
 
 		if (pTOSPlayer)

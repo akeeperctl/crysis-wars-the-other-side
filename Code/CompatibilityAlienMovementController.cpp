@@ -70,7 +70,7 @@ bool CCompatibilityAlienMovementController::RequestMovement( CMovementRequest& r
 		// Задаем SetJump для реагирование на него в будущем
 		m_currentMovementRequest.SetJump();
 
-		//auto pTrooper = dynamic_cast<CTOSTrooper*>(m_pAlien);
+		//auto pTrooper = static_cast<CTOSTrooper*>(m_pAlien);
 		//if (pTrooper)
 		//{
 		//	pTrooper->ProcessJump(request);

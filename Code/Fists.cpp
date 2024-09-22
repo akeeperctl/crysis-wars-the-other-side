@@ -305,7 +305,7 @@ void CFists::RaiseWeapon(bool raise, bool faster /*= false*/)
 		CActor* owner = GetOwnerActor();
 		if (owner && owner->GetActorClass() == CPlayer::GetActorClassType())
 		{
-			auto pPlayer = dynamic_cast<CPlayer*>(owner);
+			auto pPlayer = static_cast<CPlayer*>(owner);
 			if (pPlayer && pPlayer->GetNanoSuit())
 				if (pPlayer->GetNanoSuit()->GetMode() == NANOMODE_SPEED)
 					speedOverride = 1.75f;
@@ -360,7 +360,7 @@ void CFists::RaiseWeapon(bool raise, bool faster /*= false*/)
 //---------------------------------------------------------------
 void CFists::CollisionFeeback(const Vec3& pos, const int eFAS) const
 {
-	const auto pPlayer = dynamic_cast<CPlayer*>(GetOwnerActor());
+	const auto pPlayer = static_cast<CPlayer*>(GetOwnerActor());
 	if (pPlayer)
 		switch (eFAS)
 		{

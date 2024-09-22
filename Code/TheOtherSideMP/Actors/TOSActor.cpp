@@ -29,6 +29,7 @@ Copyright (C), AlienKeeper, 2024.
 
 #include "TheOtherSideMP/Control/ControlSystem.h"
 #include "DummyTargetPointVerifier.h"
+#include <stdexcept>
 
 CDummyTargetPointVerifier CDummyTargetPointVerifier::Instance = CDummyTargetPointVerifier();
 
@@ -52,7 +53,7 @@ bool CTOSActor::Init(IGameObject* pGameObject)
 	if (!CActor::Init(pGameObject))
 		return false;
 
-	m_pEnergyConsumer = dynamic_cast<CTOSEnergyConsumer*>(GetGameObject()->AcquireExtension("TOSEnergyConsumer"));
+	m_pEnergyConsumer = static_cast<CTOSEnergyConsumer*>(GetGameObject()->AcquireExtension("TOSEnergyConsumer"));
 	assert(m_pEnergyConsumer);
 	m_pEnergyConsumer->Reset();
 
@@ -270,7 +271,7 @@ void CTOSActor::Update(SEntityUpdateContext& ctx, const int updateSlot)
 		const auto pDebugEntity = gEnv->pEntitySystem->FindEntityByName(CTOSEnergyConsumer::s_debugEntityName);
 		if (pDebugEntity)
 		{
-			const auto pDebugActor = dynamic_cast<CTOSActor*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pDebugEntity->GetId()));
+			const auto pDebugActor = static_cast<CTOSActor*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pDebugEntity->GetId()));
 			if (pDebugActor)
 			{
 				const float energy    = pDebugActor->m_pEnergyConsumer->GetEnergy();
@@ -328,7 +329,7 @@ void CTOSActor::Revive(const bool fromInit)
 		}
 		else if (gEnv->bServer)
 		{
-			const auto* pFists = dynamic_cast<CFists*>(GetItemByClass(CItem::sFistsClass));
+			const auto* pFists = static_cast<CFists*>(GetItemByClass(CItem::sFistsClass));
 			if (pFists)
 				g_pGame->GetIGameFramework()->GetIItemSystem()->SetActorItem(this, pFists->GetEntityId());
 
@@ -937,7 +938,7 @@ IMPLEMENT_RMI(CTOSActor, SvRequestHideMe)
 	// Описываем здесь всё, что будет выполняться на сервере
 
 	// 13.01.2024 Akeeper: Не уверен на счёт этих строк, но пусть они тут будут (519-521)
-	const auto* pFists = dynamic_cast<CFists*>(GetItemByClass(CItem::sFistsClass));
+	const auto* pFists = static_cast<CFists*>(GetItemByClass(CItem::sFistsClass));
 	if (pFists)
 		g_pGame->GetIGameFramework()->GetIItemSystem()->SetActorItem(this, pFists->GetEntityId());
 

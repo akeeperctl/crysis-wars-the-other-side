@@ -161,7 +161,7 @@ void STOSCvars::CmdDumpActorInfo(IConsoleCmdArgs* pArgs)
 
 	GET_ENTITY_FROM_FIRST_ARG;
 
-	auto pActor = dynamic_cast<CTOSActor*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pEntity->GetId()));
+	auto pActor = static_cast<CTOSActor*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pEntity->GetId()));
 	if (!pActor)
 	{
 		CryLogAlways("Failed: nullptr pActor");
@@ -340,7 +340,7 @@ void STOSCvars::CmdConsumerSetEnergy(IConsoleCmdArgs* pArgs)
 
 	GET_ENTITY_FROM_FIRST_ARG;
 
-	const auto pActor = dynamic_cast<CTOSActor*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pEntity->GetId()));
+	const auto pActor = static_cast<CTOSActor*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pEntity->GetId()));
 	if (!pActor)
 	{
 		CryLogAlways("Failed: actor not found");
@@ -360,7 +360,7 @@ void STOSCvars::CmdConsumerSetDrain(IConsoleCmdArgs* pArgs)
 	const string energyStr = pArgs->GetArg(2);
 	const int energy = atoi(energyStr.empty() ? 0 : energyStr);
 
-	const auto pActor = dynamic_cast<CTOSActor*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pEntity->GetId()));
+	const auto pActor = static_cast<CTOSActor*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pEntity->GetId()));
 	if (!pActor)
 	{
 		CryLogAlways("Failed: actor not found");

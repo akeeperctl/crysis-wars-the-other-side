@@ -221,7 +221,7 @@ void CTOSMasterModule::CmdDumpDudeItems(IConsoleCmdArgs* pArgs)
 {
 	ONLY_CLIENT_CMD;
 
-	const auto pPlayer = dynamic_cast<CTOSPlayer*>(g_pGame->GetIGameFramework()->GetClientActor());
+	const auto pPlayer = static_cast<CTOSPlayer*>(g_pGame->GetIGameFramework()->GetClientActor());
 	//assert(pPlayer);
 	if (!pPlayer)
 	{
@@ -421,7 +421,7 @@ void CTOSMasterModule::CVarSetDesiredSlaveCls(ICVar* pVar)
 			return;
 		}
 
-		const auto pSynch = dynamic_cast<CTOSMasterSynchronizer*>(g_pTOSGame->GetMasterModule()->GetSynchronizer());
+		const auto pSynch = static_cast<CTOSMasterSynchronizer*>(g_pTOSGame->GetMasterModule()->GetSynchronizer());
 		assert(pSynch);
 
 		if (!pSynch)

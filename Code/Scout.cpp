@@ -759,7 +759,7 @@ void CScout::AnimationEvent(ICharacterInstance *pCharacter, const AnimEventInsta
 	else if (strcmp(event.m_EventName, "ObjectThrown") == 0)
 		m_pGrabHandler->StartDrop();
 	else if (strcmp(event.m_EventName, "StartIK") == 0)
-		dynamic_cast<CAnimatedGrabHandler*>(m_pGrabHandler)->ActivateIK();
+		static_cast<CAnimatedGrabHandler*>(m_pGrabHandler)->ActivateIK();
 
 	//TheOtherSide
 	CTOSAlien::AnimationEvent(pCharacter, event);

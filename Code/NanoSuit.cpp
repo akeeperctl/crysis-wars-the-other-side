@@ -119,7 +119,7 @@ bool CNanoSuit::AssignNanoMaterialToEntity(const IEntity* pEntity, const SNanoMa
 	bool            isClient = false;
 	SEntitySlotInfo slotInfo;
 
-	const CActor* pActor = dynamic_cast<CActor*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pEntity->GetId()));
+	const CActor* pActor = static_cast<CActor*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pEntity->GetId()));
 	if (pActor != nullptr && pActor->IsClient())
 		isClient = true;
 
@@ -650,7 +650,7 @@ void CNanoSuit::Update(const float frameTime)
 	if (m_currentMode == NANOMODE_SPEED)
 		motionBlurAmt = 1.0f;
 
-	auto pRenderProxy = dynamic_cast<IEntityRenderProxy*>(m_pOwner->GetEntity()->GetProxy(ENTITY_PROXY_RENDER));
+	auto pRenderProxy = static_cast<IEntityRenderProxy*>(m_pOwner->GetEntity()->GetProxy(ENTITY_PROXY_RENDER));
 	if (pRenderProxy && stats.bSprinting)
 	{
 		float amt(pRenderProxy->GetMotionBlurAmount());
@@ -658,10 +658,10 @@ void CNanoSuit::Update(const float frameTime)
 		pRenderProxy->SetMotionBlurAmount(amt);
 	}
 
-	const CItem* currentItem = dynamic_cast<CItem*>(gEnv->pGame->GetIGameFramework()->GetIItemSystem()->GetItem(m_pOwner->GetInventory()->GetCurrentItem()));
+	const CItem* currentItem = static_cast<CItem*>(gEnv->pGame->GetIGameFramework()->GetIItemSystem()->GetItem(m_pOwner->GetInventory()->GetCurrentItem()));
 	if (currentItem)
 	{
-		pRenderProxy = dynamic_cast<IEntityRenderProxy*>(currentItem->GetEntity()->GetProxy(ENTITY_PROXY_RENDER));
+		pRenderProxy = static_cast<IEntityRenderProxy*>(currentItem->GetEntity()->GetProxy(ENTITY_PROXY_RENDER));
 		if (pRenderProxy)
 		{
 			float amt(pRenderProxy->GetMotionBlurAmount());
@@ -1015,7 +1015,7 @@ void CNanoSuit::SetCloak(const bool on, const bool force)
 			const ENanoCloakMode cloakMode = m_cloak.GetType();
 
 			// new cloak effect
-			auto* pRenderProxy = dynamic_cast<IEntityRenderProxy*>(m_pOwner->GetEntity()->GetProxy(ENTITY_PROXY_RENDER));
+			auto* pRenderProxy = static_cast<IEntityRenderProxy*>(m_pOwner->GetEntity()->GetProxy(ENTITY_PROXY_RENDER));
 			if (pRenderProxy)
 			{
 				uint8        mask  = pRenderProxy->GetMaterialLayersMask();
@@ -1024,9 +1024,9 @@ void CNanoSuit::SetCloak(const bool on, const bool force)
 				pRenderProxy->SetMaterialLayersMask(on ? mask | MTL_LAYER_CLOAK : mask & ~MTL_LAYER_CLOAK);
 				pRenderProxy->SetMaterialLayersBlend((blend & 0xffffff00) | ((mask & MTL_LAYER_DYNAMICFROZEN) ? 0xff : 0x00));
 			}
-			if (auto* pItem = dynamic_cast<CItem*>(m_pOwner->GetCurrentItem(true)))
+			if (auto* pItem = static_cast<CItem*>(m_pOwner->GetCurrentItem(true)))
 				pItem->CloakSync(!force);
-			if (auto* pOffHand = dynamic_cast<COffHand*>(m_pOwner->GetItemByClass(CItem::sOffHandClass)))
+			if (auto* pOffHand = static_cast<COffHand*>(m_pOwner->GetItemByClass(CItem::sOffHandClass)))
 				pOffHand->CloakSync(pOffHand->GetOffHandState() != eOHS_INIT_STATE);
 
 			// take care of the attachments on the back
@@ -1040,8 +1040,8 @@ void CNanoSuit::SetCloak(const bool on, const bool force)
 							if (IAttachmentObject* pAO         = pAttachment->GetIAttachmentObject())
 								if (pAO->GetAttachmentType() == IAttachmentObject::eAttachment_Entity)
 								{
-									auto* pEA = dynamic_cast<CEntityAttachment*>(pAO);
-									if (auto* pItem = dynamic_cast<CItem*>(gEnv->pGame->GetIGameFramework()->GetIItemSystem()->GetItem(pEA->GetEntityId())))
+									auto* pEA = static_cast<CEntityAttachment*>(pAO);
+									if (auto* pItem = static_cast<CItem*>(gEnv->pGame->GetIGameFramework()->GetIItemSystem()->GetItem(pEA->GetEntityId())))
 										pItem->CloakSync(!force);
 								}
 					}
@@ -1480,7 +1480,7 @@ void CNanoSuit::PlaySound(const ENanoSound sound, const float param, const bool 
 	//~TheOtherSide
 
 
-	auto* pSoundProxy = dynamic_cast<IEntitySoundProxy*>(m_pOwner->GetEntity()->CreateProxy(ENTITY_PROXY_SOUND));
+	auto* pSoundProxy = static_cast<IEntitySoundProxy*>(m_pOwner->GetEntity()->CreateProxy(ENTITY_PROXY_SOUND));
 	if (!pSoundProxy)
 		return;
 
@@ -1657,7 +1657,7 @@ bool CNanoSuit::Tap(const ENanoAction nanoAction)
 		return false;
 
 	// double taps don't work when using a mounted weapon
-	const CItem* pCurrentItem = dynamic_cast<CItem*>(m_pOwner->GetCurrentItem());
+	const CItem* pCurrentItem = static_cast<CItem*>(m_pOwner->GetCurrentItem());
 	if (nanoAction == eNA_Jump && pCurrentItem && pCurrentItem->IsMounted())
 		return false;
 

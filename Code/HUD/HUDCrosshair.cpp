@@ -136,7 +136,7 @@ void CHUDCrosshair::Update(const float fDeltaTime)
 				m_spread += pSlaveFireMode->GetSpread();
 			}
 
-		const auto pPlayer = dynamic_cast<CTOSPlayer*>(pClientActor);
+		const auto pPlayer = static_cast<CTOSPlayer*>(pClientActor);
 		if (pPlayer && pPlayer->GetNanoSuit() && pPlayer->GetNanoSuit()->GetMode() == NANOMODE_STRENGTH)
 			m_spread *= 0.5;
 
@@ -384,11 +384,11 @@ void CHUDCrosshair::UpdateCrosshair()
 				//TheOtherSide
 				// фикс вылета в одиночном режиме при попытке взять под контроль пришельца
 				//Two handed pickups need the red X as well
-				//const auto pPlayer = dynamic_cast<CTOSPlayer*>(pClientActor);
-				const auto pPlayer = dynamic_cast<CTOSPlayer*>(pClientActor);
+				//const auto pPlayer = static_cast<CTOSPlayer*>(pClientActor);
+				const auto pPlayer = static_cast<CTOSPlayer*>(pClientActor);
 				if (pPlayer)
 				{
-					if (const auto pOffHand = dynamic_cast<CWeapon*>(pPlayer->GetItemByClass(CItem::sOffHandClass)))
+					if (const auto pOffHand = static_cast<CWeapon*>(pPlayer->GetItemByClass(CItem::sOffHandClass)))
 						iNewFriendly = pOffHand->IsWeaponLowered();
 				}
 
@@ -433,7 +433,7 @@ void CHUDCrosshair::UpdateCrosshair()
 	if (m_animInterActiveIcons.GetVisible())
 	{
 		m_bHideUseIconTemp = false;
-		const auto pItem   = dynamic_cast<CItem*>(pClientActor->GetCurrentItem());
+		const auto pItem   = static_cast<CItem*>(pClientActor->GetCurrentItem());
 		if (pItem)
 		{
 			const IWeapon* pWeapon = pItem->GetIWeapon();
@@ -450,7 +450,7 @@ void CHUDCrosshair::UpdateCrosshair()
 			IItem*         pOffHandItem = g_pGame->GetIGameFramework()->GetIItemSystem()->GetItem(offHandId);
 			if (pOffHandItem)
 			{
-				const auto    pOffHand     = dynamic_cast<COffHand*>(pOffHandItem);
+				const auto    pOffHand     = static_cast<COffHand*>(pOffHandItem);
 				const uint32 offHandState = pOffHand->GetOffHandState();
 				if (offHandState == eOHS_HOLDING_OBJECT || offHandState == eOHS_THROWING_OBJECT || offHandState == eOHS_HOLDING_NPC || offHandState == eOHS_THROWING_NPC)
 					m_bHideUseIconTemp = true;
@@ -495,7 +495,7 @@ void CHUDCrosshair::SelectCrosshair(IItem* pItem)
 			}
 			else if (IWeapon* pWeapon = pItem->GetIWeapon()) //Laser attached
 			{
-				if (dynamic_cast<CWeapon*>(pWeapon)->IsLamAttached())
+				if (static_cast<CWeapon*>(pWeapon)->IsLamAttached())
 				{
 					SetCrosshair(0);
 					bSpecialCrosshairSet = true;

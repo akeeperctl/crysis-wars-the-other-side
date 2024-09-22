@@ -90,7 +90,7 @@ public:
 					pInventory->AddItem(itemId);
 				}
 
-				const auto pPlayer = dynamic_cast<CTOSActor*>(pActor);
+				const auto pPlayer = static_cast<CTOSActor*>(pActor);
 				pPlayer->SelectItem(m_currentDudeItemId, true);
 			}
 		}
@@ -153,7 +153,7 @@ public:
 			if (!pInputEntity)
 				return;
 
-			const auto pDudePlayer = dynamic_cast<CTOSPlayer*>(g_pGame->GetIGameFramework()->GetClientActor());
+			const auto pDudePlayer = static_cast<CTOSPlayer*>(g_pGame->GetIGameFramework()->GetClientActor());
 			if (!pDudePlayer)
 				return;
 

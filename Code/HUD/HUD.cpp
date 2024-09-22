@@ -207,7 +207,7 @@ void CHUD::TOSSetAmmoHealthHUD(IActor* pActor, const char* filePath)
 	const int health = (pActor->GetHealth() / pActor->GetMaxHealth()) * 100 + 1;
 	int		  energy = 0;
 
-	if (const auto pNewActor = dynamic_cast<CTOSActor*>(pActor))
+	if (const auto pNewActor = static_cast<CTOSActor*>(pActor))
 	{
 		if (pNewActor->IsZeus())
 			m_animPlayerStats.SetVisible(false);
@@ -252,10 +252,10 @@ void CHUD::TOSShowInventoryOverview(IActor* pActor, const char* curCategory, con
 
 	if (grenades)
 	{
-		const CTOSPlayer* pPlayer = dynamic_cast<CTOSPlayer*>(pActor);
+		const CTOSPlayer* pPlayer = static_cast<CTOSPlayer*>(pActor);
 		if (pPlayer)
 		{
-			COffHand* pOffHand = dynamic_cast<COffHand*>(pPlayer->GetWeaponByClass(CItem::sOffHandClass));
+			COffHand* pOffHand = static_cast<COffHand*>(pPlayer->GetWeaponByClass(CItem::sOffHandClass));
 			if (pOffHand)
 			{
 				std::vector<string> grenades;
@@ -5812,7 +5812,7 @@ void CHUD::UpdatePlayerAmmo()
 			// Если предмет существует
 			if (pItem)
 			{
-				auto* pWeapon = dynamic_cast<CWeapon*>(pItem->GetIWeapon());
+				auto* pWeapon = static_cast<CWeapon*>(pItem->GetIWeapon());
 				//if (!pWeapon) CryLogAlways("pWeapon указатель нулевой - оружие не найдено.");
 
 				// Если оружие существует

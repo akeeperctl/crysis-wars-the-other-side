@@ -349,7 +349,7 @@ IActor* CTOSGame::GetActualClientActor() const
 	if (!pMC)
 		return nullptr;
 
-	CTOSActor* pPlayer = dynamic_cast<CTOSActor*>(g_pGame->GetIGameFramework()->GetClientActor());
+	CTOSActor* pPlayer = static_cast<CTOSActor*>(g_pGame->GetIGameFramework()->GetClientActor());
 	CTOSActor* pSlave = pMC->GetSlaveActor();
 
 	if (pSlave != nullptr)

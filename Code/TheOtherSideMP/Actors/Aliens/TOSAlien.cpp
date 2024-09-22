@@ -78,7 +78,7 @@ bool CTOSAlien::NetSerialize(TSerialize ser, const EEntityAspects aspect, const 
 			// Скопировано из CCoopAlien::UpdateMovementState()
 			CMovementRequest request;
 
-			const auto pTrooper = dynamic_cast<CTOSTrooper*>(this);
+			const auto pTrooper = static_cast<CTOSTrooper*>(this);
 			if (pTrooper)
 			{
 				request.AddDeltaMovement(m_netBodyInfo.deltaMov);// ок
@@ -180,9 +180,9 @@ void CTOSAlien::PrePhysicsUpdate()
 	//if (!gEnv->bClient)
 	//	return;
 
-	const SMovementState currentState = dynamic_cast<CCompatibilityAlienMovementController*>(GetMovementController())->GetCurrentMovementState();
+	const SMovementState currentState = static_cast<CCompatibilityAlienMovementController*>(GetMovementController())->GetCurrentMovementState();
 
-	const auto pTrooper = dynamic_cast<CTOSTrooper*>(this);
+	const auto pTrooper = static_cast<CTOSTrooper*>(this);
 	if (pTrooper)
 	{
 		// Взято наглядно из CAlien::GetActorInfo()

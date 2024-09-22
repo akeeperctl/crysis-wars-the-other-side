@@ -813,7 +813,7 @@ void CAlien::Update(SEntityUpdateContext& ctx, const int updateSlot)
 
 			if (m_pTrailAttachment)
 			{
-				const auto pEffectAttachment = dynamic_cast<CEffectAttachment*>(m_pTrailAttachment->GetIAttachmentObject());
+				const auto pEffectAttachment = static_cast<CEffectAttachment*>(m_pTrailAttachment->GetIAttachmentObject());
 				if (pEffectAttachment)
 				{
 					const float goalspeed = max(0.f, m_stats.speed - m_params.trailEffectMinSpeed);
@@ -832,7 +832,7 @@ void CAlien::Update(SEntityUpdateContext& ctx, const int updateSlot)
 
 			if (m_pHealthTrailAttachment)
 			{
-				auto* pEffectAttachment = dynamic_cast<CEffectAttachment*>(m_pHealthTrailAttachment->GetIAttachmentObject());
+				auto* pEffectAttachment = static_cast<CEffectAttachment*>(m_pHealthTrailAttachment->GetIAttachmentObject());
 				if (pEffectAttachment)
 				{
 					const float goal = 1.0f - static_cast<float>(GetHealth()) / static_cast<float>(max(1, GetMaxHealth()));
@@ -861,7 +861,7 @@ void CAlien::Update(SEntityUpdateContext& ctx, const int updateSlot)
 					{
 						const float speedRel = min(1.f, dyn.w.len() / m_params.turnSoundMaxVel);
 
-						auto* pSoundProxy = dynamic_cast<IEntitySoundProxy*>(GetEntity()->CreateProxy(ENTITY_PROXY_SOUND));
+						auto* pSoundProxy = static_cast<IEntitySoundProxy*>(GetEntity()->CreateProxy(ENTITY_PROXY_SOUND));
 						pSoundProxy->PlaySound(m_pTurnSound);
 						pSoundProxy->SetStaticSound(m_pTurnSound->GetId(), true);
 						//CryLog("angSpeed %.2f (rel %.2f)", dyn.w.len(), speedRel);
@@ -1721,7 +1721,7 @@ void CAlien::Kill()
 
 	if (m_pTurnSound)
 	{
-		auto* pSoundProxy = dynamic_cast<IEntitySoundProxy*>(GetEntity()->CreateProxy(ENTITY_PROXY_SOUND));
+		auto* pSoundProxy = static_cast<IEntitySoundProxy*>(GetEntity()->CreateProxy(ENTITY_PROXY_SOUND));
 		pSoundProxy->SetStaticSound(m_pTurnSound->GetId(), false);
 		pSoundProxy->StopSound(m_pTurnSound->GetId(), ESoundStopMode_EventFade);
 		m_pTurnSound->Stop(ESoundStopMode_EventFade);

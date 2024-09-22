@@ -348,7 +348,7 @@ void CPlayerView::ViewFirstThirdSharedPre(SViewParams &viewParams)
 	// don't blend view when spectating
 	if(m_in.stats_spectatorMode >= CActor::eASM_FirstMPMode && m_in.stats_spectatorMode <= CActor::eASM_LastMPMode)
 	{
-		auto* pPlayer = dynamic_cast<CPlayer*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(m_in.entityId));
+		auto* pPlayer = static_cast<CPlayer*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(m_in.entityId));
 		if(pPlayer)
 			pPlayer->SupressViewBlending();
 	}
@@ -586,7 +586,7 @@ void CPlayerView::ViewFirstPerson(SViewParams &viewParams)
 		IItem *pItem = owner->GetCurrentItem();
 		if(pItem)
 		{
-			auto* pWeapon = dynamic_cast<CWeapon*>(pItem->GetIWeapon());
+			auto* pWeapon = static_cast<CWeapon*>(pItem->GetIWeapon());
 			if(pWeapon)
 			{
 				weaponZoomed = pWeapon->IsZoomed();
@@ -904,7 +904,7 @@ void CPlayerView::ViewSpectatorTarget(SViewParams &viewParams)
 	// if freelook allowed, get orientation and distance from player entity
 	if(g_pGameCVars->g_spectate_FixedOrientation == 0)
 	{
-		auto* pThisPlayer = dynamic_cast<CPlayer*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(m_in.entityId));
+		auto* pThisPlayer = static_cast<CPlayer*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(m_in.entityId));
 		if(!pThisPlayer)
 			return;
 		Matrix34 ownOrientation = pThisPlayer->GetEntity()->GetWorldTM();

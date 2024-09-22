@@ -433,7 +433,7 @@ namespace TOS_AI
 		}
 	}
 
-	inline bool IsPerceptionEnabled(const IAIObject* pAI)
+	inline bool IsPerceptionEnabled(IAIObject* pAI)
 	{
 		if (!pAI)
 			return false;
@@ -735,7 +735,7 @@ namespace TOS_AI
 			EnableCombat_deprecated(pAI, enable, toFirst, solution);
 		}
 
-		inline bool IsCombatEnable_deprecated(const IActor* pActor)
+		inline bool IsCombatEnable_deprecated(IActor* pActor)
 		{
 			if (!pActor)
 				return false;
@@ -747,7 +747,7 @@ namespace TOS_AI
 			return TOS_AI::IsPerceptionEnabled(pAI);
 		}
 
-		inline bool IsCombatEnable_deprecated(const IAIObject* pAI)
+		inline bool IsCombatEnable_deprecated(IAIObject* pAI)
 		{
 			if (!pAI)
 				return false;

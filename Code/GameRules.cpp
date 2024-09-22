@@ -448,7 +448,7 @@ void CGameRules::ProcessEvent(SEntityEvent& event)
 		m_clientStateScript = nullptr;
 		m_serverStateScript = nullptr;
 
-		auto* pScriptProxy = dynamic_cast<IEntityScriptProxy*>(GetEntity()->GetProxy(ENTITY_PROXY_SCRIPT));
+		auto* pScriptProxy = static_cast<IEntityScriptProxy*>(GetEntity()->GetProxy(ENTITY_PROXY_SCRIPT));
 		if (pScriptProxy)
 		{
 			const char* stateName = pScriptProxy->GetState();
@@ -486,19 +486,19 @@ void CGameRules::PostUpdate(float frameTime)
 //------------------------------------------------------------------------
 CTOSActor* CGameRules::GetActorByChannelId(const int channelId) const
 {
-	return dynamic_cast<CTOSActor*>(m_pGameFramework->GetIActorSystem()->GetActorByChannelId(channelId));
+	return static_cast<CTOSActor*>(m_pGameFramework->GetIActorSystem()->GetActorByChannelId(channelId));
 }
 
 //------------------------------------------------------------------------
 CTOSActor* CGameRules::GetActorByEntityId(const EntityId entityId) const
 {
-	return dynamic_cast<CTOSActor*>(m_pGameFramework->GetIActorSystem()->GetActor(entityId));
+	return static_cast<CTOSActor*>(m_pGameFramework->GetIActorSystem()->GetActor(entityId));
 }
 
 //------------------------------------------------------------------------
 int CGameRules::GetChannelId(const EntityId entityId) const
 {
-	const CTOSActor* pActor = dynamic_cast<CTOSActor*>(m_pGameFramework->GetIActorSystem()->GetActor(entityId));
+	const CTOSActor* pActor = static_cast<CTOSActor*>(m_pGameFramework->GetIActorSystem()->GetActor(entityId));
 	if (pActor)
 		return pActor->GetChannelId();
 
@@ -667,7 +667,7 @@ void CGameRules::OnClientDisconnect(const int channelId, EDisconnectionCause cau
 			pSeat->Reset();
 
 	if (pActor->GetActorClass() == CPlayer::GetActorClassType())
-		dynamic_cast<CPlayer*>(pActor)->RemoveAllExplosives(0.0f);
+		static_cast<CPlayer*>(pActor)->RemoveAllExplosives(0.0f);
 
 	SetTeam(0, pActor->GetEntityId());
 
@@ -899,7 +899,7 @@ CActor* CGameRules::SpawnPlayer(const int channelId, const char* name, const cha
 
 	CActor* pActor = GetActorByChannelId(channelId);
 	if (!pActor)
-		pActor = dynamic_cast<CActor*>(m_pActorSystem->CreateActor(channelId, VerifyName(name).c_str(), className, pos, Quat(angles), Vec3(1, 1, 1)));
+		pActor = static_cast<CActor*>(m_pActorSystem->CreateActor(channelId, VerifyName(name).c_str(), className, pos, Quat(angles), Vec3(1, 1, 1)));
 
 	return pActor;
 }
@@ -924,7 +924,7 @@ CActor* CGameRules::ChangePlayerClass(const int channelId, const char* className
 
 	m_pEntitySystem->RemoveEntity(pOldActor->GetEntityId(), true);
 
-	CActor* pActor = dynamic_cast<CActor*>(m_pActorSystem->CreateActor(channelId, oldName.c_str(), className, oldPos, Quat::CreateRotationXYZ(oldAngles), Vec3(1, 1, 1), oldEntityId));
+	CActor* pActor = static_cast<CActor*>(m_pActorSystem->CreateActor(channelId, oldName.c_str(), className, oldPos, Quat::CreateRotationXYZ(oldAngles), Vec3(1, 1, 1), oldEntityId));
 	if (pActor)
 		MovePlayer(pActor, oldPos, oldAngles);
 
@@ -940,7 +940,7 @@ void CGameRules::RevivePlayer(CTOSActor* pActor, const Vec3& pos, const Ang3& an
 			pSeat->Exit(false);
 
 	// stop using any mounted weapons before reviving
-	if (auto pItem = dynamic_cast<CItem*>(pActor->GetCurrentItem()))
+	if (auto pItem = static_cast<CItem*>(pActor->GetCurrentItem()))
 		if (pItem->IsMounted())
 			pItem->StopUse(pActor->GetEntityId());
 
@@ -999,7 +999,7 @@ void CGameRules::RevivePlayerInVehicle(CTOSActor* pActor, const EntityId vehicle
 			pSeat->Exit(false);
 
 	// stop using any mounted weapons before reviving
-	if (auto* pItem = dynamic_cast<CItem*>(pActor->GetCurrentItem()))
+	if (auto* pItem = static_cast<CItem*>(pActor->GetCurrentItem()))
 		if (pItem->IsMounted())
 			pItem->StopUse(pActor->GetEntityId());
 
@@ -1128,7 +1128,7 @@ void CGameRules::KillPlayer(CTOSActor *pActor, const bool dropItem, const bool r
 	}
 
 	//TheOtherSide
-	const auto pPlayer = dynamic_cast<CTOSPlayer*>(pActor);
+	const auto pPlayer = static_cast<CTOSPlayer*>(pActor);
 	if (pPlayer)
 	{
 		CNanoSuit* pSuit = pPlayer->GetNanoSuit();
@@ -1232,7 +1232,7 @@ void CGameRules::ChangeTeam(IActor* pActor, const int teamId)
 
 	if (gEnv->bServer)
 	{
-		const auto pTosActor = dynamic_cast<CTOSActor*>(pActor);
+		const auto pTosActor = static_cast<CTOSActor*>(pActor);
 		if (pTosActor && !pTosActor->IsSlave())
 		{
 			const ScriptHandle handle(params.entityId);
@@ -1661,7 +1661,7 @@ void CGameRules::SetTeam(int teamId, EntityId entityId)
 		m_entityteams.erase(it);
 
 	//TheOtherSide
-	const auto    pActor   = dynamic_cast<CTOSActor*>(m_pActorSystem->GetActor(entityId));
+	const auto    pActor   = static_cast<CTOSActor*>(m_pActorSystem->GetActor(entityId));
 	//~TheOtherSide
 
 	const bool isplayer = pActor != nullptr;
@@ -1860,7 +1860,7 @@ bool CGameRules::IsFrozen(const EntityId entityId) const
 	if (!pEntity)
 		return false;
 
-	if (const IEntityRenderProxy* pRenderProxy = dynamic_cast<IEntityRenderProxy*>(pEntity->GetProxy(ENTITY_PROXY_RENDER)))
+	if (const IEntityRenderProxy* pRenderProxy = static_cast<IEntityRenderProxy*>(pEntity->GetProxy(ENTITY_PROXY_RENDER)))
 		return (pRenderProxy->GetMaterialLayersMask() & MTL_LAYER_FROZEN) != 0;
 
 	return false;
@@ -1960,7 +1960,7 @@ void CGameRules::FreezeEntity(EntityId entityId, bool freeze, bool vapor, bool f
 
 	{
 		// apply frozen material layer
-		auto* pRenderProxy = dynamic_cast<IEntityRenderProxy*>(pEntity->GetProxy(ENTITY_PROXY_RENDER));
+		auto* pRenderProxy = static_cast<IEntityRenderProxy*>(pEntity->GetProxy(ENTITY_PROXY_RENDER));
 		if (pRenderProxy)
 		{
 			uint8 activeLayers = pRenderProxy->GetMaterialLayersMask();
@@ -2141,7 +2141,7 @@ void CGameRules::ShatterEntity(const EntityId entityId, const Vec3& pos, const V
 		}
 	}
 
-	if (auto* pProxy = dynamic_cast<IEntityRenderProxy*>(pEntity->GetProxy(ENTITY_PROXY_RENDER)))
+	if (auto* pProxy = static_cast<IEntityRenderProxy*>(pEntity->GetProxy(ENTITY_PROXY_RENDER)))
 		gEnv->p3DEngine->DeleteEntityDecals(pProxy->GetRenderNode());
 
 	/*
@@ -2302,7 +2302,7 @@ bool CGameRules::IsSpawnLocationSafe(const EntityId playerId, const EntityId spa
 			if (playerId == entityId) // ignore self
 				continue;
 
-			const CActor* pActor = dynamic_cast<CActor*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(entityId));
+			const CActor* pActor = static_cast<CActor*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(entityId));
 			if (pActor == nullptr) // || pActor && pActor->GetSpectatorMode()!=0) // ignore spectators
 				continue;
 
@@ -3606,7 +3606,7 @@ void CGameRules::CreateScriptHitInfo(const SmartScriptTable& scriptHitInfo, cons
 
 			if (pActor && pActor->IsPlayer())
 			{
-				auto* player = dynamic_cast<CPlayer*>(pActor);
+				auto* player = static_cast<CPlayer*>(pActor);
 				assist          = player->HasHitAssistance() ? 1.0f : 0.0f;
 			}
 		}
@@ -4471,7 +4471,7 @@ void DbgPlotter::Reset()
 	if (!m_isEnabled)
 		return;
 
-	const CGameRules* pGameRules = dynamic_cast<CGameRules*>(gEnv->pGame->GetIGameFramework()->GetIGameRulesSystem()->GetCurrentGameRules());
+	const CGameRules* pGameRules = static_cast<CGameRules*>(gEnv->pGame->GetIGameFramework()->GetIGameRulesSystem()->GetCurrentGameRules());
 
 	m_maxY    = m_maxX = 0.f;
 	m_minY    = m_minX = GetISystem()->GetI3DEngine()->GetTerrainSize();
@@ -4536,7 +4536,7 @@ void DbgPlotter::PlotSpawnPoints()
 {
 	if (!m_isEnabled)
 		return;
-	const CGameRules* pGameRules = dynamic_cast<CGameRules*>(gEnv->pGame->GetIGameFramework()->GetIGameRulesSystem()->GetCurrentGameRules());
+	const CGameRules* pGameRules = static_cast<CGameRules*>(gEnv->pGame->GetIGameFramework()->GetIGameRulesSystem()->GetCurrentGameRules());
 	int               count      = pGameRules->GetSpawnLocationCount() - 1;
 	for (; count >= 0; --count)
 	{
@@ -4548,7 +4548,7 @@ void DbgPlotter::PlotTeam(const EntityId entID, const bool enemy)
 {
 	if (!m_isEnabled)
 		return;
-	const CGameRules*   pGameRules = dynamic_cast<CGameRules*>(gEnv->pGame->GetIGameFramework()->GetIGameRulesSystem()->GetCurrentGameRules());
+	const CGameRules*   pGameRules = static_cast<CGameRules*>(gEnv->pGame->GetIGameFramework()->GetIGameRulesSystem()->GetCurrentGameRules());
 	const int           teamId(enemy ? pGameRules->GetEnemyTeamId(pGameRules->GetTeam(entID)) : pGameRules->GetTeam(entID));
 	const EDbgPlotTypes plotType(enemy ? eT_Enemy : eT_Friend);
 	int                 idx = 0;
@@ -4567,7 +4567,7 @@ void DbgPlotter::PlotAllPlayers(const EntityId skipId)
 {
 	if (!m_isEnabled)
 		return;
-	const CGameRules* pGameRules = dynamic_cast<CGameRules*>(gEnv->pGame->GetIGameFramework()->GetIGameRulesSystem()->GetCurrentGameRules());
+	const CGameRules* pGameRules = static_cast<CGameRules*>(gEnv->pGame->GetIGameFramework()->GetIGameRulesSystem()->GetCurrentGameRules());
 
 	CGameRules::TPlayers players;
 	pGameRules->GetPlayers(players);
