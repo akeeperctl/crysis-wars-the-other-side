@@ -1,3 +1,4 @@
+#include "StdAfx.h"
 #include <cerrno>
 #include <cstdio>
 
@@ -105,7 +106,7 @@ std::size_t StringTools::FormatTo(std::string& result, const char* format, ...)
 	return length;
 }
 
-static std::size_t FormatToGenericStringV(auto& result, const char* format, va_list args)
+static std::size_t FormatToGenericStringV(std::string& result, const char* format, va_list args)
 {
 	va_list argsCopy;
 	va_copy(argsCopy, args);
@@ -126,7 +127,7 @@ static std::size_t FormatToGenericStringV(auto& result, const char* format, va_l
 		result.resize(existingLength + length);
 
 		// format string again with proper buffer size
-		length = StringTools::FormatToV(result.data() + existingLength, length + 1, format, argsCopy);
+		length = StringTools::FormatToV2(std::string(result.data() + existingLength), length + 1, format, argsCopy);
 
 		if (result.length() > (existingLength + length))
 		{
@@ -144,20 +145,20 @@ std::size_t StringTools::FormatToV(std::string& result, const char* format, va_l
 	return FormatToGenericStringV(result, format, args);
 }
 
-std::size_t StringTools::FormatTo(std::pmr::string& result, const char* format, ...)
-{
-	va_list args;
-	va_start(args, format);
-	std::size_t length = FormatToV(result, format, args);
-	va_end(args);
-
-	return length;
-}
-
-std::size_t StringTools::FormatToV(std::pmr::string& result, const char* format, va_list args)
-{
-	return FormatToGenericStringV(result, format, args);
-}
+//std::size_t StringTools::FormatTo(std::pmr::string& result, const char* format, ...)
+//{
+//	va_list args;
+//	va_start(args, format);
+//	std::size_t length = FormatToV(result, format, args);
+//	va_end(args);
+//
+//	return length;
+//}
+//
+//std::size_t StringTools::FormatToV(std::pmr::string& result, const char* format, va_list args)
+//{
+//	return FormatToGenericStringV(result, format, args);
+//}
 
 std::size_t StringTools::FormatTo(char* buffer, std::size_t bufferSize, const char* format, ...)
 {
@@ -200,6 +201,11 @@ std::size_t StringTools::FormatToV(char* buffer, std::size_t bufferSize, const c
 	}
 
 	return length;
+}
+
+std::size_t StringTools::FormatToV2(std::string& result, std::size_t bufferSize, const char* format, va_list args)
+{
+	return FormatToV(result, format, args);
 }
 
 std::runtime_error StringTools::ErrorFormat(const char* format, ...)

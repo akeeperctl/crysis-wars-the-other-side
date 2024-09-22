@@ -171,55 +171,55 @@ namespace StringTools
 		return IsEqualNoCase(std::basic_string_view<Char<T>>(CStr(string), prefixLength), prefix);
 	}
 
-	struct Comparator
-	{
-		using is_transparent = void;
+	//struct Comparator
+	//{
+	//	using is_transparent = void;
 
-		bool operator()(std::string_view a, std::string_view b) const
-		{
-			return a < b;
-		}
-	};
+	//	bool operator()(std::string_view a, std::string_view b) const
+	//	{
+	//		return a < b;
+	//	}
+	//};
 
-	struct ComparatorNoCase
-	{
-		using is_transparent = void;
+	//struct ComparatorNoCase
+	//{
+	//	using is_transparent = void;
 
-		bool operator()(std::string_view a, std::string_view b) const
-		{
-			return IsLessNoCase(a, b);
-		}
-	};
+	//	bool operator()(std::string_view a, std::string_view b) const
+	//	{
+	//		return IsLessNoCase(a, b);
+	//	}
+	//};
 
-	struct PathComparator
-	{
-		using is_transparent = void;
+	//struct PathComparator
+	//{
+	//	using is_transparent = void;
 
-		bool operator()(std::string_view a, std::string_view b) const
-		{
-			const auto fixSlash = [](char ch) -> char { return (ch == '\\') ? '/' : ch; };
+	//	bool operator()(std::string_view a, std::string_view b) const
+	//	{
+	//		const auto fixSlash = [](char ch) -> char { return (ch == '\\') ? '/' : ch; };
 
-			const std::size_t minLength = (a.length() <= b.length()) ? a.length() : b.length();
+	//		const std::size_t minLength = (a.length() <= b.length()) ? a.length() : b.length();
 
-			for (std::size_t i = 0; i < minLength; i++)
-			{
-				const char chA = fixSlash(ToLowerChar(a[i]));
-				const char chB = fixSlash(ToLowerChar(b[i]));
+	//		for (std::size_t i = 0; i < minLength; i++)
+	//		{
+	//			const char chA = fixSlash(ToLowerChar(a[i]));
+	//			const char chB = fixSlash(ToLowerChar(b[i]));
 
-				if (chA != chB)
-				{
-					return chA < chB;
-				}
-			}
+	//			if (chA != chB)
+	//			{
+	//				return chA < chB;
+	//			}
+	//		}
 
-			if (a.length() != b.length())
-			{
-				return a.length() < b.length();
-			}
+	//		if (a.length() != b.length())
+	//		{
+	//			return a.length() < b.length();
+	//		}
 
-			return false;
-		}
-	};
+	//		return false;
+	//	}
+	//};
 
 	inline std::string SafeString(const char* value)
 	{
@@ -231,15 +231,15 @@ namespace StringTools
 		return std::wstring(value ? value : L"");
 	}
 
-	inline std::string_view SafeView(const char* value)
-	{
-		return std::string_view(value ? value : "");
-	}
+	//inline std::string_view SafeView(const char* value)
+	//{
+	//	return std::string_view(value ? value : "");
+	//}
 
-	inline std::wstring_view SafeWView(const wchar_t* value)
-	{
-		return std::wstring_view(value ? value : L"");
-	}
+	//inline std::wstring_view SafeWView(const wchar_t* value)
+	//{
+	//	return std::wstring_view(value ? value : L"");
+	//}
 
 	namespace Detail
 	{
@@ -342,11 +342,12 @@ namespace StringTools
 	std::size_t FormatTo(std::string& result, const char* format, ...);
 	std::size_t FormatToV(std::string& result, const char* format, va_list args);
 
-	std::size_t FormatTo(std::pmr::string& result, const char* format, ...);
-	std::size_t FormatToV(std::pmr::string& result, const char* format, va_list args);
+	//std::size_t FormatTo(std::pmr::string& result, const char* format, ...);
+	//std::size_t FormatToV(std::pmr::string& result, const char* format, va_list args);
 
 	std::size_t FormatTo(char* buffer, std::size_t bufferSize, const char* format, ...);
 	std::size_t FormatToV(char* buffer, std::size_t bufferSize, const char* format, va_list args);
+	std::size_t FormatToV2(std::string&, std::size_t bufferSize, const char* format, va_list args);
 
 	std::runtime_error ErrorFormat(const char* format, ...);
 	std::runtime_error ErrorFormatV(const char* format, va_list args);

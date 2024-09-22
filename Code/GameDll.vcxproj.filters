@@ -163,6 +163,12 @@
     <Filter Include="TheOtherSideMP\Game\ScriptBinds">
       <UniqueIdentifier>{d483f571-7c28-4a1a-987e-8b4204f1cba4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="CryMP">
+      <UniqueIdentifier>{f82733c7-b9b8-4c91-8333-248852e18c4f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CryMP\Library">
+      <UniqueIdentifier>{a3b60681-ac3d-48bc-8917-333629f19a38}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Actor.cpp">
@@ -863,7 +869,7 @@
     <ClCompile Include="TheOtherSideMP\Game\Modules\Zeus\ZeusHUD.cpp">
       <Filter>TheOtherSideMP\Game\Modules\Zeus</Filter>
     </ClCompile>
-    <ClCompile Include="TheOtherSideMP\Nodes\FlowVehicleNodes.cpp">
+    <ClCompile Include="TheOtherSideMP\Nodes\FlowNewVehicleNodes.cpp">
       <Filter>TheOtherSideMP\Nodes</Filter>
     </ClCompile>
     <ClCompile Include="TheOtherSideMP\Nodes\FlowScriptNodes.cpp">
@@ -874,6 +880,15 @@
     </ClCompile>
     <ClCompile Include="TheOtherSideMP\Game\ScriptBinds\ScriptBind_Custom.cpp">
       <Filter>TheOtherSideMP\Game\ScriptBinds</Filter>
+    </ClCompile>
+    <ClCompile Include="TheOtherSideMP\Utilities\IndexFinder.cpp">
+      <Filter>TheOtherSideMP\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="CryMP\Library\StringTools.cpp">
+      <Filter>CryMP\Library</Filter>
+    </ClCompile>
+    <ClCompile Include="CryMP\Library\WinAPI.cpp">
+      <Filter>CryMP\Library</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1537,6 +1552,21 @@
     </ClInclude>
     <ClInclude Include="TheOtherSideMP\Game\ScriptBinds\ScriptBind_Custom.h">
       <Filter>TheOtherSideMP\Game\ScriptBinds</Filter>
+    </ClInclude>
+    <ClInclude Include="TheOtherSideMP\Helpers\TOS_Hooks.h">
+      <Filter>TheOtherSideMP\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="TheOtherSideMP\Utilities\IndexFinder.h">
+      <Filter>TheOtherSideMP\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="CryMP\Library\StringTools.h">
+      <Filter>CryMP\Library</Filter>
+    </ClInclude>
+    <ClInclude Include="CryMP\Library\WinAPI.h">
+      <Filter>CryMP\Library</Filter>
+    </ClInclude>
+    <ClInclude Include="TheOtherSideMP\Utilities\VTables.h">
+      <Filter>TheOtherSideMP\Utilities</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

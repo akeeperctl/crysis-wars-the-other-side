@@ -1,3 +1,5 @@
+#include "StdAfx.h"
+
 #include <stdlib.h>
 #include <string.h>
 
@@ -103,63 +105,63 @@ unsigned long WinAPI::GetCurrentErrorCode()
 // Paths //
 ///////////
 
-std::filesystem::path WinAPI::GetApplicationPath()
-{
-	constexpr DWORD BUFFER_SIZE = 1024;
-
-	wchar_t buffer[BUFFER_SIZE];
-	DWORD length = GetModuleFileNameW(nullptr, buffer, BUFFER_SIZE);
-	if (length == 0)
-	{
-		throw StringTools::SysErrorFormat("GetModuleFileNameW");
-	}
-	else if (length >= BUFFER_SIZE)
-	{
-		throw StringTools::ErrorFormat("Application path is too long!");
-	}
-
-	return std::filesystem::path(buffer);
-}
-
-void WinAPI::SetWorkingDirectory(const std::filesystem::path& path)
-{
-	if (!SetCurrentDirectoryW(path.c_str()))
-	{
-		throw StringTools::SysErrorFormat("SetCurrentDirectoryW");
-	}
-}
+//std::filesystem::path WinAPI::GetApplicationPath()
+//{
+//	constexpr DWORD BUFFER_SIZE = 1024;
+//
+//	wchar_t buffer[BUFFER_SIZE];
+//	DWORD length = GetModuleFileNameW(nullptr, buffer, BUFFER_SIZE);
+//	if (length == 0)
+//	{
+//		throw StringTools::SysErrorFormat("GetModuleFileNameW");
+//	}
+//	else if (length >= BUFFER_SIZE)
+//	{
+//		throw StringTools::ErrorFormat("Application path is too long!");
+//	}
+//
+//	return std::filesystem::path(buffer);
+//}
+//
+//void WinAPI::SetWorkingDirectory(const std::filesystem::path& path)
+//{
+//	if (!SetCurrentDirectoryW(path.c_str()))
+//	{
+//		throw StringTools::SysErrorFormat("SetCurrentDirectoryW");
+//	}
+//}
 
 /////////////
 // Modules //
 /////////////
-
-void WinAPI::DLL::AddSearchDirectory(const std::filesystem::path& path)
-{
-	if (!SetDllDirectoryW(path.c_str()))
-	{
-		throw StringTools::SysErrorFormat("SetDllDirectoryW");
-	}
-}
-
-void *WinAPI::DLL::Get(const char* name)
-{
-	return GetModuleHandleA(name);
-}
-
-void *WinAPI::DLL::Load(const char* name)
-{
-	return LoadLibraryA(name);
-}
-
-void *WinAPI::DLL::GetSymbol(void* pDLL, const char* name)
-{
-	return reinterpret_cast<void*>(GetProcAddress(static_cast<HMODULE>(pDLL), name));
-}
-
-void WinAPI::DLL::Unload(void* pDLL)
-{
-	FreeLibrary(static_cast<HMODULE>(pDLL));
-}
+//
+//void WinAPI::DLL::AddSearchDirectory(const std::filesystem::path& path)
+//{
+//	if (!SetDllDirectoryW(path.c_str()))
+//	{
+//		throw StringTools::SysErrorFormat("SetDllDirectoryW");
+//	}
+//}
+//
+//void *WinAPI::DLL::Get(const char* name)
+//{
+//	return GetModuleHandleA(name);
+//}
+//
+//void *WinAPI::DLL::Load(const char* name)
+//{
+//	return LoadLibraryA(name);
+//}
+//
+//void *WinAPI::DLL::GetSymbol(void* pDLL, const char* name)
+//{
+//	return reinterpret_cast<void*>(GetProcAddress(static_cast<HMODULE>(pDLL), name));
+//}
+//
+//void WinAPI::DLL::Unload(void* pDLL)
+//{
+//	FreeLibrary(static_cast<HMODULE>(pDLL));
+//}
 
 /////////////////
 // Message box //
@@ -174,29 +176,29 @@ void WinAPI::ErrorBox(const char *message)
 // Resources //
 ///////////////
 
-namespace
-{
-	std::string_view GetResource(void *pDLL, const char *name, const char *type)
-	{
-		HRSRC resourceInfo = FindResourceA(static_cast<HMODULE>(pDLL), name, type);
-		if (!resourceInfo)
-			return std::string_view();
-
-		HGLOBAL resourceData = LoadResource(static_cast<HMODULE>(pDLL), resourceInfo);
-		if (!resourceData)
-			return std::string_view();
-
-		const void *data = LockResource(resourceData);
-		size_t length = SizeofResource(static_cast<HMODULE>(pDLL), resourceInfo);
-
-		return std::string_view(static_cast<const char*>(data), length);
-	}
-}
-
-std::string_view WinAPI::GetDataResource(void *pDLL, int resourceID)
-{
-	return GetResource(pDLL, MAKEINTRESOURCE(resourceID), RT_RCDATA);
-}
+//namespace
+//{
+//	std::string_view GetResource(void *pDLL, const char *name, const char *type)
+//	{
+//		HRSRC resourceInfo = FindResourceA(static_cast<HMODULE>(pDLL), name, type);
+//		if (!resourceInfo)
+//			return std::string_view();
+//
+//		HGLOBAL resourceData = LoadResource(static_cast<HMODULE>(pDLL), resourceInfo);
+//		if (!resourceData)
+//			return std::string_view();
+//
+//		const void *data = LockResource(resourceData);
+//		size_t length = SizeofResource(static_cast<HMODULE>(pDLL), resourceInfo);
+//
+//		return std::string_view(static_cast<const char*>(data), length);
+//	}
+//}
+//
+//std::string_view WinAPI::GetDataResource(void *pDLL, int resourceID)
+//{
+//	return GetResource(pDLL, MAKEINTRESOURCE(resourceID), RT_RCDATA);
+//}
 
 /**
  * @brief Obtains game version from any Crysis DLL.
@@ -204,21 +206,21 @@ std::string_view WinAPI::GetDataResource(void *pDLL, int resourceID)
  * @param pDLL Handle of any Crysis DLL.
  * @return Game build number or -1 if some error occurred.
  */
-int WinAPI::GetCrysisGameBuild(void *pDLL)
-{
-	const void *versionRes = GetResource(pDLL, MAKEINTRESOURCE(VS_VERSION_INFO), RT_VERSION).data();
-	if (!versionRes)
-		return -1;
-
-	if (memcmp(RVA(versionRes, 0x6), L"VS_VERSION_INFO", 0x20) != 0)
-		return -1;
-
-	const VS_FIXEDFILEINFO *pFileInfo = static_cast<const VS_FIXEDFILEINFO*>(RVA(versionRes, 0x6 + 0x20 + 0x2));
-	if (pFileInfo->dwSignature != 0xFEEF04BD)
-		return -1;
-
-	return LOWORD(pFileInfo->dwFileVersionLS);
-}
+//int WinAPI::GetCrysisGameBuild(void *pDLL)
+//{
+//	const void *versionRes = GetResource(pDLL, MAKEINTRESOURCE(VS_VERSION_INFO), RT_VERSION).data();
+//	if (!versionRes)
+//		return -1;
+//
+//	if (memcmp(RVA(versionRes, 0x6), L"VS_VERSION_INFO", 0x20) != 0)
+//		return -1;
+//
+//	const VS_FIXEDFILEINFO *pFileInfo = static_cast<const VS_FIXEDFILEINFO*>(RVA(versionRes, 0x6 + 0x20 + 0x2));
+//	if (pFileInfo->dwSignature != 0xFEEF04BD)
+//		return -1;
+//
+//	return LOWORD(pFileInfo->dwFileVersionLS);
+//}
 
 ///////////
 // Hacks //
@@ -493,100 +495,100 @@ namespace
 	}
 }
 
-void *WinAPI::FileOpen(const std::filesystem::path & path, FileAccess access, bool *pCreated)
-{
-	const DWORD mode = ToNativeFileAccessMode(access);
-	const DWORD share = FILE_SHARE_READ;
-	const DWORD creation = ToNativeFileCreationDisposition(access);
-	const DWORD attributes = FILE_ATTRIBUTE_NORMAL;
+//void *WinAPI::FileOpen(const std::filesystem::path & path, FileAccess access, bool *pCreated)
+//{
+//	const DWORD mode = ToNativeFileAccessMode(access);
+//	const DWORD share = FILE_SHARE_READ;
+//	const DWORD creation = ToNativeFileCreationDisposition(access);
+//	const DWORD attributes = FILE_ATTRIBUTE_NORMAL;
+//
+//	HANDLE handle = CreateFileW(path.c_str(), mode, share, nullptr, creation, attributes, nullptr);
+//	if (handle == INVALID_HANDLE_VALUE)
+//	{
+//		return nullptr;
+//	}
+//
+//	if (pCreated)
+//	{
+//		(*pCreated) = (GetLastError() != ERROR_ALREADY_EXISTS);
+//	}
+//
+//	return handle;
+//}
 
-	HANDLE handle = CreateFileW(path.c_str(), mode, share, nullptr, creation, attributes, nullptr);
-	if (handle == INVALID_HANDLE_VALUE)
-	{
-		return nullptr;
-	}
+//std::string WinAPI::FileRead(void *handle, size_t maxLength)
+//{
+//	// read everything from the current position to the end of the file
+//	if (maxLength == 0)
+//	{
+//		const uint64_t currentPos = FileSeek(handle, FileSeekBase::CURRENT, 0);
+//		const uint64_t endPos = FileSeek(handle, FileSeekBase::END, 0);
+//
+//		// restore position
+//		FileSeek(handle, FileSeekBase::BEGIN, currentPos);
+//
+//		if (currentPos < endPos)
+//		{
+//			const uint64_t distance = endPos - currentPos;
+//
+//			if (distance >= 0x80000000)  // 2 GiB
+//			{
+//				throw StringTools::ErrorFormat("File is too big!");
+//			}
+//
+//			maxLength = static_cast<size_t>(distance);
+//		}
+//	}
+//
+//	std::string result;
+//	result.resize(maxLength);
+//
+//	void *buffer = result.data();
+//	const DWORD bufferSize = static_cast<DWORD>(result.length());
+//
+//	DWORD bytesRead = 0;
+//
+//	if (!ReadFile(static_cast<HANDLE>(handle), buffer, bufferSize, &bytesRead, nullptr))
+//	{
+//		throw StringTools::SysErrorFormat("ReadFile");
+//	}
+//
+//	if (bytesRead != result.length())
+//	{
+//		result.resize(bytesRead);
+//	}
+//
+//	return result;
+//}
 
-	if (pCreated)
-	{
-		(*pCreated) = (GetLastError() != ERROR_ALREADY_EXISTS);
-	}
-
-	return handle;
-}
-
-std::string WinAPI::FileRead(void *handle, size_t maxLength)
-{
-	// read everything from the current position to the end of the file
-	if (maxLength == 0)
-	{
-		const uint64_t currentPos = FileSeek(handle, FileSeekBase::CURRENT, 0);
-		const uint64_t endPos = FileSeek(handle, FileSeekBase::END, 0);
-
-		// restore position
-		FileSeek(handle, FileSeekBase::BEGIN, currentPos);
-
-		if (currentPos < endPos)
-		{
-			const uint64_t distance = endPos - currentPos;
-
-			if (distance >= 0x80000000)  // 2 GiB
-			{
-				throw StringTools::ErrorFormat("File is too big!");
-			}
-
-			maxLength = static_cast<size_t>(distance);
-		}
-	}
-
-	std::string result;
-	result.resize(maxLength);
-
-	void *buffer = result.data();
-	const DWORD bufferSize = static_cast<DWORD>(result.length());
-
-	DWORD bytesRead = 0;
-
-	if (!ReadFile(static_cast<HANDLE>(handle), buffer, bufferSize, &bytesRead, nullptr))
-	{
-		throw StringTools::SysErrorFormat("ReadFile");
-	}
-
-	if (bytesRead != result.length())
-	{
-		result.resize(bytesRead);
-	}
-
-	return result;
-}
-
-void WinAPI::FileWrite(void *handle, const std::string_view & text)
-{
-#ifdef BUILD_64BIT
-	if (text.length() >= 0xFFFFFFFF)
-	{
-		throw StringTools::ErrorFormat("Data is too big!");
-	}
-#endif
-
-	size_t totalBytesWritten = 0;
-
-	// make sure everything is written
-	do
-	{
-		const void *buffer = text.data() + totalBytesWritten;
-		const DWORD bufferSize = static_cast<DWORD>(text.length() - totalBytesWritten);
-
-		DWORD bytesWritten = 0;
-
-		if (!WriteFile(static_cast<HANDLE>(handle), buffer, bufferSize, &bytesWritten, nullptr))
-		{
-			throw StringTools::SysErrorFormat("WriteFile");
-		}
-
-		totalBytesWritten += bytesWritten;
-	}
-	while (totalBytesWritten < text.length());
-}
+//void WinAPI::FileWrite(void *handle, const std::string_view & text)
+//{
+//#ifdef BUILD_64BIT
+//	if (text.length() >= 0xFFFFFFFF)
+//	{
+//		throw StringTools::ErrorFormat("Data is too big!");
+//	}
+//#endif
+//
+//	size_t totalBytesWritten = 0;
+//
+//	// make sure everything is written
+//	do
+//	{
+//		const void *buffer = text.data() + totalBytesWritten;
+//		const DWORD bufferSize = static_cast<DWORD>(text.length() - totalBytesWritten);
+//
+//		DWORD bytesWritten = 0;
+//
+//		if (!WriteFile(static_cast<HANDLE>(handle), buffer, bufferSize, &bytesWritten, nullptr))
+//		{
+//			throw StringTools::SysErrorFormat("WriteFile");
+//		}
+//
+//		totalBytesWritten += bytesWritten;
+//	}
+//	while (totalBytesWritten < text.length());
+//}
 
 uint64_t WinAPI::FileSeek(void *handle, FileSeekBase base, int64_t offset)
 {
@@ -790,16 +792,16 @@ std::string WinAPI::GetMachineGUID()
 	return guid;
 }
 
-std::string WinAPI::GetLocale()
-{
-	wchar_t buffer[LOCALE_NAME_MAX_LENGTH] = {};
-	GetLocaleInfoEx(LOCALE_NAME_USER_DEFAULT, LOCALE_SNAME, buffer, LOCALE_NAME_MAX_LENGTH);
-
-	std::string result;
-	StringTools::AppendTo(result, std::wstring_view(buffer));
-
-	return result;
-}
+//std::string WinAPI::GetLocale()
+//{
+//	wchar_t buffer[LOCALE_NAME_MAX_LENGTH] = {};
+//	GetLocaleInfoEx(LOCALE_NAME_USER_DEFAULT, LOCALE_SNAME, buffer, LOCALE_NAME_MAX_LENGTH);
+//
+//	std::string result;
+//	StringTools::AppendTo(result, std::wstring_view(buffer));
+//
+//	return result;
+//}
 
 bool WinAPI::IsVistaOrLater()
 {
@@ -865,134 +867,134 @@ namespace
 	};
 }
 
-int WinAPI::HTTPRequest(
-	const std::string_view & method,
-	const std::string_view & url,
-	const std::string_view & data,
-	const std::map<std::string, std::string> & headers,
-	HTTPRequestCallback callback
-){
-	std::wstring urlW;
-	StringTools::AppendTo(urlW, url);
-
-	URL_COMPONENTS urlComponents = {};
-	urlComponents.dwStructSize = sizeof urlComponents;
-	urlComponents.dwSchemeLength = -1;
-	urlComponents.dwHostNameLength = -1;
-	urlComponents.dwUrlPathLength = -1;
-	urlComponents.dwExtraInfoLength = -1;
-
-	if (!WinHttpCrackUrl(urlW.c_str(), static_cast<DWORD>(urlW.length()), 0, &urlComponents))
-	{
-		throw StringTools::SysErrorFormat("WinHttpCrackUrl");
-	}
-
-	HTTPHandleGuard hSession = WinHttpOpen(L"CryMP-Client",
-	                                       WINHTTP_ACCESS_TYPE_NO_PROXY,
-	                                       WINHTTP_NO_PROXY_NAME,
-	                                       WINHTTP_NO_PROXY_BYPASS, 0);
-	if (!hSession)
-	{
-		throw StringTools::SysErrorFormat("WinHttpOpen");
-	}
-
-	const std::wstring serverNameW(urlComponents.lpszHostName, urlComponents.dwHostNameLength);
-
-	HTTPHandleGuard hConnect = WinHttpConnect(hSession, serverNameW.c_str(), urlComponents.nPort, 0);
-	if (!hConnect)
-	{
-		throw StringTools::SysErrorFormat("WinHttpConnect");
-	}
-
-	DWORD requestFlags = WINHTTP_FLAG_REFRESH;
-
-	if (urlComponents.nScheme == INTERNET_SCHEME_HTTPS)
-	{
-		requestFlags |= WINHTTP_FLAG_SECURE;
-	}
-
-	std::wstring methodW;
-	StringTools::AppendTo(methodW, method);
-
-	// URL components are not null-terminated, but whole URL is, so URL path contains both path and parameters
-	HTTPHandleGuard hRequest = WinHttpOpenRequest(hConnect,
-	                                              methodW.c_str(),
-	                                              urlComponents.lpszUrlPath, nullptr,
-	                                              WINHTTP_NO_REFERER,
-	                                              WINHTTP_DEFAULT_ACCEPT_TYPES, requestFlags);
-	if (!hRequest)
-	{
-		throw StringTools::SysErrorFormat("WinHttpOpenRequest");
-	}
-
-	std::wstring headersW;
-
-	for (const auto & [key, value] : headers)
-	{
-		StringTools::AppendTo(headersW, key);
-		headersW += L": ";
-		StringTools::AppendTo(headersW, value);
-		headersW += L"\r\n";
-	}
-
-	if (!WinHttpSendRequest(hRequest, headersW.c_str(), static_cast<DWORD>(headersW.length()),
-	                        const_cast<char*>(data.data()),
-				static_cast<DWORD>(data.length()),
-				static_cast<DWORD>(data.length()), 0))
-	{
-		throw StringTools::SysErrorFormat("WinHttpSendRequest");
-	}
-
-	if (!WinHttpReceiveResponse(hRequest, nullptr))
-	{
-		throw StringTools::SysErrorFormat("WinHttpReceiveResponse");
-	}
-
-	DWORD statusCode = 0;
-	DWORD statusCodeSize = sizeof statusCode;
-	if (!WinHttpQueryHeaders(hRequest, WINHTTP_QUERY_STATUS_CODE | WINHTTP_QUERY_FLAG_NUMBER,
-	                         WINHTTP_HEADER_NAME_BY_INDEX, &statusCode, &statusCodeSize, WINHTTP_NO_HEADER_INDEX))
-	{
-		throw StringTools::SysErrorFormat("WinHttpQueryHeaders(WINHTTP_QUERY_STATUS_CODE)");
-	}
-
-	if (callback)
-	{
-		uint64_t contentLength = 0;
-
-		// WINHTTP_QUERY_CONTENT_LENGTH is limited to 32-bit (4 GB) content length
-		// so we get content length value as a string instead
-		wchar_t contentLengthString[32];
-		DWORD contentLengthStringSize = sizeof contentLengthString;  // in bytes
-		if (!WinHttpQueryHeaders(hRequest, WINHTTP_QUERY_CUSTOM, L"Content-Length",
-			                 contentLengthString, &contentLengthStringSize, WINHTTP_NO_HEADER_INDEX))
-		{
-			if (GetLastError() != ERROR_WINHTTP_HEADER_NOT_FOUND)
-			{
-				throw StringTools::SysErrorFormat("WinHttpQueryHeaders(\"Content-Length\")");
-			}
-		}
-		else
-		{
-			contentLength = _wcstoui64(contentLengthString, nullptr, 10);
-		}
-
-		const HTTPRequestReader dataReader = [&hRequest](void *buffer, size_t bufferSize) -> size_t
-		{
-			DWORD dataLength = 0;
-			if (!WinHttpReadData(hRequest, buffer, static_cast<DWORD>(bufferSize), &dataLength))
-			{
-				throw StringTools::SysErrorFormat("WinHttpReadData");
-			}
-
-			return dataLength;
-		};
-
-		callback(contentLength, dataReader);
-	}
-
-	return statusCode;
-}
+//int WinAPI::HTTPRequest(
+//	const std::string_view & method,
+//	const std::string_view & url,
+//	const std::string_view & data,
+//	const std::map<std::string, std::string> & headers,
+//	HTTPRequestCallback callback
+//){
+//	std::wstring urlW;
+//	StringTools::AppendTo(urlW, url);
+//
+//	URL_COMPONENTS urlComponents = {};
+//	urlComponents.dwStructSize = sizeof urlComponents;
+//	urlComponents.dwSchemeLength = -1;
+//	urlComponents.dwHostNameLength = -1;
+//	urlComponents.dwUrlPathLength = -1;
+//	urlComponents.dwExtraInfoLength = -1;
+//
+//	if (!WinHttpCrackUrl(urlW.c_str(), static_cast<DWORD>(urlW.length()), 0, &urlComponents))
+//	{
+//		throw StringTools::SysErrorFormat("WinHttpCrackUrl");
+//	}
+//
+//	HTTPHandleGuard hSession = WinHttpOpen(L"CryMP-Client",
+//	                                       WINHTTP_ACCESS_TYPE_NO_PROXY,
+//	                                       WINHTTP_NO_PROXY_NAME,
+//	                                       WINHTTP_NO_PROXY_BYPASS, 0);
+//	if (!hSession)
+//	{
+//		throw StringTools::SysErrorFormat("WinHttpOpen");
+//	}
+//
+//	const std::wstring serverNameW(urlComponents.lpszHostName, urlComponents.dwHostNameLength);
+//
+//	HTTPHandleGuard hConnect = WinHttpConnect(hSession, serverNameW.c_str(), urlComponents.nPort, 0);
+//	if (!hConnect)
+//	{
+//		throw StringTools::SysErrorFormat("WinHttpConnect");
+//	}
+//
+//	DWORD requestFlags = WINHTTP_FLAG_REFRESH;
+//
+//	if (urlComponents.nScheme == INTERNET_SCHEME_HTTPS)
+//	{
+//		requestFlags |= WINHTTP_FLAG_SECURE;
+//	}
+//
+//	std::wstring methodW;
+//	StringTools::AppendTo(methodW, method);
+//
+//	// URL components are not null-terminated, but whole URL is, so URL path contains both path and parameters
+//	HTTPHandleGuard hRequest = WinHttpOpenRequest(hConnect,
+//	                                              methodW.c_str(),
+//	                                              urlComponents.lpszUrlPath, nullptr,
+//	                                              WINHTTP_NO_REFERER,
+//	                                              WINHTTP_DEFAULT_ACCEPT_TYPES, requestFlags);
+//	if (!hRequest)
+//	{
+//		throw StringTools::SysErrorFormat("WinHttpOpenRequest");
+//	}
+//
+//	std::wstring headersW;
+//
+//	for (const auto & [key, value] : headers)
+//	{
+//		StringTools::AppendTo(headersW, key);
+//		headersW += L": ";
+//		StringTools::AppendTo(headersW, value);
+//		headersW += L"\r\n";
+//	}
+//
+//	if (!WinHttpSendRequest(hRequest, headersW.c_str(), static_cast<DWORD>(headersW.length()),
+//	                        const_cast<char*>(data.data()),
+//				static_cast<DWORD>(data.length()),
+//				static_cast<DWORD>(data.length()), 0))
+//	{
+//		throw StringTools::SysErrorFormat("WinHttpSendRequest");
+//	}
+//
+//	if (!WinHttpReceiveResponse(hRequest, nullptr))
+//	{
+//		throw StringTools::SysErrorFormat("WinHttpReceiveResponse");
+//	}
+//
+//	DWORD statusCode = 0;
+//	DWORD statusCodeSize = sizeof statusCode;
+//	if (!WinHttpQueryHeaders(hRequest, WINHTTP_QUERY_STATUS_CODE | WINHTTP_QUERY_FLAG_NUMBER,
+//	                         WINHTTP_HEADER_NAME_BY_INDEX, &statusCode, &statusCodeSize, WINHTTP_NO_HEADER_INDEX))
+//	{
+//		throw StringTools::SysErrorFormat("WinHttpQueryHeaders(WINHTTP_QUERY_STATUS_CODE)");
+//	}
+//
+//	if (callback)
+//	{
+//		uint64_t contentLength = 0;
+//
+//		// WINHTTP_QUERY_CONTENT_LENGTH is limited to 32-bit (4 GB) content length
+//		// so we get content length value as a string instead
+//		wchar_t contentLengthString[32];
+//		DWORD contentLengthStringSize = sizeof contentLengthString;  // in bytes
+//		if (!WinHttpQueryHeaders(hRequest, WINHTTP_QUERY_CUSTOM, L"Content-Length",
+//			                 contentLengthString, &contentLengthStringSize, WINHTTP_NO_HEADER_INDEX))
+//		{
+//			if (GetLastError() != ERROR_WINHTTP_HEADER_NOT_FOUND)
+//			{
+//				throw StringTools::SysErrorFormat("WinHttpQueryHeaders(\"Content-Length\")");
+//			}
+//		}
+//		else
+//		{
+//			contentLength = _wcstoui64(contentLengthString, nullptr, 10);
+//		}
+//
+//		const HTTPRequestReader dataReader = [&hRequest](void *buffer, size_t bufferSize) -> size_t
+//		{
+//			DWORD dataLength = 0;
+//			if (!WinHttpReadData(hRequest, buffer, static_cast<DWORD>(bufferSize), &dataLength))
+//			{
+//				throw StringTools::SysErrorFormat("WinHttpReadData");
+//			}
+//
+//			return dataLength;
+//		};
+//
+//		callback(contentLength, dataReader);
+//	}
+//
+//	return statusCode;
+//}
 
 ///////////////
 // Clipboard //

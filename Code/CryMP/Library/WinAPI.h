@@ -4,7 +4,6 @@
 #include <stdint.h>
 #include <string.h>
 #include <string>
-#include <string_view>
 #include <utility>
 #include <filesystem>
 #include <functional>
@@ -12,7 +11,7 @@
 
 namespace WinAPI
 {
-	inline constexpr std::string_view NEWLINE = "\r\n";
+	const std::string NEWLINE = "\r\n";
 
 	/////////////
 	// Utility //
@@ -52,23 +51,23 @@ namespace WinAPI
 	// Paths //
 	///////////
 
-	std::filesystem::path GetApplicationPath();
+	//std::filesystem::path GetApplicationPath();
 
-	void SetWorkingDirectory(const std::filesystem::path& path);
+	//void SetWorkingDirectory(const std::filesystem::path& path);
 
 	/////////////
 	// Modules //
 	/////////////
 
-	namespace DLL
-	{
-		void AddSearchDirectory(const std::filesystem::path& path);
+	//namespace DLL
+	//{
+	//	void AddSearchDirectory(const std::filesystem::path& path);
 
-		void* Get(const char* name);
-		void* Load(const char* name);
-		void* GetSymbol(void* pDLL, const char* name);
-		void Unload(void* pDLL);
-	}
+	//	void* Get(const char* name);
+	//	void* Load(const char* name);
+	//	void* GetSymbol(void* pDLL, const char* name);
+	//	void Unload(void* pDLL);
+	//}
 
 	/////////////////
 	// Message box //
@@ -80,7 +79,7 @@ namespace WinAPI
 	// Resources //
 	///////////////
 
-	std::string_view GetDataResource(void *pDLL, int resourceID);
+	std::string GetDataResource(void *pDLL, int resourceID);
 
 	int GetCrysisGameBuild(void *pDLL);
 
@@ -114,102 +113,102 @@ namespace WinAPI
 		BEGIN, CURRENT, END
 	};
 
-	void *FileOpen(const std::filesystem::path & path, FileAccess access, bool *pCreated = nullptr);
+	//void *FileOpen(const std::filesystem::path & path, FileAccess access, bool *pCreated = nullptr);
 
 	std::string FileRead(void *handle, size_t maxLength = 0);
-	void FileWrite(void *handle, const std::string_view & text);
+	void FileWrite(void *handle, const std::string & text);
 
 	uint64_t FileSeek(void *handle, FileSeekBase base, int64_t offset = 0);
 	void FileResize(void *handle, uint64_t size);
 
 	void FileClose(void *handle);
 
-	class File
-	{
-		void *m_handle = nullptr;
+	//class File
+	//{
+	//	void *m_handle = nullptr;
 
-	public:
-		File() = default;
+	//public:
+	//	File() = default;
 
-		explicit File(const std::filesystem::path & path, FileAccess access, bool *pCreated = nullptr)
-		{
-			m_handle = FileOpen(path, access, pCreated);
-		}
+	//	explicit File(const std::filesystem::path & path, FileAccess access, bool *pCreated = nullptr)
+	//	{
+	//		m_handle = FileOpen(path, access, pCreated);
+	//	}
 
-		File(const File &) = delete;
+	//	File(const File &) = delete;
 
-		File(File && other)
-		{
-			std::swap(m_handle, other.m_handle);
-		}
+	//	File(File && other)
+	//	{
+	//		std::swap(m_handle, other.m_handle);
+	//	}
 
-		File & operator=(const File &) = delete;
+	//	File & operator=(const File &) = delete;
 
-		File & operator=(File && other)
-		{
-			if (this != &other)
-			{
-				Close();
+	//	File & operator=(File && other)
+	//	{
+	//		if (this != &other)
+	//		{
+	//			Close();
 
-				std::swap(m_handle, other.m_handle);
-			}
+	//			std::swap(m_handle, other.m_handle);
+	//		}
 
-			return *this;
-		}
+	//		return *this;
+	//	}
 
-		~File()
-		{
-			Close();
-		}
+	//	~File()
+	//	{
+	//		Close();
+	//	}
 
-		bool Open(const std::filesystem::path & path, FileAccess access, bool *pCreated = nullptr)
-		{
-			Close();
+	//	bool Open(const std::filesystem::path & path, FileAccess access, bool *pCreated = nullptr)
+	//	{
+	//		Close();
 
-			m_handle = FileOpen(path, access, pCreated);
+	//		m_handle = FileOpen(path, access, pCreated);
 
-			return IsOpen();
-		}
+	//		return IsOpen();
+	//	}
 
-		bool IsOpen() const
-		{
-			return m_handle != nullptr;
-		}
+	//	bool IsOpen() const
+	//	{
+	//		return m_handle != nullptr;
+	//	}
 
-		explicit operator bool() const
-		{
-			return IsOpen();
-		}
+	//	explicit operator bool() const
+	//	{
+	//		return IsOpen();
+	//	}
 
-		std::string Read(size_t maxLength = 0)
-		{
-			return FileRead(m_handle, maxLength);
-		}
+	//	std::string Read(size_t maxLength = 0)
+	//	{
+	//		return FileRead(m_handle, maxLength);
+	//	}
 
-		void Write(const std::string_view & text)
-		{
-			FileWrite(m_handle, text);
-		}
+	//	void Write(const std::string & text)
+	//	{
+	//		FileWrite(m_handle, text);
+	//	}
 
-		uint64_t Seek(FileSeekBase base, int64_t offset = 0)
-		{
-			return FileSeek(m_handle, base, offset);
-		}
+	//	uint64_t Seek(FileSeekBase base, int64_t offset = 0)
+	//	{
+	//		return FileSeek(m_handle, base, offset);
+	//	}
 
-		void Resize(uint64_t size)
-		{
-			FileResize(m_handle, size);
-		}
+	//	void Resize(uint64_t size)
+	//	{
+	//		FileResize(m_handle, size);
+	//	}
 
-		void Close()
-		{
-			if (m_handle)
-			{
-				FileClose(m_handle);
-				m_handle = nullptr;
-			}
-		}
-	};
+	//	void Close()
+	//	{
+	//		if (m_handle)
+	//		{
+	//			FileClose(m_handle);
+	//			m_handle = nullptr;
+	//		}
+	//	}
+	//};
 
 	//////////
 	// Time //
@@ -266,9 +265,9 @@ namespace WinAPI
 
 	// blocking, returns HTTP status code, throws std::system_error
 	int HTTPRequest(
-		const std::string_view & method,
-		const std::string_view & url,
-		const std::string_view & data,
+		const std::string & method,
+		const std::string & url,
+		const std::string & data,
 		const std::map<std::string, std::string> & headers,
 		HTTPRequestCallback callback
 	);

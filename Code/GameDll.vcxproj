@@ -34,23 +34,23 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <PlatformToolset>v100</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v100</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -104,7 +104,7 @@
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>.\;..\..\..\Code\CryEngine\CryCommon;..\..\..\Code\CryEngine\CryAction;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>GAMEDLL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <MinimalRebuild>true</MinimalRebuild>
+      <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling />
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -254,6 +254,8 @@
     <ClCompile Include="Claymore.cpp" />
     <ClCompile Include="ClientSynchedStorage.cpp" />
     <ClCompile Include="CompatibilityAlienMovementController.cpp" />
+    <ClCompile Include="CryMP\Library\StringTools.cpp" />
+    <ClCompile Include="CryMP\Library\WinAPI.cpp" />
     <ClCompile Include="DebugGun.cpp" />
     <ClCompile Include="Detonate.cpp" />
     <ClCompile Include="DllMain.cpp" />
@@ -474,8 +476,9 @@
     <ClCompile Include="TheOtherSideMP\Nodes\FlowMasterClientNodes.cpp" />
     <ClCompile Include="TheOtherSideMP\Nodes\FlowScriptNodes.cpp" />
     <ClCompile Include="TheOtherSideMP\Nodes\FlowStringNodes.cpp" />
-    <ClCompile Include="TheOtherSideMP\Nodes\FlowVehicleNodes.cpp" />
+    <ClCompile Include="TheOtherSideMP\Nodes\FlowNewVehicleNodes.cpp" />
     <ClCompile Include="TheOtherSideMP\Utilities\DedicatedServerHackScope.cpp" />
+    <ClCompile Include="TheOtherSideMP\Utilities\IndexFinder.cpp" />
     <ClCompile Include="Throw.cpp" />
     <ClCompile Include="ThrowableWeapon.cpp" />
     <ClCompile Include="TracerManager.cpp" />
@@ -530,6 +533,8 @@
     <ClInclude Include="Claymore.h" />
     <ClInclude Include="ClientSynchedStorage.h" />
     <ClInclude Include="CompatibilityAlienMovementController.h" />
+    <ClInclude Include="CryMP\Library\StringTools.h" />
+    <ClInclude Include="CryMP\Library\WinAPI.h" />
     <ClInclude Include="DebugGun.h" />
     <ClInclude Include="Detonate.h" />
     <ClInclude Include="DownloadTask.h" />
@@ -719,6 +724,7 @@
     <ClInclude Include="TheOtherSideMP\Helpers\TOS_HUD.h" />
     <ClInclude Include="TheOtherSideMP\Helpers\TOS_Inventory.h" />
     <ClInclude Include="TheOtherSideMP\Helpers\TOS_MasterModule.h" />
+    <ClInclude Include="TheOtherSideMP\Helpers\TOS_Hooks.h" />
     <ClInclude Include="TheOtherSideMP\Helpers\TOS_NET.h" />
     <ClInclude Include="TheOtherSideMP\Helpers\TOS_Screen.h" />
     <ClInclude Include="TheOtherSideMP\Helpers\TOS_Script.h" />
@@ -728,6 +734,8 @@
     <ClInclude Include="TheOtherSideMP\HUD\TOSCrosshair.h" />
     <ClInclude Include="TheOtherSideMP\TOSSmartStruct.h" />
     <ClInclude Include="TheOtherSideMP\Utilities\DedicatedServerHackScope.h" />
+    <ClInclude Include="TheOtherSideMP\Utilities\IndexFinder.h" />
+    <ClInclude Include="TheOtherSideMP\Utilities\VTables.h" />
     <ClInclude Include="Throw.h" />
     <ClInclude Include="ThrowableWeapon.h" />
     <ClInclude Include="TracerManager.h" />
