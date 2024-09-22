@@ -121,12 +121,12 @@ end
 
 
 function LogError(fmt, ...)
-	System.Log("$4"..string.format(fmt, ...));
+	System.Log("[ERROR] $4"..string.format(fmt, ...));
 end
 
 
 function LogWarning(fmt, ...)
-	System.Log("$6"..string.format(fmt, ...));
+	System.Log("[WARNING] $6"..string.format(fmt, ...));
 end
 
 

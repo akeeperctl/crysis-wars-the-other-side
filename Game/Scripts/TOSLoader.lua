@@ -3,7 +3,8 @@
  --Copyright (C), AlienKeeper, 2024.
 --*************************************************************************
 
--- File loads all TheOtherSide lua files
+-- File loads all TheOtherSide lua files except TOSHandleOrder,
+-- because its loaded from C++ when click the RMB in zeus
 
 Script.ReloadScript("Scripts/Utils/TOSCommon.lua")
 Script.ReloadScript("Scripts/Utils/TOSTable.lua")

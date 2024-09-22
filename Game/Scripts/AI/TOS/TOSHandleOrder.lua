@@ -6,16 +6,10 @@
 Script.ReloadScript("Scripts/TOSLoader.lua")
 Script.ReloadScript("Scripts/TOSDebug.lua")
 
-local function CryLogAlways(str, ...)
-    System.LogAlways(string.format(str, ...))
-end
-
---[[
-    Обрабатывает задачу для сущности.
-
-    executorTable       Таблица исполнителя
-    orderTable          Таблица задания
-]]
+---Обрабатывает приказ исполнителю
+---@param executorTable table данные об исполнителе
+---@param orderTable table данные о приказе
+---@return integer
 function HandleOrder(executorTable, orderTable)
 
     local outputOrderType = 0
@@ -39,19 +33,6 @@ function HandleOrder(executorTable, orderTable)
         orderTargetName = orderTarget:GetName()
     end
 
-    -- Принт приказа
-    if (enableLog) then
-        local output = string.format("[ORDER] executor(%i): %s, order id: %i, order target: %s, order pos: (%1.f,%1.f,%1.f)",
-        executorIndex,
-        executor:GetName(),
-        orderTable.goalPipeId,
-        orderTargetName,
-        orderTable.pos.x,
-        orderTable.pos.y,
-        orderTable.pos.z)
-
-        System.LogAlways(output)
-    end
 
     local executorVehicle = executor.vehicle
     local executorActor = executor.actor

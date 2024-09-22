@@ -1099,9 +1099,9 @@ TOS_AI = {
     ---@param priorityFlag integer Флаг приоритета (например, `AIGOALPIPE_RUN_ONCE`, `AIGOALPIPE_HIGH_PRIORITY`).
     ---@param entity table Сущность, для которой выбирается труба целей.
     ---@param pipeName string Имя трубы целей (например, "Attack", "Move").
-    ---@param targetId? any (Опционально) Идентификатор цели (она должна быть ИИ). Сохраняется как `LastOpResult`
-    ---@param pipeId? any (Опционально) Идентификатор трубы целей.
-    ---@param resetCurrentPipe? any (Опционально) `true`,  чтобы  сбросить  состояние  текущей  трубы  целей.
+    ---@param targetId? userdata (Опционально) Идентификатор цели (она должна быть ИИ). Сохраняется как `LastOpResult`
+    ---@param pipeId? integer (Опционально) Идентификатор трубы целей.
+    ---@param resetCurrentPipe? boolean (Опционально) `true`,  чтобы  сбросить  состояние  текущей  трубы  целей.
     ---@return boolean true если труба целей была успешно выбрана.
     SelectPipe = function(priorityFlag, entity, pipeName, targetId, pipeId, resetCurrentPipe)
         return entity:SelectPipe(priorityFlag, pipeName, targetId, pipeId, resetCurrentPipe) == true

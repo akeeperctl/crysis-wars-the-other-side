@@ -169,6 +169,9 @@ AIBehaviour.TOS_Obey = {
 	-- OnDeath = function ( self, entity, sender)
 	-- 	LogAlways("[%s] TOS_Obey.OnDeath sender: %s", EntityName(entity), EntityName(sender))
 	-- end,
+	OnDeath = function ( self, entity, sender)
+		LogAlways("[%s] TOS_Obey.OnDeath sender: %s", EntityName(entity), EntityName(sender))
+	end,
 
 	--------------------------------------------------
 	ENEMYSEEN_FIRST_CONTACT = function(self,entity,sender)
@@ -332,49 +335,61 @@ AIBehaviour.TOS_Obey = {
 	---------------------------------------------	
 	KEEP_FORMATION = function (self, entity, sender)
 		-- the team leader wants everyone to keep formation
+		LogAlways("[%s] TOS_Obey.KEEP_FORMATION", EntityName(entity))
 	end,
 	---------------------------------------------	
 	BREAK_FORMATION = function (self, entity, sender)
 		-- the team can split
+		LogAlways("[%s] TOS_Obey.BREAK_FORMATION", EntityName(entity))
 	end,
 	---------------------------------------------	
 	SINGLE_GO = function (self, entity, sender)
 		-- the team leader has instructed this group member to approach the enemy
+		LogAlways("[%s] TOS_Obey.SINGLE_GO", EntityName(entity))
 	end,
 	---------------------------------------------	
 	GROUP_COVER = function (self, entity, sender)
 		-- the team leader has instructed this group member to cover his friends
+		LogAlways("[%s] TOS_Obey.GROUP_COVER", EntityName(entity))
 	end,
 	---------------------------------------------	
 	IN_POSITION = function (self, entity, sender)
 		-- some member of the group is safely in position
+		LogAlways("[%s] TOS_Obey.IN_POSITION", EntityName(entity))
 	end,
 	---------------------------------------------	
 	GROUP_SPLIT = function (self, entity, sender)
 		-- team leader instructs group to split
+		LogAlways("[%s] TOS_Obey.GROUP_SPLIT", EntityName(entity))
 	end,
 	---------------------------------------------	
 	PHASE_RED_ATTACK = function (self, entity, sender)
 		-- team leader instructs red team to attack
+		LogAlways("[%s] TOS_Obey.PHASE_RED_ATTACK", EntityName(entity))
 	end,
 	---------------------------------------------	
 	PHASE_BLACK_ATTACK = function (self, entity, sender)
 		-- team leader instructs black team to attack
+		LogAlways("[%s] TOS_Obey.PHASE_BLACK_ATTACK", EntityName(entity))
 	end,
 	---------------------------------------------	
 	GROUP_MERGE = function (self, entity, sender)
 		-- team leader instructs groups to merge into a team again
+		LogAlways("[%s] TOS_Obey.GROUP_MERGE", EntityName(entity))
 	end,
 	---------------------------------------------	
 	CLOSE_IN_PHASE = function (self, entity, sender)
 		-- team leader instructs groups to initiate part one of assault fire maneuver
+		LogAlways("[%s] TOS_Obey.CLOSE_IN_PHASE", EntityName(entity))
 	end,
 	---------------------------------------------	
 	ASSAULT_PHASE = function (self, entity, sender)
 		-- team leader instructs groups to initiate part one of assault fire maneuver
+		LogAlways("[%s] TOS_Obey.ASSAULT_PHASE", EntityName(entity))
 	end,
 	---------------------------------------------	
 	GROUP_NEUTRALISED = function (self, entity, sender)
 		-- team leader instructs groups to initiate part one of assault fire maneuver
+		LogAlways("[%s] TOS_Obey.GROUP_NEUTRALISED", EntityName(entity))
 	end,
 }
