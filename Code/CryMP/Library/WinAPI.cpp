@@ -1,7 +1,7 @@
 #include "StdAfx.h"
 
-#include <stdlib.h>
-#include <string.h>
+//#include <stdlib.h>
+//#include <string.h>
 
 #include <windows.h>
 #include <winhttp.h>
