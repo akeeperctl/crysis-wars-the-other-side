@@ -24,7 +24,6 @@ local function boatRequest2ndGunnerShoot( entity )
 			  else
 					local seatId = entity:GetSeatId(member.id);
 			  	if ( seat.seat:GetWeaponCount() > 0) then
-						bFound = true;
 						g_SignalData.fValue = entity.Properties.attackrange;
 						AI.Signal(SIGNALFILTER_SENDER, 1, "INVEHICLEGUNNER_REQUEST_SHOOT", member.id, g_SignalData);
 						return;

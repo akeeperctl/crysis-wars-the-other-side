@@ -25,6 +25,10 @@ AIBehaviour.TOS_Obey = {
 		-- called when the behaviour is de-selected
 		-- the extra data is from the signal that is causing the behavior transition
 		LogAlways("[%s] TOS_Obey.Destructor data %s", EntityName(entity), EntityName(data))
+
+		if (entity.currentExecutedOrder == EOrders.AI_ENTERVEHICLE) then
+			CLEAR_DATA_AI_ENTERVEHICLE(entity)
+		end
 	end,
 	-- ~TheOtherSide
 
@@ -166,9 +170,6 @@ AIBehaviour.TOS_Obey = {
 		LogAlways("[%s] TOS_Obey.OnGroupMemberDiedNearest sender: %s", EntityName(entity), EntityName(sender))
 	end,
 
-	-- OnDeath = function ( self, entity, sender)
-	-- 	LogAlways("[%s] TOS_Obey.OnDeath sender: %s", EntityName(entity), EntityName(sender))
-	-- end,
 	OnDeath = function ( self, entity, sender)
 		LogAlways("[%s] TOS_Obey.OnDeath sender: %s", EntityName(entity), EntityName(sender))
 	end,

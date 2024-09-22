@@ -990,6 +990,10 @@ function VehicleBase:OnActorChangeSeat(passengerId, exiting)
 		g_gameRules:OnLeaveVehicleSeat(self, seat, passengerId, exiting);
 	end
 
+	--TheOtherSide
+	local passenger = System.GetEntity(passengerId)
+	--~TheOtherSide
+
 	if (not passenger) then
 		return;
 	end

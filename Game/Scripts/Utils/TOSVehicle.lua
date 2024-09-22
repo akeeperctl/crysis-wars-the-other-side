@@ -66,16 +66,74 @@ function TOS_Vehicle:RequestGunnerSeat(vehEntity)
 	return nil;
 end
 
---------------------------------------------------------------------------
+---Запрос свободного и незабронированного места в транспорте
+---@param vehEntity table
+---@return number|nil seatId идентификатор места в транспорте
 function TOS_Vehicle:RequestSeat(vehEntity)
 	for i,seat in pairs(vehEntity.Seats) do
-		if (seat:IsFree()) then
+		if (seat:IsFree() and not seat.passengerId) then
 			return i;
 		end
 	end
 
 	return nil;
 end
+
+--- Забронировать место в транспорте для пассажира до момента, пока он не сядет.
+---@param vehEntity table
+---@param seatId number|nil
+---@param passengerId userdata
+---@return true|nil true в случае успеха
+function TOS_Vehicle:ReserveSeatForPassenger(vehEntity, seatId, passengerId)
+	if not vehEntity then
+		LogError("<TOS_Vehicle:ReserveSeatForPassenger> vehicle not defined")
+		return nil
+	elseif not passengerId then
+		LogError("[%s] <TOS_Vehicle:ReserveSeatForPassenger> invalid passengerId: %s", EntityName(vehEntity), tonumber(passengerId))
+		return nil
+	end
+	
+	local seatInstance = vehEntity.Seats[seatId]
+	if not seatInstance then
+		LogError("[%s] <TOS_Vehicle:ReserveSeatForPassenger> seat instance not defined with seatId: %s", EntityName(vehEntity), tostring(seatId))
+		return nil
+	elseif not seatInstance:IsFree() then
+		LogWarning("[%s] <TOS_Vehicle:ReserveSeatForPassenger> seat is not free", EntityName(vehEntity))
+		return nil
+	elseif seatInstance.passengerId then
+		LogWarning("[%s] <TOS_Vehicle:ReserveSeatForPassenger> seat is already reserved to %s", EntityName(vehEntity), EntityName(seatInstance.passengerId))
+		return nil
+	end
+
+	seatInstance.passengerId = passengerId
+
+	return true;
+end
+
+--- Разбронировать место в транспорте.
+---@param vehEntity table
+---@param seatId number
+---@return unknown
+function TOS_Vehicle:UnreserveSeat(vehEntity, seatId)
+	if not vehEntity then
+		LogError("<TOS_Vehicle:UnreserveSeat> vehicle is not defined")
+		return nil
+	end
+	
+	local seatInstance = vehEntity.Seats[seatId]
+	if not seatInstance then
+		LogError("[%s] <TOS_Vehicle:UnreserveSeat> seat instance is not defined", EntityName(vehEntity))
+		return nil
+	elseif not seatInstance.passengerId then
+		LogWarning("[%s] <TOS_Vehicle:UnreserveSeat> seat is already unreserved", EntityName(vehEntity))
+	end
+
+	seatInstance.passengerId = nil
+
+	return true;
+end
+
+--------------------------------------------------------------------------
 
 function TOS_Vehicle:GetEnterRadius(vehEntity)
 	local maximum = 10

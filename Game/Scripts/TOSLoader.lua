@@ -11,8 +11,9 @@ Script.ReloadScript("Scripts/Utils/TOSTable.lua")
 Script.ReloadScript("Scripts/Utils/TOSVehicle.lua")
 Script.ReloadScript("Scripts/Utils/TOSAI.lua")
 
-Script.ReloadScript("Scripts/AI/TOS/TOSPipeManager.lua")
-PipeManager:OnInitTOS();
+Script.ReloadScript("Scripts/AI/TOS/OrderHandlers/OrdersEnum.lua")
+Script.ReloadScript("Scripts/AI/TOS/OrderHandlers/AI_GOTO.lua")
+Script.ReloadScript("Scripts/AI/TOS/OrderHandlers/AI_ENTERVEHICLE.lua")
 
 -- manual loaded
 -- Script.ReloadScript("Scripts/AI/TOS/TOSHandleOrder.lua")
