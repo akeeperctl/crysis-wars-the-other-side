@@ -1770,6 +1770,18 @@ bool CTOSZeusModule::ExecuteCommand(EZeusCommands command)
 			}
 			case eZC_OrderSelected:
 			{
+				//auto pEntity = TOS_GET_ENTITY(id);
+				//if (pEntity)
+				//{
+				//	auto pAI = pEntity->GetAI();
+				//	if (pAI)
+				//	{
+				//		auto pCAIActor = pAI->CastToCAIActor();
+				//		auto pIAIActor = pAI->CastToIAIActor();
+				//		InitCanAcquireTargetHook(pCAIActor, pIAIActor, pAI);
+				//	}
+				//}
+
 				MouseProjectToWorld(m_mouseRay, m_worldMousePos, m_mouseRayEntityFlags, false);
 				m_orderPos = m_mouseRay.pt;
 

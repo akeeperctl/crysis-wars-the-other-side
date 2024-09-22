@@ -55,10 +55,10 @@ CTOSGame::CTOSGame()
 {
 
 	auto pVTable1 = Utils::VTables::GetVTableFromAddress(IAIACTOR_VTABLE_ADDRESS_X32);
-	auto pVTable2 = Utils::VTables::GetVTableFromAddress(IAIOBJECT_VTABLE_ADDRESS_X32);
 	auto index1 = IndexFinder::getIndexOf(&IAIActor::CanAcquireTarget);
 	TOS_Hooks::ReplaceFunction(&pVTable1[index1], &IAIActorHook::CanAcquireTarget);
 
+	auto pVTable2 = Utils::VTables::GetVTableFromAddress(IAIOBJECT_VTABLE_ADDRESS_X32);
 	auto index2 = IndexFinder::getIndexOf(&IAIObject::IsHostile);
 	TOS_Hooks::ReplaceFunction(&pVTable2[index2], &IAIObjectHook::IsHostile);
 }
