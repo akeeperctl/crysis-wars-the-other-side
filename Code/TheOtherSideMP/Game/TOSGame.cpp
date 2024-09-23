@@ -21,6 +21,7 @@ Copyright (C), AlienKeeper, 2024.
 
 #include "TheOtherSideMP/Utilities/VTables.h"
 #include "TheOtherSideMP/Utilities/IndexFinder.h"
+#include <TheOtherSideMP\Helpers\TOS_Version.h>
 
 struct IAIActorHook
 {
@@ -31,6 +32,10 @@ struct IAIObjectHook
 {
 	bool IsHostile(const IAIObject* pOther, bool bUsingAIIgnorePlayer=true) const;
 };
+
+// Определение функций хука обязательно должно быть вне структуры
+// Иначе при получении адреса целевой функции будет выдаваться адрес совсем другой функции
+/////////////////////////////////////////////////////////////
 
 bool IAIActorHook::CanAcquireTarget(IAIObject* pOther) const
 {
@@ -55,6 +60,9 @@ CTOSGame::CTOSGame()
 	m_lastChannelConnectionState(0),
 	m_lastContextViewState(0)
 {
+
+	// Получение версии по имени выполняемого файла
+    m_modVersion = TOS_Version::GetDLLVersion("CrysisTheOtherSide");
 
 	auto pVTable1 = Utils::VTables::GetVTableFromAddress(IAIACTOR_VTABLE_ADDRESS_X32);
 	auto index1 = IndexFinder::getIndexOf(&IAIActor::CanAcquireTarget);
@@ -140,6 +148,19 @@ void CTOSGame::Update(const float frameTime, int frameId)
 		{
 			pModule->Update(frameTime);
 		}
+	}
+
+	if (gEnv->pSystem->IsDevMode())
+	{
+		const float height = gEnv->pRenderer->GetHeight();
+		const float height768 = gEnv->pRenderer->GetHeight() / 768.0f;
+		float color[] = {1,1,1,1};
+
+		gEnv->pRenderer->Draw2dLabel(
+			height768 * 60.0f,
+			height - height768 * 33.0f,
+			height768 * 1.6f,
+			color, false, "TOS Build: " + m_modVersion);
 	}
 }
 

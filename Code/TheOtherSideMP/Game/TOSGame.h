@@ -175,6 +175,8 @@ private:
 
 	uint m_lastChannelConnectionState;
 	uint m_lastContextViewState;
+
+	string m_modVersion;
 };
 
 extern class CTOSGame* g_pTOSGame;

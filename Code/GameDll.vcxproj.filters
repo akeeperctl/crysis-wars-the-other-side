@@ -1568,6 +1568,9 @@
     <ClInclude Include="TheOtherSideMP\Utilities\VTables.h">
       <Filter>TheOtherSideMP\Utilities</Filter>
     </ClInclude>
+    <ClInclude Include="TheOtherSideMP\Helpers\TOS_Version.h">
+      <Filter>TheOtherSideMP\Helpers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="GameActions.actions">
