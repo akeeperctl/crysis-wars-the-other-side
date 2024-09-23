@@ -120,6 +120,9 @@ enum EExtraGameplayEvent
 	eEGE_HUDInGamePostUpdate,
 	eEGE_HUDUnloadSimpleAssets,
 
+	eEGE_EntityFactionChanged,
+	eEGE_FactionReactionChanged,
+
 	//eEGE_TOSGame_Init,
 
 	//eEGE_VehicleStuck,
@@ -186,205 +189,207 @@ public:
 		{
 			//eGE - Vanilla events
 			case eGE_Connected:
-				return "eGE_Connected";
+				return "Connected";
 			case eGE_Disconnected:
-				return "eGE_Disconnected";
+				return "Disconnected";
 			case eGE_GameReset:
-				return "eGE_GameReset";
+				return "GameReset";
 			case eGE_GameStarted:
-				return "eGE_GameStarted";
+				return "GameStarted";
 			case eGE_GameEnd:
-				return "eGE_GameEnd";
+				return "GameEnd";
 			case eGE_Renamed:
-				return "eGE_Renamed";
+				return "Renamed";
 			case eGE_ChangedTeam:
-				return "eGE_ChangedTeam";
+				return "ChangedTeam";
 			case eGE_Died:
-				return "eGE_Died";
+				return "Died";
 			case eGE_Scored:
-				return "eGE_Scored";
+				return "Scored";
 			case eGE_Currency:
-				return "eGE_Currency";
+				return "Currency";
 			case eGE_Rank:
-				return "eGE_Rank";
+				return "Rank";
 			case eGE_Spectator:
-				return "eGE_Spectator";
+				return "Spectator";
 			case eGE_ScoreReset:
-				return "eGE_ScoreReset";
+				return "ScoreReset";
 			case eGE_AttachedAccessory:
-				return "eGE_AttachedAccessory";
+				return "AttachedAccessory";
 			case eGE_ZoomedIn:
-				return "eGE_ZoomedIn";
+				return "ZoomedIn";
 			case eGE_ZoomedOut:
-				return "eGE_ZoomedOut";
+				return "ZoomedOut";
 			case eGE_Kill:
-				return "eGE_Kill";
+				return "Kill";
 			case eGE_Death:
-				return "eGE_Death";
+				return "Death";
 			case eGE_Revive:
-				return "eGE_Revive";
+				return "Revive";
 			case eGE_SuitModeChanged:
-				return "eGE_SuitModeChanged";
+				return "SuitModeChanged";
 			case eGE_Hit:
-				return "eGE_Hit";
+				return "Hit";
 			case eGE_Damage:
-				return "eGE_Damage";
+				return "Damage";
 			case eGE_WeaponHit:
-				return "eGE_WeaponHit";
+				return "WeaponHit";
 			case eGE_WeaponReload:
-				return "eGE_WeaponReload";
+				return "WeaponReload";
 			case eGE_WeaponShot:
-				return "eGE_WeaponShot";
+				return "WeaponShot";
 			case eGE_WeaponMelee:
-				return "eGE_WeaponMelee";
+				return "WeaponMelee";
 			case eGE_WeaponFireModeChanged:
-				return "eGE_WeaponFireModeChanged";
+				return "WeaponFireModeChanged";
 			case eGE_Explosion:
-				return "eGE_Explosion";
+				return "Explosion";
 			case eGE_ItemSelected:
-				return "eGE_ItemSelected";
+				return "ItemSelected";
 			case eGE_ItemPickedUp:
-				return "eGE_ItemPickedUp";
+				return "ItemPickedUp";
 			case eGE_ItemDropped:
-				return "eGE_ItemDropped";
+				return "ItemDropped";
 			case eGE_ItemBought:
-				return "eGE_ItemBought";
+				return "ItemBought";
 			case eGE_EnteredVehicle:
-				return "eGE_EnteredVehicle";
+				return "EnteredVehicle";
 			case eGE_LeftVehicle:
-				return "eGE_LeftVehicle";
+				return "LeftVehicle";
 
 				//eEGE - TOS events
 			case eEGE_MainMenuOpened:
-				return "eEGE_MainMenuOpened";
+				return "MainMenuOpened";
 			case eEGE_ActorGrabbed:
-				return "eEGE_ActorGrabbed";
+				return "ActorGrabbed";
 			case eEGE_ActorDropped:
-				return "eEGE_ActorDropped";
+				return "ActorDropped";
 			case eEGE_ActorGrab:
-				return "eEGE_ActorGrab";
+				return "ActorGrab";
 			case eEGE_ActorDrop:
-				return "eEGE_ActorDrop";
+				return "ActorDrop";
 			case eEGE_ActorRelease:
-				return "eEGE_ActorRelease";
+				return "ActorRelease";
 			case eEGE_ActorPostInit:
-				return "eEGE_ActorPostInit";
+				return "ActorPostInit";
 			case eEGE_InitClient:
-				return "eEGE_InitClient";
+				return "InitClient";
 			case eEGE_ActorDead:
-				return "eEGE_ActorDead";
+				return "ActorDead";
 			case eEGE_GamerulesReset:
-				return "eEGE_GamerulesReset";
+				return "GamerulesReset";
 			case eEGE_MasterClientOnStartControl:
-				return "eEGE_MasterClientOnStartControl";
+				return "MasterClientOnStartControl";
 			case eEGE_MasterClientOnStopControl:
-				return "eEGE_MasterClientOnStopControl";
-				//case eEGE_MasterEnterSpectator:
-				//	return "eEGE_MasterEnterSpectator";
+				return "MasterClientOnStopControl";
 			case eEGE_SlaveStartObey:
-				return "eEGE_SlaveStartObey";
+				return "SlaveStartObey";
 			case eEGE_SlaveStopObey:
-				return "eEGE_SlaveStopObey";
+				return "SlaveStopObey";
 			case eEGE_EditorGameEnter:
-				return "eEGE_EditorGameEnter";
+				return "EditorGameEnter";
 			case eEGE_EditorGameExit:
-				return "eEGE_EditorGameExit";
+				return "EditorGameExit";
 			case eEGE_PlayerJoinedGame:
-				return "eEGE_PlayerJoinedGame";
+				return "PlayerJoinedGame";
 			case eEGE_PlayerJoinedSpectator:
-				return "eEGE_PlayerJoinedSpectator";
+				return "PlayerJoinedSpectator";
 			case eEGE_MasterAdd:
-				return "eEGE_MasterAdd";
+				return "MasterAdd";
 			case eEGE_MasterRemove:
-				return "eEGE_MasterRemove";
+				return "MasterRemove";
 			case eEGE_SynchronizerCreated:
-				return "eEGE_SynchronizerCreated";
+				return "SynchronizerCreated";
 			case eEGE_SynchronizerDestroyed:
-				return "eEGE_SynchronizerDestroyed";
+				return "SynchronizerDestroyed";
 			case eEGE_GamerulesDestroyed:
-				return "eEGE_GamerulesDestroyed";
+				return "GamerulesDestroyed";
 			case eEGE_GamerulesStartGame:
-				return "eEGE_GamerulesStartGame";
+				return "GamerulesStartGame";
 			case eEGE_GamerulesEventInit:
-				return "eEGE_GamerulesEventInit";
+				return "GamerulesEventInit";
 			case eEGE_GamerulesPostInit:
-				return "eEGE_GamerulesPostInit";
+				return "GamerulesPostInit";
 			case eEGE_GamerulesInit:
-				return "eEGE_GamerulesInit";
+				return "GamerulesInit";
 			case eEGE_GameModuleInit:
-				return "eEGE_GameModuleInit";
+				return "GameModuleInit";
 			case eEGE_EntityOnSpawn:
-				return "eEGE_EntityOnSpawn";
+				return "EntityOnSpawn";
 			case eEGE_EntityOnRemove:
-				return "eEGE_EntityOnRemove";
+				return "EntityOnRemove";
 			case eEGE_TOSEntityOnSpawn:
-				return "eEGE_TOSEntityOnSpawn";
+				return "TOSEntityOnSpawn";
 			case eEGE_TOSEntityOnRemove:
-				return "eEGE_TOSEntityOnRemove";
+				return "TOSEntityOnRemove";
 			case eEGE_TOSEntityMarkForRecreation:
-				return "eEGE_TOSEntityMarkForRecreation";
+				return "TOSEntityMarkForRecreation";
 			case eEGE_TOSEntityRecreated:
-				return "eEGE_TOSEntityRecreated";
+				return "TOSEntityRecreated";
 			case eEGE_TOSEntityScheduleDelegateAuthority:
-				return "eEGE_TOSEntityScheduleDelegateAuthority";
+				return "TOSEntityScheduleDelegateAuthority";
 			case eEGE_TOSEntityAuthorityDelegated:
-				return "eEGE_TOSEntityAuthorityDelegated";
+				return "TOSEntityAuthorityDelegated";
 			case eEGE_ForceStartControl:
-				return "eEGE_ForceStartControl";
+				return "ForceStartControl";
 			case eEGE_EntitiesPreReset:
-				return "eEGE_EntitiesPreReset";
+				return "EntitiesPreReset";
 			case eEGE_EntitiesPostReset:
-				return "eEGE_EntitiesPostReset";
+				return "EntitiesPostReset";
 			case eEGE_MasterClientOnSetSlave:
-				return "eEGE_MasterClientOnSetSlave";
+				return "MasterClientOnSetSlave";
 			case eEGE_MasterClientOnClearSlave:
-				return "eEGE_MasterClientOnClearSlave";
+				return "MasterClientOnClearSlave";
 			case eEGE_SlaveEntityOnRemove:
-				return "eEGE_SlaveEntityOnRemove";
+				return "SlaveEntityOnRemove";
 			case eEGE_PlayerJoinedCutscene:
-				return "eEGE_PlayerJoinedCutscene";
+				return "PlayerJoinedCutscene";
 			case eEGE_GameChannelDestroyed:
-				return "eEGE_GameChannelDestroyed";
+				return "GameChannelDestroyed";
 			case eEGE_ConfigureGameChannel:
-				return "eEGE_ConfigureGameChannel";
+				return "ConfigureGameChannel";
 			case eEGE_ClientConnect:
-				return "eEGE_ClientConnect";
+				return "ClientConnect";
 			case eEGE_ClientDisconnect:
-				return "eEGE_ClientDisconnect";
+				return "ClientDisconnect";
 			case eEGE_ClientEnteredGame:
-				return "eEGE_ClientEnteredGame";
+				return "ClientEnteredGame";
 			case eEGE_GamerulesPostInitClient:
-				return "eEGE_GamerulesPostInitClient";
+				return "GamerulesPostInitClient";
 			case eEGE_UpdateContextViewState:
-				return "eEGE_UpdateContextViewState";
+				return "UpdateContextViewState";
 			case eEGE_UpdateChannelConnectionState:
-				return "eEGE_UpdateChannelConnectionState";
+				return "UpdateChannelConnectionState";
 			case eEGE_SynchronizerRegistered:
-				return "eEGE_SynchronizerRegistered";
+				return "SynchronizerRegistered";
 			case eEGE_EntityRemovedForced:
-				return "eEGE_EntityRemovedForced";
+				return "EntityRemovedForced";
 			case eEGE_VehicleDestroyed:
-				return "eEGE_VehicleDestroyed";
+				return "VehicleDestroyed";
 			case eEGE_ActorRevived:
-				return "eEGE_ActorRevived";
+				return "ActorRevived";
 			case eEGE_OnLevelLoadingStart:
-				return "eEGE_OnLevelLoadingStart";
+				return "OnLevelLoadingStart";
 			case eEGE_OnServerStartRestarting:
-				return "eEGE_OnServerStartRestarting";
+				return "OnServerStartRestarting";
 			case eEGE_ActorExitVehicle:
-				return "eEGE_ActorExitVehicle";
+				return "ActorExitVehicle";
 			case eEGE_ActorEnterVehicle:
-				return "eEGE_ActorEnterVehicle";
+				return "ActorEnterVehicle";
 			case eEGE_HUDInit:
-				return "eEGE_HUDInit";
+				return "HUDInit";
 			case eEGE_HUDHandleFSCommand:
-				return "eEGE_HUDHandleFSCommand";
+				return "HUDHandleFSCommand";
 			case eEGE_HUDInGamePostUpdate:
-				return "eEGE_HUDInGamePostUpdate";
+				return "HUDInGamePostUpdate";
 			case eEGE_HUDUnloadSimpleAssets:
-				return "eEGE_HUDUnloadSimpleAssets";
+				return "HUDUnloadSimpleAssets";
+			case eEGE_EntityFactionChanged:
+				return "EntityFactionChanged";
+			case eEGE_FactionReactionChanged:
+				return "FactionReactionChanged";
 			case eEGE_Last:
-				return "eEGE_Last";
+				return "Last";
 			default:
 				return "<UNDEFINED>";
 		}

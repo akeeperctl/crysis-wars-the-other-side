@@ -1616,6 +1616,9 @@
     <ClInclude Include="TheOtherSideMP\Game\Modules\Factions\Logger.h">
       <Filter>TheOtherSideMP\Game\Modules\Factions</Filter>
     </ClInclude>
+    <ClInclude Include="TheOtherSideMP\AI\AICommon.h">
+      <Filter>TheOtherSideMP\AI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="GameActions.actions">

@@ -57,7 +57,7 @@ public:
 	virtual void        SetDataSource(IFactionDataSource* pDataSource, EDataSourceLoad bLoad) override;
 	virtual void        RemoveDataSource(IFactionDataSource* pDataSource) override;
 
-	virtual void        Reload() override;
+	virtual bool        Reload() override;
 
 	//virtual void        RegisterFactionReactionChangedCallback(const FactionReactionChangedCallback& callback) override;
 	//virtual void        UnregisterFactionReactionChangedCallback(const FactionReactionChangedCallback& callback) override;
@@ -68,6 +68,7 @@ public:
 
 private:
 	static bool GetReactionType(const char* szReactionName, EReaction* pReactionType);
+	static const char* GetReactionName(EReaction reactionType);
 
 	static CFactionXmlDataSource s_defaultXmlDataSource;
 

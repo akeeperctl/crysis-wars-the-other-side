@@ -6,46 +6,46 @@
 #include "FactionMap.h"
 #include "TheOtherSideMP\Game\Modules\GenericModule.h"
 
-struct SFactionID
-{
-	SFactionID(const uint8 id = IFactionMap::InvalidFactionID)
-		: id(id)
-	{
-	}
+//struct SFactionID
+//{
+//	SFactionID(const uint8 id = IFactionMap::InvalidFactionID)
+//		: id(id)
+//	{
+//	}
+//
+//	bool IsValid() const
+//	{
+//		return id != IFactionMap::InvalidFactionID;
+//	}
+//
+//	inline bool operator==(const SFactionID& other) const
+//	{
+//		if (id == IFactionMap::InvalidFactionID)
+//			return false;
+//
+//		return id == other.id;
+//	}
+//
+//	uint8 id;
+//	string name;
+//};
 
-	bool IsValid() const
-	{
-		return id != IFactionMap::InvalidFactionID;
-	}
-
-	inline bool operator==(const SFactionID& other) const
-	{
-		if (id == IFactionMap::InvalidFactionID)
-			return false;
-
-		return id == other.id;
-	}
-
-	uint8 id;
-	string name;
-};
-
-struct SFactionFlagsMask
-{
-	SFactionFlagsMask() : mask(0)
-	{
-	}
-	SFactionFlagsMask(uint32 mask) : mask(mask)
-	{
-	}
-
-	inline bool operator==(const SFactionFlagsMask& other) const
-	{
-		return mask == other.mask;
-	}
-
-	uint32 mask;
-};
+//struct SFactionFlagsMask
+//{
+//	SFactionFlagsMask() : mask(0)
+//	{
+//	}
+//	SFactionFlagsMask(uint32 mask) : mask(mask)
+//	{
+//	}
+//
+//	inline bool operator==(const SFactionFlagsMask& other) const
+//	{
+//		return mask == other.mask;
+//	}
+//
+//	uint32 mask;
+//};
 
 class CTOSFactionsModule : public CTOSGenericModule
 {
@@ -57,7 +57,11 @@ public:
 	~CTOSFactionsModule();
 
 	//ITOSGameModule
+	virtual	void OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event);
 	virtual void GetMemoryStatistics(ICrySizer* s);
+	virtual void InitCCommands(IConsole* pConsole);
+	virtual void ReleaseCCommands();
+
 	virtual const char* GetName()
 	{
 		return "ModuleFactions";
@@ -70,18 +74,14 @@ public:
 		return m_pFactionMap;
 	}
 
-	void	   SetEntityFaction(EntityId entityId, const SFactionID& newFactionId, const ReactionChangedCallback& reactionChangedCallback);
-	SFactionID GetEntityFaction(EntityId entityId) const;
+	bool	   SetEntityFaction(EntityId entityId, uint8 factionId);
+	uint8	   GetEntityFaction(EntityId entityId) const;
+	bool	   Reload();
 
-	void OnFactionReactionChanged(const uint8 factionOne, const uint8 factionTwo, const IFactionMap::ReactionType reactionType);
-
-	SFactionFlagsMask GetFactionMaskByReaction(const SFactionID& factionId, const IFactionMap::ReactionType reactionType) const;
 
 private:
-	typedef std::set<std::pair<EntityId, ReactionChangedCallback>> EntitiesWithCallbackSet;
-
-	std::unordered_map<uint8, EntitiesWithCallbackSet> m_entitiesInFactionsMap;
-	std::unordered_map<EntityId, uint8> m_factionForEntitiesMap;
+	//Console commands
+	static void CmdReloadFactions(IConsoleCmdArgs* cmdArgs);
 
 	CFactionMap* m_pFactionMap;
 	IAISystem* m_pAISystem;

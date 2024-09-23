@@ -6,6 +6,7 @@
 #include "IFactionMap.h"
 #include "FactionMap.h"
 #include "Logger.h"
+#include <TheOtherSideMP\Game\TOSGameEventRecorder.h>
 
 CFactionXmlDataSource CFactionMap::s_defaultXmlDataSource("scripts/ai/factions.xml");
 //const char* IFactionMap::s_logPrefix = "[FACTIONS] ";
@@ -118,7 +119,7 @@ void CFactionMap::Clear()
 	//}
 }
 
-void CFactionMap::Reload()
+bool CFactionMap::Reload()
 {
 	Clear();
 
@@ -127,8 +128,11 @@ void CFactionMap::Reload()
 		if (!m_pDataSource->Load(*this))
 		{
 			FactionsError("Failed to load factions from data source!");
+			return false;
 		}
 	}
+
+	return true;
 }
 
 //void CFactionMap::RegisterFactionReactionChangedCallback(const FactionReactionChangedCallback& callback)
@@ -224,8 +228,6 @@ void CFactionMap::RemoveFaction(uint8 factionID)
 
 		//if (foundIter != m_factionIds.end())
 		//{
-
-
 			//// создаем копию
 			//uint8 oldReactions[maxFactionCount][maxFactionCount];
 			//memcpy(oldReactions, m_reactions, sizeof(oldReactions));
@@ -268,7 +270,13 @@ void CFactionMap::SetReaction(uint8 factionOne, uint8 factionTwo, IFactionMap::R
 {
 	if ((factionOne < maxFactionCount) && (factionTwo < maxFactionCount))
 	{
+		ReactionType oldReaction = static_cast<ReactionType>(m_reactions[{factionOne, factionTwo}]);
+
 		m_reactions[{factionOne, factionTwo}] = reaction;
+
+		char buffer[256];
+		sprintf(buffer, "Faction ['%i'] to Faction ['%i'] from '%s' to '%s'", int(factionOne), int(factionTwo), GetReactionName(oldReaction), GetReactionName(reaction));
+		TOS_RECORD_EVENT(0, STOSGameEvent(eEGE_FactionReactionChanged, buffer, true, false, &factionOne, int(factionTwo), int(reaction)));
 
 		//m_reactions[factionOne][factionTwo] = reaction;
 		//m_factionReactionChangedCallback.Call(factionOne, factionTwo, reaction);
@@ -279,8 +287,8 @@ IFactionMap::ReactionType CFactionMap::GetReaction(const uint8 factionOne, const
 {
 	if ((factionOne < maxFactionCount) && (factionTwo < maxFactionCount))
 	{
-		auto found = m_reactions.find(std::make_pair(factionOne, factionTwo));
-		auto reaction = found->second;
+		auto foundIter = m_reactions.find(std::make_pair(factionOne, factionTwo));
+		uint8 reaction = foundIter->second;
 
 		return static_cast<IFactionMap::ReactionType>(reaction);
 	}
@@ -365,6 +373,21 @@ bool CFactionMap::GetReactionType(const char* szReactionName, EReaction* pReacti
 
 	return true;
 
+}
+
+const char* CFactionMap::GetReactionName(EReaction reactionType) 
+{
+	switch (reactionType) 
+	{
+		case Friendly:
+			return "Friendly";
+		case Hostile:
+			return "Hostile";
+		case Neutral:
+			return "Neutral";
+		default:
+			return "<UNDEFINED>";
+	}
 }
 
 void CFactionMap::SetDataSource(IFactionDataSource* pDataSource, EDataSourceLoad bLoad)

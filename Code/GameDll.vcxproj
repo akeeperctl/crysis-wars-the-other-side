@@ -691,6 +691,7 @@
     <ClInclude Include="TheOtherSideMP\Actors\Player\TOSGruntMovementController.h" />
     <ClInclude Include="TheOtherSideMP\Actors\Player\TOSPlayer.h" />
     <ClInclude Include="TheOtherSideMP\Actors\TOSActor.h" />
+    <ClInclude Include="TheOtherSideMP\AI\AICommon.h" />
     <ClInclude Include="TheOtherSideMP\AI\AIHooks.h" />
     <ClInclude Include="TheOtherSideMP\Control\ControlSystem.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>

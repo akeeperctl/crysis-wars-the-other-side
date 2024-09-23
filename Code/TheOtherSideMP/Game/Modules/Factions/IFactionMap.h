@@ -3,6 +3,7 @@
 
 #pragma once
 #include <Win32specific.h>
+#include "TheOtherSideMP\AI\AICommon.h"
 
 struct IFactionMap;
 
@@ -25,7 +26,7 @@ struct IFactionMap
 
 	enum
 	{
-		InvalidFactionID = 0xff,
+		InvalidFactionID = INVALID_SPECIES_ID
 	};
 
 	enum class EDataSourceLoad
@@ -86,7 +87,7 @@ struct IFactionMap
 	virtual void RemoveDataSource(IFactionDataSource* pDataSource) = 0;
 
 	//! Reloads the data from the current data source.
-	virtual void Reload() = 0;
+	virtual bool Reload() = 0;
 	
 	////! Register to faction reaction callback.
 	//virtual void RegisterFactionReactionChangedCallback(const FactionReactionChangedCallback& callback) = 0;

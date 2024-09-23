@@ -19,7 +19,7 @@
 	<Faction id="2" default="hostile">
 		<Reaction faction="0"  reaction="hostile" />
 		<Reaction faction="1"  reaction="hostile" />
-		<Reaction faction="2"  reaction="hostile" />
+		<Reaction faction="2"  reaction="friendly" />
 		<Reaction faction="10" reaction="neutral" />
 	</Faction>
 	

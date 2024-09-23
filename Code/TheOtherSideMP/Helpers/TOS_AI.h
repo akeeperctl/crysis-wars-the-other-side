@@ -14,6 +14,7 @@ Copyright (C), AlienKeeper, 2024.
 #include "TheOtherSideMP/Actors/TOSActor.h"
 #include "TOS_Debug.h"
 #include "TOS_Script.h"
+#include <TheOtherSideMP\AI\AICommon.h>
 
 namespace TOS_AI
 {
@@ -483,15 +484,20 @@ namespace TOS_AI
 		}
 	}
 
-	inline void SetSpecies(IAIObject* pAI, const int species)
+	inline bool SetSpecies(IAIObject* pAI, const int species)
 	{
+		bool ok = false;
+
 		if (pAI && gEnv->bServer && gEnv->pAISystem && gEnv->pAISystem->IsEnabled())
 		{
 			AgentParameters playerParams = pAI->CastToIAIActor()->GetParameters();
 			playerParams.m_nSpecies = species;
 
 			if (pAI->CastToIAIActor())
+			{
 				pAI->CastToIAIActor()->SetParameters(playerParams);
+				ok = true;
+			}
 
 			const auto pTable = pAI->GetEntity()->GetScriptTable();
 			if (pTable)
@@ -499,13 +505,16 @@ namespace TOS_AI
 				SmartScriptTable props;
 				pTable->GetValue("Properties", props);
 				props->SetValue("species", species);
+				ok = true;
 			}
 		}
+
+		return ok;
 	}
 
-	inline int GetSpecies(const IAIObject* pAI, const bool fromLua)
+	inline uint8 GetSpecies(const IAIObject* pAI, const bool fromLua)
 	{
-		int species = -1;
+		int species = INVALID_SPECIES_ID;
 
 		if (pAI && gEnv->bServer && gEnv->pAISystem->IsEnabled())
 		{

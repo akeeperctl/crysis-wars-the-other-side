@@ -24,6 +24,9 @@ namespace TOS_Hooks
 		struct IAIObjectHook
 		{
 			bool IsHostile(const IAIObject* pOther, bool bUsingAIIgnorePlayer=true) const;
+
+			// С нее нужна только сигнатура
+			unsigned GetEntityID() const;
 		};
 
 		void ApplyHooks();
