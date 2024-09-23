@@ -8,13 +8,16 @@ Copyright (C), AlienKeeper, 2024.
 #include "StdAfx.h"
 #include "AIHooks.h"
 
-constexpr size_t IAIOBJECT_VTABLE_ADDRESS_X64 = 0x000000003122bda0;
-constexpr size_t IAIACTOR_VTABLE_ADDRESS_X64 = 0x0000000041acae44;
-constexpr size_t IAISYSTEM_VTABLE_ADDRESS_X64 = 0x000000003121c290;
+#ifdef _WIN64
+	constexpr size_t IAIOBJECT_VTABLE_ADDRESS = 0x000000003122bda0;
+	constexpr size_t IAIACTOR_VTABLE_ADDRESS = 0x0000000041acae44;
+	constexpr size_t IAISYSTEM_VTABLE_ADDRESS = 0x000000003121c290;
+#elif _WIN32
+	constexpr size_t IAIOBJECT_VTABLE_ADDRESS = 0x311ba5d0;
+	constexpr size_t IAIACTOR_VTABLE_ADDRESS = 0x311ba598;
+	constexpr size_t IAISYSTEM_VTABLE_ADDRESS = 0x311b0fa0;
+#endif
 
-constexpr size_t IAIOBJECT_VTABLE_ADDRESS_X32 = 0x311ba5d0;
-constexpr size_t IAIACTOR_VTABLE_ADDRESS_X32 = 0x311ba598;
-constexpr size_t IAISYSTEM_VTABLE_ADDRESS_X32 = 0x311b0fa0;
 
 // Определение функций хука обязательно должно быть вне структуры
 // Иначе при получении адреса целевой функции будет выдаваться адрес совсем другой функции
@@ -22,11 +25,11 @@ constexpr size_t IAISYSTEM_VTABLE_ADDRESS_X32 = 0x311b0fa0;
 
 void TOS_Hooks::AI::ApplyHooks()
 {
-	auto pVTable1 = Utils::VTables::GetVTableFromAddress(IAIACTOR_VTABLE_ADDRESS_X32);
+	auto pVTable1 = Utils::VTables::GetVTableFromAddress(IAIACTOR_VTABLE_ADDRESS);
 	auto index1 = IndexFinder::getIndexOf(&IAIActor::CanAcquireTarget);
 	TOS_Hooks::ReplaceFunction(&pVTable1[index1], &IAIActorHook::CanAcquireTarget);
 
-	auto pVTable2 = Utils::VTables::GetVTableFromAddress(IAIOBJECT_VTABLE_ADDRESS_X32);
+	auto pVTable2 = Utils::VTables::GetVTableFromAddress(IAIOBJECT_VTABLE_ADDRESS);
 	auto index2 = IndexFinder::getIndexOf(&IAIObject::IsHostile);
 	TOS_Hooks::ReplaceFunction(&pVTable2[index2], &IAIObjectHook::IsHostile);
 }
