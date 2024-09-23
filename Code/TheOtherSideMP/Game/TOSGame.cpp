@@ -17,37 +17,8 @@ Copyright (C), AlienKeeper, 2024.
 
 #include "TheOtherSideMP/Helpers/TOS_Cache.h"
 #include "TheOtherSideMP/Helpers/TOS_Script.h"
-#include "TheOtherSideMP/Helpers/TOS_Hooks.h"
-
-#include "TheOtherSideMP/Utilities/VTables.h"
-#include "TheOtherSideMP/Utilities/IndexFinder.h"
-#include <TheOtherSideMP\Helpers\TOS_Version.h>
-
-struct IAIActorHook
-{
-	bool CanAcquireTarget(IAIObject* pOther) const;
-};
-
-struct IAIObjectHook
-{
-	bool IsHostile(const IAIObject* pOther, bool bUsingAIIgnorePlayer=true) const;
-};
-
-// Определение функций хука обязательно должно быть вне структуры
-// Иначе при получении адреса целевой функции будет выдаваться адрес совсем другой функции
-/////////////////////////////////////////////////////////////
-
-bool IAIActorHook::CanAcquireTarget(IAIObject* pOther) const
-{
-	CryLogAlways("IAIActorHook::CanAcquireTarget");
-	return false;
-};
-
-bool IAIObjectHook::IsHostile(const IAIObject* pOther, bool bUsingAIIgnorePlayer) const
-{
-	CryLogAlways("IAIObjectHook::IsHostile");
-	return false;
-};
+#include "TheOtherSideMP/Helpers/TOS_Version.h"
+#include "TheOtherSideMP/Hooks/AIHooks.h"
 
 CTOSGame::CTOSGame()
 	: m_pAITrackerModule(nullptr),
@@ -63,14 +34,7 @@ CTOSGame::CTOSGame()
 
 	// Получение версии по имени выполняемого файла
     m_modVersion = TOS_Version::GetDLLVersion("CrysisTheOtherSide");
-
-	auto pVTable1 = Utils::VTables::GetVTableFromAddress(IAIACTOR_VTABLE_ADDRESS_X32);
-	auto index1 = IndexFinder::getIndexOf(&IAIActor::CanAcquireTarget);
-	TOS_Hooks::ReplaceFunction(&pVTable1[index1], &IAIActorHook::CanAcquireTarget);
-
-	auto pVTable2 = Utils::VTables::GetVTableFromAddress(IAIOBJECT_VTABLE_ADDRESS_X32);
-	auto index2 = IndexFinder::getIndexOf(&IAIObject::IsHostile);
-	TOS_Hooks::ReplaceFunction(&pVTable2[index2], &IAIObjectHook::IsHostile);
+	TOS_Hooks::AI::ApplyHooks();
 }
 
 CTOSGame::~CTOSGame()

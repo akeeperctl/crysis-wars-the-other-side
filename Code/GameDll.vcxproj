@@ -484,6 +484,7 @@
     <ClCompile Include="TheOtherSideMP\Game\TOSGame.cpp" />
     <ClCompile Include="TheOtherSideMP\Game\TOSGameCvars.cpp" />
     <ClCompile Include="TheOtherSideMP\Game\TOSGameEventRecorder.cpp" />
+    <ClCompile Include="TheOtherSideMP\Hooks\AIHooks.cpp" />
     <ClCompile Include="TheOtherSideMP\HUD\TOSCrosshair.cpp" />
     <ClCompile Include="TheOtherSideMP\MasterCvars.cpp" />
     <ClCompile Include="TheOtherSideMP\Nodes\FlowFlashHUD.cpp" />
@@ -746,6 +747,7 @@
     <ClInclude Include="TheOtherSideMP\Helpers\TOS_STL.h" />
     <ClInclude Include="TheOtherSideMP\Helpers\TOS_Vehicle.h" />
     <ClInclude Include="TheOtherSideMP\Helpers\TOS_Version.h" />
+    <ClInclude Include="TheOtherSideMP\Hooks\AIHooks.h" />
     <ClInclude Include="TheOtherSideMP\HUD\TOSCrosshair.h" />
     <ClInclude Include="TheOtherSideMP\TOSSmartStruct.h" />
     <ClInclude Include="TheOtherSideMP\Utilities\DedicatedServerHackScope.h" />

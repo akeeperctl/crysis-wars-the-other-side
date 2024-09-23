@@ -169,6 +169,9 @@
     <Filter Include="CryMP\Library">
       <UniqueIdentifier>{a3b60681-ac3d-48bc-8917-333629f19a38}</UniqueIdentifier>
     </Filter>
+    <Filter Include="TheOtherSideMP\Hooks">
+      <UniqueIdentifier>{cd24565f-5dba-4472-b772-bacd17447438}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Actor.cpp">
@@ -890,6 +893,9 @@
     <ClCompile Include="CryMP\Library\WinAPI.cpp">
       <Filter>CryMP\Library</Filter>
     </ClCompile>
+    <ClCompile Include="TheOtherSideMP\Hooks\AIHooks.cpp">
+      <Filter>TheOtherSideMP\Hooks</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor.h">
@@ -1570,6 +1576,9 @@
     </ClInclude>
     <ClInclude Include="TheOtherSideMP\Helpers\TOS_Version.h">
       <Filter>TheOtherSideMP\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="TheOtherSideMP\Hooks\AIHooks.h">
+      <Filter>TheOtherSideMP\Hooks</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

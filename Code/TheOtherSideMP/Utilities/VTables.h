@@ -7,14 +7,6 @@ Comrade, thx for helping to create this!
 
 #pragma once
 
-constexpr size_t IAIOBJECT_VTABLE_ADDRESS_X64 = 0x000000003122bda0;
-constexpr size_t IAIACTOR_VTABLE_ADDRESS_X64 = 0x0000000041acae44;
-constexpr size_t IAISYSTEM_VTABLE_ADDRESS_X64 = 0x000000003121c290;
-
-constexpr size_t IAIOBJECT_VTABLE_ADDRESS_X32 = 0x311ba5d0;
-constexpr size_t IAIACTOR_VTABLE_ADDRESS_X32 = 0x311ba598;
-constexpr size_t IAISYSTEM_VTABLE_ADDRESS_X32 = 0x311b0fa0;
-
 namespace Utils
 {
 	namespace VTables
