@@ -10,15 +10,6 @@
     <Filter Include="TheOtherSideMP\Control_Old">
       <UniqueIdentifier>{fe3e36fb-7dfb-48d4-a4a9-e97a2b24a858}</UniqueIdentifier>
     </Filter>
-    <Filter Include="TheOtherSideMP\Actors">
-      <UniqueIdentifier>{9c15a8d5-e10f-4dce-9b4d-835c97230a4f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="TheOtherSideMP\Actors\aliens">
-      <UniqueIdentifier>{584b3523-2624-471a-a304-0e6d5abcf77f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="TheOtherSideMP\Actors\player">
-      <UniqueIdentifier>{80f2a524-f64c-4877-b6d4-c9976bff1110}</UniqueIdentifier>
-    </Filter>
     <Filter Include="TheOtherSideMP\Game">
       <UniqueIdentifier>{6a638ed2-5d3b-4d9e-9662-c6daf842ff8c}</UniqueIdentifier>
     </Filter>
@@ -36,9 +27,6 @@
     </Filter>
     <Filter Include="TheOtherSideMP\HUD">
       <UniqueIdentifier>{8796b1bf-5bdf-49c1-91bc-f0959f038ad0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="TheOtherSideMP\Actors\animation">
-      <UniqueIdentifier>{8839ffbb-fce8-4f95-9efa-942480b24ae1}</UniqueIdentifier>
     </Filter>
     <Filter Include="TheOtherSideMP\Extensions">
       <UniqueIdentifier>{83e9fd62-7e52-4fe9-af82-99a15a584bba}</UniqueIdentifier>
@@ -177,6 +165,24 @@
     </Filter>
     <Filter Include="FGPS">
       <UniqueIdentifier>{a6f80983-a3b3-4d1b-904c-fa688b56d13f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TheOtherSideMP\AI">
+      <UniqueIdentifier>{c066d497-3276-4b9e-b620-64dedf146c3f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TheOtherSideMP\Actors">
+      <UniqueIdentifier>{9c15a8d5-e10f-4dce-9b4d-835c97230a4f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TheOtherSideMP\Actors\aliens">
+      <UniqueIdentifier>{584b3523-2624-471a-a304-0e6d5abcf77f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TheOtherSideMP\Actors\player">
+      <UniqueIdentifier>{80f2a524-f64c-4877-b6d4-c9976bff1110}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TheOtherSideMP\Actors\animation">
+      <UniqueIdentifier>{8839ffbb-fce8-4f95-9efa-942480b24ae1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TheOtherSideMP\AI\FactionSystem">
+      <UniqueIdentifier>{88661986-e297-40a2-b367-45ef17de8f7f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -903,6 +909,12 @@
     <ClCompile Include="FGPS\FGPluginLoader.cpp">
       <Filter>FGPS</Filter>
     </ClCompile>
+    <ClCompile Include="TheOtherSideMP\AI\FactionSystem\FactionMap.cpp">
+      <Filter>TheOtherSideMP\AI\FactionSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="TheOtherSideMP\AI\FactionSystem\FactionSystem.cpp">
+      <Filter>TheOtherSideMP\AI\FactionSystem</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor.h">
@@ -1594,6 +1606,15 @@
     </ClInclude>
     <ClInclude Include="FGPS\PluginCommon.h">
       <Filter>FGPS</Filter>
+    </ClInclude>
+    <ClInclude Include="TheOtherSideMP\AI\FactionSystem\FactionMap.h">
+      <Filter>TheOtherSideMP\AI\FactionSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="TheOtherSideMP\AI\FactionSystem\IFactionMap.h">
+      <Filter>TheOtherSideMP\AI\FactionSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="TheOtherSideMP\AI\FactionSystem\FactionSystem.h">
+      <Filter>TheOtherSideMP\AI\FactionSystem</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

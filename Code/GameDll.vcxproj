@@ -432,6 +432,8 @@
     <ClCompile Include="TheOtherSideMP\Actors\Player\TOSGruntMovementController.cpp" />
     <ClCompile Include="TheOtherSideMP\Actors\Player\TOSPlayer.cpp" />
     <ClCompile Include="TheOtherSideMP\Actors\TOSActor.cpp" />
+    <ClCompile Include="TheOtherSideMP\AI\FactionSystem\FactionMap.cpp" />
+    <ClCompile Include="TheOtherSideMP\AI\FactionSystem\FactionSystem.cpp" />
     <ClCompile Include="TheOtherSideMP\Control\ControlAction.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">true</ExcludedFromBuild>
@@ -689,6 +691,9 @@
     <ClInclude Include="TheOtherSideMP\Actors\Player\TOSGruntMovementController.h" />
     <ClInclude Include="TheOtherSideMP\Actors\Player\TOSPlayer.h" />
     <ClInclude Include="TheOtherSideMP\Actors\TOSActor.h" />
+    <ClInclude Include="TheOtherSideMP\AI\FactionSystem\FactionMap.h" />
+    <ClInclude Include="TheOtherSideMP\AI\FactionSystem\FactionSystem.h" />
+    <ClInclude Include="TheOtherSideMP\AI\FactionSystem\IFactionMap.h" />
     <ClInclude Include="TheOtherSideMP\Control\ControlSystem.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">true</ExcludedFromBuild>

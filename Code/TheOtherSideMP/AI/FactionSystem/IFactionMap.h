@@ -44,27 +44,24 @@ struct IFactionMap
 	//! \return Maximum number of factions.
 	virtual uint32 GetMaxFactionCount() const = 0;
 
-	//! Gets the name of the specified faction by ID.
-	//! \param factionId Id of the faction.
-	//! \return Name of the faction or 'nullptr' if not found.
-	virtual const char* GetFactionName(uint8 factionId) const = 0;
+	////! Gets the name of the specified faction by ID.
+	////! \param factionId Id of the faction.
+	////! \return Name of the faction or 'nullptr' if not found.
+	//virtual const char* GetFactionName(uint8 factionId) const = 0;
 
-	//! Gets the ID of a faction by name.
-	//! \param szName Name of the faction.
-	//! \return ID of the faction or 'IFactionMap::InvalidFactionID' if not found.
-	virtual uint8 GetFactionID(const char* szName) const = 0;
+	////! Gets the ID of a faction by name.
+	////! \param szName Name of the faction.
+	////! \return ID of the faction or 'IFactionMap::InvalidFactionID' if not found.
+	//virtual uint8 GetFactionID(const char* szName) const = 0;
 
-	//! Creates or updates a faction. Editor mode only!
-	//! \param szName Name of the faction.
-	//! \param reactionsCount Count of reactions 'pReactions' points to. Should be max faction count!
-	//! \param pReactions Reactions to copy into the map.
-	//! \return ID of the faction or 'IFactionMap::InvalidFactionID' in case of a failure.
-	virtual uint8 CreateOrUpdateFaction(const char* szName, uint32 reactionsCount, const uint8* pReactions) = 0;
-
-	//! Removes a faction by name.
-	//! \note Editor mode only!.
-	//! \param szName Name of the faction.
-	virtual void RemoveFaction(const char* szName) = 0;
+	//! Creates a faction. Editor mode only!
+	//! \param factionID - id of the faction.
+	//! \param defaultReactionsType - Стандартная реакция на все фракции
+	//! \return true in case of a success.
+	virtual bool CreateFaction(uint8 factionId, ReactionType defaultReactionType) = 0;
+	
+	/// @brief Removes a faction by ID. Editor mode only!.
+	virtual void RemoveFaction(uint8 factionID) = 0;
 
 	//! Sets the reaction of 'factionOne' to 'factionTwo'.
 	//! \param factionOne ID of the reacting faction.

@@ -5,12 +5,12 @@
 
 CFactionSystem::CFactionSystem()
 {
-	m_factionMap.RegisterFactionReactionChangedCallback(functor(*this, &CFactionSystem::OnFactionReactionChanged));
+	//m_factionMap.RegisterFactionReactionChangedCallback(functor(*this, &CFactionSystem::OnFactionReactionChanged));
 }
 
 CFactionSystem::~CFactionSystem()
 {
-	m_factionMap.UnregisterFactionReactionChangedCallback(functor(*this, &CFactionSystem::OnFactionReactionChanged));
+	//m_factionMap.UnregisterFactionReactionChangedCallback(functor(*this, &CFactionSystem::OnFactionReactionChanged));
 }
 
 void CFactionSystem::OnFactionReactionChanged(const uint8 factionOne, const uint8 factionTwo, const IFactionMap::ReactionType reactionType)

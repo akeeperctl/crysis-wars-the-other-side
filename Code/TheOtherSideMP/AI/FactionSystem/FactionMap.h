@@ -1,12 +1,13 @@
 // Copyright 2001-2019 Crytek GmbH / Crytek Group. All rights reserved.
 
 #pragma once
-#include "IFactionMap.h"
+
 #include "platform.h"
 #include <unordered_map>
 #include <StlUtils.h>
+#include "IFactionMap.h"
 
-class CFactionXmlDataSource : IFactionDataSource
+class CFactionXmlDataSource : public IFactionDataSource
 {
 public:
 	CFactionXmlDataSource(const char* szFileName)
@@ -27,8 +28,9 @@ class CFactionMap : public IFactionMap
 
 	enum { maxFactionCount = 32 };
 
-	typedef std::unordered_map<uint8, string>                                                       FactionNamesById;
-	typedef std::unordered_map<string, uint8, stl::hash_stricmp<string>, stl::hash_stricmp<string>> FactionIdsByName;
+	typedef std::set<uint8>																			  FactionIds;
+	//typedef std::unordered_map<uint8, string>                                                       FactionNamesById;
+	//typedef std::unordered_map<string, uint8, stl::hash_stricmp<string>, stl::hash_stricmp<string>> FactionIdsByName;
 
 public:
 	typedef IFactionMap::ReactionType EReaction;
@@ -39,11 +41,12 @@ public:
 	virtual uint32      GetFactionCount() const override;
 	virtual uint32      GetMaxFactionCount() const override;
 
-	virtual const char* GetFactionName(uint8 factionId) const override;
-	virtual uint8       GetFactionID(const char* szName) const override;
+	//virtual const char* GetFactionName(uint8 factionId) const override;
+	//virtual uint8       GetFactionID(const char* szName) const override;
 
-	virtual uint8       CreateOrUpdateFaction(const char* szName, uint32 reactionsCount, const uint8* pReactions) override;
-	virtual void        RemoveFaction(const char* szName) override;
+	//virtual bool        CreateFaction(uint8 factionID, uint32 reactionsCount, const uint8* pReactions) override;
+	virtual bool		CreateFaction(uint8 factionId, CFactionMap::ReactionType defaultReactionsType);
+	virtual void		RemoveFaction(uint8 factionId);
 
 	virtual void        SetReaction(uint8 factionOne, uint8 factionTwo, IFactionMap::ReactionType reaction) override;
 	virtual EReaction   GetReaction(uint8 factionOne, uint8 factionTwo) const override;
@@ -66,9 +69,11 @@ private:
 	static CFactionXmlDataSource s_defaultXmlDataSource;
 
 	IFactionDataSource*          m_pDataSource;
-	FactionNamesById             m_namesById;
-	FactionIdsByName             m_idsByName;
-	uint8                        m_reactions[maxFactionCount][maxFactionCount];
+	//FactionNamesById             m_namesById;
+	//FactionIdsByName             m_idsByName;
+	FactionIds					 m_factionIds;
+	//uint8                        m_reactions[maxFactionCount][maxFactionCount];
+	std::map<std::pair<uint8, uint8>, uint8> m_reactions;
 
 	//CFunctorsList<FactionReactionChangedCallback> m_factionReactionChangedCallback;
 };
