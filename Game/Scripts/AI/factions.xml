@@ -1,0 +1,28 @@
+<Factions>
+	<!-- usa -->
+	<Faction id="0" default="hostile">
+		<Reaction faction="0"  reaction="friendly" />
+		<Reaction faction="10" reaction="neutral" />
+		<Reaction faction="1"  reaction="hostile" />
+		<Reaction faction="2"  reaction="hostile" />
+	</Faction>
+
+	<!-- civilians -->
+	<Faction id="10" default="neutral" />
+	
+	<!-- nk -->
+	<Faction id="1" default="hostile">
+		<Reaction faction="0"  reaction="hostile" />
+		<Reaction faction="10" reaction="neutral" />
+		<Reaction faction="1"  reaction="friendly" />
+		<Reaction faction="2"  reaction="hostile" />
+	</Faction>
+	
+	<!-- aliens -->
+	<Faction id="2" default="hostile">
+		<Reaction faction="0"  reaction="hostile" />
+		<Reaction faction="10" reaction="neutral" />
+		<Reaction faction="1"  reaction="hostile" />
+		<Reaction faction="2"  reaction="hostile" />
+	</Faction>
+</Factions>
