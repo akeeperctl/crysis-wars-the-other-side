@@ -13,6 +13,7 @@ Copyright (C), AlienKeeper, 2024.
 #include <IInput.h>
 #include "Modules\Zeus\ZeusModule.h"
 #include "ScriptBinds\ScriptBind_Custom.h"
+#include "FGPS\FGPluginLoader.h"
 
 class СTOSAIModule;
 class CControlClient;
@@ -156,10 +157,9 @@ private:
 	void UpdateChannelConnectionState();
 	void UpdateContextViewState();
 
-
+	CFGPluginLoader* m_pFGPluginLoader;
 	СTOSAIModule* m_pAITrackerModule;
 	CControlClient* m_pLocalControlClient;
-
 	CTOSGameEventRecorder* m_pEventRecorder;
 	CTOSMasterModule* m_pMasterModule;
 	CTOSZeusModule* m_pZeusModule;

@@ -281,6 +281,7 @@
     <ClCompile Include="Environment\Tornado.cpp" />
     <ClCompile Include="Expansion\Weapons\GrenadeLaunch.cpp" />
     <ClCompile Include="Expansion\Weapons\RemoteGrenade.cpp" />
+    <ClCompile Include="FGPS\FGPluginLoader.cpp" />
     <ClCompile Include="Fists.cpp" />
     <ClCompile Include="FlashAnimation.cpp" />
     <ClCompile Include="FlowItemAnimation.cpp" />
@@ -560,6 +561,8 @@
     <ClInclude Include="Environment\Tornado.h" />
     <ClInclude Include="Expansion\Weapons\GrenadeLaunch.h" />
     <ClInclude Include="Expansion\Weapons\RemoteGrenade.h" />
+    <ClInclude Include="FGPS\FGPluginLoader.h" />
+    <ClInclude Include="FGPS\PluginCommon.h" />
     <ClInclude Include="Fists.h" />
     <ClInclude Include="FlashAnimation.h" />
     <ClInclude Include="FlowItemAnimation.h" />

@@ -28,6 +28,7 @@ CTOSGame::CTOSGame()
 	m_pEntitySpawnModule(nullptr),
 	m_pZeusModule(nullptr),
 	m_pCustomScriptBind(nullptr),
+	m_pFGPluginLoader(nullptr),
 	m_lastChannelConnectionState(0),
 	m_lastContextViewState(0)
 {
@@ -72,6 +73,9 @@ void CTOSGame::Init()
 	m_pMasterModule = new CTOSMasterModule();
 
 	//~Modules
+
+	m_pFGPluginLoader = new CFGPluginLoader(gEnv->pConsole, g_pGameCVars);
+	m_pFGPluginLoader->RegisterPlugins();
 
 	// Исправление бага https://github.com/akeeperctl/crysis-wars-the-other-side/issues/8
 	g_pGameCVars->hud_enableAlienInterference = 0;

@@ -46,6 +46,8 @@ void STOSCvars::InitCVars(IConsole* pConsole)
 
 	for (std::vector<ITOSGameModule*>::iterator it = g_pTOSGame->m_modules.begin(); it != g_pTOSGame->m_modules.end(); ++it)
 		(*it)->InitCVars(pConsole);
+
+	g_pTOSGame->m_pFGPluginLoader->RegisterConsoleCommands();
 }
 
 void STOSCvars::InitCCommands(IConsole* pConsole)
@@ -93,6 +95,8 @@ void STOSCvars::ReleaseCCommands()
 	pConsole->RemoveCommand("consumersetdrain");
 	pConsole->RemoveCommand("consumersetdebugentname");
 	pConsole->RemoveCommand("getdudename");
+
+	g_pTOSGame->m_pFGPluginLoader->UnregisterConsoleCommands();
 }
 
 void STOSCvars::ReleaseCVars()

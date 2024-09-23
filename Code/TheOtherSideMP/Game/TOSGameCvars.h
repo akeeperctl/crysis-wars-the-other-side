@@ -52,9 +52,8 @@ struct STOSCvars  // NOLINT(cppcoreguidelines-special-member-functions)
 	static void ReleaseCVars();
 	static void ReleaseCCommands();
 
-	// SERVER COMMANDS
+	// SERVER CONSOLE COMMANDS
 	static void CmdNetChName(IConsoleCmdArgs* pArgs);
-
 	static void CmdDumpActorInfo(IConsoleCmdArgs* pArgs);
 	static void CmdGetEntityScriptValue(IConsoleCmdArgs* pArgs);
 	static void CmdDumpEntityInfo(IConsoleCmdArgs* pArgs);
@@ -66,7 +65,7 @@ struct STOSCvars  // NOLINT(cppcoreguidelines-special-member-functions)
 	static void CmdConsumerSetDebugEntityName(IConsoleCmdArgs* pArgs);
 
 
-	// CLIENT COMMANDS
+	// CLIENT CONSOLE COMMANDS
 	static void CmdGetDudeName(IConsoleCmdArgs* pArgs);
 
 	// Правило написания консольных значений
