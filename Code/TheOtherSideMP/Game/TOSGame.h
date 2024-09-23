@@ -24,7 +24,7 @@ class CTOSGameEventRecorder;
 
 class CTOSMasterModule;
 class CTOSEntitySpawnModule;
-
+class CTOSZeusModule;
 class CTOSFactionsModule;
 
 struct STOSGameEvent;
@@ -145,7 +145,6 @@ public:
 	CTOSMasterModule* GetMasterModule() const;
 	CTOSZeusModule* GetZeusModule() const;
 	CTOSEntitySpawnModule* GetEntitySpawnModule() const;
-	СTOSAIModule* GetAITrackerModule() const;
 	CTOSFactionsModule* GetFactionsModule() const;
 
 
@@ -157,26 +156,24 @@ private:
 	void UpdateChannelConnectionState();
 	void UpdateContextViewState();
 
+	Vec3 m_mouseScreenPos;
+	Vec3 m_mouseWorldPos;
+	uint m_lastChannelConnectionState;
+	uint m_lastContextViewState;
+	string m_modVersion;
+
 	CFGPluginLoader* m_pFGPluginLoader;
-	СTOSAIModule* m_pAITrackerModule;
-	CControlClient* m_pLocalControlClient;
 	CTOSGameEventRecorder* m_pEventRecorder;
-	CTOSMasterModule* m_pMasterModule;
-	CTOSZeusModule* m_pZeusModule;
-	CTOSEntitySpawnModule* m_pEntitySpawnModule;
 
 	CScriptBind_Custom* m_pCustomScriptBind;
 
 	std::vector<ITOSGameModule*> m_modules;
 	std::vector<ITOSGameModule*> m_flowgraphModules;
 
-	Vec3 m_mouseScreenPos;
-	Vec3 m_mouseWorldPos;
-
-	uint m_lastChannelConnectionState;
-	uint m_lastContextViewState;
-
-	string m_modVersion;
+	//Modules
+	CTOSMasterModule* m_pModuleMaster;
+	CTOSZeusModule* m_pModuleZeus;
+	CTOSEntitySpawnModule* m_pModuleEntitySpawn;
 	CTOSFactionsModule* m_pModuleFactions;
 };
 

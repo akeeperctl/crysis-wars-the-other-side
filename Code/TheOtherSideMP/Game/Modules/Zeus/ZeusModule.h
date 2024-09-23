@@ -95,7 +95,7 @@ public:
 	void        GetMemoryStatistics(ICrySizer* s);
 	const char* GetName()
 	{
-		return "CTOSZeusModule";
+		return "ModuleZeus";
 	};
 	void        Init();
 	void        Update(float frametime);

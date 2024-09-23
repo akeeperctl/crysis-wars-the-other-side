@@ -36,15 +36,24 @@ public:
 	{
 		return false;
 	};
-	void        OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event);
+	void        OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event)
+	{
+
+	};
 	void        GetMemoryStatistics(ICrySizer* s);
 	const char* GetName()
 	{
-		return "CTOSGenericModule";
+		return "GenericModule";
 	};
 	void        Init();
-	void        Update(float frametime);
-	void        Serialize(TSerialize ser);
+	void        Update(float frametime)
+	{
+
+	}
+	void        Serialize(TSerialize ser)
+	{
+
+	}
 	//bool		NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int flags) ;
 
 	int GetDebugLog()
@@ -52,31 +61,33 @@ public:
 		return m_debugLogMode;
 	}
 
-
 	CScriptableBase* GetScriptBind()
 	{
 		return nullptr;
 	};
 
 	void InitScriptBinds()
-	{};
+	{
+	};
 
 	void InitCVars(IConsole* pConsole)
-	{};
+	{
+	};
 	void InitCCommands(IConsole* pConsole)
-	{};
+	{
+	};
 	void ReleaseCVars()
-	{};
+	{
+	};
 	void ReleaseCCommands()
-	{};
+	{
+	};
 	void ReleaseScriptBinds()
-	{};
+	{
+	};
 	//~ITOSGameModule
 
 	virtual CTOSGenericSynchronizer* GetSynchronizer() const;
-
-	//template <class CSynchType>
-	//CSynchType* CreateSynchonizer(const char* entityName, const char* extensionName);
 
 protected:
 	/**
@@ -84,9 +95,7 @@ protected:
 		\n смотреть \a m_pSynchonizer
 	 */
 	void RegisterSynchronizer(CTOSGenericSynchronizer* pSynch);
-
 	CTOSGenericSynchronizer* m_pSynchonizer;
-
 	int m_debugLogMode; // режим отладки модуля (1 - вкл, 0 - выкл)
 
 private:

@@ -22,10 +22,12 @@ Copyright (C), AlienKeeper, 2024.
 
 #include "Modules\Zeus\ZeusModule.h"
 #include "Modules\Factions\FactionsModule.h"
+
+CTOSGame::CTOSGame() :
 	m_pEventRecorder(nullptr),
-	m_pMasterModule(nullptr),
-	m_pEntitySpawnModule(nullptr),
-	m_pZeusModule(nullptr),
+	m_pModuleMaster(nullptr),
+	m_pModuleEntitySpawn(nullptr),
+	m_pModuleZeus(nullptr),
 	m_pModuleFactions(nullptr),
 	m_pCustomScriptBind(nullptr),
 	m_pFGPluginLoader(nullptr),
@@ -44,9 +46,9 @@ CTOSGame::~CTOSGame()
 
 	//Modules
 
-	SAFE_DELETE(m_pMasterModule);
-	SAFE_DELETE(m_pEntitySpawnModule);
-	SAFE_DELETE(m_pZeusModule);
+	SAFE_DELETE(m_pModuleMaster);
+	SAFE_DELETE(m_pModuleEntitySpawn);
+	SAFE_DELETE(m_pModuleZeus);
 	SAFE_DELETE(m_pModuleFactions);
 
 	//~Modules
@@ -69,9 +71,10 @@ void CTOSGame::Init()
 
 	//Modules
 
-	m_pZeusModule = new CTOSZeusModule();
-	m_pEntitySpawnModule = new CTOSEntitySpawnModule();
-	m_pMasterModule = new CTOSMasterModule();
+	m_pModuleZeus = new CTOSZeusModule();
+	m_pModuleEntitySpawn = new CTOSEntitySpawnModule();
+	m_pModuleMaster = new CTOSMasterModule();
+
 	if (gEnv->pAISystem)
 		m_pModuleFactions = new CTOSFactionsModule(gEnv->pAISystem, "scripts/ai/factions.xml");
 
@@ -83,14 +86,19 @@ void CTOSGame::Init()
 	// Исправление бага https://github.com/akeeperctl/crysis-wars-the-other-side/issues/8
 	g_pGameCVars->hud_enableAlienInterference = 0;
 
+	CryLogAlways("[TOS] Starting modules initialization...");
+	CryLogAlways("---------------------------");
 	for (std::vector<ITOSGameModule*>::iterator it = m_modules.begin(); it != m_modules.end(); ++it)
 	{
 		ITOSGameModule* pModule = *it;
 		if (pModule)
 		{
 			pModule->Init();
+			CryLogAlways("[TOS] Initialization module '%s'", pModule->GetName());
 		}
 	}
+	CryLogAlways("---------------------------");
+	CryLogAlways("[TOS] Modules initialization successfully!");
 }
 
 void CTOSGame::Shutdown()
@@ -170,7 +178,7 @@ void CTOSGame::OnLevelNotFound(const char* levelName)
 
 void CTOSGame::OnLoadingStart(ILevelInfo* pLevel)
 {
-	m_pMasterModule->Reset();
+	m_pModuleMaster->Reset();
 
 	TOS_RECORD_EVENT(0, STOSGameEvent(eEGE_OnLevelLoadingStart, pLevel ? pLevel->GetName() : "", true));
 }
@@ -225,22 +233,22 @@ CTOSGameEventRecorder* CTOSGame::GetEventRecorder() const
 
 CTOSMasterModule* CTOSGame::GetMasterModule() const
 {
-	return m_pMasterModule;
+	return m_pModuleMaster;
 }
 
 CTOSZeusModule* CTOSGame::GetZeusModule() const
 {
-	return m_pZeusModule;
+	return m_pModuleZeus;
 }
 
 CTOSEntitySpawnModule* CTOSGame::GetEntitySpawnModule() const
 {
-	return m_pEntitySpawnModule;
+	return m_pModuleEntitySpawn;
 }
 
-СTOSAIModule* CTOSGame::GetAITrackerModule() const
+CTOSFactionsModule* CTOSGame::GetFactionsModule() const
 {
-	return m_pAITrackerModule;
+	return m_pModuleFactions;
 }
 
 bool CTOSGame::ModuleAdd(ITOSGameModule* pModule, const bool flowGraph)
@@ -339,7 +347,7 @@ void CTOSGame::UpdateContextViewState()
 
 IActor* CTOSGame::GetActualClientActor() const
 {
-	const auto pMC = m_pMasterModule->GetMasterClient();
+	const auto pMC = m_pModuleMaster->GetMasterClient();
 	if (!pMC)
 		return nullptr;
 

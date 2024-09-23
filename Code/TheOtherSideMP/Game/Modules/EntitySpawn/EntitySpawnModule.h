@@ -138,7 +138,7 @@ public:
 	void OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event);
 	const char* GetName()
 	{
-		return "CTOSEntitySpawnModule";
+		return "ModuleEntitySpawn";
 	};
 	void Init();
 	void Update(float frametime);

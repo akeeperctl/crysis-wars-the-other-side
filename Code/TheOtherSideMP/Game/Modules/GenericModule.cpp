@@ -13,7 +13,7 @@ Copyright (C), AlienKeeper, 2024.
 #include "../TOSGame.h"
 #include "../TOSGameEventRecorder.h"
 
-CTOSGenericModule::CTOSGenericModule()
+CTOSGenericModule::CTOSGenericModule()	
 	: m_debugLogMode(0)
 {
 	m_pSynchonizer = nullptr;
@@ -25,11 +25,6 @@ CTOSGenericModule::~CTOSGenericModule()
 	g_pTOSGame->ModuleRemove(this, false);
 }
 
-void CTOSGenericModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event)
-{
-
-}
-
 void CTOSGenericModule::GetMemoryStatistics(ICrySizer* s)
 {
 	s->Add(this);
@@ -37,15 +32,7 @@ void CTOSGenericModule::GetMemoryStatistics(ICrySizer* s)
 
 void CTOSGenericModule::Init()
 {
-	TOS_RECORD_EVENT(0, STOSGameEvent(eEGE_GameModuleInit, GetName(), true));
-}
-
-void CTOSGenericModule::Update(float frametime)
-{
-}
-
-void CTOSGenericModule::Serialize(TSerialize ser)
-{
+	TOS_RECORD_EVENT(0, STOSGameEvent(eEGE_GameModuleInit, GetName(), false));
 }
 
 CTOSGenericSynchronizer* CTOSGenericModule::GetSynchronizer() const

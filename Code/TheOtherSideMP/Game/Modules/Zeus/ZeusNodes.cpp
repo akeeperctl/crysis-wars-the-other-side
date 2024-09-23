@@ -7,6 +7,7 @@ Copyright (C), AlienKeeper, 2024.
 
 #include "Game.h"
 #include "Nodes/G2FlowBaseNode.h"
+#include "TheOtherSideMP/Game/Modules/Zeus/ZeusModule.h"
 #include "TheOtherSideMP/Game/Modules/Master/MasterClient.h"
 #include "TheOtherSideMP/Game/Modules/Master/MasterModule.h"
 

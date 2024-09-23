@@ -76,6 +76,7 @@ History:
 #include "TheOtherSideMP/Actors/Player/TOSPlayer.h"
 #include "TheOtherSideMP/Helpers/TOS_HUD.h"
 #include "TheOtherSideMP/HUD/TOSCrosshair.h"
+#include <TheOtherSideMP/Game/TOSGameEventRecorder.h>
 //~TheOtherSide
 
 static const float NIGHT_VISION_ENERGY = 30.0f;

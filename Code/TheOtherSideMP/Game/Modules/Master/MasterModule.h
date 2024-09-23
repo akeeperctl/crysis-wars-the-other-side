@@ -142,7 +142,7 @@ public:
 	void OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event);
 	const char* GetName()
 	{
-		return "CTOSMasterModule";
+		return "ModuleMaster";
 	};
 	void Init();
 	void Update(float frametime);
