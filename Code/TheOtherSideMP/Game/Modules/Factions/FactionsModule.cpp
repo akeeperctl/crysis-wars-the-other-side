@@ -1,19 +1,35 @@
 // Copyright 2001-2019 Crytek GmbH / Crytek Group. All rights reserved.
+// Adapted to CE2 by AlienKeeper
 
 #include "StdAfx.h"
-#include "FactionSystem.h"
+#include "FactionsModule.h"
 
-CFactionSystem::CFactionSystem()
+CTOSFactionsModule::CTOSFactionsModule(IAISystem* pAISystem, const char* xmlFilePath)
 {
-	//m_factionMap.RegisterFactionReactionChangedCallback(functor(*this, &CFactionSystem::OnFactionReactionChanged));
+	assert(pAISystem);
+
+	//m_factionMap.RegisterFactionReactionChangedCallback(functor(*this, &CTOSFactionsModule::OnFactionReactionChanged));
+	m_pAISystem = pAISystem;
+	m_pFactionMap = new CFactionMap(xmlFilePath);
 }
 
-CFactionSystem::~CFactionSystem()
+CTOSFactionsModule::~CTOSFactionsModule()
 {
-	//m_factionMap.UnregisterFactionReactionChangedCallback(functor(*this, &CFactionSystem::OnFactionReactionChanged));
+	//m_factionMap.UnregisterFactionReactionChangedCallback(functor(*this, &CTOSFactionsModule::OnFactionReactionChanged));
+	SAFE_DELETE(m_pFactionMap);
 }
 
-void CFactionSystem::OnFactionReactionChanged(const uint8 factionOne, const uint8 factionTwo, const IFactionMap::ReactionType reactionType)
+void CTOSFactionsModule::GetMemoryStatistics(ICrySizer* s)
+{
+
+}
+
+void CTOSFactionsModule::Serialize(TSerialize ser)
+{
+	m_pFactionMap->Serialize(ser);
+}
+
+void CTOSFactionsModule::OnFactionReactionChanged(const uint8 factionOne, const uint8 factionTwo, const IFactionMap::ReactionType reactionType)
 {
 	const EntitiesWithCallbackSet& entitiesInFactionSet = m_entitiesInFactionsMap[factionOne];
 	for (const auto& entityWithCallback : entitiesInFactionSet)
@@ -25,7 +41,7 @@ void CFactionSystem::OnFactionReactionChanged(const uint8 factionOne, const uint
 	}
 }
 
-void CFactionSystem::SetEntityFaction(EntityId entityId, const SFactionID& newFactionId, const ReactionChangedCallback& reactionChangedCallback)
+void CTOSFactionsModule::SetEntityFaction(EntityId entityId, const SFactionID& newFactionId, const ReactionChangedCallback& reactionChangedCallback)
 {
 	auto findIt = m_factionForEntitiesMap.find(entityId);
 	if (findIt != m_factionForEntitiesMap.end())
@@ -58,7 +74,7 @@ void CFactionSystem::SetEntityFaction(EntityId entityId, const SFactionID& newFa
 	}
 }
 
-SFactionID CFactionSystem::GetEntityFaction(EntityId entityId) const
+SFactionID CTOSFactionsModule::GetEntityFaction(EntityId entityId) const
 {
 	const auto findIt = m_factionForEntitiesMap.find(entityId);
 	if (findIt != m_factionForEntitiesMap.end())
@@ -68,13 +84,13 @@ SFactionID CFactionSystem::GetEntityFaction(EntityId entityId) const
 	return SFactionID();
 }
 
-SFactionFlagsMask CFactionSystem::GetFactionMaskByReaction(const SFactionID& factionId, const IFactionMap::ReactionType reactionType) const
+SFactionFlagsMask CTOSFactionsModule::GetFactionMaskByReaction(const SFactionID& factionId, const IFactionMap::ReactionType reactionType) const
 {
 	SFactionFlagsMask factionsMask{ 0 };
 
-	for (uint32 otherFactionIdRaw = 0, count = m_factionMap.GetFactionCount(); otherFactionIdRaw < count; ++otherFactionIdRaw)
+	for (uint32 otherFactionIdRaw = 0, count = m_pFactionMap->GetFactionCount(); otherFactionIdRaw < count; ++otherFactionIdRaw)
 	{
-		if (m_factionMap.GetReaction(factionId.id, otherFactionIdRaw) == reactionType)
+		if (m_pFactionMap->GetReaction(factionId.id, otherFactionIdRaw) == reactionType)
 		{
 			factionsMask.mask |= 1 << otherFactionIdRaw;
 		}

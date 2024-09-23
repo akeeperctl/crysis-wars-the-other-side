@@ -1,4 +1,5 @@
 // Copyright 2001-2019 Crytek GmbH / Crytek Group. All rights reserved.
+// Adapted to CE2 by AlienKeeper
 
 #pragma once
 
@@ -35,7 +36,9 @@ class CFactionMap : public IFactionMap
 public:
 	typedef IFactionMap::ReactionType EReaction;
 
-	CFactionMap();
+	/// @param xmlFilePath - путь к файлу с фракциями, например: "scripts/ai/factions.xml"
+	CFactionMap(const char* xmlFilePath);
+	~CFactionMap();
 
 	// IFactionMap
 	virtual uint32      GetFactionCount() const override;

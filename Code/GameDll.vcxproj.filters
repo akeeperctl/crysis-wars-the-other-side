@@ -49,9 +49,6 @@
     <Filter Include="CryMP\Library">
       <UniqueIdentifier>{a3b60681-ac3d-48bc-8917-333629f19a38}</UniqueIdentifier>
     </Filter>
-    <Filter Include="TheOtherSideMP\Hooks">
-      <UniqueIdentifier>{cd24565f-5dba-4472-b772-bacd17447438}</UniqueIdentifier>
-    </Filter>
     <Filter Include="GameDLL">
       <UniqueIdentifier>{c0059e02-d968-4deb-9a05-142211fa6f58}</UniqueIdentifier>
     </Filter>
@@ -181,7 +178,7 @@
     <Filter Include="TheOtherSideMP\Actors\animation">
       <UniqueIdentifier>{8839ffbb-fce8-4f95-9efa-942480b24ae1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="TheOtherSideMP\AI\FactionSystem">
+    <Filter Include="TheOtherSideMP\Game\Modules\Factions">
       <UniqueIdentifier>{88661986-e297-40a2-b367-45ef17de8f7f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -897,9 +894,6 @@
     <ClCompile Include="CryMP\Library\WinAPI.cpp">
       <Filter>CryMP\Library</Filter>
     </ClCompile>
-    <ClCompile Include="TheOtherSideMP\Hooks\AIHooks.cpp">
-      <Filter>TheOtherSideMP\Hooks</Filter>
-    </ClCompile>
     <ClCompile Include="DllMain.cpp">
       <Filter>GameDLL</Filter>
     </ClCompile>
@@ -909,11 +903,14 @@
     <ClCompile Include="FGPS\FGPluginLoader.cpp">
       <Filter>FGPS</Filter>
     </ClCompile>
-    <ClCompile Include="TheOtherSideMP\AI\FactionSystem\FactionMap.cpp">
-      <Filter>TheOtherSideMP\AI\FactionSystem</Filter>
+    <ClCompile Include="TheOtherSideMP\AI\AIHooks.cpp">
+      <Filter>TheOtherSideMP\AI</Filter>
     </ClCompile>
-    <ClCompile Include="TheOtherSideMP\AI\FactionSystem\FactionSystem.cpp">
-      <Filter>TheOtherSideMP\AI\FactionSystem</Filter>
+    <ClCompile Include="TheOtherSideMP\Game\Modules\Factions\FactionMap.cpp">
+      <Filter>TheOtherSideMP\Game\Modules\Factions</Filter>
+    </ClCompile>
+    <ClCompile Include="TheOtherSideMP\Game\Modules\Factions\FactionsModule.cpp">
+      <Filter>TheOtherSideMP\Game\Modules\Factions</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1595,9 +1592,6 @@
     <ClInclude Include="TheOtherSideMP\Helpers\TOS_Version.h">
       <Filter>TheOtherSideMP\Helpers</Filter>
     </ClInclude>
-    <ClInclude Include="TheOtherSideMP\Hooks\AIHooks.h">
-      <Filter>TheOtherSideMP\Hooks</Filter>
-    </ClInclude>
     <ClInclude Include="StdAfx.h">
       <Filter>GameDLL</Filter>
     </ClInclude>
@@ -1607,14 +1601,20 @@
     <ClInclude Include="FGPS\PluginCommon.h">
       <Filter>FGPS</Filter>
     </ClInclude>
-    <ClInclude Include="TheOtherSideMP\AI\FactionSystem\FactionMap.h">
-      <Filter>TheOtherSideMP\AI\FactionSystem</Filter>
+    <ClInclude Include="TheOtherSideMP\AI\AIHooks.h">
+      <Filter>TheOtherSideMP\AI</Filter>
     </ClInclude>
-    <ClInclude Include="TheOtherSideMP\AI\FactionSystem\IFactionMap.h">
-      <Filter>TheOtherSideMP\AI\FactionSystem</Filter>
+    <ClInclude Include="TheOtherSideMP\Game\Modules\Factions\FactionMap.h">
+      <Filter>TheOtherSideMP\Game\Modules\Factions</Filter>
     </ClInclude>
-    <ClInclude Include="TheOtherSideMP\AI\FactionSystem\FactionSystem.h">
-      <Filter>TheOtherSideMP\AI\FactionSystem</Filter>
+    <ClInclude Include="TheOtherSideMP\Game\Modules\Factions\FactionsModule.h">
+      <Filter>TheOtherSideMP\Game\Modules\Factions</Filter>
+    </ClInclude>
+    <ClInclude Include="TheOtherSideMP\Game\Modules\Factions\IFactionMap.h">
+      <Filter>TheOtherSideMP\Game\Modules\Factions</Filter>
+    </ClInclude>
+    <ClInclude Include="TheOtherSideMP\Game\Modules\Factions\Logger.h">
+      <Filter>TheOtherSideMP\Game\Modules\Factions</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -95,6 +95,7 @@ CGameActions* g_pGameActions = 0;
 //TheOtherSide
 CTOSGame* g_pTOSGame = 0;
 STOSCvars* g_pTOSGameCvars = 0;
+
 //TheOtherSide
 
 CGame::CGame()

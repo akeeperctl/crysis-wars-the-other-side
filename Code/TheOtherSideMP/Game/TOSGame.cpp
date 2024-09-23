@@ -18,15 +18,15 @@ Copyright (C), AlienKeeper, 2024.
 #include "TheOtherSideMP/Helpers/TOS_Cache.h"
 #include "TheOtherSideMP/Helpers/TOS_Script.h"
 #include "TheOtherSideMP/Helpers/TOS_Version.h"
-#include "TheOtherSideMP/Hooks/AIHooks.h"
+#include "TheOtherSideMP/AI/AIHooks.h"
 
-CTOSGame::CTOSGame()
-	: m_pAITrackerModule(nullptr),
-	m_pLocalControlClient(nullptr),
+#include "Modules\Zeus\ZeusModule.h"
+#include "Modules\Factions\FactionsModule.h"
 	m_pEventRecorder(nullptr),
 	m_pMasterModule(nullptr),
 	m_pEntitySpawnModule(nullptr),
 	m_pZeusModule(nullptr),
+	m_pModuleFactions(nullptr),
 	m_pCustomScriptBind(nullptr),
 	m_pFGPluginLoader(nullptr),
 	m_lastChannelConnectionState(0),
@@ -47,6 +47,7 @@ CTOSGame::~CTOSGame()
 	SAFE_DELETE(m_pMasterModule);
 	SAFE_DELETE(m_pEntitySpawnModule);
 	SAFE_DELETE(m_pZeusModule);
+	SAFE_DELETE(m_pModuleFactions);
 
 	//~Modules
 
@@ -71,6 +72,8 @@ void CTOSGame::Init()
 	m_pZeusModule = new CTOSZeusModule();
 	m_pEntitySpawnModule = new CTOSEntitySpawnModule();
 	m_pMasterModule = new CTOSMasterModule();
+	if (gEnv->pAISystem)
+		m_pModuleFactions = new CTOSFactionsModule(gEnv->pAISystem, "scripts/ai/factions.xml");
 
 	//~Modules
 

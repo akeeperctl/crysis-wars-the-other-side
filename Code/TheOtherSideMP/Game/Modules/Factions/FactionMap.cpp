@@ -1,50 +1,66 @@
 // Copyright 2001-2019 Crytek GmbH / Crytek Group. All rights reserved.
+// Adapted to CE2 by AlienKeeper
 
 #include "StdAfx.h"
+#include <StringUtils.h>
 #include "IFactionMap.h"
 #include "FactionMap.h"
+#include "Logger.h"
 
-CFactionXmlDataSource CFactionMap::s_defaultXmlDataSource("Scripts/AI/factions.xml");
+CFactionXmlDataSource CFactionMap::s_defaultXmlDataSource("scripts/ai/factions.xml");
+//const char* IFactionMap::s_logPrefix = "[FACTIONS] ";
 
-static const char outputPrefix[] = "AI: ";
-static const unsigned outputPrefixLen = sizeof(outputPrefix) - 1;
-
-void static AILogAlways(const char* format, ...)
+void static FactionsLogAlways(const char* format, ...)
 {
-	string final = "AI: ";
+	string final = FACTIONS_LOG_PREFIX;
 	final += format;
 
 	va_list args;
 	va_start(args, format);
-	CryLogAlways(final.c_str(), args);
+	gEnv->pLog->LogV( ILog::eAlways,final,args );
 	va_end(args);
 }
 
-void static AIError(const char* format, ...)
+void static FactionsError(const char* format, ...)
 {
-	string final = "AI: ";
+	string final = FACTIONS_LOG_PREFIX;
 	final += format;
+	format = final;
 
 	va_list args;
 	va_start(args, format);
-	CryLogError(final.c_str(), args);
+	gEnv->pLog->LogV( ILog::eError,final,args );
 	va_end(args);
 }
 
-void static AIWarning(const char* format, ...)
+void static FactionsWarning(const char* format, ...)
 {
-	string final = "AI: ";
+	string final = FACTIONS_LOG_PREFIX;
 	final += format;
+	format = final;
 
 	va_list args;
 	va_start(args, format);
-	CryLogWarning(final.c_str(), args);
+	gEnv->pLog->LogV( ILog::eWarning,final,args );
 	va_end(args);
 }
 
-CFactionMap::CFactionMap()
+CFactionMap::CFactionMap(const char* xmlFilePath)
 {
-	SetDataSource(&s_defaultXmlDataSource, EDataSourceLoad::Now);
+	string path = xmlFilePath;
+	const EDataSourceLoad load = EDataSourceLoad::Now;
+
+	CryStringUtils::toLowerInplace(path);
+
+	if (path.empty())
+		SetDataSource(&s_defaultXmlDataSource, load);
+	else
+		SetDataSource(new CFactionXmlDataSource(path.c_str()), load);
+}
+
+CFactionMap::~CFactionMap()
+{
+	SAFE_DELETE(m_pDataSource);
 }
 
 uint32 CFactionMap::GetFactionCount() const
@@ -110,7 +126,7 @@ void CFactionMap::Reload()
 	{
 		if (!m_pDataSource->Load(*this))
 		{
-			AILogAlways("[FactionMap] Failed to load factions from data source!");
+			FactionsError("Failed to load factions from data source!");
 		}
 	}
 }
@@ -130,7 +146,7 @@ bool CFactionMap::CreateFaction(uint8 factionId, CFactionMap::ReactionType defau
 	std::pair<FactionIds::iterator, bool> createResult;
 
 	auto found = stl::binary_find(m_factionIds.begin(), m_factionIds.end(), factionId);
-	if (found != m_factionIds.end())
+	if (found == m_factionIds.end())
 	{
 		if (m_factionIds.size() < maxFactionCount)
 		{
@@ -138,13 +154,13 @@ bool CFactionMap::CreateFaction(uint8 factionId, CFactionMap::ReactionType defau
 
 			if (!createResult.second)
 			{
-				AIError("[FactionMap] CreateFaction(...) failed. Reason: Failed to insert faction!");
+				FactionsError("CreateFaction(...) failed. Reason: Failed to insert faction!");
 				return false;
 			}
 		}
 		else
 		{
-			AIError("[FactionMap] CreateFaction(...) failed. Reason: Max faction count reached!");
+			FactionsError("CreateFaction(...) failed. Reason: Max faction count reached!");
 			return false;
 		}
 	}
@@ -178,7 +194,7 @@ bool CFactionMap::CreateFaction(uint8 factionId, CFactionMap::ReactionType defau
 	//	}
 	//	else
 	//	{
-	//		AIError("[FactionMap] CreateFaction(...) failed. Reason: Overlapping copy detected!");
+	//		FactionsError("[Factions] CreateFaction(...) failed. Reason: Overlapping copy detected!");
 
 	//		if (createResult.second)
 	//			m_factionIds.erase(factionId);
@@ -186,10 +202,10 @@ bool CFactionMap::CreateFaction(uint8 factionId, CFactionMap::ReactionType defau
 	//}
 	//else
 	//{
-	//	AIWarning("[FactionMap] CreateFaction(...) called with invalid reaction data. Parameters: 'reactionsCount' = '%d', 'pReactions' = '0x%p'", reactionsCount, pReactions);
+	//	FactionsWarning("[Factions] CreateFaction(...) called with invalid reaction data. Parameters: 'reactionsCount' = '%d', 'pReactions' = '0x%p'", reactionsCount, pReactions);
 	//}
 
-	return false;
+	return true;
 }
 
 void CFactionMap::RemoveFaction(uint8 factionID)
@@ -200,7 +216,7 @@ void CFactionMap::RemoveFaction(uint8 factionID)
 		const auto foundIter = stl::binary_find(m_factionIds.cbegin(), m_factionIds.cend(), removeFactionId);
 		if (foundIter == m_factionIds.end())
 		{
-			AIWarning("[RemoveFaction] faction %i already deleted or not created", removeFactionId);
+			FactionsWarning("RemoveFaction(...) faction %i already deleted or not created", removeFactionId);
 			return;
 		}
 
@@ -244,7 +260,7 @@ void CFactionMap::RemoveFaction(uint8 factionID)
 	}
 	else
 	{
-		AIWarning("[FactionMap] RemoveFaction(...) is only allowed in editor mode.");
+		FactionsWarning("RemoveFaction(...) is only allowed in editor mode.");
 	}
 }
 
@@ -319,7 +335,7 @@ void CFactionMap::Serialize(TSerialize ser)
 	ser.EndGroup();
 }
 
-bool CFactionMap::GetReactionType(const char* szReactionName, ReactionType* pReactionType)
+bool CFactionMap::GetReactionType(const char* szReactionName, EReaction* pReactionType)
 {
 	if (!stricmp(szReactionName, "Friendly"))
 	{
@@ -348,6 +364,7 @@ bool CFactionMap::GetReactionType(const char* szReactionName, ReactionType* pRea
 	}
 
 	return true;
+
 }
 
 void CFactionMap::SetDataSource(IFactionDataSource* pDataSource, EDataSourceLoad bLoad)
@@ -358,7 +375,7 @@ void CFactionMap::SetDataSource(IFactionDataSource* pDataSource, EDataSourceLoad
 	{
 		if (!m_pDataSource->Load(*this))
 		{
-			CryLogAlways("[FactionMap] Failed to load factions from data source!");
+			FactionsLogAlways("Failed to load factions from data source!");
 		}
 	}
 }
@@ -382,10 +399,12 @@ bool CFactionXmlDataSource::Load(IFactionMap& factionMap)
 	XmlNodeRef rootNode = GetISystem()->GetXmlUtils()->LoadXmlFile(m_fileName.c_str());
 	if (!rootNode)
 	{
-		CryLogWarning("Failed to open faction XML file '%s'.", m_fileName.c_str());
+		FactionsError("Failed to open faction XML file '%s'.", m_fileName);
 		return false;
 	}
 
+	FactionsLogAlways("Parsing Factions XML file '%s'", m_fileName);
+	CryLogAlways("---------------------------");
 	// uint8 reactions[CFactionMap::maxFactionCount][CFactionMap::maxFactionCount];
 
 	const char* szRootName = rootNode->getTag();
@@ -401,44 +420,48 @@ bool CFactionXmlDataSource::Load(IFactionMap& factionMap)
 			{
 				if (factionIdx >= CFactionMap::maxFactionCount)
 				{
-					AIWarning("Maximum number of allowed factions reached in file '%s' at line '%d'!", m_fileName.c_str(), factionNode->getLine());
+					FactionsError("Maximum number of allowed factions reached in file '%s' at line '%d'!", m_fileName.c_str(), factionNode->getLine());
 					return false;
 				}
 
-				XmlString szFactionId = nullptr;
-				if (!factionNode->getAttr("id", szFactionId) || szFactionId == nullptr || szFactionId[0] == '\0')
+				XmlString szFactionId;
+				if (!factionNode->getAttr("id", szFactionId) || szFactionId.empty())
 				{
-					AIWarning("Missing or empty 'id' attribute for 'Faction' tag in file '%s' at line %d...", m_fileName.c_str(), factionNode->getLine());
+					FactionsError("Missing or empty 'id' attribute for 'Faction' tag in file '%s' at line %d...", m_fileName.c_str(), factionNode->getLine());
 					return false;
 				}
 
 				const uint8 factionId = atoi(szFactionId); //factionMap.GetFactionID(szFactionId);
-				if (factionId != CFactionMap::InvalidFactionID)
-				{
-					AIWarning("Duplicate faction '%s' in file '%s' at line %d...", szFactionId, m_fileName.c_str(), factionNode->getLine());
-					//AIWarning("Invalid factionId of Faction '%s' in file '%s' at line %d...", szFactionId, m_fileName.c_str(), factionNode->getLine());
-					return false;
-				}
+				//if (factionId != CFactionMap::InvalidFactionID)
+				//{
+				//	FactionsWarning("Duplicate faction '%s' in file '%s' at line %d...", szFactionId, m_fileName.c_str(), factionNode->getLine());
+				//	//FactionsWarning("Invalid factionId of Faction '%s' in file '%s' at line %d...", szFactionId, m_fileName.c_str(), factionNode->getLine());
+				//	return false;
+				//}
 
 				CFactionMap::ReactionType defaultReactionType = CFactionMap::Hostile;
 
-				XmlString szDefaultReaction = nullptr;
+				XmlString szDefaultReaction;
 				if (factionNode->getAttr("default", szDefaultReaction) && szDefaultReaction && szDefaultReaction[0])
 				{
 					if (!CFactionMap::GetReactionType(szDefaultReaction, &defaultReactionType))
 					{
-						AIWarning("Invalid default reaction '%s' in file '%s' at line '%d'...", szDefaultReaction, m_fileName.c_str(), factionNode->getLine());
+						FactionsError("Invalid default reaction '%s' in file '%s' at line '%d'...", szDefaultReaction, m_fileName.c_str(), factionNode->getLine());
 						return false;
 					}
 				}
 
 				//memset(reactions[factionIdx], defaultReactionType, sizeof(reactions[factionIdx]));
 			
-				factionMap.CreateFaction(factionId, defaultReactionType);
+				const bool result = factionMap.CreateFaction(factionId, defaultReactionType);
+				if (result)
+				{
+					FactionsLogAlways("['%s'] creating successfully!", szFactionId);
+				}
 			}
 			else
 			{
-				AIWarning("Unexpected tag '%s' in file '%s' at line %d...", factionNode->getTag(), m_fileName.c_str(), factionNode->getLine());
+				FactionsError("Unexpected tag '%s' in file '%s' at line %d...", factionNode->getTag(), m_fileName.c_str(), factionNode->getLine());
 				return false;
 			}
 		}
@@ -458,31 +481,31 @@ bool CFactionXmlDataSource::Load(IFactionMap& factionMap)
 				XmlNodeRef reactionNode = factionNode->getChild(reactionIdx);
 				if (!stricmp(reactionNode->getTag(), "Reaction"))
 				{
-					XmlString szReactionOnFaction = nullptr;
-					if (!reactionNode->getAttr("faction", szReactionOnFaction) || szReactionOnFaction == nullptr || szReactionOnFaction[0] == '\0')
+					XmlString szReactionOnFaction;
+					if (!reactionNode->getAttr("faction", szReactionOnFaction) || szReactionOnFaction.empty())
 					{
-						AIWarning("Missing or empty 'faction' attribute for 'Reaction' tag in file '%s' at line %d...", m_fileName.c_str(), reactionNode->getLine());
+						FactionsError("Missing or empty 'faction' attribute for 'Reaction' tag in file '%s' at line %d...", m_fileName.c_str(), reactionNode->getLine());
 						return false;
 					}
 
 					const uint8 reactionOnfactionId = atoi(szReactionOnFaction);
-					if (reactionOnfactionId == CFactionMap::InvalidFactionID)
+					//if (reactionOnfactionId == CFactionMap::InvalidFactionID)
+					//{
+					//	FactionsWarning("Attribute 'faction' for 'Reaction' tag in file '%s' at line %d defines an unknown faction...", m_fileName.c_str(), reactionNode->getLine());
+					//	return false;
+					//}
+
+					XmlString szReaction;
+					if (!reactionNode->getAttr("reaction", szReaction) || szReaction.empty())
 					{
-						AIWarning("Attribute 'faction' for 'Reaction' tag in file '%s' at line %d defines an unknown faction...", m_fileName.c_str(), reactionNode->getLine());
+						FactionsError("Missing or empty 'reaction' attribute for 'Reaction' tag in file '%s' at line %d...", m_fileName.c_str(), reactionNode->getLine());
 						return false;
 					}
 
-					XmlString szReaction = nullptr;
-					if (!reactionNode->getAttr("reaction", szReaction) || szReaction == nullptr || szReaction[0] == '\0')
-					{
-						AIWarning("Missing or empty 'reaction' attribute for 'Reaction' tag in file '%s' at line %d...", m_fileName.c_str(), reactionNode->getLine());
-						return false;
-					}
-
-					CFactionMap::ReactionType reactionType = CFactionMap::Neutral;
+					CFactionMap::ReactionType reactionType = CFactionMap::Hostile;
 					if (!CFactionMap::GetReactionType(szReaction, &reactionType))
 					{
-						AIWarning("Invalid reaction '%s' in file '%s' at line '%d'...", szReaction, m_fileName.c_str(), reactionNode->getLine());
+						FactionsWarning("Invalid reaction '%s' in file '%s' at line '%d'...", szReaction, m_fileName.c_str(), reactionNode->getLine());
 						//return false;
 					}
 
@@ -491,7 +514,7 @@ bool CFactionXmlDataSource::Load(IFactionMap& factionMap)
 				}
 				else
 				{
-					AIWarning("Unexpected tag '%s' in file '%s' at line %d...", reactionNode->getTag(), m_fileName.c_str(), reactionNode->getLine());
+					FactionsError("Unexpected tag '%s' in file '%s' at line %d...", reactionNode->getTag(), m_fileName.c_str(), reactionNode->getLine());
 					return false;
 				}
 			}
@@ -501,9 +524,11 @@ bool CFactionXmlDataSource::Load(IFactionMap& factionMap)
 	}
 	else
 	{
-		AIWarning("Unexpected tag '%s' in file '%s' at line %d...", szRootName, m_fileName.c_str(), rootNode->getLine());
+		FactionsError("Unexpected tag '%s' in file '%s' at line %d...", szRootName, m_fileName.c_str(), rootNode->getLine());
 		return false;
 	}
 
+	CryLogAlways("---------------------------");
+	FactionsLogAlways("All factions were created successfully!");
 	return true;
 }

@@ -432,8 +432,7 @@
     <ClCompile Include="TheOtherSideMP\Actors\Player\TOSGruntMovementController.cpp" />
     <ClCompile Include="TheOtherSideMP\Actors\Player\TOSPlayer.cpp" />
     <ClCompile Include="TheOtherSideMP\Actors\TOSActor.cpp" />
-    <ClCompile Include="TheOtherSideMP\AI\FactionSystem\FactionMap.cpp" />
-    <ClCompile Include="TheOtherSideMP\AI\FactionSystem\FactionSystem.cpp" />
+    <ClCompile Include="TheOtherSideMP\AI\AIHooks.cpp" />
     <ClCompile Include="TheOtherSideMP\Control\ControlAction.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">true</ExcludedFromBuild>
@@ -473,6 +472,8 @@
     </ClCompile>
     <ClCompile Include="TheOtherSideMP\Game\Modules\EntitySpawn\EntitySpawnCvars.cpp" />
     <ClCompile Include="TheOtherSideMP\Game\Modules\EntitySpawn\EntitySpawnModule.cpp" />
+    <ClCompile Include="TheOtherSideMP\Game\Modules\Factions\FactionMap.cpp" />
+    <ClCompile Include="TheOtherSideMP\Game\Modules\Factions\FactionsModule.cpp" />
     <ClCompile Include="TheOtherSideMP\Game\Modules\GenericModule.cpp" />
     <ClCompile Include="TheOtherSideMP\Game\Modules\GenericSynchronizer.cpp" />
     <ClCompile Include="TheOtherSideMP\Game\Modules\Master\MasterClient.cpp" />
@@ -487,7 +488,6 @@
     <ClCompile Include="TheOtherSideMP\Game\TOSGame.cpp" />
     <ClCompile Include="TheOtherSideMP\Game\TOSGameCvars.cpp" />
     <ClCompile Include="TheOtherSideMP\Game\TOSGameEventRecorder.cpp" />
-    <ClCompile Include="TheOtherSideMP\Hooks\AIHooks.cpp" />
     <ClCompile Include="TheOtherSideMP\HUD\TOSCrosshair.cpp" />
     <ClCompile Include="TheOtherSideMP\MasterCvars.cpp" />
     <ClCompile Include="TheOtherSideMP\Nodes\FlowMasterClientNodes.cpp" />
@@ -691,9 +691,7 @@
     <ClInclude Include="TheOtherSideMP\Actors\Player\TOSGruntMovementController.h" />
     <ClInclude Include="TheOtherSideMP\Actors\Player\TOSPlayer.h" />
     <ClInclude Include="TheOtherSideMP\Actors\TOSActor.h" />
-    <ClInclude Include="TheOtherSideMP\AI\FactionSystem\FactionMap.h" />
-    <ClInclude Include="TheOtherSideMP\AI\FactionSystem\FactionSystem.h" />
-    <ClInclude Include="TheOtherSideMP\AI\FactionSystem\IFactionMap.h" />
+    <ClInclude Include="TheOtherSideMP\AI\AIHooks.h" />
     <ClInclude Include="TheOtherSideMP\Control\ControlSystem.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">true</ExcludedFromBuild>
@@ -726,6 +724,10 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">true</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="TheOtherSideMP\Game\Modules\EntitySpawn\EntitySpawnModule.h" />
+    <ClInclude Include="TheOtherSideMP\Game\Modules\Factions\FactionMap.h" />
+    <ClInclude Include="TheOtherSideMP\Game\Modules\Factions\FactionsModule.h" />
+    <ClInclude Include="TheOtherSideMP\Game\Modules\Factions\IFactionMap.h" />
+    <ClInclude Include="TheOtherSideMP\Game\Modules\Factions\Logger.h" />
     <ClInclude Include="TheOtherSideMP\Game\Modules\GenericModule.h" />
     <ClInclude Include="TheOtherSideMP\Game\Modules\ITOSGameModule.h" />
     <ClInclude Include="TheOtherSideMP\Game\Modules\GenericSynchronizer.h" />
@@ -753,7 +755,6 @@
     <ClInclude Include="TheOtherSideMP\Helpers\TOS_STL.h" />
     <ClInclude Include="TheOtherSideMP\Helpers\TOS_Vehicle.h" />
     <ClInclude Include="TheOtherSideMP\Helpers\TOS_Version.h" />
-    <ClInclude Include="TheOtherSideMP\Hooks\AIHooks.h" />
     <ClInclude Include="TheOtherSideMP\HUD\TOSCrosshair.h" />
     <ClInclude Include="TheOtherSideMP\TOSSmartStruct.h" />
     <ClInclude Include="TheOtherSideMP\Utilities\DedicatedServerHackScope.h" />

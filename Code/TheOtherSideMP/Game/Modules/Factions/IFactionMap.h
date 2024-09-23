@@ -1,4 +1,5 @@
 // Copyright 2001-2019 Crytek GmbH / Crytek Group. All rights reserved.
+// Adapted to CE2 by AlienKeeper
 
 #pragma once
 #include <Win32specific.h>

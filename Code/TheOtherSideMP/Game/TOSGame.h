@@ -11,11 +11,9 @@ Copyright (C), AlienKeeper, 2024.
 #include <IGameplayRecorder.h>
 #include <ILevelSystem.h>
 #include <IInput.h>
-#include "Modules\Zeus\ZeusModule.h"
 #include "ScriptBinds\ScriptBind_Custom.h"
 #include "FGPS\FGPluginLoader.h"
 
-class СTOSAIModule;
 class CControlClient;
 class CGameFlashAnimation;
 
@@ -27,6 +25,7 @@ class CTOSGameEventRecorder;
 class CTOSMasterModule;
 class CTOSEntitySpawnModule;
 
+class CTOSFactionsModule;
 
 struct STOSGameEvent;
 struct ITOSGameModule;
@@ -147,6 +146,7 @@ public:
 	CTOSZeusModule* GetZeusModule() const;
 	CTOSEntitySpawnModule* GetEntitySpawnModule() const;
 	СTOSAIModule* GetAITrackerModule() const;
+	CTOSFactionsModule* GetFactionsModule() const;
 
 
 	bool ModuleAdd(ITOSGameModule* pModule, bool flowGraph);
@@ -177,6 +177,7 @@ private:
 	uint m_lastContextViewState;
 
 	string m_modVersion;
+	CTOSFactionsModule* m_pModuleFactions;
 };
 
 extern class CTOSGame* g_pTOSGame;
