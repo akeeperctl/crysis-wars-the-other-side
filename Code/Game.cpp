@@ -417,6 +417,13 @@ bool CGame::Init(IGameFramework* pFramework)
 
 bool CGame::CompleteInit()
 {
+	//TheOtherSide
+	g_pTOSGame->Init();
+	g_pTOSGameCvars->InitCVars(m_pConsole);
+	g_pTOSGameCvars->InitCCommands(m_pConsole);
+	g_pTOSGame->InitScriptBinds();
+	//TheOtherSide
+
 	// Initialize Game02 flow nodes
 
 	if (IFlowSystem* pFlow = m_pFramework->GetIFlowSystem())
@@ -429,13 +436,6 @@ bool CGame::CompleteInit()
 			pFactory = pFactory->m_pNext;
 		}
 	}
-
-	//TheOtherSide
-	g_pTOSGame->Init();
-	g_pTOSGameCvars->InitCVars(m_pConsole);
-	g_pTOSGameCvars->InitCCommands(m_pConsole);
-	g_pTOSGame->InitScriptBinds();
-	//TheOtherSide
 
 #ifdef GAME_DEBUG_MEM
 	DumpMemInfo("CGame::CompleteInit");

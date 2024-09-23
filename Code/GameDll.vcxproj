@@ -488,10 +488,8 @@
     <ClCompile Include="TheOtherSideMP\Hooks\AIHooks.cpp" />
     <ClCompile Include="TheOtherSideMP\HUD\TOSCrosshair.cpp" />
     <ClCompile Include="TheOtherSideMP\MasterCvars.cpp" />
-    <ClCompile Include="TheOtherSideMP\Nodes\FlowFlashHUD.cpp" />
     <ClCompile Include="TheOtherSideMP\Nodes\FlowMasterClientNodes.cpp" />
     <ClCompile Include="TheOtherSideMP\Nodes\FlowScriptNodes.cpp" />
-    <ClCompile Include="TheOtherSideMP\Nodes\FlowStringNodes.cpp" />
     <ClCompile Include="TheOtherSideMP\Nodes\FlowNewVehicleNodes.cpp" />
     <ClCompile Include="TheOtherSideMP\Utilities\DedicatedServerHackScope.cpp" />
     <ClCompile Include="TheOtherSideMP\Utilities\IndexFinder.cpp" />

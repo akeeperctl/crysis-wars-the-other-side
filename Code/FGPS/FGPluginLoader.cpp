@@ -12,7 +12,21 @@ FGPS авторы писали определения функциям
 #include <windows.h>
 
 ExtendedResourceList CFGPluginLoader::m_ResourceList;
+CG2AutoRegFlowNodeBase* CFGPluginLoader::m_LastNext;
+CG2AutoRegFlowNodeBase* CFGPluginLoader::m_Last;
 FGPluginList CFGPluginLoader::m_Plugins;
+
+CFGPluginLoader::CFGPluginLoader(IConsole* pConsole, SCVars* pGameCvars): m_nPluginCounter(0)
+{
+	assert(pConsole);
+	assert(pGameCvars);
+
+	m_pConsole = pConsole;
+	m_pGameCVars = pGameCvars;
+
+	m_LastNext = CG2AutoRegFlowNodeBase::m_pLast->m_pNext;
+	m_Last = CG2AutoRegFlowNodeBase::m_pLast;
+};
 
 bool CFGPluginLoader::RegisterPlugin(char const* pDll)
 {

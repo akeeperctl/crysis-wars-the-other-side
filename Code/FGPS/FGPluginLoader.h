@@ -49,16 +49,7 @@ class CFGPluginLoader
 public:
 	friend class CTOSGame;
 
-	CFGPluginLoader(IConsole* pConsole, SCVars* pGameCvars): 
-		m_nPluginCounter(0)
-	{
-		assert(pConsole);
-		assert(pGameCvars);
-
-		m_pConsole = pConsole;
-		m_pGameCVars = pGameCvars;
-	};
-
+	CFGPluginLoader(IConsole* pConsole, SCVars* pGameCvars);
 	////////////////////////////////////////////////////
 	// RegisterPlugin
 	//
@@ -91,5 +82,8 @@ private:
 	// Dll Plugin list
 	int m_nPluginCounter;
 	static FGPluginList m_Plugins;
+
 	static ExtendedResourceList m_ResourceList;
+	static CG2AutoRegFlowNodeBase *m_LastNext;
+	static CG2AutoRegFlowNodeBase *m_Last;
 };
