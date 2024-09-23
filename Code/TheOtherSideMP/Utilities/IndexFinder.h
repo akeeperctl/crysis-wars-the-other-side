@@ -12,7 +12,7 @@ class IndexFinder
 	typedef int (IndexFinder::* method_pointer)();
 public:
 	template<typename _MethodPtr>
-	static int getIndexOf(_MethodPtr ptr)
+	static size_t getIndexOf(_MethodPtr ptr)
 	{
 		/*
 		reinterpret_cast<IndexFinder*>(&fake_vtable_ptr) - преобразует fake_vtable_ptr в указатель на IndexFinder.

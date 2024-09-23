@@ -295,13 +295,13 @@ static CTOSZeusModule::SOBBWorldPos* CreateBoxForEntity(EntityId id)
 	Vec3 worldPos(ZERO);
 
 	auto pEntity = TOS_GET_ENTITY(id);
-	if (pEntity)
-	{
-		pEntity->GetLocalBounds(entityBox);
-		box.SetOBBfromAABB(pEntity->GetRotation(), entityBox);
+	if (!pEntity)
+		return nullptr;
 
-		worldPos = pEntity->GetWorldPos();
-	}
+	pEntity->GetLocalBounds(entityBox);
+	box.SetOBBfromAABB(pEntity->GetRotation(), entityBox);
+
+	worldPos = pEntity->GetWorldPos();
 
 	auto wbox = new CTOSZeusModule::SOBBWorldPos();
 
@@ -398,7 +398,7 @@ static bool IsPhysicsAllowed(const IEntity* pEntity)
 
 	// допустимые сущности
 	const auto type = physEnt->GetType();
-	if (!(type == PE_LIVING || type == PE_RIGID || type == PE_STATIC || type == PE_WHEELEDVEHICLE || PE_ARTICULATED))
+	if (!(type == PE_LIVING || type == PE_RIGID || type == PE_STATIC || type == PE_WHEELEDVEHICLE || type == PE_ARTICULATED))
 		return false;
 }
 
@@ -468,7 +468,7 @@ static void InitSelectionFilterClasses()
 	CTOSZeusModule::s_classToConsoleVar["VehiclePartDetached"] = "tos_sv_zeus_selection_ignore_vehicle_part_detached";
 }
 
-bool CTOSZeusModule::SelectionFilter(EntityId id)
+bool CTOSZeusModule::SelectionFilter(EntityId id) const
 {
 	auto pEntity = TOS_GET_ENTITY(id);
 	if (!pEntity)
@@ -1302,7 +1302,7 @@ void CTOSZeusModule::UpdateOnScreenIcons(IActor* pClientActor)
 					icon = eZSI_Car;
 				else if (movType == IVehicleMovement::eVMT_Air)
 					icon = eZSI_Helicopter;
-				else if (movType == IVehicleMovement::eVMT_Sea || IVehicleMovement::eVMT_Amphibious)
+				else if (movType == IVehicleMovement::eVMT_Sea || movType == IVehicleMovement::eVMT_Amphibious)
 					icon = eZSI_Boat;
 
 				// не пустые тс должны быть желтые

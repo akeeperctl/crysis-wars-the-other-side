@@ -115,7 +115,7 @@ public:
 	void SaveEntitiesStartPositions();
 
 	// Фильтр на сущности. True - сущность можно выбрать, false - нельзя
-	bool SelectionFilter(EntityId id);
+	bool SelectionFilter(EntityId id) const;
 
 	//IHardwareMouseEventListener
 	void OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eHardwareMouseEvent);

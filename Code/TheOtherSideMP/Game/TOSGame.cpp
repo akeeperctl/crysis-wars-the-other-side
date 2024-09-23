@@ -50,6 +50,8 @@ CTOSGame::CTOSGame()
 	m_pEventRecorder(nullptr),
 	m_pMasterModule(nullptr),
 	m_pEntitySpawnModule(nullptr),
+	m_pZeusModule(nullptr),
+	m_pCustomScriptBind(nullptr),
 	m_lastChannelConnectionState(0),
 	m_lastContextViewState(0)
 {

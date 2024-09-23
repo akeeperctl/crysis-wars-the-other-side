@@ -27,13 +27,28 @@
 1.	В исходном коде движка, поставляемым из **CrysisWars_ModSDK_SourceCode_v1.1**, 
 зайти в папку `CrysisWars\Code\CryEngine\CryCommon`
 
-2.	Открыть файл **StlUtils.h** и в 21 строке прописать `#define _SILENCE_STDEXT_HASH_DEPRECATION_WARNINGS`
+2.	Открыть файл **StlUtils.h** и в 21 строке прописать
+      ```cpp
+      #define _SILENCE_STDEXT_HASH_DEPRECATION_WARNINGS
+      ```
 
-3.	Открыть файл **NetHelpers.h** и 132 строку заменить на 
-`return TNetMessageCallbackResult( ((cls*)p)->Handle##name( serialize, curSeq, oldSeq, pEntityId, pChannel ), reinterpret_cast<INetAtSyncItem*>(NULL) ); \`
+4.	Открыть файл **NetHelpers.h** и 132 строку заменить на
+      ```cpp
+      return TNetMessageCallbackResult( ((cls*)p)->Handle##name( serialize, curSeq, oldSeq, pEntityId, pChannel ), reinterpret_cast<INetAtSyncItem*>(NULL) ); \
+      ```
 
-4.	Перейти в папку `CrysisWars\Code\CryEngine\CryAction`
+6.	Перейти в папку `CrysisWars\Code\CryEngine\CryAction`
 
-5.	Открыть файл **IGameObject.h** и заменить 
-`template <class T_Derived, class T_Parent, size_t MAX_STATIC_MESSAGES = 32>` на 
-`template <class T_Derived, class T_Parent, size_t MAX_STATIC_MESSAGES = 64>`
+7.	Открыть файл **IGameObject.h** и заменить
+      ```cpp
+      template <class T_Derived, class T_Parent, size_t MAX_STATIC_MESSAGES = 32>
+      ```
+      на
+      ```cpp
+      template <class T_Derived, class T_Parent, size_t MAX_STATIC_MESSAGES = 64>
+      ```
+
+8. Зайти в свойства проекта, **Компоновщик->Ввод** и в поле **Дополнительные зависимости** указать
+      ```
+      version.lib;%(AdditionalDependencies)
+      ```
