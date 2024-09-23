@@ -362,6 +362,7 @@ healthchecksdb
 /Code/TheOtherSideMP/Control/*
 /Code_SP
 /Code_CRYMP
+/IncrementBuild
 /Examples
 /Log Screenshots
 /Gif
@@ -369,6 +370,7 @@ healthchecksdb
 *.code-workspace
 /assets*
 /РїСЂРѕРјРѕ
+*TOSDebug.lua*
 
 !/Game/Scripts/
 
