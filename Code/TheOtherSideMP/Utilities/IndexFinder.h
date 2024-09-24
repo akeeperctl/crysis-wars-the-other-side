@@ -22,8 +22,17 @@ public:
 		return (...)(); - возвращает значение, возвращенное вызываемым методом.
 		*/
 
-		return (reinterpret_cast<IndexFinder*>(&fake_vtable_ptr)->* * ((IndexFinder::method_pointer*)(&ptr)))();
+		IndexFinder* indexFinderPtr = reinterpret_cast<IndexFinder*>(&fake_vtable_ptr);
+		IndexFinder::method_pointer* method_pointer = (IndexFinder::method_pointer*)(&ptr);
+		IndexFinder::method_pointer method = *(method_pointer);
+
+		return (indexFinderPtr->*method)();
 	}
+
+	typedef method_pointer fake_vtable_t[201];
+	static fake_vtable_t   fake_vtable;
+	static void* fake_vtable_ptr;
+
 protected:
 	int method0()
 	{
@@ -829,8 +838,4 @@ protected:
 	{
 		return 200;
 	}
-public:
-	typedef method_pointer fake_vtable_t[201];
-	static fake_vtable_t   fake_vtable;
-	static void* fake_vtable_ptr;
 };
