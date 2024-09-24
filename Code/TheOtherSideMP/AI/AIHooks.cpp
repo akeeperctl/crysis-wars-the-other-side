@@ -74,7 +74,6 @@ bool TOS_Hooks::AI::IAIObjectHook::IsHostile(const IAIObject* pOther, bool bUsin
 	// Моя сущность
 	EntityId myId = (this->*originalGetEntityIdFunc)();
 	IEntity* pMyEntity = TOS_GET_ENTITY(myId);
-	IAIObject* pMyAI = pMyEntity->GetAI();
 
 	// Моя Фракция
 	const auto pFactions = g_pTOSGame->GetFactionsModule();
@@ -121,14 +120,28 @@ bool TOS_Hooks::AI::IAIObjectHook::IsHostile(const IAIObject* pOther, bool bUsin
 		hostile = true;
 
 	// Враждебность по параметрам
-	const IAIActor* pAIActor = pMyAI->CastToIAIActor();
-	if (pAIActor)
+	const IAIObject* pMyAI = pMyEntity->GetAI();
+	const IAIActor* pMyAIActor = pMyAI->CastToIAIActor();
+	const IAIActor* pOtherAIActor = pOther->CastToIAIActor();
+	if (pMyAIActor)
 	{
-		const auto& params = pAIActor->GetParameters();
-		if (params.m_bSpeciesHostility == false)
+		const auto& myParams = pMyAIActor->GetParameters();
+
+		if (myParams.m_bSpeciesHostility == false)
 			hostile = false;
 
-		if (bUsingAIIgnorePlayer && params.m_bAiIgnoreFgNode == true)
+		if (bUsingAIIgnorePlayer && (myParams.m_bAiIgnoreFgNode == true))
+			hostile = false;
+	}
+
+	if (pOtherAIActor)
+	{
+		const auto& otherParams = pOtherAIActor->GetParameters();
+
+		if (otherParams.m_bSpeciesHostility == false)
+			hostile = false;
+
+		if(bUsingAIIgnorePlayer && otherParams.m_bAiIgnoreFgNode == true)
 			hostile = false;
 	}
 
