@@ -5,6 +5,7 @@
 #include <StringUtils.h>
 #include "IFactionMap.h"
 #include "FactionMap.h"
+#include "FactionsModule.h"
 #include "Logger.h"
 #include <TheOtherSideMP\Game\TOSGameEventRecorder.h>
 
@@ -46,7 +47,8 @@ void static FactionsWarning(const char* format, ...)
 	va_end(args);
 }
 
-CFactionMap::CFactionMap(const char* xmlFilePath)
+CFactionMap::CFactionMap(CTOSFactionsModule* pFactionsModule, const char* xmlFilePath):
+	m_pFactionsModule(pFactionsModule)
 {
 	string path = xmlFilePath;
 	const EDataSourceLoad load = EDataSourceLoad::Now;
@@ -102,11 +104,11 @@ void CFactionMap::Clear()
 	//m_namesById.clear();
 	//m_idsByName.clear();
 
-	for (uint32 i = 0; i < maxFactionCount; ++i)
+	for (int i = 0; i < maxFactionCount; ++i)
 	{
-		for (uint32 j = 0; j < maxFactionCount; ++j)
+		for (int j = 0; j < maxFactionCount; ++j)
 		{		
-			m_reactions[{i,j}] = (i != j) ? Hostile : Friendly;
+			m_reactions[{i,j}] = (i != j) ? GetDefaultReaction() : Friendly;
 		}
 	}
 
@@ -145,7 +147,7 @@ bool CFactionMap::Reload()
 //	m_factionReactionChangedCallback.Remove(callback);
 //}
 
-bool CFactionMap::CreateFaction(uint8 factionId, CFactionMap::ReactionType defaultReactionType)
+bool CFactionMap::CreateFaction(int factionId, CFactionMap::ReactionType defaultReactionType)
 {
 	std::pair<FactionIds::iterator, bool> createResult;
 
@@ -172,7 +174,7 @@ bool CFactionMap::CreateFaction(uint8 factionId, CFactionMap::ReactionType defau
 	// Ставим реакцию defaultReactionType фракции1 на все другие фракции
 	for (auto it = m_reactions.begin(); it != m_reactions.end(); it++)
 	{
-		const uint8 factionOne = it->first.first;
+		const int factionOne = it->first.first;
 
 		if (factionOne == factionId) 
 			it->second = defaultReactionType;
@@ -212,11 +214,11 @@ bool CFactionMap::CreateFaction(uint8 factionId, CFactionMap::ReactionType defau
 	return true;
 }
 
-void CFactionMap::RemoveFaction(uint8 factionID)
+void CFactionMap::RemoveFaction(int factionID)
 {
 	if (gEnv->bEditor)
 	{
-		const uint8 removeFactionId = factionID;
+		const int removeFactionId = factionID;
 		const auto foundIter = stl::binary_find(m_factionIds.cbegin(), m_factionIds.cend(), removeFactionId);
 		if (foundIter == m_factionIds.end())
 		{
@@ -266,7 +268,7 @@ void CFactionMap::RemoveFaction(uint8 factionID)
 	}
 }
 
-void CFactionMap::SetReaction(uint8 factionOne, uint8 factionTwo, IFactionMap::ReactionType reaction)
+void CFactionMap::SetReaction(int factionOne, int factionTwo, IFactionMap::ReactionType reaction)
 {
 	if ((factionOne < maxFactionCount) && (factionTwo < maxFactionCount))
 	{
@@ -283,64 +285,65 @@ void CFactionMap::SetReaction(uint8 factionOne, uint8 factionTwo, IFactionMap::R
 	}
 }
 
-IFactionMap::ReactionType CFactionMap::GetReaction(const uint8 factionOne, const uint8 factionTwo) const
+IFactionMap::ReactionType CFactionMap::GetReaction(const int factionOne, const int factionTwo) const
 {
 	if ((factionOne < maxFactionCount) && (factionTwo < maxFactionCount))
 	{
 		auto foundIter = m_reactions.find(std::make_pair(factionOne, factionTwo));
-		uint8 reaction = foundIter->second;
+		IFactionMap::ReactionType reaction = foundIter->second;
 
 		return static_cast<IFactionMap::ReactionType>(reaction);
 	}
 
-	if (factionOne != InvalidFactionID && factionTwo != InvalidFactionID)
-	{
-		return Neutral;
-	}
+	//if (factionOne > InvalidFactionID && factionTwo > InvalidFactionID)
+	//{
+	//	return Neutral;
+	//}
 
-	return Hostile;
+	//return GetDefaultReaction();
+}
+
+IFactionMap::ReactionType CFactionMap::GetDefaultReaction() const
+{
+	return static_cast<ReactionType>(m_pFactionsModule->tos_factions_default_reaction);
 }
 
 void CFactionMap::Serialize(TSerialize ser)
 {
-	ser.BeginGroup("FactionMap");
+	//ser.BeginGroup("FactionMap");
 
-	// find highest faction id
-	uint32 highestId = 0;
+	//// find highest faction id
+	//int highestId = 0;
 
-	if (ser.IsWriting())
-	{
-		FactionIds::iterator it = m_factionIds.begin();
-		FactionIds::iterator end = m_factionIds.end();
-		for (; it != end; ++it)
-		{
-			if (*it > highestId)
-				highestId = *it;
-		}
+	//if (ser.IsWriting())
+	//{
+	//	FactionIds::iterator it = m_factionIds.begin();
+	//	FactionIds::iterator end = m_factionIds.end();
+	//	for (; it != end; ++it)
+	//	{
+	//		if (*it > highestId)
+	//			highestId = *it;
+	//	}
+	//}
 
-		//FactionIdsByName::iterator it = m_idsByName.begin();
-		//FactionIdsByName::iterator end = m_idsByName.end();
+	//ser.Value("SerializedFactionCount", highestId);
 
-		//for (; it != end; ++it)
-		//{
-		//	if (it->second > highestId)
-		//		highestId = it->second;
-		//}
-	}
+	//stack_string nameFormatter;
+	//for (size_t i = 0; i < highestId; ++i)
+	//{
+	//	for (size_t j = 0; j < highestId; ++j)
+	//	{
+	//		nameFormatter.Format("Reaction_%" PRISIZE_T "_to_%" PRISIZE_T, i, j);
+	//		ser.Value(nameFormatter.c_str(), m_reactions[{i,j}]);
+	//	}
+	//}
 
-	ser.Value("SerializedFactionCount", highestId);
+	//ser.EndGroup();
+}
 
-	stack_string nameFormatter;
-	for (size_t i = 0; i < highestId; ++i)
-	{
-		for (size_t j = 0; j < highestId; ++j)
-		{
-			nameFormatter.Format("Reaction_%" PRISIZE_T "_to_%" PRISIZE_T, i, j);
-			ser.Value(nameFormatter.c_str(), m_reactions[{i,j}]);
-		}
-	}
-
-	ser.EndGroup();
+CFactionMap::Reactions& CFactionMap::GetReactions()
+{
+	return m_reactions;
 }
 
 bool CFactionMap::GetReactionType(const char* szReactionName, EReaction* pReactionType)
@@ -454,7 +457,7 @@ bool CFactionXmlDataSource::Load(IFactionMap& factionMap)
 					return false;
 				}
 
-				const uint8 factionId = atoi(szFactionId); //factionMap.GetFactionID(szFactionId);
+				const int factionId = atoi(szFactionId); //factionMap.GetFactionID(szFactionId);
 				//if (factionId != CFactionMap::InvalidFactionID)
 				//{
 				//	FactionsWarning("Duplicate faction '%s' in file '%s' at line %d...", szFactionId, m_fileName.c_str(), factionNode->getLine());
@@ -462,7 +465,7 @@ bool CFactionXmlDataSource::Load(IFactionMap& factionMap)
 				//	return false;
 				//}
 
-				CFactionMap::ReactionType defaultReactionType = CFactionMap::Hostile;
+				CFactionMap::ReactionType defaultReactionType = factionMap.GetDefaultReaction();
 
 				XmlString szDefaultReaction;
 				if (factionNode->getAttr("default", szDefaultReaction) && szDefaultReaction && szDefaultReaction[0])
@@ -512,11 +515,11 @@ bool CFactionXmlDataSource::Load(IFactionMap& factionMap)
 					}
 
 					const uint8 reactionOnfactionId = atoi(szReactionOnFaction);
-					//if (reactionOnfactionId == CFactionMap::InvalidFactionID)
-					//{
-					//	FactionsWarning("Attribute 'faction' for 'Reaction' tag in file '%s' at line %d defines an unknown faction...", m_fileName.c_str(), reactionNode->getLine());
-					//	return false;
-					//}
+					if (reactionOnfactionId <= CFactionMap::InvalidFactionID)
+					{
+						FactionsError("Attribute 'faction' for 'Reaction' tag in file '%s' at line %d defines an unknown faction...", m_fileName.c_str(), reactionNode->getLine());
+						return false;
+					}
 
 					XmlString szReaction;
 					if (!reactionNode->getAttr("reaction", szReaction) || szReaction.empty())
@@ -525,7 +528,7 @@ bool CFactionXmlDataSource::Load(IFactionMap& factionMap)
 						return false;
 					}
 
-					CFactionMap::ReactionType reactionType = CFactionMap::Hostile;
+					CFactionMap::ReactionType reactionType = factionMap.GetDefaultReaction();
 					if (!CFactionMap::GetReactionType(szReaction, &reactionType))
 					{
 						FactionsWarning("Invalid reaction '%s' in file '%s' at line '%d'...", szReaction, m_fileName.c_str(), reactionNode->getLine());

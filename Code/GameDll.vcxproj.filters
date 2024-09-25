@@ -912,6 +912,9 @@
     <ClCompile Include="TheOtherSideMP\Game\Modules\Factions\FactionsModule.cpp">
       <Filter>TheOtherSideMP\Game\Modules\Factions</Filter>
     </ClCompile>
+    <ClCompile Include="TheOtherSideMP\Nodes\FlowFactionsNodes.cpp">
+      <Filter>TheOtherSideMP\Nodes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor.h">

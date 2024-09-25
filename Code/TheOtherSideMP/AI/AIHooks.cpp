@@ -8,6 +8,7 @@ Copyright (C), AlienKeeper, 2024.
 #include "StdAfx.h"
 #include "AIHooks.h"
 
+#include "TheOtherSideMP\Game\Modules\Factions\FactionMap.h"
 #include "TheOtherSideMP\Game\Modules\Factions\FactionsModule.h"
 #include "TheOtherSideMP\Game\TOSGame.h"
 #include <TheOtherSideMP\Helpers\TOS_Console.h>
@@ -26,12 +27,10 @@ constexpr size_t IAISYSTEM_VTABLE_ADDRESS = 0x311b0fa0;
 // Типы указателей на функции
 using CanAcquireTargetFunc = decltype(&TOS_Hooks::AI::IAIActorHook::CanAcquireTarget);
 using IsHostileFunc = decltype(&TOS_Hooks::AI::IAIObjectHook::IsHostile);
-using GetEntityIdFunc = decltype(&TOS_Hooks::AI::IAIObjectHook::GetEntityID);
 
 // Указатели на оригинальные функции
 static CanAcquireTargetFunc originalCanAcquireTarget = nullptr;
 static IsHostileFunc originalIsHostileFunc = nullptr;
-static GetEntityIdFunc originalGetEntityIdFunc = nullptr;
 
 void TOS_Hooks::AI::ApplyHooks()
 {
@@ -42,12 +41,10 @@ void TOS_Hooks::AI::ApplyHooks()
 	// Получение индексов функций
 	auto index1 = IndexFinder::getIndexOf(&IAIActor::CanAcquireTarget); // 11
 	auto index2 = IndexFinder::getIndexOf(&IAIObject::IsHostile); // 35
-	auto index3 = IndexFinder::getIndexOf(&IAIObject::GetEntityID); //53
 
 	// Сохранение оригинальных функций
 	originalCanAcquireTarget = reinterpret_cast<CanAcquireTargetFunc&>(pVTableAIActor[index1]);
 	originalIsHostileFunc = reinterpret_cast<IsHostileFunc&>(pVTableAIObject[index2]);
-	originalGetEntityIdFunc = reinterpret_cast<GetEntityIdFunc&>(pVTableAIObject[index3]);
 
 	// Замена функций хуками
 	TOS_Hooks::ReplaceFunction(&pVTableAIActor[index1], &IAIActorHook::CanAcquireTarget);
@@ -60,6 +57,80 @@ void TOS_Hooks::AI::ApplyHooks()
 
 bool TOS_Hooks::AI::IAIActorHook::CanAcquireTarget(IAIObject* pOther) const
 {
+	//if (!pOther || !pOther->IsEnabled() || (pOther->GetEntity() && pOther->GetEntity()->IsHidden()))
+	//	return false;
+
+	////// Моя Фракция
+	//const auto pFactions = g_pTOSGame->GetFactionsModule();
+	//auto pMyAI = reinterpret_cast<const IAIActor*>(this);
+
+	//auto myFaction = pFactions->GetAIFaction(pMyAI);
+	//auto otherFaction = pFactions->GetAIFaction(pOther);
+
+	//CFactionMap::EReaction MyToOtherReaction = pFactions->GetFactionMap()->GetReaction(myFaction, otherFaction);
+
+	//return MyToOtherReaction == CFactionMap::Hostile && (this->*originalCanAcquireTarget)(pOther);
+
+	//if (pOther->GetAIType() == AIOBJECT_ATTRIBUTE)
+	//{
+	//	// Аттрибут - это ИИ источника света или лазерной указки
+	//	// Ассоциация - это ИИ, который создал этот свет
+	//	// Например, Номад нацепил фонарик на оружие. Аттрибут - это свет, Ассоциация - Номад.
+
+	//	// Поиск сущности, с которой ассоциируется аттрибут
+	//	string attrName = pOther->GetName();
+	//	string token;
+
+	//	// позиция имени сущности ассоциации
+	//	int entNamePos = 3;
+	//	int curPos = 0;
+
+	//	for (int i = 0; i < entNamePos; i++)
+	//		token = attrName.Tokenize(" ", curPos);
+
+	//	// Меняем ИИ света на ИИ ассоциации, т.е. на Номада
+	//	string associationEntName = token;
+	//	IEntity* pAssociationEnt = gEnv->pEntitySystem->FindEntityByName(associationEntName.c_str());
+	//	if (pAssociationEnt)
+	//		pOther = pAssociationEnt->GetAI();
+	//}
+	//else if (pOther->GetAIType() == AIOBJECT_DUMMY)
+	//{
+	//	// Perception of ...
+
+	//	// Поиск сущности, с которой ассоциируется аттрибут
+	//	string attrName = pOther->GetName();
+	//	string token;
+
+	//	// позиция имени сущности ассоциации
+	//	int entNamePos = 3;
+	//	int curPos = 0;
+
+	//	for (int i = 0; i < entNamePos; i++)
+	//		token = attrName.Tokenize(" ", curPos);
+
+	//	// Меняем ИИ света на ИИ ассоциации, т.е. на Номада
+	//	string associationEntName = token;
+	//	IEntity* pAssociationEnt = gEnv->pEntitySystem->FindEntityByName(associationEntName.c_str());
+	//	if (pAssociationEnt)
+	//		pOther = pAssociationEnt->GetAI();
+	//}
+
+	//// Пустой указатель после ассоциации
+	//// Так не должно быть
+	//assert(pOther);
+	//if (!pOther)
+	//	return false;
+
+	//return true;
+
+	//IAIActor* pOtherActor = pOther->CastToIAIActor();
+	//if (!pOtherActor)
+		//return (pOther->GetAIType() == AIOBJECT_TARGET);
+
+	//auto pThis = reinterpret_cast<const IAIActor*>(this);
+	//auto& params = pThis->GetParameters();
+
 	// Обрабатываем через стандартную функцию
 	return (this->*originalCanAcquireTarget)(pOther);
 };
@@ -71,17 +142,16 @@ bool TOS_Hooks::AI::IAIObjectHook::IsHostile(const IAIObject* pOther, bool bUsin
 	if (!pOther)
 		return hostile;
 
-	// Моя сущность
-	EntityId myId = (this->*originalGetEntityIdFunc)();
-	IEntity* pMyEntity = TOS_GET_ENTITY(myId);
-
 	// Моя Фракция
 	const auto pFactions = g_pTOSGame->GetFactionsModule();
-	uint8 myFaction = pFactions->GetEntityFaction(myId);
 
-	if (pOther->GetAIType() == AIOBJECT_ATTRIBUTE)
+	auto debugOtherAIType = pOther->GetAIType();
+
+	if (pOther->GetAIType() == AIOBJECT_ATTRIBUTE || pOther->GetAIType() == AIOBJECT_DUMMY)
 	{
-		// Аттрибут - это ИИ источника света или лазерной указки
+		// Perception of ... - AIOBJECT_DUMMY
+
+		// Аттрибут (AIOBJECT_ATTRIBUTE) - это ИИ источника света или лазерной указки
 		// Ассоциация - это ИИ, который создал этот свет
 		// Например, Номад нацепил фонарик на оружие. Аттрибут - это свет, Ассоциация - Номад.
 
@@ -113,14 +183,21 @@ bool TOS_Hooks::AI::IAIObjectHook::IsHostile(const IAIObject* pOther, bool bUsin
 	if (bUsingAIIgnorePlayer && (pOther->GetAIType() == AIOBJECT_PLAYER) && (TOS_Console::GetSafeIntVar("ai_IgnorePlayer", 0)))
 		return false;
 
+	// Моя сущность
+	const IAIObject* pMyAI = reinterpret_cast<const IAIObject*>(this);
+
 	// Враждебная фракция
-	uint8 otherFaction = pFactions->GetEntityFaction(pOther->GetEntityID());
-	CFactionMap::EReaction reaction = pFactions->GetFactionMap()->GetReaction(myFaction, otherFaction);
-	if (reaction == CFactionMap::Hostile)
+	int myFaction = pFactions->GetAIFaction(pMyAI);
+	int otherFaction = pFactions->GetAIFaction(pOther);
+
+	assert(myFaction >= 0);
+	assert(otherFaction >= 0);
+
+	CFactionMap::EReaction MyToOtherReaction = pFactions->GetFactionMap()->GetReaction(myFaction, otherFaction);
+	if (MyToOtherReaction == CFactionMap::Hostile)
 		hostile = true;
 
 	// Враждебность по параметрам
-	const IAIObject* pMyAI = pMyEntity->GetAI();
 	const IAIActor* pMyAIActor = pMyAI->CastToIAIActor();
 	const IAIActor* pOtherAIActor = pOther->CastToIAIActor();
 	if (pMyAIActor)
@@ -141,9 +218,10 @@ bool TOS_Hooks::AI::IAIObjectHook::IsHostile(const IAIObject* pOther, bool bUsin
 		if (otherParams.m_bSpeciesHostility == false)
 			hostile = false;
 
-		if(bUsingAIIgnorePlayer && otherParams.m_bAiIgnoreFgNode == true)
+		if (bUsingAIIgnorePlayer && otherParams.m_bAiIgnoreFgNode == true)
 			hostile = false;
 	}
 
+	// return hostile && (this->*originalIsHostileFunc)(pOther, bUsingAIIgnorePlayer);
 	return hostile;
 }

@@ -512,11 +512,52 @@ namespace TOS_AI
 		return ok;
 	}
 
-	inline uint8 GetSpecies(const IAIObject* pAI, const bool fromLua)
+	inline int GetSpecies(const IAIActor* pAI)
 	{
 		int species = INVALID_SPECIES_ID;
 
 		if (pAI && gEnv->bServer && gEnv->pAISystem->IsEnabled())
+		{
+			const AgentParameters playerParams = pAI->GetParameters();
+			species = playerParams.m_nSpecies;
+		}
+
+		return species;
+	}
+
+	inline bool SetSpecies(IAIActor* pAI, const int species)
+	{
+		bool ok = false;
+
+		if (pAI && gEnv->bServer && gEnv->pAISystem && gEnv->pAISystem->IsEnabled())
+		{
+			AgentParameters playerParams = pAI->GetParameters();
+			playerParams.m_nSpecies = species;
+
+			if (pAI)
+			{
+				pAI->SetParameters(playerParams);
+				ok = true;
+			}
+
+			//const auto pTable = pAI->GetEntity()->GetScriptTable();
+			//if (pTable)
+			//{
+			//	SmartScriptTable props;
+			//	pTable->GetValue("Properties", props);
+			//	props->SetValue("species", species);
+			//	ok = true;
+			//}
+		}
+
+		return ok;
+	}
+
+	inline int GetSpecies(const IAIObject* pAI, const bool fromLua)
+	{
+		int species = INVALID_SPECIES_ID;
+
+		if (pAI && gEnv->bServer && gEnv->pAISystem->IsEnabled() && pAI->CastToIAIActor())
 		{
 			const AgentParameters playerParams = pAI->CastToIAIActor()->GetParameters();
 			species = playerParams.m_nSpecies;

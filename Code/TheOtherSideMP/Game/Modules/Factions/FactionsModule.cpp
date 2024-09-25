@@ -8,18 +8,20 @@
 #include "TheOtherSideMP\Helpers\TOS_AI.h"
 #include <TheOtherSideMP\Helpers\TOS_Entity.h>
 #include "TheOtherSideMP\Game\TOSGameEventRecorder.h"
+#include "FactionMap.h"
 
 #include "CryLibrary.h"
 #include <windows.h>
 
 
-CTOSFactionsModule::CTOSFactionsModule(IAISystem* pAISystem, const char* xmlFilePath)
+CTOSFactionsModule::CTOSFactionsModule(IAISystem* pAISystem, const char* xmlFilePath) :
+	tos_factions_default_reaction(int(IFactionMap::Hostile))
 {
 	assert(pAISystem);
 
 	//m_factionMap.RegisterFactionReactionChangedCallback(functor(*this, &CTOSFactionsModule::OnFactionReactionChanged));
 	m_pAISystem = pAISystem;
-	m_pFactionMap = new CFactionMap(xmlFilePath);
+	m_pFactionMap = new CFactionMap(this, xmlFilePath);
 }
 
 CTOSFactionsModule::~CTOSFactionsModule()
@@ -34,7 +36,7 @@ void CTOSFactionsModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEv
 	{
 		case eEGE_FactionReactionChanged:
 		{
-			
+
 			break;
 		}
 		default:
@@ -55,6 +57,55 @@ void CTOSFactionsModule::InitCCommands(IConsole* pConsole)
 void CTOSFactionsModule::ReleaseCCommands()
 {
 	gEnv->pConsole->RemoveCommand("tos_factions_reload");
+}
+
+void CTOSFactionsModule::InitCVars(IConsole* pConsole)
+{
+	pConsole->Register("tos_factions_default_reaction", &tos_factions_default_reaction, IFactionMap::Hostile, VF_CHEAT | VF_REQUIRE_LEVEL_RELOAD,
+					   "Default reaction to faction relations. Require factions reloading\n"
+					   "Usage: tos_factions_default_reaction [0/1/2]\n"
+					   "Default is 0 (Hostile)\n"
+					   "0 - hostile\n"
+					   "1 - neutral\n"
+					   "2 - friendly\n");
+}
+
+void CTOSFactionsModule::ReleaseCVars()
+{
+	gEnv->pConsole->UnregisterVariable("tos_factions_default_reaction", true);
+}
+
+void CTOSFactionsModule::Update(float frametime)
+{
+	auto pPD = g_pGame->GetIGameFramework()->GetIPersistantDebug();
+	pPD->Begin("CTOSFactionsModule", true);
+
+	for (auto it1 = m_pFactionMap->m_factionIds.begin(); it1 != m_pFactionMap->m_factionIds.end(); it1++)
+	{
+		for (auto it2 = m_pFactionMap->m_factionIds.begin(); it2 != m_pFactionMap->m_factionIds.end(); it2++)
+		{
+			int index1 = std::distance( m_pFactionMap->m_factionIds.begin(), it1);
+			int index2 = std::distance( m_pFactionMap->m_factionIds.begin(), it2);
+			pPD->AddText(100, 150 + 20 * (index1) + 100 * (index2), 1.3f, ColorF(1, 1, 1, 1), 15.0f, "Faction '%i' to Faction '%i' is '%s'",
+						 *(it2),  *(it1), CFactionMap::GetReactionName(m_pFactionMap->GetReaction(*(it2),  *(it1))));
+		}
+
+	}
+
+	//auto it = m_pFactionMap->GetReactions().begin();
+	//auto end = m_pFactionMap->GetReactions().end();
+	//for (; it != end; it++)
+	//{
+	//	auto iter1 = stl::binary_find(m_pFactionMap->m_factionIds.begin(), m_pFactionMap->m_factionIds.end(), it->first.first);
+	//	auto iter2 = stl::binary_find(m_pFactionMap->m_factionIds.begin(), m_pFactionMap->m_factionIds.end(), it->first.second);
+	//	if (iter1 != m_pFactionMap->m_factionIds.end() && iter2 != m_pFactionMap->m_factionIds.end())
+	//	{
+	//		int index = std::distance(m_pFactionMap->GetReactions().begin(), it);
+	//		pPD->AddText(300, 300 + 20 * index, 1.3f, ColorF(1, 1, 1, 1), 15.0f, "Faction '%i' to Faction '%i' is '%s'",
+	//					 it->first.first, it->first.second, CFactionMap::GetReactionName(it->second));
+
+	//	}
+	//}
 }
 
 void CTOSFactionsModule::Serialize(TSerialize ser)
@@ -107,7 +158,7 @@ void CTOSFactionsModule::Serialize(TSerialize ser)
 	//}
 //}
 
-bool CTOSFactionsModule::SetEntityFaction(EntityId entityId, uint8 factionId)
+bool CTOSFactionsModule::SetEntityFaction(EntityId entityId, int factionId)
 {
 	IEntity* pEntity = TOS_GET_ENTITY(entityId);
 	if (!pEntity)
@@ -117,7 +168,7 @@ bool CTOSFactionsModule::SetEntityFaction(EntityId entityId, uint8 factionId)
 	if (!pAI)
 		return false;
 
-	const uint8 oldFaction = GetEntityFaction(entityId);
+	const int oldFaction = GetEntityFaction(entityId);
 	const bool result = TOS_AI::SetSpecies(pAI, factionId);
 	if (result && oldFaction != INVALID_SPECIES_ID && oldFaction != factionId)
 	{
@@ -127,17 +178,60 @@ bool CTOSFactionsModule::SetEntityFaction(EntityId entityId, uint8 factionId)
 	return result;
 }
 
-uint8 CTOSFactionsModule::GetEntityFaction(EntityId entityId) const
+int CTOSFactionsModule::GetEntityFaction(EntityId entityId) const
 {
 	IEntity* pEntity = TOS_GET_ENTITY(entityId);
 	if (!pEntity)
-		return false;
+		return -1;
 
 	IAIObject* pAI = pEntity->GetAI();
-	if (!pAI)
+	if (pAI)
+		return TOS_AI::GetSpecies(pAI, false);
+	else
+		return TOS_AI::GetSpecies(pAI, true);
+
+}
+
+bool CTOSFactionsModule::SetAIFaction(IAIObject* pObject, int factionId) const
+{
+	if (!pObject)
 		return false;
 
-	return TOS_AI::GetSpecies(pAI, false);
+	const int oldFaction = GetAIFaction(pObject);
+	const bool result = TOS_AI::SetSpecies(pObject, factionId);
+	if (result && oldFaction != INVALID_SPECIES_ID && oldFaction != factionId)
+	{
+		TOS_RECORD_EVENT(0, STOSGameEvent(eEGE_EntityFactionChanged, "", true, false, nullptr, 0, factionId));
+	}
+
+	return result;
+
+}
+
+int CTOSFactionsModule::GetAIFaction(const IAIObject* pObject) const
+{
+	return TOS_AI::GetSpecies(pObject, false);
+}
+
+bool CTOSFactionsModule::SetAIFaction(IAIActor* pObject, int factionId) const
+{
+	if (!pObject)
+		return false;
+
+	const int oldFaction = GetAIFaction(pObject);
+	const bool result = TOS_AI::SetSpecies(pObject, factionId);
+	if (result && oldFaction != INVALID_SPECIES_ID && oldFaction != factionId)
+	{
+		TOS_RECORD_EVENT(0, STOSGameEvent(eEGE_EntityFactionChanged, "", true, false, nullptr, 0, factionId));
+	}
+
+	return result;
+
+}
+
+int CTOSFactionsModule::GetAIFaction(const IAIActor* pObject) const
+{
+	return TOS_AI::GetSpecies(pObject);
 }
 
 bool CTOSFactionsModule::Reload()

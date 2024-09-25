@@ -25,11 +25,14 @@ private:
 
 class CFactionMap : public IFactionMap
 {
+	friend class CTOSFactionsModule;
 	friend class CFactionXmlDataSource;
+	friend class CFlowNode_SetFactionsReaction;
 
 	enum { maxFactionCount = 32 };
 
-	typedef std::set<uint8>																			  FactionIds;
+	typedef std::set<int>																			  FactionIds;
+	typedef std::map<std::pair<int, int>, IFactionMap::ReactionType>								  Reactions;
 	//typedef std::unordered_map<uint8, string>                                                       FactionNamesById;
 	//typedef std::unordered_map<string, uint8, stl::hash_stricmp<string>, stl::hash_stricmp<string>> FactionIdsByName;
 
@@ -37,7 +40,7 @@ public:
 	typedef IFactionMap::ReactionType EReaction;
 
 	/// @param xmlFilePath - путь к файлу с фракциями, например: "scripts/ai/factions.xml"
-	CFactionMap(const char* xmlFilePath);
+	CFactionMap(CTOSFactionsModule* pFactionsModule, const char* xmlFilePath);
 	~CFactionMap();
 
 	// IFactionMap
@@ -48,11 +51,12 @@ public:
 	//virtual uint8       GetFactionID(const char* szName) const override;
 
 	//virtual bool        CreateFaction(uint8 factionID, uint32 reactionsCount, const uint8* pReactions) override;
-	virtual bool		CreateFaction(uint8 factionId, CFactionMap::ReactionType defaultReactionsType);
-	virtual void		RemoveFaction(uint8 factionId);
+	virtual bool		CreateFaction(int factionId, CFactionMap::ReactionType defaultReactionsType);
+	virtual void		RemoveFaction(int factionId);
 
-	virtual void        SetReaction(uint8 factionOne, uint8 factionTwo, IFactionMap::ReactionType reaction) override;
-	virtual EReaction   GetReaction(uint8 factionOne, uint8 factionTwo) const override;
+	virtual void        SetReaction(int factionOne, int factionTwo, IFactionMap::ReactionType reaction) override;
+	virtual EReaction   GetReaction(const int factionOne, const int factionTwo) const override;
+	virtual ReactionType GetDefaultReaction() const;
 
 	virtual void        SetDataSource(IFactionDataSource* pDataSource, EDataSourceLoad bLoad) override;
 	virtual void        RemoveDataSource(IFactionDataSource* pDataSource) override;
@@ -65,7 +69,8 @@ public:
 
 	void Clear();
 	void Serialize(TSerialize ser);
-
+protected:
+		Reactions& GetReactions();
 private:
 	static bool GetReactionType(const char* szReactionName, EReaction* pReactionType);
 	static const char* GetReactionName(EReaction reactionType);
@@ -77,7 +82,8 @@ private:
 	//FactionIdsByName             m_idsByName;
 	FactionIds					 m_factionIds;
 	//uint8                        m_reactions[maxFactionCount][maxFactionCount];
-	std::map<std::pair<uint8, uint8>, uint8> m_reactions;
+	Reactions m_reactions;
+	CTOSFactionsModule*			m_pFactionsModule;
 
 	//CFunctorsList<FactionReactionChangedCallback> m_factionReactionChangedCallback;
 };

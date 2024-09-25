@@ -3,54 +3,13 @@
 
 #pragma once
 
-#include "FactionMap.h"
 #include "TheOtherSideMP\Game\Modules\GenericModule.h"
 
-//struct SFactionID
-//{
-//	SFactionID(const uint8 id = IFactionMap::InvalidFactionID)
-//		: id(id)
-//	{
-//	}
-//
-//	bool IsValid() const
-//	{
-//		return id != IFactionMap::InvalidFactionID;
-//	}
-//
-//	inline bool operator==(const SFactionID& other) const
-//	{
-//		if (id == IFactionMap::InvalidFactionID)
-//			return false;
-//
-//		return id == other.id;
-//	}
-//
-//	uint8 id;
-//	string name;
-//};
-
-//struct SFactionFlagsMask
-//{
-//	SFactionFlagsMask() : mask(0)
-//	{
-//	}
-//	SFactionFlagsMask(uint32 mask) : mask(mask)
-//	{
-//	}
-//
-//	inline bool operator==(const SFactionFlagsMask& other) const
-//	{
-//		return mask == other.mask;
-//	}
-//
-//	uint32 mask;
-//};
-
+class CFactionMap;
 class CTOSFactionsModule : public CTOSGenericModule
 {
 public:
-	typedef Functor2 <uint8 /*factionID*/, IFactionMap::ReactionType /*reaction*/> ReactionChangedCallback;
+	//typedef Functor2 <uint8 /*factionID*/, IFactionMap::ReactionType /*reaction*/> ReactionChangedCallback;
 
 	/// @param xmlFilePath - путь к файлу с фракциями, например: "scripts/ai/factions.xml"
 	CTOSFactionsModule(IAISystem* pAISystem, const char* xmlFilePath);
@@ -61,7 +20,9 @@ public:
 	virtual void GetMemoryStatistics(ICrySizer* s);
 	virtual void InitCCommands(IConsole* pConsole);
 	virtual void ReleaseCCommands();
-
+	virtual void InitCVars(IConsole* pConsole);
+	virtual void ReleaseCVars();
+	virtual void Update(float frametime);
 	virtual const char* GetName()
 	{
 		return "ModuleFactions";
@@ -74,15 +35,24 @@ public:
 		return m_pFactionMap;
 	}
 
-	bool	   SetEntityFaction(EntityId entityId, uint8 factionId);
-	uint8	   GetEntityFaction(EntityId entityId) const;
+	bool	   SetEntityFaction(EntityId entityId, int factionId);
+	int		   GetEntityFaction(EntityId entityId) const;
+
+	bool	   SetAIFaction(IAIObject* pObject, int factionId) const;
+	int		   GetAIFaction(const IAIObject* pObject) const;
+
+	bool	   SetAIFaction(IAIActor* pObject, int factionId) const;
+	int		   GetAIFaction(const IAIActor* pObject) const;
 	bool	   Reload();
 
 
-private:
 	//Console commands
 	static void CmdReloadFactions(IConsoleCmdArgs* cmdArgs);
 
+	//Console variables
+	int tos_factions_default_reaction;
+
+private:
 	CFactionMap* m_pFactionMap;
 	IAISystem* m_pAISystem;
 };

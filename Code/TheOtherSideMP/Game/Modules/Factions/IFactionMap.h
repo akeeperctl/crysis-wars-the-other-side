@@ -60,22 +60,25 @@ struct IFactionMap
 	//! \param factionID - id of the faction.
 	//! \param defaultReactionsType - Стандартная реакция на все фракции
 	//! \return true in case of a success.
-	virtual bool CreateFaction(uint8 factionId, ReactionType defaultReactionType) = 0;
+	virtual bool CreateFaction(int factionId, ReactionType defaultReactionType) = 0;
 	
 	/// @brief Removes a faction by ID. Editor mode only!.
-	virtual void RemoveFaction(uint8 factionID) = 0;
+	virtual void RemoveFaction(int factionID) = 0;
 
 	//! Sets the reaction of 'factionOne' to 'factionTwo'.
 	//! \param factionOne ID of the reacting faction.
 	//! \param factionTwo ID of the faction 'factionOne' reacts on.
 	//! \param Reaction Reaction to set.
-	virtual void SetReaction(uint8 factionOne, uint8 factionTwo, ReactionType reaction) = 0;
+	virtual void SetReaction(int factionOne, int factionTwo, ReactionType reaction) = 0;
 
 	//! Gets the reaction of 'factionOne' to 'factionTwo'.
 	//! \param factionOne ID of the reacting faction.
 	//! \param factionTwo ID of the faction 'factionOne' reacts on.
 	//! \return Reaction of factionOne on factionTwo.
-	virtual ReactionType GetReaction(uint8 factionOne, uint8 factionTwo) const = 0;
+	virtual ReactionType GetReaction(const int factionOne, const int factionTwo) const = 0;
+	
+	//! \return The default reaction for faction relations
+	virtual ReactionType GetDefaultReaction() const = 0;
 
 	//! Sets a new data source, clears old data and loads the data from the new source if specified.
 	//! \param pDataSource Pointer to the data source.
