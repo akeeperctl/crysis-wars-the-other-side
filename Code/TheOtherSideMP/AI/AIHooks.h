@@ -26,6 +26,11 @@ namespace TOS_Hooks
 			bool IsHostile(const IAIObject* pOther, bool bUsingAIIgnorePlayer=true) const;
 		};
 
+		struct IAISystemHook
+		{
+			void Devalue( IAIObject* pRef, IAIObject* pObject, bool group, float fDevalueTime=20.f );
+		};
+
 		void ApplyHooks();
 	}
 };

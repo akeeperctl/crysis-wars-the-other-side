@@ -2,23 +2,17 @@
 	<!-- usa -->
 	<Faction id="0" default="hostile">
 		<Reaction faction="0"  reaction="friendly" />
-		<Reaction faction="1"  reaction="hostile" />
-		<Reaction faction="2"  reaction="hostile" />
 		<Reaction faction="10" reaction="neutral" />
 	</Faction>
 	
 	<!-- nk -->
 	<Faction id="1" default="hostile">
-		<Reaction faction="0"  reaction="hostile" />
 		<Reaction faction="1"  reaction="friendly" />
-		<Reaction faction="2"  reaction="hostile" />
 		<Reaction faction="10" reaction="neutral" />
 	</Faction>
 	
 	<!-- aliens -->
 	<Faction id="2" default="hostile">
-		<Reaction faction="0"  reaction="hostile" />
-		<Reaction faction="1"  reaction="hostile" />
 		<Reaction faction="2"  reaction="friendly" />
 		<Reaction faction="10" reaction="neutral" />
 	</Faction>

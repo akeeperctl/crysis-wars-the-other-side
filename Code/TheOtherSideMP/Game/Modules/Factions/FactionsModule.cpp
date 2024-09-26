@@ -80,17 +80,17 @@ void CTOSFactionsModule::Update(float frametime)
 	auto pPD = g_pGame->GetIGameFramework()->GetIPersistantDebug();
 	pPD->Begin("CTOSFactionsModule", true);
 
-	for (auto it1 = m_pFactionMap->m_factionIds.begin(); it1 != m_pFactionMap->m_factionIds.end(); it1++)
-	{
-		for (auto it2 = m_pFactionMap->m_factionIds.begin(); it2 != m_pFactionMap->m_factionIds.end(); it2++)
-		{
-			int index1 = std::distance( m_pFactionMap->m_factionIds.begin(), it1);
-			int index2 = std::distance( m_pFactionMap->m_factionIds.begin(), it2);
-			pPD->AddText(100, 150 + 20 * (index1) + 100 * (index2), 1.3f, ColorF(1, 1, 1, 1), 15.0f, "Faction '%i' to Faction '%i' is '%s'",
-						 *(it2),  *(it1), CFactionMap::GetReactionName(m_pFactionMap->GetReaction(*(it2),  *(it1))));
-		}
+	//for (auto it1 = m_pFactionMap->m_factionIds.begin(); it1 != m_pFactionMap->m_factionIds.end(); it1++)
+	//{
+	//	for (auto it2 = m_pFactionMap->m_factionIds.begin(); it2 != m_pFactionMap->m_factionIds.end(); it2++)
+	//	{
+	//		int index1 = std::distance( m_pFactionMap->m_factionIds.begin(), it1);
+	//		int index2 = std::distance( m_pFactionMap->m_factionIds.begin(), it2);
+	//		pPD->AddText(100, 150 + 20 * (index1) + 100 * (index2), 1.3f, ColorF(1, 1, 1, 1), 15.0f, "Faction '%i' to Faction '%i' is '%s'",
+	//					 *(it2),  *(it1), CFactionMap::GetReactionName(m_pFactionMap->GetReaction(*(it2),  *(it1))));
+	//	}
 
-	}
+	//}
 
 	//auto it = m_pFactionMap->GetReactions().begin();
 	//auto end = m_pFactionMap->GetReactions().end();

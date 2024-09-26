@@ -1,3 +1,3 @@
 #pragma once
 
-constexpr int INVALID_SPECIES_ID = -1;
+constexpr int INVALID_SPECIES_ID = 0xff;

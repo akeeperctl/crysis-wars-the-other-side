@@ -13,6 +13,7 @@ Copyright (C), AlienKeeper, 2024.
 #include "TheOtherSideMP\Game\TOSGame.h"
 #include <TheOtherSideMP\Helpers\TOS_Console.h>
 #include <TheOtherSideMP\Helpers\TOS_Entity.h>
+#include "AICommon.h"
 
 #ifdef _WIN64
 constexpr size_t IAIOBJECT_VTABLE_ADDRESS = 0x000000003122bda0;
@@ -37,10 +38,12 @@ void TOS_Hooks::AI::ApplyHooks()
 	// Получение VTables 
 	auto pVTableAIActor = Utils::VTables::GetVTableFromAddress(IAIACTOR_VTABLE_ADDRESS);
 	auto pVTableAIObject = Utils::VTables::GetVTableFromAddress(IAIOBJECT_VTABLE_ADDRESS);
+	//auto pVTableAISystem = Utils::VTables::GetVTableFromAddress(IAISYSTEM_VTABLE_ADDRESS);
 
 	// Получение индексов функций
 	auto index1 = IndexFinder::getIndexOf(&IAIActor::CanAcquireTarget); // 11
 	auto index2 = IndexFinder::getIndexOf(&IAIObject::IsHostile); // 35
+	//auto index3 = IndexFinder::getIndexOf(&IAISystem::Devalue); //25
 
 	// Сохранение оригинальных функций
 	originalCanAcquireTarget = reinterpret_cast<CanAcquireTargetFunc&>(pVTableAIActor[index1]);
@@ -49,6 +52,7 @@ void TOS_Hooks::AI::ApplyHooks()
 	// Замена функций хуками
 	TOS_Hooks::ReplaceFunction(&pVTableAIActor[index1], &IAIActorHook::CanAcquireTarget);
 	TOS_Hooks::ReplaceFunction(&pVTableAIObject[index2], &IAIObjectHook::IsHostile);
+	//TOS_Hooks::ReplaceFunction(&pVTableAISystem[index3], &IAISystemHook::Devalue);
 }
 
 // Определение функций хука обязательно должно быть вне структуры
@@ -133,6 +137,7 @@ bool TOS_Hooks::AI::IAIActorHook::CanAcquireTarget(IAIObject* pOther) const
 
 	// Обрабатываем через стандартную функцию
 	return (this->*originalCanAcquireTarget)(pOther);
+	//return true;
 };
 
 bool TOS_Hooks::AI::IAIObjectHook::IsHostile(const IAIObject* pOther, bool bUsingAIIgnorePlayer) const
@@ -141,11 +146,6 @@ bool TOS_Hooks::AI::IAIObjectHook::IsHostile(const IAIObject* pOther, bool bUsin
 
 	if (!pOther)
 		return hostile;
-
-	// Моя Фракция
-	const auto pFactions = g_pTOSGame->GetFactionsModule();
-
-	auto debugOtherAIType = pOther->GetAIType();
 
 	if (pOther->GetAIType() == AIOBJECT_ATTRIBUTE || pOther->GetAIType() == AIOBJECT_DUMMY)
 	{
@@ -179,7 +179,7 @@ bool TOS_Hooks::AI::IAIObjectHook::IsHostile(const IAIObject* pOther, bool bUsin
 	if (!pOther)
 		return false;
 
-	// Игнор игрока
+	//// Игнор игрока
 	if (bUsingAIIgnorePlayer && (pOther->GetAIType() == AIOBJECT_PLAYER) && (TOS_Console::GetSafeIntVar("ai_IgnorePlayer", 0)))
 		return false;
 
@@ -187,15 +187,17 @@ bool TOS_Hooks::AI::IAIObjectHook::IsHostile(const IAIObject* pOther, bool bUsin
 	const IAIObject* pMyAI = reinterpret_cast<const IAIObject*>(this);
 
 	// Враждебная фракция
+	const auto pFactions = g_pTOSGame->GetFactionsModule();
 	int myFaction = pFactions->GetAIFaction(pMyAI);
 	int otherFaction = pFactions->GetAIFaction(pOther);
 
-	assert(myFaction >= 0);
-	assert(otherFaction >= 0);
-
-	CFactionMap::EReaction MyToOtherReaction = pFactions->GetFactionMap()->GetReaction(myFaction, otherFaction);
-	if (MyToOtherReaction == CFactionMap::Hostile)
-		hostile = true;
+	if (otherFaction != INVALID_SPECIES_ID)
+	{
+		CFactionMap::EReaction MyToOtherReaction = pFactions->GetFactionMap()->GetReaction(myFaction, otherFaction);
+		CFactionMap::EReaction OtherToMyReaction = pFactions->GetFactionMap()->GetReaction(otherFaction, myFaction);
+		if (MyToOtherReaction == CFactionMap::Hostile && OtherToMyReaction == CFactionMap::Hostile)
+			hostile = true;
+	}
 
 	// Враждебность по параметрам
 	const IAIActor* pMyAIActor = pMyAI->CastToIAIActor();
@@ -222,6 +224,13 @@ bool TOS_Hooks::AI::IAIObjectHook::IsHostile(const IAIObject* pOther, bool bUsin
 			hostile = false;
 	}
 
+	//TODO: Сделать перезаписывание реакции
+
 	// return hostile && (this->*originalIsHostileFunc)(pOther, bUsingAIIgnorePlayer);
 	return hostile;
+}
+
+void TOS_Hooks::AI::IAISystemHook::Devalue(IAIObject* pRef, IAIObject* pObject, bool group, float fDevalueTime)
+{
+	return;
 }
