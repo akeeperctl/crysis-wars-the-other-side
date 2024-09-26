@@ -915,6 +915,9 @@
     <ClCompile Include="TheOtherSideMP\Nodes\FlowFactionsNodes.cpp">
       <Filter>TheOtherSideMP\Nodes</Filter>
     </ClCompile>
+    <ClCompile Include="TheOtherSideMP\Game\Modules\Factions\PersonalHostiles.cpp">
+      <Filter>TheOtherSideMP\Game\Modules\Factions</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor.h">
@@ -1621,6 +1624,9 @@
     </ClInclude>
     <ClInclude Include="TheOtherSideMP\AI\AICommon.h">
       <Filter>TheOtherSideMP\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="TheOtherSideMP\Game\Modules\Factions\PersonalHostiles.h">
+      <Filter>TheOtherSideMP\Game\Modules\Factions</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

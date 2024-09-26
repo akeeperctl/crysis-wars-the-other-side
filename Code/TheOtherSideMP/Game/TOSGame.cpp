@@ -70,14 +70,11 @@ void CTOSGame::Init()
 
 
 	//Modules
-
 	m_pModuleZeus = new CTOSZeusModule();
 	m_pModuleEntitySpawn = new CTOSEntitySpawnModule();
 	m_pModuleMaster = new CTOSMasterModule();
-
 	if (gEnv->pAISystem)
-		m_pModuleFactions = new CTOSFactionsModule(gEnv->pAISystem, "scripts/ai/factions.xml");
-
+		m_pModuleFactions = new CTOSFactionsModule(gEnv->pAISystem, gEnv->pEntitySystem, "scripts/ai/factions.xml");
 	//~Modules
 
 	m_pFGPluginLoader = new CFGPluginLoader(gEnv->pConsole, g_pGameCVars);

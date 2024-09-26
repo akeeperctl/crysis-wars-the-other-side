@@ -2,32 +2,34 @@
 // Adapted to CE2 by AlienKeeper
 
 #include "StdAfx.h"
+#include <windows.h>
+#include "CryLibrary.h"
+
+#include "FactionMap.h"
 #include "FactionsModule.h"
+#include "PersonalHostiles.h"
 #include "Logger.h"
 
 #include "TheOtherSideMP\Helpers\TOS_AI.h"
 #include <TheOtherSideMP\Helpers\TOS_Entity.h>
 #include "TheOtherSideMP\Game\TOSGameEventRecorder.h"
-#include "FactionMap.h"
 
-#include "CryLibrary.h"
-#include <windows.h>
-
-
-CTOSFactionsModule::CTOSFactionsModule(IAISystem* pAISystem, const char* xmlFilePath) :
-	tos_factions_default_reaction(int(IFactionMap::Hostile))
+CTOSFactionsModule::CTOSFactionsModule(IAISystem* pAISystem, IEntitySystem* pEntitySystem, const char* xmlFilePath)
+	: tos_factions_default_reaction(int(IFactionMap::Hostile))
 {
 	assert(pAISystem);
 
 	//m_factionMap.RegisterFactionReactionChangedCallback(functor(*this, &CTOSFactionsModule::OnFactionReactionChanged));
 	m_pAISystem = pAISystem;
 	m_pFactionMap = new CFactionMap(this, xmlFilePath);
+	m_pPersonalHostiles = new CTOSPersonalHostiles(pEntitySystem);
 }
 
 CTOSFactionsModule::~CTOSFactionsModule()
 {
 	//m_factionMap.UnregisterFactionReactionChangedCallback(functor(*this, &CTOSFactionsModule::OnFactionReactionChanged));
 	SAFE_DELETE(m_pFactionMap);
+	SAFE_DELETE(m_pPersonalHostiles);
 }
 
 void CTOSFactionsModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event)

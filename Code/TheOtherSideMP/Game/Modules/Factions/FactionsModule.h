@@ -6,13 +6,14 @@
 #include "TheOtherSideMP\Game\Modules\GenericModule.h"
 
 class CFactionMap;
+class CTOSPersonalHostiles;
 class CTOSFactionsModule : public CTOSGenericModule
 {
 public:
 	//typedef Functor2 <uint8 /*factionID*/, IFactionMap::ReactionType /*reaction*/> ReactionChangedCallback;
 
 	/// @param xmlFilePath - путь к файлу с фракциями, например: "scripts/ai/factions.xml"
-	CTOSFactionsModule(IAISystem* pAISystem, const char* xmlFilePath);
+	CTOSFactionsModule(IAISystem* pAISystem, IEntitySystem* pEntitySystem, const char* xmlFilePath);
 	~CTOSFactionsModule();
 
 	//ITOSGameModule
@@ -30,21 +31,25 @@ public:
 	virtual void Serialize(TSerialize ser);
 	//~ITOSGameModule
 
-	CFactionMap* GetFactionMap()
-	{
-		return m_pFactionMap;
-	}
-
 	bool	   SetEntityFaction(EntityId entityId, int factionId);
 	int		   GetEntityFaction(EntityId entityId) const;
 
 	bool	   SetAIFaction(IAIObject* pObject, int factionId) const;
 	int		   GetAIFaction(const IAIObject* pObject) const;
 
-	bool	   SetAIFaction(IAIActor* pObject, int factionId) const;
-	int		   GetAIFaction(const IAIActor* pObject) const;
+	bool	   SetAIFaction(IAIActor* pAIActor, int factionId) const;
+	int		   GetAIFaction(const IAIActor* pAIActor) const;
 	bool	   Reload();
 
+	inline CTOSPersonalHostiles* CTOSFactionsModule::GetPersonalHostiles()
+	{
+		return m_pPersonalHostiles;
+	}
+
+	inline CFactionMap* GetFactionMap()
+	{
+		return m_pFactionMap;
+	}
 
 	//Console commands
 	static void CmdReloadFactions(IConsoleCmdArgs* cmdArgs);
@@ -53,6 +58,7 @@ public:
 	int tos_factions_default_reaction;
 
 private:
+	CTOSPersonalHostiles* m_pPersonalHostiles;
 	CFactionMap* m_pFactionMap;
 	IAISystem* m_pAISystem;
 };

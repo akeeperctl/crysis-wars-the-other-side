@@ -474,6 +474,7 @@
     <ClCompile Include="TheOtherSideMP\Game\Modules\EntitySpawn\EntitySpawnModule.cpp" />
     <ClCompile Include="TheOtherSideMP\Game\Modules\Factions\FactionMap.cpp" />
     <ClCompile Include="TheOtherSideMP\Game\Modules\Factions\FactionsModule.cpp" />
+    <ClCompile Include="TheOtherSideMP\Game\Modules\Factions\PersonalHostiles.cpp" />
     <ClCompile Include="TheOtherSideMP\Game\Modules\GenericModule.cpp" />
     <ClCompile Include="TheOtherSideMP\Game\Modules\GenericSynchronizer.cpp" />
     <ClCompile Include="TheOtherSideMP\Game\Modules\Master\MasterClient.cpp" />
@@ -729,6 +730,7 @@
     <ClInclude Include="TheOtherSideMP\Game\Modules\Factions\FactionMap.h" />
     <ClInclude Include="TheOtherSideMP\Game\Modules\Factions\FactionsModule.h" />
     <ClInclude Include="TheOtherSideMP\Game\Modules\Factions\IFactionMap.h" />
+    <ClInclude Include="TheOtherSideMP\Game\Modules\Factions\PersonalHostiles.h" />
     <ClInclude Include="TheOtherSideMP\Game\Modules\Factions\Logger.h" />
     <ClInclude Include="TheOtherSideMP\Game\Modules\GenericModule.h" />
     <ClInclude Include="TheOtherSideMP\Game\Modules\ITOSGameModule.h" />

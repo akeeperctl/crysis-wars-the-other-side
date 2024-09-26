@@ -10,6 +10,7 @@ Copyright (C), AlienKeeper, 2024.
 
 #include "TheOtherSideMP\Game\Modules\Factions\FactionMap.h"
 #include "TheOtherSideMP\Game\Modules\Factions\FactionsModule.h"
+#include "TheOtherSideMP\Game\Modules\Factions\PersonalHostiles.h"
 #include "TheOtherSideMP\Game\TOSGame.h"
 #include <TheOtherSideMP\Helpers\TOS_Console.h>
 #include <TheOtherSideMP\Helpers\TOS_Entity.h>
@@ -186,10 +187,10 @@ bool TOS_Hooks::AI::IAIObjectHook::IsHostile(const IAIObject* pOther, bool bUsin
 	// Моя сущность
 	const IAIObject* pMyAI = reinterpret_cast<const IAIObject*>(this);
 
-	// Враждебная фракция
+	// Враждебность по фракции
 	const auto pFactions = g_pTOSGame->GetFactionsModule();
-	int myFaction = pFactions->GetAIFaction(pMyAI);
-	int otherFaction = pFactions->GetAIFaction(pOther);
+	const int myFaction = pFactions->GetAIFaction(pMyAI);
+	const int otherFaction = pFactions->GetAIFaction(pOther);
 
 	if (otherFaction != INVALID_SPECIES_ID)
 	{
@@ -199,7 +200,16 @@ bool TOS_Hooks::AI::IAIObjectHook::IsHostile(const IAIObject* pOther, bool bUsin
 			hostile = true;
 	}
 
-	// Враждебность по параметрам
+	// Персональная враждебность сущности
+	const IEntity* pMyEntity = pMyAI->GetEntity();
+	const IEntity* pOtherEntity = pOther->GetEntity();
+	if (pMyEntity && pOtherEntity)
+	{
+		if (pFactions->GetPersonalHostiles()->IsHostile(pMyEntity->GetId(), pOtherEntity->GetId()))
+			hostile = true;
+	}
+
+	// Враждебность по параметрам актера
 	const IAIActor* pMyAIActor = pMyAI->CastToIAIActor();
 	const IAIActor* pOtherAIActor = pOther->CastToIAIActor();
 	if (pMyAIActor)
