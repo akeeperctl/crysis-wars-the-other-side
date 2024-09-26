@@ -1,5 +1,6 @@
 #include "StdAfx.h"
 #include "Nodes/G2FlowBaseNode.h"
+#include "TheOtherSideMP\Game\Modules\Factions\PersonalHostiles.h"
 #include "TheOtherSideMP\Game\Modules\Factions\FactionsModule.h"
 #include "TheOtherSideMP\Game\Modules\Factions\FactionMap.h"
 #include <TheOtherSideMP\Game\Modules\Factions\Logger.h>
@@ -446,8 +447,203 @@ public:
 	}
 };
 
+////////////////////////////////////////////////
+class CFlowNode_MakePersonalHostile : public CFlowBaseNode
+{
+public:
+	explicit CFlowNode_MakePersonalHostile(SActivationInfo* pActInfo)
+	{
+	}
+
+	~CFlowNode_MakePersonalHostile()
+	{
+	};
+
+	IFlowNodePtr Clone(SActivationInfo* pActInfo)
+	{
+		return new CFlowNode_MakePersonalHostile(pActInfo);
+	}
+
+	enum EInputPorts
+	{
+		EIP_Sync = 0,
+		EIP_HostileId,
+		EIP_Make,
+	};
+
+	enum EOutputPorts
+	{
+		EOP_Success,
+	};
+
+	void GetConfiguration(SFlowNodeConfig& config)
+	{
+		static const SInputPortConfig inputs[] = {
+			InputPortConfig_Void("Sync", _HELP("")),
+			InputPortConfig<EntityId>("HostileId", 0, _HELP(""), "HostileId"),
+			InputPortConfig<bool>("Make", true, _HELP(""), "Make"),
+			{nullptr}
+		};
+		static const SOutputPortConfig outputs[] = {
+			OutputPortConfig<bool>("Success", _HELP("")),
+			{nullptr}
+		};
+
+		config.nFlags |= EFLN_TARGET_ENTITY;
+		config.pInputPorts = inputs;
+		config.pOutputPorts = outputs;
+		config.sDescription = _HELP("Add to input entity personal enemy with HostileId");
+		config.SetCategory(EFLN_APPROVED);
+	}
+
+	void ProcessEvent(const EFlowEvent event, SActivationInfo* pActInfo)
+	{
+		switch (event)
+		{
+			case eFE_Initialize:
+			{
+			}
+			break;
+			case eFE_SetEntityId:
+			{
+			}
+			break;
+			case eFE_Activate:
+			{
+				if (IsPortActive(pActInfo, EIP_Sync))
+				{
+					const auto pEntity = pActInfo->pEntity;
+					if (!pEntity)
+						return;
+
+					auto pPersonalHostiles = g_pTOSGame->GetFactionsModule()->GetPersonalHostiles();
+					if (!pPersonalHostiles)
+						return;
+
+					const EntityId hostileId = GetPortEntityId(pActInfo, EIP_HostileId);
+					const EntityId inputId = pEntity->GetId();
+
+					bool result = false;
+
+					if (GetPortBool(pActInfo, EIP_Make))
+					{
+						result = pPersonalHostiles->MakeHostile(inputId, hostileId);
+					}
+					else
+					{
+						result = pPersonalHostiles->RemoveHostile(inputId, hostileId);
+					}
+
+					ActivateOutput(pActInfo, EOP_Success, result);
+				}
+			}
+			break;
+		}
+	}
+
+	void GetMemoryStatistics(ICrySizer* s)
+	{
+		s->Add(*this);
+	}
+
+	void Serialize(SActivationInfo* pActInfo, TSerialize ser)
+	{
+
+	}
+};
+
+////////////////////////////////////////////////
+class CFlowNode_IsPersonalHostile : public CFlowBaseNode
+{
+public:
+	explicit CFlowNode_IsPersonalHostile(SActivationInfo* pActInfo)
+	{
+	}
+
+	~CFlowNode_IsPersonalHostile()
+	{
+	};
+
+	IFlowNodePtr Clone(SActivationInfo* pActInfo)
+	{
+		return new CFlowNode_IsPersonalHostile(pActInfo);
+	}
+
+	enum EInputPorts
+	{
+		EIP_Sync = 0,
+		EIP_HostileId,
+	};
+
+	enum EOutputPorts
+	{
+		EOP_Hostile,
+	};
+
+	void GetConfiguration(SFlowNodeConfig& config)
+	{
+		static const SInputPortConfig inputs[] = {
+			InputPortConfig_Void("Sync", _HELP("")),
+			InputPortConfig<EntityId>("HostileId", 0, _HELP(""), "HostileId"),
+			{nullptr}
+		};
+		static const SOutputPortConfig outputs[] = {
+			OutputPortConfig<bool>("Hostile", _HELP("")),
+			{nullptr}
+		};
+
+		config.nFlags |= EFLN_TARGET_ENTITY;
+		config.pInputPorts = inputs;
+		config.pOutputPorts = outputs;
+		config.sDescription = _HELP("Checks whether entity with HostileId is a personal enemy of input entity.");
+		config.SetCategory(EFLN_APPROVED);
+	}
+
+	void ProcessEvent(const EFlowEvent event, SActivationInfo* pActInfo)
+	{
+		switch (event)
+		{
+			case eFE_Initialize:
+			{
+			}
+			break;
+			case eFE_SetEntityId:
+			{
+			}
+			break;
+			case eFE_Activate:
+			{
+				if (IsPortActive(pActInfo, EIP_Sync))
+				{
+					const auto pEntity = pActInfo->pEntity;
+					if (!pEntity)
+						return;
+
+					const EntityId hostileId = GetPortEntityId(pActInfo, EIP_HostileId);
+					const bool result = g_pTOSGame->GetFactionsModule()->GetPersonalHostiles()->IsHostile(pEntity->GetId(), hostileId);
+
+					ActivateOutput(pActInfo, EOP_Hostile, result);
+				}
+			}
+			break;
+		}
+	}
+
+	void GetMemoryStatistics(ICrySizer* s)
+	{
+		s->Add(*this);
+	}
+
+	void Serialize(SActivationInfo* pActInfo, TSerialize ser)
+	{
+
+	}
+};
+
 
 REGISTER_FLOW_NODE("AIFactions:SetReaction", CFlowNode_SetFactionsReaction)
 REGISTER_FLOW_NODE("AIFactions:GetReaction", CFlowNode_GetFactionsReaction)
 REGISTER_FLOW_NODE("AIFactions:SetEntityFaction", CFlowNode_SetEntityFaction)
 REGISTER_FLOW_NODE("AIFactions:GetEntityFaction", CFlowNode_GetEntityFaction)
+REGISTER_FLOW_NODE("AIFactions:MakePersonalHostile", CFlowNode_MakePersonalHostile)
+REGISTER_FLOW_NODE("AIFactions:IsPersonalHostile", CFlowNode_IsPersonalHostile)

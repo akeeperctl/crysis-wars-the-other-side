@@ -8,6 +8,7 @@ Copyright (C), AlienKeeper, 2024.
 
 #include "Game.h"
 #include "NanoSuit.h"
+#include "Events\ITOSGameEventListener.h"
 #include "TOSGameEventRecorder.h"
 
 #include "Modules/ITOSGameModule.h"
@@ -260,6 +261,16 @@ bool CTOSGame::ModuleRemove(ITOSGameModule* pModule, const bool flowGraph)
 	auto& modules = flowGraph == true ? m_flowgraphModules : m_modules;
 
 	return stl::find_and_erase(modules, pModule);
+}
+
+bool CTOSGame::RegisterGameEventListener(ITOSGameEventListener* pListener)
+{
+	return stl::push_back_unique(m_gameEventListeners, pListener);
+}
+
+bool CTOSGame::UnregisterGameEventListener(ITOSGameEventListener* pListener)
+{
+	return stl::find_and_erase(m_gameEventListeners, pListener);
 }
 
 void CTOSGame::UpdateChannelConnectionState()

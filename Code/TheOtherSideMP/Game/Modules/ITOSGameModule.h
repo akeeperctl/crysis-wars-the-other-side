@@ -7,12 +7,17 @@ Copyright (C), AlienKeeper, 2024.
 
 #include "IActorSystem.h"
 #include "IInput.h"
+#include "TheOtherSideMP\Game\Events\ITOSGameEventListener.h"
+
 struct STOSGameEvent;
 class CTOSGenericSynchronizer;
 
-
-struct ITOSGameModule  // NOLINT(cppcoreguidelines-special-member-functions)
+struct ITOSGameModule : public ITOSGameEventListener // NOLINT(cppcoreguidelines-special-member-functions)
 {
+	//ITOSGameEventListener
+	virtual void OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event) {};
+	//~ITOSGameEventListener
+
 	virtual ~ITOSGameModule()
 	{};
 	//virtual void OnMainMenuEnter() = 0;
@@ -37,7 +42,6 @@ struct ITOSGameModule  // NOLINT(cppcoreguidelines-special-member-functions)
 		return false;
 	};
 
-	virtual void OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event) = 0;
 	virtual void GetMemoryStatistics(ICrySizer* s) = 0;
 	virtual const char* GetName() = 0;
 	virtual void Init() = 0;

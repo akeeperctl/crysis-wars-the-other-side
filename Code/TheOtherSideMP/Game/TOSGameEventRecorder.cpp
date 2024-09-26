@@ -160,19 +160,26 @@ void CTOSGame::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event
 		//CryLogAlways("	Desc: %s", eventDesc);
 	}
 
-	for (std::vector<ITOSGameModule*>::const_iterator it = m_modules.begin(); it != m_modules.end(); ++it)
+	for (auto it = m_gameEventListeners.begin(); it != m_gameEventListeners.end(); ++it)
 	{
-		ITOSGameModule* pModule = *it;
-		if (pModule)
-			pModule->OnExtraGameplayEvent(pEntity, event);
+		auto pEventListener = *it;
+		if (pEventListener)
+			pEventListener->OnExtraGameplayEvent(pEntity, event);
 	}
 
-	for (std::vector<ITOSGameModule*>::const_iterator it = m_flowgraphModules.begin(); it != m_flowgraphModules.end(); ++it)
-	{
-		ITOSGameModule* pModule = *it;
-		if (pModule)
-			pModule->OnExtraGameplayEvent(pEntity, event);
-	}
+	//for (std::vector<ITOSGameModule*>::const_iterator it = m_modules.begin(); it != m_modules.end(); ++it)
+	//{
+	//	ITOSGameModule* pModule = *it;
+	//	if (pModule)
+	//		pModule->OnExtraGameplayEvent(pEntity, event);
+	//}
+
+	//for (std::vector<ITOSGameModule*>::const_iterator it = m_flowgraphModules.begin(); it != m_flowgraphModules.end(); ++it)
+	//{
+	//	ITOSGameModule* pModule = *it;
+	//	if (pModule)
+	//		pModule->OnExtraGameplayEvent(pEntity, event);
+	//}
 }
 
 //IEntitySystemSink

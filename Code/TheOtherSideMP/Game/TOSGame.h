@@ -14,21 +14,20 @@ Copyright (C), AlienKeeper, 2024.
 #include "ScriptBinds\ScriptBind_Custom.h"
 #include "FGPS\FGPluginLoader.h"
 
-class CControlClient;
 class CGameFlashAnimation;
 
-struct STOSCvars;
 class CTOSAbilitiesSystem;
 class CTOSAIActionTracker;
 class CTOSGameEventRecorder;
-
 class CTOSMasterModule;
 class CTOSEntitySpawnModule;
 class CTOSZeusModule;
 class CTOSFactionsModule;
 
+struct STOSCvars;
 struct STOSGameEvent;
 struct ITOSGameModule;
+struct ITOSGameEventListener;
 struct IHardwareMouseEventListener;
 struct IHitListener;
 
@@ -147,9 +146,11 @@ public:
 	CTOSEntitySpawnModule* GetEntitySpawnModule() const;
 	CTOSFactionsModule* GetFactionsModule() const;
 
-
 	bool ModuleAdd(ITOSGameModule* pModule, bool flowGraph);
 	bool ModuleRemove(ITOSGameModule* pModule, bool flowGraph);
+
+	bool RegisterGameEventListener(ITOSGameEventListener* pModule);
+	bool UnregisterGameEventListener(ITOSGameEventListener* pListener);
 
 private:
 
@@ -167,6 +168,7 @@ private:
 
 	CScriptBind_Custom* m_pCustomScriptBind;
 
+	std::vector<ITOSGameEventListener*> m_gameEventListeners;
 	std::vector<ITOSGameModule*> m_modules;
 	std::vector<ITOSGameModule*> m_flowgraphModules;
 

@@ -18,11 +18,13 @@ CTOSGenericModule::CTOSGenericModule()
 {
 	m_pSynchonizer = nullptr;
 	g_pTOSGame->ModuleAdd(this, false);
+	g_pTOSGame->RegisterGameEventListener(this);
 }
 
 CTOSGenericModule::~CTOSGenericModule()
 {
 	g_pTOSGame->ModuleRemove(this, false);
+	g_pTOSGame->UnregisterGameEventListener(this);
 }
 
 void CTOSGenericModule::GetMemoryStatistics(ICrySizer* s)

@@ -1,7 +1,9 @@
 #pragma once
 
+#include "TheOtherSideMP\Game\Events\ITOSGameEventListener.h"
+
 /// @brief Класс, отвечающий за управление персональной враждебностью между сущностями.
-class CTOSPersonalHostiles : public IEntityEventListener
+class CTOSPersonalHostiles : public IEntityEventListener, ITOSGameEventListener
 {
 public:
 	/// @brief Класс, отвечающий за управление персональной враждебностью между сущностями.
@@ -11,6 +13,10 @@ public:
 	//IEntityEventListener
 	virtual void OnEntityEvent( IEntity *pEntity,SEntityEvent &event ) override;
 	//~IEntityEventListener
+
+	//ITOSGameEventListener
+	virtual void OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event) override;
+	//~ITOSGameEventListener
 
 	/// @brief Делает две сущности враждебными друг другу.
 	/// @param one Идентификатор первой сущности.
@@ -23,6 +29,11 @@ public:
 	/// @param two Идентификатор второй сущности.
 	/// @return true, если враждебность успешно удалена, иначе false.
 	bool RemoveHostile(EntityId one, EntityId two);
+
+	/// @brief Удаляет записи обо всех личных врагах сущности `one`.
+	/// @param one Идентификатор сущности.
+	/// @return true, если враждебность успешно удалена для всех сущностей, иначе false.
+	bool RemoveHostileAll(EntityId one);
 
 	/// @brief Проверяет, имеет ли сущность врагов.
 	/// @param one Идентификатор сущности.

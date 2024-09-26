@@ -181,6 +181,9 @@
     <Filter Include="TheOtherSideMP\Game\Modules\Factions">
       <UniqueIdentifier>{88661986-e297-40a2-b367-45ef17de8f7f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="TheOtherSideMP\Game\Events">
+      <UniqueIdentifier>{9e7a312b-859a-4358-87db-a93bc062b983}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Actor.cpp">
@@ -780,9 +783,6 @@
     <ClCompile Include="TheOtherSideMP\Game\TOSGameCvars.cpp">
       <Filter>TheOtherSideMP\Game</Filter>
     </ClCompile>
-    <ClCompile Include="TheOtherSideMP\Game\TOSGameEventRecorder.cpp">
-      <Filter>TheOtherSideMP\Game</Filter>
-    </ClCompile>
     <ClCompile Include="TheOtherSideMP\Actors\TOSActor.cpp">
       <Filter>TheOtherSideMP\Actors</Filter>
     </ClCompile>
@@ -917,6 +917,9 @@
     </ClCompile>
     <ClCompile Include="TheOtherSideMP\Game\Modules\Factions\PersonalHostiles.cpp">
       <Filter>TheOtherSideMP\Game\Modules\Factions</Filter>
+    </ClCompile>
+    <ClCompile Include="TheOtherSideMP\Game\TOSGameEventRecorder.cpp">
+      <Filter>TheOtherSideMP\Game\Events</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1475,9 +1478,6 @@
     <ClInclude Include="TheOtherSideMP\Game\TOSGameCvars.h">
       <Filter>TheOtherSideMP\Game</Filter>
     </ClInclude>
-    <ClInclude Include="TheOtherSideMP\Game\TOSGameEventRecorder.h">
-      <Filter>TheOtherSideMP\Game</Filter>
-    </ClInclude>
     <ClInclude Include="TheOtherSideMP\Game\Modules\ITOSGameModule.h">
       <Filter>TheOtherSideMP\Game\Modules</Filter>
     </ClInclude>
@@ -1627,6 +1627,12 @@
     </ClInclude>
     <ClInclude Include="TheOtherSideMP\Game\Modules\Factions\PersonalHostiles.h">
       <Filter>TheOtherSideMP\Game\Modules\Factions</Filter>
+    </ClInclude>
+    <ClInclude Include="TheOtherSideMP\Game\TOSGameEventRecorder.h">
+      <Filter>TheOtherSideMP\Game\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="TheOtherSideMP\Game\Events\ITOSGameEventListener.h">
+      <Filter>TheOtherSideMP\Game\Events</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
