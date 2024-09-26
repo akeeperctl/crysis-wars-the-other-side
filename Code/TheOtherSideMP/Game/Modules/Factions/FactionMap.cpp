@@ -332,11 +332,11 @@ void CFactionMap::SetReaction(uint8 factionOne, uint8 factionTwo, IFactionMap::R
 {
 	if ((factionOne < maxFactionCount) && (factionTwo < maxFactionCount))
 	{
-		uint8 oldReaction = uint8(m_reactions[factionOne, factionTwo]);
+		auto oldReaction = GetReaction(factionOne, factionTwo);
 
 		char buffer[256];
 		sprintf(buffer, "Faction ['%i'] to Faction ['%i'] from '%s' to '%s'", 
-				uint8(factionOne), uint8(factionTwo), GetReactionName(ReactionType(oldReaction)), GetReactionName(reaction));
+				uint8(factionOne), uint8(factionTwo), GetReactionName(oldReaction), GetReactionName(reaction));
 		TOS_RECORD_EVENT(0, STOSGameEvent(eEGE_FactionReactionChanged, buffer, true, false, &factionOne, uint8(factionTwo), uint8(reaction)));
 
 		m_reactions[factionOne][factionTwo] = reaction;
