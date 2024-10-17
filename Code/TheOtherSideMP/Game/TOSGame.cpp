@@ -22,14 +22,12 @@ Copyright (C), AlienKeeper, 2024.
 #include "TheOtherSideMP/AI/AIHooks.h"
 
 #include "Modules\Zeus\ZeusModule.h"
-#include "Modules\Factions\FactionsModule.h"
 
 CTOSGame::CTOSGame() :
 	m_pEventRecorder(nullptr),
 	m_pModuleMaster(nullptr),
 	m_pModuleEntitySpawn(nullptr),
 	m_pModuleZeus(nullptr),
-	m_pModuleFactions(nullptr),
 	m_pCustomScriptBind(nullptr),
 	m_pFGPluginLoader(nullptr),
 	m_lastChannelConnectionState(0),
@@ -38,7 +36,6 @@ CTOSGame::CTOSGame() :
 
 	// Получение версии по имени выполняемого файла
     m_modVersion = TOS_Version::GetDLLVersion("CrysisTheOtherSide");
-	TOS_Hooks::AI::ApplyHooks();
 }
 
 CTOSGame::~CTOSGame()
@@ -50,7 +47,6 @@ CTOSGame::~CTOSGame()
 	SAFE_DELETE(m_pModuleMaster);
 	SAFE_DELETE(m_pModuleEntitySpawn);
 	SAFE_DELETE(m_pModuleZeus);
-	SAFE_DELETE(m_pModuleFactions);
 
 	//~Modules
 
@@ -74,8 +70,6 @@ void CTOSGame::Init()
 	m_pModuleZeus = new CTOSZeusModule();
 	m_pModuleEntitySpawn = new CTOSEntitySpawnModule();
 	m_pModuleMaster = new CTOSMasterModule();
-	if (gEnv->pAISystem)
-		m_pModuleFactions = new CTOSFactionsModule(gEnv->pAISystem, gEnv->pEntitySystem, "scripts/ai/factions.xml");
 	//~Modules
 
 	m_pFGPluginLoader = new CFGPluginLoader(gEnv->pConsole, g_pGameCVars);
@@ -242,11 +236,6 @@ CTOSZeusModule* CTOSGame::GetZeusModule() const
 CTOSEntitySpawnModule* CTOSGame::GetEntitySpawnModule() const
 {
 	return m_pModuleEntitySpawn;
-}
-
-CTOSFactionsModule* CTOSGame::GetFactionsModule() const
-{
-	return m_pModuleFactions;
 }
 
 bool CTOSGame::ModuleAdd(ITOSGameModule* pModule, const bool flowGraph)

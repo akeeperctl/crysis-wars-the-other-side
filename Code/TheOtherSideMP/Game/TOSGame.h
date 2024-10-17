@@ -22,7 +22,6 @@ class CTOSGameEventRecorder;
 class CTOSMasterModule;
 class CTOSEntitySpawnModule;
 class CTOSZeusModule;
-class CTOSFactionsModule;
 
 struct STOSCvars;
 struct STOSGameEvent;
@@ -144,7 +143,6 @@ public:
 	CTOSMasterModule* GetMasterModule() const;
 	CTOSZeusModule* GetZeusModule() const;
 	CTOSEntitySpawnModule* GetEntitySpawnModule() const;
-	CTOSFactionsModule* GetFactionsModule() const;
 
 	bool ModuleAdd(ITOSGameModule* pModule, bool flowGraph);
 	bool ModuleRemove(ITOSGameModule* pModule, bool flowGraph);
@@ -176,7 +174,6 @@ private:
 	CTOSMasterModule* m_pModuleMaster;
 	CTOSZeusModule* m_pModuleZeus;
 	CTOSEntitySpawnModule* m_pModuleEntitySpawn;
-	CTOSFactionsModule* m_pModuleFactions;
 };
 
 extern class CTOSGame* g_pTOSGame;

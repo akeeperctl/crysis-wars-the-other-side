@@ -178,9 +178,6 @@
     <Filter Include="TheOtherSideMP\Actors\animation">
       <UniqueIdentifier>{8839ffbb-fce8-4f95-9efa-942480b24ae1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="TheOtherSideMP\Game\Modules\Factions">
-      <UniqueIdentifier>{88661986-e297-40a2-b367-45ef17de8f7f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="TheOtherSideMP\Game\Events">
       <UniqueIdentifier>{9e7a312b-859a-4358-87db-a93bc062b983}</UniqueIdentifier>
     </Filter>
@@ -906,18 +903,6 @@
     <ClCompile Include="TheOtherSideMP\AI\AIHooks.cpp">
       <Filter>TheOtherSideMP\AI</Filter>
     </ClCompile>
-    <ClCompile Include="TheOtherSideMP\Game\Modules\Factions\FactionMap.cpp">
-      <Filter>TheOtherSideMP\Game\Modules\Factions</Filter>
-    </ClCompile>
-    <ClCompile Include="TheOtherSideMP\Game\Modules\Factions\FactionsModule.cpp">
-      <Filter>TheOtherSideMP\Game\Modules\Factions</Filter>
-    </ClCompile>
-    <ClCompile Include="TheOtherSideMP\Nodes\FlowFactionsNodes.cpp">
-      <Filter>TheOtherSideMP\Nodes</Filter>
-    </ClCompile>
-    <ClCompile Include="TheOtherSideMP\Game\Modules\Factions\PersonalHostiles.cpp">
-      <Filter>TheOtherSideMP\Game\Modules\Factions</Filter>
-    </ClCompile>
     <ClCompile Include="TheOtherSideMP\Game\TOSGameEventRecorder.cpp">
       <Filter>TheOtherSideMP\Game\Events</Filter>
     </ClCompile>
@@ -1610,29 +1595,14 @@
     <ClInclude Include="TheOtherSideMP\AI\AIHooks.h">
       <Filter>TheOtherSideMP\AI</Filter>
     </ClInclude>
-    <ClInclude Include="TheOtherSideMP\Game\Modules\Factions\FactionMap.h">
-      <Filter>TheOtherSideMP\Game\Modules\Factions</Filter>
-    </ClInclude>
-    <ClInclude Include="TheOtherSideMP\Game\Modules\Factions\FactionsModule.h">
-      <Filter>TheOtherSideMP\Game\Modules\Factions</Filter>
-    </ClInclude>
-    <ClInclude Include="TheOtherSideMP\Game\Modules\Factions\IFactionMap.h">
-      <Filter>TheOtherSideMP\Game\Modules\Factions</Filter>
-    </ClInclude>
-    <ClInclude Include="TheOtherSideMP\Game\Modules\Factions\Logger.h">
-      <Filter>TheOtherSideMP\Game\Modules\Factions</Filter>
-    </ClInclude>
-    <ClInclude Include="TheOtherSideMP\AI\AICommon.h">
-      <Filter>TheOtherSideMP\AI</Filter>
-    </ClInclude>
-    <ClInclude Include="TheOtherSideMP\Game\Modules\Factions\PersonalHostiles.h">
-      <Filter>TheOtherSideMP\Game\Modules\Factions</Filter>
-    </ClInclude>
     <ClInclude Include="TheOtherSideMP\Game\TOSGameEventRecorder.h">
       <Filter>TheOtherSideMP\Game\Events</Filter>
     </ClInclude>
     <ClInclude Include="TheOtherSideMP\Game\Events\ITOSGameEventListener.h">
       <Filter>TheOtherSideMP\Game\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="TheOtherSideMP\AI\AICommon.h">
+      <Filter>TheOtherSideMP\AI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
