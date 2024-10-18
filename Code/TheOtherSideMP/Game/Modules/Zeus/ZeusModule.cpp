@@ -1000,13 +1000,17 @@ int CTOSZeusModule::MouseProjectToWorld(ray_hit& ray, const Vec3& mouseWorldPos,
 
 	if (boxDistanceAdjustment)
 	{
-		auto it = m_boxes.find(m_curClickedEntityId);
-		if (it != m_boxes.end())
-		{
-			//clickedBoxDistance = pClickedEntity->GetWorldPos().GetDistance(mouseWorldPos);
-			clickedBoxDistance = it->second->wPos.GetDistance(mouseWorldPos);
-			camToMouseDir = camToMouseDir.GetNormalizedSafe() * clickedBoxDistance;
-		}
+		clickedBoxDistance = m_clickedSelectStartPos.GetDistance(mouseWorldPos);
+		camToMouseDir = camToMouseDir.GetNormalizedSafe() * clickedBoxDistance;
+
+
+		//auto it = m_boxes.find(m_curClickedEntityId);
+		//if (it != m_boxes.end())
+		//{
+		//	//clickedBoxDistance = pClickedEntity->GetWorldPos().GetDistance(mouseWorldPos);
+		//	clickedBoxDistance = it->second->wPos.GetDistance(mouseWorldPos);
+		//	camToMouseDir = camToMouseDir.GetNormalizedSafe() * clickedBoxDistance;
+		//}
 	}
 
 	const int nSkip = sizeof(pSkipEnts) / sizeof(pSkipEnts[0]);
