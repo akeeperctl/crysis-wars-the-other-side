@@ -10,7 +10,9 @@ Copyright (C), AlienKeeper, 2024.
 #include <TheOtherSideMP\Actors\Player\TOSPlayer.h>
 #include <TheOtherSideMP\TOSSmartStruct.h>
 
-constexpr int ZEUS_PP_AMOUNT_KEY = 300;
+constexpr uint ZEUS_PP_AMOUNT_KEY = 300;
+constexpr auto ZEUS_DEFAULT_MOUSE_ENT_FLAGS = ent_terrain; //ent_living | ent_rigid | ent_static | ent_terrain | ent_sleeping_rigid | ent_independent;
+constexpr auto ZEUS_DRAGGING_MOUSE_ENT_FLAGS = ent_terrain;
 
 enum EZeusFlags
 {
@@ -235,6 +237,8 @@ public:
 	static std::map<string, string> s_classToConsoleVar;
 
 private:
+	IPersistantDebug* m_pPersistantDebug;
+	
 	string m_menuFilename;
 
 	CTOSPlayer* m_zeus;
@@ -284,6 +288,7 @@ private:
 	bool m_altModifier;
 	bool m_debugZModifier;
 	bool m_menuShow;
+	bool m_menuSpawnHandling; /// true - сущность из меню заспавнена, но не поставлена на карту
 
 	//HUD
 	CGameFlashAnimation m_animZeusScreenIcons;

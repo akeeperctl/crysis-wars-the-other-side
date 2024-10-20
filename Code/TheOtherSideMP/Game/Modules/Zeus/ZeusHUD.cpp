@@ -9,6 +9,7 @@ Copyright (C), AlienKeeper, 2024.
 #include "HUD/HUD.h"
 #include <TheOtherSideMP\Helpers\TOS_Console.h>
 #include <TheOtherSideMP\Helpers\TOS_Entity.h>
+#include <TheOtherSideMP\Helpers\TOS_Screen.h>
 
 void CTOSZeusModule::HUDInit()
 {
@@ -70,6 +71,103 @@ void CTOSZeusModule::HandleFSCommand(const char* pCommand, const char* pArgs)
 		{
 			HUDShowZeusMenu(false);
 		}
+	}
+	else if (sCommand == "Spawn")
+	{
+		STOSEntitySpawnParams params;
+		params.vanilla.bStaticEntityId = false; // true - вылетает в редакторе и медленно работает O(n), false O(1)
+		params.vanilla.bIgnoreLock = false; // spawn lock игнор
+
+		const string* const psClassName = &sArgs;
+		IEntityClass* pClass = gEnv->pEntitySystem->GetClassRegistry()->FindClass(psClassName->c_str());
+
+		const string name = string("Zeus") + psClassName->c_str();
+		params.vanilla.sName = name;
+		params.vanilla.pClass = pClass;
+
+		const auto pArchetype = gEnv->pEntitySystem->LoadEntityArchetype(psClassName->c_str());
+		if (pArchetype)
+			params.vanilla.pArchetype = pArchetype;
+
+		if (!pClass && !pArchetype)
+		{
+			CryError("[Zeus] not defined entity class '%s'", psClassName->c_str());
+			return;
+		}
+
+		// Получаем координаты вперед от камеры
+		const Vec3 pos = gEnv->pSystem->GetViewCamera().GetPosition();
+		const Vec3 dir = gEnv->pSystem->GetViewCamera().GetViewdir();
+		const float maxDistance = 300.0f;
+
+		// Только вращение по Z
+		Ang3 angles = gEnv->pRenderer->GetCamera().GetAngles();
+		angles.x, angles.y = 0;
+
+		Vec3 spawnPos = pos + (dir * maxDistance);
+		const Quat spawnRot = Quat::CreateRotationXYZ(angles);
+
+		const int rayFlags = rwi_stop_at_pierceable | rwi_colltype_any;
+		const unsigned entityFlags = ent_all;
+		
+		auto pPhys = m_zeus->GetEntity()->GetPhysics();
+		ray_hit rayHit;
+
+		const int hitted = gEnv->pPhysicalWorld->RayWorldIntersection(pos, dir * maxDistance, entityFlags, rayFlags, &rayHit, 1, pPhys);
+		if (hitted)
+		{
+			spawnPos = rayHit.pt;
+		}
+
+		//const auto vCamPos = gEnv->pSystem->GetViewCamera().GetPosition();
+		//const auto vDir = dir;
+		//auto pPhys = m_zeus->GetEntity()->GetPhysics();
+
+		//ray_hit hit;
+		//const auto queryFlags = ent_all;
+		//const unsigned int flags = rwi_stop_at_pierceable | rwi_colltype_any;
+		//const float fRange = gEnv->p3DEngine->GetMaxViewDistance();
+
+		//if (gEnv->pPhysicalWorld && gEnv->pPhysicalWorld->RayWorldIntersection(vCamPos, vDir * fRange, queryFlags, flags, &hit, 1, pPhys))
+		//{
+		//	if (gEnv->p3DEngine->RefineRayHit(&hit, vDir * fRange))
+		//	{
+		//		spawnPos = hit.pt;
+		//	}
+		//}
+
+		m_pPersistantDebug->Begin("ZeusMenuSpawn", true);
+		m_pPersistantDebug->AddLine(pos, spawnPos, ColorF(1.0f,1.0f,1.0f,1.0f), 15.0f);
+		m_pPersistantDebug->AddSphere(spawnPos, 1.0f, ColorF(0.3f,0.3f,0.3f,1.0f), 15.0f);
+
+		params.vanilla.vPosition = spawnPos;
+		params.vanilla.qRotation = spawnRot;
+
+		IEntity* pSpawned = TOS_Entity::Spawn(params, false);
+		if (!pSpawned)
+		{
+			CryError("[Zeus] entity with class '%s' spawn failed!", psClassName->c_str());
+			return;
+		}
+
+		pSpawned->Hide(true);
+
+		const EntityId spawnedId = pSpawned->GetId();
+
+		char buffer[64];
+		sprintf(buffer, "%d", spawnedId);
+		pSpawned->SetName(name + buffer);
+
+		m_dragging = true;
+		m_menuSpawnHandling = true;
+
+		SelectEntity(spawnedId);
+		m_curClickedEntityId = spawnedId;
+		m_mouseOveredEntityId = spawnedId;
+
+		m_selectStartEntitiesPositions[spawnedId] = spawnPos;
+		m_storedEntitiesPositions[spawnedId] = spawnPos;
+		m_clickedSelectStartPos = spawnPos;
 	}
 
 }
@@ -180,7 +278,9 @@ void CTOSZeusModule::HUDUpdateZeusMenuItemList(const char* szPageIdx)
 
 		_snprintf(tempBuf, sizeof(tempBuf), "%d", item.iMaxCount);
 		tempBuf[sizeof(tempBuf) - 1] = '\0';
-		itemArray.push_back(tempBuf);
+		itemArray.push_back(tempBuf);		
+		
+		itemArray.push_back(item.strClass.c_str());
 	}
 
 	//ActivateBuyMenuTabs();

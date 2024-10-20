@@ -185,6 +185,9 @@ void CTOSGame::CacheAssets()
 	TOS_Cache::CacheObject("Objects/Characters/Alien/hunter/Hunter.cdf");
 	TOS_Cache::CacheObject("Objects/Characters/Alien/AlienBase/AlienBase.cdf");
 
+	//Корейцы
+	TOS_Cache::CacheObject("Objects/Characters/Human/Asian/NK_Soldier/nk_soldier_jungle_cover_light_01.cdf");
+
 	//Нанокостюмы
 	TOS_Cache::CacheObject("Objects/Characters/Human/US/NanoSuit/nanosuit_us.cdf");
 	TOS_Cache::CacheObject("Objects/Characters/Human/US/NanoSuit/nanosuit_us_fp3p.cdf");
