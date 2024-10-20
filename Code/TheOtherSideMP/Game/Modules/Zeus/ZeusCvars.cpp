@@ -136,7 +136,7 @@ void CTOSZeusModule::InitCCommands(IConsole* pConsole)
 {
 	CTOSGenericModule::InitCCommands(pConsole);
 
-	//pConsole->AddCommand("tos_cmd_dumpmasterslist", CmdDumpMastersList);
+	pConsole->AddCommand("tos_cmd_reload_zeus_menu_items", CmdReloadMenuItems);
 }
 
 void CTOSZeusModule::ReleaseCCommands()
@@ -144,6 +144,10 @@ void CTOSZeusModule::ReleaseCCommands()
 	CTOSGenericModule::ReleaseCCommands();
 
 	const auto pConsole = gEnv->pConsole;
-	//pConsole->RemoveCommand("tos_cmd_getmasterslist");
+	pConsole->RemoveCommand("tos_cmd_reload_zeus_menu_items");
+}
 
+void CTOSZeusModule::CmdReloadMenuItems(IConsoleCmdArgs* pArgs)
+{
+	g_pTOSGame->GetZeusModule()->MenuLoadItems();
 }

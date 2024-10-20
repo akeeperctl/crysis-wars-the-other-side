@@ -85,6 +85,8 @@ CTOSZeusModule::CTOSZeusModule()
 	m_menuCurrentPage(1),
 	m_menuShow(false),
 	m_menuSpawnHandling(false),
+	m_spaceFreeCam(false),
+	m_mouseDisplayed(false),
 	m_pPersistantDebug(nullptr)
 {}
 
@@ -123,6 +125,8 @@ void CTOSZeusModule::Reset()
 	m_debugZModifier = false;
 	m_menuSpawnHandling = false;
 	m_menuShow = false;
+	m_spaceFreeCam = false;
+	m_mouseDisplayed = false;
 	m_menuCurrentPage = 1;
 
 	m_orderInfo.Create(gEnv->pScriptSystem);
@@ -234,12 +238,22 @@ bool CTOSZeusModule::OnInputEvent(const SInputEvent& event)
 				HUDShowZeusMenu(!m_menuShow);
 			}
 		}
+		else if (event.keyId == EKeyId::eKI_Space)
+		{
+			if (event.state == eAAM_OnPress)
+			{
+				m_spaceFreeCam = !m_spaceFreeCam;
+				SetZeusFlag(eZF_CanRotateCamera, m_spaceFreeCam);
+				ShowMouse(!m_spaceFreeCam);
+			}
+		}
 	}
 	else if (event.deviceId == EDeviceId::eDI_Mouse)
 	{
 		if (event.keyId == EKeyId::eKI_Mouse3) // Средняя кнопка мыши
 		{
-			SetZeusFlag(eZF_CanRotateCamera, event.state == eIS_Down);
+			if (m_spaceFreeCam == false)
+				SetZeusFlag(eZF_CanRotateCamera, event.state == eIS_Down);
 		}
 		else if (event.keyId == EKeyId::eKI_Mouse2) // Правая кнопка мыши
 		{
@@ -374,7 +388,7 @@ void CTOSZeusModule::HandleOnceSelection(EntityId id)
 
 void CTOSZeusModule::OnEntityIconPressed(IEntity* pEntity)
 {
-	if (!pEntity)
+	if (!pEntity || m_spaceFreeCam)
 		return;
 
 	HandleOnceSelection(pEntity->GetId());
@@ -576,12 +590,15 @@ void CTOSZeusModule::OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eH
 			}
 			else if (eHardwareMouseEvent == HARDWAREMOUSEEVENT_LBUTTONDOWN)
 			{
-				m_select = true;
-				m_selectStartPos = Vec2i(iX, iY);
-
-				if (m_menuSpawnHandling == false)
+				if (!m_spaceFreeCam)
 				{
-					HandleOnceSelection(GetMouseEntityId());
+					m_select = true;
+					m_selectStartPos = Vec2i(iX, iY);
+
+					if (m_menuSpawnHandling == false)
+					{
+						HandleOnceSelection(GetMouseEntityId());
+					}
 				}
 			}
 			else if (eHardwareMouseEvent == HARDWAREMOUSEEVENT_LBUTTONUP)
@@ -989,6 +1006,17 @@ void CTOSZeusModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent&
 			HUDUnloadSimpleAssets(event.int_value);
 			break;
 		}
+		case eEGE_EditorGameExit:
+		{
+			if (m_zeus)
+			{
+				if (m_mouseDisplayed == false)
+				{
+					ShowMouse(true);
+				}
+			}
+			break;
+		}
 		//case eEGE_ActorEnterVehicle:
 		//{
 		//	if (m_zeus && m_zeus->GetEntityId() == pEntity->GetId())
@@ -1172,6 +1200,8 @@ void CTOSZeusModule::Update(float frametime)
 		return;
 
 	//int frameID = gEnv->pRenderer->GetFrameID();
+
+
 
 	auto pMouse = gEnv->pHardwareMouse;
 	if (pMouse)
@@ -1485,17 +1515,18 @@ void CTOSZeusModule::UpdateDebug(bool zeusMoving, const Vec3& zeusDynVec)
 		gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 12, 1.3f, color, false, "m_altModifier = %i", int(m_altModifier));
 		gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 13, 1.3f, color, false, "m_debugZModifier = %i", int(m_debugZModifier));
 		gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 14, 1.3f, color, false, "m_menuSpawnHandling = %i", int(m_menuSpawnHandling));
+		gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 15, 1.3f, color, false, "m_spaceFreeCam = %i", int(m_spaceFreeCam));
 
-		gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 15, 1.3f, color, false, "zeusDynVec = (%1.f,%1.f,%1.f)", zeusDynVec.x, zeusDynVec.y, zeusDynVec.z);
-		gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 16, 1.3f, color, false, "zeusMoving = %i", zeusMoving);
+		gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 16, 1.3f, color, false, "zeusDynVec = (%1.f,%1.f,%1.f)", zeusDynVec.x, zeusDynVec.y, zeusDynVec.z);
+		gEnv->pRenderer->Draw2dLabel(100, startY + deltaY * 17, 1.3f, color, false, "zeusMoving = %i", zeusMoving);
 
 		if (!m_selectedEntities.empty())
 		{
-			TOS_Debug::DrawEntitiesName2DLabel(m_selectedEntities, "Selected Entities: ", 100, startY + deltaY * 17, deltaY);
+			TOS_Debug::DrawEntitiesName2DLabel(m_selectedEntities, "Selected Entities: ", 100, startY + deltaY * 18, deltaY);
 		}
 		if (!m_doubleClickLastSelectedEntities.empty())
 		{
-			TOS_Debug::DrawEntitiesName2DLabel(m_doubleClickLastSelectedEntities, "DC Selected Entities: ", 300, startY + deltaY * 18, deltaY);
+			TOS_Debug::DrawEntitiesName2DLabel(m_doubleClickLastSelectedEntities, "DC Selected Entities: ", 300, startY + deltaY * 19, deltaY);
 		}
 
 		// Вывод текстовой отладки кликнутой сущности
@@ -1571,9 +1602,10 @@ void CTOSZeusModule::ShowMouse(bool show)
 {
 	auto pMouse = gEnv->pHardwareMouse;
 	if (pMouse)
-	{
-		show ? pMouse->IncrementCounter() : pMouse->DecrementCounter();
-		pMouse->ConfineCursor(show);
+	{	
+		m_mouseDisplayed = show;
+		m_mouseDisplayed ? pMouse->IncrementCounter() : pMouse->DecrementCounter();
+		pMouse->ConfineCursor(m_mouseDisplayed);
 	}
 
 	//auto pHUD = g_pGame->GetHUD();

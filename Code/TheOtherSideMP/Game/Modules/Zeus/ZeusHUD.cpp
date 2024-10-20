@@ -91,7 +91,7 @@ void CTOSZeusModule::HandleFSCommand(const char* pCommand, const char* pArgs)
 
 		if (!pClass && !pArchetype)
 		{
-			CryError("[Zeus] not defined entity class '%s'", psClassName->c_str());
+			CryLogError("[Zeus] not defined entity class '%s'", psClassName->c_str());
 			return;
 		}
 
@@ -146,7 +146,7 @@ void CTOSZeusModule::HandleFSCommand(const char* pCommand, const char* pArgs)
 		IEntity* pSpawned = TOS_Entity::Spawn(params, false);
 		if (!pSpawned)
 		{
-			CryError("[Zeus] entity with class '%s' spawn failed!", psClassName->c_str());
+			CryLogError("[Zeus] entity with class '%s' spawn failed!", psClassName->c_str());
 			return;
 		}
 
@@ -169,7 +169,6 @@ void CTOSZeusModule::HandleFSCommand(const char* pCommand, const char* pArgs)
 		m_storedEntitiesPositions[spawnedId] = spawnPos;
 		m_clickedSelectStartPos = spawnPos;
 	}
-
 }
 
 void CTOSZeusModule::HUDInGamePostUpdate(float frametime)
@@ -345,7 +344,7 @@ bool CTOSZeusModule::MenuLoadItems()
 
 			if (!tabNode->getAttr("name", tabName) || tabName.empty())
 			{
-				CryError("[Zeus] Missing or empty 'name' attribute for '%s' tag in file '%s' at line %d...", tabNode->getTag(), m_menuFilename.c_str(), tabNode->getLine());
+				CryLogError("[Zeus] Missing or empty 'name' attribute for '%s' tag in file '%s' at line %d...", tabNode->getTag(), m_menuFilename.c_str(), tabNode->getLine());
 				return false;
 			}
 
@@ -363,25 +362,25 @@ bool CTOSZeusModule::MenuLoadItems()
 
 				if (!itemNode->getAttr("category", itemCategory) || itemCategory.empty())
 				{
-					CryError("[Zeus] Missing or empty 'category' attribute for '%s' tag in file '%s' at line %d...", itemNode->getTag(), m_menuFilename.c_str(), itemNode->getLine());
+					CryLogError("[Zeus] Missing or empty 'category' attribute for '%s' tag in file '%s' at line %d...", itemNode->getTag(), m_menuFilename.c_str(), itemNode->getLine());
 					return false;
 				}
 
 				if (!itemNode->getAttr("name", itemName) || itemName.empty())
 				{
-					CryError("[Zeus] Missing or empty 'name' attribute for '%s' tag in file '%s' at line %d...", itemNode->getTag(), m_menuFilename.c_str(), itemNode->getLine());
+					CryLogError("[Zeus] Missing or empty 'name' attribute for '%s' tag in file '%s' at line %d...", itemNode->getTag(), m_menuFilename.c_str(), itemNode->getLine());
 					return false;
 				}
 
 				if (!itemNode->getAttr("class", itemClass) || itemClass.empty())
 				{
-					CryError("[Zeus] Missing or empty 'class' attribute for '%s' tag in file '%s' at line %d...", itemNode->getTag(), m_menuFilename.c_str(), itemNode->getLine());
+					CryLogError("[Zeus] Missing or empty 'class' attribute for '%s' tag in file '%s' at line %d...", itemNode->getTag(), m_menuFilename.c_str(), itemNode->getLine());
 					return false;
 				}
 
 				if (!itemNode->getAttr("price", itemPrice) || itemPrice.empty())
 				{
-					CryError("[Zeus] Missing or empty 'price' attribute for '%s' tag in file '%s' at line %d...", itemNode->getTag(), m_menuFilename.c_str(), itemNode->getLine());
+					CryLogError("[Zeus] Missing or empty 'price' attribute for '%s' tag in file '%s' at line %d...", itemNode->getTag(), m_menuFilename.c_str(), itemNode->getLine());
 					return false;
 				}
 
@@ -424,7 +423,7 @@ bool CTOSZeusModule::MenuLoadItems()
 	}
 	else
 	{
-		CryError("[Zeus] Unexpected tag '%s' in file '%s' at line %d...", szRootName, m_menuFilename.c_str(), rootNode->getLine());
+		CryLogError("[Zeus] Unexpected tag '%s' in file '%s' at line %d...", szRootName, m_menuFilename.c_str(), rootNode->getLine());
 		return false;
 	}
 

@@ -166,9 +166,8 @@ public:
 	bool GetZeusFlag(uint flag) const;
 	void Reset();
 
-	//void OnAction(const ActionId& action, int activationMode, float value);
-protected:
-	//bool OnActionAttack2(const CTOSActor* pActor, const ActionId& actionId, int activationMode, float value, float pressedDur = 0);
+	//Console Commands
+	static void CmdReloadMenuItems(IConsoleCmdArgs* pArgs);
 
 private:
 	void UpdateDebug(bool zeusMoving, const Vec3& zeusDynVec);
@@ -289,6 +288,8 @@ private:
 	bool m_debugZModifier;
 	bool m_menuShow;
 	bool m_menuSpawnHandling; /// true - сущность из меню заспавнена, но не поставлена на карту
+	bool m_spaceFreeCam;
+	bool m_mouseDisplayed;
 
 	//HUD
 	CGameFlashAnimation m_animZeusScreenIcons;
