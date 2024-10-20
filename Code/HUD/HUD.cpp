@@ -2514,10 +2514,13 @@ bool CHUD::OnAction(const ActionId& action, int activationMode, float value)
 		}
 	}
 
-	if (action == rGameActions.buylastpurchase)
+	//TheOtherSide fix
+	// if (action == rGameActions.buylastpurchase)
+	if (m_pHUDPowerStruggle != nullptr && action == rGameActions.buylastpurchase)
 	{
 		m_pHUDPowerStruggle->BuyPackage(-1);
 	}
+	//~TheOtherSide
 
 	if (action == rGameActions.hud_buy_weapons)
 	{
