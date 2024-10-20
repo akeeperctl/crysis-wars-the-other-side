@@ -1337,7 +1337,7 @@ void CTOSZeusModule::UpdateOnScreenIcons(IActor* pClientActor)
 			{
 				const auto selectedIter = stl::binary_find(m_selectedEntities.cbegin(), m_selectedEntities.cend(), id);
 				const bool selected = selectedIter != m_selectedEntities.cend();
-				if (!(m_copying && selected))
+				if (!(selected && (m_copying || m_menuSpawnHandling)))
 				{
 					continue;
 				}

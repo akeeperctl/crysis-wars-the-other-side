@@ -136,9 +136,9 @@ void CTOSZeusModule::HandleFSCommand(const char* pCommand, const char* pArgs)
 		//	}
 		//}
 
-		m_pPersistantDebug->Begin("ZeusMenuSpawn", true);
-		m_pPersistantDebug->AddLine(pos, spawnPos, ColorF(1.0f,1.0f,1.0f,1.0f), 15.0f);
-		m_pPersistantDebug->AddSphere(spawnPos, 1.0f, ColorF(0.3f,0.3f,0.3f,1.0f), 15.0f);
+		//m_pPersistantDebug->Begin("ZeusMenuSpawn", true);
+		//m_pPersistantDebug->AddLine(pos, spawnPos, ColorF(1.0f,1.0f,1.0f,1.0f), 15.0f);
+		//m_pPersistantDebug->AddSphere(spawnPos, 1.0f, ColorF(0.3f,0.3f,0.3f,1.0f), 15.0f);
 
 		params.vanilla.vPosition = spawnPos;
 		params.vanilla.qRotation = spawnRot;
@@ -156,7 +156,7 @@ void CTOSZeusModule::HandleFSCommand(const char* pCommand, const char* pArgs)
 
 		char buffer[64];
 		sprintf(buffer, "%d", spawnedId);
-		pSpawned->SetName(name + buffer);
+		pSpawned->SetName(name + "_" + buffer);
 
 		m_dragging = true;
 		m_menuSpawnHandling = true;
