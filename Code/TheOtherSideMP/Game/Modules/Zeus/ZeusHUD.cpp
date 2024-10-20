@@ -6,6 +6,7 @@ Copyright (C), AlienKeeper, 2024.
 #include "StdAfx.h"
 #include "ZeusModule.h"
 #include "HUD/HUD.h"
+#include "HUD/HUD.h"
 #include <TheOtherSideMP\Helpers\TOS_Console.h>
 #include <TheOtherSideMP\Helpers\TOS_Entity.h>
 
@@ -20,8 +21,14 @@ void CTOSZeusModule::HUDInit()
 
 void CTOSZeusModule::HandleFSCommand(const char* pCommand, const char* pArgs)
 {
+	auto pHUD = g_pGame->GetHUD();
+	if (!pHUD)
+		return;
+
 	string sCommand = pCommand;
 	string sArgs = pArgs;
+
+	//Zeus on screen icon
 	if (sCommand == "MousePressOnUnit")
 	{
 		auto pEntity = TOS_GET_ENTITY(atoi(sArgs));
@@ -38,10 +45,33 @@ void CTOSZeusModule::HandleFSCommand(const char* pCommand, const char* pArgs)
 	{
 		m_mouseOveredEntityId = 0;
 	}
-	else if (sCommand == "Debug")
+	else if (sCommand == "CryLogAlways")
 	{
 		CryLogAlways("[Flash] %s", sArgs);
 	}
+
+	//Zeus menu
+	else if (sCommand == "UpdateBuyList")
+	{
+		m_menuCurrentPage = atoi(sArgs);
+		HUDUpdateZeusMenuItemList(sArgs);
+	}
+	else if (sCommand == "PDATabChanged")
+	{
+		pHUD->PlaySound(ESound_TabChanged);
+	}
+	else if (sCommand == "PDA")
+	{
+		if (sArgs == "TabChanged")
+		{
+			pHUD->PlaySound(ESound_TabChanged);
+		}
+		else if (sArgs == "SelfClose")
+		{
+			HUDShowZeusMenu(false);
+		}
+	}
+
 }
 
 void CTOSZeusModule::HUDInGamePostUpdate(float frametime)
@@ -64,6 +94,241 @@ void CTOSZeusModule::HUDUnloadSimpleAssets(bool unload)
 		m_animZeusScreenIcons.Unload();
 		m_animZeusMenu.Unload();
 	}
+}
+
+void CTOSZeusModule::HUDUpdateZeusMenuItemList(const char* szPageIdx)
+{
+	if (!g_pGame->GetIGameFramework()->GetClientActor())
+		return;
+
+	IFlashPlayer* pFlashPlayer = m_animZeusMenu.GetFlashPlayer();
+
+	const int iPage = atoi(szPageIdx);
+
+	if (m_menuItems.empty())
+		MenuLoadItems();
+
+	std::vector<SItem> *pItemsList = &m_menuItems[iPage];
+	std::vector<string> itemArray;
+
+	char tempBuf[256];
+
+	for (std::vector<SItem>::iterator iter = pItemsList->begin(); iter != pItemsList->end(); ++iter)
+	{
+		SItem item = (*iter);
+		const char* sReason = "ready";
+
+		//if (!item.isWeapon)
+		//{
+		//	if (item.iInventoryID > 0 && item.isUnique != 0)
+		//	{
+		//		sReason = "inventory";
+		//	}
+		//	if (item.iInventoryID == -2 && item.isUnique != 0)
+		//	{
+		//		sReason = "inventory";
+		//	}
+		//	if (item.iCount >= item.iMaxCount)
+		//	{
+		//		sReason = "inventory";
+		//	}
+		//	item.iInventoryID = 0;
+		//}
+
+		// if this item is on the restricted list, grey it out
+		//if (!pGameRules->IsItemAllowed(item.strName.c_str()))
+		//{
+		//	item.iInventoryID = 0;
+		//	sReason = "restricted";
+		//}
+		
+		// second check for item allowed: restriction list can use both classnames and itemnames.
+		//	Check the class here if necessary.
+		//if (!item.strClass.empty() && !pGameRules->IsItemAllowed(item.strClass.c_str()))
+		//{
+		//	item.iInventoryID = 0;
+		//	sReason = "restricted";
+		//}
+
+		//if (item.special && !IsPlayerSpecial())
+		//	sReason = "level";
+
+		itemArray.push_back(item.strName.c_str());
+		itemArray.push_back(item.strDesc.c_str());
+
+		_snprintf(tempBuf, sizeof(tempBuf), "%d", item.iPrice);
+		tempBuf[sizeof(tempBuf) - 1] = '\0';
+		itemArray.push_back(tempBuf);
+
+		itemArray.push_back(sReason);
+
+		_snprintf(tempBuf, sizeof(tempBuf), "%d", item.iInventoryID);
+		tempBuf[sizeof(tempBuf) - 1] = '\0';
+		itemArray.push_back(tempBuf);
+		if (!item.strCategory.empty())
+		{
+			itemArray.push_back(item.strCategory);
+		}
+		else
+		{
+			itemArray.push_back("");
+		}
+
+		_snprintf(tempBuf, sizeof(tempBuf), "%d", item.iCount);
+		tempBuf[sizeof(tempBuf) - 1] = '\0';
+		itemArray.push_back(tempBuf);
+
+		_snprintf(tempBuf, sizeof(tempBuf), "%d", item.iMaxCount);
+		tempBuf[sizeof(tempBuf) - 1] = '\0';
+		itemArray.push_back(tempBuf);
+	}
+
+	//ActivateBuyMenuTabs();
+
+	//char buffer[10];
+	//itoa(m_lastPurchase.iPrice, buffer, 10);
+
+	//wstring localized;
+	//localized = g_pHUD->LocalizeWithParams("@ui_buy_REPEATLASTBUY", true, buffer);
+	//g_pBuyMenu->Invoke("setLastPurchase", SFlashVarValue(localized));
+
+	int size = itemArray.size();
+	if (size)
+	{
+		std::vector<const char*> pushArray;
+		pushArray.reserve(size);
+		for (int i(0); i < size; ++i)
+		{
+			pushArray.push_back(itemArray[i].c_str());
+		}
+
+		pFlashPlayer->SetVariableArray(FVAT_ConstStrPtr, "m_allValues", 0, &pushArray[0], size);
+	}
+
+	pFlashPlayer->Invoke0("updateList");
+}
+
+bool CTOSZeusModule::HUDShowZeusMenu(bool show)
+{
+	if (show && gEnv->pGame->GetIGameFramework()->GetIViewSystem()->IsPlayingCutScene())
+		return false;
+
+	m_menuShow = show;
+	m_animZeusMenu.Invoke(m_menuShow ? "showPDA" : "hidePDA");
+}
+
+bool CTOSZeusModule::MenuLoadItems()
+{
+	XmlNodeRef rootNode = GetISystem()->LoadXmlFile(m_menuFilename.c_str());
+	if (!rootNode)
+	{
+		CryLogError("[Zeus] Failed to open menu XML file '%s'.", m_menuFilename.c_str());
+		return false;
+	}
+
+	CryLog("Parsing Zeus menu XML file '%s'", m_menuFilename);
+	CryLog("---------------------------");
+
+	m_menuItems.clear();
+
+	const float scale = g_pGameCVars->g_pp_scale_price;
+
+	const char* szRootName = rootNode->getTag();
+	if (!stricmp(szRootName, "Root"))
+	{
+		const int32 tabsCount = rootNode->getChildCount();
+		for (int32 tabIdx = 0; tabIdx < tabsCount; ++tabIdx)
+		{
+			// <tab name="Characters">
+			const XmlNodeRef tabNode = rootNode->getChild(tabIdx);
+			XmlString tabName;
+
+			if (!tabNode->getAttr("name", tabName) || tabName.empty())
+			{
+				CryError("[Zeus] Missing or empty 'name' attribute for '%s' tag in file '%s' at line %d...", tabNode->getTag(), m_menuFilename.c_str(), tabNode->getLine());
+				return false;
+			}
+
+			// item - в данном случае элемент меню, а не оружие.
+			const int itemsCount = tabNode->getChildCount();
+			for (int32 itemIdx = 0; itemIdx < itemsCount; ++itemIdx)
+			{
+				// <Item category="@zeus_catUSA" name="SMG Soldier" class="Grunt" price="1000"/>
+				const XmlNodeRef itemNode = tabNode->getChild(itemIdx);
+				XmlString itemCategory;
+				XmlString itemName;
+				XmlString itemClass;
+				XmlString itemPrice;
+				XmlString itemAmount; // опционально
+
+				if (!itemNode->getAttr("category", itemCategory) || itemCategory.empty())
+				{
+					CryError("[Zeus] Missing or empty 'category' attribute for '%s' tag in file '%s' at line %d...", itemNode->getTag(), m_menuFilename.c_str(), itemNode->getLine());
+					return false;
+				}
+
+				if (!itemNode->getAttr("name", itemName) || itemName.empty())
+				{
+					CryError("[Zeus] Missing or empty 'name' attribute for '%s' tag in file '%s' at line %d...", itemNode->getTag(), m_menuFilename.c_str(), itemNode->getLine());
+					return false;
+				}
+
+				if (!itemNode->getAttr("class", itemClass) || itemClass.empty())
+				{
+					CryError("[Zeus] Missing or empty 'class' attribute for '%s' tag in file '%s' at line %d...", itemNode->getTag(), m_menuFilename.c_str(), itemNode->getLine());
+					return false;
+				}
+
+				if (!itemNode->getAttr("price", itemPrice) || itemPrice.empty())
+				{
+					CryError("[Zeus] Missing or empty 'price' attribute for '%s' tag in file '%s' at line %d...", itemNode->getTag(), m_menuFilename.c_str(), itemNode->getLine());
+					return false;
+				}
+
+				itemNode->getAttr("amount", itemAmount);
+
+				int iItemPrice = 0;
+				int iItemAmount = 1;
+
+				if (!itemPrice.empty())
+					iItemPrice = atoi(itemPrice);
+				if (!itemAmount.empty())
+					iItemAmount = atoi(itemAmount);
+
+				SItem item;
+				// Не используется здесь
+				item.level = 0.0f;
+				item.isUnique = 0;
+				item.iMaxCount = 1;
+				item.uniqueLoadoutGroup = 0;
+				item.uniqueLoadoutCount = 0;
+				item.iInventoryID = 0;
+				item.bVehicleType = false;
+				item.bAmmoType = false;
+				item.loadout = false;
+				item.special = false;
+				item.isWeapon = false;
+
+				// Используется здесь
+				item.iCount = iItemAmount;
+				item.iPrice = int(iItemPrice * scale);
+				item.strCategory = itemCategory;
+				item.strClass = itemClass;
+				item.strName = itemName;
+
+				// нумерация tab начинается с 1
+				m_menuItems[tabIdx + 1].push_back(item);
+				CryLog("[Zeus] Item '%s' reading successfully!", item.strName);
+			}
+		}
+	}
+	else
+	{
+		CryError("[Zeus] Unexpected tag '%s' in file '%s' at line %d...", szRootName, m_menuFilename.c_str(), rootNode->getLine());
+		return false;
+	}
+
+	return true;
 }
 
 void CTOSZeusModule::HUDUpdateOnScreenIcon(EntityId objective, int friendly, int iconType, const Vec3 localOffset)
@@ -147,6 +412,7 @@ void CTOSZeusModule::HUDUpdateOnScreenIcon(EntityId objective, int friendly, int
 
 	m_onScreenIcons.push_back(icon);
 }
+
 void CTOSZeusModule::HUDUpdateAllZeusUnitIcons()
 {
 	auto pAnim = &m_animZeusScreenIcons;
@@ -268,3 +534,15 @@ void CTOSZeusModule::HUDUpdateAllZeusUnitIcons()
 	icons->clear();
 }
 
+void CTOSZeusModule::HUDShowPlayerHUD(bool show)
+{
+	const auto pHUD = g_pGame->GetHUD();
+	if (pHUD)
+	{
+		// HP
+		pHUD->ShowPlayerStats(show);
+
+		pHUD->ShowRadar(show);
+		pHUD->ShowCrosshair(show);
+	}
+}

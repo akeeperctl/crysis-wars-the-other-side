@@ -374,7 +374,7 @@ healthchecksdb
 *factions.xml*
 
 !/Game/Scripts/
-
+*/FGPSPlugins/
 
 #Bin trash files from code compiling
 *.exp

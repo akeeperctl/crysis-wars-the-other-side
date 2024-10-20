@@ -906,6 +906,9 @@
     <ClCompile Include="TheOtherSideMP\Game\TOSGameEventRecorder.cpp">
       <Filter>TheOtherSideMP\Game\Events</Filter>
     </ClCompile>
+    <ClCompile Include="TheOtherSideMP\Game\Modules\Zeus\ZeusClientServer.cpp">
+      <Filter>TheOtherSideMP\Game\Modules\Zeus</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor.h">

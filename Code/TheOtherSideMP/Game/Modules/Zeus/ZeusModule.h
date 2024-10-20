@@ -10,6 +10,8 @@ Copyright (C), AlienKeeper, 2024.
 #include <TheOtherSideMP\Actors\Player\TOSPlayer.h>
 #include <TheOtherSideMP\TOSSmartStruct.h>
 
+constexpr int ZEUS_PP_AMOUNT_KEY = 300;
+
 enum EZeusFlags
 {
 	eZF_CanRotateCamera = BIT(0),
@@ -82,6 +84,35 @@ public:
 		Vec3 wPos;
 	};
 
+	//enum EZeusMenuPage
+	//{
+	//	E_CHARACTERS,
+	//	E_WEAPONS,
+	//	E_VEHICLES,
+	//	E_OTHER
+	//};
+
+	struct SItem
+	{
+		string strName;
+		string strDesc;
+		string strClass;
+		string strCategory;
+		int uniqueLoadoutGroup;
+		int uniqueLoadoutCount;
+		int iPrice;
+		int isUnique;
+		int iCount;
+		int iMaxCount;
+		int iInventoryID;
+		float level;
+		bool isWeapon;
+		bool bAmmoType;
+		bool bVehicleType;
+		bool loadout;
+		bool special;
+	};
+
 	CTOSZeusModule();
 	virtual ~CTOSZeusModule();
 
@@ -126,7 +157,8 @@ public:
 	//~IFSCommandHandler
 
 	void NetMakePlayerZeus(IActor* pPlayer);
-	void ShowHUD(bool show);
+	void NetSetZeusPP(int amount);
+	int  NetGetZeusPP();
 
 	void SetZeusFlag(uint flag, bool value);
 	bool GetZeusFlag(uint flag) const;
@@ -185,21 +217,30 @@ private:
 	/// @param friendly 0 - серый, 1 - синий, 2 - красный
 	/// @param iconType - номер иконки
 	/// @param localOffset - локальное смещение иконки
-	/// @param distance 
-	/// @param size 
 	void HUDUpdateOnScreenIcon(EntityId objective, int friendly, int iconType, const Vec3 localOffset);
 	void HUDUpdateAllZeusUnitIcons();
+
 	void HUDInit();
 	void HUDInGamePostUpdate(float frametime);
 	void HUDUnloadSimpleAssets(bool unload);
+	void HUDShowPlayerHUD(bool show);
+
+	void HUDUpdateZeusMenuItemList(const char* szPageIdx);
+	bool HUDShowZeusMenu(bool show);
+
+	/// @brief Считать xml и записать все item'ы в массив
+	bool MenuLoadItems();
 
 public:
 	static std::map<string, string> s_classToConsoleVar;
 
 private:
+	string m_menuFilename;
+
 	CTOSPlayer* m_zeus;
-	uint m_zeusFlags;
 	ray_hit m_mouseRay;
+	uint m_menuCurrentPage;
+	uint m_zeusFlags;
 	uint m_mouseRayEntityFlags;
 	Vec2 m_anchoredMousePos; // используется при остановке движения мыши, когда вертится камера
 	Vec3 m_worldMousePos;
@@ -210,6 +251,7 @@ private:
 	Vec2 m_selectStopPos;
 	Vec3 m_draggingDelta;
 	Vec3 m_orderPos;
+
 	SmartScriptTable m_orderInfo;
 	SmartScriptTable m_executorInfo;
 
@@ -221,6 +263,7 @@ private:
 	std::map<EntityId, _smart_ptr<SOBBWorldPos>> m_boxes; /// боксы выделенных сущностей
 	std::map<EntityId, Vec3> m_selectStartEntitiesPositions;
 	std::map<EntityId, Vec3> m_storedEntitiesPositions;
+	std::map<int, std::vector<SItem>> m_menuItems;
 
 	std::vector<SOnScreenIcon> m_onScreenIcons;
 	EntityId m_mouseOveredEntityId;
@@ -240,6 +283,7 @@ private:
 	bool m_shiftModifier;
 	bool m_altModifier;
 	bool m_debugZModifier;
+	bool m_menuShow;
 
 	//HUD
 	CGameFlashAnimation m_animZeusScreenIcons;

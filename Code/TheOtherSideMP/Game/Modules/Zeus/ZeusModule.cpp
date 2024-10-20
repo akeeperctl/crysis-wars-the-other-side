@@ -83,7 +83,10 @@ CTOSZeusModule::CTOSZeusModule()
 	m_altModifier(false),
 	m_debugZModifier(false),
 	m_select(false),
-	m_dragging(false)
+	m_dragging(false),
+	m_menuFilename("Scripts/Zeus/ZeusMenu.xml"),
+	m_menuCurrentPage(1),
+	m_menuShow(false)
 {}
 
 CTOSZeusModule::~CTOSZeusModule()
@@ -219,6 +222,13 @@ bool CTOSZeusModule::OnInputEvent(const SInputEvent& event)
 		else if (event.keyId == EKeyId::eKI_Delete)
 		{
 			ExecuteCommand(eZC_RemoveSelected);
+		}
+		else if (event.keyId == EKeyId::eKI_P)
+		{
+			if (event.state == eAAM_OnPress)
+			{
+				HUDShowZeusMenu(!m_menuShow);
+			}
 		}
 	}
 	else if (event.deviceId == EDeviceId::eDI_Mouse)
@@ -923,7 +933,7 @@ void CTOSZeusModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent&
 		{
 			if (m_zeus)
 			{
-				ShowHUD(true);
+				HUDShowPlayerHUD(true);
 				if (noModalOrNoHUD)
 					ShowMouse(false);
 
@@ -1503,31 +1513,6 @@ void CTOSZeusModule::Serialize(TSerialize ser)
 
 }
 
-void CTOSZeusModule::NetMakePlayerZeus(IActor* pPlayer)
-{
-	if (!pPlayer)
-		return;
-
-	if (m_zeus)
-		return;
-
-	m_zeus = static_cast<CTOSPlayer*>(pPlayer);
-	ApplyZeusProperties(m_zeus);
-}
-
-void CTOSZeusModule::ShowHUD(bool show)
-{
-	const auto pHUD = g_pGame->GetHUD();
-	if (pHUD)
-	{
-		// HP
-		pHUD->ShowPlayerStats(show);
-
-		pHUD->ShowRadar(show);
-		pHUD->ShowCrosshair(show);
-	}
-}
-
 void CTOSZeusModule::SetZeusFlag(uint flag, bool value)
 {
 	m_zeusFlags = value ? (m_zeusFlags | flag) : (m_zeusFlags & ~flag);
@@ -1604,8 +1589,10 @@ void CTOSZeusModule::ApplyZeusProperties(IActor* pPlayer)
 		// Убираем лишние действия
 		g_pGameActions->FilterZeus()->Enable(true);
 
-		// Скрываем HUD
-		ShowHUD(false);
+		// Скрываем HUD игрока
+		HUDShowPlayerHUD(false);
+
+		HUDShowZeusMenu(true);
 	}
 
 	// Становимся невидимым для ИИ
