@@ -545,6 +545,13 @@ void CTOSZeusModule::OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eH
 			int x(iX), y(iY);
 			m_animZeusScreenIcons.GetFlashPlayer()->ScreenToClient(x, y);
 			m_animZeusScreenIcons.GetFlashPlayer()->SendCursorEvent(SFlashCursorEvent(eCursorState, x, y));
+		}		
+		
+		if (m_animZeusMenu.IsLoaded())
+		{
+			int x(iX), y(iY);
+			m_animZeusMenu.GetFlashPlayer()->ScreenToClient(x, y);
+			m_animZeusMenu.GetFlashPlayer()->SendCursorEvent(SFlashCursorEvent(eCursorState, x, y));
 		}
 
 		if (!pHUD->IsHaveModalHUD())

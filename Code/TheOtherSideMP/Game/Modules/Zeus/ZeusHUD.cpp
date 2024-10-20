@@ -13,6 +13,9 @@ void CTOSZeusModule::HUDInit()
 {
 	m_animZeusScreenIcons.Load("Libs/UI/HUD_Zeus_Icon.swf", eFD_Center, eFAF_Visible);
 	m_animZeusScreenIcons.GetFlashPlayer()->SetFSCommandHandler(this);
+
+	m_animZeusMenu.Load("Libs/UI/HUD_Zeus_Menu.swf", eFD_Right, eFAF_Visible);
+	m_animZeusMenu.GetFlashPlayer()->SetFSCommandHandler(this);
 }
 
 void CTOSZeusModule::HandleFSCommand(const char* pCommand, const char* pArgs)
@@ -52,10 +55,14 @@ void CTOSZeusModule::HUDUnloadSimpleAssets(bool unload)
 	{
 		m_animZeusScreenIcons.Reload();
 		m_animZeusScreenIcons.GetFlashPlayer()->SetFSCommandHandler(this);
+
+		m_animZeusMenu.Reload();
+		m_animZeusMenu.GetFlashPlayer()->SetFSCommandHandler(this);
 	}
 	else
 	{
 		m_animZeusScreenIcons.Unload();
+		m_animZeusMenu.Unload();
 	}
 }
 

@@ -243,6 +243,7 @@ private:
 
 	//HUD
 	CGameFlashAnimation m_animZeusScreenIcons;
+	CGameFlashAnimation m_animZeusMenu;
 
 	// Консольные значения
 	float tos_sv_zeus_mass_selection_hold_sec;
