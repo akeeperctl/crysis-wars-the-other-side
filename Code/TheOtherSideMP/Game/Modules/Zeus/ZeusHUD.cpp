@@ -101,11 +101,11 @@ void CTOSZeusModule::HandleFSCommand(const char* pCommand, const char* pArgs)
 		const float maxDistance = 300.0f;
 
 		// Только вращение по Z
-		Ang3 angles = gEnv->pRenderer->GetCamera().GetAngles();
-		angles.x, angles.y = 0;
-
 		Vec3 spawnPos = pos + (dir * maxDistance);
-		const Quat spawnRot = Quat::CreateRotationXYZ(angles);
+		Quat spawnRot = Quat::CreateRotationVDir(dir);
+		spawnRot.v.x = 0;
+		spawnRot.v.y = 0;
+		// FIXME: ротация транспорта после Hide(false) почему то становится в 000, хотя бокс изначально повернут правильно
 
 		const int rayFlags = rwi_stop_at_pierceable | rwi_colltype_any;
 		const unsigned entityFlags = ent_all;
