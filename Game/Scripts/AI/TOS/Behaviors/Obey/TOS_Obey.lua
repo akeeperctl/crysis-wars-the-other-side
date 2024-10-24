@@ -26,6 +26,7 @@ AIBehaviour.TOS_Obey = {
 		-- the extra data is from the signal that is causing the behavior transition
 		LogAlways("[%s] TOS_Obey.Destructor data %s", EntityName(entity), EntityName(data))
 
+		-- unreserve vehicle seat
 		if (entity.currentExecutedOrder == EOrders.AI_ENTERVEHICLE) then
 			CLEAR_DATA_AI_ENTERVEHICLE(entity)
 		end

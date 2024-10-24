@@ -11,7 +11,7 @@ Script.ReloadScript("Scripts/TOSDebug.lua")
 ---@param orderTable table данные о приказе
 ---@return integer
 function HandleOrder(executorTable, orderTable)
-
+    
     local outputOrderType = 0
 
     local executor = System.GetEntity(executorTable.entityId)
@@ -31,10 +31,12 @@ function HandleOrder(executorTable, orderTable)
     -- Если в данный момент приказ уже выполняется
     -- Нужно очистить/восстановить то, что в ходе его выполнения было создано/изменено
     local currentExecuted = executor.currentExecutedOrder
+
+    -- unreserve vehicle seat
     if currentExecuted == EOrders.AI_ENTERVEHICLE then
-        CLEAR_DATA_AI_ENTERVEHICLE(executor)
-    elseif currentExecuted == EOrders.AI_GOTO then
-        CLEAR_DATA_AI_GOTO(executor)
+         CLEAR_DATA_AI_ENTERVEHICLE(executor)
+    -- elseif currentExecuted == EOrders.AI_GOTO then
+    --     CLEAR_DATA_AI_GOTO(executor)
     end
 
     local orderPosition = g_Vectors.v000
@@ -68,8 +70,10 @@ function HandleOrder(executorTable, orderTable)
         end
     else
 
+        local speed = 3 -- бег
+
         -- Если цели нет, то бежим
-        AI_GOTO(executor, orderPosition, 3)
+        AI_GOTO(executor, orderPosition, speed)
 
     end
     return outputOrderType

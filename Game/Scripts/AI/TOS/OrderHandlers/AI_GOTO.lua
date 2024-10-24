@@ -63,9 +63,11 @@ function CLEAR_DATA_AI_GOTO(entity)
         return
     end
 
+    entity.currentExecutedOrder = EOrders.NONE
+
     if (entity.orderRefEnt) then
-        System.RemoveEntity(entity.orderRefEnt)
-        Log("[%s] <CLEAR_DATA_AI_GOTO> order ref entity removed")
+        System.RemoveEntity(entity.orderRefEnt.id)
+        Log("<CLEAR_DATA_AI_GOTO> order ref entity removed")
     end
 
     entity.orderRefEnt = nil
