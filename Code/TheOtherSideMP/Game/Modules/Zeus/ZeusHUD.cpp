@@ -102,9 +102,9 @@ void CTOSZeusModule::HandleFSCommand(const char* pCommand, const char* pArgs)
 
 		// Только вращение по Z
 		Vec3 spawnPos = pos + (dir * maxDistance);
-		Quat spawnRot = Quat::CreateRotationVDir(dir);
-		spawnRot.v.x = 0;
-		spawnRot.v.y = 0;
+		//Quat spawnRot = Quat::CreateRotationVDir(dir);
+		//spawnRot.v.x = 0;
+		//spawnRot.v.y = 0;
 		// FIXME: ротация транспорта после Hide(false) почему то становится в 000, хотя бокс изначально повернут правильно
 
 		const int rayFlags = rwi_stop_at_pierceable | rwi_colltype_any;
@@ -141,7 +141,7 @@ void CTOSZeusModule::HandleFSCommand(const char* pCommand, const char* pArgs)
 		//m_pPersistantDebug->AddSphere(spawnPos, 1.0f, ColorF(0.3f,0.3f,0.3f,1.0f), 15.0f);
 
 		params.vanilla.vPosition = spawnPos;
-		params.vanilla.qRotation = spawnRot;
+		// params.vanilla.qRotation = spawnRot;
 
 		IEntity* pSpawned = TOS_Entity::Spawn(params, false);
 		if (!pSpawned)

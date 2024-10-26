@@ -182,7 +182,7 @@ bool CTOSZeusModule::OnInputEvent(const SInputEvent& event)
 						const bool movedOnHeight = m_draggingDelta.len() > 1;
 
 						auto pVehicle = TOS_GET_VEHICLE(*it);
-						if (pVehicle && movedOnHeight)
+						if (pVehicle && TOS_Vehicle::IsAir(pVehicle) && movedOnHeight)
 						{
 							SVehicleMovementEventParams params;
 							params.fValue = pVehicle->GetEntity()->GetWorldPos().z; // желаемая высота
@@ -779,14 +779,6 @@ void CTOSZeusModule::OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eH
 							}
 						}
 
-						if (moveSelectedEnt)
-						{
-							// Применяем сдвинутые позиции боксов на сущности
-							const auto& pBox = m_boxes[pSelectedEntity->GetId()];
-							pSelectedEntity->SetWorldTM(Matrix34::CreateTranslationMat(pBox->wPos));
-							pSelectedEntity->SetRotation(Quat(pBox->obb.m33));
-						}
-
 						// Пинаем физику выделенных сущностей после того как закончили их перетаскивать
 						auto pPhys = pSelectedEntity->GetPhysics();
 						if (pPhys)
@@ -794,6 +786,14 @@ void CTOSZeusModule::OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eH
 							pe_action_awake awake;
 							awake.bAwake = 1;
 							pPhys->Action(&awake);
+						}
+
+						if (moveSelectedEnt)
+						{
+							// Применяем сдвинутые позиции боксов на сущности
+							const auto& pBox = m_boxes[pSelectedEntity->GetId()];
+							pSelectedEntity->SetWorldTM(Matrix34::CreateTranslationMat(pBox->wPos));
+							pSelectedEntity->SetRotation(Quat(pBox->obb.m33));
 						}
 
 						if (needDeselect)
@@ -819,14 +819,6 @@ void CTOSZeusModule::OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eH
 						if (pEntity)
 						{
 							pEntity->Hide(false);
-
-							auto pPhys = pEntity->GetPhysics();
-							if (pPhys)
-							{
-								pe_action_awake awake;
-								awake.bAwake = 1;
-								pPhys->Action(&awake);
-							}
 						}
 						else
 						{
@@ -1126,12 +1118,6 @@ bool CTOSZeusModule::UpdateDraggedEntity(EntityId id, const IEntity* pClickedEnt
 		newPos.z += 0.1f;
 
 		container[id]->wPos = newPos;
-
-		//if (TOS_Console::GetSafeIntVar("tos_sv_zeus_dragging_move_boxes_separately", 0) == 0)
-		//{
-		//	mat34.SetTranslation(container[id]->wPos);
-		//	pEntity->SetWorldTM(mat34);
-		//}
 	}
 	else
 	{
@@ -1172,12 +1158,6 @@ bool CTOSZeusModule::UpdateDraggedEntity(EntityId id, const IEntity* pClickedEnt
 			}
 
 			container[id]->wPos = newPos;
-
-			//if (TOS_Console::GetSafeIntVar("tos_sv_zeus_dragging_move_boxes_separately", 0) == 0)
-			//{
-			//	mat34.SetTranslation(container[id]->wPos);
-			//	pEntity->SetWorldTM(mat34);
-			//}
 		}
 		else
 		{
@@ -1185,14 +1165,6 @@ bool CTOSZeusModule::UpdateDraggedEntity(EntityId id, const IEntity* pClickedEnt
 			const Quat rot = Quat::CreateRotationVDir(toMouseDir);
 			container[id]->wPos = curPos;
 			container[id]->obb.m33 = Matrix33(rot);
-
-			//if (TOS_Console::GetSafeIntVar("tos_sv_zeus_dragging_move_boxes_separately", 0) == 0)
-			//{
-			//	// Чтобы не падали сущности на высоте
-			//	mat34.SetTranslation(Vec3(container[id]->wPos.x, container[id]->wPos.y, m_storedEntitiesPositions[id].z));
-			//	pEntity->SetWorldTM(mat34);
-			//	pEntity->SetRotation(rot);
-			//}
 		}
 	}
 
@@ -1201,12 +1173,11 @@ bool CTOSZeusModule::UpdateDraggedEntity(EntityId id, const IEntity* pClickedEnt
 
 void CTOSZeusModule::Update(float frametime)
 {
-	if (!m_zeus || !m_zeus->IsClient())
+	if (tos_sv_zeus_update == 0)
 		return;
 
-	//int frameID = gEnv->pRenderer->GetFrameID();
-
-
+	if (!m_zeus || !m_zeus->IsClient())
+		return;
 
 	auto pMouse = gEnv->pHardwareMouse;
 	if (pMouse)

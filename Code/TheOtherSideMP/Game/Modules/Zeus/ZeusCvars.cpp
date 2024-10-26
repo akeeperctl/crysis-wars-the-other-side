@@ -12,6 +12,9 @@ void CTOSZeusModule::InitCVars(IConsole* pConsole)
 {
 	CTOSGenericModule::InitCVars(pConsole);
 
+	pConsole->Register("tos_sv_zeus_update", &tos_sv_zeus_update, 1, VF_CHEAT,
+					   "0 - update disabled \n1 - update enabled");
+
 	pConsole->Register("tos_sv_zeus_mass_selection_hold_sec", &tos_sv_zeus_mass_selection_hold_sec, 0.2f, VF_CHEAT,
 					   "Delay in sec, how long you need to hold LMB down before the multiple object selection mode is enabled");
 
@@ -100,6 +103,7 @@ void CTOSZeusModule::ReleaseCVars()
 	CTOSGenericModule::ReleaseCVars();
 
 	const auto pConsole = gEnv->pConsole;
+	pConsole->UnregisterVariable("tos_sv_zeus_update", true);
 	pConsole->UnregisterVariable("tos_sv_zeus_mass_selection_hold_sec", true);
 
 	pConsole->UnregisterVariable("tos_sv_zeus_dragging_ignore_dead_bodies", true);

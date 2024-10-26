@@ -322,5 +322,7 @@ private:
 	int tos_sv_zeus_selection_ignore_interactive_entity;
 	int tos_sv_zeus_selection_ignore_vehicle_part_detached;
 
+	int tos_sv_zeus_update;
+
 	int tos_cl_zeus_dragging_draw_debug;
 };
