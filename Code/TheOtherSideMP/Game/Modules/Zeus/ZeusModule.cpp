@@ -604,23 +604,6 @@ void CTOSZeusModule::OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eH
 				m_select = false;
 				m_selectStopPos = Vec2i(iX, iY);
 
-				if (m_menuSpawnHandling)
-				{
-					if (m_curClickedEntityId != 0)
-					{
-						auto pEntity = TOS_GET_ENTITY(m_curClickedEntityId);
-						if (pEntity)
-						{
-							pEntity->Hide(false);
-						}
-						else
-						{
-							m_curClickedEntityId = 0;
-						}
-					}
-				}
-				m_menuSpawnHandling = false;
-
 				if (!m_dragging && CanSelectMultiplyWithBox())
 					GetSelectedEntities();
 				else
@@ -745,7 +728,6 @@ void CTOSZeusModule::OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eH
 						}
 					}
 				}
-
 				m_copying = false;
 
 				if (m_dragging)
@@ -800,7 +782,7 @@ void CTOSZeusModule::OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eH
 						if (moveSelectedEnt)
 						{
 							// Применяем сдвинутые позиции боксов на сущности
-							const auto pBox = m_boxes[pSelectedEntity->GetId()];
+							const auto& pBox = m_boxes[pSelectedEntity->GetId()];
 							pSelectedEntity->SetWorldTM(Matrix34::CreateTranslationMat(pBox->wPos));
 							pSelectedEntity->SetRotation(Quat(pBox->obb.m33));
 						}
@@ -828,6 +810,31 @@ void CTOSZeusModule::OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eH
 
 				m_dragTargetId = 0;
 				m_dragging = false;
+
+				if (m_menuSpawnHandling)
+				{
+					if (m_curClickedEntityId != 0)
+					{
+						auto pEntity = TOS_GET_ENTITY(m_curClickedEntityId);
+						if (pEntity)
+						{
+							pEntity->Hide(false);
+
+							auto pPhys = pEntity->GetPhysics();
+							if (pPhys)
+							{
+								pe_action_awake awake;
+								awake.bAwake = 1;
+								pPhys->Action(&awake);
+							}
+						}
+						else
+						{
+							m_curClickedEntityId = 0;
+						}
+					}
+				}
+				m_menuSpawnHandling = false;
 			}
 			else if (eHardwareMouseEvent == HARDWAREMOUSEEVENT_MOVE)
 			{
