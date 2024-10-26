@@ -4,12 +4,14 @@ Copyright (C), AlienKeeper, 2024.
 **************************************************************************/
 
 #include "StdAfx.h"
+#include "IFlashPlayer.h"
+
 #include "ZeusModule.h"
-#include "HUD/HUD.h"
 #include "HUD/HUD.h"
 #include <TheOtherSideMP\Helpers\TOS_Console.h>
 #include <TheOtherSideMP\Helpers\TOS_Entity.h>
 #include <TheOtherSideMP\Helpers\TOS_Screen.h>
+#include <TheOtherSideMP\Helpers\TOS_STL.h>
 
 void CTOSZeusModule::HUDInit()
 {
@@ -201,110 +203,90 @@ void CTOSZeusModule::HUDUpdateZeusMenuItemList(const char* szPageIdx)
 	IFlashPlayer* pFlashPlayer = m_animZeusMenu.GetFlashPlayer();
 
 	const int iPage = atoi(szPageIdx);
+	string strPageName;
 
 	if (m_menuItems.empty())
 		MenuLoadItems();
 
-	std::vector<SItem> *pItemsList = &m_menuItems[iPage];
-	std::vector<string> itemArray;
-
-	char tempBuf[256];
-
-	for (std::vector<SItem>::iterator iter = pItemsList->begin(); iter != pItemsList->end(); ++iter)
+	auto pTabBegin = m_menuItems.cbegin();
+	auto pTabEnd = m_menuItems.cend();
+	for (; pTabBegin != pTabEnd; pTabBegin++)
 	{
-		SItem item = (*iter);
-		const char* sReason = "ready";
+		if (pTabBegin->first.iIndex == iPage)
+		{	
+			strPageName = pTabBegin->first.strName;
 
-		//if (!item.isWeapon)
-		//{
-		//	if (item.iInventoryID > 0 && item.isUnique != 0)
-		//	{
-		//		sReason = "inventory";
-		//	}
-		//	if (item.iInventoryID == -2 && item.isUnique != 0)
-		//	{
-		//		sReason = "inventory";
-		//	}
-		//	if (item.iCount >= item.iMaxCount)
-		//	{
-		//		sReason = "inventory";
-		//	}
-		//	item.iInventoryID = 0;
-		//}
+			const std::vector<SItem>* pItemsList = &pTabBegin->second;
+			std::vector<string> itemArray;
 
-		// if this item is on the restricted list, grey it out
-		//if (!pGameRules->IsItemAllowed(item.strName.c_str()))
-		//{
-		//	item.iInventoryID = 0;
-		//	sReason = "restricted";
-		//}
-		
-		// second check for item allowed: restriction list can use both classnames and itemnames.
-		//	Check the class here if necessary.
-		//if (!item.strClass.empty() && !pGameRules->IsItemAllowed(item.strClass.c_str()))
-		//{
-		//	item.iInventoryID = 0;
-		//	sReason = "restricted";
-		//}
+			char tempBuf[256];
 
-		//if (item.special && !IsPlayerSpecial())
-		//	sReason = "level";
+			for (auto iter = pItemsList->cbegin(); iter != pItemsList->cend(); ++iter)
+			{
+				SItem item = (*iter);
+				const char* sReason = "ready";
 
-		itemArray.push_back(item.strName.c_str());
-		itemArray.push_back(item.strDesc.c_str());
+				itemArray.push_back(item.strName.c_str());
+				itemArray.push_back(item.strDesc.c_str());
 
-		_snprintf(tempBuf, sizeof(tempBuf), "%d", item.iPrice);
-		tempBuf[sizeof(tempBuf) - 1] = '\0';
-		itemArray.push_back(tempBuf);
+				_snprintf(tempBuf, sizeof(tempBuf), "%d", item.iPrice);
+				tempBuf[sizeof(tempBuf) - 1] = '\0';
+				itemArray.push_back(tempBuf);
 
-		itemArray.push_back(sReason);
+				itemArray.push_back(sReason);
 
-		_snprintf(tempBuf, sizeof(tempBuf), "%d", item.iInventoryID);
-		tempBuf[sizeof(tempBuf) - 1] = '\0';
-		itemArray.push_back(tempBuf);
-		if (!item.strCategory.empty())
-		{
-			itemArray.push_back(item.strCategory);
+				_snprintf(tempBuf, sizeof(tempBuf), "%d", item.iInventoryID);
+				tempBuf[sizeof(tempBuf) - 1] = '\0';
+				itemArray.push_back(tempBuf);
+				if (!item.strCategory.empty())
+				{
+					itemArray.push_back(item.strCategory);
+				}
+				else
+				{
+					itemArray.push_back("");
+				}
+
+				_snprintf(tempBuf, sizeof(tempBuf), "%d", item.iCount);
+				tempBuf[sizeof(tempBuf) - 1] = '\0';
+				itemArray.push_back(tempBuf);
+
+				_snprintf(tempBuf, sizeof(tempBuf), "%d", item.iMaxCount);
+				tempBuf[sizeof(tempBuf) - 1] = '\0';
+				itemArray.push_back(tempBuf);
+
+				itemArray.push_back(item.strClass.c_str());
+			}
+
+			int size = itemArray.size();
+			if (size)
+			{
+				std::vector<const char*> pushArray;
+				pushArray.reserve(size);
+				for (int i(0); i < size; ++i)
+				{
+					pushArray.push_back(itemArray[i].c_str());
+				}
+
+				pFlashPlayer->SetVariableArray(FVAT_ConstStrPtr, "m_allValues", 0, &pushArray[0], size);
+			}
+			break;
 		}
-		else
-		{
-			itemArray.push_back("");
-		}
-
-		_snprintf(tempBuf, sizeof(tempBuf), "%d", item.iCount);
-		tempBuf[sizeof(tempBuf) - 1] = '\0';
-		itemArray.push_back(tempBuf);
-
-		_snprintf(tempBuf, sizeof(tempBuf), "%d", item.iMaxCount);
-		tempBuf[sizeof(tempBuf) - 1] = '\0';
-		itemArray.push_back(tempBuf);		
-		
-		itemArray.push_back(item.strClass.c_str());
 	}
 
-	//ActivateBuyMenuTabs();
-
-	//char buffer[10];
-	//itoa(m_lastPurchase.iPrice, buffer, 10);
-
-	//wstring localized;
-	//localized = g_pHUD->LocalizeWithParams("@ui_buy_REPEATLASTBUY", true, buffer);
-	//g_pBuyMenu->Invoke("setLastPurchase", SFlashVarValue(localized));
-
-	int size = itemArray.size();
-	if (size)
-	{
-		std::vector<const char*> pushArray;
-		pushArray.reserve(size);
-		for (int i(0); i < size; ++i)
-		{
-			pushArray.push_back(itemArray[i].c_str());
-		}
-
-		pFlashPlayer->SetVariableArray(FVAT_ConstStrPtr, "m_allValues", 0, &pushArray[0], size);
-	}
 
 	pFlashPlayer->Invoke0("updateList");
+
+	pTabBegin = m_menuItems.cbegin();
+	pTabEnd = m_menuItems.cend();
+	for (; pTabBegin != pTabEnd; pTabBegin++)
+	{
+		SFlashVarValue setTabNameArgs[2] = { pTabBegin->first.iIndex, pTabBegin->first.strName };
+		pFlashPlayer->Invoke("setTabName", setTabNameArgs, 2);
+
+		SFlashVarValue activateTabArgs[2] = { pTabBegin->first.iIndex, true };
+		pFlashPlayer->Invoke("activateTab", activateTabArgs, 2);
+	}
 }
 
 bool CTOSZeusModule::HUDShowZeusMenu(bool show)
@@ -347,6 +329,11 @@ bool CTOSZeusModule::MenuLoadItems()
 				CryLogError("[Zeus] Missing or empty 'name' attribute for '%s' tag in file '%s' at line %d...", tabNode->getTag(), m_menuFilename.c_str(), tabNode->getLine());
 				return false;
 			}
+
+			// нумерация tab начинается с 1
+			STab tab;
+			tab.strName = tabName;
+			tab.iIndex = tabIdx + 1;
 
 			// item - в данном случае элемент меню, а не оружие.
 			const int itemsCount = tabNode->getChildCount();
@@ -415,8 +402,7 @@ bool CTOSZeusModule::MenuLoadItems()
 				item.strClass = itemClass;
 				item.strName = itemName;
 
-				// нумерация tab начинается с 1
-				m_menuItems[tabIdx + 1].push_back(item);
+				m_menuItems[tab].push_back(item);
 				CryLog("[Zeus] Item '%s' reading successfully!", item.strName);
 			}
 		}

@@ -86,14 +86,6 @@ public:
 		Vec3 wPos;
 	};
 
-	//enum EZeusMenuPage
-	//{
-	//	E_CHARACTERS,
-	//	E_WEAPONS,
-	//	E_VEHICLES,
-	//	E_OTHER
-	//};
-
 	struct SItem
 	{
 		string strName;
@@ -113,6 +105,56 @@ public:
 		bool bVehicleType;
 		bool loadout;
 		bool special;
+	};
+
+	struct STab
+	{
+		STab()
+			: iIndex(0),
+			strName("")
+		{
+
+		}		
+		
+		STab(int _index)
+			: iIndex(_index),
+			strName("")
+		{
+
+		}
+
+		bool operator > (const STab& other) const
+		{
+			return this->iIndex > other.iIndex;
+		}
+
+		bool operator >= (const STab& other) const
+		{
+			return this->iIndex >= other.iIndex;
+		}
+
+		bool operator < (const STab& other) const
+		{
+			return this->iIndex < other.iIndex;
+		}
+
+		bool operator <= (const STab& other) const
+		{
+			return this->iIndex <= other.iIndex;
+		}
+
+		bool operator == (const STab& other) const
+		{
+			return this->iIndex == other.iIndex;
+		}
+
+		bool operator != (const STab& other) const
+		{
+			return this->iIndex != other.iIndex;
+		}
+
+		string strName;
+		int iIndex;
 	};
 
 	CTOSZeusModule();
@@ -266,7 +308,7 @@ private:
 	std::map<EntityId, _smart_ptr<SOBBWorldPos>> m_boxes; /// боксы выделенных сущностей
 	std::map<EntityId, Vec3> m_selectStartEntitiesPositions;
 	std::map<EntityId, Vec3> m_storedEntitiesPositions;
-	std::map<int, std::vector<SItem>> m_menuItems;
+	std::map<STab, std::vector<SItem>> m_menuItems;
 
 	std::vector<SOnScreenIcon> m_onScreenIcons;
 	EntityId m_mouseOveredEntityId;
