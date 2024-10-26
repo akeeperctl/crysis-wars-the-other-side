@@ -57,9 +57,6 @@ void CTOSZeusModule::InitCVars(IConsole* pConsole)
 	pConsole->Register("tos_sv_zeus_on_screen_offsetY", &tos_sv_zeus_on_screen_offsetY, 0, VF_CHEAT,
 					   "On screen icon 2d offset on Y axis");
 
-	pConsole->Register("tos_sv_zeus_on_screen_update_delay", &tos_sv_zeus_on_screen_update_delay, 0.0f, VF_CHEAT,
-					   "");
-
 	// ZEUS SELECTION
 	pConsole->Register("tos_sv_zeus_selection_ignore_default", &tos_sv_zeus_selection_ignore_default, 1, VF_CHEAT,
 					   "0 - zeus will not ignore entities with class Default when selecting \n1 - zeus will ignore entities with class Default when selecting");
@@ -116,7 +113,6 @@ void CTOSZeusModule::ReleaseCVars()
 	pConsole->UnregisterVariable("tos_sv_zeus_on_screen_far_distance", true);
 	pConsole->UnregisterVariable("tos_sv_zeus_on_screen_offsetX", true);
 	pConsole->UnregisterVariable("tos_sv_zeus_on_screen_offsetY", true);
-	pConsole->UnregisterVariable("tos_sv_zeus_on_screen_update_delay", true);
 
 	pConsole->UnregisterVariable("tos_sv_zeus_selection_always_select_parent", true);
 	pConsole->UnregisterVariable("tos_sv_zeus_selection_ignore_default", true);

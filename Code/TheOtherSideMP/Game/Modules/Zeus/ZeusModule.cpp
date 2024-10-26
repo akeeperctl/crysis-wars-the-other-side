@@ -71,7 +71,6 @@ CTOSZeusModule::CTOSZeusModule()
 	m_mouseOveredEntityId(0),
 	m_mouseDownDurationSec(0),
 	m_draggingMoveStartTimer(0),
-	m_updateIconOnScreenTimer(0),
 	m_mouseRayEntityFlags(ZEUS_DEFAULT_MOUSE_ENT_FLAGS),
 	m_shiftModifier(false),
 	m_ctrlModifier(false),
@@ -140,7 +139,6 @@ void CTOSZeusModule::Reset()
 	m_lastClickedEntityId = m_curClickedEntityId = 0;
 	m_dragTargetId = 0;
 	m_mouseOveredEntityId = 0;
-	m_updateIconOnScreenTimer = TOS_Console::GetSafeFloatVar("tos_sv_zeus_on_screen_update_delay", 0);
 }
 
 bool CTOSZeusModule::OnInputEvent(const SInputEvent& event)
@@ -1318,19 +1316,11 @@ void CTOSZeusModule::Update(float frametime)
 
 	// Отрисовка флэш иконок под сущностями
 	///////////////////////////////////////////////////////////////////////
-	if (m_updateIconOnScreenTimer > 0.0f)
-		m_updateIconOnScreenTimer -= frametime;
+	IActor* pClientActor = g_pGame->GetIGameFramework()->GetClientActor();
+	if (!pClientActor)
+		return;
 
-	if (m_updateIconOnScreenTimer <= 0.0f)
-	{
-		m_updateIconOnScreenTimer = TOS_Console::GetSafeFloatVar("tos_sv_zeus_on_screen_update_delay", 0);
-
-		IActor* pClientActor = g_pGame->GetIGameFramework()->GetClientActor();
-		if (!pClientActor)
-			return;
-
-		UpdateOnScreenIcons(pClientActor);
-	}
+	UpdateOnScreenIcons(pClientActor);
 
 	// Отрисовка квадрата выделенных сущностей
 	///////////////////////////////////////////////////////////////////////

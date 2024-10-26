@@ -275,7 +275,6 @@ private:
 	EntityId m_dragTargetId; // Сущность на которую перетаскивают
 	EntityId m_orderTargetId;
 
-	float m_updateIconOnScreenTimer;
 	float m_draggingMoveStartTimer; /// Таймер начала перемещения сущностей после включения перетаскивания
 	float m_mouseDownDurationSec; /// используется для включения режима выделения нескольких объектов одновременно
 	bool m_doubleClick;
@@ -310,7 +309,6 @@ private:
 	int tos_sv_zeus_on_screen_far_distance;
 	int tos_sv_zeus_on_screen_offsetX;
 	int tos_sv_zeus_on_screen_offsetY;
-	float tos_sv_zeus_on_screen_update_delay;
 
 	int tos_sv_zeus_dragging_move_boxes_separately;
 	int tos_sv_zeus_selection_ignore_default;
