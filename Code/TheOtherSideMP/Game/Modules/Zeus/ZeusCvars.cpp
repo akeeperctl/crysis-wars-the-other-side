@@ -31,8 +31,8 @@ void CTOSZeusModule::InitCVars(IConsole* pConsole)
 	pConsole->Register("tos_sv_zeus_dragging_move_start_delay", &tos_sv_zeus_dragging_move_start_delay, 0.05f, VF_CHEAT,
 					   "Delay in sec in starting to move entities after enabling drag and drop");
 
-	pConsole->Register("tos_sv_zeus_dragging_move_boxes_separately", &tos_sv_zeus_dragging_move_boxes_separately, 1, VF_CHEAT,
-					   "0 - entities and selection boxes move together in realtime. Copying with 0 cause move bug \n1 - selection boxes move separately from entities");
+	//pConsole->Register("tos_sv_zeus_dragging_move_boxes_separately", &tos_sv_zeus_dragging_move_boxes_separately, 1, VF_CHEAT,
+	//				   "0 - entities and selection boxes move together in realtime. Copying with 0 cause move bug \n1 - selection boxes move separately from entities");
 
 
 	// ZEUS ON SCREEN ICONS

@@ -1127,11 +1127,11 @@ bool CTOSZeusModule::UpdateDraggedEntity(EntityId id, const IEntity* pClickedEnt
 
 		container[id]->wPos = newPos;
 
-		if (TOS_Console::GetSafeIntVar("tos_sv_zeus_dragging_move_boxes_separately", 0) == 0)
-		{
-			mat34.SetTranslation(container[id]->wPos);
-			pEntity->SetWorldTM(mat34);
-		}
+		//if (TOS_Console::GetSafeIntVar("tos_sv_zeus_dragging_move_boxes_separately", 0) == 0)
+		//{
+		//	mat34.SetTranslation(container[id]->wPos);
+		//	pEntity->SetWorldTM(mat34);
+		//}
 	}
 	else
 	{
@@ -1173,11 +1173,11 @@ bool CTOSZeusModule::UpdateDraggedEntity(EntityId id, const IEntity* pClickedEnt
 
 			container[id]->wPos = newPos;
 
-			if (TOS_Console::GetSafeIntVar("tos_sv_zeus_dragging_move_boxes_separately", 0) == 0)
-			{
-				mat34.SetTranslation(container[id]->wPos);
-				pEntity->SetWorldTM(mat34);
-			}
+			//if (TOS_Console::GetSafeIntVar("tos_sv_zeus_dragging_move_boxes_separately", 0) == 0)
+			//{
+			//	mat34.SetTranslation(container[id]->wPos);
+			//	pEntity->SetWorldTM(mat34);
+			//}
 		}
 		else
 		{
@@ -1186,13 +1186,13 @@ bool CTOSZeusModule::UpdateDraggedEntity(EntityId id, const IEntity* pClickedEnt
 			container[id]->wPos = curPos;
 			container[id]->obb.m33 = Matrix33(rot);
 
-			if (TOS_Console::GetSafeIntVar("tos_sv_zeus_dragging_move_boxes_separately", 0) == 0)
-			{
-				// Чтобы не падали сущности на высоте
-				mat34.SetTranslation(Vec3(container[id]->wPos.x, container[id]->wPos.y, m_storedEntitiesPositions[id].z));
-				pEntity->SetWorldTM(mat34);
-				pEntity->SetRotation(rot);
-			}
+			//if (TOS_Console::GetSafeIntVar("tos_sv_zeus_dragging_move_boxes_separately", 0) == 0)
+			//{
+			//	// Чтобы не падали сущности на высоте
+			//	mat34.SetTranslation(Vec3(container[id]->wPos.x, container[id]->wPos.y, m_storedEntitiesPositions[id].z));
+			//	pEntity->SetWorldTM(mat34);
+			//	pEntity->SetRotation(rot);
+			//}
 		}
 	}
 

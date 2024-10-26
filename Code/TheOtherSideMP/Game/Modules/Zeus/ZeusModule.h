@@ -310,7 +310,6 @@ private:
 	int tos_sv_zeus_on_screen_offsetX;
 	int tos_sv_zeus_on_screen_offsetY;
 
-	int tos_sv_zeus_dragging_move_boxes_separately;
 	int tos_sv_zeus_selection_ignore_default;
 	int tos_sv_zeus_selection_ignore_basic_entity;
 	int tos_sv_zeus_selection_ignore_rigid_body;
