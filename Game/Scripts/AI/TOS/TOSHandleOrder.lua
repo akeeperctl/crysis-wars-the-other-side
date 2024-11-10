@@ -132,6 +132,18 @@ function AIBehaviour.DEFAULT:TestSignal(entity, sender, data)
     System.LogAlways(string.format("[AI_SIGNAL] <TestSignal> entity: %s, sender: %s, data: %s", entName, sender:GetName(), table.dump(data)))
 end
 
+function StopOrder(executorId)
+    local executor = System.GetEntity(executorId)
+    local order = executor.currentExecutedOrder
+
+    if (order == EOrders.AI_ENTERVEHICLE) then
+        TOS_AI.SendSignal(SIGNALFILTER_SENDER, AISIGNAL_DEFAULT, "AI_ENTERVEHICLE_ENDED", executor.id)
+    elseif (order == EOrders.AI_GOTO) then
+        TOS_AI.SendSignal(SIGNALFILTER_SENDER, AISIGNAL_DEFAULT, "AI_GOTO_ENDED", executor.id)
+    end
+
+end
+
 function OnOrderComplete(executor)
     Zeus.OnOrderComplete(executor.id)
 end

@@ -258,6 +258,16 @@ bool CTOSZeusModule::OnInputEvent(const SInputEvent& event)
 				ShowMouse(!m_spaceFreeCam);
 			}
 		}
+		else if (event.keyId == EKeyId::eKI_X)
+		{
+			if (event.state == EInputState::eIS_Pressed)
+			{
+				auto it = m_selectedEntities.cbegin();
+				auto end = m_selectedEntities.cend();
+				for (; it != end; it++)
+					StopOrder(*it);
+			}
+		}
 	}
 	else if (event.deviceId == EDeviceId::eDI_Mouse)
 	{
@@ -1474,6 +1484,17 @@ void CTOSZeusModule::UpdateOrderIcons()
 void CTOSZeusModule::CreateOrder(EntityId executorId, const SOrder& info)
 {
 	m_orders[executorId] = info;
+}
+
+void CTOSZeusModule::StopOrder(EntityId executorId) const
+{
+	IScriptSystem* pSS = gEnv->pScriptSystem;
+	if (pSS->ExecuteFile("Scripts/AI/TOS/TOSHandleOrder.lua", true, false))
+	{
+		pSS->BeginCall("StopOrder");
+		pSS->PushFuncParam(ScriptHandle(executorId));
+		pSS->EndCall();
+	}
 }
 
 void CTOSZeusModule::RemoveOrder(EntityId executorId)
