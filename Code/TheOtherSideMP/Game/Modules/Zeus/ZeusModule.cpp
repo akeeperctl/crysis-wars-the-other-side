@@ -769,7 +769,10 @@ void CTOSZeusModule::OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eH
 								// Actor перетаскивают на Vehicle
 								IVehicle* pDragVehicle = TOS_GET_VEHICLE(dragTargetId);
 								if (pDragVehicle && TOS_Vehicle::Enter(pSelectedActor, pDragVehicle, true))
+								{
+									needDeselect = true;
 									moveSelectedEnt = false;
+								}
 							}
 							else if (pSelectedItem)
 							{
@@ -1027,10 +1030,12 @@ void CTOSZeusModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent&
 		{
 			if (m_zeus && IsSelectedEntity(pEntity->GetId()))
 			{
-				auto pVehEntity = TOS_GET_ENTITY(event.int_value);
+				const auto pVehEntity = TOS_GET_ENTITY(event.int_value);
 				if (pVehEntity)
 				{
-					DeselectEntity(pEntity->GetId());
+					if (!m_dragging)
+						DeselectEntity(pEntity->GetId());
+
 					SelectEntity(pVehEntity->GetId());
 				}
 			}
