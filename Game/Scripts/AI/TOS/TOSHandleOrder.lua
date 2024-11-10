@@ -131,3 +131,7 @@ function AIBehaviour.DEFAULT:TestSignal(entity, sender, data)
 
     System.LogAlways(string.format("[AI_SIGNAL] <TestSignal> entity: %s, sender: %s, data: %s", entName, sender:GetName(), table.dump(data)))
 end
+
+function OnOrderComplete(executor)
+    Zeus.OnOrderComplete(executor.id)
+end

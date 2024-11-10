@@ -104,4 +104,5 @@ function AIBehaviour.DEFAULT:AI_GOTO_ENDED(entity, sender)
     end
 
     TOS_AI.SelectPipe(AIGOALPIPE_SAMEPRIORITY, entity, "do_it_standing")
+    OnOrderComplete(entity)
 end

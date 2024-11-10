@@ -35,6 +35,7 @@ class CTOSZeusModule : public CTOSGenericModule, IHardwareMouseEventListener, IF
 {
 public:
 	friend class CHUD;
+	friend class CScriptBind_Zeus;
 
 	struct SUnitIcon
 	{
@@ -195,49 +196,37 @@ public:
 
 	//ITOSGameModule
 	bool        OnInputEvent(const SInputEvent& event);
-	bool        OnInputEventUI(const SInputEvent& event)
-	{
-		return false;
-	};
+	bool        OnInputEventUI(const SInputEvent& event);
 	void        OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event);
 	void        GetMemoryStatistics(ICrySizer* s);
-	const char* GetName()
-	{
-		return "ModuleZeus";
-	};
+	const char* GetName();
 	void        Init();
 	void        Update(float frametime);
-	void		UpdateUnitIcons(IActor* pClientActor);
-	void		UpdateOrderIcons();
 	void        Serialize(TSerialize ser);
-	int GetDebugLog()
-	{
-		return m_debugLogMode;
-	}
-
-	void InitCVars(IConsole* pConsole);
-	void InitCCommands(IConsole* pConsole);
-	void ReleaseCVars();
-	void ReleaseCCommands();
+	int			GetDebugLog();
+	void		InitCVars(IConsole* pConsole);
+	void		InitCCommands(IConsole* pConsole);
+	void		InitScriptBinds();
+	void		ReleaseCVars();
+	void		ReleaseCCommands();
+	void		ReleaseScriptBinds();
 	//~ITOSGameModule
-
-	void SaveEntitiesStartPositions();
-
-	// Фильтр на сущности. True - сущность можно выбрать, false - нельзя
-	bool SelectionFilter(EntityId id) const;
 
 	//IHardwareMouseEventListener
 	void OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eHardwareMouseEvent);
 	//~IHardwareMouseEventListener
-
+	
 	//IFSCommandHandler
 	void HandleFSCommand(const char* pCommand, const char* pArgs);
 	//~IFSCommandHandler
 
+	// Фильтр на сущности. True - сущность можно выбрать, false - нельзя
+	bool SelectionFilter(EntityId id) const;
+	void SaveEntitiesStartPositions();
+
 	void NetMakePlayerZeus(IActor* pPlayer);
 	void NetSetZeusPP(int amount);
 	int  NetGetZeusPP();
-
 	void SetZeusFlag(uint flag, bool value);
 	bool GetZeusFlag(uint flag) const;
 	void Reset();
@@ -246,7 +235,10 @@ public:
 	static void CmdReloadMenuItems(IConsoleCmdArgs* pArgs);
 
 private:
-	void UpdateDebug(bool zeusMoving, const Vec3& zeusDynVec);
+	void UpdateUnitIcons(IActor* pClientActor);
+	void UpdateOrderIcons();
+	void CreateOrder(EntityId executorId, const SOrder& info);
+	void RemoveOrder(EntityId executorId);
 
 	/// @brief Проекция координат мыши в мир от камеры
 	/// @param ray - структура луча
@@ -263,18 +255,18 @@ private:
 	/// @param heightAutoCalc Флаг, указывающий, нужно ли автоматически вычислять высоту перетаскиваемого объекта.
 	/// @return true, если обновление прошло успешно, иначе false.
 	bool UpdateDraggedEntity(EntityId id, const IEntity* pClickedEntity, IPhysicalEntity* pZeusPhys, std::map<EntityId, _smart_ptr<SOBBWorldPos>>& container, bool heightAutoCalc);
+	void UpdateDebug(bool zeusMoving, const Vec3& zeusDynVec);
+
+	void OnEntityIconPressed(IEntity* pEntity);
+	EntityId GetMouseEntityId();
+
+	/// @brief Получить сущности, находящиеся в границах выделенной через мышь области 
+	void GetSelectedEntities();
 
 	/// Можно ли выбрать сущности выделением нескольких сразу?
 	bool CanSelectMultiplyWithBox() const;
 
-	void OnEntityIconPressed(IEntity* pEntity);
-
-	/// @brief Получить сущности, находящиеся в границах выделенной через мышь области 
-	void GetSelectedEntities();
-	EntityId GetMouseEntityId();
-
 	void DeselectEntities();
-
 	std::set<EntityId>::iterator DeselectEntity(EntityId id);
 	void SelectEntity(EntityId id);
 	bool IsSelectedEntity(EntityId id);
@@ -283,7 +275,6 @@ private:
 	/// @param id Идентификатор выбранной сущности.
 	void HandleOnceSelection(EntityId id);
 	void ShowMouse(bool show);
-
 	void ApplyZeusProperties(IActor* pPlayer);
 
 	//Выполнить команду всем выделенным сущностям
@@ -302,6 +293,7 @@ private:
 	void HUDFlashUpdateOrderIcons();
 	void HUDInit();
 	void HUDInGamePostUpdate(float frametime);
+	bool HUDIsShowZeusMenu() const;
 	void HUDUnloadSimpleAssets(bool unload);
 	void HUDShowPlayerHUD(bool show);
 	void HUDUpdateZeusMenuItemList(const char* szPageIdx);
@@ -311,15 +303,13 @@ private:
 	bool MenuLoadItems();
 
 public:
-	bool HUDIsShowZeusMenu() const;
 	static std::map<string, string> s_classToConsoleVar;
 
 private:
+	CScriptBind_Zeus* m_pZeusScriptBind;
 	IPersistantDebug* m_pPersistantDebug;
-	
-	string m_menuFilename;
-
 	CTOSPlayer* m_zeus;
+	string m_menuFilename;
 	ray_hit m_mouseRay;
 	uint m_menuCurrentPage;
 	uint m_zeusFlags;
@@ -345,7 +335,7 @@ private:
 	std::map<EntityId, _smart_ptr<SOBBWorldPos>> m_boxes; /// боксы выделенных сущностей
 	std::map<EntityId, Vec3> m_selectStartEntitiesPositions;
 	std::map<EntityId, Vec3> m_storedEntitiesPositions;
-	std::map<EntityId, SOrder> m_storedOrders;
+	std::map<EntityId, SOrder> m_orders;
 	std::map<STab, std::vector<SItem>> m_menuItems;
 	std::vector<SUnitIcon> m_unitIcons;
 	std::vector<SOrderIcon> m_orderIcons;

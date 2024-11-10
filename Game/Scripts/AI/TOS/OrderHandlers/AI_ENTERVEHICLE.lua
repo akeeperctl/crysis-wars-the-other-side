@@ -137,4 +137,5 @@ function AIBehaviour.DEFAULT:AI_ENTERVEHICLE_ENDED(entity, sender)
     end
 
     CLEAR_DATA_AI_ENTERVEHICLE(entity)
+    OnOrderComplete(entity)
 end

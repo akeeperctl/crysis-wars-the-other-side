@@ -13,6 +13,7 @@ Copyright (C), AlienKeeper, 2024.
 #include <IInput.h>
 #include "ScriptBinds\ScriptBind_Custom.h"
 #include "FGPS\FGPluginLoader.h"
+#include "ScriptBinds/ScriptBind_Zeus.h"
 
 class CGameFlashAnimation;
 

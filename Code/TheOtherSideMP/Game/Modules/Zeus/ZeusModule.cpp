@@ -86,7 +86,8 @@ CTOSZeusModule::CTOSZeusModule()
 	m_menuSpawnHandling(false),
 	m_spaceFreeCam(false),
 	m_mouseDisplayed(false),
-	m_pPersistantDebug(nullptr)
+	m_pPersistantDebug(nullptr),
+	m_pZeusScriptBind(nullptr)
 {}
 
 CTOSZeusModule::~CTOSZeusModule()
@@ -104,6 +105,16 @@ void CTOSZeusModule::Init()
 	Reset();
 
 	m_pPersistantDebug = gEnv->pGame->GetIGameFramework()->GetIPersistantDebug();
+}
+
+void CTOSZeusModule::InitScriptBinds()
+{
+	m_pZeusScriptBind = new CScriptBind_Zeus(gEnv->pSystem, g_pGame->GetIGameFramework());
+}
+
+void CTOSZeusModule::ReleaseScriptBinds()
+{
+	SAFE_DELETE(m_pZeusScriptBind);
 }
 
 void CTOSZeusModule::Reset()
@@ -135,7 +146,7 @@ void CTOSZeusModule::Reset()
 	m_selectedEntities.clear();
 	m_selectStartEntitiesPositions.clear();
 	m_storedEntitiesPositions.clear();
-	m_storedOrders.clear();
+	m_orders.clear();
 	m_boxes.clear();
 
 	m_lastClickedEntityId = m_curClickedEntityId = 0;
@@ -265,6 +276,11 @@ bool CTOSZeusModule::OnInputEvent(const SInputEvent& event)
 	}
 
 	return true;
+}
+
+bool CTOSZeusModule::OnInputEventUI(const SInputEvent& event)
+{
+	return false;
 }
 
 bool CTOSZeusModule::CanSelectMultiplyWithBox() const
@@ -1069,6 +1085,11 @@ void CTOSZeusModule::GetMemoryStatistics(ICrySizer* s)
 	s->AddContainer(m_boxes);
 }
 
+const char* CTOSZeusModule::GetName()
+{
+	return "ModuleZeus";
+}
+
 int CTOSZeusModule::MouseProjectToWorld(ray_hit& ray, const Vec3& mouseWorldPos, uint entityFlags, bool boxDistanceAdjustment)
 {
 	if (!m_zeus || !m_zeus->GetEntity() || !m_zeus->GetEntity()->GetPhysics())
@@ -1436,19 +1457,28 @@ void CTOSZeusModule::UpdateOrderIcons()
 	auto end = m_selectedEntities.cend();
 	for (; it != end; it++)
 	{
-		// отрисовка иконки
-		auto foundIt = m_storedOrders.find(*it);
-		if (foundIt != m_storedOrders.end())
+		auto foundIt = m_orders.find(*it);
+		if (foundIt != m_orders.end())
 		{
-			SOrder* icon = &foundIt->second;
-			auto pTarget = TOS_GET_ENTITY(icon->targetId);
+			SOrder* order = &foundIt->second;
+			auto pTarget = TOS_GET_ENTITY(order->targetId);
 			if (pTarget)
-				icon->pos = pTarget->GetWorldPos();
+				order->pos = pTarget->GetWorldPos();
 
-			HUDCreateOrderIcon(icon->pos);
-			HUDCreateOrderLine(foundIt->first, icon->pos);
+			HUDCreateOrderIcon(order->pos);
+			HUDCreateOrderLine(foundIt->first, order->pos);
 		}
 	}
+}
+
+void CTOSZeusModule::CreateOrder(EntityId executorId, const SOrder& info)
+{
+	m_orders[executorId] = info;
+}
+
+void CTOSZeusModule::RemoveOrder(EntityId executorId)
+{
+	m_orders.erase(executorId);
 }
 
 void CTOSZeusModule::UpdateDebug(bool zeusMoving, const Vec3& zeusDynVec)
@@ -1541,9 +1571,9 @@ void CTOSZeusModule::UpdateDebug(bool zeusMoving, const Vec3& zeusDynVec)
 		{
 			TOS_Debug::DrawEntitiesName2DLabel(m_doubleClickLastSelectedEntities, "DC Selected Entities: ", 300, startY + deltaY * 19, deltaY);
 		}		
-		if (!m_storedOrders.empty())
+		if (!m_orders.empty())
 		{
-			TOS_Debug::DrawEntitiesName2DLabelMap(m_storedOrders, "Orders: ", 100, startY + deltaY * 20, deltaY);
+			TOS_Debug::DrawEntitiesName2DLabelMap(m_orders, "Orders: ", 100, startY + deltaY * 20, deltaY);
 		}
 
 		// Вывод текстовой отладки кликнутой сущности
@@ -1603,6 +1633,11 @@ void CTOSZeusModule::UpdateDebug(bool zeusMoving, const Vec3& zeusDynVec)
 void CTOSZeusModule::Serialize(TSerialize ser)
 {
 
+}
+
+int CTOSZeusModule::GetDebugLog()
+{
+	return m_debugLogMode;
 }
 
 void CTOSZeusModule::SetZeusFlag(uint flag, bool value)
@@ -1872,21 +1907,20 @@ bool CTOSZeusModule::ExecuteCommand(EZeusCommands command)
 				SOrder order;
 				order.pos = m_orderPos;
 				order.targetId = m_orderTargetId;
-
-				m_storedOrders[id] = order;
+				CreateOrder(id, order);
 
 				IScriptSystem* pSS = gEnv->pScriptSystem;
 				if (pSS->ExecuteFile("Scripts/AI/TOS/TOSHandleOrder.lua", true, true))
 				{
-					CScriptSetGetChain executor(m_executorInfo);
-					executor.SetValue("entityId", id);
-					executor.SetValue("maxCount", int(m_selectedEntities.size())); // макс. кол-во исполнителей
-					executor.SetValue("index", int(index)); // текущий номер исполнителя
+					CScriptSetGetChain executorChain(m_executorInfo);
+					executorChain.SetValue("entityId", id);
+					executorChain.SetValue("maxCount", int(m_selectedEntities.size())); // макс. кол-во исполнителей
+					executorChain.SetValue("index", int(index)); // текущий номер исполнителя
 
-					CScriptSetGetChain order(m_orderInfo);
-					order.SetValue("goalPipeId", id); // так надо
-					order.SetValue("pos", m_orderPos);
-					order.SetValue("targetId", m_orderTargetId);
+					CScriptSetGetChain orderChain(m_orderInfo);
+					orderChain.SetValue("goalPipeId", id); // так надо
+					orderChain.SetValue("pos", order.pos);
+					orderChain.SetValue("targetId", order.targetId);
 
 					pSS->BeginCall("HandleOrder");
 					pSS->PushFuncParam(m_executorInfo);

@@ -906,6 +906,9 @@
     <ClCompile Include="TheOtherSideMP\Game\Modules\Zeus\ZeusClientServer.cpp">
       <Filter>TheOtherSideMP\Game\Modules\Zeus</Filter>
     </ClCompile>
+    <ClCompile Include="TheOtherSideMP\Game\ScriptBinds\ScriptBind_Zeus.cpp">
+      <Filter>TheOtherSideMP\Game\ScriptBinds</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor.h">
@@ -1603,6 +1606,9 @@
     </ClInclude>
     <ClInclude Include="TheOtherSideMP\AI\AICommon.h">
       <Filter>TheOtherSideMP\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="TheOtherSideMP\Game\ScriptBinds\ScriptBind_Zeus.h">
+      <Filter>TheOtherSideMP\Game\ScriptBinds</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

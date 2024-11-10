@@ -88,6 +88,10 @@ class CHUD : public CHUDCommon,
 	friend class CHUDScopes;
 	friend class CHUDCrosshair;
 
+	//TheOtherSide
+	friend class CTOSZeusModule;
+	//~TheOtherSide
+
 public:
 
 	//current mission objectives
