@@ -702,6 +702,9 @@ public:
 		return m_currentGameRules;
 	}
 
+	//TheOtherSide
+	void GetProjectionScale(CGameFlashAnimation* pGameFlashAnimation, float* pfScaleX, float* pfScaleY, float* pfHalfUselessSize);
+	//~TheOtherSide
 
 private:
 	//some Update functions
@@ -745,7 +748,9 @@ private:
 	}
 
 	//helper funcs
-	void GetProjectionScale(CGameFlashAnimation* pGameFlashAnimation, float* pfScaleX, float* pfScaleY, float* pfHalfUselessSize);
+	//TheOtherSide
+	//void GetProjectionScale(CGameFlashAnimation* pGameFlashAnimation, float* pfScaleX, float* pfScaleY, float* pfHalfUselessSize);
+	//~TheOtherSide
 	bool WeaponHasAttachments();
 
 	bool ShowWeaponAccessories(bool enable);

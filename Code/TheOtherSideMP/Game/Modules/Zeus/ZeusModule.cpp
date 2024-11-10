@@ -135,7 +135,9 @@ void CTOSZeusModule::Reset()
 	m_selectedEntities.clear();
 	m_selectStartEntitiesPositions.clear();
 	m_storedEntitiesPositions.clear();
+	m_storedOrders.clear();
 	m_boxes.clear();
+
 	m_lastClickedEntityId = m_curClickedEntityId = 0;
 	m_dragTargetId = 0;
 	m_mouseOveredEntityId = 0;
@@ -575,11 +577,11 @@ void CTOSZeusModule::OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eH
 			eCursorState = SFlashCursorEvent::eCursorReleased;
 		}
 
-		if (m_animZeusScreenIcons.IsLoaded())
+		if (m_animZeusUnitIcons.IsLoaded())
 		{
 			int x(iX), y(iY);
-			m_animZeusScreenIcons.GetFlashPlayer()->ScreenToClient(x, y);
-			m_animZeusScreenIcons.GetFlashPlayer()->SendCursorEvent(SFlashCursorEvent(eCursorState, x, y));
+			m_animZeusUnitIcons.GetFlashPlayer()->ScreenToClient(x, y);
+			m_animZeusUnitIcons.GetFlashPlayer()->SendCursorEvent(SFlashCursorEvent(eCursorState, x, y));
 		}		
 		
 		if (m_animZeusMenu.IsLoaded())
@@ -770,8 +772,8 @@ void CTOSZeusModule::OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eH
 								IVehicle* pDragVehicle = TOS_GET_VEHICLE(dragTargetId);
 								if (pDragVehicle && TOS_Vehicle::Enter(pSelectedActor, pDragVehicle, true))
 								{
-									needDeselect = true;
 									moveSelectedEnt = false;
+									needDeselect = true;
 								}
 							}
 							else if (pSelectedItem)
@@ -1063,7 +1065,7 @@ void CTOSZeusModule::GetMemoryStatistics(ICrySizer* s)
 	s->AddContainer(m_doubleClickLastSelectedEntities);
 	s->AddContainer(m_selectStartEntitiesPositions);
 	s->AddContainer(m_storedEntitiesPositions);
-	s->AddContainer(m_onScreenIcons);
+	s->AddContainer(m_unitIcons);
 	s->AddContainer(m_boxes);
 }
 
@@ -1257,6 +1259,10 @@ void CTOSZeusModule::Update(float frametime)
 		for (auto it = m_selectedEntities.cbegin(); it != m_selectedEntities.cend(); it++)
 		{
 			const auto id = *it;
+			// TODO добавить отображение линии и позиции текущего приказа выделенной сущности
+			// если приказа нет, то ничего не выводить
+			// TODO сделать дублирование иконки приказа, по аналогии с иконками сущностей
+
 			if (!UpdateDraggedEntity(id, pClickedEntity, pZeusPhys, m_boxes, autoEntitiesHeight))
 				continue;
 		}
@@ -1316,7 +1322,8 @@ void CTOSZeusModule::Update(float frametime)
 	if (!pClientActor)
 		return;
 
-	UpdateOnScreenIcons(pClientActor);
+	UpdateUnitIcons(pClientActor);
+	UpdateOrderIcons();
 
 	// Отрисовка квадрата выделенных сущностей
 	///////////////////////////////////////////////////////////////////////
@@ -1334,7 +1341,7 @@ void CTOSZeusModule::Update(float frametime)
 	UpdateDebug(zeusMoving, zeus_dyn.v);
 }
 
-void CTOSZeusModule::UpdateOnScreenIcons(IActor* pClientActor)
+void CTOSZeusModule::UpdateUnitIcons(IActor* pClientActor)
 {
 	IEntityItPtr pIt = gEnv->pEntitySystem->GetEntityIterator();
 	while (!pIt->IsEnd())
@@ -1366,10 +1373,9 @@ void CTOSZeusModule::UpdateOnScreenIcons(IActor* pClientActor)
 			if (id == pClientActor->GetEntityId())
 				continue;
 
+			//skip further calculations if the entity is not visible at all...
 			AABB worldBounds;
 			pEntity->GetWorldBounds(worldBounds);
-
-			//skip further calculations if the entity is not visible at all...
 			if (gEnv->pSystem->GetViewCamera().IsAABBVisible_F(worldBounds) == CULL_EXCLUSION)
 				continue;
 
@@ -1419,7 +1425,28 @@ void CTOSZeusModule::UpdateOnScreenIcons(IActor* pClientActor)
 					icon = eZSI_Rifle;
 			}
 
-			HUDUpdateOnScreenIcon(id, color, icon, Vec3(0, 0, 0));
+			HUDCreateUnitIcon(id, color, icon, Vec3(0, 0, 0));
+		}
+	}
+}
+
+void CTOSZeusModule::UpdateOrderIcons()
+{
+	auto it = m_selectedEntities.cbegin();
+	auto end = m_selectedEntities.cend();
+	for (; it != end; it++)
+	{
+		// отрисовка иконки
+		auto foundIt = m_storedOrders.find(*it);
+		if (foundIt != m_storedOrders.end())
+		{
+			SOrder* icon = &foundIt->second;
+			auto pTarget = TOS_GET_ENTITY(icon->targetId);
+			if (pTarget)
+				icon->pos = pTarget->GetWorldPos();
+
+			HUDCreateOrderIcon(icon->pos);
+			HUDCreateOrderLine(foundIt->first, icon->pos);
 		}
 	}
 }
@@ -1513,6 +1540,10 @@ void CTOSZeusModule::UpdateDebug(bool zeusMoving, const Vec3& zeusDynVec)
 		if (!m_doubleClickLastSelectedEntities.empty())
 		{
 			TOS_Debug::DrawEntitiesName2DLabel(m_doubleClickLastSelectedEntities, "DC Selected Entities: ", 300, startY + deltaY * 19, deltaY);
+		}		
+		if (!m_storedOrders.empty())
+		{
+			TOS_Debug::DrawEntitiesName2DLabelMap(m_storedOrders, "Orders: ", 100, startY + deltaY * 20, deltaY);
 		}
 
 		// Вывод текстовой отладки кликнутой сущности
@@ -1830,18 +1861,6 @@ bool CTOSZeusModule::ExecuteCommand(EZeusCommands command)
 			}
 			case eZC_OrderSelected:
 			{
-				//auto pEntity = TOS_GET_ENTITY(id);
-				//if (pEntity)
-				//{
-				//	auto pAI = pEntity->GetAI();
-				//	if (pAI)
-				//	{
-				//		auto pCAIActor = pAI->CastToCAIActor();
-				//		auto pIAIActor = pAI->CastToIAIActor();
-				//		InitCanAcquireTargetHook(pCAIActor, pIAIActor, pAI);
-				//	}
-				//}
-
 				MouseProjectToWorld(m_mouseRay, m_worldMousePos, m_mouseRayEntityFlags, false);
 				m_orderPos = m_mouseRay.pt;
 
@@ -1849,6 +1868,12 @@ bool CTOSZeusModule::ExecuteCommand(EZeusCommands command)
 				auto pOrderTargetEnt = TOS_GET_ENTITY(m_orderTargetId);
 				if (pOrderTargetEnt)
 					m_orderPos = pOrderTargetEnt->GetWorldPos();
+
+				SOrder order;
+				order.pos = m_orderPos;
+				order.targetId = m_orderTargetId;
+
+				m_storedOrders[id] = order;
 
 				IScriptSystem* pSS = gEnv->pScriptSystem;
 				if (pSS->ExecuteFile("Scripts/AI/TOS/TOSHandleOrder.lua", true, true))

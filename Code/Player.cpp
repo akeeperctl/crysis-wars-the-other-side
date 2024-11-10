@@ -1799,7 +1799,7 @@ IEntity *CPlayer::LinkToVehicle(EntityId vehicleId)
 
 			//TheOtherSide
 			string vehName = pVehicle->GetEntity()->GetClass()->GetName();
-			TOS_RECORD_EVENT(GetEntityId(), STOSGameEvent(eEGE_ActorEnterVehicle, vehName.c_str(), true, false, 0, 0, pVehicle->GetEntityId()));
+			TOS_RECORD_EVENT(GetEntityId(), STOSGameEvent(eEGE_ActorEnterVehicle, vehName.c_str(), true, false, 0, 0.0f, pVehicle->GetEntityId()));
 			//~TheOtherSide
 		}
 

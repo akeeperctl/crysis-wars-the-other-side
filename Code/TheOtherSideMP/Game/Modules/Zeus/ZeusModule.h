@@ -34,9 +34,11 @@ enum EZeusCommands
 class CTOSZeusModule : public CTOSGenericModule, IHardwareMouseEventListener, IFSCommandHandler
 {
 public:
-	struct SOnScreenIcon
+	friend class CHUD;
+
+	struct SUnitIcon
 	{
-		SOnScreenIcon(EntityId _id, int _x, int _y, int _icontype, int _friendly, float _distance, float _size, float _rotation, int _healthValue, int _selected)
+		SUnitIcon(EntityId _id, int _x, int _y, int _icontype, int _friendly, float _distance, float _size, float _rotation, int _healthValue, int _selected)
 			: id(_id),
 			x(_x),
 			y(_y),
@@ -60,11 +62,26 @@ public:
 		int healthValue;
 		int selected;
 
-		bool operator ==(const CHUD::SOnScreenIcon& compare) const
+		bool operator ==(const SUnitIcon& compare) const
 		{
 			return id == compare.id;
 		}
 
+	};
+
+	struct SOrderIcon
+	{
+		SOrderIcon(int _x, int _y, float _size)
+			: x(_x),
+			y(_y),
+			size(_size)
+		{
+
+		}
+
+		int x;
+		int y;
+		float size;
 	};
 
 	struct SOBBWorldPos : public STOSSmartStruct
@@ -157,6 +174,22 @@ public:
 		int iIndex;
 	};
 
+	//enum EOrderType
+	//{
+	//	E_ORDER_ENTER_VEHICLE,
+	//	E_ORDER_PICKUP_ITEM,
+	//	E_ORDER_USE_OBJECT,
+	//	E_ORDER_PURSUIT_AND_KILL_TARGET,
+	//	E_ORDER_GOTO,
+	//};
+
+	struct SOrder
+	{
+		Vec3 pos;
+		EntityId targetId;
+		//EOrderType type;
+	};
+
 	CTOSZeusModule();
 	virtual ~CTOSZeusModule();
 
@@ -174,7 +207,8 @@ public:
 	};
 	void        Init();
 	void        Update(float frametime);
-	void UpdateOnScreenIcons(IActor* pClientActor);
+	void		UpdateUnitIcons(IActor* pClientActor);
+	void		UpdateOrderIcons();
 	void        Serialize(TSerialize ser);
 	int GetDebugLog()
 	{
@@ -243,6 +277,7 @@ private:
 
 	std::set<EntityId>::iterator DeselectEntity(EntityId id);
 	void SelectEntity(EntityId id);
+	bool IsSelectedEntity(EntityId id);
 
 	/// @brief Обрабатывает однократный выбор сущности.
 	/// @param id Идентификатор выбранной сущности.
@@ -260,14 +295,15 @@ private:
 	/// @param friendly 0 - серый, 1 - синий, 2 - красный
 	/// @param iconType - номер иконки
 	/// @param localOffset - локальное смещение иконки
-	void HUDUpdateOnScreenIcon(EntityId objective, int friendly, int iconType, const Vec3 localOffset);
-	void HUDUpdateAllZeusUnitIcons();
-
+	void HUDCreateUnitIcon(EntityId objective, int friendly, int iconType, const Vec3 localOffset);
+	void HUDCreateOrderIcon(const Vec3& worldPos);
+	void HUDCreateOrderLine(EntityId executor, const Vec3& orderWorldPos);
+	void HUDFlashUpdateUnitIcons();
+	void HUDFlashUpdateOrderIcons();
 	void HUDInit();
 	void HUDInGamePostUpdate(float frametime);
 	void HUDUnloadSimpleAssets(bool unload);
 	void HUDShowPlayerHUD(bool show);
-
 	void HUDUpdateZeusMenuItemList(const char* szPageIdx);
 	bool HUDShowZeusMenu(bool show);
 
@@ -275,6 +311,7 @@ private:
 	bool MenuLoadItems();
 
 public:
+	bool HUDIsShowZeusMenu() const;
 	static std::map<string, string> s_classToConsoleVar;
 
 private:
@@ -308,9 +345,11 @@ private:
 	std::map<EntityId, _smart_ptr<SOBBWorldPos>> m_boxes; /// боксы выделенных сущностей
 	std::map<EntityId, Vec3> m_selectStartEntitiesPositions;
 	std::map<EntityId, Vec3> m_storedEntitiesPositions;
+	std::map<EntityId, SOrder> m_storedOrders;
 	std::map<STab, std::vector<SItem>> m_menuItems;
+	std::vector<SUnitIcon> m_unitIcons;
+	std::vector<SOrderIcon> m_orderIcons;
 
-	std::vector<SOnScreenIcon> m_onScreenIcons;
 	EntityId m_mouseOveredEntityId;
 	EntityId m_curClickedEntityId;
 	EntityId m_lastClickedEntityId;
@@ -333,7 +372,8 @@ private:
 	bool m_mouseDisplayed;
 
 	//HUD
-	CGameFlashAnimation m_animZeusScreenIcons;
+	CGameFlashAnimation m_animZeusUnitIcons;
+	CGameFlashAnimation m_animZeusOrderIcons;
 	CGameFlashAnimation m_animZeusMenu;
 
 	// Консольные значения

@@ -15,8 +15,11 @@ Copyright (C), AlienKeeper, 2024.
 
 void CTOSZeusModule::HUDInit()
 {
-	m_animZeusScreenIcons.Load("Libs/UI/HUD_Zeus_Icon.swf", eFD_Center, eFAF_Visible);
-	m_animZeusScreenIcons.GetFlashPlayer()->SetFSCommandHandler(this);
+	m_animZeusUnitIcons.Load("Libs/UI/HUD_Zeus_Unit_Icon.swf", eFD_Center, eFAF_Visible);
+	m_animZeusUnitIcons.GetFlashPlayer()->SetFSCommandHandler(this);
+
+	m_animZeusOrderIcons.Load("Libs/UI/HUD_Zeus_Order_Icon.swf", eFD_Center, eFAF_Visible);
+	m_animZeusOrderIcons.GetFlashPlayer()->SetFSCommandHandler(this);
 
 	m_animZeusMenu.Load("Libs/UI/HUD_Zeus_Menu.swf", eFD_Right, eFAF_Visible);
 	m_animZeusMenu.GetFlashPlayer()->SetFSCommandHandler(this);
@@ -83,7 +86,7 @@ void CTOSZeusModule::HandleFSCommand(const char* pCommand, const char* pArgs)
 		const string* const psClassName = &sArgs;
 		IEntityClass* pClass = gEnv->pEntitySystem->GetClassRegistry()->FindClass(psClassName->c_str());
 
-		const string name = string("Zeus") + psClassName->c_str();
+		const string name = string("Zeus_") + psClassName->c_str();
 		params.vanilla.sName = name;
 		params.vanilla.pClass = pClass;
 
@@ -175,22 +178,97 @@ void CTOSZeusModule::HandleFSCommand(const char* pCommand, const char* pArgs)
 
 void CTOSZeusModule::HUDInGamePostUpdate(float frametime)
 {
-	HUDUpdateAllZeusUnitIcons();
+	HUDFlashUpdateUnitIcons();
+	HUDFlashUpdateOrderIcons();
+}
+
+void CTOSZeusModule::HUDCreateOrderIcon(const Vec3& worldPos)
+{
+	const auto pHUD = g_pGame->GetHUD();
+	if (!pHUD)
+		return;
+
+	if (pHUD->GetModalHUD() == &pHUD->m_animScoreBoard)
+		return;
+
+	auto pAnim = &m_animZeusOrderIcons;
+
+	//const int	iMinDist = TOS_Console::GetSafeIntVar("tos_sv_zeus_on_screen_near_distance", 10);
+	//const int	iMaxDist = TOS_Console::GetSafeIntVar("tos_sv_zeus_on_screen_far_distance", 500);
+	//const float	fMinSize = TOS_Console::GetSafeFloatVar("tos_sv_zeus_on_screen_near_size", 1.4f);
+	//const float	fMaxSize = TOS_Console::GetSafeFloatVar("tos_sv_zeus_on_screen_far_size", 0.7f);
+
+	//const auto pPlayerActor = static_cast<CTOSActor*>(gEnv->pGame->GetIGameFramework()->GetClientActor());
+	//const float fDist = (worldPos - pPlayerActor->GetEntity()->GetWorldPos()).len();
+	float fSize = 1.0f;
+
+	//if (fDist <= iMinDist)
+	//{
+	//	fSize = fMinSize;
+	//}
+	//else if (fDist >= iMaxDist)
+	//{
+	//	fSize = fMaxSize;
+	//}
+	//else if (iMaxDist > iMinDist)
+	//{
+	//	const float fA = ((float)iMaxDist - fDist);
+	//	const float fB = (float)(iMaxDist - iMinDist);
+	//	const float fC = (fMinSize - fMaxSize);
+	//	fSize = ((fA / fB) * fC) + fMaxSize;
+	//}
+
+	Vec3 orderScreenPos(ZERO);
+	gEnv->pRenderer->ProjectToScreen(worldPos.x, worldPos.y, worldPos.z, &orderScreenPos.x, &orderScreenPos.y, &orderScreenPos.z);
+
+	float fScaleX = 0.0f;
+	float fScaleY = 0.0f;
+	float fHalfUselessSize = 0.0f;
+	pHUD->GetProjectionScale(pAnim, &fScaleX, &fScaleY, &fHalfUselessSize);
+
+	const float offsetX = TOS_Console::GetSafeFloatVar("tos_sv_zeus_on_screen_offsetX", 0.0f);
+	const float offsetY = TOS_Console::GetSafeFloatVar("tos_sv_zeus_on_screen_offsetY", 0.0f);
+
+	const float transX = orderScreenPos.x * fScaleX + fHalfUselessSize + offsetX;
+	const float transY = orderScreenPos.y * fScaleY + offsetY;
+
+	m_orderIcons.push_back(SOrderIcon(transX, transY, fSize));
+
+}
+
+void CTOSZeusModule::HUDCreateOrderLine(EntityId executor, const Vec3& orderWorldPos)
+{
+	auto pExecutor = gEnv->pEntitySystem->GetEntity(executor);
+	if (!pExecutor)
+		return;
+
+	AABB bounds; 
+	pExecutor->GetWorldBounds(bounds);
+
+	const Vec3 startPos = bounds.GetCenter();
+	const Vec3 endPos = orderWorldPos;
+	const ColorB color = ColorB(167, 167, 167);
+
+	gEnv->pRenderer->GetIRenderAuxGeom()->DrawLine(startPos, color, endPos, color);
 }
 
 void CTOSZeusModule::HUDUnloadSimpleAssets(bool unload)
 {
 	if (!unload)
 	{
-		m_animZeusScreenIcons.Reload();
-		m_animZeusScreenIcons.GetFlashPlayer()->SetFSCommandHandler(this);
+		m_animZeusUnitIcons.Reload();
+		m_animZeusUnitIcons.GetFlashPlayer()->SetFSCommandHandler(this);
+
+		m_animZeusOrderIcons.Reload();
+		m_animZeusOrderIcons.GetFlashPlayer()->SetFSCommandHandler(this);
 
 		m_animZeusMenu.Reload();
 		m_animZeusMenu.GetFlashPlayer()->SetFSCommandHandler(this);
 	}
 	else
 	{
-		m_animZeusScreenIcons.Unload();
+		m_animZeusUnitIcons.Unload();
+		m_animZeusOrderIcons.Unload();
 		m_animZeusMenu.Unload();
 	}
 }
@@ -425,9 +503,9 @@ bool CTOSZeusModule::MenuLoadItems()
 	return true;
 }
 
-void CTOSZeusModule::HUDUpdateOnScreenIcon(EntityId objective, int friendly, int iconType, const Vec3 localOffset)
+void CTOSZeusModule::HUDCreateUnitIcon(EntityId unitEntityId, int friendly, int iconType, const Vec3 localOffset)
 {
-	const auto pAnim = &m_animZeusScreenIcons;
+	const auto pAnim = &m_animZeusUnitIcons;
 
 	const auto pHUD = g_pGame->GetHUD();
 	if (!pHUD)
@@ -436,7 +514,7 @@ void CTOSZeusModule::HUDUpdateOnScreenIcon(EntityId objective, int friendly, int
 	if (pHUD->GetModalHUD() == &pHUD->m_animScoreBoard)
 		return;
 
-	const IEntity* pObjectiveEntity = GetISystem()->GetIEntitySystem()->GetEntity(objective);
+	const IEntity* pObjectiveEntity = GetISystem()->GetIEntitySystem()->GetEntity(unitEntityId);
 	if (!pObjectiveEntity)
 		return;
 
@@ -493,24 +571,24 @@ void CTOSZeusModule::HUDUpdateOnScreenIcon(EntityId objective, int friendly, int
 	const float rotation = 0.0f;
 	const int healthValue = 100;
 
-	const auto iter = stl::binary_find(m_selectedEntities.cbegin(), m_selectedEntities.cend(), objective);
+	const auto iter = stl::binary_find(m_selectedEntities.cbegin(), m_selectedEntities.cend(), unitEntityId);
 	bool selected = iter != m_selectedEntities.cend();
 	if (!selected && m_dragTargetId > 0)
-		selected = objective == m_dragTargetId;
+		selected = unitEntityId == m_dragTargetId;
 
-	SOnScreenIcon icon(objective, transX, transY, (int)iconType, friendly, fDist, fSize * fSize, -rotation, healthValue, (int)selected);
+	SUnitIcon icon(unitEntityId, transX, transY, (int)iconType, friendly, fDist, fSize * fSize, -rotation, healthValue, (int)selected);
 
 	static const wchar_t* localizedText = L"";
 	localizedText = pHUD->LocalizeWithParams(pObjectiveEntity->GetName(), true);
 	icon.text.append(localizedText);
 
-	m_onScreenIcons.push_back(icon);
+	m_unitIcons.push_back(icon);
 }
 
-void CTOSZeusModule::HUDUpdateAllZeusUnitIcons()
+void CTOSZeusModule::HUDFlashUpdateUnitIcons()
 {
-	auto pAnim = &m_animZeusScreenIcons;
-	auto icons = &m_onScreenIcons;
+	auto pAnim = &m_animZeusUnitIcons;
+	auto icons = &m_unitIcons;
 
 	//const auto pClient = static_cast<CTOSActor*>(g_pGame->GetIGameFramework()->GetClientActor());
 	//const bool isZeus = pClient && pClient->IsZeus();
@@ -528,7 +606,7 @@ void CTOSZeusModule::HUDUpdateAllZeusUnitIcons()
 		auto it = icons->begin();
 		for (; it != icons->end(); ++it)
 		{
-			SOnScreenIcon icon = (*it);
+			SUnitIcon icon = (*it);
 
 			_snprintf(tempBuf, sizeof(tempBuf), "%d", (int)icon.id);
 			tempBuf[sizeof(tempBuf) - 1] = '\0';
@@ -590,7 +668,7 @@ void CTOSZeusModule::HUDUpdateAllZeusUnitIcons()
 
 		for (auto it = icons->begin(); it != icons->end(); ++it)
 		{
-			SOnScreenIcon icon = (*it);
+			SUnitIcon icon = (*it);
 			iconListWString.push_back(icon.text);
 		}
 
@@ -619,6 +697,84 @@ void CTOSZeusModule::HUDUpdateAllZeusUnitIcons()
 		//m_animMissionObjective.Invoke("setNearCenter", args, 2);
 		//m_objectiveNearCenter = 0;
 		// ~Commented CW original code
+	}
+	else if (pAnim->GetVisible())
+	{
+		pAnim->SetVisible(false);
+	}
+
+	icons->clear();
+}
+
+void CTOSZeusModule::HUDFlashUpdateOrderIcons()
+{
+	auto pAnim = &m_animZeusOrderIcons;
+	auto icons = &m_orderIcons;
+
+	if (icons->size())
+	{
+		pAnim->SetVisible(true);
+		const int parametersCount = 3;
+
+		//CW original code
+		std::vector< CryFixedStringT<128> > iconList;
+		iconList.reserve(parametersCount * icons->size());
+
+		char tempBuf[128];
+		auto it = icons->begin();
+		for (; it != icons->end(); ++it)
+		{
+			SOrderIcon icon = (*it);
+
+			_snprintf(tempBuf, sizeof(tempBuf), "%d", icon.x);
+			tempBuf[sizeof(tempBuf) - 1] = '\0';
+			iconList.push_back(tempBuf);
+
+			_snprintf(tempBuf, sizeof(tempBuf), "%d", icon.y);
+			tempBuf[sizeof(tempBuf) - 1] = '\0';
+			iconList.push_back(tempBuf);
+
+			_snprintf(tempBuf, sizeof(tempBuf), "%f", icon.size);
+			tempBuf[sizeof(tempBuf) - 1] = '\0';
+			iconList.push_back(tempBuf);
+		}
+
+		int size = iconList.size();
+		if (size)
+		{
+			std::vector<const char*> pushArray;
+			pushArray.reserve(size);
+			for (int i(0); i < size; ++i)
+			{
+				pushArray.push_back(iconList[i].c_str());
+			}
+
+			pAnim->GetFlashPlayer()->SetVariableArray(FVAT_ConstStrPtr, "m_allValues", 0, &pushArray[0], pushArray.size());
+		}
+
+		//std::vector< CryFixedWStringT<64> > iconListWString;
+		//iconList.reserve(icons->size());
+
+		//for (auto it = icons->begin(); it != icons->end(); ++it)
+		//{
+		//	SOrderIcon icon = (*it);
+		//	iconListWString.push_back(icon.text);
+		//}
+
+		//size = iconListWString.size();
+		//if (size)
+		//{
+		//	std::vector<const wchar_t*> pushArray;
+		//	pushArray.reserve(size);
+		//	for (int i(0); i < size; ++i)
+		//	{
+		//		pushArray.push_back(iconListWString[i].c_str());
+		//	}
+
+		//	pAnim->GetFlashPlayer()->SetVariableArray(FVAT_ConstWstrPtr, "m_allNames", 0, &pushArray[0], pushArray.size());
+		//}
+
+		pAnim->Invoke("updateIcons");
 	}
 	else if (pAnim->GetVisible())
 	{
