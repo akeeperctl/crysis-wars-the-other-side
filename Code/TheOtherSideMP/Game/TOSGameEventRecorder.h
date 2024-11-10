@@ -40,10 +40,13 @@ enum EExtraGameplayEvent
 	eEGE_ActorGrab, //NOT USED
 	eEGE_ActorDrop, //NOT USED
 	eEGE_ActorPostInit,
-	eEGE_InitClient,
+	eEGE_ActorRevived,
 	eEGE_ActorRelease,
 	eEGE_ActorDead,
+	eEGE_ActorExitVehicle,
+	eEGE_ActorEnterVehicle,
 
+	eEGE_InitClient,
 
 	//eEGE_MasterEnterSpectator, //NOT USED
 	eEGE_MasterAdd,
@@ -107,13 +110,8 @@ enum EExtraGameplayEvent
 	eEGE_UpdateContextViewState,
 	eEGE_UpdateChannelConnectionState,
 
-	eEGE_VehicleDestroyed,
-
-	eEGE_ActorRevived,
 	eEGE_OnLevelLoadingStart,
 	eEGE_OnServerStartRestarting,
-	eEGE_ActorExitVehicle,
-	eEGE_ActorEnterVehicle,
 
 	eEGE_HUDInit,
 	eEGE_HUDHandleFSCommand,
@@ -122,6 +120,8 @@ enum EExtraGameplayEvent
 
 	eEGE_EntityFactionChanged,
 	eEGE_FactionReactionChanged,
+
+	eEGE_VehicleDestroyed,
 
 	//eEGE_TOSGame_Init,
 

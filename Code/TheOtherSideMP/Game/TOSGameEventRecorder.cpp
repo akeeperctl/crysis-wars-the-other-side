@@ -105,6 +105,66 @@ void CTOSGame::OnGameplayEvent(IEntity* pEntity, const GameplayEvent& event)
 	this->OnExtraGameplayEvent(pEntity, event1);
 }
 
+void CTOSGame::OnVehicleEvent(EVehicleEvent event, const SVehicleEventParams& params)
+{
+	switch (event)
+	{
+	case eVE_Collision:
+		break;
+	case eVE_Hit:
+		break;
+	case eVE_Damaged:
+		break;
+	case eVE_Destroyed:
+		TOS_RECORD_EVENT(params.entityId, STOSGameEvent(eEGE_VehicleDestroyed, "", true));
+		break;
+	case eVE_Repair:
+		break;
+	case eVE_PassengerEnter:
+		break;
+	case eVE_PassengerExit:
+		break;
+	case eVE_PassengerChangeSeat:
+		break;
+	case eVE_SeatFreed:
+		break;
+	case eVE_PreVehicleDeletion:
+		break;
+	case eVE_VehicleDeleted:
+		break;
+	case eVE_ToggleDebugView:
+		break;
+	case eVE_ToggleDriverControlledGuns:
+		break;
+	case eVE_Brake:
+		break;
+	case eVE_Timer:
+		break;
+	case eVE_EngineStopped:
+		break;
+	case eVE_OpenDoors:
+		break;
+	case eVE_CloseDoors:
+		break;
+	case eVE_BlockDoors:
+		break;
+	case eVE_ExtractGears:
+		break;
+	case eVE_RetractGears:
+		break;
+	case eVE_Indestructible:
+		break;
+	case eVE_Abandoned:
+		break;
+	case eVE_SetAmmo:
+		break;
+	case eVE_Last:
+		break;
+	default:
+		break;
+	}
+}
+
 void CTOSGameEventRecorder::RecordEvent(const EntityId id, const STOSGameEvent& event)
 {
 	g_pTOSGame->OnExtraGameplayEvent(gEnv->pEntitySystem->GetEntity(id), event);

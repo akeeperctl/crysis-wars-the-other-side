@@ -21,7 +21,8 @@ Copyright (C), AlienKeeper, 2024.
 #include "TheOtherSideMP/Helpers/TOS_Version.h"
 #include "TheOtherSideMP/AI/AIHooks.h"
 
-#include "Modules\Zeus\ZeusModule.h"
+#include "Modules/Zeus/ZeusModule.h"
+#include "TheOtherSideMP/Helpers/TOS_Entity.h"
 
 CTOSGame::CTOSGame() :
 	m_pEventRecorder(nullptr),
@@ -111,6 +112,18 @@ void CTOSGame::Update(const float frameTime, int frameId)
 {
 	UpdateChannelConnectionState();
 	UpdateContextViewState();
+	
+	IEntityItPtr pIt = gEnv->pEntitySystem->GetEntityIterator();
+	while (!pIt->IsEnd())
+	{
+		if (IEntity* pEntity = pIt->Next())
+		{
+			const auto id = pEntity->GetId();
+			const auto pVehicle = TOS_GET_VEHICLE(id);
+			if (pVehicle)
+				pVehicle->RegisterVehicleEventListener(this, "CTOSGame");
+		}
+	}
 
 	for (std::vector<ITOSGameModule*>::iterator it = m_modules.begin(); it != m_modules.end(); ++it)
 	{

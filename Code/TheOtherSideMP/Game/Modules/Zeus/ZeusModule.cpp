@@ -1070,6 +1070,12 @@ void CTOSZeusModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent&
 
 			break;
 		}
+		case eEGE_ActorDead:
+		case eEGE_VehicleDestroyed:
+		{
+			RemoveOrder(pEntity->GetId());
+			break;
+		}
 		//case eEGE_ActorExitVehicle:
 		//{
 		//	if (m_zeus && m_zeus->GetEntityId() == pEntity->GetId())
@@ -1917,37 +1923,42 @@ bool CTOSZeusModule::ExecuteCommand(EZeusCommands command)
 			}
 			case eZC_OrderSelected:
 			{
-				MouseProjectToWorld(m_mouseRay, m_worldMousePos, m_mouseRayEntityFlags, false);
-				m_orderPos = m_mouseRay.pt;
-
-				m_orderTargetId = GetMouseEntityId();
-				auto pOrderTargetEnt = TOS_GET_ENTITY(m_orderTargetId);
-				if (pOrderTargetEnt)
-					m_orderPos = pOrderTargetEnt->GetWorldPos();
-
-				SOrder order;
-				order.pos = m_orderPos;
-				order.targetId = m_orderTargetId;
-				CreateOrder(id, order);
-
-				IScriptSystem* pSS = gEnv->pScriptSystem;
-				if (pSS->ExecuteFile("Scripts/AI/TOS/TOSHandleOrder.lua", true, true))
+				auto pAI = TOS_GET_ENTITY(id)->GetAI();
+				if (pAI && pAI->IsEnabled())
 				{
-					CScriptSetGetChain executorChain(m_executorInfo);
-					executorChain.SetValue("entityId", id);
-					executorChain.SetValue("maxCount", int(m_selectedEntities.size())); // макс. кол-во исполнителей
-					executorChain.SetValue("index", int(index)); // текущий номер исполнителя
+					MouseProjectToWorld(m_mouseRay, m_worldMousePos, m_mouseRayEntityFlags, false);
+					m_orderPos = m_mouseRay.pt;
 
-					CScriptSetGetChain orderChain(m_orderInfo);
-					orderChain.SetValue("goalPipeId", id); // так надо
-					orderChain.SetValue("pos", order.pos);
-					orderChain.SetValue("targetId", order.targetId);
+					m_orderTargetId = GetMouseEntityId();
+					auto pOrderTargetEnt = TOS_GET_ENTITY(m_orderTargetId);
+					if (pOrderTargetEnt)
+						m_orderPos = pOrderTargetEnt->GetWorldPos();
 
-					pSS->BeginCall("HandleOrder");
-					pSS->PushFuncParam(m_executorInfo);
-					pSS->PushFuncParam(m_orderInfo);
-					pSS->EndCall();
+					SOrder order;
+					order.pos = m_orderPos;
+					order.targetId = m_orderTargetId;
+					CreateOrder(id, order);
+
+					IScriptSystem* pSS = gEnv->pScriptSystem;
+					if (pSS->ExecuteFile("Scripts/AI/TOS/TOSHandleOrder.lua", true, true))
+					{
+						CScriptSetGetChain executorChain(m_executorInfo);
+						executorChain.SetValue("entityId", id);
+						executorChain.SetValue("maxCount", int(m_selectedEntities.size())); // макс. кол-во исполнителей
+						executorChain.SetValue("index", int(index)); // текущий номер исполнителя
+
+						CScriptSetGetChain orderChain(m_orderInfo);
+						orderChain.SetValue("goalPipeId", id); // так надо
+						orderChain.SetValue("pos", order.pos);
+						orderChain.SetValue("targetId", order.targetId);
+
+						pSS->BeginCall("HandleOrder");
+						pSS->PushFuncParam(m_executorInfo);
+						pSS->PushFuncParam(m_orderInfo);
+						pSS->EndCall();
+					}
 				}
+
 				break;
 			}
 			default:

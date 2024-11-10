@@ -45,7 +45,8 @@ class CTOSGame :  // NOLINT(cppcoreguidelines-special-member-functions)
 	public IInputEventListener,
 	public IEntitySystemSink,
 	public IScriptTableDumpSink,
-	public ILevelSystemListener
+	public ILevelSystemListener,
+	public IVehicleEventListener
 {
 public:
 	CTOSGame();
@@ -87,6 +88,10 @@ public:
 	//IGameplayListener
 	void OnGameplayEvent(IEntity* pEntity, const GameplayEvent& event);
 	//~IGameplayListener
+
+	//IVehicleEventListener
+	void OnVehicleEvent(EVehicleEvent event, const SVehicleEventParams& params);
+	//~IVehicleEventListener
 
 	//TOSEventRecorder->RecordEvent->calling this
 	//IGameplayRecorder->Event->calling this
