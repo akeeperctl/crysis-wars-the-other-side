@@ -353,6 +353,15 @@ void CTOSZeusModule::SelectEntity(EntityId id)
 	}
 }
 
+bool CTOSZeusModule::IsSelectedEntity(EntityId id)
+{
+	auto it = std::lower_bound(m_selectedEntities.begin(), m_selectedEntities.end(), id);
+	if (it != m_selectedEntities.end() && *it == id)
+		return true;
+
+	return false;
+}
+
 void CTOSZeusModule::HandleOnceSelection(EntityId id)
 {
 	// при копировании нельзя выделять новые сущности
@@ -1014,16 +1023,20 @@ void CTOSZeusModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent&
 			}
 			break;
 		}
-		//case eEGE_ActorEnterVehicle:
-		//{
-		//	if (m_zeus && m_zeus->GetEntityId() == pEntity->GetId())
-		//	{
-		//		if (noModalOrNoHUD)
-		//			ShowMouse(false);
-		//	}
+		case eEGE_ActorEnterVehicle:
+		{
+			if (m_zeus && IsSelectedEntity(pEntity->GetId()))
+			{
+				auto pVehEntity = TOS_GET_ENTITY(event.int_value);
+				if (pVehEntity)
+				{
+					DeselectEntity(pEntity->GetId());
+					SelectEntity(pVehEntity->GetId());
+				}
+			}
 
-		//	break;
-		//}
+			break;
+		}
 		//case eEGE_ActorExitVehicle:
 		//{
 		//	if (m_zeus && m_zeus->GetEntityId() == pEntity->GetId())

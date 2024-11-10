@@ -77,6 +77,7 @@ History:
 #include "TheOtherSideMP/Helpers/TOS_HUD.h"
 #include "TheOtherSideMP/HUD/TOSCrosshair.h"
 #include <TheOtherSideMP/Game/TOSGameEventRecorder.h>
+#include <TheOtherSideMP/Game/Modules/Zeus/ZeusModule.h>
 //~TheOtherSide
 
 static const float NIGHT_VISION_ENERGY = 30.0f;
@@ -3027,6 +3028,12 @@ bool CHUD::ShowPDA(bool show, bool buyMenu)
 			if (CWeapon* pWeapon = pActor->GetWeapon(currentItem))
 				if (pWeapon->IsZoomed())
 					pWeapon->StopZoom(pActor->GetEntityId());
+
+	//TheOtherSide
+	auto pZeusModule = g_pTOSGame->GetZeusModule();
+	if (show && pZeusModule && pZeusModule->HUDIsShowZeusMenu())
+		pZeusModule->HUDShowZeusMenu(false);
+	//~TheOtherSide
 
 	if (gEnv->bMultiplayer && pGameRules->GetTeamCount() > 1)
 	{

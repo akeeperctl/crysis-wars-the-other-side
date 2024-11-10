@@ -296,6 +296,15 @@ bool CTOSZeusModule::HUDShowZeusMenu(bool show)
 
 	m_menuShow = show;
 	m_animZeusMenu.Invoke(m_menuShow ? "showPDA" : "hidePDA");
+
+	auto pHUD = g_pGame->GetHUD();
+	if (show && pHUD)
+		pHUD->ShowPDA(false, false);
+}
+
+bool CTOSZeusModule::HUDIsShowZeusMenu() const
+{
+	return m_menuShow;
 }
 
 bool CTOSZeusModule::MenuLoadItems()
