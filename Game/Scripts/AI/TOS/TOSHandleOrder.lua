@@ -32,6 +32,8 @@ function HandleOrder(executorTable, orderTable)
     -- Нужно очистить/восстановить то, что в ходе его выполнения было создано/изменено
     local currentExecuted = executor.currentExecutedOrder
 
+    AI.ClearPrimaryHostile(executor.id)
+
     -- unreserve vehicle seat
     if currentExecuted == EOrders.AI_ENTERVEHICLE then
          CLEAR_DATA_AI_ENTERVEHICLE(executor)
@@ -50,6 +52,8 @@ function HandleOrder(executorTable, orderTable)
         orderTargetName = orderTarget:GetName()
     end
 
+    local speed = 3 -- бег
+
     -- Работа с целью приказа
     if (orderTarget) then
         local targetVehicle = orderTarget.vehicle
@@ -66,11 +70,11 @@ function HandleOrder(executorTable, orderTable)
                 --System.LogAlways(output)
 
                 AI_ENTERVEHICLE(executor, orderTarget)
+            elseif(targetActor) then
+                AI_PURSUIT_AND_KILL(executor, orderTarget, 40, speed)
             end
         end
     else
-
-        local speed = 3 -- бег
 
         -- Если цели нет, то бежим
         AI_GOTO(executor, orderPosition, speed)

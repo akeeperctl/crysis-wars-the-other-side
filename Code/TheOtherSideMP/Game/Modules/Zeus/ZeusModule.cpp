@@ -1619,14 +1619,15 @@ void CTOSZeusModule::UpdateDebug(bool zeusMoving, const Vec3& zeusDynVec)
 			auto pParent = pDebugEntity->GetParent();
 
 			pPD->AddText(screenPos.x, screenPos.y + 20 * 0, 1.2f, ColorF(1, 1, 1, 1), 1.0f, "Name = %s", pDebugEntity->GetName());
-			pPD->AddText(screenPos.x, screenPos.y + 20 * 1, 1.2f, ColorF(1, 1, 1, 1), 1.0f, "IsGarbage = %i", int(pDebugEntity->IsGarbage()));
-			pPD->AddText(screenPos.x, screenPos.y + 20 * 2, 1.2f, ColorF(1, 1, 1, 1), 1.0f, "IsRemovable = %i", int((ENTITY_FLAG_UNREMOVABLE & pDebugEntity->GetFlags()) == 0));
-			pPD->AddText(screenPos.x, screenPos.y + 20 * 3, 1.2f, ColorF(1, 1, 1, 1), 1.0f, "IsActive = %i", int(pDebugEntity->IsActive()));
-			pPD->AddText(screenPos.x, screenPos.y + 20 * 4, 1.2f, ColorF(1, 1, 1, 1), 1.0f, "Physics = %i", int(pDebugEntity->GetPhysics() != nullptr));
-			pPD->AddText(screenPos.x, screenPos.y + 20 * 5, 1.2f, ColorF(1, 1, 1, 1), 1.0f, "Parent = %s", pParent ? pParent->GetName() : "NONE");
+			pPD->AddText(screenPos.x, screenPos.y + 20 * 1, 1.2f, ColorF(1, 1, 1, 1), 1.0f, "ID = %i", pDebugEntity->GetId());
+			pPD->AddText(screenPos.x, screenPos.y + 20 * 2, 1.2f, ColorF(1, 1, 1, 1), 1.0f, "IsGarbage = %i", int(pDebugEntity->IsGarbage()));
+			pPD->AddText(screenPos.x, screenPos.y + 20 * 3, 1.2f, ColorF(1, 1, 1, 1), 1.0f, "IsRemovable = %i", int((ENTITY_FLAG_UNREMOVABLE & pDebugEntity->GetFlags()) == 0));
+			pPD->AddText(screenPos.x, screenPos.y + 20 * 4, 1.2f, ColorF(1, 1, 1, 1), 1.0f, "IsActive = %i", int(pDebugEntity->IsActive()));
+			pPD->AddText(screenPos.x, screenPos.y + 20 * 5, 1.2f, ColorF(1, 1, 1, 1), 1.0f, "Physics = %i", int(pDebugEntity->GetPhysics() != nullptr));
+			pPD->AddText(screenPos.x, screenPos.y + 20 * 6, 1.2f, ColorF(1, 1, 1, 1), 1.0f, "Parent = %s", pParent ? pParent->GetName() : "NONE");
 
-			int actorDelta = 6;
-			int itemDelta = 6;
+			int actorDelta = 7;
+			int itemDelta = 7;
 
 			auto pActor = static_cast<CTOSActor*>(TOS_GET_ACTOR(pDebugEntity->GetId()));
 			auto pItem = static_cast<CItem*>(TOS_GET_ITEM(pDebugEntity->GetId()));

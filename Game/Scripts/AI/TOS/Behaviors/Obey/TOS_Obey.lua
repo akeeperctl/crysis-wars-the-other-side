@@ -68,7 +68,7 @@ AIBehaviour.TOS_Obey = {
 	end,
 	--------------------------------------------------------------------------
 	OnCloseContact= function( self, entity )
-		LogAlways("[%s] TOS_Obey.OnCloseContact sender: %s", EntityName(entity))
+		LogAlways("[%s] TOS_Obey.OnCloseContact", EntityName(entity))
 	end,
 
 	OnTargetDead = function( self, entity )

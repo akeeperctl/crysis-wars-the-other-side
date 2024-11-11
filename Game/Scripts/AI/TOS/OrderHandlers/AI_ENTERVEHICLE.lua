@@ -3,24 +3,6 @@
  --Copyright (C), AlienKeeper, 2024.
 --*************************************************************************
 
--- local seatPos = orderTarget:GetSeatPos(seatId)
--- -- local maxAlertness = 2
--- -- local seatInstance = orderTarget.Seats[seatId]
-
--- local enterRadius = TOS_Vehicle:GetEnterRadius(orderTarget) / 2
-
--- -- ScriptHandle user, ScriptHandle object, const char* actionName, const float maxAlertness, int actionGoalPipeId, const int combatFlag, const char* luaCallback, const char* desiredGoalName
--- --AITracker.ExecuteAIAction(executor.id, orderTarget.id, "conqueror_goto_a0_d0_r3", maxAlertness, orderGoalPipeId, IGNORE_COMBAT_DURING_ACTION, "OnActionEnd", "")
-
--- local output = string.format("[ORDER] executor(%i) %s enter vehicle %s on seat %i(%i)",
---     executorIndex,
---     executorName,
---     orderTargetName,
---     seatId,
---     seatId - executorIndex)
-
--- System.LogAlways(output)
-
 function AI_ENTERVEHICLE(entity, vehicle)
     if (not entity) then
         LogError("<AI_ENTERVEHICLE> entity not found")
