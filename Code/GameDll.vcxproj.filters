@@ -897,9 +897,6 @@
     <ClCompile Include="FGPS\FGPluginLoader.cpp">
       <Filter>FGPS</Filter>
     </ClCompile>
-    <ClCompile Include="TheOtherSideMP\AI\AIHooks.cpp">
-      <Filter>TheOtherSideMP\AI</Filter>
-    </ClCompile>
     <ClCompile Include="TheOtherSideMP\Game\TOSGameEventRecorder.cpp">
       <Filter>TheOtherSideMP\Game\Events</Filter>
     </ClCompile>
@@ -1595,17 +1592,11 @@
     <ClInclude Include="FGPS\PluginCommon.h">
       <Filter>FGPS</Filter>
     </ClInclude>
-    <ClInclude Include="TheOtherSideMP\AI\AIHooks.h">
-      <Filter>TheOtherSideMP\AI</Filter>
-    </ClInclude>
     <ClInclude Include="TheOtherSideMP\Game\TOSGameEventRecorder.h">
       <Filter>TheOtherSideMP\Game\Events</Filter>
     </ClInclude>
     <ClInclude Include="TheOtherSideMP\Game\Events\ITOSGameEventListener.h">
       <Filter>TheOtherSideMP\Game\Events</Filter>
-    </ClInclude>
-    <ClInclude Include="TheOtherSideMP\AI\AICommon.h">
-      <Filter>TheOtherSideMP\AI</Filter>
     </ClInclude>
     <ClInclude Include="TheOtherSideMP\Game\ScriptBinds\ScriptBind_Zeus.h">
       <Filter>TheOtherSideMP\Game\ScriptBinds</Filter>

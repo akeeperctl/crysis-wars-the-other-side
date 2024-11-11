@@ -19,7 +19,6 @@ Copyright (C), AlienKeeper, 2024.
 #include "TheOtherSideMP/Helpers/TOS_Cache.h"
 #include "TheOtherSideMP/Helpers/TOS_Script.h"
 #include "TheOtherSideMP/Helpers/TOS_Version.h"
-#include "TheOtherSideMP/AI/AIHooks.h"
 
 #include "Modules/Zeus/ZeusModule.h"
 #include "TheOtherSideMP/Helpers/TOS_Entity.h"
