@@ -488,6 +488,7 @@
     <ClCompile Include="TheOtherSideMP\Game\TOSGameEventRecorder.cpp" />
     <ClCompile Include="TheOtherSideMP\HUD\TOSCrosshair.cpp" />
     <ClCompile Include="TheOtherSideMP\MasterCvars.cpp" />
+    <ClCompile Include="TheOtherSideMP\Nodes\FlowAINodes.cpp" />
     <ClCompile Include="TheOtherSideMP\Nodes\FlowMasterClientNodes.cpp" />
     <ClCompile Include="TheOtherSideMP\Nodes\FlowScriptNodes.cpp" />
     <ClCompile Include="TheOtherSideMP\Nodes\FlowNewVehicleNodes.cpp" />

@@ -10,7 +10,9 @@ AICharacter.Suit = {
 	AnyBehavior = {
 		--TheOtherSide
 		GO_TO_TOSSHARED         = "TOSSHARED",
-		GO_TO_TOS_OBEY          = "TOS_Obey",
+		GO_TO_TOS_OBEY     = "TOS_Obey",
+		GO_TO_TOS_OBEY_FOLLOW_AND_PROTECT     = "TOS_Obey_Follow_and_Protect",
+
 		--~TheOtherSide
 		GO_TO_IDLE              = "SuitIdle",
 		ENTERING_VEHICLE        = "EnteringVehicle",
@@ -90,6 +92,8 @@ AICharacter.Suit = {
 
 		GO_TO_PROTECT_FORCED             = "SuitProtect",
 	},
+
+	-- TOS_Obey_Follow_And_Protect = TOS_Obey,
 
 	TOSSHARED = {
 

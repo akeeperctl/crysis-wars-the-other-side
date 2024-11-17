@@ -238,7 +238,7 @@ private:
 	void UpdateUnitIcons(IActor* pClientActor);
 	void UpdateOrderIcons();
 	void CreateOrder(EntityId executorId, const SOrder& info);
-	void StopOrder(EntityId executorId) const;
+	void StopOrder(EntityId executorId);
 	void RemoveOrder(EntityId executorId);
 
 	/// @brief Проекция координат мыши в мир от камеры

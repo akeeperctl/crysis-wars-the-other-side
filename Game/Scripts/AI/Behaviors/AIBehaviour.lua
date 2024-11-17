@@ -7,6 +7,7 @@ AIBehaviour = {
 		--TheOtherSide
 		TOSSHARED 		= "Scripts/AI/TOS/Behaviors/TOSSHARED.lua",
 		TOS_Obey		= "Scripts/AI/TOS/Behaviors/Obey/TOS_Obey.lua",
+		TOS_Obey_Follow_and_Protect = "Scripts/AI/TOS/Behaviors/Obey/TOS_Obey_Follow_and_Protect.lua",
 		--~TheOtherSide
 
 	-- hardcoding behavior for video recording

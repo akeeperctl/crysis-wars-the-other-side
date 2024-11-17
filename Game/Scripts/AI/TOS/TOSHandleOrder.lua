@@ -71,10 +71,16 @@ function HandleOrder(executorTable, orderTable)
 
                 AI_ENTERVEHICLE(executor, orderTarget)
             elseif(targetActor) then
-                AI_PURSUIT_AND_KILL(executor, orderTarget, 40, speed)
+
+                if (AI.Hostile(executor.id, orderTarget.id)) then
+                    AI_PURSUIT_AND_KILL(executor, orderTarget, 40, speed)
+                else 
+                    AI_FOLLOW_AND_PROTECT(executor, orderTarget, 1.5, speed, 2)
+                end
             end
         end
     else
+        
 
         -- Если цели нет, то бежим
         AI_GOTO(executor, orderPosition, speed)
@@ -83,47 +89,27 @@ function HandleOrder(executorTable, orderTable)
     return outputOrderType
 end
 
--- ИИ Перестает реагировать на сигналы, но враги его игнорировать не будут
--- function DISABLE_COMBAT(entity, returnToFirst)
---     LogAlways("[ORDER] <DISABLE_COMBAT> entity: %s, returnToFirst: %s", 
---         EntityName(entity), 
---         tostring(returnToFirst)
---     )
+----------------------------------------------------------------
+function StopOrder(executorId)
+    local executor = System.GetEntity(executorId)
+    local order = executor.currentExecutedOrder
 
---     -- return to first?
---     if (returnToFirst and returnToFirst == true) then
---         entity:CancelSubpipe()
---         TOS_AI.InsertSubpipe(AIGOALPIPE_SAMEPRIORITY, entity, "devalue_target");
---         TOS_AI.SendSignal(SIGNALFILTER_SENDER, AISIGNAL_DEFAULT, "RETURN_TO_FIRST", entity.id)
---         TOS_AI.SelectPipe(AIGOALPIPE_LOOP, entity, "do_nothing", 0, 0, true)
+    if (order == EOrders.AI_ENTERVEHICLE) then
+        TOS_AI.SendSignal(SIGNALFILTER_SENDER, AISIGNAL_DEFAULT, "AI_ENTERVEHICLE_ENDED", executor.id)
+    elseif (order == EOrders.AI_GOTO) then
+        TOS_AI.SendSignal(SIGNALFILTER_SENDER, AISIGNAL_DEFAULT, "AI_GOTO_ENDED", executor.id)
+    elseif (order == EOrders.AI_PURSUIT_AND_KILL) then
+        TOS_AI.SendSignal(SIGNALFILTER_SENDER, AISIGNAL_DEFAULT, "AI_PURSUIT_AND_KILL_ENDED", executor.id)
+    elseif (order == EOrders.AI_FOLLOW_AND_PROTECT) then
+        TOS_AI.SendSignal(SIGNALFILTER_SENDER, AISIGNAL_DEFAULT, "AI_FOLLOW_AND_PROTECT_ENDED", executor.id)
+    end
 
---         if entity.vehicle then
---             TOS_AI.SendSignal(SIGNALFILTER_SENDER, AISIGNAL_DEFAULT, "GO_TO_IDLE", entity.id)
---         else
---             TOS_AI.SendSignal(SIGNALFILTER_SENDER, AISIGNAL_DEFAULT, "GO_TO_IDLE", entity.id)
---         end
---     end
+end
 
---     entity.AI.lastCombatClass = TOS_AI.GetAIParameter(entity, AIPARAM_COMBATCLASS)
---     -- entity.AI.ignoreSignals = true
---     TOS_AI.ChangeParameter(entity, AIPARAM_COMBATCLASS, AICombatClasses.Ignore)
---     TOS_AI.ChangeParameter(entity, AIPARAM_PERCEPTIONSCALE_AUDIO, 0)
---     TOS_AI.ChangeParameter(entity, AIPARAM_PERCEPTIONSCALE_VISUAL, 0)
--- end
-
--- function ENABLE_COMBAT(entity)
---     System.LogAlways(string.format("[ORDER] <ENABLE_COMBAT> entity: %s", 
---         EntityName(entity)
---     ))
-
---     --entity.AI.ignoreSignals = false
---     if (entity.AI.lastCombatClass ~= nil) then
---         TOS_AI.ChangeParameter(entity, AIPARAM_COMBATCLASS, entity.AI.lastCombatClass)
---     end
-
---     TOS_AI.ChangeParameter(entity, AIPARAM_PERCEPTIONSCALE_AUDIO, 1)
---     TOS_AI.ChangeParameter(entity, AIPARAM_PERCEPTIONSCALE_VISUAL, 1)
--- end
+----------------------------------------------------------------
+function OnOrderComplete(executor)
+    Zeus.OnOrderComplete(executor.id)
+end
 
 -- Дебаг ниже
 ----------------------------------------------------------------
@@ -134,20 +120,4 @@ function AIBehaviour.DEFAULT:TestSignal(entity, sender, data)
     end
 
     System.LogAlways(string.format("[AI_SIGNAL] <TestSignal> entity: %s, sender: %s, data: %s", entName, sender:GetName(), table.dump(data)))
-end
-
-function StopOrder(executorId)
-    local executor = System.GetEntity(executorId)
-    local order = executor.currentExecutedOrder
-
-    if (order == EOrders.AI_ENTERVEHICLE) then
-        TOS_AI.SendSignal(SIGNALFILTER_SENDER, AISIGNAL_DEFAULT, "AI_ENTERVEHICLE_ENDED", executor.id)
-    elseif (order == EOrders.AI_GOTO) then
-        TOS_AI.SendSignal(SIGNALFILTER_SENDER, AISIGNAL_DEFAULT, "AI_GOTO_ENDED", executor.id)
-    end
-
-end
-
-function OnOrderComplete(executor)
-    Zeus.OnOrderComplete(executor.id)
 end

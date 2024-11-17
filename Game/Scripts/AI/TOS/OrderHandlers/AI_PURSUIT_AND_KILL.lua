@@ -25,7 +25,7 @@ function AI_PURSUIT_AND_KILL(executor, target, distance, speed)
     LogAlways("[ORDER] <AI_PURSUIT_AND_KILL> target: "..target:GetName())
 
     executor.orderRefEnt = target
-    executor.currentExecutedOrder = EOrders.AI_GOTO
+    executor.currentExecutedOrder = EOrders.AI_PURSUIT_AND_KILL
 
     TOS_AI.BeginGoalPipe("ai_pursuit_and_kill")
         TOS_AI.PushGoal(GO.SIGNAL, 1, AISIGNAL_DEFAULT, "AI_PURSUIT_AND_KILL_STARTED", SIGNALFILTER_SENDER)

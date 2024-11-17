@@ -1051,7 +1051,16 @@ void CTOSZeusModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent&
 				{
 					ShowMouse(true);
 				}
+
+				auto it = m_orders.cbegin();
+				auto end = m_orders.cend();
+				for (; it != end; it++)
+				{
+					StopOrder(it->first);
+				}
 			}
+
+			gEnv->pScriptSystem->ResetTimers();
 			break;
 		}
 		case eEGE_ActorEnterVehicle:
@@ -1074,6 +1083,16 @@ void CTOSZeusModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent&
 		case eEGE_VehicleDestroyed:
 		{
 			RemoveOrder(pEntity->GetId());
+
+			auto orderIt = m_orders.begin();
+			auto orderEnd = m_orders.end();
+			for (; orderIt != orderEnd; orderIt++)
+			{
+				if (orderIt->second.targetId == pEntity->GetId())
+				{
+					StopOrder(orderIt->first);
+				}
+			}
 			break;
 		}
 		//case eEGE_ActorExitVehicle:
@@ -1492,7 +1511,7 @@ void CTOSZeusModule::CreateOrder(EntityId executorId, const SOrder& info)
 	m_orders[executorId] = info;
 }
 
-void CTOSZeusModule::StopOrder(EntityId executorId) const
+void CTOSZeusModule::StopOrder(EntityId executorId)
 {
 	IScriptSystem* pSS = gEnv->pScriptSystem;
 	if (pSS->ExecuteFile("Scripts/AI/TOS/TOSHandleOrder.lua", true, false))

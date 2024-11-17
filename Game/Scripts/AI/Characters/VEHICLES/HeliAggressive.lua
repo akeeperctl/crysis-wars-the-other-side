@@ -94,6 +94,8 @@ AICharacter.HeliAggressive = {
 		STOP_VEHICLE               = "",
 	},
 
+	-- TOS_Obey_Follow_And_Protect = TOS_Obey,
+
 	TOSSHARED = {
 
 		-- Стандартные сигналы

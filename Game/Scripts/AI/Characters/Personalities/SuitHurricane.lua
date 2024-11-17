@@ -10,7 +10,9 @@ AICharacter.SuitHurricane = {
 	AnyBehavior = {
 		--TheOtherSide
 		GO_TO_TOSSHARED         = "TOSSHARED",
-		GO_TO_TOS_OBEY          = "TOS_Obey",
+		GO_TO_TOS_OBEY     = "TOS_Obey",
+		GO_TO_TOS_OBEY_FOLLOW_AND_PROTECT     = "TOS_Obey_Follow_and_Protect",
+
 		--~TheOtherSide
 		GO_TO_IDLE              = "SuitHurricaneIdle",
 		ENTERING_VEHICLE        = "EnteringVehicle",
@@ -87,6 +89,8 @@ AICharacter.SuitHurricane = {
 		GO_TO_PREVIOUS_FORCED            = "PREVIOUS",
 		GO_TO_STATIC_FORCED              = "HBaseStaticShooter",
 	},
+
+	-- TOS_Obey_Follow_And_Protect = TOS_Obey,
 
 	TOSSHARED = {
 

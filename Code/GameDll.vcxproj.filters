@@ -906,6 +906,9 @@
     <ClCompile Include="TheOtherSideMP\Game\ScriptBinds\ScriptBind_Zeus.cpp">
       <Filter>TheOtherSideMP\Game\ScriptBinds</Filter>
     </ClCompile>
+    <ClCompile Include="TheOtherSideMP\Nodes\FlowAINodes.cpp">
+      <Filter>TheOtherSideMP\Nodes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor.h">

@@ -23,7 +23,9 @@ AICharacter.Tank = {
 	AnyBehavior = {
 		--TheOtherSide
 		GO_TO_TOSSHARED = "TOSSHARED",
-		GO_TO_TOS_OBEY  = "TOS_Obey",
+		GO_TO_TOS_OBEY     = "TOS_Obey",
+		GO_TO_TOS_OBEY_FOLLOW_AND_PROTECT     = "TOS_Obey_Follow_and_Protect",
+
 		--~TheOtherSide
 		STOP_VEHICLE    = "TankIdle",
 		GO_TO_IDLE      = "TankIdle"
@@ -83,6 +85,8 @@ AICharacter.Tank = {
 		TO_TANK_ATTACK             = "",
 		TO_TANK_MOVE               = "",
 	},
+
+	-- TOS_Obey_Follow_And_Protect = TOS_Obey,
 
 	TOSSHARED = {
 

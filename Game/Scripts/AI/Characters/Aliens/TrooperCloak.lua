@@ -10,7 +10,9 @@ AICharacter.TrooperCloak = {
 	AnyBehavior = {
 		--TheOtherSide
 		GO_TO_TOSSHARED        = "TOSSHARED",
-		GO_TO_TOS_OBEY         = "TOS_Obey",
+		GO_TO_TOS_OBEY     = "TOS_Obey",
+		GO_TO_TOS_OBEY_FOLLOW_AND_PROTECT     = "TOS_Obey_Follow_and_Protect",
+
 		--~TheOtherSide
 		RETURN_TO_FIRST        = "FIRST",
 		ORDER_FORM             = "TrooperForm",

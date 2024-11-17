@@ -29,3 +29,9 @@ function table.safedump(data)
 		return "{}"
 	end
 end
+
+function table.copy(tbl_source, tbl_dest)
+  for k, v in pairs(tbl_source) do
+    tbl_dest[k] = v
+  end
+end
