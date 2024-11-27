@@ -17,7 +17,8 @@ constexpr auto ZEUS_DRAGGING_MOUSE_ENT_FLAGS = ent_terrain;
 enum EZeusFlags
 {
 	eZF_CanRotateCamera = BIT(0),
-	eZF_Possessing = BIT(1) // зевс вселился в кого-то
+	eZF_Possessing = BIT(1), // зевс вселился в кого-то
+	eZF_CanUseMouse = BIT(2)
 };
 
 enum EZeusCommands

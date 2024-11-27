@@ -4,6 +4,7 @@ Copyright (C), AlienKeeper, 2024.
 **************************************************************************/
 
 #include "StdAfx.h"
+#include "IFlashPlayer.h"
 #include "HUD/HUD.h"
 #include "HUD/HUDSilhouettes.h"
 #include "GameActions.h"
@@ -271,6 +272,9 @@ bool CTOSZeusModule::OnInputEvent(const SInputEvent& event)
 	}
 	else if (event.deviceId == EDeviceId::eDI_Mouse)
 	{
+		if (GetZeusFlag(eZF_CanUseMouse) == false)
+			return false;
+
 		if (event.keyId == EKeyId::eKI_Mouse3) // Средняя кнопка мыши
 		{
 			if (m_spaceFreeCam == false)
@@ -617,7 +621,7 @@ void CTOSZeusModule::OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eH
 			m_animZeusMenu.GetFlashPlayer()->SendCursorEvent(SFlashCursorEvent(eCursorState, x, y));
 		}
 
-		if (!pHUD->IsHaveModalHUD())
+		if (!pHUD->IsHaveModalHUD() && (m_zeusFlags & eZF_CanUseMouse))
 		{
 			if (eHardwareMouseEvent == HARDWAREMOUSEEVENT_LBUTTONDOUBLECLICK)
 			{
@@ -1782,6 +1786,7 @@ void CTOSZeusModule::ApplyZeusProperties(IActor* pPlayer)
 
 	//Включаем мышь
 	ShowMouse(true);
+	SetZeusFlag(eZF_CanUseMouse, true);
 }
 
 bool CTOSZeusModule::ExecuteCommand(EZeusCommands command)
