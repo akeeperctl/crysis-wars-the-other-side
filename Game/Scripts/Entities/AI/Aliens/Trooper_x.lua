@@ -792,7 +792,7 @@ function Trooper_x:Kill(ragdoll, shooterId, weaponId)
     self:AddImpulse(-1, pos, vel, stats.mass * 5, 1);
 	local isServer = CryAction.IsServer()
 
-	System.LogAlways("<lua> server: "..tostring(isServer).." trooper '"..self:GetName().."' add impulse pos: "..Vec2Str(pos).." vel: "..Vec2Str(vel))
+	-- System.LogAlways("<lua> server: "..tostring(isServer).." trooper '"..self:GetName().."' add impulse pos: "..Vec2Str(pos).." vel: "..Vec2Str(vel))
 	--~TheOtherSide
 
     -- Если установлен таймер звука, убиваем его
@@ -833,8 +833,6 @@ function Trooper_x.Client:OnHit(hit, remote)
 		self.bleeding = 1.0;
 		self.nextBleed = 0.0;
 	end
-
-	local shooter = hit.shooter;
 
 	--	local distMult = self:GetDamageDistanceMultiplier(hit);
 	--	hit.damage = hit.damage * distMult;

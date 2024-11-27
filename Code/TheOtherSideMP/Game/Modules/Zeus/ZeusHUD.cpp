@@ -76,6 +76,16 @@ void CTOSZeusModule::HandleFSCommand(const char* pCommand, const char* pArgs)
 		{
 			HUDShowZeusMenu(false);
 		}
+		//else if (sArgs == "OverMenu")
+		//{
+		//	pHUD->SetModalHUD(&m_animZeusMenu);
+		//	SetZeusFlag(eZF_CanUseMouse, false);
+		//}
+		//else if (sArgs == "OutMenu")
+		//{
+		//	pHUD->SetModalHUD(nullptr);
+		//	SetZeusFlag(eZF_CanUseMouse, true);
+		//}
 	}
 	else if (sCommand == "Spawn")
 	{
