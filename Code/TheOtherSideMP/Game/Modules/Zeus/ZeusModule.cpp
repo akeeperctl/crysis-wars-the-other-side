@@ -1803,7 +1803,7 @@ bool CTOSZeusModule::ExecuteCommand(EZeusCommands command)
 		{
 			case eZC_KillSelected:
 			{
-				string hitType = "normal";
+				string hitType = "event";
 
 				HitInfo info;
 				info.SetDamage(99999.0f);
