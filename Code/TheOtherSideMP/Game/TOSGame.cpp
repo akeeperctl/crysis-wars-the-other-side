@@ -65,7 +65,6 @@ void CTOSGame::Init()
 
 	m_pEventRecorder = new CTOSGameEventRecorder();
 
-
 	//Modules
 	m_pModuleZeus = new CTOSZeusModule();
 	m_pModuleEntitySpawn = new CTOSEntitySpawnModule();

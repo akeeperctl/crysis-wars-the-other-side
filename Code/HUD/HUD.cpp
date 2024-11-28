@@ -2072,6 +2072,13 @@ void CHUD::HandleFSCommand(const char* szCommand, const char* szArgs)
 			}
 		}
 	}
+
+	//TheOtherSide
+	if (!strcmp(szCommand, "BecomeZeus"))
+	{
+		g_pTOSGame->GetZeusModule()->MakeZeus(gEnv->pGame->GetIGameFramework()->GetClientActor());
+	}
+	//~TheOtherSide
 }
 
 //-----------------------------------------------------------------------------------------------------

@@ -1,0 +1,24 @@
+[
+  {
+    "Name": "Editor",
+    "Projects": [
+      {
+        "Path": "Helpers\\LaunchEditor\\LaunchEditor.vcxproj",
+        "Action": "Start"
+      }
+    ]
+  },
+  {
+    "Name": "Server \u002B Client",
+    "Projects": [
+      {
+        "Path": "Helpers\\LaunchServer\\LaunchServer.vcxproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "Helpers\\LaunchClient\\LaunchClient.vcxproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]

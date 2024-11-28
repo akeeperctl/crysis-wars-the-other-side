@@ -15,7 +15,7 @@ void CTOSZeusModule::NetMakePlayerZeus(IActor* pPlayer)
 		return;
 
 	m_zeus = static_cast<CTOSPlayer*>(pPlayer);
-	ApplyZeusProperties(m_zeus);
+	MakeZeus(m_zeus);
 }
 
 // ПОКА НЕ ИСПОЛЬЗУЕТСЯ

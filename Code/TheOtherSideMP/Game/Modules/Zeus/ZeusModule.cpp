@@ -1027,7 +1027,7 @@ void CTOSZeusModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent&
 		{
 			if (m_zeus)
 			{
-				ApplyZeusProperties(m_zeus);
+				MakeZeus(m_zeus);
 				SetZeusFlag(eZF_Possessing, false);
 			}
 			break;
@@ -1103,7 +1103,7 @@ void CTOSZeusModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent&
 		//{
 		//	if (m_zeus && m_zeus->GetEntityId() == pEntity->GetId())
 		//	{				
-		//		//ApplyZeusProperties(m_zeus);
+		//		//MakeZeus(m_zeus);
 		//	}
 		//	break;
 		//}
@@ -1617,14 +1617,16 @@ void CTOSZeusModule::UpdateDebug(bool zeusMoving, const Vec3& zeusDynVec)
 		{
 			TOS_Debug::DrawEntitiesName2DLabel(m_selectedEntities, "Selected Entities: ", 100, startY + deltaY * 18, deltaY);
 		}
+
 		if (!m_doubleClickLastSelectedEntities.empty())
 		{
 			TOS_Debug::DrawEntitiesName2DLabel(m_doubleClickLastSelectedEntities, "DC Selected Entities: ", 300, startY + deltaY * 19, deltaY);
-		}		
-		if (!m_orders.empty())
-		{
-			TOS_Debug::DrawEntitiesName2DLabelMap(m_orders, "Orders: ", 100, startY + deltaY * 20, deltaY);
 		}
+
+		//if (!m_orders.empty())
+		//{
+		//	TOS_Debug::DrawEntitiesName2DLabelMap(m_orders, "Orders: ", 100, startY + deltaY * 20, deltaY);
+		//}
 
 		// Вывод текстовой отладки кликнутой сущности
 		///////////////////////////////////////////////////////////////////////
@@ -1718,8 +1720,10 @@ void CTOSZeusModule::ShowMouse(bool show)
 	//}
 }
 
-void CTOSZeusModule::ApplyZeusProperties(IActor* pPlayer)
+void CTOSZeusModule::MakeZeus(IActor* pPlayer)
 {
+	//TODO: Синхронизвать становление зевсом в сетевой игре
+
 	auto pTOSPlayer = static_cast<CTOSPlayer*>(pPlayer);
 
 	// Сбрасываем статы
@@ -1770,8 +1774,11 @@ void CTOSZeusModule::ApplyZeusProperties(IActor* pPlayer)
 
 		// Скрываем HUD игрока
 		HUDShowPlayerHUD(false);
-
 		HUDShowZeusMenu(true);
+
+		//Включаем мышь
+		ShowMouse(true);
+		SetZeusFlag(eZF_CanUseMouse, true);
 	}
 
 	// Становимся невидимым для ИИ
@@ -1782,11 +1789,7 @@ void CTOSZeusModule::ApplyZeusProperties(IActor* pPlayer)
 	}
 
 	pTOSPlayer->GetAnimatedCharacter()->ForceRefreshPhysicalColliderMode();
-	pTOSPlayer->GetAnimatedCharacter()->RequestPhysicalColliderMode(eColliderMode_Spectator, eColliderModeLayer_Game, "CTOSZeusModule::ApplyZeusProperties");
-
-	//Включаем мышь
-	ShowMouse(true);
-	SetZeusFlag(eZF_CanUseMouse, true);
+	pTOSPlayer->GetAnimatedCharacter()->RequestPhysicalColliderMode(eColliderMode_Spectator, eColliderModeLayer_Game, "CTOSZeusModule::MakeZeus");
 }
 
 bool CTOSZeusModule::ExecuteCommand(EZeusCommands command)

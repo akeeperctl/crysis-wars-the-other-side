@@ -1,0 +1,179 @@
+<Root>
+	<Tab name="Characters">
+		<Item category="@zeus_catUSA"    name="SMG Soldier" class="Grunt" price="1000"/>
+		<Item category="@zeus_catNK"     name="SMG Soldier" class="Grunt" price="1000"/>
+		
+		<Item category="@zeus_catNK"     name="Camper Camp Heavy Pistol" class="Asian_new.Camper\Camp.Heavy_Pistol" price="1000"/>
+		<Item category="@zeus_catNK"     name="Camper Camp Heavy Rifle" class="Asian_new.Camper\Camp.Heavy_Rifle" price="1000"/>
+		<Item category="@zeus_catNK"     name="Camper Camp Heavy Shotgun" class="Asian_new.Camper\Camp.Heavy_Shotgun" price="1000"/>
+		<Item category="@zeus_catNK"     name="Camper Camp Heavy SMG" class="Asian_new.Camper\Camp.Heavy_SMG" price="1000"/>
+		<Item category="@zeus_catNK"     name="Camper Camp Light Pistol" class="Asian_new.Camper\Camp.Light_Pistol" price="1000"/>
+		<Item category="@zeus_catNK"     name="Camper Camp Light Rifle" class="Asian_new.Camper\Camp.Light_Rifle" price="1000"/>
+		<Item category="@zeus_catNK"     name="Camper Camp Light Shotgun" class="Asian_new.Camper\Camp.Light_Shotgun" price="1000"/>
+		<Item category="@zeus_catNK"     name="Camper Camp Light SMG" class="Asian_new.Camper\Camp.Light_SMG" price="1000"/>
+		
+		<Item category="@zeus_catNK"     name="Camper Elite Heavy Rifle" class="Asian_new.Camper\Elite.Heavy_Rifle_SF" price="2000"/>
+		<Item category="@zeus_catNK"     name="Camper Elite Heavy Shotgun" class="Asian_new.Camper\Elite.Heavy_Shotgun_SF" price="2000"/>
+		<Item category="@zeus_catNK"     name="Camper Elite Heavy SMG" class="Asian_new.Camper\Elite.Heavy_SMG_SF" price="2000"/>
+		<Item category="@zeus_catNK"     name="Camper Elite Light Rifle" class="Asian_new.Camper\Elite.Light_Rifle_SF" price="2000"/>
+		<Item category="@zeus_catNK"     name="Camper Elite Light Shotgun" class="Asian_new.Camper\Elite.Light_Shotgun_SF" price="2000"/>
+		<Item category="@zeus_catNK"     name="Camper Elite Light SMG" class="Asian_new.Camper\Elite.Light_SMG_SF" price="2000"/>
+		
+		<Item category="@zeus_catNK"     name="Camper Jungle Heavy Pistol" class="Asian_new.Camper\Jungle.Heavy_Pistol" price="1000"/>
+		<Item category="@zeus_catNK"     name="Camper Jungle Heavy Rifle" class="Asian_new.Camper\Jungle.Heavy_Rifle" price="1000"/>
+		<Item category="@zeus_catNK"     name="Camper Jungle Heavy Shotgun" class="Asian_new.Camper\Jungle.Heavy_Shotgun" price="1000"/>
+		<Item category="@zeus_catNK"     name="Camper Jungle Heavy SMG" class="Asian_new.Camper\Jungle.Heavy_SMG" price="1000"/>
+		<Item category="@zeus_catNK"     name="Camper Jungle Light Pistol" class="Asian_new.Camper\Jungle.Light_Pistol" price="1000"/>
+		<Item category="@zeus_catNK"     name="Camper Jungle Light Rifle" class="Asian_new.Camper\Jungle.Light_Rifle" price="1000"/>
+		<Item category="@zeus_catNK"     name="Camper Jungle Light Shotgun" class="Asian_new.Camper\Jungle.Light_Shotgun" price="1000"/>
+		<Item category="@zeus_catNK"     name="Camper Jungle Light SMG" class="Asian_new.Camper\Jungle.Light_SMG" price="1000"/>
+
+
+		<Item category="@zeus_catNK"     name="Cover Camp Heavy Pistol" class="Asian_new.Cover\Camp.Heavy_Pistol" price="1000"/>
+		<Item category="@zeus_catNK"     name="Cover Camp Heavy Rifle" class="Asian_new.Cover\Camp.Heavy_Rifle" price="1000"/>
+		<Item category="@zeus_catNK"     name="Cover Camp Heavy Shotgun" class="Asian_new.Cover\Camp.Heavy_Shotgun" price="1000"/>
+		<Item category="@zeus_catNK"     name="Cover Camp Heavy SMG" class="Asian_new.Cover\Camp.Heavy_SMG" price="1000"/>
+		<Item category="@zeus_catNK"     name="Cover Camp Light Pistol" class="Asian_new.Cover\Camp.Light_Pistol" price="1000"/>
+		<Item category="@zeus_catNK"     name="Cover Camp Light Rifle" class="Asian_new.Cover\Camp.Light_Rifle" price="1000"/>
+		<Item category="@zeus_catNK"     name="Cover Camp Light Shotgun" class="Asian_new.Cover\Camp.Light_Shotgun" price="1000"/>
+		<Item category="@zeus_catNK"     name="Cover Camp Light SMG" class="Asian_new.Cover\Camp.Light_SMG" price="1000"/>
+		
+		<Item category="@zeus_catNK"     name="Cover Elite Heavy Rifle" class="Asian_new.Cover\Elite.Heavy_Rifle_SF" price="2000"/>
+		<Item category="@zeus_catNK"     name="Cover Elite Heavy Shotgun" class="Asian_new.Cover\Elite.Heavy_Shotgun_SF" price="2000"/>
+		<Item category="@zeus_catNK"     name="Cover Elite Heavy SMG" class="Asian_new.Cover\Elite.Heavy_SMG_SF" price="2000"/>
+		<Item category="@zeus_catNK"     name="Cover Elite Light Rifle" class="Asian_new.Cover\Elite.Light_Rifle_SF" price="2000"/>
+		<Item category="@zeus_catNK"     name="Cover Elite Light Shotgun" class="Asian_new.Cover\Elite.Light_Shotgun_SF" price="2000"/>
+		<Item category="@zeus_catNK"     name="Cover Elite Light SMG" class="Asian_new.Cover\Elite.Light_SMG_SF" price="2000"/>
+		
+		<Item category="@zeus_catNK"     name="Cover Jungle Heavy Pistol" class="Asian_new.Cover\Jungle.Heavy_Pistol" price="1000"/>
+		<Item category="@zeus_catNK"     name="Cover Jungle Heavy Rifle" class="Asian_new.Cover\Jungle.Heavy_Rifle" price="1000"/>
+		<Item category="@zeus_catNK"     name="Cover Jungle Heavy Shotgun" class="Asian_new.Cover\Jungle.Heavy_Shotgun" price="1000"/>
+		<Item category="@zeus_catNK"     name="Cover Jungle Heavy SMG" class="Asian_new.Cover\Jungle.Heavy_SMG" price="1000"/>
+		<Item category="@zeus_catNK"     name="Cover Jungle Light Pistol" class="Asian_new.Cover\Jungle.Light_Pistol" price="1000"/>
+		<Item category="@zeus_catNK"     name="Cover Jungle Light Rifle" class="Asian_new.Cover\Jungle.Light_Rifle" price="1000"/>
+		<Item category="@zeus_catNK"     name="Cover Jungle Light Shotgun" class="Asian_new.Cover\Jungle.Light_Shotgun" price="1000"/>
+		<Item category="@zeus_catNK"     name="Cover Jungle Light SMG" class="Asian_new.Cover\Jungle.Light_SMG" price="1000"/>
+
+
+		<Item category="@zeus_catNK"     name="Flanker Camp Heavy Pistol" class="Asian_new.Flanker\Camp.Heavy_Pistol" price="1000"/>
+		<Item category="@zeus_catNK"     name="Flanker Camp Heavy Rifle" class="Asian_new.Flanker\Camp.Heavy_Rifle" price="1000"/>
+		<Item category="@zeus_catNK"     name="Flanker Camp Heavy Shotgun" class="Asian_new.Flanker\Camp.Heavy_Shotgun" price="1000"/>
+		<Item category="@zeus_catNK"     name="Flanker Camp Heavy SMG" class="Asian_new.Flanker\Camp.Heavy_SMG" price="1000"/>
+		<Item category="@zeus_catNK"     name="Flanker Camp Light Pistol" class="Asian_new.Flanker\Camp.Light_Pistol" price="1000"/>
+		<Item category="@zeus_catNK"     name="Flanker Camp Light Rifle" class="Asian_new.Flanker\Camp.Light_Rifle" price="1000"/>
+		<Item category="@zeus_catNK"     name="Flanker Camp Light Shotgun" class="Asian_new.Flanker\Camp.Light_Shotgun" price="1000"/>
+		<Item category="@zeus_catNK"     name="Flanker Camp Light SMG" class="Asian_new.Flanker\Camp.Light_SMG" price="1000"/>
+		
+		<Item category="@zeus_catNK"     name="Flanker Elite Heavy Rifle" class="Asian_new.Flanker\Elite.Heavy_Rifle_SF" price="2000"/>
+		<Item category="@zeus_catNK"     name="Flanker Elite Heavy Shotgun" class="Asian_new.Flanker\Elite.Heavy_Shotgun_SF" price="2000"/>
+		<Item category="@zeus_catNK"     name="Flanker Elite Heavy SMG" class="Asian_new.Flanker\Elite.Heavy_SMG_SF" price="2000"/>
+		<Item category="@zeus_catNK"     name="Flanker Elite Light Rifle" class="Asian_new.Flanker\Elite.Light_Rifle_SF" price="2000"/>
+		<Item category="@zeus_catNK"     name="Flanker Elite Light Shotgun" class="Asian_new.Flanker\Elite.Light_Shotgun_SF" price="2000"/>
+		<Item category="@zeus_catNK"     name="Flanker Elite Light SMG" class="Asian_new.Flanker\Elite.Light_SMG_SF" price="2000"/>
+		
+		<Item category="@zeus_catNK"     name="Flanker Jungle Heavy Pistol" class="Asian_new.Flanker\Jungle.Heavy_Pistol" price="1000"/>
+		<Item category="@zeus_catNK"     name="Flanker Jungle Heavy Rifle" class="Asian_new.Flanker\Jungle.Heavy_Rifle" price="1000"/>
+		<Item category="@zeus_catNK"     name="Flanker Jungle Heavy Shotgun" class="Asian_new.Flanker\Jungle.Heavy_Shotgun" price="1000"/>
+		<Item category="@zeus_catNK"     name="Flanker Jungle Heavy SMG" class="Asian_new.Flanker\Jungle.Heavy_SMG" price="1000"/>
+		<Item category="@zeus_catNK"     name="Flanker Jungle Light Pistol" class="Asian_new.Flanker\Jungle.Light_Pistol" price="1000"/>
+		<Item category="@zeus_catNK"     name="Flanker Jungle Light Rifle" class="Asian_new.Flanker\Jungle.Light_Rifle" price="1000"/>
+		<Item category="@zeus_catNK"     name="Flanker Jungle Light Shotgun" class="Asian_new.Flanker\Jungle.Light_Shotgun" price="1000"/>
+		<Item category="@zeus_catNK"     name="Flanker Jungle Light SMG" class="Asian_new.Flanker\Jungle.Light_SMG" price="1000"/>
+
+
+		<Item category="@zeus_catNK"     name="Leader Camp Heavy Pistol" class="Asian_new.Leader\Camp.Heavy_Pistol" price="1000"/>
+		<Item category="@zeus_catNK"     name="Leader Camp Heavy Rifle" class="Asian_new.Leader\Camp.Heavy_Rifle" price="1000"/>
+		<Item category="@zeus_catNK"     name="Leader Camp Heavy Shotgun" class="Asian_new.Leader\Camp.Heavy_Shotgun" price="1000"/>
+		<Item category="@zeus_catNK"     name="Leader Camp Heavy SMG" class="Asian_new.Leader\Camp.Heavy_SMG" price="1000"/>
+		<Item category="@zeus_catNK"     name="Leader Camp Light Pistol" class="Asian_new.Leader\Camp.Light_Pistol" price="1000"/>
+		<Item category="@zeus_catNK"     name="Leader Camp Light Rifle" class="Asian_new.Leader\Camp.Light_Rifle" price="1000"/>
+		<Item category="@zeus_catNK"     name="Leader Camp Light Shotgun" class="Asian_new.Leader\Camp.Light_Shotgun" price="1000"/>
+		<Item category="@zeus_catNK"     name="Leader Camp Light SMG" class="Asian_new.Leader\Camp.Light_SMG" price="1000"/>
+		
+		<Item category="@zeus_catNK"     name="Leader Elite Heavy Rifle" class="Asian_new.Leader\Elite.Heavy_Rifle_SF" price="2000"/>
+		<Item category="@zeus_catNK"     name="Leader Elite Heavy Shotgun" class="Asian_new.Leader\Elite.Heavy_Shotgun_SF" price="2000"/>
+		<Item category="@zeus_catNK"     name="Leader Elite Heavy SMG" class="Asian_new.Leader\Elite.Heavy_SMG_SF" price="2000"/>
+		<Item category="@zeus_catNK"     name="Leader Elite Light Rifle" class="Asian_new.Leader\Elite.Light_Rifle_SF" price="2000"/>
+		<Item category="@zeus_catNK"     name="Leader Elite Light Shotgun" class="Asian_new.Leader\Elite.Light_Shotgun_SF" price="2000"/>
+		<Item category="@zeus_catNK"     name="Leader Elite Light SMG" class="Asian_new.Leader\Elite.Light_SMG_SF" price="2000"/>
+		
+		<Item category="@zeus_catNK"     name="Leader Jungle Heavy Pistol" class="Asian_new.Leader\Jungle.Heavy_Pistol" price="1000"/>
+		<Item category="@zeus_catNK"     name="Leader Jungle Heavy Rifle" class="Asian_new.Leader\Jungle.Heavy_Rifle" price="1000"/>
+		<Item category="@zeus_catNK"     name="Leader Jungle Heavy Shotgun" class="Asian_new.Leader\Jungle.Heavy_Shotgun" price="1000"/>
+		<Item category="@zeus_catNK"     name="Leader Jungle Heavy SMG" class="Asian_new.Leader\Jungle.Heavy_SMG" price="1000"/>
+		<Item category="@zeus_catNK"     name="Leader Jungle Light Pistol" class="Asian_new.Leader\Jungle.Light_Pistol" price="1000"/>
+		<Item category="@zeus_catNK"     name="Leader Jungle Light Rifle" class="Asian_new.Leader\Jungle.Light_Rifle" price="1000"/>
+		<Item category="@zeus_catNK"     name="Leader Jungle Light Shotgun" class="Asian_new.Leader\Jungle.Light_Shotgun" price="1000"/>
+		<Item category="@zeus_catNK"     name="Leader Jungle Light SMG" class="Asian_new.Leader\Jungle.Light_SMG" price="1000"/>
+		
+		
+		<Item category="@zeus_catNK"     name="Special Sniper" class="Asian_new.Special\Sniper.Sniper_SniperScope" price="1000"/>
+		<Item category="@zeus_catNK"     name="Special Watchtower Sniper" class="Asian_new.Special\Sniper.Watchtower_Sniper" price="1000"/>
+		<Item category="@zeus_catNK"     name="Special Suit Hurricane" class="Asian_new.Special\Suit.Suit_Hurricane" price="1000"/>
+		<Item category="@zeus_catNK"     name="Special Suit Sniper" class="Asian_new.Special\Suit.Suit_Sniper" price="1000"/>
+		<Item category="@zeus_catNK"     name="Special Suit Sniper Akimbo" class="Asian_new.Special\Suit.Suit_Akimbo" price="1000"/>
+		<Item category="@zeus_catNK"     name="Special Suit Sniper LAW" class="Asian_new.Special\Suit.Suit_LAW" price="1000"/>
+
+
+		<Item category="@zeus_catAliens" name="Alien" class="Aliens.NakedAliens.Alien" price="1000"/>
+		<Item category="@zeus_catAliens" name="Alien Ambush" class="Aliens.NakedAliens.Alien_Ambush" price="1000"/>
+		<Item category="@zeus_catAliens" name="Alien Defend" class="Aliens.NakedAliens.Alien_Defend" price="1000"/>
+		<Item category="@zeus_catAliens" name="Alien Melee" class="Aliens.NakedAliens.Alien_Melee" price="1000"/>
+		<Item category="@zeus_catAliens" name="Alien Patrol" class="Aliens.NakedAliens.Alien_Patrol" price="1000"/>
+		<Item category="@zeus_catAliens" name="Alien Scavenger" class="Aliens.NakedAliens.Alien_Scavenger" price="1000"/>
+		<Item category="@zeus_catAliens" name="Trooper MOAC" class="Aliens.Troopers.Trooper_MOAC" price="1000"/>
+		<Item category="@zeus_catAliens" name="Trooper MOAC Hangar" class="Aliens.Troopers.Trooper_MOAC_hangar" price="1000"/>
+		<Item category="@zeus_catAliens" name="Trooper MOAR" class="Aliens.Troopers.Trooper_MOAR" price="2500"/>
+		<Item category="@zeus_catAliens" name="Trooper MOAR Hangar" class="Aliens.Troopers.Trooper_MOAR_hangar" price="2500"/>
+		<Item category="@zeus_catAliens" name="Scout MOAC" class="Aliens.Scouts.Scout_MOAC" price="1000"/>
+		<Item category="@zeus_catAliens" name="Scout MOAR" class="Aliens.Scouts.Scout_MOAR" price="2500"/>
+		<Item category="@zeus_catAliens" name="Hunter" class="Aliens.Hunters.Hunter" price="5000"/>
+	</Tab>
+	
+	<Tab name="Weapons">
+		<Item category="@zeus_catWeapons"    name="@mp_eSCAR" class="SCAR" price="300"/>
+		<Item category="@zeus_catWeapons"    name="@mp_eSCAR" class="SCAR" price="300"/>
+		<Item category="@zeus_catWeapons"    name="@mp_eSCAR" class="SCAR" price="300"/>
+		<Item category="@zeus_catWeapons"    name="@mp_eSCAR" class="SCAR" price="300"/>
+		<Item category="@zeus_catWeapons"    name="@mp_eSCAR" class="SCAR" price="300"/>
+		<Item category="@zeus_catWeapons"    name="@mp_eSCAR" class="SCAR" price="300"/>
+		<Item category="@zeus_catWeapons"    name="@mp_eSCAR" class="SCAR" price="300"/>
+		<Item category="@zeus_catWeapons"    name="@mp_eSCAR" class="SCAR" price="300"/>
+		<Item category="@zeus_catWeapons"    name="@mp_eSCAR" class="SCAR" price="300"/>
+		<Item category="@zeus_catWeapons"    name="@mp_eSCAR" class="SCAR" price="300"/>
+		<Item category="@zeus_catWeapons"    name="@mp_eSCAR" class="SCAR" price="300"/>
+		<Item category="@zeus_catWeapons"    name="@mp_eSCAR" class="SCAR" price="300"/>
+		<Item category="@zeus_catWeapons"    name="@mp_eSCAR" class="SCAR" price="300"/>
+		<Item category="@zeus_catExplosives" name="@mp_eSCAR" class="SCAR" price="300"/>
+		<Item category="@zeus_catEquipment"  name="@mp_eSCAR" class="SCAR" price="300"/>
+		<Item category="@zeus_catAmmo"  	 name="@mp_eSCAR" class="SCAR" price="300" amount="40"/>
+		<Item category="@zeus_catAddons"  	 name="@mp_ePSilencer" class="SOCOMSilencer" price="40"/>
+	</Tab>
+	
+	<Tab name="Vehicles">
+		<Item category="@zeus_catNK"  	  name="Asian Heli" class="Vehicles.Air.Asian_Helicopter" price="300"/>
+		<Item category="@zeus_catNK"  	  name="Asian Heli Aggressive" class="Vehicles.Air.Asian_Helicopter_Aggressive" price="300"/>
+		<Item category="@zeus_catNK"  	  name="Asian Heli Reinforcement" class="Vehicles.Air.Asian_Helicopter_HighBudget_Reinforcement" price="300"/>
+		<Item category="@zeus_catNK"  	  name="Asian AAA" class="Vehicles.Land.Asian_AAA" price="300"/>
+		<Item category="@zeus_catNK"  	  name="Asian AAA SAM" class="Vehicles.Land.Asian_AAA_wSAM" price="300"/>
+		<Item category="@zeus_catNK"  	  name="Asian APC"  class="Vehicles.Land.Asian_APC" price="300"/>
+		<Item category="@zeus_catNK"  	  name="Asian LTV"  class="Vehicles.Land.Asian_LTV" price="300"/>
+		<Item category="@zeus_catNK"  	  name="Asian Tank" class="Vehicles.Land.Asian_Tank" price="300"/>
+		<Item category="@zeus_catNK"  	  name="Asian Tank Gauss" class="Vehicles.Land.Asian_Tank_wGauss" price="300"/>
+		<Item category="@zeus_catNK"  	  name="Asian Tank TAC" class="Vehicles.Land.Asian_Tank_wTAC" price="300"/>
+		<Item category="@zeus_catNK"  	  name="Asian Truck" class="Vehicles.Land.Asian_Truck" price="300"/>
+		<Item category="@zeus_catNK"  	  name="Asian Truck Hardtop" class="Vehicles.Land.Asian_Truck_wHardtop" price="300"/>
+		<Item category="@zeus_catNK"  	  name="Asian Patrol Boat" class="Vehicles.Sea.Asian_Patrolboat" price="300"/>
+		<Item category="@zeus_catNK"  	  name="Asian Patrol Boat Island" class="Vehicles.Sea.Asian_Patrolboat_Island" price="300"/>
+		<Item category="@zeus_catNK"  	  name="Asian Small Boat" class="Vehicles.Sea.Asian_Smallboat" price="300"/>
+		<Item category="@zeus_catNK"  	  name="Asian Small Boat Close" class="Vehicles.Sea.Asian_Smallboat_Close" price="300"/>
+		<Item category="@zeus_catNK"  	  name="Asian Speed Boat" class="Vehicles.Sea.Asian_Speedboat" price="300"/>
+		<Item category="@zeus_catNK"  	  name="Asian Speed Boat Roof" class="Vehicles.Sea.Asian_Speedboat_wRoof" price="300"/>
+
+		<Item category="@zeus_catNeutral" name="@mp_eSCAR" class="SCAR" price="300"/>
+	</Tab>	
+	
+	<Tab name="Other">
+		<Item category="@zeus_catProps" name="@mp_eSCAR" class="SCAR" price="300"/>
+	</Tab>
+</Root>

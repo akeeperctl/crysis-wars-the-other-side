@@ -277,7 +277,7 @@ private:
 	/// @param id Идентификатор выбранной сущности.
 	void HandleOnceSelection(EntityId id);
 	void ShowMouse(bool show);
-	void ApplyZeusProperties(IActor* pPlayer);
+	void MakeZeus(IActor* pPlayer);
 
 	//Выполнить команду всем выделенным сущностям
 	bool ExecuteCommand(EZeusCommands command);
