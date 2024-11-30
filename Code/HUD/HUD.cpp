@@ -2076,7 +2076,11 @@ void CHUD::HandleFSCommand(const char* szCommand, const char* szArgs)
 	//TheOtherSide
 	if (!strcmp(szCommand, "BecomeZeus"))
 	{
-		g_pTOSGame->GetZeusModule()->MakeZeus(gEnv->pGame->GetIGameFramework()->GetClientActor());
+		auto pPlayer = static_cast<CTOSPlayer*>(gEnv->pGame->GetIGameFramework()->GetClientActor());
+		if (!pPlayer->IsZeus())
+			g_pTOSGame->GetZeusModule()->GetNetwork().MakeZeus(pPlayer, true);
+		else
+			TOS_HUD::DisplayOverlayMessage("You have already become ZEUS", ColorF(1, 0, 0, 1));
 	}
 	//~TheOtherSide
 }
@@ -3038,8 +3042,8 @@ bool CHUD::ShowPDA(bool show, bool buyMenu)
 
 	//TheOtherSide
 	auto pZeusModule = g_pTOSGame->GetZeusModule();
-	if (show && pZeusModule && pZeusModule->HUDIsShowZeusMenu())
-		pZeusModule->HUDShowZeusMenu(false);
+	if (show && pZeusModule && pZeusModule->GetHUD().IsShowZeusMenu())
+		pZeusModule->GetHUD().ShowZeusMenu(false);
 	//~TheOtherSide
 
 	if (gEnv->bMultiplayer && pGameRules->GetTeamCount() > 1)

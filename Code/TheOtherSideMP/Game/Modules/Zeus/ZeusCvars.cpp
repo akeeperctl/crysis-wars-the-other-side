@@ -149,5 +149,5 @@ void CTOSZeusModule::ReleaseCCommands()
 
 void CTOSZeusModule::CmdReloadMenuItems(IConsoleCmdArgs* pArgs)
 {
-	g_pTOSGame->GetZeusModule()->MenuLoadItems();
+	g_pTOSGame->GetZeusModule()->GetHUD().MenuLoadItems();
 }

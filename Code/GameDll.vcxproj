@@ -476,7 +476,8 @@
     <ClCompile Include="TheOtherSideMP\Game\Modules\Master\MasterClient.cpp" />
     <ClCompile Include="TheOtherSideMP\Game\Modules\Master\MasterModule.cpp" />
     <ClCompile Include="TheOtherSideMP\Game\Modules\Master\MasterSynchronizer.cpp" />
-    <ClCompile Include="TheOtherSideMP\Game\Modules\Zeus\ZeusClientServer.cpp" />
+    <ClCompile Include="TheOtherSideMP\Game\Modules\Zeus\ZeusLocal.cpp" />
+    <ClCompile Include="TheOtherSideMP\Game\Modules\Zeus\ZeusNetwork.cpp" />
     <ClCompile Include="TheOtherSideMP\Game\Modules\Zeus\ZeusCvars.cpp" />
     <ClCompile Include="TheOtherSideMP\Game\Modules\Zeus\ZeusHUD.cpp" />
     <ClCompile Include="TheOtherSideMP\Game\Modules\Zeus\ZeusModule.cpp" />

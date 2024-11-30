@@ -78,7 +78,7 @@ public:
 				if (!pPlayer)
 					return;
 
-				g_pTOSGame->GetZeusModule()->NetMakePlayerZeus(pPlayer);
+				g_pTOSGame->GetZeusModule()->GetNetwork().MakeZeus(pPlayer, true);
 
 				ActivateOutput(pActInfo, EOP_Done, 1);
 			}

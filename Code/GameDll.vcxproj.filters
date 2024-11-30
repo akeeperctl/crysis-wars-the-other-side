@@ -900,7 +900,7 @@
     <ClCompile Include="TheOtherSideMP\Game\TOSGameEventRecorder.cpp">
       <Filter>TheOtherSideMP\Game\Events</Filter>
     </ClCompile>
-    <ClCompile Include="TheOtherSideMP\Game\Modules\Zeus\ZeusClientServer.cpp">
+    <ClCompile Include="TheOtherSideMP\Game\Modules\Zeus\ZeusNetwork.cpp">
       <Filter>TheOtherSideMP\Game\Modules\Zeus</Filter>
     </ClCompile>
     <ClCompile Include="TheOtherSideMP\Game\ScriptBinds\ScriptBind_Zeus.cpp">
@@ -908,6 +908,9 @@
     </ClCompile>
     <ClCompile Include="TheOtherSideMP\Nodes\FlowAINodes.cpp">
       <Filter>TheOtherSideMP\Nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="TheOtherSideMP\Game\Modules\Zeus\ZeusLocal.cpp">
+      <Filter>TheOtherSideMP\Game\Modules\Zeus</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

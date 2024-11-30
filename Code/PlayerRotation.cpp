@@ -255,7 +255,7 @@ void CPlayerRotation::ProcessFlyingZeroG()
 
 	//thats necessary when passing from groundG to normalG
 	m_baseQuat = m_viewQuat;
-	//m_baseQuat = Quat::CreateSlerp(m_viewQuat,m_player.GetEntity()->GetRotation() * Quat::CreateRotationZ(gf_PI),0.5f);
+	//m_baseQuat = Quat::CreateSlerp(m_viewQuat,m_pPlayer.GetEntity()->GetRotation() * Quat::CreateRotationZ(gf_PI),0.5f);
 
 	Ang3 desiredAngVel(m_deltaAngles.x,m_deltaAngles.y * 0.3f,m_deltaAngles.z);
 
@@ -321,8 +321,8 @@ void CPlayerRotation::ProcessFlyingZeroG()
 	m_baseQuat *= Quat::CreateRotationZ(finalAngle.z) * Quat::CreateRotationX(finalAngle.x) * Quat::CreateRotationY(finalAngle.y);
 	m_baseQuat.Normalize();
 
-	/*IEntity *pEnt = m_player.GetEntity();
-	Vec3 offsetToCenter(Vec3(0,0,m_player.GetStanceInfo(m_player.GetStance())->heightCollider));
+	/*IEntity *pEnt = m_pPlayer.GetEntity();
+	Vec3 offsetToCenter(Vec3(0,0,m_pPlayer.GetStanceInfo(m_pPlayer.GetStance())->heightCollider));
 	Vec3 finalPos(pEnt->GetWorldTM() * offsetToCenter);
 	Quat newBaseQuat(m_baseQuat * Quat::CreateRotationZ(finalAngle.z) * Quat::CreateRotationX(finalAngle.x) * Quat::CreateRotationY(finalAngle.y));
 	Vec3 newPos(pEnt->GetWorldPos() + m_baseQuat * offsetToCenter);
@@ -526,13 +526,13 @@ void CPlayerRotation::ClampAngles()
 
 			Matrix33 limitMtx;
 			limitMtx.SetFromVectors(right,forward,right%forward);
-			//gEnv->pRenderer->GetIRenderAuxGeom()->DrawLine(m_player.GetEntity()->GetWorldPos(), ColorB(0,0,255,255), m_player.GetEntity()->GetWorldPos() + limitMtx.GetColumn(0), ColorB(0,0,255,255));
-			//gEnv->pRenderer->GetIRenderAuxGeom()->DrawLine(m_player.GetEntity()->GetWorldPos(), ColorB(0,255,0,255), m_player.GetEntity()->GetWorldPos() + limitMtx.GetColumn(1), ColorB(0,255,0,255));
-			//gEnv->pRenderer->GetIRenderAuxGeom()->DrawLine(m_player.GetEntity()->GetWorldPos(), ColorB(255,0,0,255), m_player.GetEntity()->GetWorldPos() + limitMtx.GetColumn(2), ColorB(255,0,0,255));
+			//gEnv->pRenderer->GetIRenderAuxGeom()->DrawLine(m_pPlayer.GetEntity()->GetWorldPos(), ColorB(0,0,255,255), m_pPlayer.GetEntity()->GetWorldPos() + limitMtx.GetColumn(0), ColorB(0,0,255,255));
+			//gEnv->pRenderer->GetIRenderAuxGeom()->DrawLine(m_pPlayer.GetEntity()->GetWorldPos(), ColorB(0,255,0,255), m_pPlayer.GetEntity()->GetWorldPos() + limitMtx.GetColumn(1), ColorB(0,255,0,255));
+			//gEnv->pRenderer->GetIRenderAuxGeom()->DrawLine(m_pPlayer.GetEntity()->GetWorldPos(), ColorB(255,0,0,255), m_pPlayer.GetEntity()->GetWorldPos() + limitMtx.GetColumn(2), ColorB(255,0,0,255));
 			limitMtx.Invert();
 
 			Vec3 localDir(limitMtx * m_viewQuat.GetColumn1());
-//			Vec3 localDir(limitMtx * m_player.GetEntity()->GetWorldRotation().GetColumn1());
+//			Vec3 localDir(limitMtx * m_pPlayer.GetEntity()->GetWorldRotation().GetColumn1());
 
 			Ang3 limit;
 
@@ -577,7 +577,7 @@ void CPlayerRotation::ProcessNormal()
 {
 	//TheOtherSide
 
-	bool canRotate = g_pTOSGame->GetZeusModule()->GetZeusFlag(eZF_CanRotateCamera);
+	bool canRotate = g_pTOSGame->GetZeusModule()->GetLocal().GetFlag(CTOSZeusModule::EFlag::CanRotateCamera);
 	bool zeus = m_player.IsZeus();
 	bool isMaster = m_player.IsMaster();
 	bool inVehicle = m_player.GetLinkedVehicle() != nullptr;

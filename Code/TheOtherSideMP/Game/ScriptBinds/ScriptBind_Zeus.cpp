@@ -35,6 +35,6 @@ int CScriptBind_Zeus::OnOrderComplete(IFunctionHandler* pH, ScriptHandle executo
 	if (!pExecutor)
 		return pH->EndFunction();
 
-	g_pTOSGame->GetZeusModule()->RemoveOrder(pExecutor->GetId());
+	g_pTOSGame->GetZeusModule()->GetLocal().RemoveOrder(pExecutor->GetId());
 	return pH->EndFunction();
 }
