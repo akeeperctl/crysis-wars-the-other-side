@@ -108,15 +108,14 @@ void CTOSMasterModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEven
 		{
 			if (pGO)
 			{
-				m_pSynchonizer = static_cast<CTOSMasterSynchronizer*>(pGO->AcquireExtension("TOSMasterSynchronizer"));
-				assert(m_pSynchonizer);
+				RegisterSynchronizer(static_cast<CTOSMasterSynchronizer*>(pGO->AcquireExtension("TOSMasterSynchronizer")));
+				assert(GetSynchronizer() != nullptr);
 			}
 
 			TOS_RECORD_EVENT(entId, STOSGameEvent(eEGE_SynchronizerRegistered, "For Master Module", true));
 
 			break;
 		}
-		//case eEGE_SynchronizerRegistered:
 		case eEGE_ClientEnteredGame:
 		{
 			// В одиночной игре мастер будет задаваться по случаю

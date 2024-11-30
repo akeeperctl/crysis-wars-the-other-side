@@ -14,14 +14,6 @@ Copyright (C), AlienKeeper, 2024.
 #include "TheOtherSideMP/Helpers/TOS_AI.h"
 #include "TheOtherSideMP/Helpers/TOS_NET.h"
 
-CTOSMasterSynchronizer::CTOSMasterSynchronizer()
-{
-}
-
-CTOSMasterSynchronizer::~CTOSMasterSynchronizer()
-{
-}
-
 void CTOSMasterSynchronizer::PostInit(IGameObject* pGameObject)
 {
 	CTOSGenericSynchronizer::PostInit(pGameObject);

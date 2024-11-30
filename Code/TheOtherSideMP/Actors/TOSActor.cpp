@@ -763,6 +763,12 @@ bool CTOSActor::SetMeMaster(bool value)
 	return true;
 }
 
+bool CTOSActor::SetMeZeus(bool value)
+{
+	m_isZeus = value;
+	return true;
+}
+
 //void CTOSActor::NetMarkMeSlave(const bool slave) const
 //{
 //	CRY_ASSERT_MESSAGE(!IsPlayer(), "[MarkMeSlave] by design at 21/10/2023 the player cannot be a slave");

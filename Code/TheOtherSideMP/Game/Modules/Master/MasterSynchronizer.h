@@ -117,9 +117,6 @@ typedef NetMasterStopControlParams NetMasterIdParams;
 class CTOSMasterSynchronizer  : public CTOSGenericSynchronizer  // NOLINT(cppcoreguidelines-special-member-functions)
 {
 public:
-	CTOSMasterSynchronizer();
-	~CTOSMasterSynchronizer() ;
-
 	// IGameObjectExtension
 	void PostInit(IGameObject* pGameObject) ;
 	void Release() ;

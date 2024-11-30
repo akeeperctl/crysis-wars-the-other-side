@@ -191,6 +191,7 @@ class CTOSActor:
 public:
 
 	friend class CTOSZeusModule;
+	friend class CTOSZeusSynchronizer;
 	friend class CTOSMasterModule;
 	friend class CTOSMasterClient;
 
@@ -303,6 +304,7 @@ protected:
 	// Сделать мастером или рабом на стороне сервера
 	bool SetMeSlave(bool value);
 	bool SetMeMaster(bool value);
+	bool SetMeZeus(bool value);
 	string m_debugName;
 
 private:

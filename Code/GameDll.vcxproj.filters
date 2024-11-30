@@ -912,6 +912,9 @@
     <ClCompile Include="TheOtherSideMP\Game\Modules\Zeus\ZeusLocal.cpp">
       <Filter>TheOtherSideMP\Game\Modules\Zeus</Filter>
     </ClCompile>
+    <ClCompile Include="TheOtherSideMP\Game\Modules\Zeus\ZeusSynchronizer.cpp">
+      <Filter>TheOtherSideMP\Game\Modules\Zeus</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor.h">
@@ -1606,6 +1609,9 @@
     </ClInclude>
     <ClInclude Include="TheOtherSideMP\Game\ScriptBinds\ScriptBind_Zeus.h">
       <Filter>TheOtherSideMP\Game\ScriptBinds</Filter>
+    </ClInclude>
+    <ClInclude Include="TheOtherSideMP\Game\Modules\Zeus\ZeusSynchronizer.h">
+      <Filter>TheOtherSideMP\Game\Modules\Zeus</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

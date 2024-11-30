@@ -9,6 +9,7 @@ Copyright (C), AlienKeeper, 2024.
 #include "HUD/HUDSilhouettes.h"
 #include "GameActions.h"
 #include "ZeusModule.h"
+#include "ZeusSynchronizer.h"
 #include <TheOtherSideMP\HUD\TOSCrosshair.h>
 #include <TheOtherSideMP\Helpers\TOS_AI.h>
 #include <TheOtherSideMP\Helpers\TOS_Console.h>
@@ -21,41 +22,6 @@ Copyright (C), AlienKeeper, 2024.
 #include <Cry_Camera.h>
 
 std::map<string, string> CTOSZeusModule::s_classToConsoleVar;
-
-bool CTOSZeusModule::IsPhysicsAllowed(const IEntity* pEntity)
-{
-	if (!pEntity)
-		return false;
-
-	IPhysicalEntity* physEnt = pEntity->GetPhysics();
-	if (!physEnt)
-		return false;
-
-	// допустимые сущности
-	const auto type = physEnt->GetType();
-	if (!(type == PE_LIVING || type == PE_RIGID || type == PE_STATIC || type == PE_WHEELEDVEHICLE || type == PE_ARTICULATED))
-		return false;
-}
-
-CTOSPlayer* CTOSZeusModule::GetPlayer() const
-{
-	return m_local.GetPlayer();
-}
-
-CTOSZeusModule::Network& CTOSZeusModule::GetNetwork()
-{
-	return m_network;
-}
-
-CTOSZeusModule::Local& CTOSZeusModule::GetLocal()
-{
-	return m_local;
-}
-
-CTOSZeusModule::HUD& CTOSZeusModule::GetHUD()
-{
-	return m_hud;
-}
 
 static bool EntityIsSimilarToEntity(IEntity* pFirstEntity, IEntity* pSecondEntity)
 {
@@ -630,6 +596,8 @@ void CTOSZeusModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent&
 	bool noModalOrNoHUD = !pHUD || (pHUD && !pHUD->IsHaveModalHUD());
 	auto pPlayer = GetPlayer();
 
+	TOS_INIT_EVENT_VALUES(pEntity, event);
+
 	switch (event.event)
 	{
 	case eEGE_ActorRevived:
@@ -639,6 +607,7 @@ void CTOSZeusModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent&
 			m_local.Reset();
 			if (noModalOrNoHUD)
 				m_local.ShowMouse(false);
+			m_hud.ShowZeusMenu(false);
 		}
 		break;
 	}
@@ -730,19 +699,22 @@ void CTOSZeusModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent&
 		}
 		break;
 	}
-	//case eEGE_ActorExitVehicle:
-	//{
-	//	if (m_pPlayer && m_pPlayer->GetEntityId() == pEntity->GetId())
-	//	{				
-	//		//MakeZeus(m_pPlayer);
-	//	}
-	//	break;
-	//}
+	case eEGE_SynchronizerCreated:
+	{
+		if (pGO)
+		{
+			RegisterSynchronizer(static_cast<CTOSZeusSynchronizer*>(pGO->AcquireExtension("TOSZeusSynchronizer")));
+			assert(GetSynchronizer() != nullptr);
+		}
+
+		TOS_RECORD_EVENT(entId, STOSGameEvent(eEGE_SynchronizerRegistered, "For Zeus Module", true));
+
+		break;
+	}
 	default:
 		break;
 	}
 }
-
 
 void CTOSZeusModule::GetMemoryStatistics(ICrySizer* s)
 {
@@ -919,3 +891,39 @@ int CTOSZeusModule::GetDebugLog()
 {
 	return m_debugLogMode;
 }
+
+bool CTOSZeusModule::IsPhysicsAllowed(const IEntity* pEntity)
+{
+	if (!pEntity)
+		return false;
+
+	IPhysicalEntity* physEnt = pEntity->GetPhysics();
+	if (!physEnt)
+		return false;
+
+	// допустимые сущности
+	const auto type = physEnt->GetType();
+	if (!(type == PE_LIVING || type == PE_RIGID || type == PE_STATIC || type == PE_WHEELEDVEHICLE || type == PE_ARTICULATED))
+		return false;
+}
+
+CTOSPlayer* CTOSZeusModule::GetPlayer() const
+{
+	return m_local.GetPlayer();
+}
+
+CTOSZeusModule::Network& CTOSZeusModule::GetNetwork()
+{
+	return m_network;
+}
+
+CTOSZeusModule::Local& CTOSZeusModule::GetLocal()
+{
+	return m_local;
+}
+
+CTOSZeusModule::HUD& CTOSZeusModule::GetHUD()
+{
+	return m_hud;
+}
+

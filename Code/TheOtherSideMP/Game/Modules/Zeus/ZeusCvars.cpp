@@ -5,7 +5,7 @@ Copyright (C), AlienKeeper, 2024.
 
 // ReSharper disable CppParameterMayBeConstPtrOrRef
 #include "StdAfx.h"
-
+#include "TheOtherSideMP\Game\TOSGameCvars.h"
 #include "TheOtherSideMP\Game\Modules\Zeus\ZeusModule.h"
 
 void CTOSZeusModule::InitCVars(IConsole* pConsole)
@@ -137,6 +137,7 @@ void CTOSZeusModule::InitCCommands(IConsole* pConsole)
 	CTOSGenericModule::InitCCommands(pConsole);
 
 	pConsole->AddCommand("tos_cmd_reload_zeus_menu_items", CmdReloadMenuItems);
+	pConsole->AddCommand("tos_cmd_become_zeus", CmdBecomeZeus);
 }
 
 void CTOSZeusModule::ReleaseCCommands()
@@ -145,9 +146,19 @@ void CTOSZeusModule::ReleaseCCommands()
 
 	const auto pConsole = gEnv->pConsole;
 	pConsole->RemoveCommand("tos_cmd_reload_zeus_menu_items");
+	pConsole->RemoveCommand("tos_cmd_become_zeus");
 }
 
 void CTOSZeusModule::CmdReloadMenuItems(IConsoleCmdArgs* pArgs)
 {
 	g_pTOSGame->GetZeusModule()->GetHUD().MenuLoadItems();
+}
+
+void CTOSZeusModule::CmdBecomeZeus(IConsoleCmdArgs* pArgs)
+{
+	ONLY_CLIENT_CMD;
+	const string make = pArgs->GetArg(1);
+	const bool bMake = bool(atoi(make) > 0);
+
+	g_pTOSGame->GetZeusModule()->GetNetwork().MakeZeus(g_pGame->GetIGameFramework()->GetClientActor(), bMake);
 }

@@ -246,6 +246,7 @@ public:
 	{
 		friend class CTOSZeusModule;
 		friend class CScriptBind_Zeus;
+		friend class CTOSZeusSynchronizer;
 
 		Local::Local(CTOSZeusModule* _pParent);
 		bool GetFlag(EFlag flag) const;
@@ -358,6 +359,7 @@ public:
 
 	struct HUD
 	{
+		friend class CTOSZeusSynchronizer;
 		friend class CTOSZeusModule;
 		friend class CHUD;
 
@@ -435,6 +437,7 @@ public:
 
 	//Console Commands
 	static void CmdReloadMenuItems(IConsoleCmdArgs* pArgs);
+	static void CmdBecomeZeus(IConsoleCmdArgs* pArgs);
 	//~Console Commands
 
 	bool IsPhysicsAllowed(const IEntity* pEntity);
