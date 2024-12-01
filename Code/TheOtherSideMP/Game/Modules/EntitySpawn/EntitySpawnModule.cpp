@@ -299,32 +299,32 @@ IEntity* CTOSEntitySpawnModule::SpawnEntity(STOSEntitySpawnParams& params, bool 
 		}
 	}
 
-	const auto pEntity = pEntSys->SpawnEntity(params.vanilla, false);
-	assert(pEntity);
+	const auto pSpawned = pEntSys->SpawnEntity(params.vanilla, false);
+	assert(pSpawned);
 
 	if (!params.savedName.empty())
-		pEntity->SetName(params.savedName);
+		pSpawned->SetName(params.savedName);
 
 	IPersistantDebug* pPD = gEnv->pGame->GetIGameFramework()->GetIPersistantDebug();
 	pPD->Begin("EntitySpawnModule", true);
 
 	auto& props = params.properties;
 	if (props.GetPtr())
-		pEntity->GetScriptTable()->SetValue("Properties", props);
+		pSpawned->GetScriptTable()->SetValue("Properties", props);
 
 	auto& propsInstance = params.propertiesInstance;
 	if (propsInstance.GetPtr())
-		pEntity->GetScriptTable()->SetValue("PropertiesInstance", propsInstance);
+		pSpawned->GetScriptTable()->SetValue("PropertiesInstance", propsInstance);
 
-	gEnv->pEntitySystem->InitEntity(pEntity, params.vanilla);
+	gEnv->pEntitySystem->InitEntity(pSpawned, params.vanilla);
 
-	const EntityId entityId = pEntity->GetId();
-	CActor* pActor = static_cast<CActor*>(TOS_GET_ACTOR(entityId));
-
-	IEntity* pAuthorityPlayerEnt = gEnv->pEntitySystem->FindEntityByName(params.authorityPlayerName);
-	if (pAuthorityPlayerEnt)
+	const EntityId entityId = pSpawned->GetId();
+	auto pActor = static_cast<CActor*>(TOS_GET_ACTOR(entityId));
+	if (params.moveSpawnedToAuthorityPos && pActor)
 	{
-		g_pGame->GetGameRules()->MovePlayer(pActor, pAuthorityPlayerEnt->GetWorldPos(), Ang3(pAuthorityPlayerEnt->GetWorldRotation()));
+		IEntity* pAuthorityPlayerEnt = gEnv->pEntitySystem->FindEntityByName(params.authorityPlayerName);
+		if (pAuthorityPlayerEnt)
+			g_pGame->GetGameRules()->MovePlayer(pActor, pAuthorityPlayerEnt->GetWorldPos(), Ang3(pAuthorityPlayerEnt->GetWorldRotation()));
 	}
 
 	//1
@@ -333,7 +333,6 @@ IEntity* CTOSEntitySpawnModule::SpawnEntity(STOSEntitySpawnParams& params, bool 
 
 	if (params.tosFlags & ENTITY_MUST_RECREATED)
 	{
-
 		auto alreadyInside = stl::find(s_markedForRecreation, entityId);
 		if (!alreadyInside)
 		{
@@ -353,7 +352,7 @@ IEntity* CTOSEntitySpawnModule::SpawnEntity(STOSEntitySpawnParams& params, bool 
 	}
 
 
-	return pEntity;
+	return pSpawned;
 }
 
 bool CTOSEntitySpawnModule::SpawnEntityDelay(STOSEntityDelaySpawnParams& params, bool sendTosEvent /*= true*/)

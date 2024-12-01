@@ -7,6 +7,7 @@ Copyright (C), AlienKeeper, 2024.
 #include "IFlashPlayer.h"
 
 #include "ZeusModule.h"
+#include "ZeusSynchronizer.h"
 #include "HUD/HUD.h"
 #include <TheOtherSideMP\Helpers\TOS_Console.h>
 #include <TheOtherSideMP\Helpers\TOS_Entity.h>
@@ -89,26 +90,8 @@ void CTOSZeusModule::HandleFSCommand(const char* pCommand, const char* pArgs)
 	}
 	else if (sCommand == "Spawn")
 	{
-		STOSEntitySpawnParams params;
-		params.vanilla.bStaticEntityId = false; // true - вылетает в редакторе и медленно работает O(n), false O(1)
-		params.vanilla.bIgnoreLock = false; // spawn lock игнор
-
-		const string* const psClassName = &sArgs;
-		IEntityClass* pClass = gEnv->pEntitySystem->GetClassRegistry()->FindClass(psClassName->c_str());
-
-		const string name = string("Zeus_") + psClassName->c_str();
-		params.vanilla.sName = name;
-		params.vanilla.pClass = pClass;
-
-		const auto pArchetype = gEnv->pEntitySystem->LoadEntityArchetype(psClassName->c_str());
-		if (pArchetype)
-			params.vanilla.pArchetype = pArchetype;
-
-		if (!pClass && !pArchetype)
-		{
-			CryLogError("[Zeus] not defined entity class '%s'", psClassName->c_str());
-			return;
-		}
+		auto pSync = static_cast<CTOSZeusSynchronizer*>(GetSynchronizer());
+		assert(pSync != nullptr);
 
 		// Получаем координаты вперед от камеры
 		const Vec3 pos = gEnv->pSystem->GetViewCamera().GetPosition();
@@ -117,72 +100,96 @@ void CTOSZeusModule::HandleFSCommand(const char* pCommand, const char* pArgs)
 
 		// Только вращение по Z
 		Vec3 spawnPos = pos + (dir * maxDistance);
-		//Quat spawnRot = Quat::CreateRotationVDir(dir);
-		//spawnRot.v.x = 0;
-		//spawnRot.v.y = 0;
-		// FIXME: ротация транспорта после Hide(false) почему то становится в 000, хотя бокс изначально повернут правильно
 
 		const int rayFlags = rwi_stop_at_pierceable | rwi_colltype_any;
 		const unsigned entityFlags = ent_all;
-		
+
 		auto pPhys = GetPlayer()->GetEntity()->GetPhysics();
 		ray_hit rayHit;
 
 		const int hitted = gEnv->pPhysicalWorld->RayWorldIntersection(pos, dir * maxDistance, entityFlags, rayFlags, &rayHit, 1, pPhys);
 		if (hitted)
-		{
 			spawnPos = rayHit.pt;
-		}
 
-		//const auto vCamPos = gEnv->pSystem->GetViewCamera().GetPosition();
-		//const auto vDir = dir;
-		//auto pPhys = m_pPlayer->GetEntity()->GetPhysics();
+		CTOSZeusSynchronizer::NetSpawnParams netParams;
+		netParams.className = sArgs;
+		netParams.spawnedName = string("zeus_") + sArgs;
+		netParams.pos = spawnPos;
+		netParams.playerChannelId = GetPlayer()->GetChannelId();
+		pSync->GetGameObject()->InvokeRMI(CTOSZeusSynchronizer::SvRequestSpawnEntity(), netParams, eRMI_ToServer);
 
-		//ray_hit hit;
-		//const auto queryFlags = ent_all;
-		//const unsigned int flags = rwi_stop_at_pierceable | rwi_colltype_any;
-		//const float fRange = gEnv->p3DEngine->GetMaxViewDistance();
+		//STOSEntitySpawnParams params;
+		//params.vanilla.bStaticEntityId = false; // true - вылетает в редакторе и медленно работает O(n), false O(1)
+		//params.vanilla.bIgnoreLock = false; // spawn lock игнор
 
-		//if (gEnv->pPhysicalWorld && gEnv->pPhysicalWorld->RayWorldIntersection(vCamPos, vDir * fRange, queryFlags, flags, &hit, 1, pPhys))
+		//const string* const psClassName = &sArgs;
+		//IEntityClass* pClass = gEnv->pEntitySystem->GetClassRegistry()->FindClass(psClassName->c_str());
+
+		//const string name = string("Zeus_") + psClassName->c_str();
+		//params.vanilla.sName = name;
+		//params.vanilla.pClass = pClass;
+
+		//const auto pArchetype = gEnv->pEntitySystem->LoadEntityArchetype(psClassName->c_str());
+		//if (pArchetype)
+		//	params.vanilla.pArchetype = pArchetype;
+
+		//if (!pClass && !pArchetype)
 		//{
-		//	if (gEnv->p3DEngine->RefineRayHit(&hit, vDir * fRange))
-		//	{
-		//		spawnPos = hit.pt;
-		//	}
+		//	CryLogError("[Zeus] not defined entity class '%s'", psClassName->c_str());
+		//	return;
 		//}
 
-		//m_pPersistantDebug->Begin("ZeusMenuSpawn", true);
-		//m_pPersistantDebug->AddLine(pos, spawnPos, ColorF(1.0f,1.0f,1.0f,1.0f), 15.0f);
-		//m_pPersistantDebug->AddSphere(spawnPos, 1.0f, ColorF(0.3f,0.3f,0.3f,1.0f), 15.0f);
+		//// Получаем координаты вперед от камеры
+		//const Vec3 pos = gEnv->pSystem->GetViewCamera().GetPosition();
+		//const Vec3 dir = gEnv->pSystem->GetViewCamera().GetViewdir();
+		//const float maxDistance = 300.0f;
 
-		params.vanilla.vPosition = spawnPos;
-		// params.vanilla.qRotation = spawnRot;
+		//// Только вращение по Z
+		//Vec3 spawnPos = pos + (dir * maxDistance);
+		////Quat spawnRot = Quat::CreateRotationVDir(dir);
+		////spawnRot.v.x = 0;
+		////spawnRot.v.y = 0;
+		//// FIXME: ротация транспорта после Hide(false) почему то становится в 000, хотя бокс изначально повернут правильно
 
-		IEntity* pSpawned = TOS_Entity::Spawn(params, false);
-		if (!pSpawned)
-		{
-			CryLogError("[Zeus] entity with class '%s' spawn failed!", psClassName->c_str());
-			return;
-		}
+		//const int rayFlags = rwi_stop_at_pierceable | rwi_colltype_any;
+		//const unsigned entityFlags = ent_all;
+		//
+		//auto pPhys = GetPlayer()->GetEntity()->GetPhysics();
+		//ray_hit rayHit;
 
-		pSpawned->Hide(true);
+		//const int hitted = gEnv->pPhysicalWorld->RayWorldIntersection(pos, dir * maxDistance, entityFlags, rayFlags, &rayHit, 1, pPhys);
+		//if (hitted)
+		//{
+		//	spawnPos = rayHit.pt;
+		//}
 
-		const EntityId spawnedId = pSpawned->GetId();
+		//params.vanilla.vPosition = spawnPos;
 
-		char buffer[64];
-		sprintf(buffer, "%d", spawnedId);
-		pSpawned->SetName(name + "_" + buffer);
+		//IEntity* pSpawned = TOS_Entity::Spawn(params, false);
+		//if (!pSpawned)
+		//{
+		//	CryLogError("[Zeus] entity with class '%s' spawn failed!", psClassName->c_str());
+		//	return;
+		//}
 
-		m_local.m_dragging = true;
-		m_hud.m_menuSpawnHandling = true;
+		//pSpawned->Hide(true);
 
-		m_local.SelectEntity(spawnedId);
-		m_local.m_curClickedEntityId = spawnedId;
-		m_local.m_mouseOveredEntityId = spawnedId;
+		//const EntityId spawnedId = pSpawned->GetId();
 
-		m_local.m_selectStartEntitiesPositions[spawnedId] = spawnPos;
-		m_local.m_storedEntitiesPositions[spawnedId] = spawnPos;
-		m_local.m_clickedSelectStartPos = spawnPos;
+		//char buffer[64];
+		//sprintf(buffer, "%d", spawnedId);
+		//pSpawned->SetName(name + "_" + buffer);
+
+		//m_local.m_dragging = true;
+		//m_hud.m_menuSpawnHandling = true;
+
+		//m_local.SelectEntity(spawnedId);
+		//m_local.m_curClickedEntityId = spawnedId;
+		//m_local.m_mouseOveredEntityId = spawnedId;
+
+		//m_local.m_selectStartEntitiesPositions[spawnedId] = spawnPos;
+		//m_local.m_storedEntitiesPositions[spawnedId] = spawnPos;
+		//m_local.m_clickedSelectStartPos = spawnPos;
 	}
 }
 
@@ -251,7 +258,7 @@ void CTOSZeusModule::HUD::CreateOrderLine(EntityId executor, const Vec3& orderWo
 	if (!pExecutor)
 		return;
 
-	AABB bounds; 
+	AABB bounds;
 	pExecutor->GetWorldBounds(bounds);
 
 	const Vec3 startPos = bounds.GetCenter();
@@ -300,7 +307,7 @@ void CTOSZeusModule::HUD::UpdateZeusMenuItemList(const char* szPageIdx)
 	for (; pTabBegin != pTabEnd; pTabBegin++)
 	{
 		if (pTabBegin->first.iIndex == iPage)
-		{	
+		{
 			strPageName = pTabBegin->first.strName;
 
 			const std::vector<SItem>* pItemsList = &pTabBegin->second;

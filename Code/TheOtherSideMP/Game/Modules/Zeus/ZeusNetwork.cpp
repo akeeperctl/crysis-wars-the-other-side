@@ -10,17 +10,19 @@ Copyright (C), AlienKeeper, 2024.
 #include <TheOtherSideMP/Helpers/TOS_AI.h>
 #include <TheOtherSideMP/Helpers/TOS_Inventory.h>
 #include <TheOtherSideMP/Helpers/TOS_NET.h>
+#include <TheOtherSideMP/Helpers/TOS_Entity.h>
 
 // ПОКА НЕ ИСПОЛЬЗУЕТСЯ
 void CTOSZeusModule::Network::SetPP(int amount)
 {
-	if (!gEnv->bServer || !pParent->GetPlayer())
+	if (!gEnv->bServer)
 		return;
 
 	CGameRules* pGameRules = g_pGame->GetGameRules();
 	IScriptTable* pScriptTable = pGameRules->GetEntity()->GetScriptTable();
 	if (pScriptTable)
 	{
+		//FIXME: НУЖНО СИНХРОНИТЬ И НЕ ИСПОЛЬЗОВТАЬ ЛОК. АКТЕРА
 		pGameRules->SetSynchedEntityValue(pParent->GetPlayer()->GetEntityId(), TSynchedKey(ZEUS_PP_AMOUNT_KEY), amount);
 	}
 }
@@ -46,7 +48,7 @@ void CTOSZeusModule::Network::MakeZeus(IActor* pPlayer, bool bMake)
 
 	CTOSZeusSynchronizer::NetMakeParams params;
 	params.bMake = bMake;
-	params.playerId = pPlayer->GetEntityId();
+	params.playerChannelId = pPlayer->GetChannelId();
 
 	if (gEnv->bClient)
 		pSync->GetGameObject()->InvokeRMI(CTOSZeusSynchronizer::SvRequestMakeZeus(), params, eRMI_ToServer);

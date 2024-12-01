@@ -35,7 +35,8 @@ public:
 	{
 		CanRotateCamera = BIT(0),
 		Possessing = BIT(1), // зевс вселился в кого-то
-		CanUseMouse = BIT(2)
+		CanUseMouse = BIT(2),
+		Zeusing = BIT(3), // зевс активирован
 	};
 
 	enum class EIconColor
@@ -255,7 +256,6 @@ public:
 	private:
 		void ShowMouse(bool show);
 		void SetFlag(EFlag flag, bool value);
-		void SetPlayer(CTOSPlayer* pPlayer);
 		void Reset();
 
 		// Фильтр на сущности. True - сущность можно выбрать, false - нельзя
@@ -351,8 +351,6 @@ public:
 		EntityId m_orderTargetId;
 
 		ray_hit m_mouseRay;
-		CTOSPlayer* m_pPlayer;
-
 	public:
 		CTOSZeusModule* pParent;
 	};
@@ -441,14 +439,15 @@ public:
 	//~Console Commands
 
 	bool IsPhysicsAllowed(const IEntity* pEntity);
-	CTOSPlayer* GetPlayer() const;
+	// Получить локального игрока
+	CTOSPlayer* GetPlayer() const; 
 	Network& GetNetwork();
 	Local& GetLocal();
 	HUD& GetHUD();
 
 private:
-	Network m_network;
 	Local m_local;
+	Network m_network;
 	HUD m_hud;
 
 	CScriptBind_Zeus* m_pZeusScriptBind;

@@ -94,7 +94,6 @@ CTOSZeusModule::CTOSZeusModule()
 	m_pPersistantDebug(nullptr),
 	m_pZeusScriptBind(nullptr),
 
-
 	m_network(this),
 	m_local(this),
 	m_hud(this)
@@ -110,6 +109,10 @@ void CTOSZeusModule::Reset()
 {
 	m_local.Reset();
 	m_hud.Reset();
+
+	auto pPlayer = GetPlayer();
+	if (pPlayer)
+		pPlayer->SetMeZeus(false);
 }
 
 void CTOSZeusModule::Init()
@@ -135,7 +138,10 @@ void CTOSZeusModule::ReleaseScriptBinds()
 
 bool CTOSZeusModule::OnInputEvent(const SInputEvent& event)
 {
-	if (!GetPlayer() || !GetPlayer()->IsClient())
+	if (!gEnv->bClient)
+		return false;
+
+	if (!GetPlayer() || !m_local.GetFlag(EFlag::Zeusing))
 		return false;
 
 	if (event.deviceId == EDeviceId::eDI_Keyboard)
@@ -593,8 +599,10 @@ void CTOSZeusModule::OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eH
 void CTOSZeusModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent& event)
 {
 	auto pHUD = g_pGame->GetHUD();
-	bool noModalOrNoHUD = !pHUD || (pHUD && !pHUD->IsHaveModalHUD());
 	auto pPlayer = GetPlayer();
+
+	const bool bNoModalOrNoHUD = !pHUD || (pHUD && !pHUD->IsHaveModalHUD());
+	const bool bZeusing = m_local.GetFlag(EFlag::Zeusing);
 
 	TOS_INIT_EVENT_VALUES(pEntity, event);
 
@@ -602,10 +610,13 @@ void CTOSZeusModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent&
 	{
 	case eEGE_ActorRevived:
 	{
+		if (!bZeusing)
+			return;
+
 		if (pPlayer && pPlayer->GetEntityId() == pEntity->GetId())
 		{
 			m_local.Reset();
-			if (noModalOrNoHUD)
+			if (bNoModalOrNoHUD)
 				m_local.ShowMouse(false);
 			m_hud.ShowZeusMenu(false);
 		}
@@ -613,10 +624,13 @@ void CTOSZeusModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent&
 	}
 	case eEGE_MasterClientOnStartControl:
 	{
+		if (!bZeusing)
+			return;
+
 		if (pPlayer)
 		{
 			m_hud.ShowPlayerHUD(true);
-			if (noModalOrNoHUD)
+			if (bNoModalOrNoHUD)
 				m_local.ShowMouse(false);
 
 			m_local.SetFlag(EFlag::Possessing, true);
@@ -625,6 +639,9 @@ void CTOSZeusModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent&
 	}
 	case eEGE_MasterClientOnStopControl:
 	{
+		if (!bZeusing)
+			return;
+
 		if (pPlayer)
 		{
 			m_network.MakeZeus(pPlayer, true);
@@ -649,6 +666,9 @@ void CTOSZeusModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent&
 	}
 	case eEGE_EditorGameExit:
 	{
+		if (!bZeusing)
+			return;
+
 		if (pPlayer)
 		{
 			if (m_local.m_mouseDisplayed == false)
@@ -669,6 +689,9 @@ void CTOSZeusModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent&
 	}
 	case eEGE_ActorEnterVehicle:
 	{
+		if (!bZeusing)
+			return;
+
 		if (pPlayer && m_local.IsSelectedEntity(pEntity->GetId()))
 		{
 			const auto pVehEntity = TOS_GET_ENTITY(event.int_value);
@@ -686,6 +709,9 @@ void CTOSZeusModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent&
 	case eEGE_ActorDead:
 	case eEGE_VehicleDestroyed:
 	{
+		if (!bZeusing)
+			return;
+
 		m_local.RemoveOrder(pEntity->GetId());
 
 		auto orderIt = m_local.m_orders.begin();
@@ -736,8 +762,8 @@ void CTOSZeusModule::Update(float frametime)
 	if (tos_sv_zeus_update == 0)
 		return;
 
-	auto pPlayer = GetPlayer();
-	if (!pPlayer || !pPlayer->IsClient())
+	// TODO: 01.12.2024 здесь говно, вылетает при спавне транспортаw
+	if (!GetPlayer() || !m_local.GetFlag(EFlag::Zeusing))
 		return;
 
 	auto pMouse = gEnv->pHardwareMouse;
@@ -781,7 +807,7 @@ void CTOSZeusModule::Update(float frametime)
 		m_local.m_draggingMoveStartTimer = 0.0f;
 
 	pe_status_dynamics zeus_dyn;
-	const auto pZeusPhys = pPlayer->GetEntity()->GetPhysics();
+	const auto pZeusPhys = GetPlayer()->GetEntity()->GetPhysics();
 	if (pZeusPhys)
 		pZeusPhys->GetStatus(&zeus_dyn);
 
@@ -909,7 +935,7 @@ bool CTOSZeusModule::IsPhysicsAllowed(const IEntity* pEntity)
 
 CTOSPlayer* CTOSZeusModule::GetPlayer() const
 {
-	return m_local.GetPlayer();
+	return static_cast<CTOSPlayer*>(TOS_GET_CLIENT_ACTOR);
 }
 
 CTOSZeusModule::Network& CTOSZeusModule::GetNetwork()
@@ -926,4 +952,3 @@ CTOSZeusModule::HUD& CTOSZeusModule::GetHUD()
 {
 	return m_hud;
 }
-

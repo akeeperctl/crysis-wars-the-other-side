@@ -15,20 +15,62 @@ Copyright (C), AlienKeeper, 2024.
 class CTOSZeusSynchronizer : public CTOSGenericSynchronizer  // NOLINT(cppcoreguidelines-special-member-functions)
 {
 public:
+	struct NetSpawnParams
+	{
+		int playerChannelId;
+		string spawnedName;
+		string className;
+		Vec3 pos;
+
+		NetSpawnParams()
+			:
+			playerChannelId(0),
+			spawnedName(""),
+			className(""),
+			pos(ZERO)
+		{};
+
+		void SerializeWith(TSerialize ser)
+		{
+			ser.Value("playerChannelId", playerChannelId, 'i8');
+			ser.Value("spawnedName", spawnedName);
+			ser.Value("className", className);
+			ser.Value("pos", pos);
+		}
+	};	
+	
+	struct NetSpawnedInfo
+	{
+		EntityId spawnedId;
+		Vec3 spawnedPos;
+
+		NetSpawnedInfo()
+			:
+			spawnedId(0),
+			spawnedPos(ZERO)
+		{};
+
+		void SerializeWith(TSerialize ser)
+		{
+			ser.Value("spawnedId", spawnedId, 'eid');
+			ser.Value("spawnedPos", spawnedPos, 'wrld');
+		}
+	};
+
 	struct NetMakeParams
 	{
-		EntityId playerId;
+		int playerChannelId;
 		bool bMake;
 
 		NetMakeParams()
 			:
-			playerId(0),
+			playerChannelId(0),
 			bMake(false)
 		{};
 
 		void SerializeWith(TSerialize ser)
 		{
-			ser.Value("playerId", playerId, 'eid');
+			ser.Value("playerChannelId", playerChannelId, 'i8');
 			ser.Value("bMake", bMake, 'bool');
 		}
 	};
@@ -39,8 +81,11 @@ public:
 	//NOATTACH - Без привязки к данным сериализации
 	//Reliable - надёжная доставка пакета
 
-	DECLARE_SERVER_RMI_PREATTACH(SvRequestMakeZeus, NetMakeParams, eNRT_ReliableUnordered);
-	DECLARE_CLIENT_RMI_PREATTACH(ClMakeZeus, NetMakeParams, eNRT_ReliableUnordered);
+	DECLARE_SERVER_RMI_NOATTACH(SvRequestSpawnEntity, NetSpawnParams, eNRT_ReliableOrdered);
+	DECLARE_CLIENT_RMI_NOATTACH(ClSpawnEntity, NetSpawnedInfo, eNRT_ReliableOrdered);
+
+	DECLARE_SERVER_RMI_PREATTACH_FAST(SvRequestMakeZeus, NetMakeParams, eNRT_ReliableUnordered);
+	DECLARE_CLIENT_RMI_PREATTACH_FAST(ClMakeZeus, NetMakeParams, eNRT_ReliableUnordered);
 
 	//DECLARE_SERVER_RMI_NOATTACH(SvRequestMasterRemove, NetMasterAddingParams, eNRT_ReliableOrdered);
 	//DECLARE_SERVER_RMI_NOATTACH(SvRequestSetDesiredSlaveCls, NetDesiredSlaveClsParams, eNRT_ReliableOrdered);

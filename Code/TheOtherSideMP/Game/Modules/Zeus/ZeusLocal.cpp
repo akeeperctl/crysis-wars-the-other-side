@@ -40,7 +40,6 @@ CTOSZeusModule::Local::Local(CTOSZeusModule* _pParent)
 	:
 	pParent(_pParent),
 	m_zeusFlags(0),
-	m_pPlayer(nullptr),
 	m_anchoredMousePos(ZERO),
 	m_worldMousePos(ZERO),
 	m_worldProjectedMousePos(ZERO),
@@ -77,19 +76,9 @@ void CTOSZeusModule::Local::SetFlag(EFlag flag, bool value)
 	m_zeusFlags = value ? (m_zeusFlags | iFlag) : (m_zeusFlags & ~iFlag);
 }
 
-void CTOSZeusModule::Local::SetPlayer(CTOSPlayer* pPlayer)
-{
-	m_pPlayer = pPlayer;
-}
-
 bool CTOSZeusModule::Local::GetFlag(EFlag flag) const
 {
 	return (m_zeusFlags & int(flag)) != 0;
-}
-
-CTOSPlayer* CTOSZeusModule::Local::GetPlayer() const
-{
-	return m_pPlayer;
 }
 
 void CTOSZeusModule::Local::ShowMouse(bool show)
@@ -111,11 +100,6 @@ void CTOSZeusModule::Local::ShowMouse(bool show)
 
 void CTOSZeusModule::Local::Reset()
 {
-	if (m_pPlayer)
-	{
-		m_pPlayer->m_isZeus = false;
-		m_pPlayer = nullptr;
-	}
 	m_zeusFlags = 0;
 	m_select = false;
 	m_dragging = false;
@@ -150,12 +134,12 @@ bool CTOSZeusModule::Local::CanSelectMultiplyWithBox() const
 
 EntityId CTOSZeusModule::Local::GetMouseEntityId() const
 {
-	if (!m_pPlayer)
+	if (!pParent->GetPlayer())
 		return 0;
 
 	const auto vCamPos = gEnv->pSystem->GetViewCamera().GetPosition();
 	const auto vDir = (m_worldProjectedMousePos - vCamPos).GetNormalizedSafe();
-	auto pPhys = m_pPlayer->GetEntity()->GetPhysics();
+	auto pPhys = pParent->GetPlayer()->GetEntity()->GetPhysics();
 
 	ray_hit hit;
 	const auto queryFlags = ent_all;
@@ -699,7 +683,11 @@ void CTOSZeusModule::Local::UpdateDebug(bool zeusMoving, const Vec3& zeusDynVec)
 
 int CTOSZeusModule::Local::MouseProjectToWorld(ray_hit& ray, const Vec3& mouseWorldPos, uint entityFlags, bool boxDistanceAdjustment)
 {
-	if (!m_pPlayer || !m_pPlayer->GetEntity() || !m_pPlayer->GetEntity()->GetPhysics())
+	if (!TOS_GET_CLIENT_ACTOR)
+		return 0;
+	if (!TOS_GET_CLIENT_ACTOR->GetEntity())
+		return 0;
+	if (!TOS_GET_CLIENT_ACTOR->GetEntity()->GetPhysics())
 		return 0;
 
 	const Vec3 camWorldPos = gEnv->pSystem->GetViewCamera().GetPosition();
@@ -707,7 +695,7 @@ int CTOSZeusModule::Local::MouseProjectToWorld(ray_hit& ray, const Vec3& mouseWo
 
 	float clickedBoxDistance = 300.0f; // дистанция до кликнутой сущности
 
-	IPhysicalEntity* pSkipEnts[2] = { m_pPlayer->GetEntity()->GetPhysics(), nullptr };
+	IPhysicalEntity* pSkipEnts[2] = { TOS_GET_CLIENT_ACTOR->GetEntity()->GetPhysics(), nullptr };
 	const auto pClickedEntity = TOS_GET_ENTITY(m_curClickedEntityId);
 	if (pClickedEntity)
 		pSkipEnts[1] = pClickedEntity->GetPhysics();
