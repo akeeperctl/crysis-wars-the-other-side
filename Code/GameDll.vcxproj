@@ -432,6 +432,7 @@
     <ClCompile Include="TheOtherSideMP\Actors\Player\TOSGruntMovementController.cpp" />
     <ClCompile Include="TheOtherSideMP\Actors\Player\TOSPlayer.cpp" />
     <ClCompile Include="TheOtherSideMP\Actors\TOSActor.cpp" />
+    <ClCompile Include="TheOtherSideMP\Actors\TOSActorRMI.cpp" />
     <ClCompile Include="TheOtherSideMP\Control\ControlAction.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">true</ExcludedFromBuild>

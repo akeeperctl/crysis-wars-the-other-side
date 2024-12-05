@@ -226,6 +226,9 @@ public:
 
 	struct Network
 	{
+		friend class CTOSZeusSynchronizer;
+		friend class CTOSZeusModule;
+
 		Network::Network()
 			:
 			pParent(nullptr)
@@ -240,14 +243,18 @@ public:
 		void SetPP(int amount);
 		int  GetPP();
 
+	private:
+		void ServerEntitySpawned(EntityId id, const Vec3& pos, int clientChannelId);
+
+	public:
 		CTOSZeusModule* pParent;
 	};
 
 	struct Local
 	{
+		friend class CTOSZeusSynchronizer;
 		friend class CTOSZeusModule;
 		friend class CScriptBind_Zeus;
-		friend class CTOSZeusSynchronizer;
 
 		Local::Local(CTOSZeusModule* _pParent);
 		bool GetFlag(EFlag flag) const;
@@ -296,6 +303,7 @@ public:
 		void DeselectEntities();
 		std::set<EntityId>::iterator DeselectEntity(EntityId id);
 		void SelectEntity(EntityId id);
+		void ClickEntity(EntityId id, const Vec3& clickPos);
 		bool IsSelectedEntity(EntityId id);
 
 		/// @brief Обрабатывает однократный выбор сущности.

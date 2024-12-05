@@ -42,6 +42,25 @@ int CTOSZeusModule::Network::GetPP()
 }
 // ~ПОКА НЕ ИСПОЛЬЗУЕТСЯ
 
+void CTOSZeusModule::Network::ServerEntitySpawned(EntityId id, const Vec3& pos, int clientChannelId)
+{
+	auto pSpawned = TOS_GET_ENTITY(id);
+	assert(pSpawned != nullptr);
+
+	char buffer[64];
+	sprintf(buffer, "%d", id);
+	pSpawned->SetName(string(pSpawned->GetName()) + "_" + buffer);
+
+	// Извещаем клиента, о том, что он может перемещать заспавненную сущность
+	auto pSync = static_cast<CTOSZeusSynchronizer*>(pParent->GetSynchronizer());
+	assert(pSync != nullptr);
+
+	CTOSZeusSynchronizer::NetSpawnedInfo info;
+	info.spawnedId = id;
+	info.spawnedPos = pos;
+	pSync->RMISend(CTOSZeusSynchronizer::ClSpawnEntity(), info, eRMI_ToClientChannel, clientChannelId);
+}
+
 void CTOSZeusModule::Network::MakeZeus(IActor* pPlayer, bool bMake)
 {
 	auto pSync = static_cast<CTOSZeusSynchronizer*>(pParent->GetSynchronizer());

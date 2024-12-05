@@ -9,6 +9,7 @@ Copyright (C), AlienKeeper, 2024.
 
 #include "../GenericModule.h"
 #include "IEntity.h"
+#include <functional>
 
 #include "TheOtherSideMP/TOSSmartStruct.h"
 
@@ -83,23 +84,30 @@ struct STOSEntityDelaySpawnParams : public STOSEntitySpawnParams
 {
 	STOSEntityDelaySpawnParams()
 		: scheduledTimeStamp(0),
-		spawnDelay(0)
+		spawnDelay(0),
+		clientChannelId(0)
 	{}
 
 	explicit STOSEntityDelaySpawnParams(const SEntitySpawnParams& _vanillaParams)
 		: STOSEntitySpawnParams(_vanillaParams),
 		scheduledTimeStamp(0),
-		spawnDelay(0)
+		spawnDelay(0),
+		clientChannelId(0)
 	{}
 
 	explicit STOSEntityDelaySpawnParams(const STOSEntitySpawnParams& params)
 		: STOSEntitySpawnParams(params),
 		scheduledTimeStamp(0),
-		spawnDelay(0)
+		spawnDelay(0),
+		clientChannelId(0)
 	{}
 
 	float scheduledTimeStamp; ///< Штамп времени, когда свершилось планирование
 	float spawnDelay; ///< Задержка перед спавном. \n Если значение > 0.0f, то использовать функцию \a SpawnDelay(), иначе задержки не будет */
+	int clientChannelId; // нужен для CTOSZeusModule::Network::ServerEntitySpawned
+
+	std::function<void(EntityId, const Vec3&, int)> pCallback;
+	//void (*pCallback)(EntityId spawnedId, const Vec3& spawnedPos); // Вызываемая функция после спавна
 };
 
 

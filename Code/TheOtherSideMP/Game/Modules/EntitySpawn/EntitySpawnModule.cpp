@@ -169,9 +169,12 @@ void CTOSEntitySpawnModule::Update(float frametime)
 
 		if (curTime - recordedTime > delay)
 		{
-			SpawnEntity(*pSpawnParams, true);
-
+			auto pSpawned = SpawnEntity(*pSpawnParams, true);
 			s_scheduledSpawnsDelay.erase(it++);
+
+			if (pSpawned && pSpawnParams->pCallback)
+				pSpawnParams->pCallback(pSpawned->GetId(), pSpawned->GetWorldPos(), pSpawnParams->clientChannelId);
+
 			break;
 		}
 		else
@@ -374,7 +377,9 @@ bool CTOSEntitySpawnModule::SpawnEntityDelay(STOSEntityDelaySpawnParams& params,
 	{
 		// Недопустимо чтобы 1 игрок-мастер мог управлять сразу двумя рабами
 
-		bool alreadyHaveSaved = savedIter->second->authorityPlayerName == params.authorityPlayerName;
+		bool alreadyHaveSaved = params.authorityPlayerName.length() > 0 && 
+			savedIter->second->authorityPlayerName == params.authorityPlayerName;
+
 		if (alreadyHaveSaved)
 		{
 			if (gEnv->pSystem->IsDevMode())
@@ -388,7 +393,11 @@ bool CTOSEntitySpawnModule::SpawnEntityDelay(STOSEntityDelaySpawnParams& params,
 	// Спавнит сразу, если задержка очень маленькая
 	if (params.spawnDelay < 0.001f)
 	{
-		return SpawnEntity(params, sendTosEvent);
+		auto pEntity = SpawnEntity(params, sendTosEvent);
+
+		if (params.pCallback != nullptr)
+			params.pCallback(pEntity->GetId(), pEntity->GetWorldPos(), params.clientChannelId);
+		return pEntity;
 	}
 
 	// Мы не можем проверить наличие этой записи в map, потому что у нас нет идентификатора записи.

@@ -21,21 +21,24 @@ public:
 		string spawnedName;
 		string className;
 		Vec3 pos;
+		Vec3 dir;
 
 		NetSpawnParams()
 			:
 			playerChannelId(0),
 			spawnedName(""),
 			className(""),
-			pos(ZERO)
+			pos(ZERO),
+			dir(ZERO)
 		{};
 
 		void SerializeWith(TSerialize ser)
 		{
 			ser.Value("playerChannelId", playerChannelId, 'i8');
-			ser.Value("spawnedName", spawnedName);
-			ser.Value("className", className);
-			ser.Value("pos", pos);
+			ser.Value("spawnedName", spawnedName, 'stab');
+			ser.Value("className", className, 'stab');
+			ser.Value("pos", pos, 'wrld');
+			ser.Value("dir", dir, 'dir0');
 		}
 	};	
 	
@@ -81,8 +84,8 @@ public:
 	//NOATTACH - Без привязки к данным сериализации
 	//Reliable - надёжная доставка пакета
 
-	DECLARE_SERVER_RMI_NOATTACH(SvRequestSpawnEntity, NetSpawnParams, eNRT_ReliableOrdered);
-	DECLARE_CLIENT_RMI_NOATTACH(ClSpawnEntity, NetSpawnedInfo, eNRT_ReliableOrdered);
+	DECLARE_SERVER_RMI_NOATTACH_FAST(SvRequestSpawnEntity, NetSpawnParams, eNRT_UnreliableOrdered);
+	DECLARE_CLIENT_RMI_NOATTACH_FAST(ClSpawnEntity, NetSpawnedInfo, eNRT_UnreliableOrdered);
 
 	DECLARE_SERVER_RMI_PREATTACH_FAST(SvRequestMakeZeus, NetMakeParams, eNRT_ReliableUnordered);
 	DECLARE_CLIENT_RMI_PREATTACH_FAST(ClMakeZeus, NetMakeParams, eNRT_ReliableUnordered);

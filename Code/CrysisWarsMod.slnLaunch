@@ -18,6 +18,10 @@
       {
         "Path": "Helpers\\LaunchClient\\LaunchClient.vcxproj",
         "Action": "Start"
+      },
+      {
+        "Path": "Helpers\\LaunchClient2\\LaunchClient2.vcxproj",
+        "Action": "Start"
       }
     ]
   }

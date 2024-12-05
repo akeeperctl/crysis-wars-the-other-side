@@ -13,11 +13,8 @@ IMPLEMENT_RMI(CTOSZeusSynchronizer, SvRequestMakeZeus)
 	// Здесь пишем всё, что должно выполниться на сервере
 
 	//TODO:
-	// 1) Не спавнятся/удаляются/перемещаются (синхронно) сущности в мультиплеере
 	// 2) Через меню паузы можно кликнуть по объектам...
-	// 3) Странный вылет при выходе зевса из матча
-	// 4) Не скрыта модель зевса
-	// 5) Дергается модель зевса при передвижении (рассинхрон) (так ли оно важно, мж так и оставить?)
+	// 6) Спавн транспорта вызывает Malformed Packet 0_o, при этом оружие спавнится нормально
 
 	if (gEnv->bServer)
 	{
@@ -25,17 +22,9 @@ IMPLEMENT_RMI(CTOSZeusSynchronizer, SvRequestMakeZeus)
 			TOS_Debug::GetEnv(), TOS_Debug::GetAct(3));
 
 		auto pZeusModule = g_pTOSGame->GetZeusModule();
-		auto pTOSPlayer = static_cast<CTOSPlayer*>(g_pGame->GetIGameFramework()->GetIActorSystem()->GetActorByChannelId(params.playerChannelId));
+		auto pTOSPlayer = static_cast<CTOSPlayer*>(TOS_GET_ACTOR_CHANNELID(params.playerChannelId));
 		assert(pZeusModule != nullptr);
 		assert(pTOSPlayer != nullptr);
-
-		auto pInventory = pTOSPlayer->GetInventory();
-		assert(pInventory != nullptr);
-
-		// Отбираем оружие
-		pInventory->HolsterItem(true);
-		pInventory->RemoveAllItems();
-		TOS_Inventory::GiveItem(pTOSPlayer, "NightVision", false, false, false);
 
 		// Сбрасываем статы
 		pTOSPlayer->GetActorStats()->inAir = 0.0f;
@@ -44,13 +33,12 @@ IMPLEMENT_RMI(CTOSZeusSynchronizer, SvRequestMakeZeus)
 		// Становимся неуязвимым к урону
 		pTOSPlayer->SetMeZeus(true);
 		pTOSPlayer->GetGameObject()->ChangedNetworkState(TOS_NET::SERVER_ASPECT_STATIC);
+		pTOSPlayer->GetGameObject()->SetAspectProfile(eEA_Physics, eAP_Spectator);
 
 		// Откл. ИИ для перса зевса
 		auto pAI = pTOSPlayer->GetEntity()->GetAI();
 		if (pAI)
 			TOS_AI::SendEvent(pAI, AIEVENT_DISABLE);
-
-		pTOSPlayer->GetGameObject()->SetAspectProfile(eEA_Physics, eAP_Spectator);
 
 		// Режим полета со столкновениями
 		pTOSPlayer->SetFlyMode(1);
@@ -68,15 +56,20 @@ IMPLEMENT_RMI(CTOSZeusSynchronizer, SvRequestMakeZeus)
 		if (pTOSPlayer->GetAnimatedCharacter())
 		{
 			pTOSPlayer->GetAnimatedCharacter()->ForceRefreshPhysicalColliderMode();
-			pTOSPlayer->GetAnimatedCharacter()->RequestPhysicalColliderMode(eColliderMode_Spectator, eColliderModeLayer_Game, "CTOSZeusModule::MakeZeus");
+			pTOSPlayer->GetAnimatedCharacter()->RequestPhysicalColliderMode(
+				eColliderMode_Spectator, 
+				eColliderModeLayer_Game, 
+				"CTOSZeusModule::MakeZeus");
 		}
 
+		pTOSPlayer->GetGameObject()->InvokeRMI(CTOSActor::ClClearInventory(), CActor::NoParams(), eRMI_ToAllClients);
 		pTOSPlayer->GetGameObject()->InvokeRMI(CTOSActor::ClMarkHideMe(), NetHideMeParams(true), eRMI_ToAllClients);
 
 		auto pSync = static_cast<CTOSZeusSynchronizer*>(pZeusModule->GetSynchronizer());
 		assert(pSync != nullptr);
+		pSync->RMISend(CTOSZeusSynchronizer::ClMakeZeus(), params, eRMI_ToClientChannel, params.playerChannelId);
 
-		pSync->GetGameObject()->InvokeRMI(CTOSZeusSynchronizer::ClMakeZeus(), params, eRMI_ToClientChannel, params.playerChannelId);
+		TOS_Inventory::GiveItem(pTOSPlayer, "NightVision", false, false, false);
 	}
 
 	return true;
@@ -98,13 +91,6 @@ IMPLEMENT_RMI(CTOSZeusSynchronizer, ClMakeZeus)
 
 		assert(pZeusModule != nullptr);
 		assert(pTOSPlayer != nullptr);
-
-		auto pInventory = pTOSPlayer->GetInventory();
-		assert(pInventory != nullptr);
-
-		// Отбираем оружие
-		pInventory->HolsterItem(true);
-		pInventory->RemoveAllItems();
 
 		// Убираем лишние действия
 		g_pGameActions->FilterZeus()->Enable(true);
@@ -140,10 +126,11 @@ IMPLEMENT_RMI(CTOSZeusSynchronizer, ClMakeZeus)
 		if (pTOSPlayer->GetAnimatedCharacter())
 		{
 			pTOSPlayer->GetAnimatedCharacter()->ForceRefreshPhysicalColliderMode();
-			pTOSPlayer->GetAnimatedCharacter()->RequestPhysicalColliderMode(eColliderMode_Spectator, eColliderModeLayer_Game, "CTOSZeusModule::MakeZeus");
+			pTOSPlayer->GetAnimatedCharacter()->RequestPhysicalColliderMode(
+				eColliderMode_Spectator, 
+				eColliderModeLayer_Game, 
+				"CTOSZeusModule::MakeZeus");
 		}
-
-		pTOSPlayer->GetGameObject()->InvokeRMI(CTOSActor::SvRequestHideMe(), NetHideMeParams(true), eRMI_ToServer);
 	}
 
 	return true;
@@ -152,15 +139,6 @@ IMPLEMENT_RMI(CTOSZeusSynchronizer, ClMakeZeus)
 //------------------------------------------------------------------------
 IMPLEMENT_RMI(CTOSZeusSynchronizer, SvRequestSpawnEntity)
 {
-	// Здесь пишем всё, что должно выполниться на сервере
-
-	//TODO:
-	// 1) Не спавнятся/удаляются/перемещаются (синхронно) сущности в мультиплеере
-	// 2) Через меню паузы можно кликнуть по объектам...
-	// 3) Странный вылет при выходе зевса из матча
-	// 4) Не скрыта модель зевса
-	// 5) Дергается модель зевса при передвижении (рассинхрон) (так ли оно важно, мж так и оставить?)
-
 	if (gEnv->bServer)
 	{
 		CryLog("[C++][%s][%s][SvRequestSpawnEntity]",
@@ -169,13 +147,22 @@ IMPLEMENT_RMI(CTOSZeusSynchronizer, SvRequestSpawnEntity)
 		auto pZeusModule = g_pTOSGame->GetZeusModule();
 		assert(pZeusModule != nullptr);
 
-		STOSEntitySpawnParams spawnParams;
+		STOSEntityDelaySpawnParams spawnParams;
+		//spawnParams.pCallback = pZeusModule->GetNetwork().ServerEntitySpawned;
+		spawnParams.pCallback = std::bind(
+			&CTOSZeusModule::Network::ServerEntitySpawned, 
+			&pZeusModule->GetNetwork(), 
+			std::placeholders::_1, 
+			std::placeholders::_2,
+			std::placeholders::_3);
+
+		spawnParams.spawnDelay = 1.0f;
 		spawnParams.vanilla.bStaticEntityId = false; // true - вылетает в редакторе и медленно работает O(n), false O(1)
 		spawnParams.vanilla.bIgnoreLock = false; // spawn lock игнор
 
-		auto pPlayer = g_pGame->GetIGameFramework()->GetIActorSystem()->GetActorByChannelId(params.playerChannelId);
-		if (pPlayer)
-			spawnParams.authorityPlayerName = pPlayer->GetEntity()->GetName();
+		//auto pPlayer = TOS_GET_ACTOR_CHANNELID(params.playerChannelId);
+		//if (pPlayer)
+			//spawnParams.authorityPlayerName = pPlayer->GetEntity()->GetName();
 
 		const string* const psClassName = &params.className;
 		IEntityClass* pClass = gEnv->pEntitySystem->GetClassRegistry()->FindClass(psClassName->c_str());
@@ -195,8 +182,9 @@ IMPLEMENT_RMI(CTOSZeusSynchronizer, SvRequestSpawnEntity)
 			return true;
 		}
 
-		IEntity* pSpawned = TOS_Entity::Spawn(spawnParams, false);
-		if (!pSpawned)
+		bool bSpawned = TOS_Entity::SpawnDelay(spawnParams, false);
+		// IEntity* pSpawned = gEnv->pEntitySystem->SpawnEntity(spawnParams.vanilla, false);
+		if (!bSpawned)
 		{
 			CryLogError("[Zeus] entity with class '%s' spawn failed!", psClassName->c_str());
 			return true;
@@ -204,21 +192,6 @@ IMPLEMENT_RMI(CTOSZeusSynchronizer, SvRequestSpawnEntity)
 
 		//pSpawned->Hide(true);
 		// TODO: 01/12/2024 malformed packet при спавне техники какого хуя 
-
-
-		//const EntityId spawnedId = pSpawned->GetId();
-		//char buffer[64];
-		//sprintf(buffer, "%d", spawnedId);
-		//pSpawned->SetName(name + "_" + buffer);
-
-		// Извещаем клиента, о том, что он может перемещать заспавненную сущность
-		//auto pSync = static_cast<CTOSZeusSynchronizer*>(pZeusModule->GetSynchronizer());
-		//assert(pSync != nullptr);
-
-		//NetSpawnedInfo info;
-		//info.spawnedId = spawnedId;
-		//info.spawnedPos = params.pos;
-		//pSync->GetGameObject()->InvokeRMI(CTOSZeusSynchronizer::ClSpawnEntity(), info, eRMI_ToClientChannel, params.playerChannelId);
 	}
 
 	return true;
@@ -241,12 +214,7 @@ IMPLEMENT_RMI(CTOSZeusSynchronizer, ClSpawnEntity)
 		pZeusModule->GetHUD().m_menuSpawnHandling = true;
 
 		pZeusModule->GetLocal().SelectEntity(params.spawnedId);
-		pZeusModule->GetLocal().m_curClickedEntityId = params.spawnedId;
-		pZeusModule->GetLocal().m_mouseOveredEntityId = params.spawnedId;
-
-		pZeusModule->GetLocal().m_selectStartEntitiesPositions[params.spawnedId] = params.spawnedPos;
-		pZeusModule->GetLocal().m_storedEntitiesPositions[params.spawnedId] = params.spawnedPos;
-		pZeusModule->GetLocal().m_clickedSelectStartPos = params.spawnedPos;
+		pZeusModule->GetLocal().ClickEntity(params.spawnedId, params.spawnedPos);
 	}
 
 	return true;
