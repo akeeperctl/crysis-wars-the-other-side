@@ -709,7 +709,13 @@ void CTOSZeusModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGameEvent&
 	case eEGE_ActorDead:
 	case eEGE_VehicleDestroyed:
 	{
+		if (!TOS_GET_CLIENT_ACTOR)
+			return;
+
 		if (!bZeusing)
+			return;
+
+		if (!pEntity)
 			return;
 
 		m_local.RemoveOrder(pEntity->GetId());
