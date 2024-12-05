@@ -68,6 +68,8 @@ struct STOSCvars  // NOLINT(cppcoreguidelines-special-member-functions)
 	// CLIENT CONSOLE COMMANDS
 	static void CmdGetDudeName(IConsoleCmdArgs* pArgs);
 
+	static void CmdRMIRemoveInventory(IConsoleCmdArgs* pArgs);
+
 	// Правило написания консольных значений
 	// мод_среда_ОписаниеДействия
 

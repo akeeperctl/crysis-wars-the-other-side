@@ -1,5 +1,6 @@
 #include "StdAfx.h"
 #include "ZeusModule.h"
+#include "ZeusSynchronizer.h"
 #include <TheOtherSideMP/Helpers/TOS_AI.h>
 #include <TheOtherSideMP/Helpers/TOS_Entity.h>
 #include <TheOtherSideMP/Helpers/TOS_Console.h>
@@ -90,12 +91,6 @@ void CTOSZeusModule::Local::ShowMouse(bool show)
 		m_mouseDisplayed ? pMouse->IncrementCounter() : pMouse->DecrementCounter();
 		pMouse->ConfineCursor(m_mouseDisplayed);
 	}
-
-	//auto pHUD = g_pGame->GetHUD();
-	//if (pHUD)
-	//{
-	//	show ? pHUD->CursorIncrementCounter() : pHUD->CursorDecrementCounter();
-	//}
 }
 
 void CTOSZeusModule::Local::Reset()
@@ -184,6 +179,15 @@ void CTOSZeusModule::Local::SelectEntity(EntityId id)
 		m_selectedEntities.insert(id);
 		m_boxes[id] = CreateBoxForEntity(id);
 	}
+}
+
+void CTOSZeusModule::Local::ClickEntity(EntityId id, const Vec3& clickPos)
+{
+	m_curClickedEntityId = id;
+	m_mouseOveredEntityId = id;
+	m_selectStartEntitiesPositions[id] = clickPos;
+	m_storedEntitiesPositions[id] = clickPos;
+	m_clickedSelectStartPos = clickPos;
 }
 
 bool CTOSZeusModule::Local::IsSelectedEntity(EntityId id)
@@ -873,94 +877,91 @@ bool CTOSZeusModule::Local::ExecuteCommand(ECommand command)
 		}
 		case ECommand::CopySelected:
 		{
+			// Get the entity from the given ID
 			const auto pEntity = TOS_GET_ENTITY(id);
 			if (pEntity)
 			{
-				int savedItemCount = 0;
-				std::map<int, string> savedItems;
-				string currentItemClass;
+				auto pSync = static_cast<CTOSZeusSynchronizer*>(pParent->GetSynchronizer());
+				assert(pSync != nullptr);
 
-				EStance selectedStance = STANCE_STAND;
-				CTOSActor* pActor = static_cast<CTOSActor*>(TOS_GET_ACTOR(id));
-				if (pActor)
-				{
-					//	const IInventory* pInventory = pActor->GetInventory();
-					//	if (pInventory)
-					//	{
-					//		savedItemCount = pInventory->GetCount();
+				auto& method = CTOSZeusSynchronizer::SvRequestSpawnEntity();
+				auto netParams = CTOSZeusSynchronizer::NetSpawnParams();
+				netParams.className = pEntity->GetClass()->GetName();
+				netParams.pos = pEntity->GetWorldPos();
+				netParams.dir = pEntity->GetWorldRotation().GetColumn1();
 
-					//		for (int slot = 0; slot <= savedItemCount; slot++)
-					//		{
-					//			const auto pItem = TOS_GET_ENTITY(pInventory->GetItem(slot));
-					//			if (pItem)
-					//				savedItems[slot] = pItem->GetClass()->GetName();
-					//		}
+				pSync->RMISend(method, netParams, eRMI_ToServer);
 
-					//		const auto pCurrentItem = TOS_GET_ENTITY(pInventory->GetCurrentItem());
-					//		if (pCurrentItem)
-					//			currentItemClass = pCurrentItem->GetClass()->GetName();
-					//	}
+				// Initialize variables
+				// int savedItemCount = 0;
+				// std::map<int, std::string> savedItems;
+				// std::string currentItemClass;
+				// EStance selectedStance = STANCE_STAND;
 
-					selectedStance = pActor->GetStance();
-				}
+				// Get the actor associated with the entity
+				//CTOSActor* pActor = static_cast<CTOSActor*>(TOS_GET_ACTOR(id));
+				//if (pActor)
+					//selectedStance = pActor->GetStance();
 
+				// Prepare spawn parameters
+				//STOSEntitySpawnParams params;
+				//params.vanilla.bStaticEntityId = false; // Set to true for faster performance but slower editor
+				//params.vanilla.bIgnoreLock = false; // Ignore spawn lock
+				//params.vanilla.nFlags = pEntity->GetFlags();
+				//params.vanilla.nFlags &= ~ENTITY_FLAG_UNREMOVABLE;
+				//params.vanilla.pClass = pEntity->GetClass();
+				//params.vanilla.vPosition = pEntity->GetWorldPos();
+				//params.vanilla.qRotation = pEntity->GetRotation();
 
-				STOSEntitySpawnParams params;
-				params.vanilla.bStaticEntityId = false; // true - вылетает в редакторе и медленно работает O(n), false O(1)
-				params.vanilla.bIgnoreLock = false; // spawn lock игнор
-				params.vanilla.nFlags = pEntity->GetFlags();
-				params.vanilla.nFlags &= ~ENTITY_FLAG_UNREMOVABLE;
+				//// Set archetype if available
+				//if (pEntity->GetArchetype())
+				//	params.vanilla.pArchetype = pEntity->GetArchetype();
 
-				params.vanilla.pClass = pEntity->GetClass();
-				params.vanilla.vPosition = pEntity->GetWorldPos();
-				params.vanilla.qRotation = pEntity->GetRotation();
+				//// Get script table properties
+				//const auto pScriptTable = pEntity->GetScriptTable();
+				//if (pScriptTable)
+				//	pScriptTable->GetValue("Properties", params.properties);
 
-				if (pEntity->GetArchetype())
-					params.vanilla.pArchetype = pEntity->GetArchetype();
+				// Spawn the entity 
+				//const auto pSpawned = TOS_Entity::Spawn(params, false);
+				//if (pSpawned)
+				//{
+					// Deselect the original entity and update the iterator
+					//it = DeselectEntity(id);
+					//needUpdateIter = false;
 
-				const auto pScriptTable = pEntity->GetScriptTable();
-				if (pScriptTable)
-				{
-					pScriptTable->GetValue("Properties", params.properties);
-				}
+					//// Hide the spawned entity and set it as the current dragging entity
+					//pSpawned->Hide(true);
+					//m_dragging = true;
 
-				const auto pSpawned = TOS_Entity::Spawn(params, false);
-				if (pSpawned)
-				{
-					pSpawned->Hide(true);
+					//// Get the ID of the spawned entity and set its stance
+					//const auto spawnedId = pSpawned->GetId();
+					//auto pSpawnedActor = static_cast<CTOSActor*>(TOS_GET_ACTOR(spawnedId));
+					//if (pSpawnedActor)
+					//{
+					//	pSpawnedActor->SetStance(selectedStance);
+					//	TOS_AI::SetStance(pSpawnedActor->GetEntity()->GetAI(), selectedStance);
+					//}
 
-					it = DeselectEntity(id);
-					needUpdateIter = false;
+					//// Set the name of the spawned entity
+					//char buffer[16];
+					//sprintf(buffer, "%i", spawnedId);
+					//pSpawned->SetName(string(pSpawned->GetClass()->GetName()) + "_" + buffer);
 
-					m_dragging = true;
-					//m_select = true;
+					//// Update tracking variables
+					//m_lastClickedEntityId = id;
+					//m_curClickedEntityId = spawnedId;
+					//m_mouseOveredEntityId = spawnedId;
 
-					const auto spawnedId = pSpawned->GetId();
-					auto pSpawnedActor = static_cast<CTOSActor*>(TOS_GET_ACTOR(spawnedId));
-					if (pSpawnedActor)
-					{
-						//	for (int slot = 0; slot <= savedItemCount; slot++)
-						//		TOS_Inventory::GiveItem(pSpawnedActor, savedItems[slot], false, false, false);
+					//// Store positions
+					//const auto pos = pSpawned->GetWorldPos();
+					//m_selectStartEntitiesPositions[spawnedId] = pos;
+					//m_storedEntitiesPositions[spawnedId] = pos;
+					//m_clickedSelectStartPos = pos;
 
-						pSpawnedActor->SetStance(selectedStance);
-						TOS_AI::SetStance(pSpawnedActor->GetEntity()->GetAI(), selectedStance);
-					}
-
-					char buffer[16];
-					sprintf(buffer, "%i", spawnedId);
-					pSpawned->SetName(string(pSpawned->GetClass()->GetName()) + "_" + buffer);
-
-					m_lastClickedEntityId = id;
-					m_curClickedEntityId = spawnedId;
-					m_mouseOveredEntityId = spawnedId;
-
-					const auto pos = pSpawned->GetWorldPos();
-					m_selectStartEntitiesPositions[spawnedId] = pos;
-					m_storedEntitiesPositions[spawnedId] = pos;
-					m_clickedSelectStartPos = pos;
-
-					copiedEntities.insert(spawnedId);
-				}
+					// Add the spawned entity to the copied entities set
+					//copiedEntities.insert(spawnedId);
+				//}
 			}
 			break;
 		}
@@ -1012,13 +1013,13 @@ bool CTOSZeusModule::Local::ExecuteCommand(ECommand command)
 			it++;
 	}
 
-	if (command == ECommand::CopySelected)
-	{
-		for (auto it = copiedEntities.cbegin(); it != copiedEntities.cend(); it++)
-		{
-			SelectEntity(*it);
-		}
-	}
+	//if (command == ECommand::CopySelected)
+	//{
+	//	for (auto it = copiedEntities.cbegin(); it != copiedEntities.cend(); it++)
+	//	{
+	//		SelectEntity(*it);
+	//	}
+	//}
 
 	return true;
 }

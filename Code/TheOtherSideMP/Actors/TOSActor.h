@@ -217,6 +217,21 @@ public:
 		}
 	};
 
+	struct NetClearInventoryParams
+	{
+		EntityId actorEntityId;
+
+		NetClearInventoryParams()
+			:
+			actorEntityId(0)
+		{};
+
+		void SerializeWith(TSerialize ser)
+		{
+			ser.Value("actorEntityId", actorEntityId, 'eid');
+		}
+	};
+
 	CTOSActor();
 	~CTOSActor() ;
 
@@ -257,6 +272,8 @@ public:
 	
 	virtual bool ShouldUsePhysicsMovement();
 	virtual bool ApplyActions(int actions); // нужна для поддержки m_actions не только в игроке
+
+	void RemoveAllItems();
 
 	//Новые функции сюда
 	//const Vec3& FilterDeltaMovement(const Vec3& deltaMov);
@@ -342,6 +359,8 @@ private:
 
 	DECLARE_CLIENT_RMI_POSTATTACH(ClAttachChild, NetAttachChild, eNRT_ReliableUnordered);
 	DECLARE_SERVER_RMI_POSTATTACH(SvRequestAttachChild, NetAttachChild, eNRT_ReliableUnordered);
+
+	DECLARE_CLIENT_RMI_PREATTACH(ClClearInventory, NoParams, eNRT_ReliableUnordered);
 
 protected:
 	bool m_chargingJump;///< Если *true, то высота прыжка зависит от длительности нажатия на дейсвие прыжка [jump]
