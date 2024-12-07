@@ -148,7 +148,6 @@ IMPLEMENT_RMI(CTOSZeusSynchronizer, SvRequestSpawnEntity)
 		assert(pZeusModule != nullptr);
 
 		STOSEntityDelaySpawnParams spawnParams;
-		//spawnParams.pCallback = pZeusModule->GetNetwork().ServerEntitySpawned;
 		spawnParams.pCallback = std::bind(
 			&CTOSZeusModule::Network::ServerEntitySpawned, 
 			&pZeusModule->GetNetwork(), 
@@ -156,13 +155,15 @@ IMPLEMENT_RMI(CTOSZeusSynchronizer, SvRequestSpawnEntity)
 			std::placeholders::_2,
 			std::placeholders::_3);
 
+		//TODO: 05.12.2024 Протестировать падает ли сервер при спавне траснпорта
 		spawnParams.spawnDelay = 1.0f;
 		spawnParams.vanilla.bStaticEntityId = false; // true - вылетает в редакторе и медленно работает O(n), false O(1)
 		spawnParams.vanilla.bIgnoreLock = false; // spawn lock игнор
+		spawnParams.safeParams = false;
 
-		//auto pPlayer = TOS_GET_ACTOR_CHANNELID(params.playerChannelId);
-		//if (pPlayer)
-			//spawnParams.authorityPlayerName = pPlayer->GetEntity()->GetName();
+		auto pPlayer = TOS_GET_ACTOR_CHANNELID(params.playerChannelId);
+		if (pPlayer)
+			spawnParams.authorityPlayerName = pPlayer->GetEntity()->GetName();
 
 		const string* const psClassName = &params.className;
 		IEntityClass* pClass = gEnv->pEntitySystem->GetClassRegistry()->FindClass(psClassName->c_str());
@@ -182,8 +183,7 @@ IMPLEMENT_RMI(CTOSZeusSynchronizer, SvRequestSpawnEntity)
 			return true;
 		}
 
-		bool bSpawned = TOS_Entity::SpawnDelay(spawnParams, false);
-		// IEntity* pSpawned = gEnv->pEntitySystem->SpawnEntity(spawnParams.vanilla, false);
+		bool bSpawned = TOS_Entity::SpawnDelay(spawnParams, true);
 		if (!bSpawned)
 		{
 			CryLogError("[Zeus] entity with class '%s' spawn failed!", psClassName->c_str());

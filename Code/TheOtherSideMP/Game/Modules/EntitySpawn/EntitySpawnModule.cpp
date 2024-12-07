@@ -68,7 +68,7 @@ void CTOSEntitySpawnModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGam
 			auto pParams = new STOSEntitySpawnParams(*static_cast<STOSEntitySpawnParams*>(event.extra_data));
 			assert(pParams);
 
-			if (!HaveSavedParams(pEntity))
+			if (pParams->safeParams && !HaveSavedParams(pEntity))
 			{
 
 				// id должен генерироваться
@@ -294,7 +294,10 @@ IEntity* CTOSEntitySpawnModule::SpawnEntity(STOSEntitySpawnParams& params, bool 
 	{
 		// Недопустимо чтобы 1 игрок-мастер мог управлять сразу двумя рабами
 
-		bool alreadyHaveSaved = !params.authorityPlayerName.empty() && iter->second->authorityPlayerName == params.authorityPlayerName;
+		bool alreadyHaveSaved = params.safeParams &&
+			!params.authorityPlayerName.empty() && 
+			iter->second->authorityPlayerName == params.authorityPlayerName;
+
 		if (alreadyHaveSaved)
 		{
 			CryLog("%s<c++> [CTOSEntitySpawnModule] Slave entity spawn interrupted! The system already has a saved slave for player %s", TOS_COLOR_YELLOW, params.authorityPlayerName);
@@ -377,7 +380,7 @@ bool CTOSEntitySpawnModule::SpawnEntityDelay(STOSEntityDelaySpawnParams& params,
 	{
 		// Недопустимо чтобы 1 игрок-мастер мог управлять сразу двумя рабами
 
-		bool alreadyHaveSaved = params.authorityPlayerName.length() > 0 && 
+		bool alreadyHaveSaved = params.safeParams && params.authorityPlayerName.length() > 0 &&
 			savedIter->second->authorityPlayerName == params.authorityPlayerName;
 
 		if (alreadyHaveSaved)
