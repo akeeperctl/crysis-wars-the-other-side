@@ -16,6 +16,8 @@ Copyright (C), AlienKeeper, 2024.
 
 #include "TheOtherSideMP/Helpers/TOS_Entity.h"
 #include "TheOtherSideMP/Helpers/TOS_STL.h"
+#include "TheOtherSideMP/Game/Modules/Zeus/ZeusSynchronizer.h"
+#include "TheOtherSideMP/Game/Modules/Zeus/ZeusModule.h"
 
 #include "CryMemoryAllocator.h"
 #include "CryMemoryManager.h"
@@ -68,7 +70,7 @@ void CTOSEntitySpawnModule::OnExtraGameplayEvent(IEntity* pEntity, const STOSGam
 			auto pParams = new STOSEntitySpawnParams(*static_cast<STOSEntitySpawnParams*>(event.extra_data));
 			assert(pParams);
 
-			if (pParams->safeParams && !HaveSavedParams(pEntity))
+			if (pParams->saveParams && !HaveSavedParams(pEntity))
 			{
 
 				// id должен генерироваться
@@ -294,7 +296,7 @@ IEntity* CTOSEntitySpawnModule::SpawnEntity(STOSEntitySpawnParams& params, bool 
 	{
 		// Недопустимо чтобы 1 игрок-мастер мог управлять сразу двумя рабами
 
-		bool alreadyHaveSaved = params.safeParams &&
+		bool alreadyHaveSaved = params.saveParams &&
 			!params.authorityPlayerName.empty() && 
 			iter->second->authorityPlayerName == params.authorityPlayerName;
 
@@ -357,6 +359,21 @@ IEntity* CTOSEntitySpawnModule::SpawnEntity(STOSEntitySpawnParams& params, bool 
 		TOS_RECORD_EVENT(entityId, STOSGameEvent(eEGE_TOSEntityScheduleDelegateAuthority, plName, true, false, nullptr, 0.0f, forceStartControl));
 	}
 
+	if (params.hide)
+	{
+		CTOSZeusSynchronizer::NetHideParams hideParams;
+		hideParams.bHide = true;
+		hideParams.id = pSpawned->GetId();
+
+		auto pZeusModule = g_pTOSGame->GetZeusModule();
+		if (pZeusModule)
+		{
+			auto pSync = pZeusModule->GetSynchronizer();
+			if (pSync)
+				pSync->RMISend(CTOSZeusSynchronizer::ClHideEntity(), hideParams, eRMI_ToAllClients | eRMI_NoLocalCalls);
+		}
+			
+	}
 
 	return pSpawned;
 }
@@ -380,7 +397,7 @@ bool CTOSEntitySpawnModule::SpawnEntityDelay(STOSEntityDelaySpawnParams& params,
 	{
 		// Недопустимо чтобы 1 игрок-мастер мог управлять сразу двумя рабами
 
-		bool alreadyHaveSaved = params.safeParams && params.authorityPlayerName.length() > 0 &&
+		bool alreadyHaveSaved = params.saveParams && params.authorityPlayerName.length() > 0 &&
 			savedIter->second->authorityPlayerName == params.authorityPlayerName;
 
 		if (alreadyHaveSaved)

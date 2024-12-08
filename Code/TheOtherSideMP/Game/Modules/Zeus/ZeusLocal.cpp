@@ -830,17 +830,10 @@ bool CTOSZeusModule::Local::ExecuteCommand(ECommand command)
 		{
 		case ECommand::KillSelected:
 		{
-			string hitType = "event";
-
-			HitInfo info;
-			info.SetDamage(99999.0f);
-			info.targetId = id;
-			info.type = g_pGame->GetGameRules()->GetHitTypeId(hitType.c_str());
-
-			g_pGame->GetGameRules()->ClientHit(info);
-
-			if (pVehicle)
-				TOS_Vehicle::Destroy(pVehicle);
+			auto& method = CTOSZeusSynchronizer::SvRequestKillEntity();
+			auto netParams = CTOSZeusSynchronizer::NetRemoveParams();
+			netParams.id = id;
+			pParent->GetSynchronizer()->RMISend(method, netParams, eRMI_ToServer);
 
 			break;
 		}
@@ -850,23 +843,10 @@ bool CTOSZeusModule::Local::ExecuteCommand(ECommand command)
 			m_select = false;
 			m_copying = false;
 
-			if (pActor)
-			{
-				auto pActorVeh = pActor->GetLinkedVehicle();
-				if (pActorVeh)
-				{
-					TOS_Vehicle::Exit(pActor, false, true);
-				}
-			}
-
-			auto pEntity = TOS_GET_ENTITY(id);
-			if (pEntity)
-			{
-				pEntity->Hide(true);
-				pEntity->Activate(false);
-			}
-
-			TOS_Entity::RemoveEntityDelayed(id, 2);
+			auto& method = CTOSZeusSynchronizer::SvRequestRemoveEntity();
+			auto netParams = CTOSZeusSynchronizer::NetRemoveParams();
+			netParams.id = id;
+			pParent->GetSynchronizer()->RMISend(method, netParams, eRMI_ToServer);
 
 			it = DeselectEntity(id);
 			m_doubleClickLastSelectedEntities.erase(id);
@@ -881,16 +861,13 @@ bool CTOSZeusModule::Local::ExecuteCommand(ECommand command)
 			const auto pEntity = TOS_GET_ENTITY(id);
 			if (pEntity)
 			{
-				auto pSync = static_cast<CTOSZeusSynchronizer*>(pParent->GetSynchronizer());
-				assert(pSync != nullptr);
-
 				auto& method = CTOSZeusSynchronizer::SvRequestSpawnEntity();
 				auto netParams = CTOSZeusSynchronizer::NetSpawnParams();
 				netParams.className = pEntity->GetClass()->GetName();
 				netParams.pos = pEntity->GetWorldPos();
 				netParams.dir = pEntity->GetWorldRotation().GetColumn1();
 
-				pSync->RMISend(method, netParams, eRMI_ToServer);
+				pParent->GetSynchronizer()->RMISend(method, netParams, eRMI_ToServer);
 
 				// Initialize variables
 				// int savedItemCount = 0;
@@ -983,24 +960,15 @@ bool CTOSZeusModule::Local::ExecuteCommand(ECommand command)
 				order.targetId = m_orderTargetId;
 				CreateOrder(id, order);
 
-				IScriptSystem* pSS = gEnv->pScriptSystem;
-				if (pSS->ExecuteFile("Scripts/AI/TOS/TOSHandleOrder.lua", true, true))
-				{
-					CScriptSetGetChain executorChain(m_executorInfo);
-					executorChain.SetValue("entityId", id);
-					executorChain.SetValue("maxCount", int(m_selectedEntities.size())); // макс. кол-во исполнителей
-					executorChain.SetValue("index", int(index)); // текущий номер исполнителя
-
-					CScriptSetGetChain orderChain(m_orderInfo);
-					orderChain.SetValue("goalPipeId", id); // так надо
-					orderChain.SetValue("pos", order.pos);
-					orderChain.SetValue("targetId", order.targetId);
-
-					pSS->BeginCall("HandleOrder");
-					pSS->PushFuncParam(m_executorInfo);
-					pSS->PushFuncParam(m_orderInfo);
-					pSS->EndCall();
-				}
+				auto& method = CTOSZeusSynchronizer::SvRequestExecuteOrder();
+				auto netParams = CTOSZeusSynchronizer::NetExecuteOrderParams();
+				netParams.id = id;
+				netParams.maxCount = int(m_selectedEntities.size());
+				netParams.index = int(index);
+				netParams.goalPipeId = id;
+				netParams.pos = order.pos;
+				netParams.targetId = order.targetId;
+				pParent->GetSynchronizer()->RMISend(method, netParams, eRMI_ToServer);
 			}
 
 			break;

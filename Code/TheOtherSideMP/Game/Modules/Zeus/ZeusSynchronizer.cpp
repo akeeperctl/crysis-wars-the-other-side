@@ -6,6 +6,7 @@
 #include <TheOtherSideMP/Helpers/TOS_Entity.h>
 #include <TheOtherSideMP/Helpers/TOS_Inventory.h>
 #include <TheOtherSideMP/Helpers/TOS_NET.h>
+#include <TheOtherSideMP/Helpers/TOS_Vehicle.h>
 
 //------------------------------------------------------------------------
 IMPLEMENT_RMI(CTOSZeusSynchronizer, SvRequestMakeZeus)
@@ -65,9 +66,7 @@ IMPLEMENT_RMI(CTOSZeusSynchronizer, SvRequestMakeZeus)
 		pTOSPlayer->GetGameObject()->InvokeRMI(CTOSActor::ClClearInventory(), CActor::NoParams(), eRMI_ToAllClients);
 		pTOSPlayer->GetGameObject()->InvokeRMI(CTOSActor::ClMarkHideMe(), NetHideMeParams(true), eRMI_ToAllClients);
 
-		auto pSync = static_cast<CTOSZeusSynchronizer*>(pZeusModule->GetSynchronizer());
-		assert(pSync != nullptr);
-		pSync->RMISend(CTOSZeusSynchronizer::ClMakeZeus(), params, eRMI_ToClientChannel, params.playerChannelId);
+		RMISend(CTOSZeusSynchronizer::ClMakeZeus(), params, eRMI_ToClientChannel, params.playerChannelId);
 
 		TOS_Inventory::GiveItem(pTOSPlayer, "NightVision", false, false, false);
 	}
@@ -155,11 +154,12 @@ IMPLEMENT_RMI(CTOSZeusSynchronizer, SvRequestSpawnEntity)
 			std::placeholders::_2,
 			std::placeholders::_3);
 
-		//TODO: 05.12.2024 Протестировать падает ли сервер при спавне траснпорта
+		spawnParams.clientChannelId = params.playerChannelId;
+		spawnParams.hide = true;
 		spawnParams.spawnDelay = 1.0f;
+		spawnParams.saveParams = false;
 		spawnParams.vanilla.bStaticEntityId = false; // true - вылетает в редакторе и медленно работает O(n), false O(1)
 		spawnParams.vanilla.bIgnoreLock = false; // spawn lock игнор
-		spawnParams.safeParams = false;
 
 		auto pPlayer = TOS_GET_ACTOR_CHANNELID(params.playerChannelId);
 		if (pPlayer)
@@ -202,20 +202,186 @@ IMPLEMENT_RMI(CTOSZeusSynchronizer, ClSpawnEntity)
 {
 	// Здесь пишем всё, что должно выполниться на клиенте
 
-	if (gEnv->bClient)
+	CryLog("[C++][%s][%s][ClSpawnEntity]",
+		TOS_Debug::GetEnv(), TOS_Debug::GetAct(3));
+
+	auto pZeusModule = g_pTOSGame->GetZeusModule();
+	assert(pZeusModule != nullptr);
+
+	pZeusModule->GetLocal().m_dragging = true;
+	pZeusModule->GetHUD().m_menuSpawnHandling = true;
+
+	//TODO: не выделяется сущность после спавна
+	pZeusModule->GetLocal().SelectEntity(params.spawnedId);
+	pZeusModule->GetLocal().ClickEntity(params.spawnedId, params.spawnedPos);
+
+	return true;
+}
+
+//------------------------------------------------------------------------
+IMPLEMENT_RMI(CTOSZeusSynchronizer, SvRequestTransformEntity)
+{
+	CryLog("[C++][%s][%s][SvRequestTransformEntity]",
+		TOS_Debug::GetEnv(), TOS_Debug::GetAct(3));
+
+	auto pEntity = TOS_GET_ENTITY(params.id);
+	if (!pEntity)
+		return true;
+
+	auto pPhys = pEntity->GetPhysics();
+	if (pPhys)
 	{
-		CryLog("[C++][%s][%s][ClSpawnEntity]",
-			TOS_Debug::GetEnv(), TOS_Debug::GetAct(3));
-
-		auto pZeusModule = g_pTOSGame->GetZeusModule();
-		assert(pZeusModule != nullptr);
-
-		pZeusModule->GetLocal().m_dragging = true;
-		pZeusModule->GetHUD().m_menuSpawnHandling = true;
-
-		pZeusModule->GetLocal().SelectEntity(params.spawnedId);
-		pZeusModule->GetLocal().ClickEntity(params.spawnedId, params.spawnedPos);
+		pe_action_awake awake;
+		awake.bAwake = 1;
+		pPhys->Action(&awake);
 	}
+
+	Vec3 pos = params.pos;
+	Quat rot = Quat::CreateRotationVDir(params.dir);
+	pEntity->SetWorldTM(Matrix34::Create(Vec3(1, 1, 1), rot, pos));
+	pEntity->SetRotation(rot);
+
+	RMISend(ClTransformEntity(), params, eRMI_ToAllClients | eRMI_NoLocalCalls);
+
+	return true;
+}
+
+//------------------------------------------------------------------------
+IMPLEMENT_RMI(CTOSZeusSynchronizer, ClTransformEntity)
+{
+	CryLog("[C++][%s][%s][SvRequestTransformEntity]",
+		TOS_Debug::GetEnv(), TOS_Debug::GetAct(3));
+
+	auto pEntity = TOS_GET_ENTITY(params.id);
+	if (!pEntity)
+		return true;
+
+	auto pPhys = pEntity->GetPhysics();
+	if (pPhys)
+	{
+		pe_action_awake awake;
+		awake.bAwake = 1;
+		pPhys->Action(&awake);
+	}
+
+	Vec3 pos = params.pos;
+	Quat rot = Quat::CreateRotationVDir(params.dir);
+	pEntity->SetWorldTM(Matrix34::Create(Vec3(1, 1, 1), rot, pos));
+	pEntity->SetRotation(rot);
+
+	return true;
+}
+
+//------------------------------------------------------------------------
+IMPLEMENT_RMI(CTOSZeusSynchronizer, SvRequestRemoveEntity)
+{
+	CryLog("[C++][%s][%s][SvRequestRemoveEntity]",
+		TOS_Debug::GetEnv(), TOS_Debug::GetAct(3));
+
+	auto pActor = TOS_GET_ACTOR(params.id);
+	if (pActor)
+	{
+		auto pActorVeh = pActor->GetLinkedVehicle();
+		if (pActorVeh)
+		{
+			TOS_Vehicle::Exit(pActor, false, true);
+		}
+	}
+
+	auto pEntity = TOS_GET_ENTITY(params.id);
+	if (pEntity)
+	{
+		pEntity->Hide(true);
+		pEntity->Activate(false);
+	}
+
+	TOS_Entity::RemoveEntityDelayed(params.id, 2);
+
+	return true;
+}
+
+//------------------------------------------------------------------------
+IMPLEMENT_RMI(CTOSZeusSynchronizer, SvRequestKillEntity)
+{
+	CryLog("[C++][%s][%s][SvRequestKillEntity]",
+		TOS_Debug::GetEnv(), TOS_Debug::GetAct(3));
+
+	string hitType = "event";
+
+	HitInfo info;
+	info.SetDamage(99999.0f);
+	info.targetId = params.id;
+	info.type = g_pGame->GetGameRules()->GetHitTypeId(hitType.c_str());
+
+	g_pGame->GetGameRules()->ClientHit(info);
+
+	auto pVehicle = TOS_GET_VEHICLE(params.id);
+	if (pVehicle)
+		TOS_Vehicle::Destroy(pVehicle);
+
+
+	return true;
+}
+
+//------------------------------------------------------------------------
+IMPLEMENT_RMI(CTOSZeusSynchronizer, SvRequestExecuteOrder)
+{
+	CryLog("[C++][%s][%s][SvRequestExecuteOrder]",
+		TOS_Debug::GetEnv(), TOS_Debug::GetAct(3));
+
+	IScriptSystem* pSS = gEnv->pScriptSystem;
+	if (pSS->ExecuteFile("Scripts/AI/TOS/TOSHandleOrder.lua", true, true))
+	{
+		SmartScriptTable executorInfo;
+		SmartScriptTable orderInfo;
+
+		executorInfo.Create(gEnv->pScriptSystem);
+		orderInfo.Create(gEnv->pScriptSystem);
+
+		CScriptSetGetChain executorChain(executorInfo);
+		CScriptSetGetChain orderChain(orderInfo);
+
+		executorChain.SetValue("entityId", params.id);
+		executorChain.SetValue("maxCount", params.maxCount); // макс. кол-во исполнителей
+		executorChain.SetValue("index", params.index); // текущий номер исполнителя
+		
+		orderChain.SetValue("goalPipeId", params.id); // так надо
+		orderChain.SetValue("pos", params.pos);
+		orderChain.SetValue("targetId", params.targetId);
+
+		pSS->BeginCall("HandleOrder");
+		pSS->PushFuncParam(executorInfo);
+		pSS->PushFuncParam(orderInfo);
+		pSS->EndCall();
+	}
+
+	return true;
+}
+
+//------------------------------------------------------------------------
+IMPLEMENT_RMI(CTOSZeusSynchronizer, SvRequestHideEntity)
+{
+	CryLog("[C++][%s][%s][SvRequestHideEntity]",
+		TOS_Debug::GetEnv(), TOS_Debug::GetAct(3));
+
+	auto pEntity = TOS_GET_ENTITY(params.id);
+	if (pEntity)
+		pEntity->Hide(params.bHide);
+
+	RMISend(ClHideEntity(), params, eRMI_ToAllClients | eRMI_NoLocalCalls);
+
+	return true;
+}
+
+//------------------------------------------------------------------------
+IMPLEMENT_RMI(CTOSZeusSynchronizer, ClHideEntity)
+{
+	CryLog("[C++][%s][%s][ClHideEntity]",
+		TOS_Debug::GetEnv(), TOS_Debug::GetAct(3));
+
+	auto pEntity = TOS_GET_ENTITY(params.id);
+	if (pEntity)
+		pEntity->Hide(params.bHide);
 
 	return true;
 }

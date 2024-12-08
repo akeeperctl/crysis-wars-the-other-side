@@ -519,20 +519,27 @@ void CTOSZeusModule::OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eH
 						}
 
 						// Пинаем физику выделенных сущностей после того как закончили их перетаскивать
-						auto pPhys = pSelectedEntity->GetPhysics();
-						if (pPhys)
-						{
-							pe_action_awake awake;
-							awake.bAwake = 1;
-							pPhys->Action(&awake);
-						}
+						//auto pPhys = pSelectedEntity->GetPhysics();
+						//if (pPhys)
+						//{
+						//	pe_action_awake awake;
+						//	awake.bAwake = 1;
+						//	pPhys->Action(&awake);
+						//}
 
 						if (moveSelectedEnt)
 						{
 							// Применяем сдвинутые позиции боксов на сущности
 							const auto& pBox = m_local.m_boxes[pSelectedEntity->GetId()];
-							pSelectedEntity->SetWorldTM(Matrix34::CreateTranslationMat(pBox->wPos));
-							pSelectedEntity->SetRotation(Quat(pBox->obb.m33));
+							//pSelectedEntity->SetWorldTM(Matrix34::CreateTranslationMat(pBox->wPos));
+							//pSelectedEntity->SetRotation(Quat(pBox->obb.m33));
+
+							CTOSZeusSynchronizer::NetTransformParams params;
+							params.pos = pBox->wPos;
+							params.dir = pBox->obb.m33.GetColumn1();
+							params.id = pSelectedEntity->GetId();
+
+							GetSynchronizer()->RMISend(CTOSZeusSynchronizer::SvRequestTransformEntity(), params, eRMI_ToServer);
 						}
 
 						if (needDeselect)

@@ -50,27 +50,36 @@ void CTOSZeusModule::Network::ServerEntitySpawned(EntityId id, const Vec3& pos, 
 	char buffer[64];
 	sprintf(buffer, "%d", id);
 	pSpawned->SetName(string(pSpawned->GetName()) + "_" + buffer);
+	pSpawned->Hide(false);
 
 	// Извещаем клиента, о том, что он может перемещать заспавненную сущность
-	auto pSync = static_cast<CTOSZeusSynchronizer*>(pParent->GetSynchronizer());
-	assert(pSync != nullptr);
-
 	CTOSZeusSynchronizer::NetSpawnedInfo info;
+	//CTOSZeusSynchronizer::NetHideParams params;
+
 	info.spawnedId = id;
 	info.spawnedPos = pos;
+
+	//params.id = id;
+	//params.bHide = false;
+
+	auto pSync = static_cast<CTOSZeusSynchronizer*>(pParent->GetSynchronizer());
+	assert(pSync != nullptr);
 	pSync->RMISend(CTOSZeusSynchronizer::ClSpawnEntity(), info, eRMI_ToClientChannel, clientChannelId);
+	// pSync->RMISend(CTOSZeusSynchronizer::ClHideEntity(), params, eRMI_ToAllClients | eRMI_NoLocalCalls);
+
 }
 
 void CTOSZeusModule::Network::MakeZeus(IActor* pPlayer, bool bMake)
 {
-	auto pSync = static_cast<CTOSZeusSynchronizer*>(pParent->GetSynchronizer());
-
 	CTOSZeusSynchronizer::NetMakeParams params;
 	params.bMake = bMake;
 	params.playerChannelId = pPlayer->GetChannelId();
 
 	if (gEnv->bClient)
+	{
+		auto pSync = static_cast<CTOSZeusSynchronizer*>(pParent->GetSynchronizer());
 		pSync->GetGameObject()->InvokeRMI(CTOSZeusSynchronizer::SvRequestMakeZeus(), params, eRMI_ToServer);
+	}
 
 	//// Сбрасываем статы
 	//pTOSPlayer->GetActorStats()->inAir = 0.0f;
