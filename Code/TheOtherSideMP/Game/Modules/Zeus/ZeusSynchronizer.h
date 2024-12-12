@@ -55,7 +55,7 @@ public:
 
 		void SerializeWith(TSerialize ser)
 		{
-			ser.Value("spawnedId", spawnedId);
+			ser.Value("spawnedId", spawnedId, 'eid');
 			ser.Value("spawnedPos", spawnedPos, 'wrld');
 		}
 	};
@@ -112,6 +112,24 @@ public:
 		{
 			ser.Value("id", id, 'eid');
 		}
+	};		
+	
+	struct NetKillParams
+	{
+		EntityId targetId;
+		EntityId shooterId;
+
+		NetKillParams()
+			:
+			targetId(ZERO),
+			shooterId(ZERO)
+		{};
+
+		void SerializeWith(TSerialize ser)
+		{
+			ser.Value("targetId", targetId, 'eid');
+			ser.Value("shooterId", shooterId, 'eid');
+		}
 	};	
 	
 	struct NetExecuteOrderParams
@@ -160,6 +178,24 @@ public:
 			ser.Value("id", id, 'eid');
 			ser.Value("bHide", bHide, 'bool');
 		}
+	};	
+	
+	struct NetMakeHostileParams
+	{
+		EntityId id;
+		bool bHostile;
+
+		NetMakeHostileParams()
+			:
+			id(ZERO),
+			bHostile(false)
+		{};
+
+		void SerializeWith(TSerialize ser)
+		{
+			ser.Value("id", id, 'eid');
+			ser.Value("bHostile", bHostile, 'bool');
+		}
 	};
 	const char* GetNameOfClass() { return "CTOSZeusSynchronizer"; }
 
@@ -168,36 +204,21 @@ public:
 	//NOATTACH - Без привязки к данным сериализации
 	//Reliable - надёжная доставка пакета
 
-	DECLARE_SERVER_RMI_POSTATTACH_FAST(SvRequestExecuteOrder, NetExecuteOrderParams, eNRT_ReliableOrdered);
-	DECLARE_SERVER_RMI_POSTATTACH_FAST(SvRequestKillEntity, NetRemoveParams, eNRT_ReliableOrdered);
-	DECLARE_SERVER_RMI_POSTATTACH_FAST(SvRequestRemoveEntity, NetRemoveParams, eNRT_ReliableOrdered);
+	DECLARE_SERVER_RMI_POSTATTACH(SvRequestAIMakeHostile, NetMakeHostileParams, eNRT_ReliableOrdered);
+	DECLARE_SERVER_RMI_POSTATTACH(SvRequestExecuteOrder, NetExecuteOrderParams, eNRT_ReliableOrdered);
+	DECLARE_SERVER_RMI_POSTATTACH(SvRequestKillEntity, NetKillParams, eNRT_ReliableOrdered);
+	DECLARE_SERVER_RMI_POSTATTACH(SvRequestRemoveEntity, NetRemoveParams, eNRT_ReliableOrdered);
 
-	DECLARE_SERVER_RMI_POSTATTACH_FAST(SvRequestHideEntity, NetHideParams, eNRT_ReliableOrdered);
-	DECLARE_CLIENT_RMI_POSTATTACH_FAST(ClHideEntity, NetHideParams, eNRT_ReliableOrdered);
+	DECLARE_SERVER_RMI_POSTATTACH(SvRequestHideEntity, NetHideParams, eNRT_ReliableOrdered);
+	DECLARE_CLIENT_RMI_POSTATTACH(ClHideEntity, NetHideParams, eNRT_ReliableOrdered);
 
 	DECLARE_SERVER_RMI_POSTATTACH_FAST(SvRequestTransformEntity, NetTransformParams, eNRT_ReliableOrdered);
 	DECLARE_CLIENT_RMI_POSTATTACH_FAST(ClTransformEntity, NetTransformParams, eNRT_ReliableOrdered);
 
-	DECLARE_SERVER_RMI_PREATTACH_FAST(SvRequestSpawnEntity, NetSpawnParams, eNRT_UnreliableOrdered);
-	DECLARE_CLIENT_RMI_PREATTACH_FAST(ClSpawnEntity, NetSpawnedInfo, eNRT_UnreliableOrdered);
+	DECLARE_SERVER_RMI_POSTATTACH(SvRequestCopyEntity, NetSpawnParams, eNRT_ReliableOrdered);
+	DECLARE_SERVER_RMI_POSTATTACH(SvRequestSpawnEntity, NetSpawnParams, eNRT_ReliableOrdered);
+	DECLARE_CLIENT_RMI_POSTATTACH(ClSpawnEntity, NetSpawnedInfo, eNRT_ReliableOrdered);
 
 	DECLARE_SERVER_RMI_PREATTACH_FAST(SvRequestMakeZeus, NetMakeParams, eNRT_ReliableUnordered);
 	DECLARE_CLIENT_RMI_PREATTACH_FAST(ClMakeZeus, NetMakeParams, eNRT_ReliableUnordered);
-
-	//DECLARE_SERVER_RMI_NOATTACH(SvRequestMasterRemove, NetMasterAddingParams, eNRT_ReliableOrdered);
-	//DECLARE_SERVER_RMI_NOATTACH(SvRequestSetDesiredSlaveCls, NetDesiredSlaveClsParams, eNRT_ReliableOrdered);
-
-	//DECLARE_CLIENT_RMI_NOATTACH(ClMasterClientStartControl, NetMasterStartControlParams, eNRT_ReliableOrdered);
-	//DECLARE_SERVER_RMI_NOATTACH(SvRequestMasterClientStartControl, NetMasterStartControlParams, eNRT_ReliableOrdered);
-
-	//DECLARE_SERVER_RMI_NOATTACH(SvRequestDelegateAuthority, NetDelegateAuthorityParams, eNRT_ReliableOrdered);
-
-	//DECLARE_CLIENT_RMI_NOATTACH(ClMasterClientStopControl, NetGenericNoParams, eNRT_ReliableOrdered);
-	//DECLARE_SERVER_RMI_NOATTACH(SvRequestMasterClientStopControl, NetMasterStopControlParams, eNRT_ReliableOrdered);
-
-	////TODO: 10/11/2023, 09:25 Создать модуль для ИИ, когда наберется достаточно функций.
-	//DECLARE_SERVER_RMI_NOATTACH(SvRequestSaveMCParams, NetMasterIdParams, eNRT_ReliableOrdered);
-	//DECLARE_SERVER_RMI_NOATTACH(SvRequestApplyMCSavedParams, NetMasterIdParams, eNRT_ReliableOrdered);
-
-
 };

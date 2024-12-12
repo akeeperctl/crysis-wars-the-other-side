@@ -456,11 +456,17 @@ void CTOSZeusModule::OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eH
 						auto pEntity = TOS_GET_ENTITY(*it);
 						if (pEntity)
 						{
-							pEntity->Hide(false);
+							CTOSZeusSynchronizer::NetHideParams hideParams;
+							CTOSZeusSynchronizer::NetMakeHostileParams makeHostileParams;
 
-							bool hostile = true;
-							TOS_Script::GetEntityProperty(pEntity, "bSpeciesHostility", hostile);
-							TOS_AI::MakeHostile(pEntity->GetAI(), hostile);
+							hideParams.bHide = false;
+							hideParams.id = pEntity->GetId();
+
+							makeHostileParams.bHostile = true;
+							makeHostileParams.id = pEntity->GetId();
+
+							GetSynchronizer()->RMISend(CTOSZeusSynchronizer::SvRequestHideEntity(), hideParams, eRMI_ToServer);
+							GetSynchronizer()->RMISend(CTOSZeusSynchronizer::SvRequestAIMakeHostile(), makeHostileParams, eRMI_ToServer);
 						}
 					}
 				}
@@ -564,7 +570,10 @@ void CTOSZeusModule::OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eH
 						auto pEntity = TOS_GET_ENTITY(m_local.m_curClickedEntityId);
 						if (pEntity)
 						{
-							pEntity->Hide(false);
+							CTOSZeusSynchronizer::NetHideParams params;
+							params.bHide = false;
+							params.id = pEntity->GetId();
+							GetSynchronizer()->RMISend(CTOSZeusSynchronizer::SvRequestHideEntity(), params, eRMI_ToServer);
 						}
 						else
 						{
@@ -775,7 +784,6 @@ void CTOSZeusModule::Update(float frametime)
 	if (tos_sv_zeus_update == 0)
 		return;
 
-	// TODO: 01.12.2024 здесь говно, вылетает при спавне транспортаw
 	if (!GetPlayer() || !m_local.GetFlag(EFlag::Zeusing))
 		return;
 
@@ -839,9 +847,6 @@ void CTOSZeusModule::Update(float frametime)
 		for (auto it = m_local.m_selectedEntities.cbegin(); it != m_local.m_selectedEntities.cend(); it++)
 		{
 			const auto id = *it;
-			// TODO добавить отображение линии и позиции текущего приказа выделенной сущности
-			// если приказа нет, то ничего не выводить
-			// TODO сделать дублирование иконки приказа, по аналогии с иконками сущностей
 
 			if (!m_local.UpdateDraggedEntity(id, pClickedEntity, pZeusPhys, m_local.m_boxes, autoEntitiesHeight))
 				continue;

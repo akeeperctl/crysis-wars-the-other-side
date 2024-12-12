@@ -245,6 +245,7 @@ public:
 
 	private:
 		void ServerEntitySpawned(EntityId id, const Vec3& pos, int clientChannelId);
+		void ServerEntityCopied(EntityId id, const Vec3& pos, int clientChannelId);
 
 	public:
 		CTOSZeusModule* pParent;

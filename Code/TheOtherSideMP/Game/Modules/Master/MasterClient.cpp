@@ -923,10 +923,7 @@ void CTOSMasterClient::PrepareDude(const bool toStartControl, const uint dudeFla
 			g_pGameActions->FilterMasterControlSlave()->Enable(true);
         }
 
-		//if (dudeFlags & TOS_DUDE_FLAG_HIDE_MODEL)
-		//{
 		m_pLocalDude->GetGameObject()->InvokeRMI(CTOSActor::SvRequestHideMe(), NetHideMeParams(true), eRMI_ToServer);
-		//}
 
 		if (dudeFlags & TOS_DUDE_FLAG_BEAM_MODEL)
 		{
@@ -934,9 +931,6 @@ void CTOSMasterClient::PrepareDude(const bool toStartControl, const uint dudeFla
 			const Quat slaveRot = m_pSlaveEntity->GetWorldRotation();
 
 			m_pLocalDude->GetEntity()->SetWorldTM(Matrix34::CreateTranslationMat(slavePos), 0);
-
-			// Привязка НЕ работает от клиента к серверу без исп. RMI
-			//m_pSlaveEntity->AttachChild(m_pLocalDude->GetEntity(), ENTITY_XFORM_USER | IEntity::ATTACHMENT_KEEP_TRANSFORMATION);
 
 			CTOSActor::NetAttachChild params;
 			params.flags = ENTITY_XFORM_USER | IEntity::ATTACHMENT_KEEP_TRANSFORMATION;
@@ -949,7 +943,6 @@ void CTOSMasterClient::PrepareDude(const bool toStartControl, const uint dudeFla
 			m_pLocalDude->GetAnimatedCharacter()->SetParams(anparams);
 
 			m_pLocalDude->SetViewRotation(slaveRot);
-			//m_pLocalDude->SetAngles(Ang3(slaveRot));
 		}
 
 		IInventory* pInventory = m_pLocalDude->GetInventory();
@@ -957,56 +950,13 @@ void CTOSMasterClient::PrepareDude(const bool toStartControl, const uint dudeFla
 		{
 			pInventory->HolsterItem(true);
 			pInventory->RemoveAllItems();
-
-			//if (IEntityClassRegistry* pClassRegistry = gEnv->pEntitySystem->GetClassRegistry())
-			//{
-				//const string itemClassName = "Binoculars";
-
-				//pClassRegistry->IteratorMoveFirst();
-				//const IEntityClass* pEntityClass = pClassRegistry->FindClass(itemClassName);
-
-				//if (pEntityClass)
-					//g_pGame->GetIGameFramework()->GetIItemSystem()->GiveItem(pActor, itemClassName, false, false, false);
-			//}
 		}
-
-        //if (dudeFlags & TOS_DUDE_FLAG_CLEAR_INVENTORY)
-        //{
-        //    //TODO Сохранение инвентаря Dude
-        //}
-
-		//g_pGameCVars->hud_enableAlienInterference = 0;
-        //m_pLocalDude->ClearInterference();
-        //gEnv->pConsole->GetCVar("hud_enableAlienInterference")->ForceSet("0");
 
         if (pHUD)
         {
-            //LoadHUD(true); deprecated
-            //m_pAbilitiesSystem->InitHUD(true);			
-            //m_pAbilitiesSystem->ShowHUD(true);
-            //m_pAbilitiesSystem->UpdateHUD();
-            //m_pAbilitiesSystem->ReloadHUD();
-
-            //SetAmmoHealthHUD();
-
-            //g_pGame->GetHUD()->UpdateHealth(m_pControlledActor);
-            //g_pGame->GetHUD()->m_animPlayerStats.Reload(true);
-
 			const auto pHUDCrosshair = pHUD->GetCrosshair();
 			pHUDCrosshair->SetOpacity(1.0f);
 			pHUDCrosshair->SetCrosshair(g_pGameCVars->hud_crosshair);
-        }
-
-        if (!gEnv->bEditor)
-        {
-            // fix "Pure function error" 	
-
-            /*CGameRules* pGR = g_pGame->GetGameRules();
-            if (pGR && !m_isHitListener)
-            {
-                m_isHitListener = true;
-                pGR->AddHitListener(this);
-            }*/
         }
     }
     else
@@ -1045,18 +995,8 @@ void CTOSMasterClient::PrepareDude(const bool toStartControl, const uint dudeFla
 			m_pLocalDude->GetAnimatedCharacter()->SetParams(params);
 		}
 
-        //m_pLocalDude->InitInterference();
-		//gEnv->pConsole->GetCVar("hud_enableAlienInterference")->ForceSet("1");
-        //g_pGameCVars->hud_enableAlienInterference = 1;
-		//m_pLocalDude->ResetScreenFX();
-		//gEnv->pSystem->GetI3DEngine()->SetPostEffectParam("AlienInterference_Amount", 0.0f);
-		//SAFE_HUD_FUNC(StartInterference(0, 0, 100.0f, 3.f));
-
         if (m_pLocalDude->IsThirdPerson())
             m_pLocalDude->ToggleThirdPerson();
-
-        // Выполнено - Нужно написать функцию для отображения дружественного перекрестия
-		// Выполнено - Нужно написать функцию для смены имени текущего оружия
 
 		if (pHUD)
 		{
@@ -1104,28 +1044,6 @@ void CTOSMasterClient::PrepareDude(const bool toStartControl, const uint dudeFla
             {
 				SAFE_HUD_FUNC(TOSSetAmmoHealthHUD(m_pLocalDude, "Libs/UI/HUD_AmmoHealthEnergySuit.gfx"));
 				SAFE_HUD_FUNC(TOSSetInventoryHUD(m_pLocalDude, "Libs/UI/HUD_WeaponSelection.gfx"));
-
-                //m_animScoutFlyInterface.Unload();
-
-                //switch (pSuit->GetMode())
-                //{
-                //case NANOMODE_DEFENSE:
-                //    g_pGame->GetHUD()->m_animPlayerStats.Invoke("setMode", "Armor");
-                //    break;
-                //case NANOMODE_SPEED:
-                //    g_pGame->GetHUD()->m_animPlayerStats.Invoke("setMode", "Speed");
-                //    break;
-                //case NANOMODE_STRENGTH:
-                //    g_pGame->GetHUD()->m_animPlayerStats.Invoke("setMode", "Strength");
-                //    break;
-                //case NANOMODE_CLOAK:
-                //    g_pGame->GetHUD()->m_animPlayerStats.Invoke("setMode", "Cloak");
-                //    break;
-                //case NANOMODE_INVULNERABILITY:
-                //case NANOMODE_DEFENSE_HIT_REACTION:
-                //case NANOMODE_LAST:
-                //    break;
-                //}
             }
 
         }

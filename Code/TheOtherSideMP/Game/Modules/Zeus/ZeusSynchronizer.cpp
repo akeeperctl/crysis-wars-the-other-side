@@ -15,7 +15,6 @@ IMPLEMENT_RMI(CTOSZeusSynchronizer, SvRequestMakeZeus)
 
 	//TODO:
 	// 2) Через меню паузы можно кликнуть по объектам...
-	// 6) Спавн транспорта вызывает Malformed Packet 0_o, при этом оружие спавнится нормально
 
 	if (gEnv->bServer)
 	{
@@ -189,9 +188,6 @@ IMPLEMENT_RMI(CTOSZeusSynchronizer, SvRequestSpawnEntity)
 			CryLogError("[Zeus] entity with class '%s' spawn failed!", psClassName->c_str());
 			return true;
 		}
-
-		//pSpawned->Hide(true);
-		// TODO: 01/12/2024 malformed packet при спавне техники какого хуя 
 	}
 
 	return true;
@@ -310,12 +306,13 @@ IMPLEMENT_RMI(CTOSZeusSynchronizer, SvRequestKillEntity)
 
 	HitInfo info;
 	info.SetDamage(99999.0f);
-	info.targetId = params.id;
+	info.shooterId = params.shooterId;
+	info.targetId = params.targetId;
 	info.type = g_pGame->GetGameRules()->GetHitTypeId(hitType.c_str());
 
-	g_pGame->GetGameRules()->ClientHit(info);
+	g_pGame->GetGameRules()->ServerHit(info);
 
-	auto pVehicle = TOS_GET_VEHICLE(params.id);
+	auto pVehicle = TOS_GET_VEHICLE(params.targetId);
 	if (pVehicle)
 		TOS_Vehicle::Destroy(pVehicle);
 
@@ -382,6 +379,82 @@ IMPLEMENT_RMI(CTOSZeusSynchronizer, ClHideEntity)
 	auto pEntity = TOS_GET_ENTITY(params.id);
 	if (pEntity)
 		pEntity->Hide(params.bHide);
+
+	return true;
+}
+
+//------------------------------------------------------------------------
+IMPLEMENT_RMI(CTOSZeusSynchronizer, SvRequestAIMakeHostile)
+{
+	CryLog("[C++][%s][%s][SvRequestAIMakeHostile]",
+		TOS_Debug::GetEnv(), TOS_Debug::GetAct(3));
+
+	auto pEntity = TOS_GET_ENTITY(params.id);
+	if (pEntity)
+	{
+		bool hostile = params.bHostile;
+		TOS_Script::GetEntityProperty(pEntity, "bSpeciesHostility", hostile);
+		TOS_AI::MakeHostile(pEntity->GetAI(), hostile);
+	}
+
+	return true;
+}
+
+//------------------------------------------------------------------------
+IMPLEMENT_RMI(CTOSZeusSynchronizer, SvRequestCopyEntity)
+{
+	if (gEnv->bServer)
+	{
+		CryLog("[C++][%s][%s][SvRequestCopyEntity]",
+			TOS_Debug::GetEnv(), TOS_Debug::GetAct(3));
+
+		auto pZeusModule = g_pTOSGame->GetZeusModule();
+		assert(pZeusModule != nullptr);
+
+		STOSEntityDelaySpawnParams spawnParams;
+		spawnParams.pCallback = std::bind(
+			&CTOSZeusModule::Network::ServerEntityCopied,
+			&pZeusModule->GetNetwork(),
+			std::placeholders::_1,
+			std::placeholders::_2,
+			std::placeholders::_3);
+
+		spawnParams.clientChannelId = params.playerChannelId;
+		spawnParams.hide = true;
+		spawnParams.spawnDelay = 1.0f;
+		spawnParams.saveParams = false;
+		spawnParams.vanilla.bStaticEntityId = false; // true - вылетает в редакторе и медленно работает O(n), false O(1)
+		spawnParams.vanilla.bIgnoreLock = false; // spawn lock игнор
+
+		auto pPlayer = TOS_GET_ACTOR_CHANNELID(params.playerChannelId);
+		if (pPlayer)
+			spawnParams.authorityPlayerName = pPlayer->GetEntity()->GetName();
+
+		const string* const psClassName = &params.className;
+		IEntityClass* pClass = gEnv->pEntitySystem->GetClassRegistry()->FindClass(psClassName->c_str());
+
+		const string name = string("zeus_") + psClassName->c_str();
+		spawnParams.vanilla.sName = name;
+		spawnParams.vanilla.pClass = pClass;
+		spawnParams.vanilla.vPosition = params.pos;
+
+		const auto pArchetype = gEnv->pEntitySystem->LoadEntityArchetype(psClassName->c_str());
+		if (pArchetype)
+			spawnParams.vanilla.pArchetype = pArchetype;
+
+		if (!pClass && !pArchetype)
+		{
+			CryLogError("[Zeus] not defined entity class '%s'", psClassName->c_str());
+			return true;
+		}
+
+		bool bSpawned = TOS_Entity::SpawnDelay(spawnParams, true);
+		if (!bSpawned)
+		{
+			CryLogError("[Zeus] entity with class '%s' copy failed!", psClassName->c_str());
+			return true;
+		}
+	}
 
 	return true;
 }
